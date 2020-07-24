@@ -130,8 +130,20 @@ class CLM(TimeStampedModel):
         'post_test'
     )
     YES_NO = Choices(
-        (1, _("Yes")),
-        (0, _("No"))
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    YES_NO_SOMETIMES = Choices(
+        ('yes', _("Yes")),
+        ('no', _("No")),
+        ('sometimes', _("Sometimes"))
+    )
+    PERCENT = Choices(
+        ('hundred', _("100%")),
+        ('seventy_five', _("75%")),
+        ('fifty', _("50%")),
+        ('twenty_five', _("25%")),
+        ('less_than_twenty_five', _("Less than 25%")),
     )
     REFERRAL = Choices(
         ('from_same_ngo', _('Referral from the same NGO')),
@@ -981,6 +993,83 @@ class CLM(TimeStampedModel):
     cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
     enrolled_at_school = models.BooleanField(blank=True, default=False, verbose_name=_('Enrolled at School'))
 
+    basic_stationery = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child receive basic stationery?')
+    )
+    pss_kit = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child benefit from the PSS kit?')
+    )
+
+    remote_learning = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child involved in remote learning?')
+    )
+
+    reliable_internet = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO_SOMETIMES,
+        verbose_name=_('Does the family have reliable internet service in their area during remote learning?')
+    )
+
+    gender_participate = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did both girls and boys in the same family participate in the class and have access to the phone/device?')
+    )
+    gender_participate_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Explain')
+    )
+    remote_learning_engagement = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PERCENT,
+        verbose_name=_('Frequency of Child Engagement in remote learning?')
+    )
+    meet_learning_outcomes = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PERCENT,
+        verbose_name=_('How well did the child meet the learning outcomes?')
+    )
+    parent_learning_support_rate = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PERCENT,
+        verbose_name=_('How do you rate the parents learning support provided to the child through this Remote learning phase?')
+    )
+    covid_message = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Has the child been reached with awareness messaging on Covid-19 and prevention measures?')
+    )
+    covid_parents_message = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Has the parents been reached with awareness messaging on Covid-19 and prevention measures? ')
+    )
     @property
     def student_fullname(self):
         if self.student:

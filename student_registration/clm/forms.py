@@ -3024,7 +3024,7 @@ class CBECEForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 6, Person.CURRENT_YEAR - 1)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 1)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -3417,10 +3417,70 @@ class CBECEForm(CommonForm):
         required=False, to_field_name='id',
     )
 
-    # student_p_code = forms.CharField(
-    #     label=_('P-Code If a child lives in a tent / Brax in a random camp'),
-    #     widget=forms.TextInput, required=False
-    # )
+    student_p_code = forms.CharField(
+        label=_('P-Code If a child lives in a tent / Brax in a random camp'),
+        widget=forms.TextInput, required=False
+    )
+
+    student_number_children = forms.IntegerField(
+        label=_('How many children does this child have?'),
+        widget=forms.TextInput, required=False
+    )
+
+    basic_stationery = forms.ChoiceField(
+        label=_("Did the child receive basic stationery?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    pss_kit = forms.ChoiceField(
+            label=_("Did the child benefit from the PSS kit?"),
+            widget=forms.Select, required=True,
+            choices=CLM.YES_NO
+        )
+    remote_learning = forms.ChoiceField(
+            label=_("'Was the child involved in remote learning?"),
+            widget=forms.Select, required=True,
+            choices=CLM.YES_NO
+        )
+    reliable_internet = forms.ChoiceField(
+        label=_("Does the family have reliable internet service in their area during remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO_SOMETIMES
+    )
+    gender_participate = forms.ChoiceField(
+        label=_("Did both girls and boys in the same family participate in the class and have access to the phone/device?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    gender_participate_explain = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    remote_learning_engagement = forms.ChoiceField(
+        label=_("Frequency of Child Engagement in remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    meet_learning_outcomes = forms.ChoiceField(
+        label=_("How well did the child meet the learning outcomes?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    parent_learning_support_rate = forms.ChoiceField(
+        label=_("How do you rate the parents learning support provided to the child through this Remote learning phase?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    covid_message = forms.ChoiceField(
+        label=_("Has the child been reached with awareness messaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    covid_parents_message = forms.ChoiceField(
+        label=_("Has the parents been reached with awareness messaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -3799,7 +3859,57 @@ class CBECEForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
-            # Fieldset(
+
+            Fieldset(
+                None,
+                Div(HTML('<span>E</span>'), css_class='block_tag'),
+                # Div(
+                #     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
+                # ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('basic_stationery', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('pss_kit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('reliable_internet', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('gender_participate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('gender_participate_explain', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('remote_learning_engagement', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('parent_learning_support_rate', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('covid_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('covid_parents_message', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data E_right_border'
+            ),
+
+        # Fieldset(
             #     None,
             #     Div(
             #         HTML('<span>E</span>'), css_class='block_tag'),
@@ -3879,7 +3989,7 @@ class CBECEForm(CommonForm):
         education_status = cleaned_data.get("education_status")
         miss_school_date = cleaned_data.get("miss_school_date")
         student_nationality = cleaned_data.get("student_nationality")
-        other_nationality = cleaned_data.get("other_nationality.id")
+        other_nationality = cleaned_data.get("other_nationality")
         main_caregiver = cleaned_data.get("main_caregiver")
         other_caregiver_relationship = cleaned_data.get("other_caregiver_relationship")
         have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
@@ -4088,7 +4198,18 @@ class CBECEForm(CommonForm):
             'other_caregiver_relationship',
             'labour_weekly_income',
             'source_of_transportation',
-            'student_p_code'
+            'student_p_code',
+            'basic_stationery',
+            'pss_kit',
+            'remote_learning',
+            'reliable_internet',
+            'gender_participate',
+            'gender_participate_explain',
+            'remote_learning_engagement',
+            'meet_learning_outcomes',
+            'parent_learning_support_rate',
+            'covid_message',
+            'covid_parents_message'
         )
 
     class Media:
