@@ -143,6 +143,13 @@ class CLM(TimeStampedModel):
         ('caregiver', _('Caregiver')),
         ('childand_or_caregiver', _('French/Arabic'))
     )
+    HOW_OFTEN= Choices(
+        ('daily', _('Daily')),
+        ('every_2_to_3_days', _('Every 2-3 days')),
+        ('weekly', _('Weekly')),
+        ('biweekly', _('Biweekly')),
+        ('monthly', _('Monthly'))
+    )
     PERCENT = Choices(
         ('hundred', _("100%")),
         ('seventy_five', _("75%")),
@@ -1068,10 +1075,11 @@ class CLM(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?')
     )
-    covid_message_how_often = models.IntegerField(
+    covid_message_how_often = models.CharField(
+        max_length=50,
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 10)),
+        choices=HOW_OFTEN,
         verbose_name=_('How often?')
     )
 
@@ -1082,10 +1090,11 @@ class CLM(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures? ')
     )
-    covid_parents_message_how_often = models.IntegerField(
+    covid_parents_message_how_often =  models.CharField(
+        max_length=50,
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 10)),
+        choices=HOW_OFTEN,
         verbose_name=_('How often?')
     )
 

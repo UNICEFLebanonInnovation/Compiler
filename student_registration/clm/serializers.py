@@ -277,6 +277,21 @@ class BLNSerializer(CLMSerializer):
             'main_caregiver_nationality',
             'other_caregiver_relationship',
             'student_number_children',
+            # 'basic_stationery',
+            # 'pss_kit',
+            # 'remote_learning',
+            # 'reliable_internet',
+            # 'gender_participate',
+            # 'gender_participate_explain',
+            # 'remote_learning_engagement',
+            # 'meet_learning_outcomes',
+            # 'parent_learning_support_rate',
+            # 'covid_message',
+            # 'covid_message_how_often',
+            # 'covid_parents_message',
+            # 'covid_parents_message_how_often',
+            # 'follow_up_done',
+            # 'follow_up_done_with_who',
         )
 
 
@@ -347,7 +362,22 @@ class ABLNSerializer(CLMSerializer):
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
-            'student_number_children'
+            'student_number_children',
+            # 'basic_stationery',
+            # 'pss_kit',
+            # 'remote_learning',
+            # 'reliable_internet',
+            # 'gender_participate',
+            # 'gender_participate_explain',
+            # 'remote_learning_engagement',
+            # 'meet_learning_outcomes',
+            # 'parent_learning_support_rate',
+            # 'covid_message',
+            # 'covid_message_how_often',
+            # 'covid_parents_message',
+            # 'covid_parents_message_how_often',
+            # 'follow_up_done',
+            # 'follow_up_done_with_who',
         )
 
 
@@ -457,6 +487,20 @@ class CBECESerializer(CLMSerializer):
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
+            'basic_stationery',
+            'remote_learning',
+            'reliable_internet',
+            'gender_participate',
+            'gender_participate_explain',
+            'remote_learning_engagement',
+            'meet_learning_outcomes',
+            'parent_learning_support_rate',
+            'covid_message',
+            'covid_message_how_often',
+            'covid_parents_message',
+            'covid_parents_message_how_often',
+            'follow_up_done',
+            'follow_up_done_with_who',
 
         )
 

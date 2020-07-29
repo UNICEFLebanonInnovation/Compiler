@@ -3432,11 +3432,11 @@ class CBECEForm(CommonForm):
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
     )
-    pss_kit = forms.ChoiceField(
-            label=_("Did the child benefit from the PSS kit?"),
-            widget=forms.Select, required=True,
-            choices=CLM.YES_NO
-        )
+    # pss_kit = forms.ChoiceField(
+    #         label=_("Did the child benefit from the PSS kit?"),
+    #         widget=forms.Select, required=True,
+    #         choices=CLM.YES_NO
+    #     )
     remote_learning = forms.ChoiceField(
             label=_("'Was the child involved in remote learning?"),
             widget=forms.Select, required=True,
@@ -3476,9 +3476,10 @@ class CBECEForm(CommonForm):
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
     )
-    covid_message_how_often = forms.IntegerField(
+    covid_message_how_often = forms.ChoiceField(
         label=_("How often?"),
-        widget=forms.TextInput, required=False
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
     )
 
     covid_parents_message = forms.ChoiceField(
@@ -3486,9 +3487,10 @@ class CBECEForm(CommonForm):
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
     )
-    covid_parents_message_how_often = forms.IntegerField(
+    covid_parents_message_how_often = forms.ChoiceField(
         label=_("How often?"),
-        widget=forms.TextInput, required=False
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
     )
 
     follow_up_done = forms.ChoiceField(
@@ -3498,7 +3500,7 @@ class CBECEForm(CommonForm):
     )
     follow_up_done_with_who = forms.ChoiceField(
         label=_("With who child and/or caregiver?"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=CLM.WITH_WHO
     )
 
@@ -3889,54 +3891,51 @@ class CBECEForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('basic_stationery', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2</span>'),
+                    # Div('pss_kit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('pss_kit', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
                     Div('remote_learning', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('reliable_internet', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('gender_participate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">4.1</span>'),
                     Div('gender_participate_explain', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('remote_learning_engagement', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('meet_learning_outcomes', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('parent_learning_support_rate', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('covid_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">9.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">8.1</span>'),
                     Div('covid_message_how_often', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('covid_parents_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">10.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">9.1</span>'),
                     Div('covid_parents_message_how_often', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('follow_up_done', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">11.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">10.1</span>'),
                     Div('follow_up_done_with_who', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4261,7 +4260,7 @@ class CBECEForm(CommonForm):
             'source_of_transportation',
             'student_p_code',
             'basic_stationery',
-            'pss_kit',
+            # 'pss_kit',
             'remote_learning',
             'reliable_internet',
             'gender_participate',
