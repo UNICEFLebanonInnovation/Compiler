@@ -170,7 +170,6 @@ $(document).ready(function(){
     });
 
     $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income, select#id_covid_message, select#id_covid_parents_message,  select#id_gender_participate,  select#id_follow_up_done', function(){
-        alert('hi');
         reorganizeForm();
 
     });
