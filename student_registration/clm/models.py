@@ -138,6 +138,11 @@ class CLM(TimeStampedModel):
         ('no', _("No")),
         ('sometimes', _("Sometimes"))
     )
+    WITH_WHO = Choices(
+        ('child', _('Child')),
+        ('caregiver', _('Caregiver')),
+        ('childand_or_caregiver', _('French/Arabic'))
+    )
     PERCENT = Choices(
         ('hundred', _("100%")),
         ('seventy_five', _("75%")),
@@ -1061,14 +1066,42 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Has the child been reached with awareness messaging on Covid-19 and prevention measures?')
+        verbose_name=_('Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?')
     )
+    covid_message_how_often = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 10)),
+        verbose_name=_('How often?')
+    )
+
     covid_parents_message = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Has the parents been reached with awareness messaging on Covid-19 and prevention measures? ')
+        verbose_name=_('Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures? ')
+    )
+    covid_parents_message_how_often = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 10)),
+        verbose_name=_('How often?')
+    )
+
+    follow_up_done = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was any follow-up done to ensure messages were well received, understood and adopted?')
+    )
+    follow_up_done_with_who = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=WITH_WHO,
+        verbose_name=_('With who child and/or caregiver?')
     )
     @property
     def student_fullname(self):

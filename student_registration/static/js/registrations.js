@@ -169,8 +169,10 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
-         reorganizeForm();
+    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income, select#id_covid_message, select#id_covid_parents_message,  select#id_gender_participate,  select#id_follow_up_done', function(){
+        alert('hi');
+        reorganizeForm();
+
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
@@ -708,6 +710,11 @@ function reorganizeForm()
     var have_labour = $('select#id_have_labour_single_selection').val();
     var main_caregiver = $('select#id_main_caregiver').val();
 
+    var covid_message = $('select#id_covid_message').val();
+    var covid_parents_message = $('select#id_covid_parents_message').val();
+    var gender_participate = $('select#id_gender_participate').val();
+    var follow_up_done = $('select#id_follow_up_done').val();
+
     $('div.child_id').addClass('d-none');
 
     // id_student_nationality
@@ -726,6 +733,38 @@ function reorganizeForm()
         $('#span_miss_school_date').removeClass('d-none');
     }
 
+    // id_covid_message
+    $('div#div_id_covid_message_how_often').addClass('d-none');
+    $('#span_covid_message_how_often').addClass('d-none');
+    if(covid_message == 'yes'){
+        $('div#div_id_covid_message_how_often').removeClass('d-none');
+        $('#span_covid_message_how_often').removeClass('d-none');
+    }
+
+    // id_covid_parents_message
+    $('div#div_id_covid_parents_message_how_often').addClass('d-none');
+    $('#span_covid_parents_message_how_often').addClass('d-none');
+    if(covid_parents_message == 'yes'){
+        $('div#div_id_covid_parents_message_how_often').removeClass('d-none');
+        $('#span_covid_parents_message_how_often').removeClass('d-none');
+    }
+
+    // id_gender_participate
+    $('div#div_id_gender_participate_explain').addClass('d-none');
+    $('#span_gender_participate_explain').addClass('d-none');
+    if(gender_participate == 'yes'){
+        $('div#div_id_gender_participate_explain').removeClass('d-none');
+        $('#span_gender_participate_explain').removeClass('d-none');
+    }
+
+    // id_follow_up_done
+    $('div#div_id_follow_up_done_with_who').addClass('d-none');
+    $('#span_follow_up_done_with_who').addClass('d-none');
+    if(follow_up_done == 'yes'){
+        $('div#div_id_follow_up_done_with_who').removeClass('d-none');
+        $('#span_follow_up_done_with_who').removeClass('d-none');
+    }
+
 
     // have_children
     $('div#div_id_student_number_children').addClass('d-none');
@@ -736,8 +775,6 @@ function reorganizeForm()
     }else{
         $('#id_student_number_children').val('');
     }
-
-
 
     // have_labour_single_selection
 

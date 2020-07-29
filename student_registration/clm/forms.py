@@ -3472,14 +3472,34 @@ class CBECEForm(CommonForm):
         choices=CLM.PERCENT
     )
     covid_message = forms.ChoiceField(
-        label=_("Has the child been reached with awareness messaging on Covid-19 and prevention measures?"),
+        label=_("Has the child directly been reached with awareness directlymessaging on Covid-19 and prevention measures?"),
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
     )
+    covid_message_how_often = forms.IntegerField(
+        label=_("How often?"),
+        widget=forms.TextInput, required=False
+    )
+
     covid_parents_message = forms.ChoiceField(
-        label=_("Has the parents been reached with awareness messaging on Covid-19 and prevention measures?"),
+        label=_("Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?"),
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
+    )
+    covid_parents_message_how_often = forms.IntegerField(
+        label=_("How often?"),
+        widget=forms.TextInput, required=False
+    )
+
+    follow_up_done = forms.ChoiceField(
+        label=_("Was any follow-up done to ensure messages were well received, understood and adopted?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    follow_up_done_with_who = forms.ChoiceField(
+        label=_("With who child and/or caregiver?"),
+        widget=forms.Select, required=True,
+        choices=CLM.WITH_WHO
     )
 
     def __init__(self, *args, **kwargs):
@@ -3886,24 +3906,38 @@ class CBECEForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('gender_participate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">5.1</span>'),
                     Div('gender_participate_explain', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('remote_learning_engagement', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('meet_learning_outcomes', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('parent_learning_support_rate', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('covid_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">9.1</span>'),
+                    Div('covid_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('covid_parents_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">10.1</span>'),
+                    Div('covid_parents_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('follow_up_done', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">11.1</span>'),
+                    Div('follow_up_done_with_who', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data E_right_border'
@@ -3998,6 +4032,33 @@ class CBECEForm(CommonForm):
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
+        covid_message = cleaned_data.get("covid_message")
+        covid_message_how_often = cleaned_data.get("covid_message_how_often")
+        covid_parents_message = cleaned_data.get("covid_parents_message")
+        covid_parents_message_how_often = cleaned_data.get("covid_parents_message_how_often")
+        gender_participate = cleaned_data.get("gender_participate")
+        gender_participate_explain = cleaned_data.get("gender_participate_explain")
+        follow_up_done = cleaned_data.get("follow_up_done")
+        follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
+
+
+        if covid_message == 'yes':
+            if not covid_message_how_often:
+                self.add_error('covid_message_how_often', 'This field is required')
+
+        if covid_parents_message == 'yes':
+            if not covid_parents_message_how_often:
+                self.add_error('covid_parents_message_how_often', 'This field is required')
+
+
+        if follow_up_done == 'yes':
+            if not gender_participate_explain:
+                self.add_error('gender_participate_explain', 'This field is required')
+
+        if gender_participate == 'yes':
+            if not follow_up_done_with_who:
+                self.add_error('follow_up_done_with_who', 'This field is required')
+
 
         if education_status != 'out of school':
             if not miss_school_date:
@@ -4209,7 +4270,11 @@ class CBECEForm(CommonForm):
             'meet_learning_outcomes',
             'parent_learning_support_rate',
             'covid_message',
-            'covid_parents_message'
+            'covid_message_how_often',
+            'covid_parents_message',
+            'covid_parents_message_how_often',
+            'follow_up_done',
+            'follow_up_done_with_who',
         )
 
     class Media:
