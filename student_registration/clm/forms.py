@@ -4295,11 +4295,6 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
             if not covid_parents_message_how_often:
                 self.add_error('covid_parents_message_how_often', 'This field is required')
 
-        print ('---------------------------------')
-        print (gender_participate)
-        print ('---------------------------------')
-
-
         if gender_participate == 'no':
             if not gender_participate_explain:
                 self.add_error('gender_participate_explain', 'This field is required')
