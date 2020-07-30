@@ -3427,83 +3427,6 @@ class CBECEForm(CommonForm):
         widget=forms.TextInput, required=False
     )
 
-    basic_stationery = forms.ChoiceField(
-        label=_("Did the child receive basic stationery?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO
-    )
-    # pss_kit = forms.ChoiceField(
-    #         label=_("Did the child benefit from the PSS kit?"),
-    #         widget=forms.Select, required=True,
-    #         choices=CLM.YES_NO
-    #     )
-    remote_learning = forms.ChoiceField(
-            label=_("'Was the child involved in remote learning?"),
-            widget=forms.Select, required=True,
-            choices=CLM.YES_NO
-        )
-    reliable_internet = forms.ChoiceField(
-        label=_("Does the family have reliable internet service in their area during remote learning?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO_SOMETIMES
-    )
-    gender_participate = forms.ChoiceField(
-        label=_("Did both girls and boys in the same family participate in the class and have access to the phone/device?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO
-    )
-    gender_participate_explain = forms.CharField(
-        label=_('Explain'),
-        widget=forms.TextInput, required=False
-    )
-    remote_learning_engagement = forms.ChoiceField(
-        label=_("Frequency of Child Engagement in remote learning?"),
-        widget=forms.Select, required=True,
-        choices=CLM.PERCENT
-    )
-    meet_learning_outcomes = forms.ChoiceField(
-        label=_("How well did the child meet the learning outcomes?"),
-        widget=forms.Select, required=True,
-        choices=CLM.PERCENT
-    )
-    parent_learning_support_rate = forms.ChoiceField(
-        label=_("How do you rate the parents learning support provided to the child through this Remote learning phase?"),
-        widget=forms.Select, required=True,
-        choices=CLM.PERCENT
-    )
-    covid_message = forms.ChoiceField(
-        label=_("Has the child directly been reached with awareness directlymessaging on Covid-19 and prevention measures?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO
-    )
-    covid_message_how_often = forms.ChoiceField(
-        label=_("How often?"),
-        widget=forms.Select, required=False,
-        choices=CLM.HOW_OFTEN
-    )
-
-    covid_parents_message = forms.ChoiceField(
-        label=_("Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO
-    )
-    covid_parents_message_how_often = forms.ChoiceField(
-        label=_("How often?"),
-        widget=forms.Select, required=False,
-        choices=CLM.HOW_OFTEN
-    )
-
-    follow_up_done = forms.ChoiceField(
-        label=_("Was any follow-up done to ensure messages were well received, understood and adopted?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO
-    )
-    follow_up_done_with_who = forms.ChoiceField(
-        label=_("With who child and/or caregiver?"),
-        widget=forms.Select, required=False,
-        choices=CLM.WITH_WHO
-    )
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(CBECEForm, self).__init__(*args, **kwargs)
@@ -3882,66 +3805,6 @@ class CBECEForm(CommonForm):
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
 
-            Fieldset(
-                None,
-                Div(HTML('<span>E</span>'), css_class='block_tag'),
-                # Div(
-                #     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
-                # ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('basic_stationery', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">2</span>'),
-                    # Div('pss_kit', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('remote_learning', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('reliable_internet', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('gender_participate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">4.1</span>'),
-                    Div('gender_participate_explain', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('remote_learning_engagement', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('meet_learning_outcomes', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('parent_learning_support_rate', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('covid_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">8.1</span>'),
-                    Div('covid_message_how_often', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">9</span>'),
-                    Div('covid_parents_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">9.1</span>'),
-                    Div('covid_parents_message_how_often', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">10</span>'),
-                    Div('follow_up_done', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">10.1</span>'),
-                    Div('follow_up_done_with_who', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning child_data E_right_border'
-            ),
-
         # Fieldset(
             #     None,
             #     Div(
@@ -4031,33 +3894,6 @@ class CBECEForm(CommonForm):
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
-        covid_message = cleaned_data.get("covid_message")
-        covid_message_how_often = cleaned_data.get("covid_message_how_often")
-        covid_parents_message = cleaned_data.get("covid_parents_message")
-        covid_parents_message_how_often = cleaned_data.get("covid_parents_message_how_often")
-        gender_participate = cleaned_data.get("gender_participate")
-        gender_participate_explain = cleaned_data.get("gender_participate_explain")
-        follow_up_done = cleaned_data.get("follow_up_done")
-        follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
-
-
-        if covid_message == 'yes':
-            if not covid_message_how_often:
-                self.add_error('covid_message_how_often', 'This field is required')
-
-        if covid_parents_message == 'yes':
-            if not covid_parents_message_how_often:
-                self.add_error('covid_parents_message_how_often', 'This field is required')
-
-
-        if follow_up_done == 'yes':
-            if not gender_participate_explain:
-                self.add_error('gender_participate_explain', 'This field is required')
-
-        if gender_participate == 'yes':
-            if not follow_up_done_with_who:
-                self.add_error('follow_up_done_with_who', 'This field is required')
-
 
         if education_status != 'out of school':
             if not miss_school_date:
@@ -4259,6 +4095,229 @@ class CBECEForm(CommonForm):
             'labour_weekly_income',
             'source_of_transportation',
             'student_p_code',
+            # 'basic_stationery',
+            # # 'pss_kit',
+            # 'remote_learning',
+            # 'reliable_internet',
+            # 'gender_participate',
+            # 'gender_participate_explain',
+            # 'remote_learning_engagement',
+            # 'meet_learning_outcomes',
+            # 'parent_learning_support_rate',
+            # 'covid_message',
+            # 'covid_message_how_often',
+            # 'covid_parents_message',
+            # 'covid_parents_message_how_often',
+            # 'follow_up_done',
+            # 'follow_up_done_with_who',
+        )
+
+    class Media:
+        js = (
+            # 'js/jquery-3.3.1.min.js',
+            # 'js/jquery-ui-1.12.1.js',
+            # 'js/validator.js',
+            # 'js/registrations.js',
+        )
+
+class CBECEMonitoringQuestionerForm(forms.ModelForm):
+    basic_stationery = forms.ChoiceField(
+        label=_("Did the child receive basic stationery?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    # pss_kit = forms.ChoiceField(
+    #         label=_("Did the child benefit from the PSS kit?"),
+    #         widget=forms.Select, required=True,
+    #         choices=CLM.YES_NO
+    #     )
+    remote_learning = forms.ChoiceField(
+        label=_("'Was the child involved in remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    reliable_internet = forms.ChoiceField(
+        label=_("Does the family have reliable internet service in their area during remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO_SOMETIMES
+    )
+    gender_participate = forms.ChoiceField(
+        label=_(
+            "Did both girls and boys in the same family participate in the class and have access to the phone/device?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    gender_participate_explain = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    remote_learning_engagement = forms.ChoiceField(
+        label=_("Frequency of Child Engagement in remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    meet_learning_outcomes = forms.ChoiceField(
+        label=_("How well did the child meet the learning outcomes?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    parent_learning_support_rate = forms.ChoiceField(
+        label=_(
+            "How do you rate the parents learning support provided to the child through this Remote learning phase?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    covid_message = forms.ChoiceField(
+        label=_(
+            "Has the child directly been reached with awareness directlymessaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    covid_message_how_often = forms.ChoiceField(
+        label=_("How often?"),
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
+    )
+
+    covid_parents_message = forms.ChoiceField(
+        label=_("Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    covid_parents_message_how_often = forms.ChoiceField(
+        label=_("How often?"),
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
+    )
+
+    follow_up_done = forms.ChoiceField(
+        label=_("Was any follow-up done to ensure messages were well received, understood and adopted?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    follow_up_done_with_who = forms.ChoiceField(
+        label=_("With who child and/or caregiver?"),
+        widget=forms.Select, required=False,
+        choices=CLM.WITH_WHO
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CBECEMonitoringQuestionerForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('clm:cbece_monitoring_questioner', kwargs={'pk': instance.id})
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(HTML('<span>A</span>'), css_class='block_tag'),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('basic_stationery', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2</span>'),
+                    # Div('pss_kit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('reliable_internet', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('gender_participate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">4.1</span>'),
+                    Div('gender_participate_explain', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('remote_learning_engagement', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('parent_learning_support_rate', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('covid_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">8.1</span>'),
+                    Div('covid_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('covid_parents_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">9.1</span>'),
+                    Div('covid_parents_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('follow_up_done', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">10.1</span>'),
+                    Div('follow_up_done_with_who', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info" href="/clm/cbece-list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(CBECEMonitoringQuestionerForm, self).clean()
+        print (cleaned_data)
+
+        covid_message = cleaned_data.get("covid_message")
+        covid_message_how_often = cleaned_data.get("covid_message_how_often")
+        covid_parents_message = cleaned_data.get("covid_parents_message")
+        covid_parents_message_how_often = cleaned_data.get("covid_parents_message_how_often")
+        gender_participate = cleaned_data.get("gender_participate")
+        gender_participate_explain = cleaned_data.get("gender_participate_explain")
+        follow_up_done = cleaned_data.get("follow_up_done")
+        follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
+
+
+        if covid_message == 'yes':
+            if not covid_message_how_often:
+                self.add_error('covid_message_how_often', 'This field is required')
+
+        if covid_parents_message == 'yes':
+            if not covid_parents_message_how_often:
+                self.add_error('covid_parents_message_how_often', 'This field is required')
+
+        print ('---------------------------------')
+        print (gender_participate)
+        print ('---------------------------------')
+
+
+        if gender_participate == 'no':
+            if not gender_participate_explain:
+                self.add_error('gender_participate_explain', 'This field is required')
+
+        if follow_up_done == 'yes':
+            if not follow_up_done_with_who:
+                self.add_error('follow_up_done_with_who', 'This field is required')
+
+    def save(self, instance=None, request=None):
+        instance = super(CBECEMonitoringQuestionerForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+
+    class Meta:
+        model = CBECE
+        fields = (
             'basic_stationery',
             # 'pss_kit',
             'remote_learning',
@@ -4278,12 +4337,437 @@ class CBECEForm(CommonForm):
 
     class Media:
         js = (
-            # 'js/jquery-3.3.1.min.js',
-            # 'js/jquery-ui-1.12.1.js',
             # 'js/validator.js',
-            # 'js/registrations.js',
         )
 
+class BLNMonitoringQuestionerForm(forms.ModelForm):
+    basic_stationery = forms.ChoiceField(
+        label=_("Did the child receive basic stationery?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    pss_kit = forms.ChoiceField(
+            label=_("Did the child benefit from the PSS kit?"),
+            widget=forms.Select, required=True,
+            choices=CLM.YES_NO
+        )
+    remote_learning = forms.ChoiceField(
+        label=_("'Was the child involved in remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    reliable_internet = forms.ChoiceField(
+        label=_("Does the family have reliable internet service in their area during remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO_SOMETIMES
+    )
+    gender_participate = forms.ChoiceField(
+        label=_(
+            "Did both girls and boys in the same family participate in the class and have access to the phone/device?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    gender_participate_explain = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    remote_learning_engagement = forms.ChoiceField(
+        label=_("Frequency of Child Engagement in remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    meet_learning_outcomes = forms.ChoiceField(
+        label=_("How well did the child meet the learning outcomes?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    parent_learning_support_rate = forms.ChoiceField(
+        label=_(
+            "How do you rate the parents learning support provided to the child through this Remote learning phase?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    covid_message = forms.ChoiceField(
+        label=_(
+            "Has the child directly been reached with awareness directlymessaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    covid_message_how_often = forms.ChoiceField(
+        label=_("How often?"),
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
+    )
+
+    covid_parents_message = forms.ChoiceField(
+        label=_("Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    covid_parents_message_how_often = forms.ChoiceField(
+        label=_("How often?"),
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
+    )
+
+    follow_up_done = forms.ChoiceField(
+        label=_("Was any follow-up done to ensure messages were well received, understood and adopted?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    follow_up_done_with_who = forms.ChoiceField(
+        label=_("With who child and/or caregiver?"),
+        widget=forms.Select, required=False,
+        choices=CLM.WITH_WHO
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(BLNMonitoringQuestionerForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('clm:bln_monitoring_questioner', kwargs={'pk': instance.id})
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(HTML('<span>A</span>'), css_class='block_tag'),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('basic_stationery', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('pss_kit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('reliable_internet', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('gender_participate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">4.1</span>'),
+                    Div('gender_participate_explain', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('remote_learning_engagement', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('parent_learning_support_rate', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('covid_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">8.1</span>'),
+                    Div('covid_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('covid_parents_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">9.1</span>'),
+                    Div('covid_parents_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('follow_up_done', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">10.1</span>'),
+                    Div('follow_up_done_with_who', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info" href="/clm/bln-list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(BLNMonitoringQuestionerForm, self).clean()
+
+        covid_message = cleaned_data.get("covid_message")
+        covid_message_how_often = cleaned_data.get("covid_message_how_often")
+        covid_parents_message = cleaned_data.get("covid_parents_message")
+        covid_parents_message_how_often = cleaned_data.get("covid_parents_message_how_often")
+        gender_participate = cleaned_data.get("gender_participate")
+        gender_participate_explain = cleaned_data.get("gender_participate_explain")
+        follow_up_done = cleaned_data.get("follow_up_done")
+        follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
+
+
+        if covid_message == 'yes':
+            if not covid_message_how_often:
+                self.add_error('covid_message_how_often', 'This field is required')
+
+        if covid_parents_message == 'yes':
+            if not covid_parents_message_how_often:
+                self.add_error('covid_parents_message_how_often', 'This field is required')
+
+
+        if gender_participate == 'no':
+            if not gender_participate_explain:
+                self.add_error('gender_participate_explain', 'This field is required')
+
+        if follow_up_done == 'yes':
+            if not follow_up_done_with_who:
+                self.add_error('follow_up_done_with_who', 'This field is required')
+
+    def save(self, instance=None, request=None):
+        instance = super(BLNMonitoringQuestionerForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+
+    class Meta:
+        model = BLN
+        fields = (
+            'basic_stationery',
+            'pss_kit',
+            'remote_learning',
+            'reliable_internet',
+            'gender_participate',
+            'gender_participate_explain',
+            'remote_learning_engagement',
+            'meet_learning_outcomes',
+            'parent_learning_support_rate',
+            'covid_message',
+            'covid_message_how_often',
+            'covid_parents_message',
+            'covid_parents_message_how_often',
+            'follow_up_done',
+            'follow_up_done_with_who',
+        )
+
+    class Media:
+        js = (
+            # 'js/validator.js',
+        )
+
+class ABLNMonitoringQuestionerForm(forms.ModelForm):
+    basic_stationery = forms.ChoiceField(
+        label=_("Did the child receive basic stationery?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    # pss_kit = forms.ChoiceField(
+    #         label=_("Did the child benefit from the PSS kit?"),
+    #         widget=forms.Select, required=True,
+    #         choices=CLM.YES_NO
+    #     )
+    remote_learning = forms.ChoiceField(
+        label=_("'Was the child involved in remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    reliable_internet = forms.ChoiceField(
+        label=_("Does the family have reliable internet service in their area during remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO_SOMETIMES
+    )
+    gender_participate = forms.ChoiceField(
+        label=_(
+            "Did both girls and boys in the same family participate in the class and have access to the phone/device?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    gender_participate_explain = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    remote_learning_engagement = forms.ChoiceField(
+        label=_("Frequency of Child Engagement in remote learning?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    meet_learning_outcomes = forms.ChoiceField(
+        label=_("How well did the child meet the learning outcomes?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    parent_learning_support_rate = forms.ChoiceField(
+        label=_(
+            "How do you rate the parents learning support provided to the child through this Remote learning phase?"),
+        widget=forms.Select, required=True,
+        choices=CLM.PERCENT
+    )
+    covid_message = forms.ChoiceField(
+        label=_(
+            "Has the child directly been reached with awareness directlymessaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    covid_message_how_often = forms.ChoiceField(
+        label=_("How often?"),
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
+    )
+
+    covid_parents_message = forms.ChoiceField(
+        label=_("Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    covid_parents_message_how_often = forms.ChoiceField(
+        label=_("How often?"),
+        widget=forms.Select, required=False,
+        choices=CLM.HOW_OFTEN
+    )
+
+    follow_up_done = forms.ChoiceField(
+        label=_("Was any follow-up done to ensure messages were well received, understood and adopted?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    follow_up_done_with_who = forms.ChoiceField(
+        label=_("With who child and/or caregiver?"),
+        widget=forms.Select, required=False,
+        choices=CLM.WITH_WHO
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ABLNMonitoringQuestionerForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('clm:abln_monitoring_questioner', kwargs={'pk': instance.id})
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(HTML('<span>A</span>'), css_class='block_tag'),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('basic_stationery', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2</span>'),
+                    # Div('pss_kit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('reliable_internet', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('gender_participate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">4.1</span>'),
+                    Div('gender_participate_explain', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('remote_learning_engagement', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('parent_learning_support_rate', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('covid_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">8.1</span>'),
+                    Div('covid_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('covid_parents_message', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">9.1</span>'),
+                    Div('covid_parents_message_how_often', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('follow_up_done', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">10.1</span>'),
+                    Div('follow_up_done_with_who', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info" href="/clm/abln-list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(ABLNMonitoringQuestionerForm, self).clean()
+
+        covid_message = cleaned_data.get("covid_message")
+        covid_message_how_often = cleaned_data.get("covid_message_how_often")
+        covid_parents_message = cleaned_data.get("covid_parents_message")
+        covid_parents_message_how_often = cleaned_data.get("covid_parents_message_how_often")
+        gender_participate = cleaned_data.get("gender_participate")
+        gender_participate_explain = cleaned_data.get("gender_participate_explain")
+        follow_up_done = cleaned_data.get("follow_up_done")
+        follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
+
+
+        if covid_message == 'yes':
+            if not covid_message_how_often:
+                self.add_error('covid_message_how_often', 'This field is required')
+
+        if covid_parents_message == 'yes':
+            if not covid_parents_message_how_often:
+                self.add_error('covid_parents_message_how_often', 'This field is required')
+
+        if gender_participate == 'no':
+            if not gender_participate_explain:
+                self.add_error('gender_participate_explain', 'This field is required')
+
+        if follow_up_done == 'yes':
+            if not follow_up_done_with_who:
+                self.add_error('follow_up_done_with_who', 'This field is required')
+
+    def save(self, instance=None, request=None):
+        instance = super(ABLNMonitoringQuestionerForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+
+    class Meta:
+        model = ABLN
+        fields = (
+            'basic_stationery',
+            # 'pss_kit',
+            'remote_learning',
+            'reliable_internet',
+            'gender_participate',
+            'gender_participate_explain',
+            'remote_learning_engagement',
+            'meet_learning_outcomes',
+            'parent_learning_support_rate',
+            'covid_message',
+            'covid_message_how_often',
+            'covid_parents_message',
+            'covid_parents_message_how_often',
+            'follow_up_done',
+            'follow_up_done_with_who',
+        )
+
+    class Media:
+        js = (
+            # 'js/validator.js',
+        )
 
 class ABLNAssessmentForm(forms.ModelForm):
 
@@ -4649,7 +5133,6 @@ class ABLNAssessmentForm(forms.ModelForm):
             'child_health_examed',
             'child_health_concern',
         )
-
 
 class BLNAssessmentForm(forms.ModelForm):
     participation = forms.ChoiceField(
@@ -5029,7 +5512,6 @@ class BLNAssessmentForm(forms.ModelForm):
             'child_health_concern',
         )
 
-
 class CBECEAssessmentForm(forms.ModelForm):
 
     participation = forms.ChoiceField(
@@ -5191,7 +5673,6 @@ class CBECEAssessmentForm(forms.ModelForm):
             'enrolled_at_school',
         )
 
-
 class BLNAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
@@ -5205,7 +5686,6 @@ class BLNAdminForm(forms.ModelForm):
     class Meta:
         model = BLN
         fields = '__all__'
-
 
 class ABLNAdminForm(forms.ModelForm):
 
@@ -5221,7 +5701,6 @@ class ABLNAdminForm(forms.ModelForm):
         model = ABLN
         fields = '__all__'
 
-
 class RSAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
@@ -5235,7 +5714,6 @@ class RSAdminForm(forms.ModelForm):
     class Meta:
         model = RS
         fields = '__all__'
-
 
 class InclusionAdminForm(forms.ModelForm):
 
@@ -5251,7 +5729,6 @@ class InclusionAdminForm(forms.ModelForm):
         model = BLN
         fields = '__all__'
 
-
 class CBECEAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
@@ -5265,7 +5742,6 @@ class CBECEAdminForm(forms.ModelForm):
     class Meta:
         model = CBECE
         fields = '__all__'
-
 
 class BLNReferralForm(forms.ModelForm):
 
@@ -5380,7 +5856,6 @@ class BLNReferralForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
-
 class BLNFollowupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -5479,7 +5954,6 @@ class BLNFollowupForm(forms.ModelForm):
         js = (
             # 'js/validator.js',
         )
-
 
 class ABLNReferralForm(forms.ModelForm):
 
@@ -5593,7 +6067,6 @@ class ABLNReferralForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
-
 class ABLNFollowupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -5692,7 +6165,6 @@ class ABLNFollowupForm(forms.ModelForm):
         js = (
             # 'js/validator.js',
         )
-
 
 class CBECEReferralForm(forms.ModelForm):
 
@@ -5801,7 +6273,6 @@ class CBECEReferralForm(forms.ModelForm):
         js = (
             # 'js/validator.js',
         )
-
 
 class CBECEFollowupForm(forms.ModelForm):
 

@@ -42,6 +42,11 @@ urlpatterns = [
         name='bln_edit'
     ),
     url(
+        regex=r'^bln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
+        view=views.BLNMonitoringQuestionerView.as_view(),
+        name='bln_monitoring_questioner'
+    ),
+    url(
         regex=r'^bln-export/$',
         view=views.BLNExportViewSet.as_view(),
         name='bln_export'
@@ -98,6 +103,11 @@ urlpatterns = [
         name='cbece_edit'
     ),
     url(
+        regex=r'^cbece-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
+        view=views.CBECEMonitoringQuestionerView.as_view(),
+        name='cbece_monitoring_questioner'
+    ),
+    url(
         regex=r'^cbece-export/$',
         view=views.CBECEExportViewSet.as_view(),
         name='cbece_export'
@@ -117,6 +127,11 @@ urlpatterns = [
         regex=r'^abln-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.ABLNEditView.as_view(),
         name='abln_edit'
+    ),
+    url(
+        regex=r'^abln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
+        view=views.ABLNMonitoringQuestionerView.as_view(),
+        name='abln_monitoring_questioner'
     ),
     url(
         regex=r'^abln-export/$',

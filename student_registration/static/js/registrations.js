@@ -169,7 +169,23 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income, select#id_covid_message, select#id_covid_parents_message,  select#id_gender_participate,  select#id_follow_up_done', function(){
+    $(document).on('change', 'select#id_gender_participate', function(){
+         reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_follow_up_done', function(){
+         reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_covid_parents_message', function(){
+         reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_covid_message', function(){
+         reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
         reorganizeForm();
 
     });
@@ -751,9 +767,11 @@ function reorganizeForm()
     // id_gender_participate
     $('div#div_id_gender_participate_explain').addClass('d-none');
     $('#span_gender_participate_explain').addClass('d-none');
-    if(gender_participate == 'yes'){
-        $('div#div_id_gender_participate_explain').removeClass('d-none');
+    if(gender_participate =='no'){
+        $('#div_id_gender_participate_explain').removeClass('d-none');
         $('#span_gender_participate_explain').removeClass('d-none');
+    }else{
+        $('#id_gender_participate_explain').val('');
     }
 
     // id_follow_up_done

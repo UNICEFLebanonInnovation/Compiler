@@ -46,6 +46,9 @@ from .forms import (
     CBECEAssessmentForm,
     CBECEFollowupForm,
     CBECEReferralForm,
+    CBECEMonitoringQuestionerForm,
+    BLNMonitoringQuestionerForm,
+    ABLNMonitoringQuestionerForm
 )
 from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
@@ -184,6 +187,36 @@ class BLNEditView(LoginRequiredMixin,
         instance = BLN.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BLNEditView, self).form_valid(form)
+
+class BLNMonitoringQuestionerView( LoginRequiredMixin,
+                                      GroupRequiredMixin,
+                                      FormView):
+    template_name = 'clm/bln_monitoring_questioner.html'
+    form_class = BLNMonitoringQuestionerForm
+    success_url = '/clm/bln-list/'
+    group_required = [u"CLM_BLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(BLNMonitoringQuestionerView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(BLNMonitoringQuestionerView, self).form_valid(form)
+
+
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -504,6 +537,34 @@ class ABLNEditView(LoginRequiredMixin,
         instance = ABLN.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(ABLNEditView, self).form_valid(form)
+
+class ABLNMonitoringQuestionerView( LoginRequiredMixin,
+                                      GroupRequiredMixin,
+                                      FormView):
+    template_name = 'clm/abln_monitoring_questioner.html'
+    form_class = ABLNMonitoringQuestionerForm
+    success_url = '/clm/abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(ABLNMonitoringQuestionerView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(ABLNMonitoringQuestionerView, self).form_valid(form)
 
 
 class ABLNListView(LoginRequiredMixin,
@@ -1160,6 +1221,35 @@ class CBECEEditView(LoginRequiredMixin,
         instance = CBECE.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(CBECEEditView, self).form_valid(form)
+
+
+class CBECEMonitoringQuestionerView( LoginRequiredMixin,
+                                      GroupRequiredMixin,
+                                      FormView):
+    template_name = 'clm/cbece_monitoring_questioner.html'
+    form_class = CBECEMonitoringQuestionerForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEMonitoringQuestionerView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEMonitoringQuestionerView, self).form_valid(form)
 
 
 class CBECEListView(LoginRequiredMixin,
