@@ -795,6 +795,32 @@ function reorganizeForm()
         $('#span_follow_up_done_with_who').removeClass('d-none');
     }
 
+    // remote_learning
+    $('div#div_id_remote_learning_reasons_not_engaged').addClass('d-none');
+    $('#span_remote_learning_reasons_not_engaged').addClass('d-none');
+    if(remote_learning == 'no'){
+        $('div#div_id_remote_learning_reasons_not_engaged').removeClass('d-none');
+        $('#span_remote_learning_reasons_not_engaged').removeClass('d-none');
+    }
+    else{
+        $('#id_reasons_not_engaged_other').val('');
+        $('div#div_id_reasons_not_engaged_other').addClass('d-none');
+        $('#span_reasons_not_engaged_other').addClass('d-none');
+        $('div#div_id_remote_learning_reasons_not_engaged').addClass('d-none');
+        $('#span_remote_learning_reasons_not_engaged').addClass('d-none');
+    }
+
+    // remote_learning_reasons_not_engaged
+    $('div#div_id_reasons_not_engaged_other').addClass('d-none');
+    $('#span_reasons_not_engaged_other').addClass('d-none');
+    if(remote_learning_reasons_not_engaged == 'Other'){
+        $('div#div_id_reasons_not_engaged_other').removeClass('d-none');
+        $('#span_reasons_not_engaged_other').removeClass('d-none');
+    }else{
+        $('#id_reasons_not_engaged_other').val('');
+        $('div#div_id_reasons_not_engaged_other').addClass('d-none');
+        $('#span_reasons_not_engaged_other').addClass('d-none');
+    }
 
     // have_children
     $('div#div_id_student_number_children').addClass('d-none');

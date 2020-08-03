@@ -281,7 +281,7 @@ class BLNSerializer(CLMSerializer):
             'pss_kit',
             'remote_learning',
             'remote_learning_reasons_not_engaged',
-            'reasons_not_engaged_other'
+            'reasons_not_engaged_other',
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -369,7 +369,7 @@ class ABLNSerializer(CLMSerializer):
             'pss_kit',
             'remote_learning',
             'remote_learning_reasons_not_engaged',
-            'reasons_not_engaged_other'
+            'reasons_not_engaged_other',
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -494,7 +494,7 @@ class CBECESerializer(CLMSerializer):
             'basic_stationery',
             'remote_learning',
             'remote_learning_reasons_not_engaged',
-            'reasons_not_engaged_other'
+            'reasons_not_engaged_other',
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',

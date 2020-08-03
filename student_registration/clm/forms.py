@@ -4123,8 +4123,9 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
     )
     remote_learning_reasons_not_engaged = forms.ChoiceField(
         label=_("what other reasons for this child not being engaged?"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(
+            ('', '----------'),
             ('child_relocated', _('Child relocated')),
             ('child_is_not_reachable', _('Child is not reachable')),
             ('child_did_not_fit_the_criteria', _('Child did not fit the criteria - enrolled in previous FE')),
@@ -4221,9 +4222,9 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('remote_learning', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_remote_learning_reasons_not_engaged">2.1</span>'),
                     Div('remote_learning_reasons_not_engaged', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_reasons_not_engaged_other">2.2</span>'),
                     Div('reasons_not_engaged_other', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4289,7 +4290,17 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
         gender_participate_explain = cleaned_data.get("gender_participate_explain")
         follow_up_done = cleaned_data.get("follow_up_done")
         follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
+        remote_learning = cleaned_data.get("remote_learning")
+        remote_learning_reasons_not_engaged = cleaned_data.get("remote_learning_reasons_not_engaged")
+        reasons_not_engaged_other = cleaned_data.get("reasons_not_engaged_other")
 
+        if remote_learning == 'no':
+            if not remote_learning_reasons_not_engaged:
+                self.add_error('remote_learning_reasons_not_engaged', 'This field is required')
+
+        if remote_learning_reasons_not_engaged == 'Other':
+            if not reasons_not_engaged_other:
+                self.add_error('reasons_not_engaged_other', 'This field is required')
 
         if covid_message == 'yes':
             if not covid_message_how_often:
@@ -4321,7 +4332,7 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
             # 'pss_kit',
             'remote_learning',
             'remote_learning_reasons_not_engaged',
-            'reasons_not_engaged_other'
+            'reasons_not_engaged_other',
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -4359,8 +4370,9 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
     )
     remote_learning_reasons_not_engaged = forms.ChoiceField(
         label=_("what other reasons for this child not being engaged?"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(
+            ('', '----------'),
             ('child_relocated', _('Child relocated')),
             ('child_is_not_reachable', _('Child is not reachable')),
             ('child_did_not_fit_the_criteria', _('Child did not fit the criteria - enrolled in previous FE')),
@@ -4459,9 +4471,9 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('remote_learning', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_remote_learning_reasons_not_engaged">3.1</span>'),
                     Div('remote_learning_reasons_not_engaged', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_reasons_not_engaged_other">3.2</span>'),
                     Div('reasons_not_engaged_other', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4527,6 +4539,17 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
         gender_participate_explain = cleaned_data.get("gender_participate_explain")
         follow_up_done = cleaned_data.get("follow_up_done")
         follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
+        remote_learning = cleaned_data.get("remote_learning")
+        remote_learning_reasons_not_engaged = cleaned_data.get("remote_learning_reasons_not_engaged")
+        reasons_not_engaged_other = cleaned_data.get("reasons_not_engaged_other")
+
+        if remote_learning == 'no':
+            if not remote_learning_reasons_not_engaged:
+                self.add_error('remote_learning_reasons_not_engaged', 'This field is required')
+
+        if remote_learning_reasons_not_engaged == 'Other':
+            if not reasons_not_engaged_other:
+                self.add_error('reasons_not_engaged_other', 'This field is required')
 
 
         if covid_message == 'yes':
@@ -4560,7 +4583,7 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
             'pss_kit',
             'remote_learning',
             'remote_learning_reasons_not_engaged',
-            'reasons_not_engaged_other'
+            'reasons_not_engaged_other',
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -4598,8 +4621,9 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
     )
     remote_learning_reasons_not_engaged = forms.ChoiceField(
         label=_("what other reasons for this child not being engaged?"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(
+            ('', '----------'),
             ('child_relocated', _('Child relocated')),
             ('child_is_not_reachable', _('Child is not reachable')),
             ('child_did_not_fit_the_criteria', _('Child did not fit the criteria - enrolled in previous FE')),
@@ -4698,9 +4722,9 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('remote_learning', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_remote_learning_reasons_not_engaged">3.1</span>'),
                     Div('remote_learning_reasons_not_engaged', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_reasons_not_engaged_other">3.2</span>'),
                     Div('reasons_not_engaged_other', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4766,6 +4790,17 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
         gender_participate_explain = cleaned_data.get("gender_participate_explain")
         follow_up_done = cleaned_data.get("follow_up_done")
         follow_up_done_with_who = cleaned_data.get("follow_up_done_with_who")
+        remote_learning = cleaned_data.get("remote_learning")
+        remote_learning_reasons_not_engaged = cleaned_data.get("remote_learning_reasons_not_engaged")
+        reasons_not_engaged_other = cleaned_data.get("reasons_not_engaged_other")
+
+        if remote_learning == 'no':
+            if not remote_learning_reasons_not_engaged:
+                self.add_error('remote_learning_reasons_not_engaged', 'This field is required')
+
+        if remote_learning_reasons_not_engaged == 'Other':
+            if not reasons_not_engaged_other:
+                self.add_error('reasons_not_engaged_other', 'This field is required')
 
 
         if covid_message == 'yes':
@@ -4798,7 +4833,7 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
             'pss_kit',
             'remote_learning',
             'remote_learning_reasons_not_engaged',
-            'reasons_not_engaged_other'
+            'reasons_not_engaged_other',
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',

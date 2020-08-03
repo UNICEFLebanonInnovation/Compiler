@@ -139,11 +139,13 @@ class CLM(TimeStampedModel):
         ('sometimes', _("Sometimes"))
     )
     WITH_WHO = Choices(
+        ('', '----------'),
         ('child', _('Child')),
         ('caregiver', _('Caregiver')),
-        ('childand_or_caregiver', _('French/Arabic'))
+        ('child_and_caregiver', _('Child and caregiver'))
     )
     HOW_OFTEN= Choices(
+        ('', '----------'),
         ('daily', _('Daily')),
         ('every_2_to_3_days', _('Every 2-3 days')),
         ('weekly', _('Weekly')),
