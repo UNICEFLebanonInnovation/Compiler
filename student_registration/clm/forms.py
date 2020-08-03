@@ -4095,21 +4095,6 @@ class CBECEForm(CommonForm):
             'labour_weekly_income',
             'source_of_transportation',
             'student_p_code',
-            # 'basic_stationery',
-            # # 'pss_kit',
-            # 'remote_learning',
-            # 'reliable_internet',
-            # 'gender_participate',
-            # 'gender_participate_explain',
-            # 'remote_learning_engagement',
-            # 'meet_learning_outcomes',
-            # 'parent_learning_support_rate',
-            # 'covid_message',
-            # 'covid_message_how_often',
-            # 'covid_parents_message',
-            # 'covid_parents_message_how_often',
-            # 'follow_up_done',
-            # 'follow_up_done_with_who',
         )
 
     class Media:
@@ -4135,6 +4120,20 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
         label=_("'Was the child involved in remote learning?"),
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
+    )
+    remote_learning_reasons_not_engaged = forms.ChoiceField(
+        label=_("what other reasons for this child not being engaged?"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('child_relocated', _('Child relocated')),
+            ('child_is_not_reachable', _('Child is not reachable')),
+            ('child_did_not_fit_the_criteria', _('Child did not fit the criteria - enrolled in previous FE')),
+            ('Other', _('Other')),
+        ),
+    )
+    reasons_not_engaged_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     reliable_internet = forms.ChoiceField(
         label=_("Does the family have reliable internet service in their area during remote learning?"),
@@ -4217,13 +4216,18 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('basic_stationery', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">2</span>'),
-                    # Div('pss_kit', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('remote_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('remote_learning_reasons_not_engaged', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.2</span>'),
+                    Div('reasons_not_engaged_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('reliable_internet', css_class='col-md-3'),
                     css_class='row',
@@ -4316,6 +4320,8 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
             'basic_stationery',
             # 'pss_kit',
             'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other'
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -4350,6 +4356,20 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
         label=_("'Was the child involved in remote learning?"),
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
+    )
+    remote_learning_reasons_not_engaged = forms.ChoiceField(
+        label=_("what other reasons for this child not being engaged?"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('child_relocated', _('Child relocated')),
+            ('child_is_not_reachable', _('Child is not reachable')),
+            ('child_did_not_fit_the_criteria', _('Child did not fit the criteria - enrolled in previous FE')),
+            ('Other', _('Other')),
+        ),
+    )
+    reasons_not_engaged_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     reliable_internet = forms.ChoiceField(
         label=_("Does the family have reliable internet service in their area during remote learning?"),
@@ -4437,46 +4457,54 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('remote_learning', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('remote_learning_reasons_not_engaged', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.2</span>'),
+                    Div('reasons_not_engaged_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('reliable_internet', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('gender_participate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">4.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">5.1</span>'),
                     Div('gender_participate_explain', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('remote_learning_engagement', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    Div('remote_learning_engagement', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('parent_learning_support_rate', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('covid_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">8.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">9.1</span>'),
                     Div('covid_message_how_often', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('covid_parents_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">9.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">10.1</span>'),
                     Div('covid_parents_message_how_often', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('follow_up_done', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">10.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">11.1</span>'),
                     Div('follow_up_done_with_who', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4531,6 +4559,8 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
             'basic_stationery',
             'pss_kit',
             'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other'
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -4565,6 +4595,20 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
         label=_("'Was the child involved in remote learning?"),
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
+    )
+    remote_learning_reasons_not_engaged = forms.ChoiceField(
+        label=_("what other reasons for this child not being engaged?"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('child_relocated', _('Child relocated')),
+            ('child_is_not_reachable', _('Child is not reachable')),
+            ('child_did_not_fit_the_criteria', _('Child did not fit the criteria - enrolled in previous FE')),
+            ('Other', _('Other')),
+        ),
+    )
+    reasons_not_engaged_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     reliable_internet = forms.ChoiceField(
         label=_("Does the family have reliable internet service in their area during remote learning?"),
@@ -4647,51 +4691,59 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('basic_stationery', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">2</span>'),
-                    # Div('pss_kit', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('pss_kit', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('remote_learning', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('remote_learning_reasons_not_engaged', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.2</span>'),
+                    Div('reasons_not_engaged_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('reliable_internet', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('gender_participate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">4.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_gender_participate_explain">5.1</span>'),
                     Div('gender_participate_explain', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('remote_learning_engagement', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    Div('remote_learning_engagement', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('meet_learning_outcomes', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('parent_learning_support_rate', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('covid_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">8.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_message_how_often">9.1</span>'),
                     Div('covid_message_how_often', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('covid_parents_message', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">9.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_parents_message_how_often">10.1</span>'),
                     Div('covid_parents_message_how_often', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('follow_up_done', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">10.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_follow_up_done_with_who">11.1</span>'),
                     Div('follow_up_done_with_who', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4743,8 +4795,10 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
         model = ABLN
         fields = (
             'basic_stationery',
-            # 'pss_kit',
+            'pss_kit',
             'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other'
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',

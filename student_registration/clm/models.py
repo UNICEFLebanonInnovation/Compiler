@@ -1028,6 +1028,24 @@ class CLM(TimeStampedModel):
         verbose_name=_('Was the child involved in remote learning?')
     )
 
+    remote_learning_reasons_not_engaged = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('child_relocated', _('Child relocated')),
+            ('child_is_not_reachable', _('Child is not reachable')),
+            ('child_did_not_fit_the_criteria', _('Child did not fit the criteria - enrolled in previous FE')),
+            ('Other', _('Other')),
+        ),
+        verbose_name=_('what other reasons for this child not being engaged?')
+    )
+
+    reasons_not_engaged_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
     reliable_internet = models.CharField(
         max_length=10,
         blank=True,
@@ -1112,6 +1130,7 @@ class CLM(TimeStampedModel):
         choices=WITH_WHO,
         verbose_name=_('With who child and/or caregiver?')
     )
+
     @property
     def student_fullname(self):
         if self.student:

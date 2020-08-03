@@ -280,6 +280,8 @@ class BLNSerializer(CLMSerializer):
             'basic_stationery',
             'pss_kit',
             'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other'
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -366,6 +368,8 @@ class ABLNSerializer(CLMSerializer):
             'basic_stationery',
             'pss_kit',
             'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other'
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
@@ -489,6 +493,8 @@ class CBECESerializer(CLMSerializer):
             'other_caregiver_relationship',
             'basic_stationery',
             'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other'
             'reliable_internet',
             'gender_participate',
             'gender_participate_explain',
