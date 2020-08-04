@@ -1819,6 +1819,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_artistic': "post_test->>'BLN_ASSESSMENT/artistic'",
         }).values(
             'id',
+            'new_registry',
             'partner__name',
             'first_attendance_date',
             'round__name',
@@ -1892,7 +1893,6 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'learning_result',
             'cycle_completed',
             'enrolled_at_school',
-            'new_registry',
             'student_outreached',
             'have_barcode',
             'owner__username',
@@ -2302,6 +2302,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_artistic': "post_test->>'ABLN_ASSESSMENT/artistic'",
         }).values(
             'id',
+            'new_registry',
             'partner__name',
             'first_attendance_date',
             'round__name',
@@ -2375,7 +2376,6 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'learning_result',
             'cycle_completed',
             'enrolled_at_school',
-            'new_registry',
             'student_outreached',
             'have_barcode',
             'owner__username',
@@ -2463,6 +2463,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         headers = {
+            'new_registry': 'First time registered?',
             'partner__name': 'Partner',
             'round__name': 'CLM Round',
             'type': 'Program type',
@@ -2571,7 +2572,6 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
-            'new_registry': 'First time registered?',
             'owner__username': 'owner',
             'modified_by__username': 'modified_by',
             'created': 'created',
@@ -2632,6 +2632,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'post_self_q14': "post_self_assessment->>'SELF_ASSESSMENT/assessment_14'",
 
         }).values(
+            'new_registry',
             'partner__name',
             'round__name',
             'type',
@@ -2744,7 +2745,6 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'barriers',
             'learning_result',
 
-            'new_registry',
             'owner__username',
             'modified_by__username',
             'created',
@@ -2779,6 +2779,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en': 'Cadaster',
             'location': 'Location',
             'language': 'The language supported in the program',
+            'registration_level':'Registration level',
             'student__first_name': 'First name',
             'student__father_name': 'Father name',
             'student__last_name': 'Last name',
@@ -2956,6 +2957,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en',
             'location',
             'language',
+            'registration_level',
             'student__first_name',
             'student__father_name',
             'student__last_name',
@@ -3167,6 +3169,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 
         }).values(
             'id',
+            'new_registry',
             'partner__name',
             'first_attendance_date',
             'round__name',
@@ -3175,6 +3178,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en',
             'location',
             'language',
+            'registration_level',
             'student__first_name',
             'student__father_name',
             'student__last_name',
@@ -3269,7 +3273,6 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'learning_result',
             'cycle_completed',
             'enrolled_at_school',
-            'new_registry',
             'student_outreached',
             'have_barcode',
             'owner__username',
