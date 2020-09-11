@@ -203,7 +203,7 @@ class CLM(TimeStampedModel):
         ('manufacturing', _('Manufacturing')),
         ('retail_store', _('Retail / Store')),
         ('begging', _('Begging')),
-        ('other_many_other', _('Other services (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
+        ('other_many_other', _('Other services')),
         # ('other', _('Other')),
     )
     LEARNING_RESULT = Choices(
@@ -319,6 +319,12 @@ class CLM(TimeStampedModel):
         null=True,
         choices=LABOURS,
         verbose_name=_('What is the type of work ?')
+    )
+    labours_other_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')
     )
     labour_hours = models.IntegerField(
         blank=True,

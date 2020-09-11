@@ -195,10 +195,10 @@ class CommonForm(forms.ModelForm):
         label=_("Mother fullname"),
         widget=forms.TextInput, required=True
     )
-    # student_address = forms.CharField(
-    #     label=_("The area where the child resides"),
-    #     widget=forms.TextInput, required=True
-    # )
+    student_address = forms.CharField(
+        label=_("The area where the child resides"),
+        widget=forms.TextInput, required=True
+    )
     student_p_code = forms.CharField(
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
         widget=forms.TextInput, required=False
@@ -315,7 +315,7 @@ class CommonForm(forms.ModelForm):
             'student_birthday_day',
             'student_nationality',
             'student_mother_fullname',
-            # 'student_address',
+            'student_address',
             'student_p_code',
             # 'student_id_number',
             'internal_number',
@@ -377,11 +377,11 @@ class BLNForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-    # registration_level = forms.ChoiceField(
-    #     label=_("Registration level"),
-    #     widget=forms.Select, required=True,
-    #     choices=REGISTRATION_LEVEL
-    # )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -417,6 +417,11 @@ class BLNForm(CommonForm):
         widget=forms.Select, required=False,
         choices=CLM.LABOURS
     )
+    labours_other_specify = forms.CharField(
+        label=_('Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)'),
+        widget=forms.TextInput, required=False
+    )
+
     labour_hours = forms.CharField(
         label=_('How many hours does this child work in a day?'),
         widget=forms.TextInput, required=False
@@ -786,8 +791,19 @@ class BLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">8</span>'),
-                    # Div('registration_level', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_address', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('registration_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('first_attendance_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -853,8 +869,6 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_transportation', css_class='col-md-3'),
                     css_class='row d-none',
@@ -1060,12 +1074,18 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">3.1</span>'),
                     Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default" id="span_labours_other_specify">3.1.1</span>'),
+                    Div('labours_other_specify', css_class='col-md-3'),
+                    css_class='row',
+                    id='labour_details_1'
+                ),
+                Div(
                     HTML('<span class="badge badge-default">3.2</span>'),
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
                     HTML('<span class="badge badge-default">3.3</span>'),
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
-                    id='labour_details'
+                    id='labour_details_2'
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
@@ -1158,6 +1178,11 @@ class BLNForm(CommonForm):
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
+
+        labours_other_specify = cleaned_data.get("labours_other_specify")
+        if labours_single_selection == 'other_many_other':
+            if not labours_other_specify:
+                self.add_error('labours_other_specify', 'This field is required')
 
         if education_status != 'out of school':
             if not miss_school_date:
@@ -1308,6 +1333,7 @@ class BLNForm(CommonForm):
             'student_birthday_year',
             'have_labour_single_selection',
             'labours_single_selection',
+            'labours_other_specify',
             'labour_hours',
             'phone_number',
             'phone_number_confirm',
@@ -1354,7 +1380,7 @@ class BLNForm(CommonForm):
             'student_number_children',
             'round_start_date',
             'cadaster',
-            # 'registration_level',
+            'registration_level',
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
@@ -1403,11 +1429,11 @@ class ABLNForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-    # registration_level = forms.ChoiceField(
-    #     label=_("Registration level"),
-    #     widget=forms.Select, required=True,
-    #     choices=REGISTRATION_LEVEL
-    # )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -1442,6 +1468,10 @@ class ABLNForm(CommonForm):
         label=_('What is the type of work ?'),
         widget=forms.Select, required=False,
         choices=CLM.LABOURS
+    )
+    labours_other_specify = forms.CharField(
+        label=_('Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)'),
+        widget=forms.TextInput, required=False
     )
     labour_hours = forms.CharField(
         label=_('How many hours does this child work in a day?'),
@@ -1812,8 +1842,19 @@ class ABLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">8</span>'),
-                    # Div('registration_level', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_address', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('registration_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('first_attendance_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -1879,8 +1920,6 @@ class ABLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_transportation', css_class='col-md-3'),
                     css_class='row d-none',
@@ -2087,12 +2126,18 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">3.1</span>'),
                     Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default" id="span_labours_other_specify">3.1.1</span>'),
+                    Div('labours_other_specify', css_class='col-md-3'),
+                    css_class='row',
+                    id='labour_details_1'
+                ),
+                Div(
                     HTML('<span class="badge badge-default">3.2</span>'),
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
                     HTML('<span class="badge badge-default">3.3</span>'),
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
-                    id='labour_details'
+                    id='labour_details_2'
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
@@ -2184,6 +2229,11 @@ class ABLNForm(CommonForm):
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
+
+        labours_other_specify = cleaned_data.get("labours_other_specify")
+        if labours_single_selection == 'other_many_other':
+            if not labours_other_specify:
+                self.add_error('labours_other_specify', 'This field is required')
 
         if education_status != 'out of school':
             if not miss_school_date:
@@ -2335,6 +2385,7 @@ class ABLNForm(CommonForm):
             'student_birthday_year',
             'have_labour_single_selection',
             'labours_single_selection',
+            'labours_other_specify',
             'labour_hours',
             'phone_number',
             'phone_number_confirm',
@@ -2381,7 +2432,7 @@ class ABLNForm(CommonForm):
             'student_number_children',
             'round_start_date',
             'cadaster',
-            # 'registration_level',
+            'registration_level',
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
@@ -3132,6 +3183,10 @@ class CBECEForm(CommonForm):
         widget=forms.Select, required=False,
         choices=CLM.LABOURS
     )
+    labours_other_specify = forms.CharField(
+        label=_('Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)'),
+        widget=forms.TextInput, required=False
+    )
     labour_hours = forms.CharField(
         label=_('How many hours does this child work in a day?'),
         widget=forms.TextInput, required=False
@@ -3530,8 +3585,19 @@ class CBECEForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_address', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('registration_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('first_attendance_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -3597,8 +3663,6 @@ class CBECEForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_transportation', css_class='col-md-3'),
                     css_class='row d-none',
@@ -3795,12 +3859,18 @@ class CBECEForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">3.1</span>'),
                     Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default" id="span_labours_other_specify">3.1.1</span>'),
+                    Div('labours_other_specify', css_class='col-md-3'),
+                    css_class='row',
+                    id='labour_details_1'
+                ),
+                Div(
                     HTML('<span class="badge badge-default">3.2</span>'),
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
                     HTML('<span class="badge badge-default">3.3</span>'),
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
-                    id='labour_details'
+                    id='labour_details_2'
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
@@ -3894,6 +3964,11 @@ class CBECEForm(CommonForm):
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
+
+        labours_other_specify = cleaned_data.get("labours_other_specify")
+        if labours_single_selection == 'other_many_other':
+            if not labours_other_specify:
+                self.add_error('labours_other_specify', 'This field is required')
 
         if education_status != 'out of school':
             if not miss_school_date:
@@ -4045,6 +4120,7 @@ class CBECEForm(CommonForm):
             'student_birthday_year',
             'have_labour_single_selection',
             'labours_single_selection',
+            'labours_other_specify',
             'labour_hours',
             'phone_number',
             'phone_number_confirm',
@@ -4088,7 +4164,7 @@ class CBECEForm(CommonForm):
             'miss_school_date',
             'round_start_date',
             'cadaster',
-            # 'registration_level',
+            'registration_level',
             'main_caregiver',
             # 'main_caregiver_nationality',
             'other_caregiver_relationship',

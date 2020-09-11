@@ -193,6 +193,9 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
+    $(document).on('change', 'select#id_labours_single_selection', function(){
+         reorganizeForm();
+    });
     $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
         reorganizeForm();
 
@@ -732,6 +735,7 @@ function reorganizeForm()
     // var family_status = $('select#id_student_family_status').val();
     var have_children = $('input[name=student_have_children]:checked').val();
     var have_labour = $('select#id_have_labour_single_selection').val();
+    var labour_selection = $('select#id_labours_single_selection').val();
     var main_caregiver = $('select#id_main_caregiver').val();
 
     var covid_message = $('select#id_covid_message').val();
@@ -833,13 +837,19 @@ function reorganizeForm()
     }
 
     // have_labour_single_selection
-
-     $('#labour_details').addClass('d-none');
-    // $('div#div_id_labour_weekly_income').addClass('d-none');
-    // $('div#div_id_labours_single_selection').addClass('d-none');
-    // $('div#div_id_labour_hours').addClass('d-none');
+     $('#labour_details_1').addClass('d-none');
+     $('#labour_details_2').addClass('d-none');
     if(have_labour != 'no'){
-        $('#labour_details').removeClass('d-none');
+        $('#labour_details_1').removeClass('d-none');
+        $('#labour_details_2').removeClass('d-none');
+    }
+
+     // labour_selection
+    $('div#div_id_labours_other_specify').addClass('d-none');
+    $('#span_labours_other_specify').addClass('d-none');
+    if(labour_selection =='other_many_other'){
+        $('div#div_id_labours_other_specify').removeClass('d-none');
+        $('#span_labours_other_specify').removeClass('d-none');
     }
 
     if(id_type == 'UNHCR Registered'){
