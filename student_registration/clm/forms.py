@@ -650,7 +650,40 @@ class BLNForm(CommonForm):
         initial='yes'
     )
 
+    modality_arabic = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     arabic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_english = forms.ChoiceField(
+        label=_("Attended English test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_english = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    english = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -661,7 +694,17 @@ class BLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-
+    modality_math = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     math = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -673,17 +716,50 @@ class BLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    modality_social = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
 
     social_emotional = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+    modality_emotional = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     attended_psychomotor = forms.ChoiceField(
         label=_("Attended Psychomotor test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
+    )
+    modality_psychomotor  = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
     )
     psychomotor = forms.FloatField(
         label=_('Results'),
@@ -722,12 +798,19 @@ class BLNForm(CommonForm):
             if instance.pre_test:
                 p_test = instance.pre_test
                 self.fields['attended_arabic'].initial = p_test["BLN_ASSESSMENT/attended_arabic"]
+                # self.fields['modality_arabic'].initial = p_test["BLN_ASSESSMENT/modality_arabic"]
                 self.fields['arabic'].initial = p_test["BLN_ASSESSMENT/arabic"]
+                # self.fields['attended_english'].initial = p_test["BLN_ASSESSMENT/attended_english"]
+                # self.fields['modality_english'].initial = p_test["BLN_ASSESSMENT/modality_english"]
+                # self.fields['english'].initial = p_test["BLN_ASSESSMENT/english"]
                 self.fields['attended_math'].initial = p_test["BLN_ASSESSMENT/attended_math"]
+                # self.fields['modality_math'].initial = p_test["BLN_ASSESSMENT/modality_math"]
                 self.fields['math'].initial = p_test["BLN_ASSESSMENT/math"]
                 self.fields['attended_social'].initial = p_test["BLN_ASSESSMENT/attended_social"]
+                # self.fields['modality_social'].initial = p_test["BLN_ASSESSMENT/modality_social"]
                 self.fields['social_emotional'].initial = p_test["BLN_ASSESSMENT/social_emotional"]
                 self.fields['attended_psychomotor'].initial = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+                # self.fields['modality_psychomotor'].initial = p_test["BLN_ASSESSMENT/modality_psychomotor"]
                 self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
 
         self.helper = FormHelper()
@@ -1099,31 +1182,51 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
+                    Div('modality_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
-
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    Div('modality_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    Div('english', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    Div('modality_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('attended_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    Div('modality_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    Div('modality_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning E_right_border d-none'
+                css_class='bd-callout bd-callout-warning E_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -1314,16 +1417,16 @@ class BLNForm(CommonForm):
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
-        instance.pre_test = {
-            "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-            "BLN_ASSESSMENT/arabic": request.POST.get('arabic'),
-            "BLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "BLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
-            "BLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-            "BLN_ASSESSMENT/math": request.POST.get('math'),
-            "BLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-            "BLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
-        }
+        # instance.pre_test = {
+        #     "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+        #     "BLN_ASSESSMENT/arabic": request.POST.get('arabic'),
+        #     "BLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
+        #     "BLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+        #     "BLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+        #     "BLN_ASSESSMENT/math": request.POST.get('math'),
+        #     "BLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
+        #     "BLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+        # }
         instance.save()
 
     class Meta:
@@ -1707,7 +1810,40 @@ class ABLNForm(CommonForm):
         initial='yes'
     )
 
+    modality_arabic = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     arabic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_english = forms.ChoiceField(
+        label=_("Attended English test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_english = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    english = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -1718,7 +1854,17 @@ class ABLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-
+    modality_math = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     math = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -1730,17 +1876,50 @@ class ABLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    modality_social = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
 
     social_emotional = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+    modality_emotional = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     attended_psychomotor = forms.ChoiceField(
         label=_("Attended Psychomotor test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
+    )
+    modality_psychomotor  = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
     )
     psychomotor = forms.FloatField(
         label=_('Results'),
@@ -1774,12 +1953,19 @@ class ABLNForm(CommonForm):
             if instance.pre_test:
                 p_test = instance.pre_test
                 self.fields['attended_arabic'].initial = p_test["ABLN_ASSESSMENT/attended_arabic"]
+                self.fields['modality_arabic'].initial = p_test["ABLN_ASSESSMENT/modality_arabic"]
                 self.fields['arabic'].initial = p_test["ABLN_ASSESSMENT/arabic"]
+                self.fields['attended_english'].initial = p_test["ABLN_ASSESSMENT/attended_english"]
+                self.fields['modality_english'].initial = p_test["ABLN_ASSESSMENT/modality_english"]
+                self.fields['english'].initial = p_test["ABLN_ASSESSMENT/english"]
                 self.fields['attended_math'].initial = p_test["ABLN_ASSESSMENT/attended_math"]
+                self.fields['modality_math'].initial = p_test["ABLN_ASSESSMENT/modality_math"]
                 self.fields['math'].initial = p_test["ABLN_ASSESSMENT/math"]
                 self.fields['attended_social'].initial = p_test["ABLN_ASSESSMENT/attended_social"]
+                self.fields['modality_social'].initial = p_test["ABLN_ASSESSMENT/modality_social"]
                 self.fields['social_emotional'].initial = p_test["ABLN_ASSESSMENT/social_emotional"]
                 self.fields['attended_psychomotor'].initial = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+                self.fields['modality_psychomotor'].initial = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
                 self.fields['psychomotor'].initial = p_test["ABLN_ASSESSMENT/psychomotor"]
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2151,31 +2337,51 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
+                    Div('modality_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
-
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    Div('modality_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    Div('english', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    Div('modality_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('attended_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    Div('modality_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    Div('modality_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning E_right_border d-none'
+                css_class='bd-callout bd-callout-warning E_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -3409,53 +3615,131 @@ class CBECEForm(CommonForm):
         ),
         initial=''
     )
-    # attended_arabic = forms.ChoiceField(
-    #     label=_("Attended Arabic test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # arabic = forms.FloatField(
-    #     label=_('Results'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # attended_math = forms.ChoiceField(
-    #     label=_("Attended Math test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # math = forms.FloatField(
-    #     label=_('Results'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # attended_social = forms.ChoiceField(
-    #     label=_("Attended Social test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # social_emotional = forms.FloatField(
-    #     label=_('Results'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # attended_psychomotor = forms.ChoiceField(
-    #     label=_("Attended Psychomotor test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # psychomotor = forms.FloatField(
-    #     label=_('Results'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
+
+    attended_arabic = forms.ChoiceField(
+        label=_("Attended Arabic test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    modality_arabic = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    arabic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_english = forms.ChoiceField(
+        label=_("Attended English test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_english = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    english = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_math = forms.ChoiceField(
+        label=_("Attended Math test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_math = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    math = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_social = forms.ChoiceField(
+        label=_("Attended Social test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_social = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+
+    social_emotional = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    modality_emotional = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    attended_psychomotor = forms.ChoiceField(
+        label=_("Attended Psychomotor test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_psychomotor  = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    psychomotor = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
         widget=forms.Select, required=True,
@@ -3508,17 +3792,23 @@ class CBECEForm(CommonForm):
                 assessment_slug='cbece_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
              )
-
             if instance.pre_test:
-                pre_test_button = ' btn-success '
-                # post_test_button = ' btn-outline-success '
-                # post_test = instance.assessment_form(
-                #     stage='post_test',
-                #     assessment_slug='cbece_post_test',
-                #     callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
-                #  )
-            # if instance.post_test:
-            #     post_test_button = ' btn-success '
+                p_test = instance.pre_test
+                self.fields['attended_arabic'].initial = p_test["CBECE_ASSESSMENT/attended_arabic"]
+                self.fields['modality_arabic'].initial = p_test["CBECE_ASSESSMENT/modality_arabic"]
+                self.fields['arabic'].initial = p_test["CBECE_ASSESSMENT/arabic"]
+                self.fields['attended_english'].initial = p_test["CBECE_ASSESSMENT/attended_english"]
+                self.fields['modality_english'].initial = p_test["CBECE_ASSESSMENT/modality_english"]
+                self.fields['english'].initial = p_test["CBECE_ASSESSMENT/english"]
+                self.fields['attended_math'].initial = p_test["CBECE_ASSESSMENT/attended_math"]
+                self.fields['modality_math'].initial = p_test["CBECE_ASSESSMENT/modality_math"]
+                self.fields['math'].initial = p_test["CBECE_ASSESSMENT/math"]
+                self.fields['attended_social'].initial = p_test["CBECE_ASSESSMENT/attended_social"]
+                self.fields['modality_social'].initial = p_test["CBECE_ASSESSMENT/modality_social"]
+                self.fields['social_emotional'].initial = p_test["CBECE_ASSESSMENT/social_emotional"]
+                self.fields['attended_psychomotor'].initial = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+                self.fields['modality_psychomotor'].initial = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+                self.fields['psychomotor'].initial = p_test["CBECE_ASSESSMENT/psychomotor"]
 
             if instance.cycle_id == 3:
                 display_final_grade = ''
@@ -3875,42 +4165,62 @@ class CBECEForm(CommonForm):
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
 
-        # Fieldset(
-            #     None,
-            #     Div(
-            #         HTML('<span>E</span>'), css_class='block_tag'),
-            #     Div(
-            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">1</span>'),
-            #         Div('attended_arabic', css_class='col-md-2'),
-            #         Div('arabic', css_class='col-md-2'),
-            #         css_class='row',
-            #     ),
-            #
-            #     Div(
-            #         HTML('<span class="badge badge-default">2</span>'),
-            #         Div('attended_math', css_class='col-md-2'),
-            #         Div('math', css_class='col-md-2'),
-            #         css_class='row',
-            #     ),
-            #
-            #     Div(
-            #         HTML('<span class="badge badge-default">3</span>'),
-            #         Div('attended_social', css_class='col-md-2'),
-            #         Div('social_emotional', css_class='col-md-2'),
-            #         css_class='row',
-            #     ),
-            #
-            #     Div(
-            #         HTML('<span class="badge badge-default">4</span>'),
-            #         Div('attended_psychomotor', css_class='col-md-2'),
-            #         Div('psychomotor', css_class='col-md-2'),
-            #         css_class='row',
-            #     ),
-            #     css_class='bd-callout bd-callout-warning E_right_border d-none'
-            # ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>E</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attended_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
+                    Div('modality_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
+                    Div('arabic', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    Div('modality_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    Div('english', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('attended_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    Div('modality_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
+                    Div('math', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('attended_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    Div('modality_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
+                    Div('social_emotional', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('attended_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    Div('modality_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
+                    Div('psychomotor', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning E_right_border'
+            ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
@@ -4101,16 +4411,16 @@ class CBECEForm(CommonForm):
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer)
-        # instance.pre_test = {
-        #     "CBECE_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-        #     "CBECE_ASSESSMENT/arabic": request.POST.get('arabic'),
-        #     "CBECE_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-        #     "CBECE_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
-        #     "CBECE_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-        #     "CBECE_ASSESSMENT/math": request.POST.get('math'),
-        #     "CBECE_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-        #     "CBECE_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
-        # }
+        instance.pre_test = {
+            "CBECE_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "CBECE_ASSESSMENT/arabic": request.POST.get('arabic'),
+            "CBECE_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
+            "CBECE_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+            "CBECE_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "CBECE_ASSESSMENT/math": request.POST.get('math'),
+            "CBECE_ASSESSMENT/attended_social": request.POST.get('attended_social'),
+            "CBECE_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+        }
         instance.save()
 
     class Meta:
@@ -4987,7 +5297,40 @@ class ABLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
 
+    modality_arabic = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     arabic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_english = forms.ChoiceField(
+        label=_("Attended English test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_english = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    english = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -4998,7 +5341,17 @@ class ABLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-
+    modality_math = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     math = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -5010,17 +5363,50 @@ class ABLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    modality_social = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
 
     social_emotional = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+    modality_emotional = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     attended_psychomotor = forms.ChoiceField(
         label=_("Attended Psychomotor test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
+    )
+    modality_psychomotor  = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
     )
     psychomotor = forms.FloatField(
         label=_('Results'),
@@ -5112,12 +5498,19 @@ class ABLNAssessmentForm(forms.ModelForm):
         if instance.post_test:
             p_test = instance.post_test
             self.fields['attended_arabic'].initial = p_test["ABLN_ASSESSMENT/attended_arabic"]
+            self.fields['modality_arabic'].initial = p_test["ABLN_ASSESSMENT/modality_arabic"]
             self.fields['arabic'].initial = p_test["ABLN_ASSESSMENT/arabic"]
+            self.fields['attended_english'].initial = p_test["ABLN_ASSESSMENT/attended_english"]
+            self.fields['modality_english'].initial = p_test["ABLN_ASSESSMENT/modality_english"]
+            self.fields['english'].initial = p_test["ABLN_ASSESSMENT/english"]
             self.fields['attended_math'].initial = p_test["ABLN_ASSESSMENT/attended_math"]
+            self.fields['modality_math'].initial = p_test["ABLN_ASSESSMENT/modality_math"]
             self.fields['math'].initial = p_test["ABLN_ASSESSMENT/math"]
             self.fields['attended_social'].initial = p_test["ABLN_ASSESSMENT/attended_social"]
+            self.fields['modality_social'].initial = p_test["ABLN_ASSESSMENT/modality_social"]
             self.fields['social_emotional'].initial = p_test["ABLN_ASSESSMENT/social_emotional"]
             self.fields['attended_psychomotor'].initial = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+            self.fields['modality_psychomotor'].initial = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
             self.fields['psychomotor'].initial = p_test["ABLN_ASSESSMENT/psychomotor"]
 
         self.helper = FormHelper()
@@ -5156,30 +5549,50 @@ class ABLNAssessmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attended_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
+                    Div('modality_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
+                    Div('arabic', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    Div('modality_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    Div('english', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('attended_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    Div('modality_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
+                    Div('math', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('attended_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    Div('modality_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
+                    Div('social_emotional', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+                Div(
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('attended_arabic', css_class='col-md-4'),
-                    Div('arabic', css_class='col-md-4'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('attended_math', css_class='col-md-4'),
-                    Div('math', css_class='col-md-4'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('attended_social', css_class='col-md-4'),
-                    Div('social_emotional', css_class='col-md-4'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('attended_psychomotor', css_class='col-md-4'),
-                    Div('psychomotor', css_class='col-md-4'),
+                    Div('attended_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    Div('modality_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
+                    Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
@@ -5352,7 +5765,40 @@ class BLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
 
+    modality_arabic = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     arabic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_english = forms.ChoiceField(
+        label=_("Attended English test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_english = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    english = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -5363,7 +5809,17 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-
+    modality_math = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     math = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -5375,11 +5831,33 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    modality_social = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
 
     social_emotional = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
+    )
+    modality_emotional = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
     )
     attended_psychomotor = forms.ChoiceField(
         label=_("Attended Psychomotor test"),
@@ -5387,11 +5865,23 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    modality_psychomotor = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
     psychomotor = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+
     follow_up_type = forms.ChoiceField(
         label=_('Type of follow up'),
         widget=forms.Select, required=False,
@@ -5490,12 +5980,19 @@ class BLNAssessmentForm(forms.ModelForm):
         if instance.post_test:
             p_test = instance.post_test
             self.fields['attended_arabic'].initial = p_test["BLN_ASSESSMENT/attended_arabic"]
+            self.fields['modality_arabic'].initial = p_test["BLN_ASSESSMENT/modality_arabic"]
             self.fields['arabic'].initial = p_test["BLN_ASSESSMENT/arabic"]
+            self.fields['attended_english'].initial = p_test["BLN_ASSESSMENT/attended_english"]
+            self.fields['modality_english'].initial = p_test["BLN_ASSESSMENT/modality_english"]
+            self.fields['english'].initial = p_test["BLN_ASSESSMENT/english"]
             self.fields['attended_math'].initial = p_test["BLN_ASSESSMENT/attended_math"]
+            self.fields['modality_math'].initial = p_test["BLN_ASSESSMENT/modality_math"]
             self.fields['math'].initial = p_test["BLN_ASSESSMENT/math"]
             self.fields['attended_social'].initial = p_test["BLN_ASSESSMENT/attended_social"]
+            self.fields['modality_social'].initial = p_test["BLN_ASSESSMENT/modality_social"]
             self.fields['social_emotional'].initial = p_test["BLN_ASSESSMENT/social_emotional"]
             self.fields['attended_psychomotor'].initial = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+            self.fields['modality_psychomotor'].initial = p_test["BLN_ASSESSMENT/modality_psychomotor"]
             self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -5533,30 +6030,50 @@ class BLNAssessmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attended_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
+                    Div('modality_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
+                    Div('arabic', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    Div('modality_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    Div('english', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('attended_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    Div('modality_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
+                    Div('math', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('attended_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    Div('modality_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
+                    Div('social_emotional', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+                Div(
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('attended_arabic', css_class='col-md-4'),
-                    Div('arabic', css_class='col-md-4'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('attended_math', css_class='col-md-4'),
-                    Div('math', css_class='col-md-4'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('attended_social', css_class='col-md-4'),
-                    Div('social_emotional', css_class='col-md-4'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('attended_psychomotor', css_class='col-md-4'),
-                    Div('psychomotor', css_class='col-md-4'),
+                    Div('attended_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    Div('modality_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
+                    Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
@@ -5750,8 +6267,26 @@ class CBECEAssessmentForm(forms.ModelForm):
                 assessment_slug='cbece_post_test',
                 callback=self.request.build_absolute_uri(reverse('clm:cbece_post_assessment', kwargs={'pk': instance.id}))
              )
+
+        # post_test
         if instance.post_test:
-            post_test_button = ' btn-success '
+            p_test = instance.post_test
+            self.fields['attended_arabic'].initial = p_test["CBECE_ASSESSMENT/attended_arabic"]
+            self.fields['modality_arabic'].initial = p_test["CBECE_ASSESSMENT/modality_arabic"]
+            self.fields['arabic'].initial = p_test["CBECE_ASSESSMENT/arabic"]
+            self.fields['attended_english'].initial = p_test["CBECE_ASSESSMENT/attended_english"]
+            self.fields['modality_english'].initial = p_test["CBECE_ASSESSMENT/modality_english"]
+            self.fields['english'].initial = p_test["CBECE_ASSESSMENT/english"]
+            self.fields['attended_math'].initial = p_test["CBECE_ASSESSMENT/attended_math"]
+            self.fields['modality_math'].initial = p_test["CBECE_ASSESSMENT/modality_math"]
+            self.fields['math'].initial = p_test["CBECE_ASSESSMENT/math"]
+            self.fields['attended_social'].initial = p_test["CBECE_ASSESSMENT/attended_social"]
+            self.fields['modality_social'].initial = p_test["CBECE_ASSESSMENT/modality_social"]
+            self.fields['social_emotional'].initial = p_test["CBECE_ASSESSMENT/social_emotional"]
+            self.fields['attended_psychomotor'].initial = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+            self.fields['modality_psychomotor'].initial = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+            self.fields['psychomotor'].initial = p_test["CBECE_ASSESSMENT/psychomotor"]
+
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True

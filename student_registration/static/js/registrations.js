@@ -257,7 +257,7 @@ $(document).ready(function(){
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_participation, select#id_follow_up_type, select#id_attended_arabic,  select#id_attended_math,  ' +
+    $(document).on('change', 'select#id_participation, select#id_follow_up_type, select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
         'select#id_attended_social,  select#id_attended_psychomotor ', function(){
        reorganizeForm_post_assessment();
     });
@@ -1006,6 +1006,7 @@ function reorganizeForm_post_assessment()
     var follow_up_type = $('select#id_follow_up_type').val();
 
     var attended_arabic = $('select#id_attended_arabic').val();
+    var attended_english = $('select#id_attended_english').val();
     var attended_math = $('select#id_attended_math').val();
     var attended_social = $('select#id_attended_social').val();
     var attended_psychomotor = $('select#id_attended_psychomotor').val();
@@ -1040,26 +1041,70 @@ function reorganizeForm_post_assessment()
     }
 
     $('div#div_id_arabic').addClass('d-none');
+    $('#span_arabic').addClass('d-none');
+    $('div#div_id_modality_arabic').addClass('d-none');
+    $('#span_modality_arabic').addClass('d-none');
+
+    $('div#div_id_english').addClass('d-none');
+    $('#span_english').addClass('d-none');
+    $('div#div_id_modality_english').addClass('d-none');
+    $('#span_modality_english').addClass('d-none');
+
     $('div#div_id_math').addClass('d-none');
-    $('div#div_id_social').addClass('d-none');
+    $('#span_math').addClass('d-none');
+    $('div#div_id_modality_math').addClass('d-none');
+    $('#span_modality_math').addClass('d-none');
+
+    $('div#div_id_social_emotional').addClass('d-none');
+    $('#span_social_emotional').addClass('d-none');
+    $('div#div_id_modality_social').addClass('d-none');
+    $('#span_modality_social').addClass('d-none');
+
     $('div#div_id_psychomotor').addClass('d-none');
+    $('#span_psychomotor').addClass('d-none');
+    $('div#div_id_modality_psychomotor').addClass('d-none');
+    $('#span_modality_psychomotor').addClass('d-none');
+
     // attended_arabic
     if(attended_arabic == 'yes'){
         $('div#div_id_arabic').removeClass('d-none');
+        $('#span_arabic').removeClass('d-none');
+        $('div#div_id_modality_arabic').removeClass('d-none');
+        $('#span_modality_arabic').removeClass('d-none');
+
     }
     else{
         $('#id_arabic').val('');
     }
+
+    // attended_english
+    if(attended_english == 'yes'){
+        $('div#div_id_english').removeClass('d-none');
+        $('#span_english').removeClass('d-none');
+        $('div#div_id_modality_english').removeClass('d-none');
+        $('#span_modality_english').removeClass('d-none');
+
+    }
+    else{
+        $('#id_arabic').val('');
+    }
+
     // attended_math
     if(attended_math == 'yes'){
         $('div#div_id_math').removeClass('d-none');
+        $('#span_math').removeClass('d-none');
+        $('div#div_id_modality_math').removeClass('d-none');
+        $('#span_modality_math').removeClass('d-none');
     }
     else{
         $('#id_math').val('');
     }
     // attended_social
     if(attended_social == 'yes'){
-        $('div#div_id_social').removeClass('d-none');
+        $('div#div_id_social_emotional').removeClass('d-none');
+        $('#span_social_emotional').removeClass('d-none');
+        $('div#div_id_modality_social').removeClass('d-none');
+        $('#span_modality_social').removeClass('d-none');
     }
     else{
         $('#id_social').val('');
@@ -1067,6 +1112,9 @@ function reorganizeForm_post_assessment()
     // attended_psychomotor
     if(attended_psychomotor == 'yes'){
         $('div#div_id_psychomotor').removeClass('d-none');
+        $('#span_psychomotor').removeClass('d-none');
+        $('div#div_id_modality_psychomotor').removeClass('d-none');
+        $('#span_modality_psychomotor').removeClass('d-none');
     }
     else{
         $('#id_psychomotor').val('');
