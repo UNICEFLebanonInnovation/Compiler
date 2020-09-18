@@ -258,7 +258,7 @@ $(document).ready(function(){
     });
 
     $(document).on('change', 'select#id_participation, select#id_follow_up_type, select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
-        'select#id_attended_social,  select#id_attended_psychomotor ', function(){
+        'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic ', function(){
        reorganizeForm_post_assessment();
     });
 
@@ -1006,11 +1006,14 @@ function reorganizeForm_post_assessment()
     var follow_up_type = $('select#id_follow_up_type').val();
 
     var attended_arabic = $('select#id_attended_arabic').val();
+    var attended_arabic = $('select#id_attended_arabic').val();
     var attended_english = $('select#id_attended_english').val();
     var attended_math = $('select#id_attended_math').val();
     var attended_social = $('select#id_attended_social').val();
     var attended_psychomotor = $('select#id_attended_psychomotor').val();
 
+    var attended_science = $('select#id_attended_science').val();
+    var attended_artistic = $('select#id_attended_artistic').val();
 
 
     // id_participation
@@ -1065,6 +1068,17 @@ function reorganizeForm_post_assessment()
     $('div#div_id_modality_psychomotor').addClass('d-none');
     $('#span_modality_psychomotor').addClass('d-none');
 
+
+    $('div#div_id_science').addClass('d-none');
+    $('#span_science').addClass('d-none');
+    $('div#div_id_modality_science').addClass('d-none');
+    $('#span_modality_science').addClass('d-none');
+
+    $('div#div_id_artistic ').addClass('d-none');
+    $('#span_artistic ').addClass('d-none');
+    $('div#div_id_modality_artistic ').addClass('d-none');
+    $('#span_modality_artistic ').addClass('d-none');
+
     // attended_arabic
     if(attended_arabic == 'yes'){
         $('div#div_id_arabic').removeClass('d-none');
@@ -1075,6 +1089,7 @@ function reorganizeForm_post_assessment()
     }
     else{
         $('#id_arabic').val('');
+        $('select#id_modality_arabic').val("");
     }
 
     // attended_english
@@ -1120,6 +1135,27 @@ function reorganizeForm_post_assessment()
         $('#id_psychomotor').val('');
     }
 
+    // attended_science,
+    if(attended_science == 'yes'){
+        $('div#div_id_science').removeClass('d-none');
+        $('#span_science').removeClass('d-none');
+        $('div#div_id_modality_science').removeClass('d-none');
+        $('#span_modality_science').removeClass('d-none');
+    }
+    else{
+        $('#id_science').val('');
+    }
+
+    // attended_artistic
+    if(attended_artistic == 'yes'){
+        $('div#div_id_artistic').removeClass('d-none');
+        $('#span_artistic').removeClass('d-none');
+        $('div#div_id_modality_artistic').removeClass('d-none');
+        $('#span_modality_artistic').removeClass('d-none');
+    }
+    else{
+        $('#id_artistic').val('');
+    }
 
 }
 

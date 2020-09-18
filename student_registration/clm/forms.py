@@ -834,6 +834,12 @@ class BLNForm(CommonForm):
                 if "BLN_ASSESSMENT/psychomotor" in p_test:
                     self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
 
+                    # 1. Arabic
+                    # 2. English(only in BLN)
+                    # 3. Mathematics
+                    # 4. Social - Emotional
+                    # 5. Artistic
+
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1911,28 +1917,28 @@ class ABLNForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    attended_english = forms.ChoiceField(
-        label=_("Attended English test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_english = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
-    )
-    english = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
+    # attended_english = forms.ChoiceField(
+    #     label=_("Attended English test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    # modality_english = forms.ChoiceField(
+    #     label=_("Please indicate modality"),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('online', _("Online Forms")),
+    #         ('phone', _("Phone / Whatasapp")),
+    #         ('parents', _("Asking Parents")),
+    #         ('offline', _("Offline(F2F)"))
+    #     )
+    # )
+    # english = forms.FloatField(
+    #     label=_('Results'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
     attended_math = forms.ChoiceField(
         label=_("Attended Math test"),
         widget=forms.Select, required=True,
@@ -2037,14 +2043,14 @@ class ABLNForm(CommonForm):
                     self.fields['arabic'].initial = p_test["ABLN_ASSESSMENT/arabic"]
 
 
-                if "ABLN_ASSESSMENT/attended_english" in p_test:
-                    self.fields['attended_english'].initial = p_test["ABLN_ASSESSMENT/attended_english"]
-
-                if "ABLN_ASSESSMENT/modality_english" in p_test:
-                    self.fields['modality_english'].initial = p_test["ABLN_ASSESSMENT/modality_english"]
-
-                if "ABLN_ASSESSMENT/english" in p_test:
-                    self.fields['english'].initial = p_test["ABLN_ASSESSMENT/english"]
+                # if "ABLN_ASSESSMENT/attended_english" in p_test:
+                #     self.fields['attended_english'].initial = p_test["ABLN_ASSESSMENT/attended_english"]
+                #
+                # if "ABLN_ASSESSMENT/modality_english" in p_test:
+                #     self.fields['modality_english'].initial = p_test["ABLN_ASSESSMENT/modality_english"]
+                #
+                # if "ABLN_ASSESSMENT/english" in p_test:
+                #     self.fields['english'].initial = p_test["ABLN_ASSESSMENT/english"]
 
 
                 if "ABLN_ASSESSMENT/attended_math" in p_test:
@@ -2451,15 +2457,15 @@ class ABLNForm(CommonForm):
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
-                    Div('english', css_class='col-md-2'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">2</span>'),
+                #     Div('attended_english', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                #     Div('modality_english', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                #     Div('english', css_class='col-md-2'),
+                #     css_class='row',
+                # ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
@@ -2549,9 +2555,9 @@ class ABLNForm(CommonForm):
         modality_arabic = cleaned_data.get("modality_arabic")
         arabic = cleaned_data.get("arabic")
 
-        attended_english = cleaned_data.get("attended_english")
-        modality_english = cleaned_data.get("modality_english")
-        english = cleaned_data.get("english")
+        # attended_english = cleaned_data.get("attended_english")
+        # modality_english = cleaned_data.get("modality_english")
+        # english = cleaned_data.get("english")
 
         attended_psychomotor = cleaned_data.get("attended_psychomotor")
         modality_psychomotor = cleaned_data.get("modality_psychomotor")
@@ -2571,11 +2577,11 @@ class ABLNForm(CommonForm):
             if not arabic:
                 self.add_error('arabic', 'This field is required')
 
-        if attended_english == 'yes':
-            if not modality_english:
-                self.add_error('modality_english', 'This field is required')
-            if not english:
-                self.add_error('english', 'This field is required')
+        # if attended_english == 'yes':
+        #     if not modality_english:
+        #         self.add_error('modality_english', 'This field is required')
+        #     if not english:
+        #         self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
@@ -2735,9 +2741,9 @@ class ABLNForm(CommonForm):
             "ABLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
             "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
-            "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
-            "ABLN_ASSESSMENT/english": request.POST.get('english'),
+            # "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
+            # "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+            # "ABLN_ASSESSMENT/english": request.POST.get('english'),
 
             "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
             "ABLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
@@ -3899,7 +3905,50 @@ class CBECEForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-
+    attended_science = forms.ChoiceField(
+        label=_("Attended Science test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_science = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    science = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_artistic = forms.ChoiceField(
+        label=_("Attended Artistic test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_artistic  = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    artistic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
         widget=forms.Select, required=True,
@@ -3954,6 +4003,10 @@ class CBECEForm(CommonForm):
              )
             if instance.pre_test:
                 p_test = instance.pre_test
+                print('---------------------------------------------------------')
+                print(p_test)
+                print('---------------------------------------------------------')
+
                 if "CBECE_ASSESSMENT/attended_arabic" in p_test:
                     self.fields['attended_arabic'].initial = p_test["CBECE_ASSESSMENT/attended_arabic"]
 
@@ -3998,6 +4051,24 @@ class CBECEForm(CommonForm):
 
                 if "CBECE_ASSESSMENT/psychomotor" in p_test:
                     self.fields['psychomotor'].initial = p_test["CBECE_ASSESSMENT/psychomotor"]
+
+                if "CBECE_ASSESSMENT/attended_science" in p_test:
+                    self.fields['attended_science'].initial = p_test["CBECE_ASSESSMENT/attended_science"]
+
+                if "CBECE_ASSESSMENT/modality_science" in p_test:
+                    self.fields['modality_science'].initial = p_test["CBECE_ASSESSMENT/modality_science"]
+
+                if "CBECE_ASSESSMENT/science" in p_test:
+                    self.fields['science'].initial = p_test["CBECE_ASSESSMENT/science"]
+
+                if "CBECE_ASSESSMENT/attended_artistic" in p_test:
+                    self.fields['attended_artistic'].initial = p_test["CBECE_ASSESSMENT/attended_artistic"]
+
+                if "CBECE_ASSESSMENT/modality_artistic" in p_test:
+                    self.fields['modality_artistic'].initial = p_test["CBECE_ASSESSMENT/modality_artistic"]
+
+                if "CBECE_ASSESSMENT/artistic" in p_test:
+                    self.fields['artistic'].initial = p_test["CBECE_ASSESSMENT/artistic"]
 
             if instance.cycle_id == 3:
                 display_final_grade = ''
@@ -4388,6 +4459,15 @@ class CBECEForm(CommonForm):
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('attended_science', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_science">4.1</span>'),
+                    Div('modality_science', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_social_science">4.2</span>'),
+                    Div('science', css_class='col-md-2'),
+                    css_class='row',
+                ),
 
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -4408,6 +4488,18 @@ class CBECEForm(CommonForm):
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
+
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('attended_artistic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">5.1</span>'),
+                    Div('modality_artistic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_artistic">5.2</span>'),
+                    Div('artistic', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+
                 css_class='bd-callout bd-callout-warning E_right_border'
             ),
             FormActions(
@@ -4484,6 +4576,28 @@ class CBECEForm(CommonForm):
         attended_social = cleaned_data.get("attended_social")
         modality_social = cleaned_data.get("modality_social")
         social_emotional = cleaned_data.get("social_emotional")
+
+        attended_science = cleaned_data.get("attended_science")
+        modality_science = cleaned_data.get("modality_science")
+        science = cleaned_data.get("science")
+
+        attended_artistic = cleaned_data.get("attended_artistic")
+        modality_artistic = cleaned_data.get("modality_artistic")
+        artistic = cleaned_data.get("artistic")
+
+
+        if attended_science == 'yes':
+            if not modality_science:
+                self.add_error('modality_science', 'This field is required')
+            if not science:
+                self.add_error('science', 'This field is required')
+
+        if attended_artistic == 'yes':
+            if not modality_artistic:
+                self.add_error('modality_artistic', 'This field is required')
+            if not artistic:
+                self.add_error('artistic', 'This field is required')
+
 
         if attended_arabic == 'yes':
             if not modality_arabic:
@@ -4670,6 +4784,14 @@ class CBECEForm(CommonForm):
             "CBECE_ASSESSMENT/attended_social": request.POST.get('attended_social'),
             "CBECE_ASSESSMENT/modality_social": request.POST.get('modality_social'),
             "CBECE_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+
+            "CBECE_ASSESSMENT/attended_science": request.POST.get('attended_science'),
+            "CBECE_ASSESSMENT/modality_science": request.POST.get('modality_science'),
+            "CBECE_ASSESSMENT/science": request.POST.get('science'),
+
+            "CBECE_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
+            "CBECE_ASSESSMENT/modality_artistic": request.POST.get('modality_artistic'),
+            "CBECE_ASSESSMENT/artistic": request.POST.get('artistic'),
         }
         instance.save()
 
@@ -5561,28 +5683,28 @@ class ABLNAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    attended_english = forms.ChoiceField(
-        label=_("Attended English test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_english = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
-    )
-    english = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
+    # attended_english = forms.ChoiceField(
+    #     label=_("Attended English test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    # modality_english = forms.ChoiceField(
+    #     label=_("Please indicate modality"),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('online', _("Online Forms")),
+    #         ('phone', _("Phone / Whatasapp")),
+    #         ('parents', _("Asking Parents")),
+    #         ('offline', _("Offline(F2F)"))
+    #     )
+    # )
+    # english = forms.FloatField(
+    #     label=_('Results'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
     attended_math = forms.ChoiceField(
         label=_("Attended Math test"),
         widget=forms.Select, required=True,
@@ -5743,14 +5865,14 @@ class ABLNAssessmentForm(forms.ModelForm):
             if "ABLN_ASSESSMENT/arabic" in p_test:
                 self.fields['arabic'].initial = p_test["ABLN_ASSESSMENT/arabic"]
 
-            if "ABLN_ASSESSMENT/attended_english" in p_test:
-                self.fields['attended_english'].initial = p_test["ABLN_ASSESSMENT/attended_english"]
-
-            if "ABLN_ASSESSMENT/modality_english" in p_test:
-                self.fields['modality_english'].initial = p_test["ABLN_ASSESSMENT/modality_english"]
-
-            if "ABLN_ASSESSMENT/english" in p_test:
-                self.fields['english'].initial = p_test["ABLN_ASSESSMENT/english"]
+            # if "ABLN_ASSESSMENT/attended_english" in p_test:
+            #     self.fields['attended_english'].initial = p_test["ABLN_ASSESSMENT/attended_english"]
+            #
+            # if "ABLN_ASSESSMENT/modality_english" in p_test:
+            #     self.fields['modality_english'].initial = p_test["ABLN_ASSESSMENT/modality_english"]
+            #
+            # if "ABLN_ASSESSMENT/english" in p_test:
+            #     self.fields['english'].initial = p_test["ABLN_ASSESSMENT/english"]
 
             if "ABLN_ASSESSMENT/attended_math" in p_test:
                 self.fields['attended_math'].initial = p_test["ABLN_ASSESSMENT/attended_math"]
@@ -5823,15 +5945,15 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
-                    Div('english', css_class='col-md-2'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">2</span>'),
+                #     Div('attended_english', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                #     Div('modality_english', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                #     Div('english', css_class='col-md-2'),
+                #     css_class='row',
+                # ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
@@ -5944,9 +6066,9 @@ class ABLNAssessmentForm(forms.ModelForm):
         modality_arabic = cleaned_data.get("modality_arabic")
         arabic = cleaned_data.get("arabic")
 
-        attended_english = cleaned_data.get("attended_english")
-        modality_english = cleaned_data.get("modality_english")
-        english = cleaned_data.get("english")
+        # attended_english = cleaned_data.get("attended_english")
+        # modality_english = cleaned_data.get("modality_english")
+        # english = cleaned_data.get("english")
 
         attended_psychomotor = cleaned_data.get("attended_psychomotor")
         modality_psychomotor = cleaned_data.get("modality_psychomotor")
@@ -5966,11 +6088,11 @@ class ABLNAssessmentForm(forms.ModelForm):
             if not arabic:
                 self.add_error('arabic', 'This field is required')
 
-        if attended_english == 'yes':
-            if not modality_english:
-                self.add_error('modality_english', 'This field is required')
-            if not english:
-                self.add_error('english', 'This field is required')
+        # if attended_english == 'yes':
+        #     if not modality_english:
+        #         self.add_error('modality_english', 'This field is required')
+        #     if not english:
+        #         self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
@@ -5998,9 +6120,9 @@ class ABLNAssessmentForm(forms.ModelForm):
             "ABLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
             "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
-            "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
-            "ABLN_ASSESSMENT/english": request.POST.get('english'),
+            # "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
+            # "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+            # "ABLN_ASSESSMENT/english": request.POST.get('english'),
 
             "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
             "ABLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
@@ -6642,6 +6764,50 @@ class CBECEAssessmentForm(forms.ModelForm):
         label=_('Final grade') + ' (/80)', required=False,
         widget=forms.NumberInput,
         min_value=0, max_value=80
+    )
+    attended_science = forms.ChoiceField(
+        label=_("Attended Math test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_science = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    science = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_artistic = forms.ChoiceField(
+        label=_("Attended Psychomotor test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_artistic  = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    artistic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
     )
     # cycle_completed = forms.TypedChoiceField(
     #     label=_("Completed the cycle?"),
