@@ -4464,7 +4464,7 @@ class CBECEForm(CommonForm):
                     Div('attended_science', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_science">4.1</span>'),
                     Div('modality_science', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_social_science">4.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_science">4.2</span>'),
                     Div('science', css_class='col-md-2'),
                     css_class='row',
                 ),
