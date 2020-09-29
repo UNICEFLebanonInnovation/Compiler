@@ -3974,38 +3974,22 @@ class CBECEForm(CommonForm):
         label=_('How many children does this child have?'),
         widget=forms.TextInput, required=False
     )
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(CBECEForm, self).__init__(*args, **kwargs)
 
-        pre_test = ''
-        post_test = ''
-        pre_test_button = ' btn-outline-success '
-        post_test_button = ' btn-outline-secondary disabled'
-        display_assessment = ' d-none'
         display_registry = ''
-        display_final_grade = ' d-none'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:cbece_add')
         self.fields['clm_type'].initial = 'CBECE'
-        # self.fields['new_registry'].initial = 'yes'
-
+        self.fields['new_registry'].initial = 'yes'
         if instance:
-            display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
 
-            pre_test = instance.assessment_form(
-                stage='pre_test',
-                assessment_slug='cbece_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
-             )
+
             if instance.pre_test:
                 p_test = instance.pre_test
-                print('---------------------------------------------------------')
-                print(p_test)
-                print('---------------------------------------------------------')
 
                 if "CBECE_ASSESSMENT/attended_arabic" in p_test:
                     self.fields['attended_arabic'].initial = p_test["CBECE_ASSESSMENT/attended_arabic"]
@@ -4764,7 +4748,7 @@ class CBECEForm(CommonForm):
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer)
-        instance.post_test = {
+        instance.pre_test = {
             "CBECE_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
             "CBECE_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
             "CBECE_ASSESSMENT/arabic": request.POST.get('arabic'),
