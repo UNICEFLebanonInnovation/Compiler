@@ -784,63 +784,6 @@ class BLNForm(CommonForm):
             display_registry = ' d-none'
             form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
 
-            if instance.pre_test:
-                p_test = instance.pre_test
-                if "BLN_ASSESSMENT/attended_arabic" in p_test:
-                    self.fields['attended_arabic'].initial = p_test["BLN_ASSESSMENT/attended_arabic"]
-
-                if "BLN_ASSESSMENT/modality_arabic" in p_test:
-                    self.fields['modality_arabic'].initial = p_test["BLN_ASSESSMENT/modality_arabic"]
-
-                if "BLN_ASSESSMENT/arabic" in p_test:
-                    self.fields['arabic'].initial = p_test["BLN_ASSESSMENT/arabic"]
-
-                if "BLN_ASSESSMENT/attended_english" in p_test:
-                    self.fields['attended_english'].initial = p_test["BLN_ASSESSMENT/attended_english"]
-
-                if "BLN_ASSESSMENT/modality_english" in p_test:
-                    self.fields['modality_english'].initial = p_test["BLN_ASSESSMENT/modality_english"]
-
-                if "BLN_ASSESSMENT/english" in p_test:
-                    self.fields['english'].initial = p_test["BLN_ASSESSMENT/english"]
-
-
-                if "BLN_ASSESSMENT/attended_math" in p_test:
-                    self.fields['attended_math'].initial = p_test["BLN_ASSESSMENT/attended_math"]
-
-                if "BLN_ASSESSMENT/modality_math" in p_test:
-                    self.fields['modality_math'].initial = p_test["BLN_ASSESSMENT/modality_math"]
-
-                if "BLN_ASSESSMENT/math" in p_test:
-                        self.fields['math'].initial = p_test["BLN_ASSESSMENT/math"]
-
-
-                if "BLN_ASSESSMENT/attended_social" in p_test:
-                    self.fields['attended_social'].initial = p_test["BLN_ASSESSMENT/attended_social"]
-
-                if "BLN_ASSESSMENT/modality_social" in p_test:
-                    self.fields['modality_social'].initial = p_test["BLN_ASSESSMENT/modality_social"]
-
-                if "BLN_ASSESSMENT/social_emotional" in p_test:
-                    self.fields['social_emotional'].initial = p_test["BLN_ASSESSMENT/social_emotional"]
-
-
-                if "BLN_ASSESSMENT/attended_psychomotor" in p_test:
-                    self.fields['attended_psychomotor'].initial = p_test["BLN_ASSESSMENT/attended_psychomotor"]
-
-                if "BLN_ASSESSMENT/modality_psychomotor" in p_test:
-                    self.fields['modality_psychomotor'].initial = p_test["BLN_ASSESSMENT/modality_psychomotor"]
-
-                if "BLN_ASSESSMENT/psychomotor" in p_test:
-                    self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
-
-                    # 1. Arabic
-                    # 2. English(only in BLN)
-                    # 3. Mathematics
-                    # 4. Social - Emotional
-                    # 5. Artistic
-
-
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -1917,28 +1860,28 @@ class ABLNForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    # attended_english = forms.ChoiceField(
-    #     label=_("Attended English test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # modality_english = forms.ChoiceField(
-    #     label=_("Please indicate modality"),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('online', _("Online Forms")),
-    #         ('phone', _("Phone / Whatasapp")),
-    #         ('parents', _("Asking Parents")),
-    #         ('offline', _("Offline(F2F)"))
-    #     )
-    # )
-    # english = forms.FloatField(
-    #     label=_('Results'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
+    attended_english = forms.ChoiceField(
+        label=_("Attended English test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_english = forms.ChoiceField(
+        label=_("Please indicate modality"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+        )
+    )
+    english = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
     attended_math = forms.ChoiceField(
         label=_("Attended Math test"),
         widget=forms.Select, required=True,
@@ -2031,56 +1974,6 @@ class ABLNForm(CommonForm):
             display_registry = ' d-none'
             form_action = reverse('clm:abln_edit', kwargs={'pk': instance.id})
 
-            if instance.pre_test:
-                p_test = instance.pre_test
-                if "ABLN_ASSESSMENT/attended_arabic" in p_test:
-                    self.fields['attended_arabic'].initial = p_test["ABLN_ASSESSMENT/attended_arabic"]
-
-                if "ABLN_ASSESSMENT/modality_arabic" in p_test:
-                    self.fields['modality_arabic'].initial = p_test["ABLN_ASSESSMENT/modality_arabic"]
-
-                if "ABLN_ASSESSMENT/arabic" in p_test:
-                    self.fields['arabic'].initial = p_test["ABLN_ASSESSMENT/arabic"]
-
-
-                # if "ABLN_ASSESSMENT/attended_english" in p_test:
-                #     self.fields['attended_english'].initial = p_test["ABLN_ASSESSMENT/attended_english"]
-                #
-                # if "ABLN_ASSESSMENT/modality_english" in p_test:
-                #     self.fields['modality_english'].initial = p_test["ABLN_ASSESSMENT/modality_english"]
-                #
-                # if "ABLN_ASSESSMENT/english" in p_test:
-                #     self.fields['english'].initial = p_test["ABLN_ASSESSMENT/english"]
-
-
-                if "ABLN_ASSESSMENT/attended_math" in p_test:
-                    self.fields['attended_math'].initial = p_test["ABLN_ASSESSMENT/attended_math"]
-
-                if "ABLN_ASSESSMENT/modality_math" in p_test:
-                    self.fields['modality_math'].initial = p_test["ABLN_ASSESSMENT/modality_math"]
-
-                if "ABLN_ASSESSMENT/math" in p_test:
-                        self.fields['math'].initial = p_test["ABLN_ASSESSMENT/math"]
-
-
-                if "ABLN_ASSESSMENT/attended_social" in p_test:
-                    self.fields['attended_social'].initial = p_test["ABLN_ASSESSMENT/attended_social"]
-
-                if "ABLN_ASSESSMENT/modality_social" in p_test:
-                    self.fields['modality_social'].initial = p_test["ABLN_ASSESSMENT/modality_social"]
-
-                if "ABLN_ASSESSMENT/social_emotional" in p_test:
-                    self.fields['social_emotional'].initial = p_test["ABLN_ASSESSMENT/social_emotional"]
-
-
-                if "ABLN_ASSESSMENT/attended_psychomotor" in p_test:
-                    self.fields['attended_psychomotor'].initial = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
-
-                if "ABLN_ASSESSMENT/modality_psychomotor" in p_test:
-                    self.fields['modality_psychomotor'].initial = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
-
-                if "ABLN_ASSESSMENT/psychomotor" in p_test:
-                    self.fields['psychomotor'].initial = p_test["ABLN_ASSESSMENT/psychomotor"]
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -2457,15 +2350,15 @@ class ABLNForm(CommonForm):
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
-                # Div(
-                #     HTML('<span class="badge badge-default">2</span>'),
-                #     Div('attended_english', css_class='col-md-2'),
-                #     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                #     Div('modality_english', css_class='col-md-2'),
-                #     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
-                #     Div('english', css_class='col-md-2'),
-                #     css_class='row',
-                # ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    Div('modality_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    Div('english', css_class='col-md-2'),
+                    css_class='row',
+                ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
@@ -2555,9 +2448,9 @@ class ABLNForm(CommonForm):
         modality_arabic = cleaned_data.get("modality_arabic")
         arabic = cleaned_data.get("arabic")
 
-        # attended_english = cleaned_data.get("attended_english")
-        # modality_english = cleaned_data.get("modality_english")
-        # english = cleaned_data.get("english")
+        attended_english = cleaned_data.get("attended_english")
+        modality_english = cleaned_data.get("modality_english")
+        english = cleaned_data.get("english")
 
         attended_psychomotor = cleaned_data.get("attended_psychomotor")
         modality_psychomotor = cleaned_data.get("modality_psychomotor")
@@ -2577,11 +2470,11 @@ class ABLNForm(CommonForm):
             if not arabic:
                 self.add_error('arabic', 'This field is required')
 
-        # if attended_english == 'yes':
-        #     if not modality_english:
-        #         self.add_error('modality_english', 'This field is required')
-        #     if not english:
-        #         self.add_error('english', 'This field is required')
+        if attended_english == 'yes':
+            if not modality_english:
+                self.add_error('modality_english', 'This field is required')
+            if not english:
+                self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
@@ -2736,14 +2629,14 @@ class ABLNForm(CommonForm):
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
-        instance.post_test = {
+        instance.pre_test = {
             "ABLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
             "ABLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
             "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
-            # "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            # "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
-            # "ABLN_ASSESSMENT/english": request.POST.get('english'),
+            "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
+            "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+            "ABLN_ASSESSMENT/english": request.POST.get('english'),
 
             "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
             "ABLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
@@ -3986,73 +3879,6 @@ class CBECEForm(CommonForm):
         if instance:
             display_registry = ' d-none'
             form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-
-
-            if instance.pre_test:
-                p_test = instance.pre_test
-
-                if "CBECE_ASSESSMENT/attended_arabic" in p_test:
-                    self.fields['attended_arabic'].initial = p_test["CBECE_ASSESSMENT/attended_arabic"]
-
-                if "CBECE_ASSESSMENT/modality_arabic" in p_test:
-                    self.fields['modality_arabic'].initial = p_test["CBECE_ASSESSMENT/modality_arabic"]
-
-                if "CBECE_ASSESSMENT/arabic" in p_test:
-                    self.fields['arabic'].initial = p_test["CBECE_ASSESSMENT/arabic"]
-
-                if "CBECE_ASSESSMENT/attended_english" in p_test:
-                    self.fields['attended_english'].initial = p_test["CBECE_ASSESSMENT/attended_english"]
-
-                if "CBECE_ASSESSMENT/modality_english" in p_test:
-                    self.fields['modality_english'].initial = p_test["CBECE_ASSESSMENT/modality_english"]
-
-                if "CBECE_ASSESSMENT/english" in p_test:
-                    self.fields['english'].initial = p_test["CBECE_ASSESSMENT/english"]
-
-                if "CBECE_ASSESSMENT/attended_math" in p_test:
-                    self.fields['attended_math'].initial = p_test["CBECE_ASSESSMENT/attended_math"]
-
-                if "CBECE_ASSESSMENT/modality_math" in p_test:
-                    self.fields['modality_math'].initial = p_test["CBECE_ASSESSMENT/modality_math"]
-
-                if "CBECE_ASSESSMENT/math" in p_test:
-                    self.fields['math'].initial = p_test["CBECE_ASSESSMENT/math"]
-
-                if "CBECE_ASSESSMENT/attended_social" in p_test:
-                    self.fields['attended_social'].initial = p_test["CBECE_ASSESSMENT/attended_social"]
-
-                if "CBECE_ASSESSMENT/modality_social" in p_test:
-                    self.fields['modality_social'].initial = p_test["CBECE_ASSESSMENT/modality_social"]
-
-                if "CBECE_ASSESSMENT/social_emotional" in p_test:
-                    self.fields['social_emotional'].initial = p_test["CBECE_ASSESSMENT/social_emotional"]
-
-                if "CBECE_ASSESSMENT/attended_psychomotor" in p_test:
-                    self.fields['attended_psychomotor'].initial = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
-
-                if "CBECE_ASSESSMENT/modality_psychomotor" in p_test:
-                    self.fields['modality_psychomotor'].initial = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
-
-                if "CBECE_ASSESSMENT/psychomotor" in p_test:
-                    self.fields['psychomotor'].initial = p_test["CBECE_ASSESSMENT/psychomotor"]
-
-                if "CBECE_ASSESSMENT/attended_science" in p_test:
-                    self.fields['attended_science'].initial = p_test["CBECE_ASSESSMENT/attended_science"]
-
-                if "CBECE_ASSESSMENT/modality_science" in p_test:
-                    self.fields['modality_science'].initial = p_test["CBECE_ASSESSMENT/modality_science"]
-
-                if "CBECE_ASSESSMENT/science" in p_test:
-                    self.fields['science'].initial = p_test["CBECE_ASSESSMENT/science"]
-
-                if "CBECE_ASSESSMENT/attended_artistic" in p_test:
-                    self.fields['attended_artistic'].initial = p_test["CBECE_ASSESSMENT/attended_artistic"]
-
-                if "CBECE_ASSESSMENT/modality_artistic" in p_test:
-                    self.fields['modality_artistic'].initial = p_test["CBECE_ASSESSMENT/modality_artistic"]
-
-                if "CBECE_ASSESSMENT/artistic" in p_test:
-                    self.fields['artistic'].initial = p_test["CBECE_ASSESSMENT/artistic"]
 
             if instance.cycle_id == 3:
                 display_final_grade = ''

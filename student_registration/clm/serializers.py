@@ -90,7 +90,7 @@ class CLMSerializer(serializers.ModelSerializer):
     comments = serializers.CharField(required=False)
     unsuccessful_posttest_reason = serializers.CharField(required=False)
     unsuccessful_pretest_reason = serializers.CharField(required=False)
-
+    pre_test = serializers.JSONField(required=False)
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
     governorate_name = serializers.CharField(source='governorate.name', read_only=True)
@@ -187,6 +187,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'comments',
             'unsuccessful_posttest_reason',
             'unsuccessful_pretest_reason',
+            'pre_test',
             'created',
             'modified',
             'cycle_completed',

@@ -181,6 +181,53 @@ class BLNEditView(LoginRequiredMixin,
         else:
             data = BLNSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+            if 'pre_test' in data:
+                p_test = data['pre_test']
+                if "BLN_ASSESSMENT/attended_arabic" in p_test:
+                    data['attended_arabic'] = p_test["BLN_ASSESSMENT/attended_arabic"]
+
+                if "BLN_ASSESSMENT/modality_arabic" in p_test:
+                    data['modality_arabic'] = p_test["BLN_ASSESSMENT/modality_arabic"]
+
+                if "BLN_ASSESSMENT/arabic" in p_test:
+                    data['arabic'] = p_test["BLN_ASSESSMENT/arabic"]
+
+                if "BLN_ASSESSMENT/attended_english" in p_test:
+                    data['attended_english'] = p_test["BLN_ASSESSMENT/attended_english"]
+
+                if "BLN_ASSESSMENT/modality_english" in p_test:
+                    data['modality_english'] = p_test["BLN_ASSESSMENT/modality_english"]
+
+                if "BLN_ASSESSMENT/english" in p_test:
+                    data['english'] = p_test["BLN_ASSESSMENT/english"]
+
+                if "BLN_ASSESSMENT/attended_math" in p_test:
+                    data['attended_math'] = p_test["BLN_ASSESSMENT/attended_math"]
+
+                if "BLN_ASSESSMENT/modality_math" in p_test:
+                    data['modality_math'] = p_test["BLN_ASSESSMENT/modality_math"]
+
+                if "BLN_ASSESSMENT/math" in p_test:
+                    data['math'] = p_test["BLN_ASSESSMENT/math"]
+
+                if "BLN_ASSESSMENT/attended_social" in p_test:
+                    data['attended_social'] = p_test["BLN_ASSESSMENT/attended_social"]
+
+                if "BLN_ASSESSMENT/modality_social" in p_test:
+                    data['modality_social'] = p_test["BLN_ASSESSMENT/modality_social"]
+
+                if "BLN_ASSESSMENT/social_emotional" in p_test:
+                    data['social_emotional'] = p_test["BLN_ASSESSMENT/social_emotional"]
+
+                if "BLN_ASSESSMENT/attended_psychomotor" in p_test:
+                    data['attended_psychomotor'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+
+                if "BLN_ASSESSMENT/modality_psychomotor" in p_test:
+                    data['modality_psychomotor'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
+
+                if "BLN_ASSESSMENT/psychomotor" in p_test:
+                    data['psychomotor'] = p_test["BLN_ASSESSMENT/psychomotor"]
+
             return BLNForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
@@ -531,6 +578,53 @@ class ABLNEditView(LoginRequiredMixin,
         else:
             data = ABLNSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+            if 'pre_test' in data:
+                p_test = data['pre_test']
+                if "ABLN_ASSESSMENT/attended_arabic" in p_test:
+                    data['attended_arabic'] = p_test["ABLN_ASSESSMENT/attended_arabic"]
+
+                if "ABLN_ASSESSMENT/modality_arabic" in p_test:
+                    data['modality_arabic'] = p_test["ABLN_ASSESSMENT/modality_arabic"]
+
+                if "ABLN_ASSESSMENT/arabic" in p_test:
+                    data['arabic'] = p_test["ABLN_ASSESSMENT/arabic"]
+
+                if "ABLN_ASSESSMENT/attended_english" in p_test:
+                    data['attended_english'] = p_test["ABLN_ASSESSMENT/attended_english"]
+
+                if "ABLN_ASSESSMENT/modality_english" in p_test:
+                    data['modality_english'] = p_test["ABLN_ASSESSMENT/modality_english"]
+
+                if "ABLN_ASSESSMENT/english" in p_test:
+                    data['english'] = p_test["ABLN_ASSESSMENT/english"]
+
+                if "ABLN_ASSESSMENT/attended_math" in p_test:
+                    data['attended_math'] = p_test["ABLN_ASSESSMENT/attended_math"]
+
+                if "ABLN_ASSESSMENT/modality_math" in p_test:
+                    data['modality_math'] = p_test["ABLN_ASSESSMENT/modality_math"]
+
+                if "ABLN_ASSESSMENT/math" in p_test:
+                    data['math'] = p_test["ABLN_ASSESSMENT/math"]
+
+                if "ABLN_ASSESSMENT/attended_social" in p_test:
+                    data['attended_social'] = p_test["ABLN_ASSESSMENT/attended_social"]
+
+                if "ABLN_ASSESSMENT/modality_social" in p_test:
+                    data['modality_social'] = p_test["ABLN_ASSESSMENT/modality_social"]
+
+                if "ABLN_ASSESSMENT/social_emotional" in p_test:
+                    data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
+
+                if "ABLN_ASSESSMENT/attended_psychomotor" in p_test:
+                    data['attended_psychomotor'] = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+
+                if "ABLN_ASSESSMENT/modality_psychomotor" in p_test:
+                    data['modality_psychomotor'] = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
+
+                if "ABLN_ASSESSMENT/psychomotor" in p_test:
+                    data['psychomotor'] = p_test["ABLN_ASSESSMENT/psychomotor"]
+
             return ABLNForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
@@ -1215,6 +1309,73 @@ class CBECEEditView(LoginRequiredMixin,
         else:
             data = CBECESerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+
+            if 'pre_test' in data:
+                p_test = data['pre_test']
+
+                if "CBECE_ASSESSMENT/attended_arabic" in p_test:
+                    data['attended_arabic'] = p_test["CBECE_ASSESSMENT/attended_arabic"]
+
+                if "CBECE_ASSESSMENT/modality_arabic" in p_test:
+                    data['modality_arabic'] = p_test["CBECE_ASSESSMENT/modality_arabic"]
+
+                if "CBECE_ASSESSMENT/arabic" in p_test:
+                    data['arabic'] = p_test["CBECE_ASSESSMENT/arabic"]
+
+                if "CBECE_ASSESSMENT/attended_english" in p_test:
+                    data['attended_english'] = p_test["CBECE_ASSESSMENT/attended_english"]
+
+                if "CBECE_ASSESSMENT/modality_english" in p_test:
+                    data['modality_english'] = p_test["CBECE_ASSESSMENT/modality_english"]
+
+                if "CBECE_ASSESSMENT/english" in p_test:
+                    data['english'] = p_test["CBECE_ASSESSMENT/english"]
+
+                if "CBECE_ASSESSMENT/attended_math" in p_test:
+                    data['attended_math'] = p_test["CBECE_ASSESSMENT/attended_math"]
+
+                if "CBECE_ASSESSMENT/modality_math" in p_test:
+                    data['modality_math'] = p_test["CBECE_ASSESSMENT/modality_math"]
+
+                if "CBECE_ASSESSMENT/math" in p_test:
+                    data['math'] = p_test["CBECE_ASSESSMENT/math"]
+
+                if "CBECE_ASSESSMENT/attended_social" in p_test:
+                    data['attended_social'] = p_test["CBECE_ASSESSMENT/attended_social"]
+
+                if "CBECE_ASSESSMENT/modality_social" in p_test:
+                    data['modality_social'] = p_test["CBECE_ASSESSMENT/modality_social"]
+
+                if "CBECE_ASSESSMENT/social_emotional" in p_test:
+                    data['social_emotional'] = p_test["CBECE_ASSESSMENT/social_emotional"]
+
+                if "CBECE_ASSESSMENT/attended_psychomotor" in p_test:
+                    data['attended_psychomotor'] = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+
+                if "CBECE_ASSESSMENT/modality_psychomotor" in p_test:
+                    data['modality_psychomotor'] = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+
+                if "CBECE_ASSESSMENT/psychomotor" in p_test:
+                    data['psychomotor'] = p_test["CBECE_ASSESSMENT/psychomotor"]
+
+                if "CBECE_ASSESSMENT/attended_science" in p_test:
+                    data['attended_science'] = p_test["CBECE_ASSESSMENT/attended_science"]
+
+                if "CBECE_ASSESSMENT/modality_science" in p_test:
+                    data['modality_science'] = p_test["CBECE_ASSESSMENT/modality_science"]
+
+                if "CBECE_ASSESSMENT/science" in p_test:
+                    data['science'] = p_test["CBECE_ASSESSMENT/science"]
+
+                if "CBECE_ASSESSMENT/attended_artistic" in p_test:
+                    data['attended_artistic'] = p_test["CBECE_ASSESSMENT/attended_artistic"]
+
+                if "CBECE_ASSESSMENT/modality_artistic" in p_test:
+                    data['modality_artistic'] = p_test["CBECE_ASSESSMENT/modality_artistic"]
+
+                if "CBECE_ASSESSMENT/artistic" in p_test:
+                    data['artistic'] = p_test["CBECE_ASSESSMENT/artistic"]
+
             return CBECEForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
