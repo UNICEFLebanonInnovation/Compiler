@@ -3879,7 +3879,6 @@ class CBECEForm(CommonForm):
         if instance:
             display_registry = ' d-none'
             form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-
             if instance.cycle_id == 3:
                 display_final_grade = ''
 

@@ -843,6 +843,14 @@ function reorganizeForm()
         $('#labour_details_1').removeClass('d-none');
         $('#labour_details_2').removeClass('d-none');
     }
+    else
+    {
+        $('#id_labours_single_selection').val('')
+        $('#id_labours_other_specify').val('')
+        $('#id_labour_hours').val('')
+        $('#id_labour_weekly_income').val('')
+
+    }
 
      // labour_selection
     $('div#div_id_labours_other_specify').addClass('d-none');
@@ -850,6 +858,10 @@ function reorganizeForm()
     if(labour_selection =='other_many_other'){
         $('div#div_id_labours_other_specify').removeClass('d-none');
         $('#span_labours_other_specify').removeClass('d-none');
+    }
+    else
+    {
+        $('#id_labours_other_specify').val('');
     }
 
     if(id_type == 'UNHCR Registered'){

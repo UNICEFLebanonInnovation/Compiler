@@ -295,6 +295,7 @@ class BLNSerializer(CLMSerializer):
             'covid_parents_message_how_often',
             'follow_up_done',
             'follow_up_done_with_who',
+            'labours_other_specify',
         )
 
 
@@ -383,6 +384,7 @@ class ABLNSerializer(CLMSerializer):
             'covid_parents_message_how_often',
             'follow_up_done',
             'follow_up_done_with_who',
+            'labours_other_specify',
         )
 
 
@@ -508,6 +510,7 @@ class CBECESerializer(CLMSerializer):
             'covid_parents_message_how_often',
             'follow_up_done',
             'follow_up_done_with_who',
+            'labours_other_specify',
 
         )
 
