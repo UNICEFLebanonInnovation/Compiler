@@ -145,6 +145,7 @@ $(document).ready(function(){
 
     reorganizeForm();
     reorganizeForm_post_assessment();
+
     $(document).on('change', 'select#id_level', function(){
 
          if($(document).find('#id_exam_result_arabic').length == 1) {
@@ -196,6 +197,12 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_labours_single_selection', function(){
          reorganizeForm();
     });
+
+
+    $(document).on('change', 'select#id_student_family_status', function(){
+         reorganizeForm();
+    });
+
     $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
         reorganizeForm();
 
@@ -214,6 +221,11 @@ $(document).ready(function(){
             $('#id_caretaker_first_name').val(student_father_name);
             $('#id_caretaker_last_name').val(student_last_name);
         }
+        else if(main_caregiver == 'mother'){
+            var student_mother_name = $('#id_student_mother_fullname').val();
+            $('#id_caretaker_mother_name').val(student_mother_name);
+        }
+
         else if(main_caregiver == 'other'){
             $('div#div_id_other_caregiver_relationship').removeClass('d-none');
             $('#span_other_caregiver_relationship').removeClass('d-none');
@@ -732,7 +744,7 @@ function reorganizeForm()
     var id_type = $('select#id_id_type').val();
     var nationality = $('select#id_student_nationality').val();
     var education_status = $('select#id_education_status').val();
-    // var family_status = $('select#id_student_family_status').val();
+    var family_status = $('select#id_student_family_status').val();
     var have_children = $('input[name=student_have_children]:checked').val();
     var have_labour = $('select#id_have_labour_single_selection').val();
     var labour_selection = $('select#id_labours_single_selection').val();
@@ -826,6 +838,19 @@ function reorganizeForm()
         $('#span_reasons_not_engaged_other').addClass('d-none');
     }
 
+    if(family_status =='single'){
+        $('div#id_student_number_children').addClass('d-none');
+        $('#span_student_number_children').addClass('d-none');
+        $('#id_student_number_children').val('');
+        $('div#div_id_student_have_children').addClass('d-none');
+        $('#span_student_have_children').addClass('d-none');
+    }else{
+        $('div#id_student_number_children').removeClass('d-none');
+        $('#span_student_number_children').removeClass('d-none');
+        $('div#div_id_student_have_children').removeClass('d-none');
+        $('#span_student_have_children').removeClass('d-none');
+    }
+
     // have_children
     $('div#div_id_student_number_children').addClass('d-none');
     $('#span_student_number_children').addClass('d-none');
@@ -906,13 +931,6 @@ function reorganizeForm()
         $('#span_other_caregiver_relationship').addClass('d-none');
         }
 
-//    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
-//        $('div#student_have_children').removeClass('d-none');
-//        $('div#student_have_children').prev().removeClass('d-none');
-//    }else{
-//        $('div#student_have_children').addClass('d-none');
-//        $('div#student_have_children').prev().addClass('d-none');
-//    }
 
     if(id_cycle == '3'){
         $('option[value=graduated_to_formal_kg]').show();

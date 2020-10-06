@@ -1437,6 +1437,38 @@ class BLNForm(CommonForm):
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
 
+        # grades Max Value validation
+        registration_level = cleaned_data.get("registration_level")
+        arabic = cleaned_data.get("arabic")
+        english = cleaned_data.get("english")
+        math = cleaned_data.get("arabic")
+        social_emotional = cleaned_data.get("social_emotional")
+        psychomotor = cleaned_data.get("psychomotor")
+
+        if registration_level == 'level_one':
+            if arabic > 44:
+                self.add_error('arabic', 'This value is greater that 44')
+            if english > 36:
+                self.add_error('english', 'This value is greater that 36')
+            if math > 18:
+                self.add_error('math', 'This value is greater that 18')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+        else:
+            if arabic > 52:
+                self.add_error('arabic', 'This value is greater that 52')
+            if english > 56:
+                self.add_error('english', 'This value is greater that 56')
+            if math > 30:
+                self.add_error('math', 'This value is greater that 30')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+
+
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
         instance.pre_test = {
@@ -1833,7 +1865,7 @@ class ABLNForm(CommonForm):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
-            ('bln', _('BLN'))
+            # ('bln', _('BLN'))
         ),
         initial=''
     )
@@ -1860,28 +1892,28 @@ class ABLNForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    attended_english = forms.ChoiceField(
-        label=_("Attended English test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_english = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
-    )
-    english = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
+    # attended_english = forms.ChoiceField(
+    #     label=_("Attended English test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    # modality_english = forms.ChoiceField(
+    #     label=_("Please indicate modality"),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('online', _("Online Forms")),
+    #         ('phone', _("Phone / Whatasapp")),
+    #         ('parents', _("Asking Parents")),
+    #         ('offline', _("Offline(F2F)"))
+    #     )
+    # )
+    # english = forms.FloatField(
+    #     label=_('Results'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
     attended_math = forms.ChoiceField(
         label=_("Attended Math test"),
         widget=forms.Select, required=True,
@@ -2350,41 +2382,41 @@ class ABLNForm(CommonForm):
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
+                # Div(
+                #     HTML('<span class="badge badge-default">2</span>'),
+                #     Div('attended_english', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                #     Div('modality_english', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                #     Div('english', css_class='col-md-2'),
+                #     css_class='row',
+                # ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
-                    Div('english', css_class='col-md-2'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">2.1</span>'),
                     Div('modality_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">2.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">3.1</span>'),
                     Div('modality_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">3.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">4.1</span>'),
                     Div('modality_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">4.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -2627,6 +2659,37 @@ class ABLNForm(CommonForm):
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
 
+        #grades Max Value validation
+        registration_level = cleaned_data.get("registration_level")
+        arabic = cleaned_data.get("arabic")
+        english = cleaned_data.get("english")
+        math = cleaned_data.get("arabic")
+        social_emotional = cleaned_data.get("social_emotional")
+        psychomotor = cleaned_data.get("psychomotor")
+
+        if registration_level == 'level_one':
+            if arabic > 40:
+                self.add_error('arabic', 'This value is greater that 40')
+            # if english > '36':
+            #     self.add_error('english', 'This value is greater that 36')
+            if math > 20:
+                self.add_error('math', 'This value is greater that 20')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+        else:
+            if arabic > 52:
+                self.add_error('arabic', 'This value is greater that 52')
+            # if english > 56:
+            #     self.add_error('english', 'This value is greater that 56')
+            if math > 34:
+                self.add_error('math', 'This value is greater that 34')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+
     def save(self, request=None, instance=None, serializer=None):
         instance = super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
         instance.pre_test = {
@@ -2634,9 +2697,9 @@ class ABLNForm(CommonForm):
             "ABLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
             "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
-            "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
-            "ABLN_ASSESSMENT/english": request.POST.get('english'),
+            # "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
+            # "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+            # "ABLN_ASSESSMENT/english": request.POST.get('english'),
 
             "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
             "ABLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
@@ -4279,31 +4342,31 @@ class CBECEForm(CommonForm):
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">5.1</span>'),
                     Div('modality_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">5.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">6.1</span>'),
                     Div('modality_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">6.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">7.1</span>'),
                     Div('modality_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_artistic">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_artistic">7.2</span>'),
                     Div('artistic', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -4570,6 +4633,48 @@ class CBECEForm(CommonForm):
             if other_number != other_number_confirm:
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
+
+        #grades Max Value validation
+        registration_level = cleaned_data.get("registration_level")
+        arabic = cleaned_data.get("arabic")
+        english = cleaned_data.get("english")
+        math = cleaned_data.get("arabic")
+        social_emotional = cleaned_data.get("social_emotional")
+        psychomotor = cleaned_data.get("psychomotor")
+        science = cleaned_data.get("science")
+        artistic = cleaned_data.get("artistic")
+
+        if registration_level == 'level_one':
+            if arabic > 48:
+                self.add_error('arabic', 'This value is greater that 48')
+            if english > 48:
+                self.add_error('english', 'This value is greater that 48')
+            if math > 44:
+                self.add_error('math', 'This value is greater that 44')
+            if social_emotional > 40:
+                self.add_error('social_emotional', 'This value is greater that 40')
+            if psychomotor > 34:
+                self.add_error('psychomotor', 'This value is greater that 34')
+            if science > 36:
+                self.add_error('science', 'This value is greater that 24')
+            if artistic > 12:
+                self.add_error('artistic', 'This value is greater that 12')
+        else:
+            if arabic > 60:
+                self.add_error('arabic', 'This value is greater that 60')
+            if english > 60:
+                self.add_error('english', 'This value is greater that 60')
+            if math > 46:
+                self.add_error('math', 'This value is greater that 46')
+            if social_emotional > 40:
+                self.add_error('social_emotional', 'This value is greater that 40')
+            if psychomotor > 36:
+                self.add_error('psychomotor', 'This value is greater that 36')
+            if science > 36:
+                self.add_error('science', 'This value is greater that 24')
+            if artistic > 12:
+                self.add_error('artistic', 'This value is greater that 12')
+
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer)

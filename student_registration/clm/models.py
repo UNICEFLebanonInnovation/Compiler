@@ -1569,7 +1569,7 @@ class ABLN(CLM):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
-            ('bln', _('BLN'))
+            # ('bln', _('BLN'))
         ),
         verbose_name=_('Source of identification of the child')
     )
