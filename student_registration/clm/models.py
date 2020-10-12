@@ -220,6 +220,7 @@ class CLM(TimeStampedModel):
         ('', '----------'),
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
     )
     first_attendance_date = models.DateField(
         blank=True,
@@ -1208,8 +1209,8 @@ class BLN(CLM):
         ('', '----------'),
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
     )
-
     MAIN_CAREGIVER = (
         ('', '----------'),
         ('mother', _('Mother')),

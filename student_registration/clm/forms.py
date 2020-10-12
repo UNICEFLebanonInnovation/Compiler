@@ -348,7 +348,14 @@ class CommonForm(forms.ModelForm):
 
 class BLNForm(CommonForm):
 
-    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
+
+    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 8)))
     YEARS_BLN.insert(0, ('', '---------'))
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
@@ -1441,7 +1448,7 @@ class BLNForm(CommonForm):
         registration_level = cleaned_data.get("registration_level")
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
-        math = cleaned_data.get("arabic")
+        math = cleaned_data.get("math")
         social_emotional = cleaned_data.get("social_emotional")
         psychomotor = cleaned_data.get("psychomotor")
 
@@ -1456,13 +1463,24 @@ class BLNForm(CommonForm):
                 self.add_error('social_emotional', 'This value is greater that 24')
             if psychomotor > 8:
                 self.add_error('psychomotor', 'This value is greater that 8')
-        else:
+        elif registration_level == 'level_two':
             if arabic > 52:
                 self.add_error('arabic', 'This value is greater that 52')
             if english > 56:
                 self.add_error('english', 'This value is greater that 56')
             if math > 30:
                 self.add_error('math', 'This value is greater that 30')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+        else:
+            if arabic > 58:
+                self.add_error('arabic', 'This value is greater that 58')
+            if english > 60:
+                self.add_error('english', 'This value is greater that 60')
+            if math > 32:
+                self.add_error('math', 'This value is greater that 32')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
             if psychomotor > 8:
@@ -1568,9 +1586,9 @@ class BLNForm(CommonForm):
 
 
 class ABLNForm(CommonForm):
-
-    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
+    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 8)))
     YEARS_ABLN.insert(0, ('', '---------'))
+
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         required=False
@@ -2472,6 +2490,7 @@ class ABLNForm(CommonForm):
         labours_single_selection = cleaned_data.get("labours_single_selection")
         labour_hours = cleaned_data.get("labour_hours")
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        student_family_status = cleaned_data.get("student_family_status")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
 
@@ -2539,7 +2558,8 @@ class ABLNForm(CommonForm):
         if main_caregiver == 'other':
             if not other_caregiver_relationship:
                 self.add_error('other_caregiver_relationship', 'This field is required')
-        if student_have_children:
+
+        if student_family_status!='single' and student_have_children:
             if not student_number_children:
                 self.add_error('student_number_children', 'This field is required')
         if have_labour_single_selection != 'no':
@@ -2662,8 +2682,8 @@ class ABLNForm(CommonForm):
         #grades Max Value validation
         registration_level = cleaned_data.get("registration_level")
         arabic = cleaned_data.get("arabic")
-        english = cleaned_data.get("english")
-        math = cleaned_data.get("arabic")
+        # english = cleaned_data.get("english")
+        math = cleaned_data.get("math")
         social_emotional = cleaned_data.get("social_emotional")
         psychomotor = cleaned_data.get("psychomotor")
 
@@ -3413,7 +3433,7 @@ class CBECEForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 1)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 3)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -4638,13 +4658,13 @@ class CBECEForm(CommonForm):
         registration_level = cleaned_data.get("registration_level")
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
-        math = cleaned_data.get("arabic")
+        math = cleaned_data.get("math")
         social_emotional = cleaned_data.get("social_emotional")
         psychomotor = cleaned_data.get("psychomotor")
         science = cleaned_data.get("science")
         artistic = cleaned_data.get("artistic")
 
-        if registration_level == 'level_one':
+        if registration_level == 'level_two':
             if arabic > 48:
                 self.add_error('arabic', 'This value is greater that 48')
             if english > 48:
@@ -4656,7 +4676,7 @@ class CBECEForm(CommonForm):
             if psychomotor > 34:
                 self.add_error('psychomotor', 'This value is greater that 34')
             if science > 36:
-                self.add_error('science', 'This value is greater that 24')
+                self.add_error('science', 'This value is greater that 36')
             if artistic > 12:
                 self.add_error('artistic', 'This value is greater that 12')
         else:
@@ -4671,7 +4691,7 @@ class CBECEForm(CommonForm):
             if psychomotor > 36:
                 self.add_error('psychomotor', 'This value is greater that 36')
             if science > 36:
-                self.add_error('science', 'This value is greater that 24')
+                self.add_error('science', 'This value is greater that 36')
             if artistic > 12:
                 self.add_error('artistic', 'This value is greater that 12')
 

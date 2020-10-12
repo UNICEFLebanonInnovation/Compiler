@@ -839,11 +839,12 @@ function reorganizeForm()
     }
 
     if(family_status =='single'){
-        $('div#id_student_number_children').addClass('d-none');
-        $('#span_student_number_children').addClass('d-none');
         $('#id_student_number_children').val('');
+        $('div#div_id_student_number_children').addClass('d-none');
+        $('#span_student_number_children').addClass('d-none');
         $('div#div_id_student_have_children').addClass('d-none');
         $('#span_student_have_children').addClass('d-none');
+        $('#div_id_student_have_children').val(0);
     }else{
         $('div#id_student_number_children').removeClass('d-none');
         $('#span_student_number_children').removeClass('d-none');
