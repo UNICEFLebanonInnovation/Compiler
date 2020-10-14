@@ -200,7 +200,7 @@ $(document).ready(function(){
 
 
     $(document).on('change', 'select#id_student_family_status', function(){
-         reorganizeForm();
+         family_status_single();
     });
 
     $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
@@ -239,14 +239,25 @@ $(document).ready(function(){
         }
     });
 
+    $(document).on('change', 'select#id_main_caregiver_nationality', function(){
+
+        var nationality = $('select#id_main_caregiver_nationality').val();
+        $('div#div_id_main_caregiver_nationality_other').addClass('d-none');
+        $('#span_main_caregiver_nationality_other').addClass('d-none');
+
+        if(nationality == 6){
+            $('div#div_id_main_caregiver_nationality_other').removeClass('d-none');
+            $('#span_main_caregiver_nationality_other').removeClass('d-none');
+        }
+        else {
+            $('#id_main_caregiver_nationality_other').val('');
+        }
+    });
 
     $(document).on('click', 'input[name=student_have_children]', function(){
         reorganizeForm();
     });
 
-    // $(document).on('click', 'input[name=have_labour]', function(){
-    //     reorganizeForm();
-    // });
 
     $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
          verify_age_level();
@@ -750,6 +761,7 @@ function reorganizeForm()
     var labour_selection = $('select#id_labours_single_selection').val();
     var main_caregiver = $('select#id_main_caregiver').val();
 
+
     var covid_message = $('select#id_covid_message').val();
     var covid_parents_message = $('select#id_covid_parents_message').val();
     var gender_participate = $('select#id_gender_participate').val();
@@ -838,19 +850,6 @@ function reorganizeForm()
         $('#span_reasons_not_engaged_other').addClass('d-none');
     }
 
-    if(family_status =='single'){
-        $('#id_student_number_children').val('');
-        $('div#div_id_student_number_children').addClass('d-none');
-        $('#span_student_number_children').addClass('d-none');
-        $('div#div_id_student_have_children').addClass('d-none');
-        $('#span_student_have_children').addClass('d-none');
-        $('#div_id_student_have_children').val(0);
-    }else{
-        $('div#id_student_number_children').removeClass('d-none');
-        $('#span_student_number_children').removeClass('d-none');
-        $('div#div_id_student_have_children').removeClass('d-none');
-        $('#span_student_have_children').removeClass('d-none');
-    }
 
     // have_children
     $('div#div_id_student_number_children').addClass('d-none');
@@ -923,11 +922,11 @@ function reorganizeForm()
     }
 
 
-        if(main_caregiver == 'other'){
-            $('div#div_id_other_caregiver_relationship').removeClass('d-none');
-            $('#span_other_caregiver_relationship').removeClass('d-none');
-        }
-        else {
+    if(main_caregiver == 'other'){
+        $('div#div_id_other_caregiver_relationship').removeClass('d-none');
+        $('#span_other_caregiver_relationship').removeClass('d-none');
+    }
+    else {
         $('div#div_id_other_caregiver_relationship').addClass('d-none');
         $('#span_other_caregiver_relationship').addClass('d-none');
         }
@@ -1028,6 +1027,27 @@ function reorganizeForm()
 
     reorganizeForm_post_assessment();
 
+}
+
+
+function family_status_single()
+{
+    var family_status = $('select#id_student_family_status').val();
+
+    $('div#div_id_student_have_children').addClass('d-none');
+    $('#span_student_have_children').addClass('d-none');
+    if(family_status !='single'){
+        $('div#div_id_student_have_children').removeClass('d-none');
+        $('#span_student_have_children').removeClass('d-none');
+    }
+    else{
+        $('input:radio[name=student_have_children]').filter('[value=0]').prop('checked', true);
+        $('#id_student_number_children').val('');
+        $('div#div_id_student_number_children').addClass('d-none');
+        $('#span_student_number_children').addClass('d-none');
+
+
+    }
 }
 
 function reorganizeForm_post_assessment()

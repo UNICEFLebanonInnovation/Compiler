@@ -57,7 +57,6 @@ from .utils import is_allowed_create, is_allowed_edit
 class CLMView(LoginRequiredMixin,
               GroupRequiredMixin,
               TemplateView):
-
     template_name = 'clm/index.html'
 
     group_required = [u"CLM"]
@@ -84,7 +83,6 @@ def assessment_form(instance_id, stage, enrollment_model, assessment_slug, callb
 class BLNAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
-
     template_name = 'clm/bln_create_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
@@ -102,7 +100,8 @@ class BLNAddView(LoginRequiredMixin,
                 enrollment_model='BLN',
                 assessment_slug='bln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
-                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -145,7 +144,6 @@ class BLNAddView(LoginRequiredMixin,
 class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
-
     template_name = 'clm/bln_edit_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
@@ -163,7 +161,8 @@ class BLNEditView(LoginRequiredMixin,
                 enrollment_model='BLN',
                 assessment_slug='bln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
-                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -235,9 +234,10 @@ class BLNEditView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(BLNEditView, self).form_valid(form)
 
-class BLNMonitoringQuestionerView( LoginRequiredMixin,
-                                      GroupRequiredMixin,
-                                      FormView):
+
+class BLNMonitoringQuestionerView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  FormView):
     template_name = 'clm/bln_monitoring_questioner.html'
     form_class = BLNMonitoringQuestionerForm
     success_url = '/clm/bln-list/'
@@ -264,11 +264,8 @@ class BLNMonitoringQuestionerView( LoginRequiredMixin,
         return super(BLNMonitoringQuestionerView, self).form_valid(form)
 
 
-
-
 @method_decorator(csrf_exempt, name='dispatch')
 class AssessmentSubmission(SingleObjectMixin, View):
-
     model = RS
     slug_url_kwarg = 'status'
 
@@ -310,7 +307,6 @@ class BLNListView(LoginRequiredMixin,
                   ExportMixin,
                   SingleTableView,
                   RequestConfig):
-
     table_class = BLNTable
     model = BLN
     template_name = 'clm/bln_list.html'
@@ -321,13 +317,13 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(partner=self.request.user.partner_id, created__year= Person.CURRENT_YEAR).order_by('-id')
+        return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
+            '-id')
 
 
 class BLNReferralView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
-
     template_name = 'clm/bln_referral.html'
     form_class = BLNReferralForm
     success_url = '/clm/bln-list/'
@@ -357,7 +353,6 @@ class BLNReferralView(LoginRequiredMixin,
 class BLNFollowupView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
-
     template_name = 'clm/bln_followup.html'
     form_class = BLNFollowupForm
     success_url = '/clm/bln-list/'
@@ -387,7 +382,6 @@ class BLNFollowupView(LoginRequiredMixin,
 class BLNDashboardView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        TemplateView):
-
     template_name = 'clm/bln_dashboard.html'
     model = BLN
     group_required = [u"CLM_BLN"]
@@ -418,7 +412,6 @@ class BLNDashboardView(LoginRequiredMixin,
         repeat_class_female = repeat_class.filter(student__sex='Female')
 
         for gov in governorates:
-
             total_gov = queryset.filter(governorate=gov).count()
             total_male_gov = total_male.filter(governorate=gov).count()
             total_female_gov = total_female.filter(governorate=gov).count()
@@ -436,8 +429,10 @@ class BLNDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0.0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov),
+                                         2) if total_male_gov else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov),
+                                           2) if total_female_gov else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
                     participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
@@ -467,8 +462,10 @@ class BLNDashboardView(LoginRequiredMixin,
                     participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
                                              2) if attendance_gov else 0.0,
 
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
+                                         2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                                           2) if total_gov else 0.0,
             })
 
         return {
@@ -481,7 +478,6 @@ class BLNDashboardView(LoginRequiredMixin,
 class ABLNAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
-
     template_name = 'clm/abln_create_form.html'
     form_class = ABLNForm
     success_url = '/clm/abln-list/'
@@ -499,7 +495,8 @@ class ABLNAddView(LoginRequiredMixin,
                 enrollment_model='ABLN',
                 assessment_slug='abln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
-                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -542,7 +539,6 @@ class ABLNAddView(LoginRequiredMixin,
 class ABLNEditView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
-
     template_name = 'clm/abln_edit_form.html'
     form_class = ABLNForm
     success_url = '/clm/abln-list/'
@@ -560,7 +556,8 @@ class ABLNEditView(LoginRequiredMixin,
                 enrollment_model='ABLN',
                 assessment_slug='abln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
-                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -632,9 +629,10 @@ class ABLNEditView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(ABLNEditView, self).form_valid(form)
 
-class ABLNMonitoringQuestionerView( LoginRequiredMixin,
-                                      GroupRequiredMixin,
-                                      FormView):
+
+class ABLNMonitoringQuestionerView(LoginRequiredMixin,
+                                   GroupRequiredMixin,
+                                   FormView):
     template_name = 'clm/abln_monitoring_questioner.html'
     form_class = ABLNMonitoringQuestionerForm
     success_url = '/clm/abln-list/'
@@ -667,7 +665,6 @@ class ABLNListView(LoginRequiredMixin,
                    ExportMixin,
                    SingleTableView,
                    RequestConfig):
-
     table_class = ABLNTable
     model = ABLN
     template_name = 'clm/abln_list.html'
@@ -678,13 +675,13 @@ class ABLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
+        return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
+            '-id')
 
 
 class ABLNReferralView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        FormView):
-
     template_name = 'clm/abln_referral.html'
     form_class = ABLNReferralForm
     success_url = '/clm/abln-list/'
@@ -714,7 +711,6 @@ class ABLNReferralView(LoginRequiredMixin,
 class ABLNPostAssessmentView(LoginRequiredMixin,
                              GroupRequiredMixin,
                              FormView):
-
     template_name = 'clm/abln_post_assessment.html'
     form_class = ABLNAssessmentForm
     success_url = '/clm/abln-list/'
@@ -744,7 +740,6 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
 class BLNPostAssessmentView(LoginRequiredMixin,
                             GroupRequiredMixin,
                             FormView):
-
     template_name = 'clm/bln_post_assessment.html'
     form_class = BLNAssessmentForm
     success_url = '/clm/bln-list/'
@@ -774,7 +769,6 @@ class BLNPostAssessmentView(LoginRequiredMixin,
 class CBECEPostAssessmentView(LoginRequiredMixin,
                               GroupRequiredMixin,
                               FormView):
-
     template_name = 'clm/cbece_post_assessment.html'
     form_class = CBECEAssessmentForm
     success_url = '/clm/cbece-list/'
@@ -804,7 +798,6 @@ class CBECEPostAssessmentView(LoginRequiredMixin,
 class ABLNFollowupView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        FormView):
-
     template_name = 'clm/abln_followup.html'
     form_class = ABLNFollowupForm
     success_url = '/clm/abln-list/'
@@ -834,7 +827,6 @@ class ABLNFollowupView(LoginRequiredMixin,
 class RSDashboardView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       TemplateView):
-
     template_name = 'clm/rs_dashboard.html'
     model = RS
     group_required = [u"CLM_RS"]
@@ -889,8 +881,10 @@ class RSDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0.0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov),
+                                         2) if total_male_gov else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov),
+                                           2) if total_female_gov else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
                     participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
@@ -920,14 +914,15 @@ class RSDashboardView(LoginRequiredMixin,
                     participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
                                              2) if attendance_gov else 0.0,
 
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
-
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
+                                         2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                                           2) if total_gov else 0.0,
 
                 'repetition_male1': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
-                                         2) if total_gov else 0.0,
+                                          2) if total_gov else 0.0,
                 'repetition_female1': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
-                                           2) if total_gov else 0.0,
+                                            2) if total_gov else 0.0,
             })
 
             dis_count = []
@@ -950,9 +945,8 @@ class RSDashboardView(LoginRequiredMixin,
 
 
 class CBECEDashboardView(LoginRequiredMixin,
-                      GroupRequiredMixin,
-                      TemplateView):
-
+                         GroupRequiredMixin,
+                         TemplateView):
     template_name = 'clm/cbece_dashboard.html'
     model = CBECE
     group_required = [u"CLM_CBECE"]
@@ -984,7 +978,6 @@ class CBECEDashboardView(LoginRequiredMixin,
         repeat_class_female = repeat_class.filter(student__sex='Female')
 
         for gov in governorates:
-
             total_gov = queryset.filter(governorate=gov).count()
             total_male_gov = total_male.filter(governorate=gov)
             total_female_gov = total_female.filter(governorate=gov)
@@ -1002,8 +995,10 @@ class CBECEDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov.count()), 2) if total_male_gov.count() else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.count()), 2) if total_female_gov.count() else 0.0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov.count()),
+                                         2) if total_male_gov.count() else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.count()),
+                                           2) if total_female_gov.count() else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
                     participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
@@ -1033,24 +1028,56 @@ class CBECEDashboardView(LoginRequiredMixin,
                     participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
                                              2) if attendance_gov else 0.0,
 
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
+                                         2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                                           2) if total_gov else 0.0,
             })
 
-            d1_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d1_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d1_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]),
+                                              post=RawSQL("((scores->>'post_LanguageArtDomain')::float)",
+                                                          params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d1_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]),
+                                                  post=RawSQL("((scores->>'post_LanguageArtDomain')::float)",
+                                                              params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]),
+                                              post=RawSQL("((scores->>'post_CognitiveDomain')::float)",
+                                                          params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]),
+                                                  post=RawSQL("((scores->>'post_CognitiveDomain')::float)",
+                                                              params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d4_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d4_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d4_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]),
+                                              post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)",
+                                                          params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d4_female = total_female_gov.annotate(
+                pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d5_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d5_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d5_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]),
+                                              post=RawSQL("((scores->>'post_PsychomotorDomain')::float)",
+                                                          params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d5_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]),
+                                                  post=RawSQL("((scores->>'post_PsychomotorDomain')::float)",
+                                                              params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d6_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d6_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d6_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]),
+                                              post=RawSQL("((scores->>'post_ArtisticDomain')::float)",
+                                                          params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d6_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]),
+                                                  post=RawSQL("((scores->>'post_ArtisticDomain')::float)",
+                                                              params=[])).aggregate(
+                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
             domain_gov.append({
                 'governorate': gov.name,
@@ -1082,7 +1109,6 @@ class CBECEDashboardView(LoginRequiredMixin,
 class RSAddView(LoginRequiredMixin,
                 GroupRequiredMixin,
                 FormView):
-
     template_name = 'clm/create_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
@@ -1100,7 +1126,8 @@ class RSAddView(LoginRequiredMixin,
                 enrollment_model='RS',
                 assessment_slug='rs_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit',
-                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
 
         return self.success_url
 
@@ -1153,7 +1180,6 @@ class RSAddView(LoginRequiredMixin,
 class RSEditView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
-
     template_name = 'clm/edit_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
@@ -1195,7 +1221,6 @@ class RSListView(LoginRequiredMixin,
                  ExportMixin,
                  SingleTableView,
                  RequestConfig):
-
     table_class = RSTable
     model = RS
     template_name = 'clm/rs_list.html'
@@ -1212,7 +1237,6 @@ class RSListView(LoginRequiredMixin,
 class CBECEAddView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
-
     template_name = 'clm/cbece_create_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
@@ -1230,7 +1254,8 @@ class CBECEAddView(LoginRequiredMixin,
                 enrollment_model='CBECE',
                 assessment_slug='cbece_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:cbece_edit',
-                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -1273,7 +1298,6 @@ class CBECEAddView(LoginRequiredMixin,
 class CBECEEditView(LoginRequiredMixin,
                     GroupRequiredMixin,
                     FormView):
-
     template_name = 'clm/cbece_edit_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
@@ -1291,7 +1315,8 @@ class CBECEEditView(LoginRequiredMixin,
                 enrollment_model='CBECE',
                 assessment_slug='cbece_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:cbece_edit',
-                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -1384,9 +1409,9 @@ class CBECEEditView(LoginRequiredMixin,
         return super(CBECEEditView, self).form_valid(form)
 
 
-class CBECEMonitoringQuestionerView( LoginRequiredMixin,
-                                      GroupRequiredMixin,
-                                      FormView):
+class CBECEMonitoringQuestionerView(LoginRequiredMixin,
+                                    GroupRequiredMixin,
+                                    FormView):
     template_name = 'clm/cbece_monitoring_questioner.html'
     form_class = CBECEMonitoringQuestionerForm
     success_url = '/clm/cbece-list/'
@@ -1419,7 +1444,6 @@ class CBECEListView(LoginRequiredMixin,
                     ExportMixin,
                     SingleTableView,
                     RequestConfig):
-
     table_class = CBECETable
     model = CBECE
     template_name = 'clm/cbece_list.html'
@@ -1430,14 +1454,14 @@ class CBECEListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return CBECE.objects.filter(partner=self.request.user.partner_id, round__start_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+        return CBECE.objects.filter(partner=self.request.user.partner_id,
+                                    round__start_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
         # return CBECE.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
 class CBECEReferralView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FormView):
-
+                        GroupRequiredMixin,
+                        FormView):
     template_name = 'clm/cbece_referral.html'
     form_class = CBECEReferralForm
     success_url = '/clm/cbece-list/'
@@ -1465,9 +1489,8 @@ class CBECEReferralView(LoginRequiredMixin,
 
 
 class CBECEFollowupView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FormView):
-
+                        GroupRequiredMixin,
+                        FormView):
     template_name = 'clm/cbece_followup.html'
     form_class = CBECEFollowupForm
     success_url = '/clm/cbece-list/'
@@ -1493,6 +1516,7 @@ class CBECEFollowupView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(CBECEFollowupView, self).form_valid(form)
 
+
 ####################### API VIEWS #############################
 
 
@@ -1501,7 +1525,6 @@ class BLNViewSet(mixins.RetrieveModelMixin,
                  mixins.CreateModelMixin,
                  mixins.UpdateModelMixin,
                  viewsets.GenericViewSet):
-
     model = BLN
     queryset = BLN.objects.all()
     serializer_class = BLNSerializer
@@ -1512,7 +1535,8 @@ class BLNViewSet(mixins.RetrieveModelMixin,
 
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
-            return self.queryset.filter(created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -1529,7 +1553,6 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
                   mixins.CreateModelMixin,
                   mixins.UpdateModelMixin,
                   viewsets.GenericViewSet):
-
     model = ABLN
     queryset = ABLN.objects.all()
     serializer_class = ABLNSerializer
@@ -1540,7 +1563,8 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
 
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
-            return self.queryset.filter(created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -1557,7 +1581,6 @@ class RSViewSet(mixins.RetrieveModelMixin,
                 mixins.CreateModelMixin,
                 mixins.UpdateModelMixin,
                 viewsets.GenericViewSet):
-
     model = RS
     queryset = RS.objects.all()
     serializer_class = RSSerializer
@@ -1581,7 +1604,6 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
                    mixins.CreateModelMixin,
                    mixins.UpdateModelMixin,
                    viewsets.GenericViewSet):
-
     model = CBECE
     queryset = CBECE.objects.all()
     serializer_class = CBECESerializer
@@ -1605,7 +1627,6 @@ class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
                                   mixins.CreateModelMixin,
                                   mixins.UpdateModelMixin,
                                   viewsets.GenericViewSet):
-
     model = SelfPerceptionGrades
     queryset = SelfPerceptionGrades.objects.all()
     serializer_class = SelfPerceptionGradesSerializer
@@ -1615,7 +1636,6 @@ class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
 class CLMStudentViewSet(mixins.RetrieveModelMixin,
                         mixins.ListModelMixin,
                         viewsets.GenericViewSet):
-
     model = BLN
     queryset = BLN.objects.all()
     serializer_class = BLNSerializer
@@ -1644,7 +1664,6 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
 
 
 class BLNExportViewSet(LoginRequiredMixin, ListView):
-
     model = BLN
     queryset = BLN.objects.all()
 
@@ -1654,7 +1673,6 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-
         headers = {
             'id': 'enrollment_id',
             'new_registry': 'First time registered?',
@@ -1666,6 +1684,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'district__name_en': 'District',
             'cadaster__name_en': 'Cadaster',
             'location': 'Location',
+            'student__address': 'Student Address',
             'language': 'The language supported in the program',
             'student__first_name': 'First name',
             'student__father_name': 'Father name',
@@ -1722,7 +1741,6 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'other_number': 'ID number of the child',
             'other_number_confirm': 'ID number of the child confirm',
 
-
             'main_caregiver': 'Main Caregiver',
             'main_caregiver_nationality__name': 'main caregiver nationality',
             'other_caregiver_relationship': 'other caregiver relationship',
@@ -1739,39 +1757,58 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'labour_weekly_income': 'Child weekly income',
             'basic_stationery': 'Did the child receive basic stationery?',
             'pss_kit': 'Did the child benefit from the PSS kit?',
-            'remote_learning': 'Was the child involved in remote learning?' ,
-            'remote_learning_reasons_not_engaged': 'what other reasons for this child not being engaged?' ,
-            'reasons_not_engaged_other': 'reasons not engaged other' ,
-            'reliable_internet': 'Does the family have reliable internet service in their area during remote learning?' ,
-            'gender_participate': 'Did both girls and boys in the same family participate in the class and have access to the phone/device?' ,
-            'gender_participate_explain': 'Explain' ,
-            'remote_learning_engagement': 'Frequency of Child Engagement in remote learning?' ,
-            'meet_learning_outcomes': 'How well did the child meet the learning outcomes?' ,
-            'parent_learning_support_rate': 'How do you rate the parents learning support provided to the child through this Remote learning phase?' ,
-            'covid_message': 'Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?' ,
-            'covid_message_how_often': 'How often?' ,
-            'covid_parents_message': 'Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?' ,
-            'covid_parents_message_how_often': 'How often?' ,
-            'follow_up_done': 'Was any follow-up done to ensure messages were well received, understood and adopted?' ,
-            'follow_up_done_with_who': 'With who child and/or caregiver?' ,
+            'remote_learning': 'Was the child involved in remote learning?',
+            'remote_learning_reasons_not_engaged': 'what other reasons for this child not being engaged?',
+            'reasons_not_engaged_other': 'reasons not engaged other',
+            'reliable_internet': 'Does the family have reliable internet service in their area during remote learning?',
+            'gender_participate': 'Did both girls and boys in the same family participate in the class and have access to the phone/device?',
+            'gender_participate_explain': 'Explain',
+            'remote_learning_engagement': 'Frequency of Child Engagement in remote learning?',
+            'meet_learning_outcomes': 'How well did the child meet the learning outcomes?',
+            'parent_learning_support_rate': 'How do you rate the parents learning support provided to the child through this Remote learning phase?',
+            'covid_message': 'Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?',
+            'covid_message_how_often': 'How often?',
+            'covid_parents_message': 'Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?',
+            'covid_parents_message_how_often': 'How often?',
+            'follow_up_done': 'Was any follow-up done to ensure messages were well received, understood and adopted?',
+            'follow_up_done_with_who': 'With who child and/or caregiver?',
 
             'unsuccessful_pretest_reason': 'Reason why not doing the Pre-test',
             'unsuccessful_posttest_reason': 'Reason why not doing the Post-test',
 
-            'pre_test_arabic': 'Pre-test Arabic Language Development ',
-            'pre_test_foreign_language': 'Pre-test Foreign Language Development',
-            'pre_test_math': 'Pre-test Cognitive Development - Mathematics',
-            'pre_test_social_emotional': 'Pre-test Social-Emotional Development',
-            'pre_test_psychomotor': 'Pre-test Psychomotor Development for children with special need',
-            'pre_test_artistic': 'Pre-test Artistic Development',
-            'pre_test_score': 'Pre-test score',
-            'post_test_arabic': 'Post-test Arabic Language Development ',
-            'post_test_foreign_language': 'Post-test Foreign Language Development',
-            'post_test_math': 'Post-test Cognitive Development - Mathematics',
-            'post_test_social_emotional': 'Post-test Social-Emotional Development',
-            'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
-            'post_test_artistic': 'Post-test Artistic Development',
-            'post_test_score': 'Post-test Score',
+            'pre_test_attended_arabic': 'pre test attended arabic',
+            'pre_test_modality_arabic': 'pre test modality arabic',
+            'pre_test_arabic': 'pre test arabic',
+            'pre_test_attended_english': 'pre test attended english',
+            'pre_test_modality_english': 'pre test modality english',
+            'pre_test_english': 'pre test english',
+            'pre_test_attended_psychomotor': 'pre test attended psychomotor',
+            'pre_test_modality_psychomotor': 'pre test modality psychomotor',
+            'pre_test_psychomotor': 'pre test psychomotor',
+            'pre_test_attended_math': 'pre test attended math',
+            'pre_test_modality_math': 'pre test modality math',
+            'pre_test_math': 'pre test math',
+            'pre_test_attended_social': 'pre test attended social',
+            'pre_test_modality_social': 'pre test modality social',
+            'pre_test_social_emotional': 'pre test social emotional',
+            'pre_test_score': 'pre test score',
+            'post_test_attended_arabic': 'post test attended arabic',
+            'post_test_modality_arabic': 'post test modality arabic',
+            'post_test_arabic': 'post test arabic',
+            'post_test_attended_english': 'post test attended english',
+            'post_test_modality_english': 'post test modality english',
+            'post_test_english': 'post test english',
+            'post_test_attended_psychomotor': 'post test attended psychomotor',
+            'post_test_modality_psychomotor': 'post test modality psychomotor',
+            'post_test_psychomotor': 'post test psychomotor',
+            'post_test_attended_math': 'post test attended math',
+            'post_test_modality_math': 'post test modality math',
+            'post_test_math': 'post test math',
+            'post_test_attended_social': 'post test attended social',
+            'post_test_modality_social': 'post test modality social',
+            'post_test_social_emotional': 'post test social emotional',
+            'post_test_score': 'post test score',
+
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
@@ -1811,173 +1848,231 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         }
 
         field_list = (
-         'id'
-         'new_registry',
-         'partner__name',
-         'source_of_identification',
-         'first_attendance_date',
-         'round__name',
-         'governorate__name_en',
-         'district__name_en',
-         'cadaster__name_en',
-         'location',
-         'language',
-         'student__first_name',
-         'student__father_name',
-         'student__last_name',
-         'student__sex',
-         'student__birthday_day',
-         'student__birthday_month',
-         'student__birthday_year',
-         'student__nationality__name',
-         'other_nationality',
-         'student__mother_fullname',
-         'student__p_code'
-         'student__id_number'
-         'student__number',
-         'student__family_status',
-         'student__have_children',
-         'student_number_children',
-         'disability__name_en',
-         'internal_number',
-         'education_status',
+            'id'
+            'new_registry',
+            'partner__name',
+            'source_of_identification',
+            'first_attendance_date',
+            'round__name',
+            'governorate__name_en',
+            'district__name_en',
+            'cadaster__name_en',
+            'location',
+            'student__address',
+            'language',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__nationality__name',
+            'other_nationality',
+            'student__mother_fullname',
+            'student__p_code'
+            'student__id_number'
+            'student__number',
+            'student__family_status',
+            'student__have_children',
+            'student_number_children',
+            'disability__name_en',
+            'internal_number',
+            'education_status',
 
-         'phone_number',
-         'phone_number_confirm',
-         'phone_owner',
-         'second_phone_number',
-         'second_phone_number_confirm',
-         'second_phone_owner',
+            'phone_number',
+            'phone_number_confirm',
+            'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
+            'second_phone_owner',
 
-         'id_type',
-         'case_number',
-         'case_number_confirm',
-         'individual_case_number',
-         'individual_case_number_confirm',
-         'parent_individual_case_number',
-         'parent_individual_case_number_confirm',
-         'recorded_number',
-         'recorded_number_confirm',
-         'national_number',
-         'national_number_confirm',
-         'syrian_national_number',
-         'syrian_national_number_confirm',
-         'sop_national_number',
-         'sop_national_number_confirm',
-         'parent_national_number',
-         'parent_national_number_confirm',
-         'parent_syrian_national_number',
-         'parent_syrian_national_number_confirm',
-         'parent_sop_national_number',
-         'parent_sop_national_number_confirm',
-         'parent_other_number', 'ID number of the Caretaker',
-         'parent_other_number_confirm',
-         'other_number',
-         'other_number_confirm',
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'parent_individual_case_number',
+            'parent_individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'national_number',
+            'national_number_confirm',
+            'syrian_national_number',
+            'syrian_national_number_confirm',
+            'sop_national_number',
+            'sop_national_number_confirm',
+            'parent_national_number',
+            'parent_national_number_confirm',
+            'parent_syrian_national_number',
+            'parent_syrian_national_number_confirm',
+            'parent_sop_national_number',
+            'parent_sop_national_number_confirm',
+            'parent_other_number', 'ID number of the Caretaker',
+            'parent_other_number_confirm',
+            'other_number',
+            'other_number_confirm',
 
-         'main_caregiver',
-         'main_caregiver_nationality__name',
-         'other_caregiver_relationship',
-         'caretaker_first_name',
-         'caretaker_middle_name',
-         'caretaker_last_name',
-         'caretaker_mother_name',
+            'main_caregiver',
+            'main_caregiver_nationality__name',
+            'other_caregiver_relationship',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
 
-         'hh_educational_level__name',
-         'father_educational_level__name',
-         'have_labour_single_selection',
-         'labours_single_selection',
-         'labour_hours',
-         'labour_weekly_income',
-         'basic_stationery',
-         'pss_kit',
-         'remote_learning',
-         'remote_learning_reasons_not_engaged',
-         'reasons_not_engaged_other',
-         'reliable_internet',
-         'gender_participate',
-         'gender_participate_explain',
-         'remote_learning_engagement',
-         'meet_learning_outcomes',
-         'parent_learning_support_rate',
-         'covid_message',
-         'covid_message_how_often',
-         'covid_parents_message',
-         'covid_parents_message_how_often',
-         'follow_up_done',
-         'follow_up_done_with_who',
+            'hh_educational_level__name',
+            'father_educational_level__name',
+            'have_labour_single_selection',
+            'labours_single_selection',
+            'labour_hours',
+            'labour_weekly_income',
+            'basic_stationery',
+            'pss_kit',
+            'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other',
+            'reliable_internet',
+            'gender_participate',
+            'gender_participate_explain',
+            'remote_learning_engagement',
+            'meet_learning_outcomes',
+            'parent_learning_support_rate',
+            'covid_message',
+            'covid_message_how_often',
+            'covid_parents_message',
+            'covid_parents_message_how_often',
+            'follow_up_done',
+            'follow_up_done_with_who',
 
-         'unsuccessful_pretest_reason',
-         'unsuccessful_posttest_reason',
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
 
-         'pre_test_arabic',
-         'pre_test_foreign_language',
-         'pre_test_math',
-         'pre_test_social_emotional',
-         'pre_test_psychomotor',
-         'pre_test_artistic',
-         'pre_test_score',
-         'post_test_arabic',
-         'post_test_foreign_language',
-         'post_test_math',
-         'post_test_social_emotional',
-         'post_test_psychomotor',
-         'post_test_artistic',
-         'post_test_score',
-         'participation',
-         'barriers',
-         'learning_result',
-         'student_outreached',
-         'have_barcode',
-         'owner__username',
-         'modified_by__username',
-         'created',
-         'modified',
+            'pre_test_attended_arabic',
+            'pre_test_modality_arabic',
+            'pre_test_arabic',
 
-         'referral_programme_type_1',
-         'referral_partner_1',
-         'referral_date_1',
-         'confirmation_date_1',
+            'pre_test_attended_english',
+            'pre_test_modality_english',
+            'pre_test_english',
 
-         'referral_programme_type_2',
-         'referral_partner_2',
-         'referral_date_2',
-         'confirmation_date_2',
+            'pre_test_attended_psychomotor',
+            'pre_test_modality_psychomotor',
+            'pre_test_psychomotor',
 
-         'referral_programme_type_3',
-         'referral_partner_3',
-         'referral_date_3',
-         'confirmation_date_3',
+            'pre_test_attended_math',
+            'pre_test_modality_math',
+            'pre_test_math',
 
-         'followup_call_date_1',
-         'followup_call_reason_1',
-         'followup_call_result_1',
+            'pre_test_attended_social',
+            'pre_test_modality_social',
+            'pre_test_social_emotional',
 
-         'followup_call_date_2',
-         'followup_call_reason_2',
-         'followup_call_result_2',
+            'pre_test_score',
 
-         'followup_visit_date_1',
-         'followup_visit_reason_1',
-         'followup_visit_result_1'
+            'post_test_attended_arabic',
+            'post_test_modality_arabic',
+            'post_test_arabic',
+
+            'post_test_attended_english',
+            'post_test_modality_english',
+            'post_test_english',
+
+            'post_test_attended_psychomotor',
+            'post_test_modality_psychomotor',
+            'post_test_psychomotor',
+
+            'post_test_attended_math',
+            'post_test_modality_math',
+            'post_test_math',
+
+            'post_test_attended_social',
+            'post_test_modality_social',
+            'post_test_social_emotional',
+
+            'post_test_score',
+
+            'participation',
+            'barriers',
+            'learning_result',
+            'student_outreached',
+            'have_barcode',
+            'owner__username',
+            'modified_by__username',
+            'created',
+            'modified',
+
+            'referral_programme_type_1',
+            'referral_partner_1',
+            'referral_date_1',
+            'confirmation_date_1',
+
+            'referral_programme_type_2',
+            'referral_partner_2',
+            'referral_date_2',
+            'confirmation_date_2',
+
+            'referral_programme_type_3',
+            'referral_partner_3',
+            'referral_date_3',
+            'confirmation_date_3',
+
+            'followup_call_date_1',
+            'followup_call_reason_1',
+            'followup_call_result_1',
+
+            'followup_call_date_2',
+            'followup_call_reason_2',
+            'followup_call_result_2',
+
+            'followup_visit_date_1',
+            'followup_visit_reason_1',
+            'followup_visit_result_1'
         )
 
         qs = self.get_queryset().extra(select={
             # 'participation': "CONCAT(participation, '_absence')",
 
+            'pre_test_attended_arabic': "pre_test->>'BLN_ASSESSMENT/attended_arabic'",
+            'pre_test_modality_arabic': "pre_test->>'BLN_ASSESSMENT/modality_arabic'",
             'pre_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
-            'pre_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
-            'pre_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
-            'pre_test_social_emotional': "pre_test->>'BLN_ASSESSMENT/social_emotional'",
-            'pre_test_psychomotor': "pre_test->>'BLN_ASSESSMENT/psychomotor'",
-            'pre_test_artistic': "pre_test->>'BLN_ASSESSMENT/artistic'",
 
+            'pre_test_attended_english': "pre_test->>'BLN_ASSESSMENT/attended_english'",
+            'pre_test_modality_english': "pre_test->>'BLN_ASSESSMENT/modality_english'",
+            'pre_test_english': "pre_test->>'BLN_ASSESSMENT/english'",
+
+            'pre_test_attended_psychomotor': "pre_test->>'BLN_ASSESSMENT/attended_psychomotor'",
+            'pre_test_modality_psychomotor': "pre_test->>'BLN_ASSESSMENT/modality_psychomotor'",
+            'pre_test_psychomotor': "pre_test->>'BLN_ASSESSMENT/psychomotor'",
+
+            'pre_test_attended_math': "pre_test->>'BLN_ASSESSMENT/attended_math'",
+            'pre_test_modality_math': "pre_test->>'BLN_ASSESSMENT/modality_math'",
+            'pre_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
+
+            'pre_test_attended_social': "pre_test->>'BLN_ASSESSMENT/attended_social'",
+            'pre_test_modality_social': "pre_test->>'BLN_ASSESSMENT/modality_social'",
+            'pre_test_social_emotional': "pre_test->>'BLN_ASSESSMENT/social_emotional'",
+
+            'post_test_attended_arabic': "post_test->>'BLN_ASSESSMENT/attended_arabic'",
+            'post_test_modality_arabic': "post_test->>'BLN_ASSESSMENT/modality_arabic'",
             'post_test_arabic': "post_test->>'BLN_ASSESSMENT/arabic'",
-            'post_test_foreign_language': "post_test->>'BLN_ASSESSMENT/foreign_language'",
-            'post_test_math': "post_test->>'BLN_ASSESSMENT/math'",
-            'post_test_social_emotional': "post_test->>'BLN_ASSESSMENT/social_emotional'",
+
+            'post_test_attended_english': "post_test->>'BLN_ASSESSMENT/attended_english'",
+            'post_test_modality_english': "post_test->>'BLN_ASSESSMENT/modality_english'",
+            'post_test_english': "post_test->>'BLN_ASSESSMENT/english'",
+
+            'post_test_attended_psychomotor': "post_test->>'BLN_ASSESSMENT/attended_psychomotor'",
+            'post_test_modality_psychomotor': "post_test->>'BLN_ASSESSMENT/modality_psychomotor'",
             'post_test_psychomotor': "post_test->>'BLN_ASSESSMENT/psychomotor'",
-            'post_test_artistic': "post_test->>'BLN_ASSESSMENT/artistic'",
+
+            'post_test_attended_math': "post_test->>'BLN_ASSESSMENT/attended_math'",
+            'post_test_modality_math': "post_test->>'BLN_ASSESSMENT/modality_math'",
+            'post_test_math': "post_test->>'BLN_ASSESSMENT/math'",
+
+            'post_test_attended_social': "post_test->>'BLN_ASSESSMENT/attended_social'",
+            'post_test_modality_social': "post_test->>'BLN_ASSESSMENT/modality_social'",
+            'post_test_social_emotional': "post_test->>'BLN_ASSESSMENT/social_emotional'",
+
         }).values(
             'id',
             'new_registry',
@@ -1988,6 +2083,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'district__name_en',
             'cadaster__name_en',
             'location',
+            'student__address',
             'language',
             'student__first_name',
             'student__father_name',
@@ -2035,20 +2131,50 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'follow_up_done_with_who',
             'unsuccessful_pretest_reason',
             'unsuccessful_posttest_reason',
+            'pre_test_attended_arabic',
+            'pre_test_modality_arabic',
             'pre_test_arabic',
-            'pre_test_foreign_language',
-            'pre_test_math',
-            'pre_test_social_emotional',
+
+            'pre_test_attended_english',
+            'pre_test_modality_english',
+            'pre_test_english',
+
+            'pre_test_attended_psychomotor',
+            'pre_test_modality_psychomotor',
             'pre_test_psychomotor',
-            'pre_test_artistic',
+
+            'pre_test_attended_math',
+            'pre_test_modality_math',
+            'pre_test_math',
+
+            'pre_test_attended_social',
+            'pre_test_modality_social',
+            'pre_test_social_emotional',
+
             'pre_test_score',
+
+            'post_test_attended_arabic',
+            'post_test_modality_arabic',
             'post_test_arabic',
-            'post_test_foreign_language',
-            'post_test_math',
-            'post_test_social_emotional',
+
+            'post_test_attended_english',
+            'post_test_modality_english',
+            'post_test_english',
+
+            'post_test_attended_psychomotor',
+            'post_test_modality_psychomotor',
             'post_test_psychomotor',
-            'post_test_artistic',
+
+            'post_test_attended_math',
+            'post_test_modality_math',
+            'post_test_math',
+
+            'post_test_attended_social',
+            'post_test_modality_social',
+            'post_test_social_emotional',
+
             'post_test_score',
+
             'participation',
             'barriers',
             'learning_result',
@@ -2130,7 +2256,6 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
 
 class ABLNExportViewSet(LoginRequiredMixin, ListView):
-
     model = ABLN
     queryset = ABLN.objects.all()
 
@@ -2140,7 +2265,6 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-
         headers = {
             'id': 'enropllment_id',
             'new_registry': 'First time registered?',
@@ -2152,6 +2276,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'district__name_en': 'District',
             'cadaster__name_en': 'Cadaster',
             'location': 'Location',
+            'student__address': 'Student Address',
             'language': 'The language supported in the program',
             'student__first_name': 'First name',
             'student__father_name': 'Father name',
@@ -2223,37 +2348,51 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'labour_weekly_income': 'Child weekly income',
             'basic_stationery': 'Did the child receive basic stationery?',
             'pss_kit': 'Did the child benefit from the PSS kit?',
-            'remote_learning': 'Was the child involved in remote learning?' ,
-            'remote_learning_reasons_not_engaged': 'what other reasons for this child not being engaged?' ,
-            'reasons_not_engaged_other': 'reasons not engaged other' ,
-            'reliable_internet': 'Does the family have reliable internet service in their area during remote learning?' ,
-            'gender_participate': 'Did both girls and boys in the same family participate in the class and have access to the phone/device?' ,
-            'gender_participate_explain': 'Explain' ,
-            'remote_learning_engagement': 'Frequency of Child Engagement in remote learning?' ,
-            'meet_learning_outcomes': 'How well did the child meet the learning outcomes?' ,
-            'parent_learning_support_rate': 'How do you rate the parents learning support provided to the child through this Remote learning phase?' ,
-            'covid_message': 'Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?' ,
-            'covid_message_how_often': 'How often?' ,
-            'covid_parents_message': 'Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?' ,
-            'covid_parents_message_how_often': 'How often?' ,
-            'follow_up_done': 'Was any follow-up done to ensure messages were well received, understood and adopted?' ,
-            'follow_up_done_with_who': 'With who child and/or caregiver?' ,
+            'remote_learning': 'Was the child involved in remote learning?',
+            'remote_learning_reasons_not_engaged': 'what other reasons for this child not being engaged?',
+            'reasons_not_engaged_other': 'reasons not engaged other',
+            'reliable_internet': 'Does the family have reliable internet service in their area during remote learning?',
+            'gender_participate': 'Did both girls and boys in the same family participate in the class and have access to the phone/device?',
+            'gender_participate_explain': 'Explain',
+            'remote_learning_engagement': 'Frequency of Child Engagement in remote learning?',
+            'meet_learning_outcomes': 'How well did the child meet the learning outcomes?',
+            'parent_learning_support_rate': 'How do you rate the parents learning support provided to the child through this Remote learning phase?',
+            'covid_message': 'Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?',
+            'covid_message_how_often': 'How often?',
+            'covid_parents_message': 'Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?',
+            'covid_parents_message_how_often': 'How often?',
+            'follow_up_done': 'Was any follow-up done to ensure messages were well received, understood and adopted?',
+            'follow_up_done_with_who': 'With who child and/or caregiver?',
 
             'unsuccessful_pretest_reason': 'Reason why not doing the Pre-test',
             'unsuccessful_posttest_reason': 'Reason why not doing the Post-test',
 
-            'pre_test_arabic': 'Pre-test Arabic Language Development ',
-            'pre_test_math': 'Pre-test Cognitive Development - Mathematics',
-            'pre_test_social_emotional': 'Pre-test Social-Emotional Development',
-            'pre_test_psychomotor': 'Pre-test Psychomotor Development for children with special need',
-            'pre_test_artistic': 'Pre-test Artistic Development',
-            'pre_test_score': 'Pre-test score',
-            'post_test_arabic': 'Post-test Arabic Language Development ',
-            'post_test_math': 'Post-test Cognitive Development - Mathematics',
-            'post_test_social_emotional': 'Post-test Social-Emotional Development',
-            'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
-            'post_test_artistic': 'Post-test Artistic Development',
-            'post_test_score': 'Post-test Score',
+            'pre_test_attended_arabic': 'pre test attended arabic',
+            'pre_test_modality_arabic': 'pre test modality arabic',
+            'pre_test_arabic': 'pre test arabic',
+            'pre_test_attended_psychomotor': 'pre test attended psychomotor',
+            'pre_test_modality_psychomotor': 'pre test modality psychomotor',
+            'pre_test_psychomotor': 'pre test psychomotor',
+            'pre_test_attended_math': 'pre test attended math',
+            'pre_test_modality_math': 'pre test modality math',
+            'pre_test_math': 'pre test math',
+            'pre_test_attended_social': 'pre test attended social',
+            'pre_test_modality_social': 'pre test modality social',
+            'pre_test_social_emotional': 'pre test social emotional',
+            'pre_test_score': 'pre test score',
+            'post_test_attended_arabic': 'post test attended arabic',
+            'post_test_modality_arabic': 'post test modality arabic',
+            'post_test_arabic': 'post test arabic',
+            'post_test_attended_psychomotor': 'post test attended psychomotor',
+            'post_test_modality_psychomotor': 'post test modality psychomotor',
+            'post_test_psychomotor': 'post test psychomotor',
+            'post_test_attended_math': 'post test attended math',
+            'post_test_modality_math': 'post test modality math',
+            'post_test_math': 'post test math',
+            'post_test_attended_social': 'post test attended social',
+            'post_test_modality_social': 'post test modality social',
+            'post_test_social_emotional': 'post test social emotional',
+            'post_test_score': 'post test score',
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
@@ -2450,17 +2589,37 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
         qs = self.get_queryset().extra(select={
             # 'participation': "CONCAT(participation, '_absence')",
 
+            'pre_test_attended_arabic': "pre_test->>'ABLN_ASSESSMENT/attended_arabic'",
+            'pre_test_modality_arabic': "pre_test->>'ABLN_ASSESSMENT/modality_arabic'",
             'pre_test_arabic': "pre_test->>'ABLN_ASSESSMENT/arabic'",
-            'pre_test_math': "pre_test->>'ABLN_ASSESSMENT/math'",
-            'pre_test_social_emotional': "pre_test->>'ABLN_ASSESSMENT/social_emotional'",
-            'pre_test_psychomotor': "pre_test->>'ABLN_ASSESSMENT/psychomotor'",
-            'pre_test_artistic': "pre_test->>'ABLN_ASSESSMENT/artistic'",
 
+            'pre_test_attended_psychomotor': "pre_test->>'ABLN_ASSESSMENT/attended_psychomotor'",
+            'pre_test_modality_psychomotor': "pre_test->>'ABLN_ASSESSMENT/modality_psychomotor'",
+            'pre_test_psychomotor': "pre_test->>'ABLN_ASSESSMENT/psychomotor'",
+
+            'pre_test_attended_math': "pre_test->>'ABLN_ASSESSMENT/attended_math'",
+            'pre_test_modality_math': "pre_test->>'ABLN_ASSESSMENT/modality_math'",
+            'pre_test_math': "pre_test->>'ABLN_ASSESSMENT/math'",
+
+            'pre_test_attended_social': "pre_test->>'ABLN_ASSESSMENT/attended_social'",
+            'pre_test_modality_social': "pre_test->>'ABLN_ASSESSMENT/modality_social'",
+            'pre_test_social_emotional': "pre_test->>'ABLN_ASSESSMENT/social_emotional'",
+
+            'post_test_attended_arabic': "post_test->>'ABLN_ASSESSMENT/attended_arabic'",
+            'post_test_modality_arabic': "post_test->>'ABLN_ASSESSMENT/modality_arabic'",
             'post_test_arabic': "post_test->>'ABLN_ASSESSMENT/arabic'",
-            'post_test_math': "post_test->>'ABLN_ASSESSMENT/math'",
-            'post_test_social_emotional': "post_test->>'ABLN_ASSESSMENT/social_emotional'",
+
+            'post_test_attended_psychomotor': "post_test->>'ABLN_ASSESSMENT/attended_psychomotor'",
+            'post_test_modality_psychomotor': "post_test->>'ABLN_ASSESSMENT/modality_psychomotor'",
             'post_test_psychomotor': "post_test->>'ABLN_ASSESSMENT/psychomotor'",
-            'post_test_artistic': "post_test->>'ABLN_ASSESSMENT/artistic'",
+
+            'post_test_attended_math': "post_test->>'ABLN_ASSESSMENT/attended_math'",
+            'post_test_modality_math': "post_test->>'ABLN_ASSESSMENT/modality_math'",
+            'post_test_math': "post_test->>'ABLN_ASSESSMENT/math'",
+
+            'post_test_attended_social': "post_test->>'ABLN_ASSESSMENT/attended_social'",
+            'post_test_modality_social': "post_test->>'ABLN_ASSESSMENT/modality_social'",
+            'post_test_social_emotional': "post_test->>'ABLN_ASSESSMENT/social_emotional'",
         }).values(
             'id',
             'new_registry',
@@ -2471,6 +2630,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'district__name_en',
             'cadaster__name_en',
             'location',
+            'student__address',
             'language',
             'student__first_name',
             'student__father_name',
@@ -2520,17 +2680,41 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'follow_up_done_with_who',
             'unsuccessful_pretest_reason',
             'unsuccessful_posttest_reason',
+
+            'pre_test_attended_arabic',
+            'pre_test_modality_arabic',
             'pre_test_arabic',
-            'pre_test_math',
-            'pre_test_social_emotional',
+
+            'pre_test_attended_psychomotor',
+            'pre_test_modality_psychomotor',
             'pre_test_psychomotor',
-            'pre_test_artistic',
+
+            'pre_test_attended_math',
+            'pre_test_modality_math',
+            'pre_test_math',
+
+            'pre_test_attended_social',
+            'pre_test_modality_social',
+            'pre_test_social_emotional',
+
             'pre_test_score',
+
+            'post_test_attended_arabic',
+            'post_test_modality_arabic',
             'post_test_arabic',
-            'post_test_math',
-            'post_test_social_emotional',
+
+            'post_test_attended_psychomotor',
+            'post_test_modality_psychomotor',
             'post_test_psychomotor',
-            'post_test_artistic',
+
+            'post_test_attended_math',
+            'post_test_modality_math',
+            'post_test_math',
+
+            'post_test_attended_social',
+            'post_test_modality_social',
+            'post_test_social_emotional',
+
             'post_test_score',
             'participation',
             'barriers',
@@ -2612,7 +2796,6 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
 
 
 class RSExportViewSet(LoginRequiredMixin, ListView):
-
     model = RS
     queryset = RS.objects.all()
 
@@ -2622,7 +2805,6 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-
         headers = {
             'new_registry': 'First time registered?',
             'partner__name': 'Partner',
@@ -2916,7 +3098,6 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
 
 
 class CBECEExportViewSet(LoginRequiredMixin, ListView):
-
     model = CBECE
     queryset = CBECE.objects.all()
 
@@ -2926,9 +3107,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-
         headers = {
-
             'id': 'enropllment_id',
             'new_registry': 'First time registered?',
             'partner__name': 'Partner',
@@ -2940,7 +3119,8 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en': 'Cadaster',
             'location': 'Location',
             'language': 'The language supported in the program',
-            'registration_level':'Registration level',
+            'student__address': 'Student Address',
+            'registration_level': 'Registration level',
             'student__first_name': 'First name',
             'student__father_name': 'Father name',
             'student__last_name': 'Last name',
@@ -3026,47 +3206,51 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'follow_up_done': 'Was any follow-up done to ensure messages were well received, understood and adopted?',
             'follow_up_done_with_who': 'With who child and/or caregiver?',
 
-            'pre_test_score': 'Academic Result - Pre',
-            'post_test_score': 'Academic Result - Post',
-
-            'pre_test_LanguageArtDomain1': 'Language Development - Pre - Level 1',
-            'post_test_LanguageArtDomain1': 'Language Development - Post - Level 1',
-            'pre_test_CognitiveDomian1': 'Cognitive Development - Mathematics - Pre - Level 1',
-            'post_test_CognitiveDomian1': 'Cognitive Development - Mathematics - Post - Level 1',
-            'pre_test_ScienceDomain1': 'Science Development - Science - Pre - Level 1',
-            'post_test_ScienceDomain1': 'Science Development - Science - Post - Level 1',
-            'pre_test_SocialEmotionalDomain1': 'Social-Emotional Development - Pre - Level 1',
-            'post_test_SocialEmotionalDomain1': 'Social-Emotional Development - Post - Level 1',
-            'pre_test_PsychomotorDomain1': 'Psychomotor Development - Pre - Level 1',
-            'post_test_PsychomotorDomain1': 'Psychomotor Development - Post - Level 1',
-            'pre_test_ArtisticDomain1': 'Artistic Development - Pre - Level 1',
-            'post_test_ArtisticDomain1': 'Artistic Development - Post - Level 1',
-
-            'pre_test_LanguageArtDomain2': 'Language Development - Pre - Level 2',
-            'post_test_LanguageArtDomain2': 'Language Development - Post - Level 2',
-            'pre_test_CognitiveDomian2': 'Cognitive Development - Mathematics - Pre - Level 2',
-            'post_test_CognitiveDomian2': 'Cognitive Development - Mathematics - Post - Level 2',
-            'pre_test_ScienceDomain2': 'Science Development - Science - Pre - Level 2',
-            'post_test_ScienceDomain2': 'Science Development - Science - Post - Level 2',
-            'pre_test_SocialEmotionalDomain2': 'Social-Emotional Development - Pre - Level 2',
-            'post_test_SocialEmotionalDomain2': 'Social-Emotional Development - Post - Level 2',
-            'pre_test_PsychomotorDomain2': 'Psychomotor Development - Pre - Level 2',
-            'post_test_PsychomotorDomain2': 'Psychomotor Development - Post - Level 2',
-            'pre_test_ArtisticDomain2': 'Artistic Development - Pre - Level 2',
-            'post_test_ArtisticDomain2': 'Artistic Development - Post - Level 2',
-
-            'pre_test_LanguageArtDomain3': 'Language Development - Pre - Level 3',
-            'post_test_LanguageArtDomain3': 'Language Development - Post - Level 3',
-            'pre_test_CognitiveDomian3': 'Cognitive Development - Mathematics - Pre - Level 3',
-            'post_test_CognitiveDomian3': 'Cognitive Development - Mathematics - Post - Level 3',
-            'pre_test_ScienceDomain3': 'Science Development - Science - Pre - Level 3',
-            'post_test_ScienceDomain3': 'Science Development - Science - Post - Level 3',
-            'pre_test_SocialEmotionalDomain3': 'Social-Emotional Development - Pre - Level 3',
-            'post_test_SocialEmotionalDomain3': 'Social-Emotional Development - Post - Level 3',
-            'pre_test_PsychomotorDomain3': 'Psychomotor Development - Pre - Level 3',
-            'post_test_PsychomotorDomain3': 'Psychomotor Development - Post - Level 3',
-            'pre_test_ArtisticDomain3': 'Artistic Development - Pre - Level 3',
-            'post_test_ArtisticDomain3': 'Artistic Development - Post - Level 3',
+            'pre_test_attended_arabic': 'pre test attended arabic',
+            'pre_test_modality_arabic': 'pre test modality arabic',
+            'pre_test_arabic': 'pre test arabic',
+            'pre_test_attended_english': 'pre test attended english',
+            'pre_test_modality_english': 'pre test modality english',
+            'pre_test_english': 'pre test english',
+            'pre_test_attended_psychomotor': 'pre test attended psychomotor',
+            'pre_test_modality_psychomotor': 'pre test modality psychomotor',
+            'pre_test_psychomotor': 'pre test psychomotor',
+            'pre_test_attended_math': 'pre test attended math',
+            'pre_test_modality_math': 'pre test modality math',
+            'pre_test_math': 'pre test math',
+            'pre_test_attended_social': 'pre test attended social',
+            'pre_test_modality_social': 'pre test modality social',
+            'pre_test_social_emotional': 'pre test social emotional',
+            # 'pre_test_attended_science': 'pre test attended science',
+            # 'pre_test_modality_science"': 'pre test modality science"',
+            # 'pre_test_science"': 'pre test science"',
+            # 'pre_test_attended_artistic': 'pre test attended artistic',
+            # 'pre_test_modality_artistic': 'pre test modality artistic',
+            # 'pre_test_social_artistic': 'pre test artistic',
+            'pre_test_score': 'pre test score',
+            #
+            # 'post_test_attended_arabic': 'post test attended arabic',
+            # 'post_test_modality_arabic': 'post test modality arabic',
+            # 'post_test_arabic': 'post test arabic',
+            # 'post_test_attended_english': 'post test attended english',
+            # 'post_test_modality_english': 'post test modality english',
+            # 'post_test_english': 'post test english',
+            # 'post_test_attended_psychomotor': 'post test attended psychomotor',
+            # 'post_test_modality_psychomotor': 'post test modality psychomotor',
+            # 'post_test_psychomotor': 'post test psychomotor',
+            # 'post_test_attended_math': 'post test attended math',
+            # 'post_test_modality_math': 'post test modality math',
+            # 'post_test_math': 'post test math',
+            # 'post_test_attended_social': 'post test attended social',
+            # 'post_test_modality_social': 'post test modality social',
+            # 'post_test_social_emotional': 'post test social emotional',
+            # 'post_test_attended_science': 'post test attended science',
+            # 'post_test_modality_science"': 'post test modality science"',
+            # 'post_test_science"': 'post test science"',
+            # 'post_test_attended_artistic': 'post test attended artistic',
+            # 'post_test_modality_artistic': 'post test modality artistic',
+            # 'post_test_social_artistic': 'post test artistic',
+            # 'post_test_score': 'post test score',
 
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
@@ -3107,6 +3291,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         }
 
         field_list = (
+
             'id'
             'new_registry',
             'partner__name',
@@ -3117,6 +3302,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'district__name_en',
             'cadaster__name_en',
             'location',
+            'student__address',
             'language',
             'registration_level',
             'student__first_name',
@@ -3203,47 +3389,65 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'follow_up_done',
             'follow_up_done_with_who',
 
+            'pre_test_attended_arabic',
+            'pre_test_modality_arabic',
+            'pre_test_arabic',
+
+            'pre_test_attended_english',
+            'pre_test_modality_english',
+            'pre_test_english',
+            #
+            'pre_test_attended_psychomotor',
+            'pre_test_modality_psychomotor',
+            'pre_test_psychomotor',
+
+            'pre_test_attended_math',
+            'pre_test_modality_math',
+            'pre_test_math',
+
+            'pre_test_attended_social',
+            'pre_test_modality_social',
+            'pre_test_social_emotional',
+
+            # 'pre_test_attended_science',
+            # 'pre_test_modality_science',
+            # 'pre_test_science',
+            #
+            # 'pre_test_attended_artistic',
+            # 'pre_test_modality_artistic',
+            # 'pre_test_artistic',
+            #
             'pre_test_score',
-            'post_test_score',
 
-            'pre_test_LanguageArtDomain1',
-            'post_test_LanguageArtDomain1',
-            'pre_test_CognitiveDomian1',
-            'post_test_CognitiveDomian1',
-            'pre_test_ScienceDomain1',
-            'post_test_ScienceDomain1',
-            'pre_test_SocialEmotionalDomain1',
-            'post_test_SocialEmotionalDomain1',
-            'pre_test_PsychomotorDomain1',
-            'post_test_PsychomotorDomain1',
-            'pre_test_ArtisticDomain1',
-            'post_test_ArtisticDomain1',
-
-            'pre_test_LanguageArtDomain2',
-            'post_test_LanguageArtDomain2',
-            'pre_test_CognitiveDomian2',
-            'post_test_CognitiveDomian2',
-            'pre_test_ScienceDomain2',
-            'post_test_ScienceDomain2',
-            'pre_test_SocialEmotionalDomain2',
-            'post_test_SocialEmotionalDomain2',
-            'pre_test_PsychomotorDomain2',
-            'post_test_PsychomotorDomain2',
-            'pre_test_ArtisticDomain2',
-            'post_test_ArtisticDomain2',
-
-            'pre_test_LanguageArtDomain3',
-            'post_test_LanguageArtDomain3',
-            'pre_test_CognitiveDomian3',
-            'post_test_CognitiveDomian3',
-            'pre_test_ScienceDomain3',
-            'post_test_ScienceDomain3',
-            'pre_test_SocialEmotionalDomain3',
-            'post_test_SocialEmotionalDomain3',
-            'pre_test_PsychomotorDomain3',
-            'post_test_PsychomotorDomain3',
-            'pre_test_ArtisticDomain3',
-            'post_test_ArtisticDomain3',
+            # 'post_test_attended_arabic',
+            # 'post_test_modality_arabic',
+            # 'post_test_arabic',
+            #
+            # 'post_test_attended_english',
+            # 'post_test_modality_english',
+            # 'post_test_english',
+            #
+            # 'post_test_attended_psychomotor',
+            # 'post_test_modality_psychomotor',
+            # 'post_test_psychomotor',
+            #
+            # 'post_test_attended_math',
+            # 'post_test_modality_math',
+            # 'post_test_math',
+            #
+            # 'post_test_attended_social',
+            # 'post_test_modality_social',
+            # 'post_test_social_emotional',
+            #
+            # 'post_test_attended_science',
+            # 'post_test_modality_science',
+            # 'post_test_science',
+            #
+            # 'post_test_attended_artistic',
+            # 'post_test_modality_artistic',
+            # 'post_test_artistic',
+            #
+            # 'post_test_score',
 
             'participation',
             'barriers',
@@ -3286,47 +3490,61 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         qs = self.get_queryset().extra(select={
             # 'participation': "CONCAT(participation, '_absence')",
 
-            'pre_test_LanguageArtDomain1': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
-            'pre_test_CognitiveDomian1': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
-            'pre_test_ScienceDomain1': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain1'",
-            'pre_test_SocialEmotionalDomain1': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain1'",
-            'pre_test_PsychomotorDomain1': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain1'",
-            'pre_test_ArtisticDomain1': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain1'",
+            'pre_test_attended_arabic': "pre_test->>'CBECE_ASSESSMENT/attended_arabic'",
+            'pre_test_modality_arabic': "pre_test->>'CBECE_ASSESSMENT/modality_arabic'",
+            'pre_test_arabic': "pre_test->>'CBECE_ASSESSMENT/arabic'",
 
-            'post_test_LanguageArtDomain1': "post_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
-            'post_test_CognitiveDomian1': "post_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
-            'post_test_ScienceDomain1': "post_test->>'CBECE_ASSESSMENT/ScienceDomain1'",
-            'post_test_SocialEmotionalDomain1': "post_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain1'",
-            'post_test_PsychomotorDomain1': "post_test->>'CBECE_ASSESSMENT/PsychomotorDomain1'",
-            'post_test_ArtisticDomain1': "post_test->>'CBECE_ASSESSMENT/ArtisticDomain1'",
+            'pre_test_attended_english': "pre_test->>'CBECE_ASSESSMENT/attended_english'",
+            'pre_test_modality_english': "pre_test->>'CBECE_ASSESSMENT/modality_english'",
+            'pre_test_english': "pre_test->>'CBECE_ASSESSMENT/english'",
 
-            'pre_test_LanguageArtDomain2': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain2'",
-            'pre_test_CognitiveDomian2': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian2'",
-            'pre_test_ScienceDomain2': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain2'",
-            'pre_test_SocialEmotionalDomain2': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain2'",
-            'pre_test_PsychomotorDomain2': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain2'",
-            'pre_test_ArtisticDomain2': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain2'",
+            'pre_test_attended_psychomotor': "pre_test->>'CBECE_ASSESSMENT/attended_psychomotor'",
+            'pre_test_modality_psychomotor': "pre_test->>'CBECE_ASSESSMENT/modality_psychomotor'",
+            'pre_test_psychomotor': "pre_test->>'CBECE_ASSESSMENT/psychomotor'",
 
-            'post_test_LanguageArtDomain2': "post_test->>'CBECE_ASSESSMENT/LanguageArtDomain2'",
-            'post_test_CognitiveDomian2': "post_test->>'CBECE_ASSESSMENT/CognitiveDomian2'",
-            'post_test_ScienceDomain2': "post_test->>'CBECE_ASSESSMENT/ScienceDomain2'",
-            'post_test_SocialEmotionalDomain2': "post_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain2'",
-            'post_test_PsychomotorDomain2': "post_test->>'CBECE_ASSESSMENT/PsychomotorDomain2'",
-            'post_test_ArtisticDomain2': "post_test->>'CBECE_ASSESSMENT/ArtisticDomain2'",
+            'pre_test_attended_math': "pre_test->>'CBECE_ASSESSMENT/attended_math'",
+            'pre_test_modality_math': "pre_test->>'CBECE_ASSESSMENT/modality_math'",
+            'pre_test_math': "pre_test->>'CBECE_ASSESSMENT/math'",
 
-            'pre_test_LanguageArtDomain3': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain3'",
-            'pre_test_CognitiveDomian3': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian3'",
-            'pre_test_ScienceDomain3': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain3'",
-            'pre_test_SocialEmotionalDomain3': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain3'",
-            'pre_test_PsychomotorDomain3': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain3'",
-            'pre_test_ArtisticDomain3': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain3'",
+            'pre_test_attended_social': "pre_test->>'CBECE_ASSESSMENT/attended_social'",
+            'pre_test_modality_social': "pre_test->>'CBECE_ASSESSMENT/modality_social'",
+            'pre_test_social_emotional': "pre_test->>'CBECE_ASSESSMENT/social_emotional'",
 
-            'post_test_LanguageArtDomain3': "post_test->>'CBECE_ASSESSMENT/LanguageArtDomain3'",
-            'post_test_CognitiveDomian3': "post_test->>'CBECE_ASSESSMENT/CognitiveDomian3'",
-            'post_test_ScienceDomain3': "post_test->>'CBECE_ASSESSMENT/ScienceDomain3'",
-            'post_test_SocialEmotionalDomain3': "post_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain3'",
-            'post_test_PsychomotorDomain3': "post_test->>'CBECE_ASSESSMENT/PsychomotorDomain3'",
-            'post_test_ArtisticDomain3': "post_test->>'CBECE_ASSESSMENT/ArtisticDomain3'",
+            'pre_test_attended_science': "pre_test->>'CBECE_ASSESSMENT/attended_science'",
+            'pre_test_modality_science': "pre_test->>'CBECE_ASSESSMENT/modality_science'",
+            'pre_test_science': "pre_test->>'CBECE_ASSESSMENT/science'",
+
+            'pre_test_attended_artistic': "pre_test->>'CBECE_ASSESSMENT/attended_artistic'",
+            'pre_test_modality_artistic': "pre_test->>'CBECE_ASSESSMENT/modality_artistic'",
+            'pre_test_artistic': "pre_test->>'CBECE_ASSESSMENT/artistic'",
+
+            'post_test_attended_arabic': "post_test->>'CBECE_ASSESSMENT/attended_arabic'",
+            'post_test_modality_arabic': "post_test->>'CBECE_ASSESSMENT/modality_arabic'",
+            'post_test_arabic': "post_test->>'CBECE_ASSESSMENT/arabic'",
+
+            'post_test_attended_english': "post_test->>'CBECE_ASSESSMENT/attended_english'",
+            'post_test_modality_english': "post_test->>'CBECE_ASSESSMENT/modality_english'",
+            'post_test_english': "post_test->>'CBECE_ASSESSMENT/english'",
+
+            'post_test_attended_psychomotor': "post_test->>'CBECE_ASSESSMENT/attended_psychomotor'",
+            'post_test_modality_psychomotor': "post_test->>'CBECE_ASSESSMENT/modality_psychomotor'",
+            'post_test_psychomotor': "post_test->>'CBECE_ASSESSMENT/psychomotor'",
+
+            'post_test_attended_math': "post_test->>'CBECE_ASSESSMENT/attended_math'",
+            'post_test_modality_math': "post_test->>'CBECE_ASSESSMENT/modality_math'",
+            'post_test_math': "post_test->>'CBECE_ASSESSMENT/math'",
+
+            'post_test_attended_social': "post_test->>'CBECE_ASSESSMENT/attended_social'",
+            'post_test_modality_social': "post_test->>'CBECE_ASSESSMENT/modality_social'",
+            'post_test_social_emotional': "post_test->>'CBECE_ASSESSMENT/social_emotional'",
+
+            'post_test_attended_science': "post_test->>'CBECE_ASSESSMENT/attended_science'",
+            'post_test_modality_science': "post_test->>'CBECE_ASSESSMENT/modality_science'",
+            'post_test_science': "post_test->>'CBECE_ASSESSMENT/science'",
+
+            'post_test_attended_artistic': "post_test->>'CBECE_ASSESSMENT/attended_artistic'",
+            'post_test_modality_artistic': "post_test->>'CBECE_ASSESSMENT/modality_artistic'",
+            'post_test_artistic': "post_test->>'CBECE_ASSESSMENT/artistic'"
 
         }).values(
             'id',
@@ -3338,6 +3556,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'district__name_en',
             'cadaster__name_en',
             'location',
+            'student__address',
             'language',
             'registration_level',
             'student__first_name',
@@ -3384,50 +3603,65 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'follow_up_done',
             'follow_up_done_with_who',
 
+            'pre_test_attended_arabic',
+            'pre_test_modality_arabic',
+            'pre_test_arabic',
+
+            'pre_test_attended_english',
+            'pre_test_modality_english',
+            'pre_test_english',
+
+            'pre_test_attended_psychomotor',
+            'pre_test_modality_psychomotor',
+            'pre_test_psychomotor',
+
+            'pre_test_attended_math',
+            'pre_test_modality_math',
+            'pre_test_math',
+
+            'pre_test_attended_social',
+            'pre_test_modality_social',
+            'pre_test_social_emotional',
+
+            # 'pre_test_attended_science',
+            # 'pre_test_modality_science',
+            # 'pre_test_science',
+
+            # 'pre_test_attended_artistic',
+            # 'pre_test_modality_artistic',
+            # 'pre_test_artistic',
+
             'pre_test_score',
-            'post_test_score',
 
-            'pre_test_LanguageArtDomain1',
-            'pre_test_CognitiveDomian1',
-            'pre_test_ScienceDomain1',
-            'pre_test_SocialEmotionalDomain1',
-            'pre_test_PsychomotorDomain1',
-            'pre_test_ArtisticDomain1',
-
-            'post_test_LanguageArtDomain1',
-            'post_test_CognitiveDomian1',
-            'post_test_ScienceDomain1',
-            'post_test_SocialEmotionalDomain1',
-            'post_test_PsychomotorDomain1',
-            'post_test_ArtisticDomain1',
-
-            'pre_test_LanguageArtDomain2',
-            'pre_test_CognitiveDomian2',
-            'pre_test_ScienceDomain2',
-            'pre_test_SocialEmotionalDomain2',
-            'pre_test_PsychomotorDomain2',
-            'pre_test_ArtisticDomain2',
-
-            'post_test_LanguageArtDomain2',
-            'post_test_CognitiveDomian2',
-            'post_test_ScienceDomain2',
-            'post_test_SocialEmotionalDomain2',
-            'post_test_PsychomotorDomain2',
-            'post_test_ArtisticDomain2',
-
-            'pre_test_LanguageArtDomain3',
-            'pre_test_CognitiveDomian3',
-            'pre_test_ScienceDomain3',
-            'pre_test_SocialEmotionalDomain3',
-            'pre_test_PsychomotorDomain3',
-            'pre_test_ArtisticDomain3',
-
-            'post_test_LanguageArtDomain3',
-            'post_test_CognitiveDomian3',
-            'post_test_ScienceDomain3',
-            'post_test_SocialEmotionalDomain3',
-            'post_test_PsychomotorDomain3',
-            'post_test_ArtisticDomain3',
+            # 'post_test_attended_arabic',
+            # 'post_test_modality_arabic',
+            # 'post_test_arabic',
+            #
+            # 'post_test_attended_english',
+            # 'post_test_modality_english',
+            # 'post_test_english',
+            #
+            # 'post_test_attended_psychomotor',
+            # 'post_test_modality_psychomotor',
+            # 'post_test_psychomotor',
+            #
+            # 'post_test_attended_math',
+            # 'post_test_modality_math',
+            # 'post_test_math',
+            #
+            # 'post_test_attended_social',
+            # 'post_test_modality_social',
+            # 'post_test_social_emotional',
+            #
+            # 'post_test_attended_science',
+            # 'post_test_modality_science',
+            # 'post_test_science',
+            #
+            # 'post_test_attended_artistic',
+            # 'post_test_modality_artistic',
+            # 'post_test_artistic',
+            #
+            # 'post_test_score',
 
             'participation',
             'barriers',
@@ -3503,22 +3737,18 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'followup_call_result_2',
             'followup_visit_date_1',
             'followup_visit_reason_1',
-            'followup_visit_result_1',
+            'followup_visit_result_1'
         )
         # print(qs.query)
-
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
-
 def load_districts(request):
-
     id_governorate = request.GET.get('id_governorate')
     cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
     return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
 
 
 def load_cadasters(request):
-
     id_district = request.GET.get('id_district')
     cities = Location.objects.filter(parent_id=id_district).order_by('name')
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
@@ -3545,9 +3775,9 @@ def search_clm_child(request):
         if len(terms.split()) > 1:
             qs = model.objects.annotate(fullname=Concat('student__first_name', Value(' '),
                                                         'student__father_name', Value(' '),
-                                                        'student__last_name'))\
-                .filter(partner=request.user.partner_id)\
-                .filter(fullname__icontains=terms)\
+                                                        'student__last_name')) \
+                .filter(partner=request.user.partner_id) \
+                .filter(fullname__icontains=terms) \
                 .values('id', 'student__first_name', 'student__father_name',
                         'student__last_name', 'student__mother_fullname',
                         'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3570,15 +3800,12 @@ def search_clm_child(request):
 
 
 class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
-
     template_name = 'clm/execs.html'
 
     def get_context_data(self, **kwargs):
-
         instances = ABLN.objects.filter(round_id=8)
         instances.update(round_id=9)
 
         return {
             'result': instances.count(),
         }
-

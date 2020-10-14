@@ -359,7 +359,7 @@ class BLNForm(CommonForm):
     YEARS_BLN.insert(0, ('', '---------'))
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
-        required=False
+        required=True
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
@@ -657,16 +657,11 @@ class BLNForm(CommonForm):
         initial='yes'
     )
 
-    modality_arabic = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_arabic = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     arabic = forms.FloatField(
         label=_('Results'),
@@ -679,16 +674,11 @@ class BLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_english = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_english  = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     english = forms.FloatField(
         label=_('Results'),
@@ -701,16 +691,11 @@ class BLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_math = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_math = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     math = forms.FloatField(
         label=_('Results'),
@@ -723,16 +708,11 @@ class BLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_social = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_social  = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     social_emotional = forms.FloatField(
@@ -746,16 +726,11 @@ class BLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_psychomotor  = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_psychomotor = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     psychomotor = forms.FloatField(
         label=_('Results'),
@@ -771,6 +746,11 @@ class BLNForm(CommonForm):
             ('father', _('Father')),
             ('other', _('Other')),
         )
+    )
+
+    main_caregiver_nationality_other =  forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
 
     # student_p_code = forms.CharField(
@@ -970,35 +950,40 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5.1</span>'),
-                    Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.1</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('caretaker_first_name', css_class='col-md-3'),
+                    Div('main_caregiver_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_main_caregiver_nationality_other">6.1</span>'),
+                    Div('main_caregiver_nationality_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('caretaker_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('caretaker_middle_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('caretaker_last_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">9</span>'),
+                    Div('caretaker_last_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('caretaker_mother_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">11</span>'),
-                    Div('case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -1253,6 +1238,8 @@ class BLNForm(CommonForm):
         other_nationality = cleaned_data.get("other_nationality")
         main_caregiver = cleaned_data.get("main_caregiver")
         other_caregiver_relationship = cleaned_data.get("other_caregiver_relationship")
+        main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
+        main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
         have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
         labours_single_selection = cleaned_data.get("labours_single_selection")
         labour_hours = cleaned_data.get("labour_hours")
@@ -1325,6 +1312,9 @@ class BLNForm(CommonForm):
         if main_caregiver == 'other':
             if not other_caregiver_relationship:
                 self.add_error('other_caregiver_relationship', 'This field is required')
+        if main_caregiver_nationality.id == 6:
+            if not main_caregiver_nationality_other:
+                self.add_error('main_caregiver_nationality_other', 'This field is required')
         if student_have_children:
             if not student_number_children:
                 self.add_error('student_number_children', 'This field is required')
@@ -1591,7 +1581,7 @@ class ABLNForm(CommonForm):
 
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
-        required=False
+        required=True
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
@@ -1894,16 +1884,11 @@ class ABLNForm(CommonForm):
         initial='yes'
     )
 
-    modality_arabic = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_arabic = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     arabic = forms.FloatField(
         label=_('Results'),
@@ -1938,16 +1923,11 @@ class ABLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_math = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_math = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     math = forms.FloatField(
         label=_('Results'),
@@ -1960,16 +1940,11 @@ class ABLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_social = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_social = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     social_emotional = forms.FloatField(
@@ -1984,16 +1959,11 @@ class ABLNForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_psychomotor  = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_psychomotor  = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     psychomotor = forms.FloatField(
         label=_('Results'),
@@ -2009,6 +1979,11 @@ class ABLNForm(CommonForm):
             ('father', _('Father')),
             ('other', _('Other')),
         )
+    )
+
+    main_caregiver_nationality_other =  forms.CharField(
+        label=_('specify'),
+        widget=forms.TextInput, required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -2203,35 +2178,40 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5.1</span>'),
-                    Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.1</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('caretaker_first_name', css_class='col-md-3'),
+                    Div('main_caregiver_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_main_caregiver_nationality_other">6.1</span>'),
+                    Div('main_caregiver_nationality_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('caretaker_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('caretaker_middle_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('caretaker_last_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">9</span>'),
+                    Div('caretaker_last_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('caretaker_mother_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">11</span>'),
-                    Div('case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a  class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -2486,6 +2466,8 @@ class ABLNForm(CommonForm):
         other_nationality = cleaned_data.get("other_nationality")
         main_caregiver = cleaned_data.get("main_caregiver")
         other_caregiver_relationship = cleaned_data.get("other_caregiver_relationship")
+        main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
+        main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
         have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
         labours_single_selection = cleaned_data.get("labours_single_selection")
         labour_hours = cleaned_data.get("labour_hours")
@@ -2558,7 +2540,9 @@ class ABLNForm(CommonForm):
         if main_caregiver == 'other':
             if not other_caregiver_relationship:
                 self.add_error('other_caregiver_relationship', 'This field is required')
-
+        if main_caregiver_nationality.id == 6:
+            if not main_caregiver_nationality_other:
+                self.add_error('main_caregiver_nationality_other', 'This field is required')
         if student_family_status!='single' and student_have_children:
             if not student_number_children:
                 self.add_error('student_number_children', 'This field is required')
@@ -3500,7 +3484,7 @@ class CBECEForm(CommonForm):
 
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
-        required=False
+        required=True
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
@@ -3775,16 +3759,11 @@ class CBECEForm(CommonForm):
         initial='yes'
     )
 
-    modality_arabic = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_arabic = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     arabic = forms.FloatField(
         label=_('Results'),
@@ -3797,16 +3776,11 @@ class CBECEForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_english = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_english = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     english = forms.FloatField(
         label=_('Results'),
@@ -3819,16 +3793,11 @@ class CBECEForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_math = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_math = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     math = forms.FloatField(
         label=_('Results'),
@@ -3841,16 +3810,11 @@ class CBECEForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_social = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_social = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     social_emotional = forms.FloatField(
@@ -3865,16 +3829,11 @@ class CBECEForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_psychomotor  = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_psychomotor  = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     psychomotor = forms.FloatField(
         label=_('Results'),
@@ -3887,16 +3846,11 @@ class CBECEForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_science = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_science = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     science = forms.FloatField(
         label=_('Results'),
@@ -3909,16 +3863,11 @@ class CBECEForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_artistic  = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_artistic  = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     artistic = forms.FloatField(
         label=_('Results'),

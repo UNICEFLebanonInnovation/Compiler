@@ -222,6 +222,15 @@ class CLM(TimeStampedModel):
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
     )
+
+    MODALITY = choices=(
+            ('', '----------'),
+            ('online', _("Online Forms")),
+            ('phone', _("Phone / Whatasapp")),
+            ('parents', _("Asking Parents")),
+            ('offline', _("Offline(F2F)"))
+    )
+
     first_attendance_date = models.DateField(
         blank=True,
         null=True,
@@ -1266,11 +1275,18 @@ class BLN(CLM):
         choices=MAIN_CAREGIVER,
         verbose_name=_('Main Caregiver')
     )
+
     main_caregiver_nationality = models.ForeignKey(
         Nationality,
         blank=False, null=True,
         related_name='+',
         verbose_name=_('Main Caregiver Nationality')
+    )
+    main_caregiver_nationality_other = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('specify')
     )
 
     other_caregiver_relationship = models.CharField(
@@ -1507,7 +1523,12 @@ class ABLN(CLM):
         related_name='+',
         verbose_name=_('Main Caregiver Nationality')
     )
-
+    main_caregiver_nationality_other = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('specify')
+    )
     other_caregiver_relationship = models.CharField(
         max_length=500,
         blank=True,
