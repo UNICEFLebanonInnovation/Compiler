@@ -6,7 +6,11 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.bootstrap import FormActions
+
+from crispy_forms.bootstrap import (
+    FormActions,
+    InlineCheckboxes
+)
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from dal import autocomplete
 
@@ -1146,7 +1150,7 @@ class BLNForm(CommonForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
-                    Div('modality_arabic', css_class='col-md-2'),
+                    Div('modality_arabic',css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
@@ -1155,7 +1159,7 @@ class BLNForm(CommonForm):
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('attended_english', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2'),
+                    Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row',
@@ -1164,7 +1168,7 @@ class BLNForm(CommonForm):
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
-                    Div('modality_math', css_class='col-md-2'),
+                    Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
@@ -1174,7 +1178,7 @@ class BLNForm(CommonForm):
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('attended_social', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
-                    Div('modality_social', css_class='col-md-2'),
+                    Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
@@ -1184,7 +1188,7 @@ class BLNForm(CommonForm):
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2'),
+                    Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
@@ -1481,23 +1485,23 @@ class BLNForm(CommonForm):
         instance = super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
         instance.pre_test = {
             "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-            "BLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
+            "BLN_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
             "BLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
             "BLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            "BLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+            "BLN_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             "BLN_ASSESSMENT/english": request.POST.get('english'),
 
             "BLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "BLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
+            "BLN_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
             "BLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
 
             "BLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-            "BLN_ASSESSMENT/modality_math": request.POST.get('modality_math'),
+            "BLN_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
             "BLN_ASSESSMENT/math": request.POST.get('math'),
 
             "BLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-            "BLN_ASSESSMENT/modality_social": request.POST.get('modality_social'),
+            "BLN_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
             "BLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
         }
 
@@ -2375,7 +2379,7 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
-                    Div('modality_arabic', css_class='col-md-2'),
+                    Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
@@ -2384,7 +2388,7 @@ class ABLNForm(CommonForm):
                 #     HTML('<span class="badge badge-default">2</span>'),
                 #     Div('attended_english', css_class='col-md-2'),
                 #     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                #     Div('modality_english', css_class='col-md-2'),
+                #     Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
                 #     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
                 #     Div('english', css_class='col-md-2'),
                 #     css_class='row',
@@ -2393,7 +2397,7 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('attended_math', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_math">2.1</span>'),
-                    Div('modality_math', css_class='col-md-2'),
+                    Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">2.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
@@ -2403,7 +2407,7 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_social', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_social">3.1</span>'),
-                    Div('modality_social', css_class='col-md-2'),
+                    Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_social_emotional">3.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
@@ -2413,7 +2417,7 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_psychomotor">4.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2'),
+                    Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_psychomotor">4.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
@@ -2698,23 +2702,23 @@ class ABLNForm(CommonForm):
         instance = super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
         instance.pre_test = {
             "ABLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-            "ABLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
+            "ABLN_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
             "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
             # "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            # "ABLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+            # "ABLN_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             # "ABLN_ASSESSMENT/english": request.POST.get('english'),
 
             "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "ABLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
+            "ABLN_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
             "ABLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
 
             "ABLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-            "ABLN_ASSESSMENT/modality_math": request.POST.get('modality_math'),
+            "ABLN_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
             "ABLN_ASSESSMENT/math": request.POST.get('math'),
 
             "ABLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-            "ABLN_ASSESSMENT/modality_social": request.POST.get('modality_social'),
+            "ABLN_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
             "ABLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
         }
 
@@ -4277,7 +4281,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
-                    Div('modality_arabic', css_class='col-md-2'),
+                    Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
@@ -4286,7 +4290,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('attended_english', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2'),
+                    Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row',
@@ -4295,7 +4299,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
-                    Div('modality_math', css_class='col-md-2'),
+                    Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
@@ -4304,7 +4308,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('attended_science', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_science">4.1</span>'),
-                    Div('modality_science', css_class='col-md-2'),
+                    Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_science">4.2</span>'),
                     Div('science', css_class='col-md-2'),
                     css_class='row',
@@ -4314,7 +4318,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('attended_social', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_social">5.1</span>'),
-                    Div('modality_social', css_class='col-md-2'),
+                    Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_social_emotional">5.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
@@ -4324,7 +4328,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_psychomotor">6.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2'),
+                    Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_psychomotor">6.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
@@ -4334,7 +4338,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('attended_artistic', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_artistic">7.1</span>'),
-                    Div('modality_artistic', css_class='col-md-2'),
+                    Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_artistic">7.2</span>'),
                     Div('artistic', css_class='col-md-2'),
                     css_class='row',
@@ -4649,31 +4653,31 @@ class CBECEForm(CommonForm):
         instance = super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer)
         instance.pre_test = {
             "CBECE_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-            "CBECE_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
+            "CBECE_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
             "CBECE_ASSESSMENT/arabic": request.POST.get('arabic'),
 
             "CBECE_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            "CBECE_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+            "CBECE_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             "CBECE_ASSESSMENT/english": request.POST.get('english'),
 
             "CBECE_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "CBECE_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
+            "CBECE_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
             "CBECE_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
 
             "CBECE_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-            "CBECE_ASSESSMENT/modality_math": request.POST.get('modality_math'),
+            "CBECE_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
             "CBECE_ASSESSMENT/math": request.POST.get('math'),
 
             "CBECE_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-            "CBECE_ASSESSMENT/modality_social": request.POST.get('modality_social'),
+            "CBECE_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
             "CBECE_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
 
             "CBECE_ASSESSMENT/attended_science": request.POST.get('attended_science'),
-            "CBECE_ASSESSMENT/modality_science": request.POST.get('modality_science'),
+            "CBECE_ASSESSMENT/modality_science": request.POST.getlist('modality_science'),
             "CBECE_ASSESSMENT/science": request.POST.get('science'),
 
             "CBECE_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
-            "CBECE_ASSESSMENT/modality_artistic": request.POST.get('modality_artistic'),
+            "CBECE_ASSESSMENT/modality_artistic": request.POST.getlist('modality_artistic'),
             "CBECE_ASSESSMENT/artistic": request.POST.get('artistic'),
         }
         instance.save()
@@ -6000,7 +6004,7 @@ class ABLNAssessmentForm(forms.ModelForm):
         instance.modified_by = request.user
         instance.post_test = {
             "ABLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-            "ABLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
+            "ABLN_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
             "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
             # "ABLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
@@ -6008,15 +6012,15 @@ class ABLNAssessmentForm(forms.ModelForm):
             # "ABLN_ASSESSMENT/english": request.POST.get('english'),
 
             "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "ABLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
+            "ABLN_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
             "ABLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
 
             "ABLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-            "ABLN_ASSESSMENT/modality_math": request.POST.get('modality_math'),
+            "ABLN_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
             "ABLN_ASSESSMENT/math": request.POST.get('math'),
 
             "ABLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-            "ABLN_ASSESSMENT/modality_social": request.POST.get('modality_social'),
+            "ABLN_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
             "ABLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
         }
         instance.save()
@@ -6387,7 +6391,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
-                    Div('modality_arabic', css_class='col-md-2'),
+                    Div('modality_arabic', css_class='col-md-2  multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
@@ -6396,7 +6400,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('attended_english', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2'),
+                    Div('modality_english', css_class='col-md-2  multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row',
@@ -6405,7 +6409,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('attended_math', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
-                    Div('modality_math', css_class='col-md-2'),
+                    Div('modality_math', css_class='col-md-2  multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
@@ -6415,7 +6419,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('attended_social', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
-                    Div('modality_social', css_class='col-md-2'),
+                    Div('modality_social', css_class='col-md-2  multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
@@ -6425,7 +6429,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2'),
+                    Div('modality_psychomotor', css_class='col-md-2  multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
@@ -6565,23 +6569,23 @@ class BLNAssessmentForm(forms.ModelForm):
         instance.modified_by = request.user
         instance.post_test = {
                 "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-                "BLN_ASSESSMENT/modality_arabic": request.POST.get('modality_arabic'),
+                "BLN_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
                 "BLN_ASSESSMENT/arabic": request.POST.get('arabic'),
 
                 "BLN_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-                "BLN_ASSESSMENT/modality_english": request.POST.get('modality_english'),
+                "BLN_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
                 "BLN_ASSESSMENT/english": request.POST.get('english'),
 
                 "BLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-                "BLN_ASSESSMENT/modality_psychomotor": request.POST.get('modality_psychomotor'),
+                "BLN_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
                 "BLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
 
                 "BLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-                "BLN_ASSESSMENT/modality_math": request.POST.get('modality_math'),
+                "BLN_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
                 "BLN_ASSESSMENT/math": request.POST.get('math'),
 
                 "BLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-                "BLN_ASSESSMENT/modality_social": request.POST.get('modality_social'),
+                "BLN_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
                 "BLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
             }
         instance.save()

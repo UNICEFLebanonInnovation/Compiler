@@ -224,7 +224,7 @@ class CLM(TimeStampedModel):
     )
 
     MODALITY = choices=(
-            ('', '----------'),
+            # ('', '----------'),
             ('online', _("Online Forms")),
             ('phone', _("Phone / Whatasapp")),
             ('parents', _("Asking Parents")),
