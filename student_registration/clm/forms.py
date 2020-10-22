@@ -1275,31 +1275,31 @@ class BLNForm(CommonForm):
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
-            if not arabic:
+            if arabic is None:
                 self.add_error('arabic', 'This field is required')
 
         if attended_english == 'yes':
             if not modality_english:
                 self.add_error('modality_english', 'This field is required')
-            if not english:
+            if english is None:
                 self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
                 self.add_error('modality_psychomotor', 'This field is required')
-            if not psychomotor:
+            if psychomotor is None:
                 self.add_error('psychomotor', 'This field is required')
 
         if attended_math == 'yes':
             if not modality_math:
                 self.add_error('modality_math', 'This field is required')
-            if not math:
+            if math is None:
                 self.add_error('math', 'This field is required')
 
         if attended_social == 'yes':
             if not modality_social:
                 self.add_error('modality_social', 'This field is required')
-            if not social_emotional:
+            if social_emotional is None:
                 self.add_error('social_emotional', 'This field is required')
 
 
@@ -2504,31 +2504,31 @@ class ABLNForm(CommonForm):
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
-            if not arabic:
+            if arabic is None:
                 self.add_error('arabic', 'This field is required')
 
         if attended_english == 'yes':
             if not modality_english:
                 self.add_error('modality_english', 'This field is required')
-            if not english:
+            if english is None:
                 self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
                 self.add_error('modality_psychomotor', 'This field is required')
-            if not psychomotor:
+            if psychomotor is None:
                 self.add_error('psychomotor', 'This field is required')
 
         if attended_math == 'yes':
             if not modality_math:
                 self.add_error('modality_math', 'This field is required')
-            if not math:
+            if math is None:
                 self.add_error('math', 'This field is required')
 
         if attended_social == 'yes':
             if not modality_social:
                 self.add_error('modality_social', 'This field is required')
-            if not social_emotional:
+            if social_emotional is None:
                 self.add_error('social_emotional', 'This field is required')
 
         if labours_single_selection == 'other_many_other':
@@ -4434,44 +4434,44 @@ class CBECEForm(CommonForm):
         if attended_science == 'yes':
             if not modality_science:
                 self.add_error('modality_science', 'This field is required')
-            if not science:
+            if science is None:
                 self.add_error('science', 'This field is required')
 
         if attended_artistic == 'yes':
             if not modality_artistic:
                 self.add_error('modality_artistic', 'This field is required')
-            if not artistic:
+            if artistic is None:
                 self.add_error('artistic', 'This field is required')
 
 
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
-            if not arabic:
+            if arabic is None:
                 self.add_error('arabic', 'This field is required')
 
         if attended_english == 'yes':
             if not modality_english:
                 self.add_error('modality_english', 'This field is required')
-            if not english:
+            if english is None:
                 self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
                 self.add_error('modality_psychomotor', 'This field is required')
-            if not psychomotor:
+            if psychomotor is None:
                 self.add_error('psychomotor', 'This field is required')
 
         if attended_math == 'yes':
             if not modality_math:
                 self.add_error('modality_math', 'This field is required')
-            if not math:
+            if math is None:
                 self.add_error('math', 'This field is required')
 
         if attended_social == 'yes':
             if not modality_social:
                 self.add_error('modality_social', 'This field is required')
-            if not social_emotional:
+            if social_emotional is None:
                 self.add_error('social_emotional', 'This field is required')
 
         if labours_single_selection == 'other_many_other':
@@ -5972,31 +5972,31 @@ class ABLNAssessmentForm(forms.ModelForm):
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
-            if not arabic:
+            if arabic is None:
                 self.add_error('arabic', 'This field is required')
 
         # if attended_english == 'yes':
         #     if not modality_english:
         #         self.add_error('modality_english', 'This field is required')
-        #     if not english:
+        #     if english is None:
         #         self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
                 self.add_error('modality_psychomotor', 'This field is required')
-            if not psychomotor:
+            if psychomotor is None:
                 self.add_error('psychomotor', 'This field is required')
 
         if attended_math == 'yes':
             if not modality_math:
                 self.add_error('modality_math', 'This field is required')
-            if not math:
+            if math is None:
                 self.add_error('math', 'This field is required')
 
         if attended_social == 'yes':
             if not modality_social:
                 self.add_error('modality_social', 'This field is required')
-            if not social_emotional:
+            if social_emotional is None:
                 self.add_error('social_emotional', 'This field is required')
 
     def save(self, instance=None, request=None):
@@ -6536,31 +6536,31 @@ class BLNAssessmentForm(forms.ModelForm):
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
-            if not arabic:
+            if arabic is None:
                 self.add_error('arabic', 'This field is required')
 
         if attended_english == 'yes':
             if not modality_english:
                 self.add_error('modality_english', 'This field is required')
-            if not english:
+            if english is None:
                 self.add_error('english', 'This field is required')
 
         if attended_psychomotor == 'yes':
             if not modality_psychomotor:
                 self.add_error('modality_psychomotor', 'This field is required')
-            if not psychomotor:
+            if psychomotor is None:
                 self.add_error('psychomotor', 'This field is required')
 
         if attended_math == 'yes':
             if not modality_math:
                 self.add_error('modality_math', 'This field is required')
-            if not math:
+            if math is None:
                 self.add_error('math', 'This field is required')
 
         if attended_social == 'yes':
             if not modality_social:
                 self.add_error('modality_social', 'This field is required')
-            if not social_emotional:
+            if social_emotional is None:
                 self.add_error('social_emotional', 'This field is required')
 
 

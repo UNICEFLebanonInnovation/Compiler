@@ -2537,6 +2537,7 @@ class Inclusion(TimeStampedModel):
             ('bln', _('BLN')),
             ('cbece', _('CBECE')),
             ('ocha', _('OCHA')),
+            ('non unicef', _('Non - UNICEF')),
         ),
         verbose_name=_('Source of identification of the child')
     )

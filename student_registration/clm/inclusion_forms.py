@@ -382,6 +382,7 @@ class InclusionForm(forms.ModelForm):
             ('bln', _('BLN')),
             ('cbece', _('CBECE')),
             ('ocha', _('OCHA')),
+            ('non unicef', _('Non - UNICEF')),
         ),
         initial=''
     )
