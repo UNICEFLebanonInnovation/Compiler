@@ -281,7 +281,8 @@ $(document).ready(function(){
     });
 
     $(document).on('change', 'select#id_participation, select#id_follow_up_type, select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
-        'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic ', function(){
+        'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , ' +
+        'select#id_barriers_single, select#id_test_done ', function(){
        reorganizeForm_post_assessment();
     });
 
@@ -1054,9 +1055,10 @@ function reorganizeForm_post_assessment()
 {
 
     var participation = $('select#id_participation').val();
+    var barriers_single = $('select#id_barriers_single').val();
+    var test_done = $('select#id_test_done').val();
     var follow_up_type = $('select#id_follow_up_type').val();
 
-    var attended_arabic = $('select#id_attended_arabic').val();
     var attended_arabic = $('select#id_attended_arabic').val();
     var attended_english = $('select#id_attended_english').val();
     var attended_math = $('select#id_attended_math').val();
@@ -1069,15 +1071,62 @@ function reorganizeForm_post_assessment()
 
     // id_participation
     $('div#div_id_barriers_single').addClass('d-none');
+    $('#span_barriers_single').addClass('d-none');
+    $('div#div_id_barriers_other').addClass('d-none');
+    $('#span_barriers_other').addClass('d-none');
     $('#follow_up').addClass('hide');
+
+
 
     if(participation != 'no_absence'){
         $('#div_id_barriers_single').removeClass('d-none');
+        $('#span_barriers_single').removeClass('d-none');
         $('#follow_up').removeClass('hide');
         // $('input[name=follow_up_type]').val('none').checked(true);
-        $('div#div_phone_call_number').val('');
-        $('div#div_house_visit_number').val('');
-        $('div#div_family_visit_number').val('');
+        $('#id_phone_call_number').val('');
+        $('#id_house_visit_number').val('');
+        $('#id_family_visit_number').val('');
+    }
+
+    if(barriers_single == 'other'){
+        $('#div_id_barriers_other').removeClass('d-none');
+        $('#span_barriers_other').removeClass('d-none');
+    }
+    else
+    {
+        $('#id_barriers_other').val('');
+    }
+
+    $('div#div_id_round_complete').addClass('d-none');
+    $('#span_round_complete').addClass('d-none');
+    $('div.grades').addClass('d-none');
+
+    if(test_done == 'yes'){
+    $('#div_id_round_complete').removeClass('d-none');
+    $('#span_round_complete').removeClass('d-none');
+    $('#grades').removeClass('hide');
+    $('div.grades').removeClass('d-none');
+
+    }
+    else
+    {
+        $('select#id_round_complete').val("");
+
+        // grades
+        $('#id_arabic').val('');
+        $('select#id_modality_arabic').val("");
+        $('#id_english').val('');
+        $('select#id_modality_english').val("");
+        $('#id_math').val('');
+        $('select#id_modality_math').val("");
+        $('#id_social').val('');
+        $('select#id_modality_social').val("");
+        $('#id_psychomotor').val('');
+        $('select#id_modality_psychomotor').val("");
+        $('#id_science').val('');
+        $('select#id_modality_science').val("");
+        $('#id_artistic').val('');
+        $('select#id_modality_artistic').val("");
     }
 
     // follow_up_type
@@ -1141,7 +1190,6 @@ function reorganizeForm_post_assessment()
     else{
         $('#id_arabic').val('');
         $('select#id_modality_arabic').val("");
-        // $('#id_modality_arabic').val('');
 
     }
 

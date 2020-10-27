@@ -163,6 +163,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'participation',
             'learning_result',
             'barriers_single',
+            'barriers_other',
             'test_done',
             'round_complete',
             'follow_up_type',

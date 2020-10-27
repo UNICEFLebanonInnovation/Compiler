@@ -169,16 +169,19 @@ class CLM(TimeStampedModel):
     PARTICIPATION = Choices(
         ('', '----------'),
         ('no_absence', _('No Absence')),
-        ('less_than_3days', _('Less than 3 absence days')),
-        ('3_7_days', _('3 to 7 absence days')),
-        ('7_12_days', _('7 to 12 absence days')),
-        ('more_than_12days', _('More than 12 absence days')),
+        ('less_than_5days', _('Less than 5 absence days')),
+        ('5_10_days', _('5 to 10 absence days')),
+        ('10_15_days', _('10 to 15 absence days')),
+        ('15_25_days', _('15 to 25 absence days')),
+        ('more_than_25days', _('More than 25 absence days')),
     )
     BARRIERS = Choices(
         ('Full time job to support family financially', _('Full time job to support family financially')),
         ('seasonal_work', _('Seasonal work')),
-        ('cold_weather', _('Cold Weather')),
-        ('transportation', _('Transportation')),
+        # ('cold_weather', _('Cold Weather')),
+        # ('transportation', _('Transportation')),
+        ('availablity_electronic_device', _('Availablity of Electronic Device')),
+        ('internet_connectivity', _('Internet Connectivity')),
         ('sickness', _('Sickness')),
         ('security', _('Security')),
         ('family_moved', _('Family moved')),
@@ -404,6 +407,11 @@ class CLM(TimeStampedModel):
         choices=BARRIERS,
         verbose_name=_('The main barriers affecting the daily attendance and performance')
     )
+    barriers_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
     test_done = models.CharField(
         max_length=100,
         blank=True,

@@ -5504,11 +5504,11 @@ class ABLNAssessmentForm(forms.ModelForm):
         choices=(
                 ('', '----------'),
                 ('no_absence', _('No Absence')),
-                ('less_than_3days', _('Less than 3 absence days')),
-                ('3_7_days', _('3 to 7 absence days')),
-                ('7_12_days', _('7 to 12 absence days')),
-                ('more_than_12days', _('More than 12 absence days')),
-
+                ('less_than_5days', _('Less than 5 absence days')),
+                ('5_10_days', _('5 to 10 absence days')),
+                ('10_15_days', _('10 to 15 absence days')),
+                ('15_25_days', _('15 to 25 absence days')),
+                ('more_than_25days', _('More than 25 absence days')),
             ),
         initial=''
     )
@@ -5519,10 +5519,12 @@ class ABLNAssessmentForm(forms.ModelForm):
             ('', '----------'),
             ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
             ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
+            # ('referred_to_alp', _('referred to ALP')),
+            ('referred_public_school', _('Referred to public school')),
             ('referred_to_bln', _('Referred to BLN')),
+            ('referred_to_tvet', _('Referred to TVET')),
             ('referred_to_ybln', _('Referred to YBLN')),
-            # ('referred_to_alp', _('Referred to ALP')),
-            ('referred_to_cbt', _('Referred to CBT')),
+            ('dropout', _('Dropout, referral not possible')),
         ),
         initial=''
     )
@@ -6053,10 +6055,11 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(
                 ('', '----------'),
                 ('no_absence', _('No Absence')),
-                ('less_than_3days', _('Less than 3 absence days')),
-                ('3_7_days', _('3 to 7 absence days')),
-                ('7_12_days', _('7 to 12 absence days')),
-                ('more_than_12days', _('More than 12 absence days')),
+                ('less_than_5days', _('Less than 5 absence days')),
+                ('5_10_days', _('5 to 10 absence days')),
+                ('10_15_days', _('10 to 15 absence days')),
+                ('15_25_days', _('15 to 25 absence days')),
+                ('more_than_25days', _('More than 25 absence days')),
 
             ),
         initial=''
@@ -6066,7 +6069,7 @@ class BLNAssessmentForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
-            ('graduated_to_bln_next_level', _('Graduated to the next level')),
+            # ('graduated_to_bln_next_level', _('Graduated to the next level')),
             ('graduated_to_bln_next_round_same_level', _('Graduated to the next round, same level')),
             ('graduated_to_bln_next_round_higher_level', _('Graduated to the next round, higher level')),
             ('referred_to_alp', _('referred to ALP')),
@@ -6084,6 +6087,10 @@ class BLNAssessmentForm(forms.ModelForm):
         widget=forms.Select,
         required=True
     )
+    barriers_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     test_done = forms.ChoiceField(
         label=_("Post test has been done"),
         widget=forms.Select, required=True,
@@ -6097,6 +6104,17 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+
+    basic_stationery = forms.ChoiceField(
+        label=_("Did the child receive basic stationery?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    pss_kit = forms.ChoiceField(
+            label=_("Did the child benefit from the PSS kit?"),
+            widget=forms.Select, required=True,
+            choices=CLM.YES_NO
+        )
     attended_arabic = forms.ChoiceField(
         label=_("Attended Arabic test"),
         widget=forms.Select, required=True,
@@ -6371,68 +6389,78 @@ class BLNAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-4'),
-                    Div('barriers_single', css_class='col-md-4'),
+                    Div('participation', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_barriers_single">1.1</span>'),
+                    Div('barriers_single', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_barriers_other">1.2</span>'),
+                    Div('barriers_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('test_done', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default" id="span_round_complete">2.1</span>'),
                     Div('round_complete', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('basic_stationery', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('pss_kit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">6.1</span>'),
                     Div('modality_arabic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">6.2</span>'),
                     Div('arabic', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">7.1</span>'),
                     Div('modality_english', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_english">7.2</span>'),
                     Div('english', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">8.1</span>'),
                     Div('modality_math', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">8.2</span>'),
                     Div('math', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">9.1</span>'),
                     Div('modality_social', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">9.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('attended_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">10.1</span>'),
                     Div('modality_psychomotor', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">10.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
@@ -6533,6 +6561,25 @@ class BLNAssessmentForm(forms.ModelForm):
         modality_social = cleaned_data.get("modality_social")
         social_emotional = cleaned_data.get("social_emotional")
 
+        learning_result = cleaned_data.get("learning_result")
+        barriers_single = cleaned_data.get("barriers_single")
+        barriers_other = cleaned_data.get("barriers_other")
+
+        test_done = cleaned_data.get("test_done")
+        round_complete = cleaned_data.get("round_complete")
+
+        if test_done == 'yes':
+            if not round_complete:
+                self.add_error('round_complete', 'This field is required')
+
+        if learning_result != 'no_absence':
+            if not barriers_single:
+                self.add_error('barriers_single', 'This field is required')
+
+        if barriers_single == 'other':
+            if not barriers_other:
+                self.add_error('barriers_other', 'This field is required')
+
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
@@ -6595,10 +6642,13 @@ class BLNAssessmentForm(forms.ModelForm):
         model = BLN
         fields = (
             'participation',
-            'learning_result',
             'barriers_single',
+            'barriers_other',
             'test_done',
             'round_complete',
+            'basic_stationery',
+            'pss_kit',
+            'learning_result',
             'follow_up_type',
             'phone_call_number',
             'house_visit_number',
@@ -6618,11 +6668,12 @@ class CBECEAssessmentForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=(
                 ('', '----------'),
+                ('no_absence', _('No Absence')),
                 ('less_than_5days', _('Less than 5 absence days')),
                 ('5_10_days', _('5 to 10 absence days')),
                 ('10_15_days', _('10 to 15 absence days')),
-                ('more_than_15days', _('More than 15 absence days')),
-                ('no_absence', _('No Absence'))
+                ('15_25_days', _('15 to 25 absence days')),
+                ('more_than_25days', _('More than 25 absence days')),
             ),
         initial=''
     )

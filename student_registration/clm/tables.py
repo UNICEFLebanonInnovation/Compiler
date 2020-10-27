@@ -46,18 +46,18 @@ class BLNTable(CommonTable):
     monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
                                             template_name='django_tables2/clm_monitoring_column.html',
                                             attrs={'url': '/clm/bln-monitoring-questioner/', 'programme': 'BLN'})
-    # referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
-    #                                         template_name='django_tables2/clm_referral_column.html',
-    #                                         attrs={'url': '/clm/bln-referral/', 'programme': 'BLN'})
-    # followup_column = tables.TemplateColumn(verbose_name=_('Follow-up'), orderable=False,
-    #                                         template_name='django_tables2/clm_followup_column.html',
-    #                                         attrs={'url': '/clm/bln-followup/', 'programme': 'BLN'})
+    referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
+                                            template_name='django_tables2/clm_referral_column.html',
+                                            attrs={'url': '/clm/bln-referral/', 'programme': 'BLN'})
+    followup_column = tables.TemplateColumn(verbose_name=_('Follow-up'), orderable=False,
+                                            template_name='django_tables2/clm_followup_column.html',
+                                            attrs={'url': '/clm/bln-followup/', 'programme': 'BLN'})
     re_enroll_column = tables.TemplateColumn(verbose_name=_('Re-enroll'), orderable=False,
                                              template_name='django_tables2/clm_re_enroll_column.html',
                                              attrs={'url': '/clm/bln-add/', 'programme': 'BLN'})
-    # post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
-    #                                                template_name='django_tables2/clm_assessment_column.html',
-    #                                                attrs={'url': '/clm/bln-post-assessment/', 'programme': 'BLN'})
+    post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
+                                                   template_name='django_tables2/clm_assessment_column.html',
+                                                   attrs={'url': '/clm/bln-post-assessment/', 'programme': 'BLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
@@ -78,11 +78,11 @@ class BLNTable(CommonTable):
         model = BLN
         fields = (
             'edit_column',
-            # 'post_assessment_column',
+            'post_assessment_column',
             'delete_column',
             'monitoring_column',
-            # 'referral_column',
-            # 'followup_column',
+            'referral_column',
+            'followup_column',
             're_enroll_column',
             'first_attendance_date',
             'round',
