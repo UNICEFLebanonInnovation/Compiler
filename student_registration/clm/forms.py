@@ -6122,16 +6122,11 @@ class BLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
 
-    modality_arabic = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_arabic = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     arabic = forms.FloatField(
         label=_('Results'),
@@ -6144,16 +6139,11 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_english = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_english = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     english = forms.FloatField(
         label=_('Results'),
@@ -6166,16 +6156,11 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_math = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_math = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     math = forms.FloatField(
         label=_('Results'),
@@ -6188,16 +6173,11 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_social = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_social = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
 
     social_emotional = forms.FloatField(
@@ -6211,16 +6191,11 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_psychomotor = forms.ChoiceField(
-        label=_("Please indicate modality"),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
-        )
+    modality_psychomotor = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     psychomotor = forms.FloatField(
         label=_('Results'),
@@ -6302,6 +6277,7 @@ class BLNAssessmentForm(forms.ModelForm):
     )
 
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    registration_level = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -6323,52 +6299,6 @@ class BLNAssessmentForm(forms.ModelForm):
                 callback=self.request.build_absolute_uri(
                     reverse('clm:bln_post_assessment', kwargs={'pk': instance.id}))
             )
-        if instance.post_test:
-            p_test = instance.post_test
-            if "BLN_ASSESSMENT/attended_arabic" in p_test:
-                self.fields['attended_arabic'].initial = p_test["BLN_ASSESSMENT/attended_arabic"]
-
-            if "BLN_ASSESSMENT/modality_arabic" in p_test:
-                self.fields['modality_arabic'].initial = p_test["BLN_ASSESSMENT/modality_arabic"]
-
-            if "BLN_ASSESSMENT/arabic" in p_test:
-                self.fields['arabic'].initial = p_test["BLN_ASSESSMENT/arabic"]
-
-            if "BLN_ASSESSMENT/attended_english" in p_test:
-                self.fields['attended_english'].initial = p_test["BLN_ASSESSMENT/attended_english"]
-
-            if "BLN_ASSESSMENT/modality_english" in p_test:
-                self.fields['modality_english'].initial = p_test["BLN_ASSESSMENT/modality_english"]
-
-            if "BLN_ASSESSMENT/english" in p_test:
-                self.fields['english'].initial = p_test["BLN_ASSESSMENT/english"]
-
-            if "BLN_ASSESSMENT/attended_math" in p_test:
-                self.fields['attended_math'].initial = p_test["BLN_ASSESSMENT/attended_math"]
-
-            if "BLN_ASSESSMENT/modality_math" in p_test:
-                self.fields['modality_math'].initial = p_test["BLN_ASSESSMENT/modality_math"]
-
-            if "BLN_ASSESSMENT/math" in p_test:
-                self.fields['math'].initial = p_test["BLN_ASSESSMENT/math"]
-
-            if "BLN_ASSESSMENT/attended_social" in p_test:
-                self.fields['attended_social'].initial = p_test["BLN_ASSESSMENT/attended_social"]
-
-            if "BLN_ASSESSMENT/modality_social" in p_test:
-                self.fields['modality_social'].initial = p_test["BLN_ASSESSMENT/modality_social"]
-
-            if "BLN_ASSESSMENT/social_emotional" in p_test:
-                self.fields['social_emotional'].initial = p_test["BLN_ASSESSMENT/social_emotional"]
-
-            if "BLN_ASSESSMENT/attended_psychomotor" in p_test:
-                self.fields['attended_psychomotor'].initial = p_test["BLN_ASSESSMENT/attended_psychomotor"]
-
-            if "BLN_ASSESSMENT/modality_psychomotor" in p_test:
-                self.fields['modality_psychomotor'].initial = p_test["BLN_ASSESSMENT/modality_psychomotor"]
-
-            if "BLN_ASSESSMENT/psychomotor" in p_test:
-                self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -6462,6 +6392,8 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row grades',
                 ),
+
+
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
             Fieldset(
@@ -6580,6 +6512,7 @@ class BLNAssessmentForm(forms.ModelForm):
             if not barriers_other:
                 self.add_error('barriers_other', 'This field is required')
 
+
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
@@ -6610,9 +6543,48 @@ class BLNAssessmentForm(forms.ModelForm):
             if social_emotional is None:
                 self.add_error('social_emotional', 'This field is required')
 
+        # grades Max Value validation
+        registration_level = cleaned_data.get("registration_level")
+
+        if registration_level == 'level_one':
+            if arabic > 44:
+                self.add_error('arabic', 'This value is greater that 44')
+            if english > 36:
+                self.add_error('english', 'This value is greater that 36')
+            if math > 18:
+                self.add_error('math', 'This value is greater that 18')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+        elif registration_level == 'level_two':
+            if arabic > 52:
+                self.add_error('arabic', 'This value is greater that 52')
+            if english > 56:
+                self.add_error('english', 'This value is greater that 56')
+            if math > 30:
+                self.add_error('math', 'This value is greater that 30')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+        else:
+            if arabic > 58:
+                self.add_error('arabic', 'This value is greater that 58')
+            if english > 60:
+                self.add_error('english', 'This value is greater that 60')
+            if math > 32:
+                self.add_error('math', 'This value is greater that 32')
+            if social_emotional > 24:
+                self.add_error('social_emotional', 'This value is greater that 24')
+            if psychomotor > 8:
+                self.add_error('psychomotor', 'This value is greater that 8')
+
 
     def save(self, instance=None, request=None):
         instance = super(BLNAssessmentForm, self).save()
+        # instance = super(BLNAssessmentForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
+
         instance.modified_by = request.user
         instance.post_test = {
                 "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),

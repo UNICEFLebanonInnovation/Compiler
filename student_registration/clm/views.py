@@ -717,6 +717,7 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
     form_class = ABLNAssessmentForm
     success_url = '/clm/abln-list/'
     group_required = [u"CLM_ABLN"]
+    # data['student_nationality'] = data['student_nationality_id']
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -756,11 +757,62 @@ class BLNPostAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(id=self.kwargs['pk'])
+
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
+
         else:
-            return form_class(instance=instance, request=self.request)
+            data = BLNSerializer(instance).data
+            if 'post_test' in data:
+                p_test = data['post_test']
+                if p_test:
+                    if "BLN_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["BLN_ASSESSMENT/attended_arabic"]
+
+                    if "BLN_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["BLN_ASSESSMENT/modality_arabic"]
+
+                    if "BLN_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["BLN_ASSESSMENT/arabic"]
+
+                    if "BLN_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["BLN_ASSESSMENT/attended_english"]
+
+                    if "BLN_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["BLN_ASSESSMENT/modality_english"]
+
+                    if "BLN_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["BLN_ASSESSMENT/english"]
+
+                    if "BLN_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["BLN_ASSESSMENT/attended_math"]
+
+                    if "BLN_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["BLN_ASSESSMENT/modality_math"]
+
+                    if "BLN_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["BLN_ASSESSMENT/math"]
+
+                    if "BLN_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["BLN_ASSESSMENT/attended_social"]
+
+                    if "BLN_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["BLN_ASSESSMENT/modality_social"]
+
+                    if "BLN_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["BLN_ASSESSMENT/social_emotional"]
+
+                    if "BLN_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_psychomotor'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+
+                    if "BLN_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_psychomotor'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
+
+                    if "BLN_ASSESSMENT/psychomotor" in p_test:
+                        data['psychomotor'] = p_test["BLN_ASSESSMENT/psychomotor"]
+
+            return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
