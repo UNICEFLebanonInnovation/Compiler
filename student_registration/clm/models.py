@@ -234,6 +234,13 @@ class CLM(TimeStampedModel):
             ('offline', _("Offline(F2F)"))
     )
 
+    SESSION_MODALITY = choices = (
+        # ('', '----------'),
+        ('online', _("Online via Whatsapp")),
+        ('phone', _("Phone calls")),
+        ('offline', _("Offline(F2F)"))
+    )
+
     first_attendance_date = models.DateField(
         blank=True,
         null=True,
@@ -475,10 +482,66 @@ class CLM(TimeStampedModel):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         verbose_name=_('Parents attended parents meeting')
     )
-    visits_number = models.IntegerField(
+    pss_session_attended = models.CharField(
+        max_length=100,
         blank=True,
         null=True,
-        verbose_name=_('Please enter the number parent visits')
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Attended PSS Session')
+    )
+    pss_session_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('PSS session number')
+    )
+
+    pss_session_modality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices= SESSION_MODALITY,
+        verbose_name=_('Please the modality used per each session')
+    )
+    covid_session_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Attended PSS Session')
+    )
+    covid_session_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('PSS session number')
+    )
+
+    covid_session_modality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices= SESSION_MODALITY,
+        verbose_name=_('Please the modality used per each session')
+    )
+
+    followup_session_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Attended PSS Session')
+    )
+    followup_session_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('PSS session number')
+    )
+
+    followup_session_modality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices= SESSION_MODALITY,
+        verbose_name=_('Please the modality used per each session')
     )
     parent_attended = models.CharField(
         max_length=100,
@@ -491,6 +554,16 @@ class CLM(TimeStampedModel):
             ('other', _('Other')),
         ),
         verbose_name=_('Parents attended parents meeting')
+    )
+
+    parent_attended_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    visits_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Please enter the number parent visits')
     )
     child_health_examed = models.CharField(
         max_length=100,

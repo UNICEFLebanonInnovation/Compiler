@@ -6233,12 +6233,12 @@ class BLNAssessmentForm(forms.ModelForm):
         label=_('Result of follow up'),
         widget=forms.Select, required=False,
         choices=(
-            ('child back', _('Phone Call')),
-            ('child transfer to difficulty center', _('Child transfer to difficulty center')),
-            ('child transfer to protection', _('Child transfer to protection')),
-            ('child transfer to medical', _('Child transfer to medical')),
-            ('Intensive followup', _('Intensive followup')),
-            ('dropout', _('Dropout')),
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
         ),
         initial=''
     )
@@ -6248,10 +6248,54 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    visits_number = forms.IntegerField(
-        label=_('Please enter the number parent visits'),
+    pss_session_attended = forms.ChoiceField(
+        label=_("Attended PSS Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    pss_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
+    )
+    pss_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    covid_session_attended = forms.ChoiceField(
+        label=_("Attended covid Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    covid_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    covid_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    followup_session_attended = forms.ChoiceField(
+        label=_("Attended followup Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    followup_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+
+    followup_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     parent_attended = forms.ChoiceField(
         label=_("Parent who attended the parents meeting"),
@@ -6262,6 +6306,10 @@ class BLNAssessmentForm(forms.ModelForm):
             ('father', _('Father')),
             ('other', _('Other')),
         )
+    )
+    parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     child_health_examed = forms.ChoiceField(
         label=_("Did the child receive health exam"),
@@ -6434,6 +6482,7 @@ class BLNAssessmentForm(forms.ModelForm):
                 id='follow_up',
                 css_class='bd-callout bd-callout-warning B_right_border'
             ),
+
             Fieldset(
                 None,
                 Div(
@@ -6445,22 +6494,54 @@ class BLNAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('parent_attended_visits', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2</span>'),
+                    # Div('visits_number', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('visits_number', css_class='col-md-4'),
+                    Div('pss_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_session_modality">2.1</span>'),
+                    Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
+                    Div('pss_session_number', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('parent_attended', css_class='col-md-4'),
+                    Div('covid_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_session_modality">3.1</span>'),
+                    Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
+                    Div('covid_session_number', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('child_health_examed', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('child_health_concern', css_class='col-md-4'),
+                    Div('followup_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_modality">4.1</span>'),
+                    Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
+                    Div('followup_session_number', css_class='col-md-2'),
                     css_class='row',
                 ),
+
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('parent_attended', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_parent_attended_other">5.1</span>'),
+                    Div('parent_attended_other', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">4</span>'),
+                #     Div('child_health_examed', css_class='col-md-4'),
+                #     HTML('<span class="badge badge-default">5</span>'),
+                #     Div('child_health_concern', css_class='col-md-4'),
+                #     css_class='row',
+                # ),
+                id= 'visits',
                 css_class='bd-callout bd-callout-warning C_right_border'+ display_assessment,
             ),
             FormActions(
@@ -6586,6 +6667,10 @@ class BLNAssessmentForm(forms.ModelForm):
         # instance = super(BLNAssessmentForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
 
         instance.modified_by = request.user
+        instance.pss_session_modality = request.POST.getlist('pss_session_modality')
+        instance.covid_session_modality = request.POST.getlist('covid_session_modality')
+        instance.followup_session_modality = request.POST.getlist('Followup_session_modality')
+
         instance.post_test = {
                 "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
                 "BLN_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
@@ -6607,6 +6692,7 @@ class BLNAssessmentForm(forms.ModelForm):
                 "BLN_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
                 "BLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
             }
+
         instance.save()
         messages.success(request, _('Your data has been sent successfully to the server'))
 
@@ -6627,10 +6713,17 @@ class BLNAssessmentForm(forms.ModelForm):
             'family_visit_number',
             'follow_up_result',
             'parent_attended_visits',
-            'visits_number',
+            'pss_session_attended',
+            'pss_session_number',
+            'covid_session_attended',
+            'covid_session_number',
+            'followup_session_attended',
+            'followup_session_number',
+            'parent_attended_other',
+            # 'visits_number',
             'parent_attended',
-            'child_health_examed',
-            'child_health_concern',
+            # 'child_health_examed',
+            # 'child_health_concern',
         )
 
 class CBECEAssessmentForm(forms.ModelForm):
