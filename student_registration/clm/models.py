@@ -226,7 +226,7 @@ class CLM(TimeStampedModel):
         ('level_three', _('Level three')),
     )
 
-    MODALITY = choices=(
+    MODALITY = Choices(
             # ('', '----------'),
             ('online', _("Online Forms")),
             ('phone', _("Phone / Whatasapp")),
@@ -234,11 +234,11 @@ class CLM(TimeStampedModel):
             ('offline', _("Offline(F2F)"))
     )
 
-    SESSION_MODALITY = choices = (
-        # ('', '----------'),
-        ('online', _("Online via Whatsapp")),
-        ('phone', _("Phone calls")),
-        ('offline', _("Offline(F2F)"))
+    SESSION_MODALITY = Choices(
+            # ('', '----------'),
+            ('online', _("Online via Whatsapp")),
+            ('phone', _("Phone calls")),
+            ('offline', _("Offline(F2F)"))
     )
 
     first_attendance_date = models.DateField(
@@ -494,12 +494,15 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('PSS session number')
     )
-
-    pss_session_modality = models.CharField(
-        max_length=100,
+    pss_session_modality = ArrayField(
+        models.CharField(
+            choices=SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices= SESSION_MODALITY,
         verbose_name=_('Please the modality used per each session')
     )
     covid_session_attended = models.CharField(
@@ -515,11 +518,15 @@ class CLM(TimeStampedModel):
         verbose_name=_('PSS session number')
     )
 
-    covid_session_modality = models.CharField(
-        max_length=100,
+    covid_session_modality = ArrayField(
+        models.CharField(
+            choices=SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices= SESSION_MODALITY,
         verbose_name=_('Please the modality used per each session')
     )
 
@@ -536,11 +543,15 @@ class CLM(TimeStampedModel):
         verbose_name=_('PSS session number')
     )
 
-    followup_session_modality = models.CharField(
-        max_length=100,
+    followup_session_modality = ArrayField(
+        models.CharField(
+            choices=SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices= SESSION_MODALITY,
         verbose_name=_('Please the modality used per each session')
     )
     parent_attended = models.CharField(

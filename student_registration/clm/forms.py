@@ -6339,11 +6339,11 @@ class BLNAssessmentForm(forms.ModelForm):
         display_assessment = ''
         form_action = reverse('clm:bln_post_assessment', kwargs={'pk': instance.id})
 
-        if instance.pre_test:
+        if instance.post_test:
             post_test_button = ' btn-outline-success '
             post_test = instance.assessment_form(
                 stage='post_test',
-                assessment_slug='abln_post_test',
+                assessment_slug='bln_post_test',
                 callback=self.request.build_absolute_uri(
                     reverse('clm:bln_post_assessment', kwargs={'pk': instance.id}))
             )
@@ -6667,9 +6667,9 @@ class BLNAssessmentForm(forms.ModelForm):
         # instance = super(BLNAssessmentForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
 
         instance.modified_by = request.user
-        instance.pss_session_modality = request.POST.getlist('pss_session_modality')
-        instance.covid_session_modality = request.POST.getlist('covid_session_modality')
-        instance.followup_session_modality = request.POST.getlist('Followup_session_modality')
+        # instance.pss_session_modality = request.POST.getlist('pss_session_modality')
+        # instance.covid_session_modality = request.POST.getlist('covid_session_modality')
+        # instance.followup_session_modality = request.POST.getlist('followup_session_modality')
 
         instance.post_test = {
                 "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
@@ -6715,10 +6715,13 @@ class BLNAssessmentForm(forms.ModelForm):
             'parent_attended_visits',
             'pss_session_attended',
             'pss_session_number',
+            'pss_session_modality',
             'covid_session_attended',
             'covid_session_number',
+            'covid_session_modality',
             'followup_session_attended',
             'followup_session_number',
+            'followup_session_modality',
             'parent_attended_other',
             # 'visits_number',
             'parent_attended',
