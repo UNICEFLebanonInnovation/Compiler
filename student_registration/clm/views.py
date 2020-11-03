@@ -219,14 +219,14 @@ class BLNEditView(LoginRequiredMixin,
                     if "BLN_ASSESSMENT/social_emotional" in p_test:
                         data['social_emotional'] = p_test["BLN_ASSESSMENT/social_emotional"]
 
-                    if "BLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+                    if "BLN_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_artistic"]
 
-                    if "BLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
+                    if "BLN_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_artistic"]
 
-                    if "BLN_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["BLN_ASSESSMENT/psychomotor"]
+                    if "BLN_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["BLN_ASSESSMENT/artistic"]
 
             return BLNForm(data, instance=instance, request=self.request)
 
@@ -615,14 +615,14 @@ class ABLNEditView(LoginRequiredMixin,
                     if "ABLN_ASSESSMENT/social_emotional" in p_test:
                         data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
 
-                    if "ABLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+                    if "ABLN_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["ABLN_ASSESSMENT/attended_artistic"]
 
-                    if "ABLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
+                    if "ABLN_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["ABLN_ASSESSMENT/modality_artistic"]
 
-                    if "ABLN_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["ABLN_ASSESSMENT/psychomotor"]
+                    if "ABLN_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["ABLN_ASSESSMENT/artistic"]
 
             return ABLNForm(data, instance=instance, request=self.request)
 

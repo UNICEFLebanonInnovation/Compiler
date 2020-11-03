@@ -724,19 +724,19 @@ class BLNForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    attended_psychomotor = forms.ChoiceField(
-        label=_("Attended Psychomotor test"),
+    attended_artistic = forms.ChoiceField(
+        label=_("Attended Artistic test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_psychomotor = forms.MultipleChoiceField(
+    modality_artistic = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
         choices=CLM.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    psychomotor = forms.FloatField(
+    artistic = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -1186,11 +1186,11 @@ class BLNForm(CommonForm):
 
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('attended_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">5.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_psychomotor">5.2</span>'),
-                    Div('psychomotor', css_class='col-md-2'),
+                    Div('attended_artistic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">5.1</span>'),
+                    Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_artistic">5.2</span>'),
+                    Div('artistic', css_class='col-md-2'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning E_right_border'
@@ -1260,9 +1260,9 @@ class BLNForm(CommonForm):
         modality_english = cleaned_data.get("modality_english")
         english = cleaned_data.get("english")
 
-        attended_psychomotor = cleaned_data.get("attended_psychomotor")
-        modality_psychomotor = cleaned_data.get("modality_psychomotor")
-        psychomotor = cleaned_data.get("psychomotor")
+        attended_artistic = cleaned_data.get("attended_artistic")
+        modality_artistic = cleaned_data.get("modality_artistic")
+        artistic = cleaned_data.get("artistic")
 
         attended_math = cleaned_data.get("attended_math")
         modality_math = cleaned_data.get("modality_math")
@@ -1284,11 +1284,11 @@ class BLNForm(CommonForm):
             if english is None:
                 self.add_error('english', 'This field is required')
 
-        if attended_psychomotor == 'yes':
-            if not modality_psychomotor:
-                self.add_error('modality_psychomotor', 'This field is required')
-            if psychomotor is None:
-                self.add_error('psychomotor', 'This field is required')
+        if attended_artistic == 'yes':
+            if not modality_artistic:
+                self.add_error('modality_artistic', 'This field is required')
+            if artistic is None:
+                self.add_error('artistic', 'This field is required')
 
         if attended_math == 'yes':
             if not modality_math:
@@ -1444,7 +1444,7 @@ class BLNForm(CommonForm):
         english = cleaned_data.get("english")
         math = cleaned_data.get("math")
         social_emotional = cleaned_data.get("social_emotional")
-        psychomotor = cleaned_data.get("psychomotor")
+        artistic = cleaned_data.get("artistic")
 
         if registration_level == 'level_one':
             if arabic > 44:
@@ -1455,8 +1455,8 @@ class BLNForm(CommonForm):
                 self.add_error('math', 'This value is greater that 18')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
+            if artistic > 8:
+                self.add_error('artistic', 'This value is greater that 8')
         elif registration_level == 'level_two':
             if arabic > 52:
                 self.add_error('arabic', 'This value is greater that 52')
@@ -1466,8 +1466,8 @@ class BLNForm(CommonForm):
                 self.add_error('math', 'This value is greater that 30')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
+            if artistic > 8:
+                self.add_error('artistic', 'This value is greater that 8')
         else:
             if arabic > 58:
                 self.add_error('arabic', 'This value is greater that 58')
@@ -1477,8 +1477,8 @@ class BLNForm(CommonForm):
                 self.add_error('math', 'This value is greater that 32')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
+            if artistic > 8:
+                self.add_error('artistic', 'This value is greater that 8')
 
 
     def save(self, request=None, instance=None, serializer=None):
@@ -1492,9 +1492,9 @@ class BLNForm(CommonForm):
             "BLN_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             "BLN_ASSESSMENT/english": request.POST.get('english'),
 
-            "BLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "BLN_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
-            "BLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+            "BLN_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
+            "BLN_ASSESSMENT/modality_artistic": request.POST.getlist('modality_artistic'),
+            "BLN_ASSESSMENT/artistic": request.POST.get('artistic'),
 
             "BLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
             "BLN_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
@@ -1957,19 +1957,19 @@ class ABLNForm(CommonForm):
         min_value=0, required=False
     )
 
-    attended_psychomotor = forms.ChoiceField(
-        label=_("Attended Psychomotor test"),
+    attended_artistic = forms.ChoiceField(
+        label=_("Attended Artistic test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_psychomotor  = forms.MultipleChoiceField(
+    modality_artistic  = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
         choices=CLM.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    psychomotor = forms.FloatField(
+    artistic = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -2415,11 +2415,11 @@ class ABLNForm(CommonForm):
 
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('attended_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">4.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_psychomotor">4.2</span>'),
-                    Div('psychomotor', css_class='col-md-2'),
+                    Div('attended_artistic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">4.1</span>'),
+                    Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_artistic">4.2</span>'),
+                    Div('artistic', css_class='col-md-2'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning E_right_border'
@@ -2489,9 +2489,9 @@ class ABLNForm(CommonForm):
         modality_english = cleaned_data.get("modality_english")
         english = cleaned_data.get("english")
 
-        attended_psychomotor = cleaned_data.get("attended_psychomotor")
-        modality_psychomotor = cleaned_data.get("modality_psychomotor")
-        psychomotor = cleaned_data.get("psychomotor")
+        attended_artistic = cleaned_data.get("attended_artistic")
+        modality_artistic = cleaned_data.get("modality_artistic")
+        artistic = cleaned_data.get("artistic")
 
         attended_math = cleaned_data.get("attended_math")
         modality_math = cleaned_data.get("modality_math")
@@ -2513,11 +2513,11 @@ class ABLNForm(CommonForm):
             if english is None:
                 self.add_error('english', 'This field is required')
 
-        if attended_psychomotor == 'yes':
-            if not modality_psychomotor:
-                self.add_error('modality_psychomotor', 'This field is required')
-            if psychomotor is None:
-                self.add_error('psychomotor', 'This field is required')
+        if attended_artistic == 'yes':
+            if not modality_artistic:
+                self.add_error('modality_artistic', 'This field is required')
+            if artistic is None:
+                self.add_error('artistic', 'This field is required')
 
         if attended_math == 'yes':
             if not modality_math:
@@ -2673,7 +2673,7 @@ class ABLNForm(CommonForm):
         # english = cleaned_data.get("english")
         math = cleaned_data.get("math")
         social_emotional = cleaned_data.get("social_emotional")
-        psychomotor = cleaned_data.get("psychomotor")
+        artistic = cleaned_data.get("artistic")
 
         if registration_level == 'level_one':
             if arabic > 40:
@@ -2684,8 +2684,8 @@ class ABLNForm(CommonForm):
                 self.add_error('math', 'This value is greater that 20')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
+            if artistic > 8:
+                self.add_error('artistic', 'This value is greater that 8')
         else:
             if arabic > 52:
                 self.add_error('arabic', 'This value is greater that 52')
@@ -2695,8 +2695,8 @@ class ABLNForm(CommonForm):
                 self.add_error('math', 'This value is greater that 34')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
+            if artistic > 8:
+                self.add_error('artistic', 'This value is greater that 8')
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
@@ -2709,9 +2709,9 @@ class ABLNForm(CommonForm):
             # "ABLN_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             # "ABLN_ASSESSMENT/english": request.POST.get('english'),
 
-            "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "ABLN_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
-            "ABLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+            "ABLN_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
+            "ABLN_ASSESSMENT/modality_artistic": request.POST.getlist('modality_artistic'),
+            "ABLN_ASSESSMENT/artistic": request.POST.get('artistic'),
 
             "ABLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
             "ABLN_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
