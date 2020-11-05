@@ -2149,28 +2149,17 @@ class CBECE(CLM):
         ('in_school', _('Inside the school')),
         ('out_school', _('Outside the school')),
     )
-
-    # LEARNING_RESULT = Choices(
-    #     ('', _('Learning result')),
-    #     ('graduated_to_cbece_next_level', _('Graduated to the next level')),
-    #     ('graduated_to_cbec_next_round_same_level', _('Graduated to the next round, same level')),
-    #     ('graduated_to_cbec_next_round_higher_level', _('Graduated to the next round, higher level')),
-    #     ('referred_to_alp', _('referred to ALP')),
-    #     ('referred_public_school', _('Referred to public school')),
-    #     ('referred_to_tvet', _('Referred to TVET')),
-    #     ('referred_to_ybln', _('Referred to YBLN')),
-    #     ('dropout', _('Dropout, referral not possible')),
-    # )
-
     LEARNING_RESULT = Choices(
-        ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
-        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
-        ('referred_to_another_program', _('Referred to another program')),
-        ('dropout', _('Dropout from school')),
-        ('repeat_level', _('Repeat level')),
-        ('graduated_next_round_higher_level', _('Graduated to the next round, higher level')),
+            ('', '----------'),
+            ('graduated_to_cbece_next_level', _('Graduated to the next level')),
+            ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
+            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level')),
+            ('referred_to_alp', _('referred to ALP')),
+            ('referred_public_school', _('Referred to public school')),
+            ('referred_to_tvet', _('Referred to TVET')),
+            ('referred_to_ycbece', _('Referred to YCBECE')),
+            ('dropout', _('Dropout, referral not possible')),
     )
-
     REGISTRATION_LEVEL = (
         ('', '----------'),
         ('level_two', _('Level two')),

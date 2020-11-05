@@ -219,14 +219,14 @@ class BLNEditView(LoginRequiredMixin,
                     if "BLN_ASSESSMENT/social_emotional" in p_test:
                         data['social_emotional'] = p_test["BLN_ASSESSMENT/social_emotional"]
 
-                    if "BLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+                    if "BLN_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_artistic"]
 
-                    if "BLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
+                    if "BLN_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_artistic"]
 
-                    if "BLN_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["BLN_ASSESSMENT/psychomotor"]
+                    if "BLN_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["BLN_ASSESSMENT/artistic"]
 
             return BLNForm(data, instance=instance, request=self.request)
 
@@ -538,8 +538,8 @@ class ABLNAddView(LoginRequiredMixin,
 
 
 class ABLNEditView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   FormView):
+                  GroupRequiredMixin,
+                  FormView):
     template_name = 'clm/abln_edit_form.html'
     form_class = ABLNForm
     success_url = '/clm/abln-list/'
@@ -615,14 +615,14 @@ class ABLNEditView(LoginRequiredMixin,
                     if "ABLN_ASSESSMENT/social_emotional" in p_test:
                         data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
 
-                    if "ABLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+                    if "ABLN_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["ABLN_ASSESSMENT/attended_artistic"]
 
-                    if "ABLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
+                    if "ABLN_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["ABLN_ASSESSMENT/modality_artistic"]
 
-                    if "ABLN_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["ABLN_ASSESSMENT/psychomotor"]
+                    if "ABLN_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["ABLN_ASSESSMENT/artistic"]
 
             return ABLNForm(data, instance=instance, request=self.request)
 
@@ -630,7 +630,6 @@ class ABLNEditView(LoginRequiredMixin,
         instance = ABLN.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(ABLNEditView, self).form_valid(form)
-
 
 class ABLNMonitoringQuestionerView(LoginRequiredMixin,
                                    GroupRequiredMixin,
@@ -711,13 +710,12 @@ class ABLNReferralView(LoginRequiredMixin,
 
 
 class ABLNPostAssessmentView(LoginRequiredMixin,
-                             GroupRequiredMixin,
-                             FormView):
+                            GroupRequiredMixin,
+                            FormView):
     template_name = 'clm/abln_post_assessment.html'
     form_class = ABLNAssessmentForm
     success_url = '/clm/abln-list/'
     group_required = [u"CLM_ABLN"]
-    # data['student_nationality'] = data['student_nationality_id']
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -728,17 +726,67 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(id=self.kwargs['pk'])
+
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
+
         else:
-            return form_class(instance=instance, request=self.request)
+            data = ABLNSerializer(instance).data
+            if 'post_test' in data:
+                p_test = data['post_test']
+                if p_test:
+                    if "ABLN_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["ABLN_ASSESSMENT/attended_arabic"]
+
+                    if "ABLN_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["ABLN_ASSESSMENT/modality_arabic"]
+
+                    if "ABLN_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["ABLN_ASSESSMENT/arabic"]
+
+                    if "ABLN_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["ABLN_ASSESSMENT/attended_english"]
+
+                    if "ABLN_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["ABLN_ASSESSMENT/modality_english"]
+
+                    if "ABLN_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["ABLN_ASSESSMENT/english"]
+
+                    if "ABLN_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["ABLN_ASSESSMENT/attended_math"]
+
+                    if "ABLN_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["ABLN_ASSESSMENT/modality_math"]
+
+                    if "ABLN_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["ABLN_ASSESSMENT/math"]
+
+                    if "ABLN_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["ABLN_ASSESSMENT/attended_social"]
+
+                    if "ABLN_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["ABLN_ASSESSMENT/modality_social"]
+
+                    if "ABLN_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
+
+                    if "ABLN_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_psychomotor'] = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+
+                    if "ABLN_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_psychomotor'] = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
+
+                    if "ABLN_ASSESSMENT/psychomotor" in p_test:
+                        data['psychomotor'] = p_test["ABLN_ASSESSMENT/psychomotor"]
+
+            return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(ABLNPostAssessmentView, self).form_valid(form)
-
 
 class BLNPostAssessmentView(LoginRequiredMixin,
                             GroupRequiredMixin,
@@ -821,8 +869,8 @@ class BLNPostAssessmentView(LoginRequiredMixin,
 
 
 class CBECEPostAssessmentView(LoginRequiredMixin,
-                              GroupRequiredMixin,
-                              FormView):
+                            GroupRequiredMixin,
+                            FormView):
     template_name = 'clm/cbece_post_assessment.html'
     form_class = CBECEAssessmentForm
     success_url = '/clm/cbece-list/'
@@ -837,11 +885,80 @@ class CBECEPostAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(id=self.kwargs['pk'])
+
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
+
         else:
-            return form_class(instance=instance, request=self.request)
+            data = CBECESerializer(instance).data
+            if 'post_test' in data:
+                p_test = data['post_test']
+                if p_test:
+                    if "CBECE_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["CBECE_ASSESSMENT/attended_arabic"]
+
+                    if "CBECE_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["CBECE_ASSESSMENT/modality_arabic"]
+
+                    if "CBECE_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["CBECE_ASSESSMENT/arabic"]
+
+                    if "CBECE_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["CBECE_ASSESSMENT/attended_english"]
+
+                    if "CBECE_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["CBECE_ASSESSMENT/modality_english"]
+
+                    if "CBECE_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["CBECE_ASSESSMENT/english"]
+
+                    if "CBECE_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["CBECE_ASSESSMENT/attended_math"]
+
+                    if "CBECE_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["CBECE_ASSESSMENT/modality_math"]
+
+                    if "CBECE_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["CBECE_ASSESSMENT/math"]
+
+                    if "CBECE_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["CBECE_ASSESSMENT/attended_social"]
+
+                    if "CBECE_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["CBECE_ASSESSMENT/modality_social"]
+
+                    if "CBECE_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["CBECE_ASSESSMENT/social_emotional"]
+
+                    if "CBECE_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_psychomotor'] = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+
+                    if "CBECE_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_psychomotor'] = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+
+                    if "CBECE_ASSESSMENT/psychomotor" in p_test:
+                        data['psychomotor'] = p_test["CBECE_ASSESSMENT/psychomotor"]
+
+                    if "CBECE_ASSESSMENT/attended_science" in p_test:
+                        data['attended_science'] = p_test["CBECE_ASSESSMENT/attended_science"]
+
+                    if "CBECE_ASSESSMENT/modality_science" in p_test:
+                        data['modality_science'] = p_test["CBECE_ASSESSMENT/modality_science"]
+
+                    if "CBECE_ASSESSMENT/science" in p_test:
+                        data['science'] = p_test["CBECE_ASSESSMENT/science"]
+
+                    if "CBECE_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["CBECE_ASSESSMENT/attended_artistic"]
+
+                    if "CBECE_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["CBECE_ASSESSMENT/modality_artistic"]
+
+                    if "CBECE_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["CBECE_ASSESSMENT/artistic"]
+
+            return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
