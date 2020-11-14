@@ -79,7 +79,7 @@ class BLNTable(CommonTable):
         fields = (
             'edit_column',
             'delete_column',
-            'post_assessment_column',
+            # 'post_assessment_column',
             'monitoring_column',
             # 'referral_column',
             # 'followup_column',
@@ -159,7 +159,7 @@ class ABLNTable(CommonTable):
         fields = (
             'edit_column',
             'delete_column',
-            'post_assessment_column',
+            # 'post_assessment_column',
             'monitoring_column',
             # 'referral_column',
             # 'followup_column',
@@ -361,7 +361,7 @@ class CBECETable(CommonTable):
             # 'referral_column',
             # 'followup_column',
             'delete_column',
-            'post_assessment_column',
+            # 'post_assessment_column',
             'monitoring_column',
             'first_attendance_date',
             'round',

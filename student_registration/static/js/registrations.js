@@ -1108,33 +1108,33 @@ function reorganizeForm_post_assessment()
     $('#span_round_complete').addClass('d-none');
     $('div.grades').addClass('d-none');
 
-    if(test_done == 'yes'){
-    $('#div_id_round_complete').removeClass('d-none');
-    $('#span_round_complete').removeClass('d-none');
-    $('#grades').removeClass('hide');
-    $('div.grades').removeClass('d-none');
-
-    }
-    else
-    {
-        $('select#id_round_complete').val("");
-
-        // grades
-        $('#id_arabic').val('');
-        $('select#id_modality_arabic').val("");
-        $('#id_english').val('');
-        $('select#id_modality_english').val("");
-        $('#id_math').val('');
-        $('select#id_modality_math').val("");
-        $('#id_social').val('');
-        $('select#id_modality_social').val("");
-        $('#id_psychomotor').val('');
-        $('select#id_modality_psychomotor').val("");
-        $('#id_science').val('');
-        $('select#id_modality_science').val("");
-        $('#id_artistic').val('');
-        $('select#id_modality_artistic').val("");
-    }
+    // if(test_done == 'yes'){
+    // $('#div_id_round_complete').removeClass('d-none');
+    // $('#span_round_complete').removeClass('d-none');
+    // $('#grades').removeClass('hide');
+    // $('div.grades').removeClass('d-none');
+    //
+    // }
+    // else
+    // {
+    //     $('select#id_round_complete').val("");
+    //
+    //     // grades
+    //     $('#id_arabic').val('');
+    //     $('select#id_modality_arabic').val("");
+    //     $('#id_english').val('');
+    //     $('select#id_modality_english').val("");
+    //     $('#id_math').val('');
+    //     $('select#id_modality_math').val("");
+    //     $('#id_social').val('');
+    //     $('select#id_modality_social').val("");
+    //     $('#id_psychomotor').val('');
+    //     $('select#id_modality_psychomotor').val("");
+    //     $('#id_science').val('');
+    //     $('select#id_modality_science').val("");
+    //     $('#id_artistic').val('');
+    //     $('select#id_modality_artistic').val("");
+    // }
 
     // follow_up_type
     $('div#div_phone_call_number').addClass('d-none');

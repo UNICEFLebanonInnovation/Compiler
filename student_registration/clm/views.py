@@ -3392,36 +3392,16 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_attended_social': 'pre test attended social',
             'pre_test_modality_social': 'pre test modality social',
             'pre_test_social_emotional': 'pre test social emotional',
-            # 'pre_test_attended_science': 'pre test attended science',
-            # 'pre_test_modality_science"': 'pre test modality science"',
-            # 'pre_test_science"': 'pre test science"',
-            # 'pre_test_attended_artistic': 'pre test attended artistic',
-            # 'pre_test_modality_artistic': 'pre test modality artistic',
-            # 'pre_test_social_artistic': 'pre test artistic',
+
+            'pre_test_attended_science': 'pre test attended science',
+            'pre_test_modality_science': 'pre test modality science',
+            'pre_test_science': 'pre test science',
+
+            'pre_test_attended_artistic': 'pre test attended artistic',
+            'pre_test_modality_artistic': 'pre test modality artistic',
+            'pre_test_artistic': 'pre test artistic',
+
             'pre_test_score': 'pre test score',
-            #
-            # 'post_test_attended_arabic': 'post test attended arabic',
-            # 'post_test_modality_arabic': 'post test modality arabic',
-            # 'post_test_arabic': 'post test arabic',
-            # 'post_test_attended_english': 'post test attended english',
-            # 'post_test_modality_english': 'post test modality english',
-            # 'post_test_english': 'post test english',
-            # 'post_test_attended_psychomotor': 'post test attended psychomotor',
-            # 'post_test_modality_psychomotor': 'post test modality psychomotor',
-            # 'post_test_psychomotor': 'post test psychomotor',
-            # 'post_test_attended_math': 'post test attended math',
-            # 'post_test_modality_math': 'post test modality math',
-            # 'post_test_math': 'post test math',
-            # 'post_test_attended_social': 'post test attended social',
-            # 'post_test_modality_social': 'post test modality social',
-            # 'post_test_social_emotional': 'post test social emotional',
-            # 'post_test_attended_science': 'post test attended science',
-            # 'post_test_modality_science"': 'post test modality science"',
-            # 'post_test_science"': 'post test science"',
-            # 'post_test_attended_artistic': 'post test attended artistic',
-            # 'post_test_modality_artistic': 'post test modality artistic',
-            # 'post_test_social_artistic': 'post test artistic',
-            # 'post_test_score': 'post test score',
 
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
@@ -3580,45 +3560,15 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_social',
             'pre_test_social_emotional',
 
-            # 'pre_test_attended_science',
-            # 'pre_test_modality_science',
-            # 'pre_test_science',
-            #
-            # 'pre_test_attended_artistic',
-            # 'pre_test_modality_artistic',
-            # 'pre_test_artistic',
-            #
-            'pre_test_score',
+            'pre_test_attended_science',
+            'pre_test_modality_science',
+            'pre_test_science',
 
-            # 'post_test_attended_arabic',
-            # 'post_test_modality_arabic',
-            # 'post_test_arabic',
-            #
-            # 'post_test_attended_english',
-            # 'post_test_modality_english',
-            # 'post_test_english',
-            #
-            # 'post_test_attended_psychomotor',
-            # 'post_test_modality_psychomotor',
-            # 'post_test_psychomotor',
-            #
-            # 'post_test_attended_math',
-            # 'post_test_modality_math',
-            # 'post_test_math',
-            #
-            # 'post_test_attended_social',
-            # 'post_test_modality_social',
-            # 'post_test_social_emotional',
-            #
-            # 'post_test_attended_science',
-            # 'post_test_modality_science',
-            # 'post_test_science',
-            #
-            # 'post_test_attended_artistic',
-            # 'post_test_modality_artistic',
-            # 'post_test_artistic',
-            #
-            # 'post_test_score',
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
+            'pre_test_artistic',
+
+            'pre_test_score',
 
             'participation',
             'barriers',
@@ -3688,34 +3638,6 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_attended_artistic': "pre_test->>'CBECE_ASSESSMENT/attended_artistic'",
             'pre_test_modality_artistic': "pre_test->>'CBECE_ASSESSMENT/modality_artistic'",
             'pre_test_artistic': "pre_test->>'CBECE_ASSESSMENT/artistic'",
-
-            'post_test_attended_arabic': "post_test->>'CBECE_ASSESSMENT/attended_arabic'",
-            'post_test_modality_arabic': "post_test->>'CBECE_ASSESSMENT/modality_arabic'",
-            'post_test_arabic': "post_test->>'CBECE_ASSESSMENT/arabic'",
-
-            'post_test_attended_english': "post_test->>'CBECE_ASSESSMENT/attended_english'",
-            'post_test_modality_english': "post_test->>'CBECE_ASSESSMENT/modality_english'",
-            'post_test_english': "post_test->>'CBECE_ASSESSMENT/english'",
-
-            'post_test_attended_psychomotor': "post_test->>'CBECE_ASSESSMENT/attended_psychomotor'",
-            'post_test_modality_psychomotor': "post_test->>'CBECE_ASSESSMENT/modality_psychomotor'",
-            'post_test_psychomotor': "post_test->>'CBECE_ASSESSMENT/psychomotor'",
-
-            'post_test_attended_math': "post_test->>'CBECE_ASSESSMENT/attended_math'",
-            'post_test_modality_math': "post_test->>'CBECE_ASSESSMENT/modality_math'",
-            'post_test_math': "post_test->>'CBECE_ASSESSMENT/math'",
-
-            'post_test_attended_social': "post_test->>'CBECE_ASSESSMENT/attended_social'",
-            'post_test_modality_social': "post_test->>'CBECE_ASSESSMENT/modality_social'",
-            'post_test_social_emotional': "post_test->>'CBECE_ASSESSMENT/social_emotional'",
-
-            'post_test_attended_science': "post_test->>'CBECE_ASSESSMENT/attended_science'",
-            'post_test_modality_science': "post_test->>'CBECE_ASSESSMENT/modality_science'",
-            'post_test_science': "post_test->>'CBECE_ASSESSMENT/science'",
-
-            'post_test_attended_artistic': "post_test->>'CBECE_ASSESSMENT/attended_artistic'",
-            'post_test_modality_artistic': "post_test->>'CBECE_ASSESSMENT/modality_artistic'",
-            'post_test_artistic': "post_test->>'CBECE_ASSESSMENT/artistic'"
 
         }).values(
             'id',
@@ -3794,45 +3716,15 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_social',
             'pre_test_social_emotional',
 
-            # 'pre_test_attended_science',
-            # 'pre_test_modality_science',
-            # 'pre_test_science',
+            'pre_test_attended_science',
+            'pre_test_modality_science',
+            'pre_test_science',
 
-            # 'pre_test_attended_artistic',
-            # 'pre_test_modality_artistic',
-            # 'pre_test_artistic',
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
+            'pre_test_artistic',
 
             'pre_test_score',
-
-            # 'post_test_attended_arabic',
-            # 'post_test_modality_arabic',
-            # 'post_test_arabic',
-            #
-            # 'post_test_attended_english',
-            # 'post_test_modality_english',
-            # 'post_test_english',
-            #
-            # 'post_test_attended_psychomotor',
-            # 'post_test_modality_psychomotor',
-            # 'post_test_psychomotor',
-            #
-            # 'post_test_attended_math',
-            # 'post_test_modality_math',
-            # 'post_test_math',
-            #
-            # 'post_test_attended_social',
-            # 'post_test_modality_social',
-            # 'post_test_social_emotional',
-            #
-            # 'post_test_attended_science',
-            # 'post_test_modality_science',
-            # 'post_test_science',
-            #
-            # 'post_test_attended_artistic',
-            # 'post_test_modality_artistic',
-            # 'post_test_artistic',
-            #
-            # 'post_test_score',
 
             'participation',
             'barriers',
