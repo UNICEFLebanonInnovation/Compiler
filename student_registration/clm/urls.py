@@ -169,6 +169,11 @@ urlpatterns = [
         name='cbece_post_assessment'
     ),
     url(
+        regex=r'^cbece-mid-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=views.CBECEMidAssessmentView.as_view(),
+        name='cbece_mid_assessment'
+    ),
+    url(
         regex=r'^cbece-referral/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEReferralView.as_view(),
         name='cbece_referral'

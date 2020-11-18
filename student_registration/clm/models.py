@@ -2376,6 +2376,211 @@ class CBECE(CLM):
         ),
         verbose_name=_('Source of identification of the child')
     )
+    mid_test_participation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CLM.PARTICIPATION,
+        verbose_name=_('Participation')
+    )
+    mid_test_learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+    mid_test_barriers_single = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CLM.BARRIERS,
+        verbose_name=_('The main barriers affecting the daily attendance and performance')
+    )
+    mid_test_barriers_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
+    mid_test_done = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('test_done')
+    )
+    mid_test_round_complete = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Round complete')
+    )
+
+    mid_test = JSONField(blank=True, null=True)
+
+    mid_test_basic_stationery = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=CLM.YES_NO,
+        verbose_name=_('Did the child receive basic stationery?')
+    )
+
+    mid_test_follow_up_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('none', _('----------')),
+            ('Phone', _('Phone Call')),
+            ('House visit', _('House Visit')),
+            ('Family Visit', _('Family Visit')),
+        ),
+        verbose_name=_('Type of follow up')
+    )
+
+    mid_test_phone_call_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Please enter the number phone calls')
+    )
+    mid_test_house_visit_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Please enter the number of house visits')
+    )
+    mid_test_family_visit_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Please enter the number parent visits')
+    )
+    mid_test_follow_up_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('child back', _('Phone Call')),
+            ('child transfer to difficulty center', _('Child transfer to difficulty center')),
+            ('child transfer to protection', _('Child transfer to protection')),
+            ('child transfer to medical', _('Child transfer to medical')),
+            ('Intensive followup', _('Intensive followup')),
+            ('dropout', _('Dropout')),
+        ),
+        verbose_name=_('Result of follow up')
+    )
+    mid_test_parent_attended_visits = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Parents attended parents meeting')
+    )
+
+    # to ddo
+    mid_test_pss_session_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Attended PSS Session')
+    )
+    mid_test_pss_session_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('PSS session number')
+    )
+    mid_test_pss_session_modality = ArrayField(
+        models.CharField(
+            choices=CLM.SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Please the modality used per each session')
+    )
+    mid_test_covid_session_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Attended PSS Session')
+    )
+    mid_test_covid_session_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('PSS session number')
+    )
+
+    mid_test_covid_session_modality = ArrayField(
+        models.CharField(
+            choices=CLM.SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Please the modality used per each session')
+    )
+
+    mid_test_followup_session_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Attended PSS Session')
+    )
+    mid_test_followup_session_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('PSS session number')
+    )
+
+    mid_test_followup_session_modality = ArrayField(
+        models.CharField(
+            choices=CLM.SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Please the modality used per each session')
+    )
+    mid_test_parent_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        ),
+        verbose_name=_('Parents attended parents meeting')
+    )
+
+    mid_test_parent_attended_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    mid_test_child_health_examed = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('"Did the child receive health exam')
+    )
+    mid_test_child_health_concern = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Anything to worry about')
+    )
 
     # def calculate_sore(self, stage):
     #     keys = [
@@ -2434,6 +2639,10 @@ class CBECE(CLM):
     @property
     def post_assessment_form(self):
         return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
+
+    @property
+    def mid_assessment_form(self):
+        return self.assessment_form(stage='mid_test', assessment_slug='cbece_mid_test')
 
     @property
     def art_improvement(self):

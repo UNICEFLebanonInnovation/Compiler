@@ -44,6 +44,7 @@ from .forms import (
     BLNAssessmentForm,
     ABLNAssessmentForm,
     CBECEAssessmentForm,
+    CBECEMidAssessmentForm,
     CBECEFollowupForm,
     CBECEReferralForm,
     CBECEMonitoringQuestionerForm,
@@ -964,6 +965,103 @@ class CBECEPostAssessmentView(LoginRequiredMixin,
         instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(CBECEPostAssessmentView, self).form_valid(form)
+
+class CBECEMidAssessmentView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+    template_name = 'clm/cbece_mid_assessment.html'
+    form_class = CBECEMidAssessmentForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEMidAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+
+        else:
+            data = CBECESerializer(instance).data
+            if 'mid_test' in data:
+                p_test = data['mid_test']
+                if p_test:
+                    if "CBECE_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["CBECE_ASSESSMENT/attended_arabic"]
+
+                    if "CBECE_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["CBECE_ASSESSMENT/modality_arabic"]
+
+                    if "CBECE_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["CBECE_ASSESSMENT/arabic"]
+
+                    if "CBECE_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["CBECE_ASSESSMENT/attended_english"]
+
+                    if "CBECE_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["CBECE_ASSESSMENT/modality_english"]
+
+                    if "CBECE_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["CBECE_ASSESSMENT/english"]
+
+                    if "CBECE_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["CBECE_ASSESSMENT/attended_math"]
+
+                    if "CBECE_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["CBECE_ASSESSMENT/modality_math"]
+
+                    if "CBECE_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["CBECE_ASSESSMENT/math"]
+
+                    if "CBECE_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["CBECE_ASSESSMENT/attended_social"]
+
+                    if "CBECE_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["CBECE_ASSESSMENT/modality_social"]
+
+                    if "CBECE_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["CBECE_ASSESSMENT/social_emotional"]
+
+                    if "CBECE_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_psychomotor'] = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+
+                    if "CBECE_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_psychomotor'] = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+
+                    if "CBECE_ASSESSMENT/psychomotor" in p_test:
+                        data['psychomotor'] = p_test["CBECE_ASSESSMENT/psychomotor"]
+
+                    if "CBECE_ASSESSMENT/attended_science" in p_test:
+                        data['attended_science'] = p_test["CBECE_ASSESSMENT/attended_science"]
+
+                    if "CBECE_ASSESSMENT/modality_science" in p_test:
+                        data['modality_science'] = p_test["CBECE_ASSESSMENT/modality_science"]
+
+                    if "CBECE_ASSESSMENT/science" in p_test:
+                        data['science'] = p_test["CBECE_ASSESSMENT/science"]
+
+                    if "CBECE_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["CBECE_ASSESSMENT/attended_artistic"]
+
+                    if "CBECE_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["CBECE_ASSESSMENT/modality_artistic"]
+
+                    if "CBECE_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["CBECE_ASSESSMENT/artistic"]
+
+            return form_class(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEMidAssessmentView, self).form_valid(form)
 
 
 class ABLNFollowupView(LoginRequiredMixin,
