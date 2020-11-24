@@ -7987,7 +7987,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">5.2</span>'),
                     Div('arabic', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
@@ -7996,7 +7996,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_english">6.2</span>'),
                     Div('english', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">7</span>'),
@@ -8005,7 +8005,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">7.2</span>'),
                     Div('math', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">8</span>'),
@@ -8014,7 +8014,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_science">8.2</span>'),
                     Div('science', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
@@ -8024,7 +8024,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_social_emotional">9.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
@@ -8034,7 +8034,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_psychomotor">10.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
@@ -8044,7 +8044,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_artistic">11.2</span>'),
                     Div('artistic', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
@@ -8064,19 +8064,19 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1.1</span>'),
                     Div('mid_test_phone_call_number', css_class='col-md-3'),
                     css_class='row',
-                    id='div_phone_call_number'
+                    id='div_mid_test_phone_call_number'
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1.1</span>'),
                     Div('mid_test_house_visit_number', css_class='col-md-3'),
                     css_class='row',
-                    id='div_house_visit_number'
+                    id='div_mid_test_house_visit_number'
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1.1</span>'),
                     Div('mid_test_family_visit_number', css_class='col-md-3'),
                     css_class='row',
-                    id='div_family_visit_number'
+                    id='div_mid_test_family_visit_number'
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
