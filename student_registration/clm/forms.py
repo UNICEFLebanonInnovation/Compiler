@@ -5713,6 +5713,20 @@ class ABLNAssessmentForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+    pss_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    pss_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     covid_session_attended = forms.ChoiceField(
         label=_("Attended covid Session"),
         widget=forms.Select, required=True,
@@ -5728,6 +5742,20 @@ class ABLNAssessmentForm(forms.ModelForm):
         choices=CLM.SESSION_MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
+    )
+    covid_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    covid_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     followup_session_attended = forms.ChoiceField(
         label=_("Attended followup Session"),
@@ -5746,7 +5774,7 @@ class ABLNAssessmentForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    parent_attended = forms.ChoiceField(
+    followup_parent_attended = forms.ChoiceField(
         label=_("Parent who attended the parents meeting"),
         widget=forms.Select, required=False,
         choices=(
@@ -5756,7 +5784,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             ('other', _('Other')),
         )
     )
-    parent_attended_other = forms.CharField(
+    followup_parent_attended_other = forms.CharField(
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
@@ -5955,6 +5983,10 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
                     Div('pss_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">5</span>'),
+                    Div('pss_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
+                    Div('pss_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -5964,6 +5996,10 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
                     Div('covid_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">5</span>'),
+                    Div('covid_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
+                    Div('covid_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -5973,16 +6009,13 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
                     Div('followup_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">5</span>'),
+                    Div('followup_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
+                    Div('followup_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
 
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('parent_attended', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_parent_attended_other">5.1</span>'),
-                    Div('parent_attended_other', css_class='col-md-4'),
-                    css_class='row',
-                ),
                 # Div(
                 #     HTML('<span class="badge badge-default">4</span>'),
                 #     Div('child_health_examed', css_class='col-md-4'),
@@ -6165,15 +6198,18 @@ class ABLNAssessmentForm(forms.ModelForm):
             'pss_session_attended',
             'pss_session_number',
             'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
             'covid_session_attended',
             'covid_session_number',
             'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
             'followup_session_attended',
             'followup_session_number',
             'followup_session_modality',
-            'parent_attended_other',
-            # 'visits_number',
-            'parent_attended',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
             # 'child_health_examed',
             # 'child_health_concern',
         )
@@ -6394,6 +6430,20 @@ class BLNAssessmentForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+    pss_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    pss_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     covid_session_attended = forms.ChoiceField(
         label=_("Attended covid Session"),
         widget=forms.Select, required=True,
@@ -6409,6 +6459,20 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=CLM.SESSION_MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
+    )
+    covid_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    covid_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     followup_session_attended = forms.ChoiceField(
         label=_("Attended followup Session"),
@@ -6427,7 +6491,7 @@ class BLNAssessmentForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    parent_attended = forms.ChoiceField(
+    followup_parent_attended = forms.ChoiceField(
         label=_("Parent who attended the parents meeting"),
         widget=forms.Select, required=False,
         choices=(
@@ -6437,7 +6501,7 @@ class BLNAssessmentForm(forms.ModelForm):
             ('other', _('Other')),
         )
     )
-    parent_attended_other = forms.CharField(
+    followup_parent_attended_other = forms.CharField(
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
@@ -6636,6 +6700,10 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
                     Div('pss_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">5</span>'),
+                    Div('pss_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
+                    Div('pss_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -6645,6 +6713,10 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
                     Div('covid_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">5</span>'),
+                    Div('covid_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
+                    Div('covid_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -6654,14 +6726,10 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
                     Div('followup_session_number', css_class='col-md-2'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('parent_attended', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_parent_attended_other">5.1</span>'),
-                    Div('parent_attended_other', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">5</span>'),
+                    Div('followup_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
+                    Div('followup_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 # Div(
@@ -6846,15 +6914,18 @@ class BLNAssessmentForm(forms.ModelForm):
             'pss_session_attended',
             'pss_session_number',
             'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
             'covid_session_attended',
             'covid_session_number',
             'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
             'followup_session_attended',
             'followup_session_number',
             'followup_session_modality',
-            'parent_attended_other',
-            # 'visits_number',
-            'parent_attended',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
             # 'child_health_examed',
             # 'child_health_concern',
         )
@@ -6894,7 +6965,20 @@ class CBECEAssessmentForm(forms.ModelForm):
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme? (Select more than one if applicable)'),
-        choices=CLM.BARRIERS,
+        choices= (
+            ('Full time job to support family financially', _('Full time job to support family financially')),
+            ('seasonal_work', _('Seasonal work')),
+            ('availablity_electronic_device', _('Availablity of Electronic Device')),
+            ('internet_connectivity', _('Internet Connectivity')),
+            ('sickness', _('Sickness')),
+            ('security', _('Security')),
+            ('family_moved', _('Family moved')),
+            ('Moved back to Syria', _('Moved back to Syria')),
+            ('Enrolled in formal education', _('Enrolled in formal education')),
+            ('violence bullying', _('Violence/Bullying')),
+            ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
+            ('other', _('Other')),
+        ),
         widget=forms.Select,
         required=True
     )
@@ -7109,6 +7193,20 @@ class CBECEAssessmentForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
+    pss_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    pss_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     covid_session_attended = forms.ChoiceField(
         label=_("Attended covid Session"),
         widget=forms.Select, required=True,
@@ -7124,6 +7222,20 @@ class CBECEAssessmentForm(forms.ModelForm):
         choices=CLM.SESSION_MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
+    )
+    covid_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    covid_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     followup_session_attended = forms.ChoiceField(
         label=_("Attended followup Session"),
@@ -7142,7 +7254,7 @@ class CBECEAssessmentForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    parent_attended = forms.ChoiceField(
+    followup_parent_attended = forms.ChoiceField(
         label=_("Parent who attended the parents meeting"),
         widget=forms.Select, required=False,
         choices=(
@@ -7152,7 +7264,7 @@ class CBECEAssessmentForm(forms.ModelForm):
             ('other', _('Other')),
         )
     )
-    parent_attended_other = forms.CharField(
+    followup_parent_attended_other = forms.CharField(
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
@@ -7246,7 +7358,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">5.2</span>'),
                     Div('arabic', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
@@ -7255,7 +7367,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_english">6.2</span>'),
                     Div('english', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">7</span>'),
@@ -7264,7 +7376,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">7.2</span>'),
                     Div('math', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">8</span>'),
@@ -7273,7 +7385,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_science">8.2</span>'),
                     Div('science', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
@@ -7283,7 +7395,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_social_emotional">9.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
@@ -7293,7 +7405,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_psychomotor">10.2</span>'),
                     Div('psychomotor', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
 
                 Div(
@@ -7303,7 +7415,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_artistic">11.2</span>'),
                     Div('artistic', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
@@ -7369,6 +7481,10 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
                     Div('pss_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">5</span>'),
+                    Div('pss_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
+                    Div('pss_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -7378,6 +7494,10 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
                     Div('covid_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">5</span>'),
+                    Div('covid_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
+                    Div('covid_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -7387,16 +7507,13 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
                     Div('followup_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">5</span>'),
+                    Div('followup_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
+                    Div('followup_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
 
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('parent_attended', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_parent_attended_other">5.1</span>'),
-                    Div('parent_attended_other', css_class='col-md-4'),
-                    css_class='row',
-                ),
                 # Div(
                 #     HTML('<span class="badge badge-default">4</span>'),
                 #     Div('child_health_examed', css_class='col-md-4'),
@@ -7602,15 +7719,18 @@ class CBECEAssessmentForm(forms.ModelForm):
             'pss_session_attended',
             'pss_session_number',
             'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
             'covid_session_attended',
             'covid_session_number',
             'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
             'followup_session_attended',
             'followup_session_number',
             'followup_session_modality',
-            'parent_attended_other',
-            # 'visits_number',
-            'parent_attended',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
             # 'child_health_examed',
             # 'child_health_concern',
         )

@@ -190,7 +190,7 @@ class CLM(TimeStampedModel):
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
         ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
-        ('no_barriers', _('No barriers')),
+        # ('no_barriers', _('No barriers')),
         ('other', _('Other')),
     )
     HAVE_LABOUR = Choices(
@@ -505,6 +505,22 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Please the modality used per each session')
     )
+    pss_parent_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        ),
+        verbose_name=_('Parents attended parents meeting')
+    )
+    pss_parent_attended_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
     covid_session_attended = models.CharField(
         max_length=100,
         blank=True,
@@ -528,6 +544,22 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Please the modality used per each session')
+    )
+    covid_parent_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        ),
+        verbose_name=_('Parents attended parents meeting')
+    )
+    covid_parent_attended_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
     )
 
     followup_session_attended = models.CharField(
@@ -554,7 +586,7 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Please the modality used per each session')
     )
-    parent_attended = models.CharField(
+    followup_parent_attended = models.CharField(
         max_length=100,
         blank=True,
         null=True,
@@ -566,11 +598,27 @@ class CLM(TimeStampedModel):
         ),
         verbose_name=_('Parents attended parents meeting')
     )
-
-    parent_attended_other = models.TextField(
+    followup_parent_attended_other = models.TextField(
         blank=True, null=True,
         verbose_name=_('Please specify')
     )
+    # parent_attended = models.CharField(
+    #     max_length=100,
+    #     blank=True,
+    #     null=True,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('mother', _('Mother')),
+    #         ('father', _('Father')),
+    #         ('other', _('Other')),
+    #     ),
+    #     verbose_name=_('Parents attended parents meeting')
+    # )
+    #
+    # parent_attended_other = models.TextField(
+    #     blank=True, null=True,
+    #     verbose_name=_('Please specify')
+    # )
     visits_number = models.IntegerField(
         blank=True,
         null=True,

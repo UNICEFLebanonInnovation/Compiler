@@ -3818,12 +3818,12 @@ msgstr "الوضع الأمني"
 #: student_registration/clm/models.py:187
 #: student_registration/clm/models.py:2776
 msgid "Family moved"
-msgstr "تبديل مكان السكن"
+msgstr "تغيير اقامة السكن في لبنان"
 
 #: student_registration/clm/models.py:188
 #: student_registration/clm/models.py:2777
 msgid "Moved back to Syria"
-msgstr "انتقل الى سوريا"
+msgstr "العائلة انتقلت الى سوريا"
 
 #: student_registration/clm/models.py:189
 #: student_registration/clm/models.py:670
