@@ -3512,11 +3512,7 @@ class CBECEForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-    registration_level = forms.ChoiceField(
-        label=_("Registration level"),
-        widget=forms.Select, required=True,
-        choices=REGISTRATION_LEVEL
-    )
+
 
     have_labour_single_selection = forms.ChoiceField(
         label=_('Does the child participate in work?'),
@@ -3903,6 +3899,7 @@ class CBECEForm(CommonForm):
         label=_('How many children does this child have?'),
         widget=forms.TextInput, required=False
     )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(CBECEForm, self).__init__(*args, **kwargs)
@@ -5801,8 +5798,13 @@ class ABLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
 
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
+
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
-    registration_level = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -5841,6 +5843,11 @@ class ABLNAssessmentForm(forms.ModelForm):
                     HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+
+                Div(
+                    Div('registration_level', css_class='col-md-3 d-none'),
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -6518,8 +6525,14 @@ class BLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
 
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
+
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
-    registration_level = forms.CharField(widget=forms.HiddenInput, required=False)
+
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -6558,6 +6571,10 @@ class BLNAssessmentForm(forms.ModelForm):
                     HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    Div('registration_level', css_class='col-md-3 d-none'),
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -6931,6 +6948,11 @@ class BLNAssessmentForm(forms.ModelForm):
         )
 
 class CBECEAssessmentForm(forms.ModelForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
         widget=forms.Select, required=True,
@@ -7284,6 +7306,12 @@ class CBECEAssessmentForm(forms.ModelForm):
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_level = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=False,
+        choices=REGISTRATION_LEVEL
+    )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(CBECEAssessmentForm, self).__init__(*args, **kwargs)
@@ -7321,6 +7349,10 @@ class CBECEAssessmentForm(forms.ModelForm):
                     HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    Div('registration_level', css_class='col-md-3 d-none'),
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -7737,6 +7769,11 @@ class CBECEAssessmentForm(forms.ModelForm):
 
 class CBECEMidAssessmentForm(forms.ModelForm):
 
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
 
     mid_test_done = forms.ChoiceField(
         label=_("Mid test has been done"),
@@ -7868,7 +7905,12 @@ class CBECEMidAssessmentForm(forms.ModelForm):
 
 
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
-    registration_level = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -7911,6 +7953,10 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('mid_test_done', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('registration_level', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
 

@@ -21,17 +21,9 @@ $(document).ready(function(){
 
     reorganizeForm_mid_assessment();
 
-    $(document).on('change', +
-        'select#id_attended_arabic, ' +
-        'select#id_attended_english,  ' +
-        'select#id_attended_math,  ' +
-        'select#id_attended_social,  ' +
-        'select#id_attended_psychomotor ,  ' +
-        'select#id_attended_science ,  ' +
-        'select#id_attended_artistic , ' +
-        'select#id_mid_test_done ',
-        function(){
-        reorganizeForm_mid_assessment();
+        $(document).on('change', 'select#id_attended_arabic, select#id_attended_english, select#id_attended_math,  select#id_attended_social,  ' +
+        'select#id_attended_psychomotor, select#id_attended_science , select#id_attended_artistic,  select#id_mid_test_done ', function(){
+       reorganizeForm_mid_assessment();
     });
 
     $(document).on('click', '.cancel-button', function(e){
@@ -71,7 +63,6 @@ function reorganizeForm_mid_assessment()
     var attended_psychomotor = $('select#id_attended_psychomotor').val();
     var attended_science = $('select#id_attended_science').val();
     var attended_artistic = $('select#id_attended_artistic').val();
-
 
     $('div.grades').addClass('d-none');
 
