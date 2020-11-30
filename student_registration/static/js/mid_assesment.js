@@ -21,8 +21,7 @@ $(document).ready(function(){
 
     reorganizeForm_mid_assessment();
 
-    $(document).on('change', 'select#id_mid_test_participation, ' +
-        'select#id_mid_test_follow_up_type, ' +
+    $(document).on('change', +
         'select#id_attended_arabic, ' +
         'select#id_attended_english,  ' +
         'select#id_attended_math,  ' +
@@ -30,13 +29,7 @@ $(document).ready(function(){
         'select#id_attended_psychomotor ,  ' +
         'select#id_attended_science ,  ' +
         'select#id_attended_artistic , ' +
-        'select#id_parent_attended ,' +
-        'select#id_mid_test_barriers_single, ' +
-        'select#id_mid_test_done , ' +
-        'select#id_mid_test_pss_session_attended , ' +
-        'select#id_mid_test_covid_session_attended,  ' +
-        'select#id_mid_test_followup_session_attended,  ' +
-        'select#id_mid_test_parent_attended ',
+        'select#id_mid_test_done ',
         function(){
         reorganizeForm_mid_assessment();
     });
@@ -69,11 +62,7 @@ $(document).ready(function(){
 
 function reorganizeForm_mid_assessment()
 {
-    var mid_test_participation = $('select#id_mid_test_participation').val();
-    var mid_test_barriers_single = $('select#id_mid_test_barriers_single').val();
     var mid_test_done = $('select#id_mid_test_done').val();
-    var follow_up_type = $('select#id_mid_test_follow_up_type').val();
-
 
     var attended_arabic = $('select#id_attended_arabic').val();
     var attended_english = $('select#id_attended_english').val();
@@ -83,58 +72,15 @@ function reorganizeForm_mid_assessment()
     var attended_science = $('select#id_attended_science').val();
     var attended_artistic = $('select#id_attended_artistic').val();
 
-    var mid_test_pss_session_attended = $('select#id_mid_test_pss_session_attended').val();
-    var mid_test_covid_session_attended = $('select#id_mid_test_covid_session_attended').val();
-    var mid_test_followup_session_attended = $('select#id_mid_test_followup_session_attended').val();
 
-
-    var mid_test_parent_attended =  $('select#id_mid_test_parent_attended').val();
-
-    // id_mid_test_participation
-    $('div#div_id_mid_test_barriers_single').addClass('d-none');
-    $('#span_barriers_single').addClass('d-none');
-    $('div#div_id_mid_test_barriers_other').addClass('d-none');
-    $('#span_barriers_other').addClass('d-none');
-    $('#mid_test_follow_up').addClass('hide');
-    $('#mid_test_visits').addClass('hide');
-
-
-
-    if(mid_test_participation != 'no_absence'){
-        $('#div_id_mid_test_barriers_single').removeClass('d-none');
-        $('#span_mid_test_barriers_single').removeClass('d-none');
-        $('#mid_test_follow_up').removeClass('hide');
-        $('#mid_test_visits').removeClass('hide');
-        // $('input[name=follow_up_type]').val('none').checked(true);
-        $('#id_mid_test_phone_call_number').val('');
-        $('#id_mid_test_house_visit_number').val('');
-        $('#id_mid_test_family_visit_number').val('');
-    }
-
-    if(mid_test_barriers_single == 'other'){
-        $('#div_id_mid_test_barriers_other').removeClass('d-none');
-        $('#span_barriers_other').removeClass('d-none');
-    }
-    else
-    {
-        $('#id_mid_test_barriers_other').val('');
-    }
-
-    $('div#div_id_mid_test_round_complete').addClass('d-none');
-    $('#span_round_complete').addClass('d-none');
     $('div.grades').addClass('d-none');
 
     if(mid_test_done == 'yes'){
-    $('#div_id_mid_test_round_complete').removeClass('d-none');
-    $('#span_round_complete').removeClass('d-none');
-    $('#grades').removeClass('hide');
+    // $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');
-
     }
     else
     {
-        $('select#id_mid_test_round_complete').val("");
-
         // grades
         $('#id_arabic').val('');
         $('select#id_modality_arabic').val("");
@@ -151,21 +97,6 @@ function reorganizeForm_mid_assessment()
         $('#id_artistic').val('');
         $('select#id_modality_artistic').val("");
     }
-
-
-    // follow_up_type
-    $('div#div_mid_test_phone_call_number').addClass('d-none');
-    $('div#div_mid_test_house_visit_number').addClass('d-none');
-    $('div#div_mid_test_family_visit_number').addClass('d-none');
-
-    if(follow_up_type == 'Phone'){
-        $('div#div_mid_test_phone_call_number').removeClass('d-none');
-    }else if(follow_up_type == 'House visit'){
-        $('div#div_mid_test_house_visit_number').removeClass('d-none');
-    }else if(follow_up_type == 'Family Visit') {
-        $('div#div_mid_test_family_visit_number').removeClass('d-none');
-    }
-
 
     $('div#div_id_arabic').addClass('d-none');
     $('#span_arabic').addClass('d-none');
@@ -286,71 +217,6 @@ function reorganizeForm_mid_assessment()
     else{
         $('#id_artistic').val('');
         $('select#id_modality_artistic').val("");
-    }
-
-
-
-    // pss_session_modality
-    $('div#div_id_mid_test_pss_session_number').addClass('d-none');
-    $('#span_pss_session_number').addClass('d-none');
-    $('div#div_id_mid_test_pss_session_modality').addClass('d-none');
-    $('#span_pss_session_modality').addClass('d-none');
-    if(mid_test_pss_session_attended == 'yes'){
-        $('div#div_id_mid_test_pss_session_number').removeClass('d-none');
-        $('#span_pss_session_number').removeClass('d-none');
-        $('div#div_id_mid_test_pss_session_modality').removeClass('d-none');
-        $('#span_pss_session_modality').removeClass('d-none');
-    }
-    else{
-        $('#id_mid_test_pss_session_number').val('');
-        $('select#div_id_mid_test_pss_session_modality').val("");
-    }
-
-
-
-    // mid_test_covid_session_attended
-    $('div#div_id_mid_test_covid_session_number').addClass('d-none');
-    $('#span_covid_session_number ').addClass('d-none');
-    $('div#div_id_mid_test_covid_session_modality ').addClass('d-none');
-    $('#span_covid_session_modality ').addClass('d-none');
-    if(mid_test_covid_session_attended == 'yes'){
-        $('div#div_id_mid_test_covid_session_number').removeClass('d-none');
-        $('#span_covid_session_number').removeClass('d-none');
-        $('div#div_id_mid_test_covid_session_modality').removeClass('d-none');
-        $('#span_covid_session_modality').removeClass('d-none');
-    }
-    else{
-        $('#id_mid_test_covid_session_number').val('');
-        $('select#div_id_mid_test_covid_session_modality').val("");
-    }
-
-
-    // mid_test_followup_session_attended
-    $('div#div_id_mid_test_followup_session_number').addClass('d-none');
-    $('#span_followup_session_number ').addClass('d-none');
-    $('div#div_id_mid_test_followup_session_modality ').addClass('d-none');
-    $('#span_followup_session_modality ').addClass('d-none');
-    if(mid_test_followup_session_attended == 'yes'){
-        $('div#div_id_mid_test_followup_session_number').removeClass('d-none');
-        $('#span_followup_session_number').removeClass('d-none');
-        $('div#div_id_mid_test_followup_session_modality').removeClass('d-none');
-        $('#span_followup_session_modality').removeClass('d-none');
-    }
-    else{
-        $('#id_mid_test_followup_session_number').val('');
-        $('select#div_id_mid_test_followup_session_modality').val("");
-    }
-
-    // parent_attended
-    $('#div_id_mid_test_parent_attended_other').addClass('d-none');
-    $('#span_parent_attended_other').addClass('d-none');
-    if(mid_test_parent_attended == 'other'){
-    $('#div_id_mid_test_parent_attended_other').removeClass('d-none');
-    $('#span_parent_attended_other').removeClass('d-none');
-    }
-    else
-    {
-        $('#id_mid_test_parent_attended_other').val('');
     }
 
 }
