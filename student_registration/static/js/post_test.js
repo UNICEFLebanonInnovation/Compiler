@@ -22,8 +22,10 @@ $(document).ready(function(){
 
     reorganizeForm_post_assessment();
 
+
     $(document).on('change', 'select#id_participation,  select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
         'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
+        'select#id_pss_parent_attended,  select#id_covid_parent_attended ,  select#id_followup_parent_attended ,' +
         'select#id_barriers_single, select#id_test_done , select#id_pss_session_attended,  select#id_covid_session_attended ,  select#id_followup_session_attended ', function(){
        reorganizeForm_post_assessment();
     });
@@ -299,66 +301,6 @@ function reorganizeForm_post_assessment()
         $('select#id_modality_artistic').val("");
     }
 
-    // pss_session_modality
-    $('div#div_id_pss_session_number').addClass('d-none');
-    $('#span_pss_session_number ').addClass('d-none');
-    $('div#div_id_pss_session_modality ').addClass('d-none');
-    $('#span_pss_session_modality').addClass('d-none');
-    $('div#div_id_pss_parent_attended_other').addClass('d-none');
-    $('#span_pss_parent_attended_other').addClass('d-none');
-    $('div#div_id_pss_parent_attended').addClass('d-none');
-    $('#span_pss_session_modality').addClass('d-none');
-    if(pss_session_attended == 'yes'){
-        $('div#div_id_pss_session_number').removeClass('d-none');
-        $('#span_pss_session_number').removeClass('d-none');
-        $('div#div_id_pss_session_modality').removeClass('d-none');
-        $('#span_pss_session_modality').removeClass('d-none');
-        $('div#div_id_pss_parent_attended_other').removeClass('d-none');
-        $('#span_pss_parent_attended_other').removeClass('d-none');
-        $('div#div_id_pss_parent_attended').removeClass('d-none');
-        $('#span_pss_parent_attended').removeClass('d-none');
-    }
-    else{
-        alert('hi')
-        $('#id_pss_session_number').val('');
-        $('select#div_id_pss_session_modality').val("");
-        $('#span_pss_parent_attended_other').val('');
-        $('select#div_id_pss_parent_attended').val("");
-
-    }
-
-    // covid_session_attended
-    $('div#div_id_covid_session_number').addClass('d-none');
-    $('#span_covid_session_number ').addClass('d-none');
-    $('div#div_id_covid_session_modality ').addClass('d-none');
-    $('#span_covid_session_modality ').addClass('d-none');
-    if(covid_session_attended == 'yes'){
-        $('div#div_id_covid_session_number').removeClass('d-none');
-        $('#span_covid_session_number').removeClass('d-none');
-        $('div#div_id_covid_session_modality').removeClass('d-none');
-        $('#span_covid_session_modality').removeClass('d-none');
-    }
-    else{
-        $('#id_covid_session_number').val('');
-        $('select#div_id_covid_session_modality').val("");
-    }
-
-    // followup_session_attended
-    $('div#div_id_followup_session_number').addClass('d-none');
-    $('#span_followup_session_number ').addClass('d-none');
-    $('div#div_id_followup_session_modality ').addClass('d-none');
-    $('#span_followup_session_modality ').addClass('d-none');
-    if(followup_session_attended == 'yes'){
-        $('div#div_id_followup_session_number').removeClass('d-none');
-        $('#span_followup_session_number').removeClass('d-none');
-        $('div#div_id_followup_session_modality').removeClass('d-none');
-        $('#span_followup_session_modality').removeClass('d-none');
-    }
-    else{
-        $('#id_followup_session_number').val('');
-        $('select#div_id_followup_session_modality').val("");
-    }
-
     // pss_parent_attended
     $('#div_id_pss_parent_attended_other').addClass('d-none');
     $('#span_pss_parent_attended_other').addClass('d-none');
@@ -371,7 +313,36 @@ function reorganizeForm_post_assessment()
         $('#id_pss_parent_attended_other').val('');
     }
 
-    // covid_parent_attended
+    // pss_session_modality
+    $('div#div_id_pss_session_number').addClass('d-none');
+    $('#span_pss_session_number ').addClass('d-none');
+    $('div#div_id_pss_session_modality ').addClass('d-none');
+    $('#span_pss_session_modality').addClass('d-none');
+    // $('div#div_id_pss_parent_attended_other').addClass('d-none');
+    // $('#span_pss_parent_attended_other').addClass('d-none');
+    $('div#div_id_pss_parent_attended').addClass('d-none');
+    $('#span_pss_parent_attended').addClass('d-none');
+
+
+    if(pss_session_attended == 'yes'){
+        $('div#div_id_pss_session_number').removeClass('d-none');
+        $('#span_pss_session_number').removeClass('d-none');
+        $('div#div_id_pss_session_modality').removeClass('d-none');
+        $('#span_pss_session_modality').removeClass('d-none');
+        // $('div#div_id_pss_parent_attended_other').removeClass('d-none');
+        // $('#span_pss_parent_attended_other').removeClass('d-none');
+        $('div#div_id_pss_parent_attended').removeClass('d-none');
+        $('#span_pss_parent_attended').removeClass('d-none');
+    }
+    else{
+        $('#id_pss_session_number').val('');
+        $('select#div_id_pss_session_modality').val("");
+        $('#span_pss_parent_attended_other').val('');
+        $('select#div_id_pss_parent_attended').val("");
+
+    }
+
+ // covid_parent_attended
     $('#div_id_covid_parent_attended_other').addClass('d-none');
     $('#span_covid_parent_attended_other').addClass('d-none');
     if(covid_parent_attended == 'other'){
@@ -383,7 +354,37 @@ function reorganizeForm_post_assessment()
         $('#id_covid_parent_attended_other').val('');
     }
 
-    // followup_parent_attended
+    // covid_session_modality
+    $('div#div_id_covid_session_number').addClass('d-none');
+    $('#span_covid_session_number ').addClass('d-none');
+    $('div#div_id_covid_session_modality ').addClass('d-none');
+    $('#span_covid_session_modality').addClass('d-none');
+    // $('div#div_id_covid_parent_attended_other').addClass('d-none');
+    // $('#span_covid_parent_attended_other').addClass('d-none');
+    $('div#div_id_covid_parent_attended').addClass('d-none');
+    $('#span_covid_parent_attended').addClass('d-none');
+
+
+    if(covid_session_attended == 'yes'){
+        $('div#div_id_covid_session_number').removeClass('d-none');
+        $('#span_covid_session_number').removeClass('d-none');
+        $('div#div_id_covid_session_modality').removeClass('d-none');
+        $('#span_covid_session_modality').removeClass('d-none');
+        // $('div#div_id_covid_parent_attended_other').removeClass('d-none');
+        // $('#span_covid_parent_attended_other').removeClass('d-none');
+        $('div#div_id_covid_parent_attended').removeClass('d-none');
+        $('#span_covid_parent_attended').removeClass('d-none');
+    }
+    else{
+        $('#id_covid_session_number').val('');
+        $('select#div_id_covid_session_modality').val("");
+        $('#span_covid_parent_attended_other').val('');
+        $('select#div_id_covid_parent_attended').val("");
+
+    }
+
+
+     // followup_parent_attended
     $('#div_id_followup_parent_attended_other').addClass('d-none');
     $('#span_followup_parent_attended_other').addClass('d-none');
     if(followup_parent_attended == 'other'){
@@ -395,6 +396,33 @@ function reorganizeForm_post_assessment()
         $('#id_followup_parent_attended_other').val('');
     }
 
+    // followup_session_modality
+    $('div#div_id_followup_session_number').addClass('d-none');
+    $('#span_followup_session_number ').addClass('d-none');
+    $('div#div_id_followup_session_modality ').addClass('d-none');
+    $('#span_followup_session_modality').addClass('d-none');
+    // $('div#div_id_followup_parent_attended_other').addClass('d-none');
+    // $('#span_followup_parent_attended_other').addClass('d-none');
+    $('div#div_id_followup_parent_attended').addClass('d-none');
+    $('#span_followup_parent_attended').addClass('d-none');
 
+
+    if(followup_session_attended == 'yes'){
+        $('div#div_id_followup_session_number').removeClass('d-none');
+        $('#span_followup_session_number').removeClass('d-none');
+        $('div#div_id_followup_session_modality').removeClass('d-none');
+        $('#span_followup_session_modality').removeClass('d-none');
+        // $('div#div_id_followup_parent_attended_other').removeClass('d-none');
+        // $('#span_followup_parent_attended_other').removeClass('d-none');
+        $('div#div_id_followup_parent_attended').removeClass('d-none');
+        $('#span_followup_parent_attended').removeClass('d-none');
+    }
+    else{
+        $('#id_followup_session_number').val('');
+        $('select#div_id_followup_session_modality').val("");
+        $('#span_followup_parent_attended_other').val('');
+        $('select#div_id_followup_parent_attended').val("");
+
+    }
 
 }
