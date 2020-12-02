@@ -96,6 +96,7 @@ REGISTRATION_LEVEL = (
     ('', '----------'),
     ('level_one', _('Level one')),
     ('level_two', _('Level two')),
+
 )
 
 
@@ -1580,6 +1581,12 @@ class BLNForm(CommonForm):
 
 
 class ABLNForm(CommonForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
     YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 8)))
     YEARS_ABLN.insert(0, ('', '---------'))
 
@@ -5495,6 +5502,12 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
         )
 
 class ABLNAssessmentForm(forms.ModelForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
         widget=forms.Select, required=True,
@@ -5523,6 +5536,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             ('referred_to_tvet', _('Referred to TVET')),
             ('referred_to_ybln', _('Referred to YBLN')),
             ('dropout', _('Dropout, referral not possible')),
+            ('referred_to_bln', _('Referred to BLN')),
         ),
         initial=''
     )
@@ -5675,7 +5689,7 @@ class ABLNAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    follow_up_result = forms.ChoiceField(
+    phone_call_follow_up_result = forms.ChoiceField(
         label=_('Result of follow up'),
         widget=forms.Select, required=False,
         choices=(
@@ -5688,8 +5702,34 @@ class ABLNAssessmentForm(forms.ModelForm):
         ),
         initial=''
     )
-    parent_attended_visits = forms.ChoiceField(
-        label=_("Parents attended parents meeting"),
+    house_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    family_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    cp_referral = forms.ChoiceField(
+        label=_("CP Followup"),
         widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -5875,6 +5915,8 @@ class ABLNAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('cp_referral', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
@@ -5937,31 +5979,24 @@ class ABLNAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('follow_up_type', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
                     Div('phone_call_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_phone_call_number'
-                ),
-                Div(
                     HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('house_visit_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_house_visit_number'
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('family_visit_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_family_visit_number'
+                    Div('phone_call_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('follow_up_result', css_class='col-md-3'),
-                    css_class='row',
+                    Div('house_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('house_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('family_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('family_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
                 ),
                 id='follow_up',
                 css_class='bd-callout bd-callout-warning B_right_border'
@@ -5990,9 +6025,9 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
                     Div('pss_session_number', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">5</span>'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">2.3</span>'),
                     Div('pss_parent_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">2.4</span>'),
                     Div('pss_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -6003,9 +6038,9 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
                     Div('covid_session_number', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">5</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">3.3</span>'),
                     Div('covid_parent_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">3.4</span>'),
                     Div('covid_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -6016,9 +6051,9 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
                     Div('followup_session_number', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">5</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">4.3</span>'),
                     Div('followup_parent_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">4.4</span>'),
                     Div('followup_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -6196,11 +6231,12 @@ class ABLNAssessmentForm(forms.ModelForm):
             'basic_stationery',
             'pss_kit',
             'learning_result',
-            'follow_up_type',
             'phone_call_number',
             'house_visit_number',
             'family_visit_number',
-            'follow_up_result',
+            'phone_call_follow_up_result' ,
+            'house_visit_follow_up_result' ,
+            'family_visit_follow_up_result' ,
             'parent_attended_visits',
             'pss_session_attended',
             'pss_session_number',
@@ -6217,11 +6253,18 @@ class ABLNAssessmentForm(forms.ModelForm):
             'followup_session_modality',
             'followup_parent_attended_other',
             'followup_parent_attended',
+            'cp_referral',
             # 'child_health_examed',
             # 'child_health_concern',
         )
 
 class BLNAssessmentForm(forms.ModelForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
         widget=forms.Select, required=True,
@@ -6402,7 +6445,33 @@ class BLNAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    follow_up_result = forms.ChoiceField(
+    phone_call_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    house_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    family_visit_follow_up_result = forms.ChoiceField(
         label=_('Result of follow up'),
         widget=forms.Select, required=False,
         choices=(
@@ -6417,6 +6486,12 @@ class BLNAssessmentForm(forms.ModelForm):
     )
     parent_attended_visits = forms.ChoiceField(
         label=_("Parents attended parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    cp_referral = forms.ChoiceField(
+        label=_("CP Followup"),
         widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -6602,6 +6677,8 @@ class BLNAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('cp_referral', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -6664,31 +6741,24 @@ class BLNAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('follow_up_type', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
                     Div('phone_call_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_phone_call_number'
-                ),
-                Div(
                     HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('house_visit_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_house_visit_number'
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('family_visit_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_family_visit_number'
+                    Div('phone_call_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('follow_up_result', css_class='col-md-3'),
-                    css_class='row',
+                    Div('house_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('house_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('family_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('family_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
                 ),
                 id='follow_up',
                 css_class='bd-callout bd-callout-warning B_right_border'
@@ -6717,9 +6787,9 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
                     Div('pss_session_number', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">5</span>'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">2.3</span>'),
                     Div('pss_parent_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">2.4</span>'),
                     Div('pss_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -6730,9 +6800,9 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
                     Div('covid_session_number', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">5</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">3.3</span>'),
                     Div('covid_parent_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">3.4</span>'),
                     Div('covid_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -6743,9 +6813,9 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
                     Div('followup_session_number', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">5</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">4.3</span>'),
                     Div('followup_parent_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">4.4</span>'),
                     Div('followup_parent_attended_other', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -6922,11 +6992,12 @@ class BLNAssessmentForm(forms.ModelForm):
             'basic_stationery',
             'pss_kit',
             'learning_result',
-            'follow_up_type',
             'phone_call_number',
             'house_visit_number',
             'family_visit_number',
-            'follow_up_result',
+            'phone_call_follow_up_result' ,
+            'house_visit_follow_up_result' ,
+            'family_visit_follow_up_result' ,
             'parent_attended_visits',
             'pss_session_attended',
             'pss_session_number',
@@ -6943,6 +7014,7 @@ class BLNAssessmentForm(forms.ModelForm):
             'followup_session_modality',
             'followup_parent_attended_other',
             'followup_parent_attended',
+            'cp_referral',
             # 'child_health_examed',
             # 'child_health_concern',
         )
@@ -6976,11 +7048,11 @@ class CBECEAssessmentForm(forms.ModelForm):
             # ('graduated_to_cbece_next_level', _('Graduated to the next level')),
             ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
             ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level')),
-            ('referred_to_alp', _('referred to ALP')),
+            # ('referred_to_alp', _('referred to ALP')),
             ('referred_public_school', _('Referred to public school')),
             # ('referred_to_tvet', _('Referred to TVET')),
             # ('referred_to_ycbece', _('Referred to YCBECE')),
-            # ('dropout', _('Dropout, referral not possible')),
+            ('dropout', _('Dropout, referral not possible')),
         ),
         initial=''
     )
@@ -7180,7 +7252,33 @@ class CBECEAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    follow_up_result = forms.ChoiceField(
+    phone_call_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    house_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    family_visit_follow_up_result = forms.ChoiceField(
         label=_('Result of follow up'),
         widget=forms.Select, required=False,
         choices=(
@@ -7195,6 +7293,12 @@ class CBECEAssessmentForm(forms.ModelForm):
     )
     parent_attended_visits = forms.ChoiceField(
         label=_("Parents attended parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    cp_referral = forms.ChoiceField(
+        label=_("CP Followup"),
         widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -7380,9 +7484,10 @@ class CBECEAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('cp_referral', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
@@ -7460,31 +7565,24 @@ class CBECEAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('follow_up_type', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
                     Div('phone_call_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_phone_call_number'
-                ),
-                Div(
                     HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('house_visit_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_house_visit_number'
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('family_visit_number', css_class='col-md-3'),
-                    css_class='row',
-                    id='div_family_visit_number'
+                    Div('phone_call_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('follow_up_result', css_class='col-md-3'),
-                    css_class='row',
+                    Div('house_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('house_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('family_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('family_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
                 ),
                 id='follow_up',
                 css_class='bd-callout bd-callout-warning B_right_border'
@@ -7742,11 +7840,12 @@ class CBECEAssessmentForm(forms.ModelForm):
             'basic_stationery',
             # 'pss_kit',
             'learning_result',
-            'follow_up_type',
             'phone_call_number',
             'house_visit_number',
             'family_visit_number',
-            'follow_up_result',
+            'phone_call_follow_up_result' ,
+            'house_visit_follow_up_result' ,
+            'family_visit_follow_up_result' ,
             'parent_attended_visits',
             'pss_session_attended',
             'pss_session_number',
@@ -7763,6 +7862,7 @@ class CBECEAssessmentForm(forms.ModelForm):
             'followup_session_modality',
             'followup_parent_attended_other',
             'followup_parent_attended',
+            'cp_referral',
             # 'child_health_examed',
             # 'child_health_concern',
         )

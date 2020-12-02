@@ -22,7 +22,7 @@ $(document).ready(function(){
 
     reorganizeForm_post_assessment();
 
-    $(document).on('change', 'select#id_participation, select#id_follow_up_type, select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
+    $(document).on('change', 'select#id_participation,  select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
         'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
         'select#id_barriers_single, select#id_test_done , select#id_pss_session_attended,  select#id_covid_session_attended ,  select#id_followup_session_attended ', function(){
        reorganizeForm_post_assessment();
@@ -82,7 +82,7 @@ function reorganizeForm_post_assessment()
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
     var test_done = $('select#id_test_done').val();
-    var follow_up_type = $('select#id_follow_up_type').val();
+    // var follow_up_type = $('select#id_follow_up_type').val();
 
     var attended_arabic = $('select#id_attended_arabic').val();
     var attended_english = $('select#id_attended_english').val();
@@ -164,19 +164,19 @@ function reorganizeForm_post_assessment()
         $('select#id_modality_artistic').val("");
     }
 
-    // follow_up_type
-    $('div#div_phone_call_number').addClass('d-none');
-    $('div#div_house_visit_number').addClass('d-none');
-    $('div#div_family_visit_number').addClass('d-none');
-    if(follow_up_type == 'Phone'){
-        $('div#div_phone_call_number').removeClass('d-none');
-
-    }else if(follow_up_type == 'House visit'){
-        $('div#div_house_visit_number').removeClass('d-none');
-
-    }else if(follow_up_type == 'Family Visit') {
-        $('div#div_family_visit_number').removeClass('d-none');
-    }
+    // // follow_up_type
+    // $('div#div_phone_call_number').addClass('d-none');
+    // $('div#div_house_visit_number').addClass('d-none');
+    // $('div#div_family_visit_number').addClass('d-none');
+    // if(follow_up_type == 'Phone'){
+    //     $('div#div_phone_call_number').removeClass('d-none');
+    //
+    // }else if(follow_up_type == 'House visit'){
+    //     $('div#div_house_visit_number').removeClass('d-none');
+    //
+    // }else if(follow_up_type == 'Family Visit') {
+    //     $('div#div_family_visit_number').removeClass('d-none');
+    // }
 
     $('div#div_id_arabic').addClass('d-none');
     $('#span_arabic').addClass('d-none');

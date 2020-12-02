@@ -461,7 +461,7 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Please enter the number parent visits')
     )
-    follow_up_result = models.CharField(
+    phone_call_follow_up_result = models.CharField(
         max_length=100,
         blank=True,
         null=True,
@@ -474,6 +474,41 @@ class CLM(TimeStampedModel):
             ('dropout', _('Dropout')),
         ),
         verbose_name=_('Result of follow up')
+    )
+    house_visit_follow_up_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('child back', _('Phone Call')),
+            ('child transfer to difficulty center', _('Child transfer to difficulty center')),
+            ('child transfer to protection', _('Child transfer to protection')),
+            ('child transfer to medical', _('Child transfer to medical')),
+            ('Intensive followup', _('Intensive followup')),
+            ('dropout', _('Dropout')),
+        ),
+        verbose_name=_('Result of follow up')
+    )
+    family_visit_follow_up_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('child back', _('Phone Call')),
+            ('child transfer to difficulty center', _('Child transfer to difficulty center')),
+            ('child transfer to protection', _('Child transfer to protection')),
+            ('child transfer to medical', _('Child transfer to medical')),
+            ('Intensive followup', _('Intensive followup')),
+            ('dropout', _('Dropout')),
+        ),
+        verbose_name=_('Result of follow up')
+    )
+    cp_referral = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('CP Followup')
     )
     parent_attended_visits = models.CharField(
         max_length=100,
