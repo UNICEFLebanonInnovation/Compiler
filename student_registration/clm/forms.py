@@ -1585,7 +1585,7 @@ class ABLNForm(CommonForm):
         ('', '----------'),
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
-        ('level_three', _('Level three'))
+        # ('level_three', _('Level three'))
     )
     YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 8)))
     YEARS_ABLN.insert(0, ('', '---------'))
@@ -5506,7 +5506,7 @@ class ABLNAssessmentForm(forms.ModelForm):
         ('', '----------'),
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
-        ('level_three', _('Level three'))
+        # ('level_three', _('Level three'))
     )
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
@@ -5730,9 +5730,11 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
     cp_referral = forms.ChoiceField(
         label=_("CP Followup"),
-        widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('yes', _("Yes")),
+            ('no', _("No")))
     )
     pss_session_attended = forms.ChoiceField(
         label=_("Attended PSS Session"),
@@ -6162,24 +6164,13 @@ class ABLNAssessmentForm(forms.ModelForm):
                 self.add_error('social_emotional', 'This value is greater that 24')
             if psychomotor > 8:
                 self.add_error('psychomotor', 'This value is greater that 8')
-        elif registration_level == 'level_two':
+        else:
             if arabic > 52:
                 self.add_error('arabic', 'This value is greater that 52')
             # if english > 56:
             #     self.add_error('english', 'This value is greater that 56')
-            if math > 30:
-                self.add_error('math', 'This value is greater that 30')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
-        else:
-            if arabic > 58:
-                self.add_error('arabic', 'This value is greater that 58')
-            # if english > 60:
-            #     self.add_error('english', 'This value is greater that 60')
-            if math > 32:
-                self.add_error('math', 'This value is greater that 32')
+            if math > 34:
+                self.add_error('math', 'This value is greater that 34')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
             if psychomotor > 8:
@@ -6492,9 +6483,11 @@ class BLNAssessmentForm(forms.ModelForm):
     )
     cp_referral = forms.ChoiceField(
         label=_("CP Followup"),
-        widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('yes', _("Yes")),
+            ('no', _("No")))
     )
     pss_session_attended = forms.ChoiceField(
         label=_("Attended PSS Session"),
@@ -7047,9 +7040,9 @@ class CBECEAssessmentForm(forms.ModelForm):
             ('', '----------'),
             # ('graduated_to_cbece_next_level', _('Graduated to the next level')),
             ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
-            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level')),
+            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level round 3')),
             # ('referred_to_alp', _('referred to ALP')),
-            ('referred_public_school', _('Referred to public school')),
+            ('referred_public_school', _('Referred to public school grade 1')),
             # ('referred_to_tvet', _('Referred to TVET')),
             # ('referred_to_ycbece', _('Referred to YCBECE')),
             ('dropout', _('Dropout, referral not possible')),
@@ -7299,9 +7292,11 @@ class CBECEAssessmentForm(forms.ModelForm):
     )
     cp_referral = forms.ChoiceField(
         label=_("CP Followup"),
-        widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('yes', _("Yes")),
+            ('no', _("No")))
     )
     pss_session_attended = forms.ChoiceField(
         label=_("Attended PSS Session"),

@@ -507,7 +507,7 @@ class CLM(TimeStampedModel):
         max_length=100,
         blank=True,
         null=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
+        choices=(('', '----------'), ('yes', _("Yes")), ('no', _("No"))),
         verbose_name=_('CP Followup')
     )
     parent_attended_visits = models.CharField(
@@ -2236,9 +2236,9 @@ class CBECE(CLM):
             ('', '----------'),
             ('graduated_to_cbece_next_level', _('Graduated to the next level')),
             ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
-            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level')),
+            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level round 3')),
             ('referred_to_alp', _('referred to ALP')),
-            ('referred_public_school', _('Referred to public school')),
+            ('referred_public_school', _('Referred to public school grade 1')),
             ('referred_to_tvet', _('Referred to TVET')),
             ('referred_to_ycbece', _('Referred to YCBECE')),
             ('dropout', _('Dropout, referral not possible')),

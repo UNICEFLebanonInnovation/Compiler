@@ -109,16 +109,16 @@ function reorganizeForm_post_assessment()
     $('#span_barriers_single').addClass('d-none');
     $('div#div_id_barriers_other').addClass('d-none');
     $('#span_barriers_other').addClass('d-none');
-    $('#follow_up').addClass('hide');
-    $('#visits').addClass('hide');
+    // $('#follow_up').addClass('hide');
+    // $('#visits').addClass('hide');
 
 
 
     if(participation != 'no_absence'){
         $('#div_id_barriers_single').removeClass('d-none');
         $('#span_barriers_single').removeClass('d-none');
-        $('#follow_up').removeClass('hide');
-        $('#visits').removeClass('hide');
+        // $('#follow_up').removeClass('hide');
+        // $('#visits').removeClass('hide');
         // $('input[name=follow_up_type]').val('none').checked(true);
         $('#id_phone_call_number').val('');
         $('#id_house_visit_number').val('');
