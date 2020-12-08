@@ -5560,7 +5560,7 @@ class ABLNAssessmentForm(forms.ModelForm):
 
     round_complete = forms.ChoiceField(
         label=_("Round complete"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
@@ -6118,63 +6118,62 @@ class ABLNAssessmentForm(forms.ModelForm):
         if barriers_single == 'other':
             if not barriers_other:
                 self.add_error('barriers_other', 'This field is required')
+        if test_done =='yes':
+            if attended_arabic == 'yes':
+                if not modality_arabic:
+                    self.add_error('modality_arabic', 'This field is required')
+                if arabic is None:
+                    self.add_error('arabic', 'This field is required')
 
+            # if attended_english == 'yes':
+            #     if not modality_english:
+            #         self.add_error('modality_english', 'This field is required')
+            #     if english is None:
+            #         self.add_error('english', 'This field is required')
 
-        if attended_arabic == 'yes':
-            if not modality_arabic:
-                self.add_error('modality_arabic', 'This field is required')
-            if arabic is None:
-                self.add_error('arabic', 'This field is required')
+            if attended_psychomotor == 'yes':
+                if not modality_psychomotor:
+                    self.add_error('modality_psychomotor', 'This field is required')
+                if psychomotor is None:
+                    self.add_error('psychomotor', 'This field is required')
 
-        # if attended_english == 'yes':
-        #     if not modality_english:
-        #         self.add_error('modality_english', 'This field is required')
-        #     if english is None:
-        #         self.add_error('english', 'This field is required')
+            if attended_math == 'yes':
+                if not modality_math:
+                    self.add_error('modality_math', 'This field is required')
+                if math is None:
+                    self.add_error('math', 'This field is required')
 
-        if attended_psychomotor == 'yes':
-            if not modality_psychomotor:
-                self.add_error('modality_psychomotor', 'This field is required')
-            if psychomotor is None:
-                self.add_error('psychomotor', 'This field is required')
+            if attended_social == 'yes':
+                if not modality_social:
+                    self.add_error('modality_social', 'This field is required')
+                if social_emotional is None:
+                    self.add_error('social_emotional', 'This field is required')
 
-        if attended_math == 'yes':
-            if not modality_math:
-                self.add_error('modality_math', 'This field is required')
-            if math is None:
-                self.add_error('math', 'This field is required')
+            # grades Max Value validation
+            registration_level = cleaned_data.get("registration_level")
 
-        if attended_social == 'yes':
-            if not modality_social:
-                self.add_error('modality_social', 'This field is required')
-            if social_emotional is None:
-                self.add_error('social_emotional', 'This field is required')
-
-        # grades Max Value validation
-        registration_level = cleaned_data.get("registration_level")
-
-        if registration_level == 'level_one':
-            if arabic > 44:
-                self.add_error('arabic', 'This value is greater that 44')
-            # if english > 36:
-            #     self.add_error('english', 'This value is greater that 36')
-            if math > 18:
-                self.add_error('math', 'This value is greater that 18')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
-        else:
-            if arabic > 52:
-                self.add_error('arabic', 'This value is greater that 52')
-            # if english > 56:
-            #     self.add_error('english', 'This value is greater that 56')
-            if math > 34:
-                self.add_error('math', 'This value is greater that 34')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
+            if registration_level == 'level_one':
+                if arabic > 44:
+                    self.add_error('arabic', 'This value is greater that 44')
+                # if english > 36:
+                #     self.add_error('english', 'This value is greater that 36')
+                if math > 18:
+                    self.add_error('math', 'This value is greater that 18')
+                if social_emotional > 24:
+                    self.add_error('social_emotional', 'This value is greater that 24')
+                if psychomotor > 8:
+                    self.add_error('psychomotor', 'This value is greater that 8')
+            else:
+                if arabic > 52:
+                    self.add_error('arabic', 'This value is greater that 52')
+                # if english > 56:
+                #     self.add_error('english', 'This value is greater that 56')
+                if math > 34:
+                    self.add_error('math', 'This value is greater that 34')
+                if social_emotional > 24:
+                    self.add_error('social_emotional', 'This value is greater that 24')
+                if psychomotor > 8:
+                    self.add_error('psychomotor', 'This value is greater that 8')
 
 
     def save(self, instance=None, request=None):
@@ -6307,7 +6306,7 @@ class BLNAssessmentForm(forms.ModelForm):
 
     round_complete = forms.ChoiceField(
         label=_("Round complete"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
@@ -6871,73 +6870,73 @@ class BLNAssessmentForm(forms.ModelForm):
             if not barriers_other:
                 self.add_error('barriers_other', 'This field is required')
 
+        if test_done == 'yes':
+            if attended_arabic == 'yes':
+                if not modality_arabic:
+                    self.add_error('modality_arabic', 'This field is required')
+                if arabic is None:
+                    self.add_error('arabic', 'This field is required')
 
-        if attended_arabic == 'yes':
-            if not modality_arabic:
-                self.add_error('modality_arabic', 'This field is required')
-            if arabic is None:
-                self.add_error('arabic', 'This field is required')
+            if attended_english == 'yes':
+                if not modality_english:
+                    self.add_error('modality_english', 'This field is required')
+                if english is None:
+                    self.add_error('english', 'This field is required')
 
-        if attended_english == 'yes':
-            if not modality_english:
-                self.add_error('modality_english', 'This field is required')
-            if english is None:
-                self.add_error('english', 'This field is required')
+            if attended_psychomotor == 'yes':
+                if not modality_psychomotor:
+                    self.add_error('modality_psychomotor', 'This field is required')
+                if psychomotor is None:
+                    self.add_error('psychomotor', 'This field is required')
 
-        if attended_psychomotor == 'yes':
-            if not modality_psychomotor:
-                self.add_error('modality_psychomotor', 'This field is required')
-            if psychomotor is None:
-                self.add_error('psychomotor', 'This field is required')
+            if attended_math == 'yes':
+                if not modality_math:
+                    self.add_error('modality_math', 'This field is required')
+                if math is None:
+                    self.add_error('math', 'This field is required')
 
-        if attended_math == 'yes':
-            if not modality_math:
-                self.add_error('modality_math', 'This field is required')
-            if math is None:
-                self.add_error('math', 'This field is required')
+            if attended_social == 'yes':
+                if not modality_social:
+                    self.add_error('modality_social', 'This field is required')
+                if social_emotional is None:
+                    self.add_error('social_emotional', 'This field is required')
 
-        if attended_social == 'yes':
-            if not modality_social:
-                self.add_error('modality_social', 'This field is required')
-            if social_emotional is None:
-                self.add_error('social_emotional', 'This field is required')
+            # grades Max Value validation
+            registration_level = cleaned_data.get("registration_level")
 
-        # grades Max Value validation
-        registration_level = cleaned_data.get("registration_level")
-
-        if registration_level == 'level_one':
-            if arabic > 44:
-                self.add_error('arabic', 'This value is greater that 44')
-            if english > 36:
-                self.add_error('english', 'This value is greater that 36')
-            if math > 18:
-                self.add_error('math', 'This value is greater that 18')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
-        elif registration_level == 'level_two':
-            if arabic > 52:
-                self.add_error('arabic', 'This value is greater that 52')
-            if english > 56:
-                self.add_error('english', 'This value is greater that 56')
-            if math > 30:
-                self.add_error('math', 'This value is greater that 30')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
-        else:
-            if arabic > 58:
-                self.add_error('arabic', 'This value is greater that 58')
-            if english > 60:
-                self.add_error('english', 'This value is greater that 60')
-            if math > 32:
-                self.add_error('math', 'This value is greater that 32')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if psychomotor > 8:
-                self.add_error('psychomotor', 'This value is greater that 8')
+            if registration_level == 'level_one':
+                if arabic > 44:
+                    self.add_error('arabic', 'This value is greater that 44')
+                if english > 36:
+                    self.add_error('english', 'This value is greater that 36')
+                if math > 18:
+                    self.add_error('math', 'This value is greater that 18')
+                if social_emotional > 24:
+                    self.add_error('social_emotional', 'This value is greater that 24')
+                if psychomotor > 8:
+                    self.add_error('psychomotor', 'This value is greater that 8')
+            elif registration_level == 'level_two':
+                if arabic > 52:
+                    self.add_error('arabic', 'This value is greater that 52')
+                if english > 56:
+                    self.add_error('english', 'This value is greater that 56')
+                if math > 30:
+                    self.add_error('math', 'This value is greater that 30')
+                if social_emotional > 24:
+                    self.add_error('social_emotional', 'This value is greater that 24')
+                if psychomotor > 8:
+                    self.add_error('psychomotor', 'This value is greater that 8')
+            else:
+                if arabic > 58:
+                    self.add_error('arabic', 'This value is greater that 58')
+                if english > 60:
+                    self.add_error('english', 'This value is greater that 60')
+                if math > 32:
+                    self.add_error('math', 'This value is greater that 32')
+                if social_emotional > 24:
+                    self.add_error('social_emotional', 'This value is greater that 24')
+                if psychomotor > 8:
+                    self.add_error('psychomotor', 'This value is greater that 8')
 
 
     def save(self, instance=None, request=None):
@@ -7082,7 +7081,7 @@ class CBECEAssessmentForm(forms.ModelForm):
 
     round_complete = forms.ChoiceField(
         label=_("Round complete"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
@@ -7706,81 +7705,82 @@ class CBECEAssessmentForm(forms.ModelForm):
             if not barriers_other:
                 self.add_error('barriers_other', 'This field is required')
 
-        if attended_science == 'yes':
-            if not modality_science:
-                self.add_error('modality_science', 'This field is required')
-            if science is None:
-                self.add_error('science', 'This field is required')
+        if test_done == 'yes':
+            if attended_science == 'yes':
+                if not modality_science:
+                    self.add_error('modality_science', 'This field is required')
+                if science is None:
+                    self.add_error('science', 'This field is required')
 
-        if attended_artistic == 'yes':
-            if not modality_artistic:
-                self.add_error('modality_artistic', 'This field is required')
-            if artistic is None:
-                self.add_error('artistic', 'This field is required')
+            if attended_artistic == 'yes':
+                if not modality_artistic:
+                    self.add_error('modality_artistic', 'This field is required')
+                if artistic is None:
+                    self.add_error('artistic', 'This field is required')
 
-        if attended_arabic == 'yes':
-            if not modality_arabic:
-                self.add_error('modality_arabic', 'This field is required')
-            if arabic is None:
-                self.add_error('arabic', 'This field is required')
+            if attended_arabic == 'yes':
+                if not modality_arabic:
+                    self.add_error('modality_arabic', 'This field is required')
+                if arabic is None:
+                    self.add_error('arabic', 'This field is required')
 
-        if attended_english == 'yes':
-            if not modality_english:
-                self.add_error('modality_english', 'This field is required')
-            if english is None:
-                self.add_error('english', 'This field is required')
+            if attended_english == 'yes':
+                if not modality_english:
+                    self.add_error('modality_english', 'This field is required')
+                if english is None:
+                    self.add_error('english', 'This field is required')
 
-        if attended_psychomotor == 'yes':
-            if not modality_psychomotor:
-                self.add_error('modality_psychomotor', 'This field is required')
-            if psychomotor is None:
-                self.add_error('psychomotor', 'This field is required')
+            if attended_psychomotor == 'yes':
+                if not modality_psychomotor:
+                    self.add_error('modality_psychomotor', 'This field is required')
+                if psychomotor is None:
+                    self.add_error('psychomotor', 'This field is required')
 
-        if attended_math == 'yes':
-            if not modality_math:
-                self.add_error('modality_math', 'This field is required')
-            if math is None:
-                self.add_error('math', 'This field is required')
+            if attended_math == 'yes':
+                if not modality_math:
+                    self.add_error('modality_math', 'This field is required')
+                if math is None:
+                    self.add_error('math', 'This field is required')
 
-        if attended_social == 'yes':
-            if not modality_social:
-                self.add_error('modality_social', 'This field is required')
-            if social_emotional is None:
-                self.add_error('social_emotional', 'This field is required')
+            if attended_social == 'yes':
+                if not modality_social:
+                    self.add_error('modality_social', 'This field is required')
+                if social_emotional is None:
+                    self.add_error('social_emotional', 'This field is required')
 
-        # grades Max Value validation
-        registration_level = cleaned_data.get("registration_level")
+            # grades Max Value validation
+            registration_level = cleaned_data.get("registration_level")
 
-        if registration_level == 'level_two':
-            if arabic > 48:
-                self.add_error('arabic', 'This value is greater that 48')
-            if english > 48:
-                self.add_error('english', 'This value is greater that 48')
-            if math > 44:
-                self.add_error('math', 'This value is greater that 44')
-            if social_emotional > 40:
-                self.add_error('social_emotional', 'This value is greater that 40')
-            if psychomotor > 34:
-                self.add_error('psychomotor', 'This value is greater that 34')
-            if science > 36:
-                self.add_error('science', 'This value is greater that 36')
-            if artistic > 12:
-                self.add_error('artistic', 'This value is greater that 12')
-        else:
-            if arabic > 60:
-                self.add_error('arabic', 'This value is greater that 60')
-            if english > 60:
-                self.add_error('english', 'This value is greater that 60')
-            if math > 46:
-                self.add_error('math', 'This value is greater that 46')
-            if social_emotional > 40:
-                self.add_error('social_emotional', 'This value is greater that 40')
-            if psychomotor > 36:
-                self.add_error('psychomotor', 'This value is greater that 36')
-            if science > 36:
-                self.add_error('science', 'This value is greater that 36')
-            if artistic > 12:
-                self.add_error('artistic', 'This value is greater that 12')
+            if registration_level == 'level_two':
+                if arabic > 48:
+                    self.add_error('arabic', 'This value is greater that 48')
+                if english > 48:
+                    self.add_error('english', 'This value is greater that 48')
+                if math > 44:
+                    self.add_error('math', 'This value is greater that 44')
+                if social_emotional > 40:
+                    self.add_error('social_emotional', 'This value is greater that 40')
+                if psychomotor > 34:
+                    self.add_error('psychomotor', 'This value is greater that 34')
+                if science > 36:
+                    self.add_error('science', 'This value is greater that 36')
+                if artistic > 12:
+                    self.add_error('artistic', 'This value is greater that 12')
+            else:
+                if arabic > 60:
+                    self.add_error('arabic', 'This value is greater that 60')
+                if english > 60:
+                    self.add_error('english', 'This value is greater that 60')
+                if math > 46:
+                    self.add_error('math', 'This value is greater that 46')
+                if social_emotional > 40:
+                    self.add_error('social_emotional', 'This value is greater that 40')
+                if psychomotor > 36:
+                    self.add_error('psychomotor', 'This value is greater that 36')
+                if science > 36:
+                    self.add_error('science', 'This value is greater that 36')
+                if artistic > 12:
+                    self.add_error('artistic', 'This value is greater that 12')
 
     def save(self, instance=None, request=None):
         instance = super(CBECEAssessmentForm, self).save()
@@ -8161,82 +8161,82 @@ class CBECEMidAssessmentForm(forms.ModelForm):
         artistic = cleaned_data.get("artistic")
 
         test_done = cleaned_data.get("test_done")
+        if test_done == 'yes':
+            if attended_science == 'yes':
+                if not modality_science:
+                    self.add_error('modality_science', 'This field is required')
+                if science is None:
+                    self.add_error('science', 'This field is required')
 
-        if attended_science == 'yes':
-            if not modality_science:
-                self.add_error('modality_science', 'This field is required')
-            if science is None:
-                self.add_error('science', 'This field is required')
+            if attended_artistic == 'yes':
+                if not modality_artistic:
+                    self.add_error('modality_artistic', 'This field is required')
+                if artistic is None:
+                    self.add_error('artistic', 'This field is required')
 
-        if attended_artistic == 'yes':
-            if not modality_artistic:
-                self.add_error('modality_artistic', 'This field is required')
-            if artistic is None:
-                self.add_error('artistic', 'This field is required')
+            if attended_arabic == 'yes':
+                if not modality_arabic:
+                    self.add_error('modality_arabic', 'This field is required')
+                if arabic is None:
+                    self.add_error('arabic', 'This field is required')
 
-        if attended_arabic == 'yes':
-            if not modality_arabic:
-                self.add_error('modality_arabic', 'This field is required')
-            if arabic is None:
-                self.add_error('arabic', 'This field is required')
+            if attended_english == 'yes':
+                if not modality_english:
+                    self.add_error('modality_english', 'This field is required')
+                if english is None:
+                    self.add_error('english', 'This field is required')
 
-        if attended_english == 'yes':
-            if not modality_english:
-                self.add_error('modality_english', 'This field is required')
-            if english is None:
-                self.add_error('english', 'This field is required')
+            if attended_psychomotor == 'yes':
+                if not modality_psychomotor:
+                    self.add_error('modality_psychomotor', 'This field is required')
+                if psychomotor is None:
+                    self.add_error('psychomotor', 'This field is required')
 
-        if attended_psychomotor == 'yes':
-            if not modality_psychomotor:
-                self.add_error('modality_psychomotor', 'This field is required')
-            if psychomotor is None:
-                self.add_error('psychomotor', 'This field is required')
+            if attended_math == 'yes':
+                if not modality_math:
+                    self.add_error('modality_math', 'This field is required')
+                if math is None:
+                    self.add_error('math', 'This field is required')
 
-        if attended_math == 'yes':
-            if not modality_math:
-                self.add_error('modality_math', 'This field is required')
-            if math is None:
-                self.add_error('math', 'This field is required')
+            if attended_social == 'yes':
+                if not modality_social:
+                    self.add_error('modality_social', 'This field is required')
+                if social_emotional is None:
+                    self.add_error('social_emotional', 'This field is required')
 
-        if attended_social == 'yes':
-            if not modality_social:
-                self.add_error('modality_social', 'This field is required')
-            if social_emotional is None:
-                self.add_error('social_emotional', 'This field is required')
+            # grades Max Value validation
+            registration_level = cleaned_data.get("registration_level")
 
-        # grades Max Value validation
-        registration_level = cleaned_data.get("registration_level")
-
-        if registration_level == 'level_two':
-            if arabic > 48:
-                self.add_error('arabic', 'This value is greater that 48')
-            if english > 48:
-                self.add_error('english', 'This value is greater that 48')
-            if math > 44:
-                self.add_error('math', 'This value is greater that 44')
-            if social_emotional > 40:
-                self.add_error('social_emotional', 'This value is greater that 40')
-            if psychomotor > 34:
-                self.add_error('psychomotor', 'This value is greater that 34')
-            if science > 36:
-                self.add_error('science', 'This value is greater that 36')
-            if artistic > 12:
-                self.add_error('artistic', 'This value is greater that 12')
-        else:
-            if arabic > 60:
-                self.add_error('arabic', 'This value is greater that 60')
-            if english > 60:
-                self.add_error('english', 'This value is greater that 60')
-            if math > 46:
-                self.add_error('math', 'This value is greater that 46')
-            if social_emotional > 40:
-                self.add_error('social_emotional', 'This value is greater that 40')
-            if psychomotor > 36:
-                self.add_error('psychomotor', 'This value is greater that 36')
-            if science > 36:
-                self.add_error('science', 'This value is greater that 36')
-            if artistic > 12:
-                self.add_error('artistic', 'This value is greater that 12')
+            if registration_level == 'level_two':
+                if arabic > 48:
+                    self.add_error('arabic', 'This value is greater that 48')
+                if english > 48:
+                    self.add_error('english', 'This value is greater that 48')
+                if math > 44:
+                    self.add_error('math', 'This value is greater that 44')
+                if social_emotional > 40:
+                    self.add_error('social_emotional', 'This value is greater that 40')
+                if psychomotor > 34:
+                    self.add_error('psychomotor', 'This value is greater that 34')
+                if science > 36:
+                    self.add_error('science', 'This value is greater that 36')
+                if artistic > 12:
+                    self.add_error('artistic', 'This value is greater that 12')
+            else:
+                if arabic > 60:
+                    self.add_error('arabic', 'This value is greater that 60')
+                if english > 60:
+                    self.add_error('english', 'This value is greater that 60')
+                if math > 46:
+                    self.add_error('math', 'This value is greater that 46')
+                if social_emotional > 40:
+                    self.add_error('social_emotional', 'This value is greater that 40')
+                if psychomotor > 36:
+                    self.add_error('psychomotor', 'This value is greater that 36')
+                if science > 36:
+                    self.add_error('science', 'This value is greater that 36')
+                if artistic > 12:
+                    self.add_error('artistic', 'This value is greater that 12')
 
     def save(self, instance=None, request=None):
         instance = super(CBECEMidAssessmentForm, self).save()

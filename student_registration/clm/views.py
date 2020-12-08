@@ -984,7 +984,6 @@ class CBECEMidAssessmentView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
         instance = CBECE.objects.get(id=self.kwargs['pk'])
-
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
 
@@ -992,6 +991,7 @@ class CBECEMidAssessmentView(LoginRequiredMixin,
             data = CBECESerializer(instance).data
             if 'mid_test' in data:
                 p_test = data['mid_test']
+
                 if p_test:
                     if "CBECE_ASSESSMENT/attended_arabic" in p_test:
                         data['attended_arabic'] = p_test["CBECE_ASSESSMENT/attended_arabic"]
@@ -3500,6 +3500,8 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_artistic': 'pre test artistic',
 
             'pre_test_score': 'pre test score',
+
+            # 'mid_test_done', 'mid_test'
 
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
