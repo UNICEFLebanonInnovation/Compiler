@@ -1933,9 +1933,10 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
 
 
 class BLNExportViewSet(LoginRequiredMixin, ListView):
-    model = BLN
-    queryset = BLN.objects.all()
 
+    current_round = CLMRound.objects.filter(current_year=True)
+    model = BLN
+    queryset = BLN.objects.filter(round__in=current_round)
     def get_queryset(self):
         if not self.request.user.is_staff:
             return self.queryset.filter(partner=self.request.user.partner)
@@ -2445,9 +2446,36 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_score',
 
             'participation',
-            'barriers',
+            'barriers_single',
+            'barriers_other',
+            'test_done',
+            'round_complete',
+            'basic_stationery',
+            'pss_kit',
             'learning_result',
-            'cycle_completed',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'phone_call_follow_up_result',
+            'house_visit_follow_up_result',
+            'family_visit_follow_up_result',
+            'parent_attended_visits',
+            'pss_session_attended',
+            'pss_session_number',
+            'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
+            'covid_session_attended',
+            'covid_session_number',
+            'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
+            'followup_session_attended',
+            'followup_session_number',
+            'followup_session_modality',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
+            'cp_referral',
             'enrolled_at_school',
             'student_outreached',
             'have_barcode',
@@ -2525,8 +2553,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
 
 class ABLNExportViewSet(LoginRequiredMixin, ListView):
+    current_round = CLMRound.objects.filter(current_year=True)
     model = ABLN
-    queryset = ABLN.objects.all()
+    queryset = ABLN.objects.filter(round__in=current_round)
+
 
     def get_queryset(self):
         if not self.request.user.is_staff:
@@ -2815,9 +2845,37 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_score',
 
             'participation',
-            'barriers',
+            'barriers_single',
+            'barriers_other',
+            'test_done',
+            'round_complete',
+            'basic_stationery',
+            'pss_kit',
             'learning_result',
-            'cycle_completed',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'phone_call_follow_up_result',
+            'house_visit_follow_up_result',
+            'family_visit_follow_up_result',
+            'parent_attended_visits',
+            'pss_session_attended',
+            'pss_session_number',
+            'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
+            'covid_session_attended',
+            'covid_session_number',
+            'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
+            'followup_session_attended',
+            'followup_session_number',
+            'followup_session_modality',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
+            'cp_referral',
+
             'enrolled_at_school',
 
             'referral_programme_type_1',
@@ -2986,9 +3044,37 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
 
             'post_test_score',
             'participation',
-            'barriers',
+            'barriers_single',
+            'barriers_other',
+            'test_done',
+            'round_complete',
+            'basic_stationery',
+            'pss_kit',
             'learning_result',
-            'cycle_completed',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'phone_call_follow_up_result',
+            'house_visit_follow_up_result',
+            'family_visit_follow_up_result',
+            'parent_attended_visits',
+            'pss_session_attended',
+            'pss_session_number',
+            'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
+            'covid_session_attended',
+            'covid_session_number',
+            'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
+            'followup_session_attended',
+            'followup_session_number',
+            'followup_session_modality',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
+            'cp_referral',
+
             'enrolled_at_school',
             'student_outreached',
             'have_barcode',
@@ -3367,8 +3453,11 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
 
 
 class CBECEExportViewSet(LoginRequiredMixin, ListView):
+    current_round = CLMRound.objects.filter(current_year=True)
     model = CBECE
-    queryset = CBECE.objects.all()
+
+    # queryset = CBECE.objects.all()
+    queryset = CBECE.objects.filter(round__in=current_round)
 
     def get_queryset(self):
         if not self.request.user.is_staff:
@@ -3501,11 +3590,88 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 
             'pre_test_score': 'pre test score',
 
-            # 'mid_test_done', 'mid_test'
+            'post_test_attended_arabic': 'post test attended arabic',
+            'post_test_modality_arabic': 'post test modality arabic',
+            'post_test_arabic': 'post test arabic',
+            'post_test_attended_english': 'post test attended english',
+            'post_test_modality_english': 'post test modality english',
+            'post_test_english': 'post test english',
+            'post_test_attended_psychomotor': 'post test attended psychomotor',
+            'post_test_modality_psychomotor': 'post test modality psychomotor',
+            'post_test_psychomotor': 'post test psychomotor',
+            'post_test_attended_math': 'post test attended math',
+            'post_test_modality_math': 'post test modality math',
+            'post_test_math': 'post test math',
+            'post_test_attended_social': 'post test attended social',
+            'post_test_modality_social': 'post test modality social',
+            'post_test_social_emotional': 'post test social emotional',
+
+            'post_test_attended_science': 'post test attended science',
+            'post_test_modality_science': 'post test modality science',
+            'post_test_science': 'post test science',
+
+            'post_test_attended_artistic': 'post test attended artistic',
+            'post_test_modality_artistic': 'post test modality artistic',
+            'post_test_artistic': 'post test artistic',
+
+            'post_test_score': 'post test score',
+            'mid_test_done':'mid test done',
+            'mid_test_attended_arabic': 'mid test attended arabic',
+            'mid_test_modality_arabic': 'mid test modality arabic',
+            'mid_test_arabic': 'mid test arabic',
+            'mid_test_attended_english': 'mid test attended english',
+            'mid_test_modality_english': 'mid test modality english',
+            'mid_test_english': 'mid test english',
+            'mid_test_attended_psychomotor': 'mid test attended psychomotor',
+            'mid_test_modality_psychomotor': 'mid test modality psychomotor',
+            'mid_test_psychomotor': 'mid test psychomotor',
+            'mid_test_attended_math': 'mid test attended math',
+            'mid_test_modality_math': 'mid test modality math',
+            'mid_test_math': 'mid test math',
+            'mid_test_attended_social': 'mid test attended social',
+            'mid_test_modality_social': 'mid test modality social',
+            'mid_test_social_emotional': 'mid test social emotional',
+
+            'mid_test_attended_science': 'mid test attended science',
+            'mid_test_modality_science': 'mid test modality science',
+            'mid_test_science': 'mid test science',
+
+            'mid_test_attended_artistic': 'mid test attended artistic',
+            'mid_test_modality_artistic': 'mid test modality artistic',
+            'mid_test_artistic': 'mid test artistic',
 
             'participation': 'Level of participation / Absence',
-            'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
+            'barriers_single': '',
+            'barriers_other': '',
+            'test_done': '',
+            'round_complete': '',
+            'basic_stationery': '',
+            'pss_kit': '',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
+            'phone_call_number': '',
+            'house_visit_number': '',
+            'family_visit_number': '',
+            'phone_call_follow_up_result': '',
+            'house_visit_follow_up_result': '',
+            'family_visit_follow_up_result': '',
+            'parent_attended_visits': '',
+            'pss_session_attended': '',
+            'pss_session_number': '',
+            'pss_session_modality': '',
+            'pss_parent_attended': '',
+            'pss_parent_attended_other': '',
+            'covid_session_attended': '',
+            'covid_session_number': '',
+            'covid_session_modality': '',
+            'covid_parent_attended': '',
+            'covid_parent_attended_other': '',
+            'followup_session_attended': '',
+            'followup_session_number': '',
+            'followup_session_modality': '',
+            'followup_parent_attended_other': '',
+            'followup_parent_attended': '',
+            'cp_referral': '',
+
             'student_outreached': 'Student outreached?',
             'have_barcode': 'Have barcode with him?',
             'owner__username': 'owner',
@@ -3670,9 +3836,99 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 
             'pre_test_score',
 
+            # Post
+            'post_test_attended_arabic',
+            'post_test_modality_arabic',
+            'post_test_arabic',
+
+            'post_test_attended_english',
+            'post_test_modality_english',
+            'post_test_english',
+
+            'post_test_attended_psychomotor',
+            'post_test_modality_psychomotor',
+            'post_test_psychomotor',
+
+            'post_test_attended_math',
+            'post_test_modality_math',
+            'post_test_math',
+
+            'post_test_attended_social',
+            'post_test_modality_social',
+            'post_test_social_emotional',
+
+            'post_test_attended_science',
+            'post_test_modality_science',
+            'post_test_science',
+
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
+            'post_test_artistic',
+
+            'post_test_score',
+
+            # mid
+            'mid_test_done',
+            'mid_test_attended_arabic',
+            'mid_test_modality_arabic',
+            'mid_test_arabic',
+
+            'mid_test_attended_english',
+            'mid_test_modality_english',
+            'mid_test_english',
+
+            'mid_test_attended_psychomotor',
+            'mid_test_modality_psychomotor',
+            'mid_test_psychomotor',
+
+            'mid_test_attended_math',
+            'mid_test_modality_math',
+            'mid_test_math',
+
+            'mid_test_attended_social',
+            'mid_test_modality_social',
+            'mid_test_social_emotional',
+
+            'mid_test_attended_science',
+            'mid_test_modality_science',
+            'mid_test_science',
+
+            'mid_test_attended_artistic',
+            'mid_test_modality_artistic',
+            'mid_test_artistic',
+
             'participation',
-            'barriers',
+            'barriers_single',
+            'barriers_other',
+            'test_done',
+            'round_complete',
+            'basic_stationery',
+            'pss_kit',
             'learning_result',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'phone_call_follow_up_result',
+            'house_visit_follow_up_result',
+            'family_visit_follow_up_result',
+            'parent_attended_visits',
+            'pss_session_attended',
+            'pss_session_number',
+            'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
+            'covid_session_attended',
+            'covid_session_number',
+            'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
+            'followup_session_attended',
+            'followup_session_number',
+            'followup_session_modality',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
+            'cp_referral',
+
             'student_outreached',
             'have_barcode',
             'owner__username',
@@ -3738,6 +3994,67 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_attended_artistic': "pre_test->>'CBECE_ASSESSMENT/attended_artistic'",
             'pre_test_modality_artistic': "pre_test->>'CBECE_ASSESSMENT/modality_artistic'",
             'pre_test_artistic': "pre_test->>'CBECE_ASSESSMENT/artistic'",
+
+
+
+            # Post
+            'post_test_attended_arabic': "post_test->>'CBECE_ASSESSMENT/attended_arabic'",
+            'post_test_modality_arabic': "post_test->>'CBECE_ASSESSMENT/modality_arabic'",
+            'post_test_arabic': "post_test->>'CBECE_ASSESSMENT/arabic'",
+
+            'post_test_attended_english': "post_test->>'CBECE_ASSESSMENT/attended_english'",
+            'post_test_modality_english': "post_test->>'CBECE_ASSESSMENT/modality_english'",
+            'post_test_english': "post_test->>'CBECE_ASSESSMENT/english'",
+
+            'post_test_attended_psychomotor': "post_test->>'CBECE_ASSESSMENT/attended_psychomotor'",
+            'post_test_modality_psychomotor': "post_test->>'CBECE_ASSESSMENT/modality_psychomotor'",
+            'post_test_psychomotor': "post_test->>'CBECE_ASSESSMENT/psychomotor'",
+
+            'post_test_attended_math': "post_test->>'CBECE_ASSESSMENT/attended_math'",
+            'post_test_modality_math': "post_test->>'CBECE_ASSESSMENT/modality_math'",
+            'post_test_math': "post_test->>'CBECE_ASSESSMENT/math'",
+
+            'post_test_attended_social': "post_test->>'CBECE_ASSESSMENT/attended_social'",
+            'post_test_modality_social': "post_test->>'CBECE_ASSESSMENT/modality_social'",
+            'post_test_social_emotional': "post_test->>'CBECE_ASSESSMENT/social_emotional'",
+
+            'post_test_attended_science': "post_test->>'CBECE_ASSESSMENT/attended_science'",
+            'post_test_modality_science': "post_test->>'CBECE_ASSESSMENT/modality_science'",
+            'post_test_science': "post_test->>'CBECE_ASSESSMENT/science'",
+
+            'post_test_attended_artistic': "post_test->>'CBECE_ASSESSMENT/attended_artistic'",
+            'post_test_modality_artistic': "post_test->>'CBECE_ASSESSMENT/modality_artistic'",
+            'post_test_artistic': "post_test->>'CBECE_ASSESSMENT/artistic'",
+
+
+            # mid
+            'mid_test_attended_arabic': "mid_test->>'CBECE_ASSESSMENT/attended_arabic'",
+            'mid_test_modality_arabic': "mid_test->>'CBECE_ASSESSMENT/modality_arabic'",
+            'mid_test_arabic': "mid_test->>'CBECE_ASSESSMENT/arabic'",
+
+            'mid_test_attended_english': "mid_test->>'CBECE_ASSESSMENT/attended_english'",
+            'mid_test_modality_english': "mid_test->>'CBECE_ASSESSMENT/modality_english'",
+            'mid_test_english': "mid_test->>'CBECE_ASSESSMENT/english'",
+
+            'mid_test_attended_psychomotor': "mid_test->>'CBECE_ASSESSMENT/attended_psychomotor'",
+            'mid_test_modality_psychomotor': "mid_test->>'CBECE_ASSESSMENT/modality_psychomotor'",
+            'mid_test_psychomotor': "mid_test->>'CBECE_ASSESSMENT/psychomotor'",
+
+            'mid_test_attended_math': "mid_test->>'CBECE_ASSESSMENT/attended_math'",
+            'mid_test_modality_math': "mid_test->>'CBECE_ASSESSMENT/modality_math'",
+            'mid_test_math': "mid_test->>'CBECE_ASSESSMENT/math'",
+
+            'mid_test_attended_social': "mid_test->>'CBECE_ASSESSMENT/attended_social'",
+            'mid_test_modality_social': "mid_test->>'CBECE_ASSESSMENT/modality_social'",
+            'mid_test_social_emotional': "mid_test->>'CBECE_ASSESSMENT/social_emotional'",
+
+            'mid_test_attended_science': "mid_test->>'CBECE_ASSESSMENT/attended_science'",
+            'mid_test_modality_science': "mid_test->>'CBECE_ASSESSMENT/modality_science'",
+            'mid_test_science': "mid_test->>'CBECE_ASSESSMENT/science'",
+
+            'mid_test_attended_artistic': "mid_test->>'CBECE_ASSESSMENT/attended_artistic'",
+            'mid_test_modality_artistic': "mid_test->>'CBECE_ASSESSMENT/modality_artistic'",
+            'mid_test_artistic': "mid_test->>'CBECE_ASSESSMENT/artistic'",
 
         }).values(
             'id',
@@ -3826,10 +4143,101 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 
             'pre_test_score',
 
+            # post
+
+            'post_test_attended_arabic',
+            'post_test_modality_arabic',
+            'post_test_arabic',
+
+            'post_test_attended_english',
+            'post_test_modality_english',
+            'post_test_english',
+
+            'post_test_attended_psychomotor',
+            'post_test_modality_psychomotor',
+            'post_test_psychomotor',
+
+            'post_test_attended_math',
+            'post_test_modality_math',
+            'post_test_math',
+
+            'post_test_attended_social',
+            'post_test_modality_social',
+            'post_test_social_emotional',
+
+            'post_test_attended_science',
+            'post_test_modality_science',
+            'post_test_science',
+
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
+            'post_test_artistic',
+
+            'post_test_score',
+
+            # mid
+            'mid_test_done',
+            'mid_test_attended_arabic',
+            'mid_test_modality_arabic',
+            'mid_test_arabic',
+
+            'mid_test_attended_english',
+            'mid_test_modality_english',
+            'mid_test_english',
+
+            'mid_test_attended_psychomotor',
+            'mid_test_modality_psychomotor',
+            'mid_test_psychomotor',
+
+            'mid_test_attended_math',
+            'mid_test_modality_math',
+            'mid_test_math',
+
+            'mid_test_attended_social',
+            'mid_test_modality_social',
+            'mid_test_social_emotional',
+
+            'mid_test_attended_science',
+            'mid_test_modality_science',
+            'mid_test_science',
+
+            'mid_test_attended_artistic',
+            'mid_test_modality_artistic',
+            'mid_test_artistic',
+
+
             'participation',
-            'barriers',
+            'barriers_single',
+            'barriers_other',
+            'test_done',
+            'round_complete',
+            'basic_stationery',
+            'pss_kit',
             'learning_result',
-            'cycle_completed',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'phone_call_follow_up_result' ,
+            'house_visit_follow_up_result' ,
+            'family_visit_follow_up_result' ,
+            'parent_attended_visits',
+            'pss_session_attended',
+            'pss_session_number',
+            'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
+            'covid_session_attended',
+            'covid_session_number',
+            'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
+            'followup_session_attended',
+            'followup_session_number',
+            'followup_session_modality',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
+            'cp_referral',
+
             'enrolled_at_school',
             'student_outreached',
             'have_barcode',

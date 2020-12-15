@@ -6244,8 +6244,6 @@ class ABLNAssessmentForm(forms.ModelForm):
             'followup_parent_attended_other',
             'followup_parent_attended',
             'cp_referral',
-            # 'child_health_examed',
-            # 'child_health_concern',
         )
 
 class BLNAssessmentForm(forms.ModelForm):

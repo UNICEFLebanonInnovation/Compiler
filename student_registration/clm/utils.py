@@ -2,7 +2,6 @@ from datetime import date
 
 
 def is_allowed_create(programme):
-    return True
 
     from student_registration.schools.models import CLMRound
 
@@ -40,7 +39,6 @@ def is_allowed_create(programme):
 
 
 def is_allowed_edit(programme):
-    return True
 
     from student_registration.schools.models import CLMRound
 

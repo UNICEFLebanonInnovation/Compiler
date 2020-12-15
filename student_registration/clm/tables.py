@@ -43,9 +43,9 @@ class BLNTable(CommonTable):
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-bln/', 'programme': 'BLN'})
 
-    monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
-                                            template_name='django_tables2/clm_monitoring_column.html',
-                                            attrs={'url': '/clm/bln-monitoring-questioner/', 'programme': 'BLN'})
+    # monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
+    #                                         template_name='django_tables2/clm_monitoring_column.html',
+    #                                         attrs={'url': '/clm/bln-monitoring-questioner/', 'programme': 'BLN'})
     # referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
     #                                         template_name='django_tables2/clm_referral_column.html',
     #                                         attrs={'url': '/clm/bln-referral/', 'programme': 'BLN'})
@@ -80,7 +80,7 @@ class BLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
-            'monitoring_column',
+            # 'monitoring_column',
             # 'referral_column',
             # 'followup_column',
             're_enroll_column',
@@ -128,9 +128,9 @@ class ABLNTable(CommonTable):
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-abln/', 'programme': 'ABLN'})
 
-    monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
-                                            template_name='django_tables2/clm_monitoring_column.html',
-                                            attrs={'url': '/clm/abln-monitoring-questioner/', 'programme': 'ABLN'})
+    # monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
+    #                                         template_name='django_tables2/clm_monitoring_column.html',
+    #                                         attrs={'url': '/clm/abln-monitoring-questioner/', 'programme': 'ABLN'})
     # referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
     #                                         template_name='django_tables2/clm_referral_column.html',
     #                                         attrs={'url': '/clm/abln-referral/', 'programme': 'ABLN'})
@@ -160,7 +160,7 @@ class ABLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
-            'monitoring_column',
+            # 'monitoring_column',
             # 'referral_column',
             # 'followup_column',
             'first_attendance_date',
@@ -319,9 +319,9 @@ class CBECETable(CommonTable):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-cbece/', 'programme': 'CBECE'})
-    monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
-                                            template_name='django_tables2/clm_monitoring_column.html',
-                                            attrs={'url': '/clm/cbece-monitoring-questioner/', 'programme': 'CBECE'})
+    # monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
+    #                                         template_name='django_tables2/clm_monitoring_column.html',
+    #                                         attrs={'url': '/clm/cbece-monitoring-questioner/', 'programme': 'CBECE'})
     # referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
     #                                         template_name='django_tables2/clm_referral_column.html',
     #                                         attrs={'url': '/clm/cbece-referral/', 'programme': 'CBECE'})
@@ -367,7 +367,7 @@ class CBECETable(CommonTable):
             'delete_column',
             'post_assessment_column',
             'mid_assessment_column',
-            'monitoring_column',
+            # 'monitoring_column',
             'first_attendance_date',
             'round',
             'cycle',

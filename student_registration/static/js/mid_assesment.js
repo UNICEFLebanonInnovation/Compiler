@@ -65,27 +65,37 @@ function reorganizeForm_mid_assessment()
     var attended_artistic = $('select#id_attended_artistic').val();
 
     $('div.grades').addClass('d-none');
-
+    alert(mid_test_done);
     if(mid_test_done == 'yes'){
+        alert('yes');
     // $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');
     }
     else
     {
+        alert('no');
         // grades
         $('#id_arabic').val('');
+
+        $('select#id_attended_arabic').val("no");
         $('select#id_modality_arabic').val("");
         $('#id_english').val('');
+        $('select#id_attended_english').val("no");
         $('select#id_modality_english').val("");
         $('#id_math').val('');
+        $('select#id_attended_math').val("no");
         $('select#id_modality_math').val("");
         $('#id_social').val('');
+        $('select#id_attended_social').val("no");
         $('select#id_modality_social').val("");
         $('#id_psychomotor').val('');
+        $('select#id_attended_psychomotor').val("no");
         $('select#id_modality_psychomotor').val("");
         $('#id_science').val('');
+        $('select#id_attended_science').val("no");
         $('select#id_modality_science').val("");
         $('#id_artistic').val('');
+        $('select#id_attended_artistic').val("no");
         $('select#id_modality_artistic').val("");
     }
 
