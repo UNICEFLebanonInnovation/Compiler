@@ -67,16 +67,13 @@ function reorganizeForm_mid_assessment()
     $('div.grades').addClass('d-none');
     alert(mid_test_done);
     if(mid_test_done == 'yes'){
-        alert('yes');
     // $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');
     }
     else
     {
-        alert('no');
         // grades
         $('#id_arabic').val('');
-
         $('select#id_attended_arabic').val("no");
         $('select#id_modality_arabic').val("");
         $('#id_english').val('');
