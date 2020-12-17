@@ -1854,13 +1854,44 @@ class ABLN(CLM):
 
 
 class RS(CLM):
-
-    LEARNING_RESULT = Choices(
-        ('', _('Learning result')),
-        ('repeat_level', _('Yes')),
-        ('graduated_next_level', _('No'))
+    MUAC = Choices(
+        ('', _('MUAC')),
+        ('1', _('< 11.5 CM (severe malnutrition)')),
+        ('2', _('< 12.5 CM (moderate malnutrition)')),
+    )
+    SITES = Choices(
+        ('', _('Program site')),
+        ('in_school', _('Inside the school')),
+        ('out_school', _('Outside the school')),
     )
 
+    # LEARNING_RESULT = Choices(
+    #     ('', _('Learning result')),
+    #     ('repeat_level', _('Yes')),
+    #     ('graduated_next_level', _('No'))
+    # )
+    LEARNING_RESULT = Choices(
+            ('', '----------'),
+            ('graduated_to_cbece_next_level', _('Graduated to the next level')),
+            ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
+            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level round 3')),
+            ('referred_to_alp', _('referred to ALP')),
+            ('referred_public_school', _('Referred to public school grade 1')),
+            ('referred_to_tvet', _('Referred to TVET')),
+            ('referred_to_ycbece', _('Referred to YCBECE')),
+            ('dropout', _('Dropout, referral not possible')),
+    )
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
+    MAIN_CAREGIVER = (
+        ('', '----------'),
+        ('mother', _('Mother')),
+        ('father', _('Father')),
+        ('other', _('Other')),
+    )
     SCHOOL_SHIFTS = Choices(
         ('', _('Shift')),
         ('first', _('First shift')),
@@ -1880,13 +1911,31 @@ class RS(CLM):
         ('academic', _('Academic')),
         ('absence', _('Absence'))
     )
-
+    education_status = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('out of school', _('Out of school')),
+            ('enrolled in formal education but did not continue',
+             _("Enrolled in formal education but did not continue")),
+            ('enrolled in CBECE', _("Enrolled in CBECE")),
+        ),
+        verbose_name=_('Education status')
+    )
     type = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=TYPES,
         verbose_name=_('Program type')
+    )
+    cycle = models.ForeignKey(
+        Cycle,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cycle')
     )
     site = models.CharField(
         max_length=50,
@@ -1922,69 +1971,68 @@ class RS(CLM):
     )
     referral = ArrayField(
         models.CharField(
-            choices=REFER_SEASON,
+            choices=CLM.REFERRAL,
             max_length=100,
             blank=True,
             null=True,
         ),
         blank=True,
         null=True,
-        verbose_name=_('Reason of referral')
+        verbose_name=_('Where was the child referred?')
     )
-    pre_test_arabic = models.FloatField(
+    child_muac = models.CharField(
+        max_length=50,
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
+        choices=MUAC,
+        verbose_name=_('Child MUAC')
+    )
+    pre_test_arabic = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Arabic')
     )
     pre_test_language = models.FloatField(
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
+        choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Foreign Language')
     )
     pre_test_math = models.FloatField(
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
+        choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Math')
     )
     pre_test_science = models.FloatField(
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
+        choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
     post_test_arabic = models.FloatField(
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
-        verbose_name=_('Arabic')
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Science')
     )
     post_test_language = models.FloatField(
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
-        verbose_name=_('Foreign Language')
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Science')
     )
     post_test_math = models.FloatField(
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
-        verbose_name=_('Math')
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Science')
     )
     post_test_science = models.FloatField(
         blank=True,
         null=True,
-        default=0,
-        # choices=((x, x) for x in range(0, 21)),
+        choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
 
@@ -2032,13 +2080,12 @@ class RS(CLM):
         null=True,
         verbose_name=_('Motivation - Post')
     )
-
     learning_result = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=LEARNING_RESULT,
-        verbose_name=_('RS Learning result')
+        verbose_name=_('Learning result')
     )
     section = models.ForeignKey(
         Section,
@@ -2046,7 +2093,109 @@ class RS(CLM):
         related_name='+',
         verbose_name=_('Section')
     )
+    final_grade = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        blank=True, null=True,
+        # help_text='/80'
+    )
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('miss_school_date')
+    )
+    round_start_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Round start date')
+    )
+    registration_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
+        verbose_name=_('Registration level')
+    )
+    main_caregiver = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=MAIN_CAREGIVER,
+        verbose_name=_('Main Caregiver')
+    )
+    main_caregiver_nationality = models.ForeignKey(
+        Nationality,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Main Caregiver Nationality')
+    )
 
+    other_caregiver_relationship = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Other Caregiver Relationship')
+    )
+
+    student_number_children = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('How many children does this child have?')
+    )
+    phone_owner = models.CharField(
+        max_length=100,
+        blank=False,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Phone Owner')
+    )
+    second_phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Second Phone Owner')
+    )
+    second_phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Second Phone number')
+    )
+    second_phone_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Second Phone number confirm')
+    )
+    source_of_identification = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
+            ('From hosted community', _('From hosted community')),
+            ('From displaced community', _('From displaced community'))
+        ),
+        verbose_name=_('Source of identification of the child')
+    )
     class Meta:
         ordering = ['-id']
         verbose_name = "RS"
@@ -2347,20 +2496,6 @@ class CBECE(CLM):
         blank=True,
         null=True,
         verbose_name=_('miss_school_date')
-    )
-    cycle = models.ForeignKey(
-        Cycle,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Cycle')
-    )
-
-    learning_result = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=LEARNING_RESULT,
-        verbose_name=_('Learning result')
     )
     first_attendance_date = models.DateField(
         blank=True,

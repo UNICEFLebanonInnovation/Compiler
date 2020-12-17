@@ -1376,9 +1376,9 @@ class CBECEDashboardView(LoginRequiredMixin,
 
 
 class RSAddView(LoginRequiredMixin,
-                GroupRequiredMixin,
-                FormView):
-    template_name = 'clm/create_form.html'
+                   GroupRequiredMixin,
+                   FormView):
+    template_name = 'clm/rs_create_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
@@ -1397,7 +1397,6 @@ class RSAddView(LoginRequiredMixin,
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit',
                                                                  kwargs={
                                                                      'pk': self.request.session.get('instance_id')})))
-
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -1406,6 +1405,7 @@ class RSAddView(LoginRequiredMixin,
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         kwargs['is_allowed_create'] = True
+        # kwargs['is_allowed_create'] = is_allowed_create('RS')
         return super(RSAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -1420,21 +1420,12 @@ class RSAddView(LoginRequiredMixin,
             data = RSSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
 
-            data['pre_test_arabic'] = 0
-            data['pre_test_language'] = 0
-            data['pre_test_math'] = 0
-            data['pre_test_science'] = 0
-            data['post_test_arabic'] = 0
-            data['post_test_language'] = 0
-            data['post_test_math'] = 0
-            data['post_test_science'] = 0
             data['learning_result'] = ''
-
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
             data['student_outreached'] = self.request.GET.get('student_outreached', '')
             data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
@@ -1447,9 +1438,9 @@ class RSAddView(LoginRequiredMixin,
 
 
 class RSEditView(LoginRequiredMixin,
-                 GroupRequiredMixin,
-                 FormView):
-    template_name = 'clm/edit_form.html'
+                    GroupRequiredMixin,
+                    FormView):
+    template_name = 'clm/rs_edit_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
@@ -1459,6 +1450,15 @@ class RSEditView(LoginRequiredMixin,
             return '/clm/rs-add/'
         if self.request.POST.get('save_and_continue', None):
             return '/clm/rs-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='RS',
+                assessment_slug='rs_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit',
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -1466,7 +1466,7 @@ class RSEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = True
+        kwargs['is_allowed_edit'] = is_allowed_edit('RS')
         return super(RSEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -1476,6 +1476,73 @@ class RSEditView(LoginRequiredMixin,
         else:
             data = RSSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+
+            if 'pre_test' in data:
+                p_test = data['pre_test']
+                if p_test:
+                    if "RS_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["RS_ASSESSMENT/attended_arabic"]
+
+                    if "RS_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["RS_ASSESSMENT/modality_arabic"]
+
+                    if "RS_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["RS_ASSESSMENT/arabic"]
+
+                    if "RS_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["RS_ASSESSMENT/attended_english"]
+
+                    if "RS_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["RS_ASSESSMENT/modality_english"]
+
+                    if "RS_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["RS_ASSESSMENT/english"]
+
+                    if "RS_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["RS_ASSESSMENT/attended_math"]
+
+                    if "RS_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["RS_ASSESSMENT/modality_math"]
+
+                    if "RS_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["RS_ASSESSMENT/math"]
+
+                    if "RS_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["RS_ASSESSMENT/attended_social"]
+
+                    if "RS_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["RS_ASSESSMENT/modality_social"]
+
+                    if "RS_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["RS_ASSESSMENT/social_emotional"]
+
+                    if "RS_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_psychomotor'] = p_test["RS_ASSESSMENT/attended_psychomotor"]
+
+                    if "RS_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_psychomotor'] = p_test["RS_ASSESSMENT/modality_psychomotor"]
+
+                    if "RS_ASSESSMENT/psychomotor" in p_test:
+                        data['psychomotor'] = p_test["RS_ASSESSMENT/psychomotor"]
+
+                    if "RS_ASSESSMENT/attended_science" in p_test:
+                        data['attended_science'] = p_test["RS_ASSESSMENT/attended_science"]
+
+                    if "RS_ASSESSMENT/modality_science" in p_test:
+                        data['modality_science'] = p_test["RS_ASSESSMENT/modality_science"]
+
+                    if "RS_ASSESSMENT/science" in p_test:
+                        data['science'] = p_test["RS_ASSESSMENT/science"]
+
+                    if "RS_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["RS_ASSESSMENT/attended_artistic"]
+
+                    if "RS_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["RS_ASSESSMENT/modality_artistic"]
+
+                    if "RS_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["RS_ASSESSMENT/artistic"]
+
             return RSForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
@@ -1484,12 +1551,14 @@ class RSEditView(LoginRequiredMixin,
         return super(RSEditView, self).form_valid(form)
 
 
+
+
 class RSListView(LoginRequiredMixin,
-                 GroupRequiredMixin,
-                 FilterView,
-                 ExportMixin,
-                 SingleTableView,
-                 RequestConfig):
+                    GroupRequiredMixin,
+                    FilterView,
+                    ExportMixin,
+                    SingleTableView,
+                    RequestConfig):
     table_class = RSTable
     model = RS
     template_name = 'clm/rs_list.html'
@@ -1500,7 +1569,9 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return RS.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        # return RS.objects.filter(partner=self.request.user.partner_id,
+        #                             round__start_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
+        return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
 class CBECEAddView(LoginRequiredMixin,
