@@ -1911,6 +1911,31 @@ class RS(CLM):
         ('academic', _('Academic')),
         ('absence', _('Absence'))
     )
+    GRADE_LEVEL = Choices(
+        ('grade1', _('Grade 1')),
+        ('grade2', _('Grade 2')),
+        ('grade3', _('Grade 3')),
+        ('grade4', _('Grade 4')),
+        ('grade5', _('Grade 5')),
+        ('grade6', _('Grade 6')),
+        ('grade7', _('Grade 7')),
+        ('grade8', _('Grade 8')),
+        ('grade9', _('Grade 9'))
+    )
+
+    SOURCE_JOIN_FE = Choices(
+        ('ALP', _('ALP')),
+        ('Prep-ECE', _('Prep - ECE')),
+        ('ABLN', ('ABLN')),
+        ('CBECE', _('CBECE')),
+        ('BLN', ('BLN')),
+        ('YBLN', _('YBLN')),
+        ('FE_outside_lebanon', _('FE outside Lebanon')),
+    )
+    # YEAR_REGISTRATION = Choices(
+    #     ('year_1_2020', _('Year 1-2020')),
+    #     ('year_2_2020', _("Year 2-2021")),
+    # )
     education_status = models.CharField(
         max_length=100,
         blank=True,
@@ -2196,6 +2221,27 @@ class RS(CLM):
         ),
         verbose_name=_('Source of identification of the child')
     )
+    grade_level = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=GRADE_LEVEL,
+        verbose_name=_('What was the child education level when first joining formal education in lebanon')
+    )
+    source_join_fe = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SOURCE_JOIN_FE,
+        verbose_name=_('From where did the child first come to join  FE')
+    )
+    # year_registration = models.CharField(
+    #     max_length=100,
+    #     blank=True,
+    #     null=True,
+    #     choices= YEAR_REGISTRATION ,
+    #     verbose_name=_('Year of registration')
+    # )
     class Meta:
         ordering = ['-id']
         verbose_name = "RS"

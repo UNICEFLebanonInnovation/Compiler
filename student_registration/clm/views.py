@@ -1489,6 +1489,7 @@ class RSEditView(LoginRequiredMixin,
                     if "RS_ASSESSMENT/arabic" in p_test:
                         data['arabic'] = p_test["RS_ASSESSMENT/arabic"]
 
+
                     if "RS_ASSESSMENT/attended_english" in p_test:
                         data['attended_english'] = p_test["RS_ASSESSMENT/attended_english"]
 
@@ -1497,6 +1498,7 @@ class RSEditView(LoginRequiredMixin,
 
                     if "RS_ASSESSMENT/english" in p_test:
                         data['english'] = p_test["RS_ASSESSMENT/english"]
+
 
                     if "RS_ASSESSMENT/attended_math" in p_test:
                         data['attended_math'] = p_test["RS_ASSESSMENT/attended_math"]
@@ -1507,23 +1509,6 @@ class RSEditView(LoginRequiredMixin,
                     if "RS_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["RS_ASSESSMENT/math"]
 
-                    if "RS_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["RS_ASSESSMENT/attended_social"]
-
-                    if "RS_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["RS_ASSESSMENT/modality_social"]
-
-                    if "RS_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["RS_ASSESSMENT/social_emotional"]
-
-                    if "RS_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["RS_ASSESSMENT/attended_psychomotor"]
-
-                    if "RS_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["RS_ASSESSMENT/modality_psychomotor"]
-
-                    if "RS_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["RS_ASSESSMENT/psychomotor"]
 
                     if "RS_ASSESSMENT/attended_science" in p_test:
                         data['attended_science'] = p_test["RS_ASSESSMENT/attended_science"]
@@ -1534,14 +1519,35 @@ class RSEditView(LoginRequiredMixin,
                     if "RS_ASSESSMENT/science" in p_test:
                         data['science'] = p_test["RS_ASSESSMENT/science"]
 
-                    if "RS_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["RS_ASSESSMENT/attended_artistic"]
 
-                    if "RS_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["RS_ASSESSMENT/modality_artistic"]
+                    if "RS_ASSESSMENT/attended_biology" in p_test:
+                        data['attended_biology'] = p_test["RS_ASSESSMENT/attended_biology"]
 
-                    if "RS_ASSESSMENT/artistic" in p_test:
-                        data['artistic'] = p_test["RS_ASSESSMENT/artistic"]
+                    if "RS_ASSESSMENT/modality_biology" in p_test:
+                        data['modality_biology'] = p_test["RS_ASSESSMENT/modality_biology"]
+
+                    if "RS_ASSESSMENT/biology" in p_test:
+                        data['biology'] = p_test["RS_ASSESSMENT/biology"]
+
+
+                    if "RS_ASSESSMENT/attended_chemistry" in p_test:
+                        data['attended_chemistry'] = p_test["RS_ASSESSMENT/attended_chemistry"]
+
+                    if "RS_ASSESSMENT/modality_chemistry" in p_test:
+                        data['modality_chemistry'] = p_test["RS_ASSESSMENT/modality_chemistry"]
+
+                    if "RS_ASSESSMENT/chemistry" in p_test:
+                        data['chemistry'] = p_test["RS_ASSESSMENT/chemistry"]
+
+
+                    if "RS_ASSESSMENT/attended_physics" in p_test:
+                        data['attended_physics'] = p_test["RS_ASSESSMENT/attended_physics"]
+
+                    if "RS_ASSESSMENT/modality_physics" in p_test:
+                        data['modality_physics'] = p_test["RS_ASSESSMENT/modality_physics"]
+
+                    if "RS_ASSESSMENT/physics" in p_test:
+                        data['physics'] = p_test["RS_ASSESSMENT/physics"]
 
             return RSForm(data, instance=instance, request=self.request)
 

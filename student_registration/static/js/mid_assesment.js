@@ -65,7 +65,6 @@ function reorganizeForm_mid_assessment()
     var attended_artistic = $('select#id_attended_artistic').val();
 
     $('div.grades').addClass('d-none');
-    alert(mid_test_done);
     if(mid_test_done == 'yes'){
     // $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');

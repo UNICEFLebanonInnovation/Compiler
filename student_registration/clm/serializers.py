@@ -486,8 +486,8 @@ class RSSerializer(CLMSerializer):
             'follow_up_done',
             'follow_up_done_with_who',
             'labours_other_specify',
-            'mid_test_done',
-            'mid_test'
+            'grade_level',
+            'source_join_fe'
         )
 
 

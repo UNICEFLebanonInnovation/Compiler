@@ -3198,38 +3198,20 @@ class RSForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    attended_social = forms.ChoiceField(
-        label=_("Attended Social test"),
+    attended_biology = forms.ChoiceField(
+        label=_("Attended biology test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_social = forms.MultipleChoiceField(
+    modality_biology = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
         choices=CLM.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
 
-    social_emotional = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-
-    attended_psychomotor = forms.ChoiceField(
-        label=_("Attended Psychomotor test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_psychomotor  = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    psychomotor = forms.FloatField(
+    biology = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -3251,19 +3233,37 @@ class RSForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    attended_artistic = forms.ChoiceField(
-        label=_("Attended Artistic test"),
+    attended_chemistry = forms.ChoiceField(
+        label=_("Attended chemistry test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_artistic  = forms.MultipleChoiceField(
+    modality_chemistry  = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
         choices=CLM.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    artistic = forms.FloatField(
+    chemistry = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+
+    attended_physics = forms.ChoiceField(
+        label=_("Attended physics test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_physics  = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    physics = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -3292,6 +3292,17 @@ class RSForm(CommonForm):
     student_number_children = forms.IntegerField(
         label=_('How many children does this child have?'),
         widget=forms.TextInput, required=False
+    )
+    grade_level = forms.ChoiceField(
+        label=_("What was the child education level when first joining formal education in lebanon"),
+        widget=forms.Select, required=True,
+        choices=RS.GRADE_LEVEL
+    )
+
+    source_join_fe = forms.ChoiceField(
+        label=_("From where did the child first come to join  FE"),
+        widget=forms.Select, required=True,
+        choices=RS.SOURCE_JOIN_FE
     )
 
     def __init__(self, *args, **kwargs):
@@ -3433,23 +3444,30 @@ class RSForm(CommonForm):
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('grade_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('source_join_fe', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('education_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_miss_school_date">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_miss_school_date">14.1</span>'),
                     Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('source_of_transportation', css_class='col-md-3'),
                     css_class='row d-none',
                 ),
@@ -3704,34 +3722,33 @@ class RSForm(CommonForm):
                     Div('science', css_class='col-md-2'),
                     css_class='row',
                 ),
-
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">5.1</span>'),
-                    Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">5.2</span>'),
-                    Div('social_emotional', css_class='col-md-2'),
+                    Div('attended_biology', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_biology">5.1</span>'),
+                    Div('modality_biology', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_biology">5.2</span>'),
+                    Div('biology', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('attended_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">6.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_psychomotor">6.2</span>'),
-                    Div('psychomotor', css_class='col-md-2'),
+                    Div('attended_chemistry', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_chemistry">6.1</span>'),
+                    Div('modality_chemistry', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_chemistry">6.2</span>'),
+                    Div('chemistry', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
                     HTML('<span class="badge badge-default">7</span>'),
-                    Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">7.1</span>'),
-                    Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_artistic">7.2</span>'),
-                    Div('artistic', css_class='col-md-2'),
+                    Div('attended_physics', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_physics">7.1</span>'),
+                    Div('modality_physics', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_physics">7.2</span>'),
+                    Div('physics', css_class='col-md-2'),
                     css_class='row',
                 ),
 
@@ -3802,38 +3819,26 @@ class RSForm(CommonForm):
         modality_english = cleaned_data.get("modality_english")
         english = cleaned_data.get("english")
 
-        attended_psychomotor = cleaned_data.get("attended_psychomotor")
-        modality_psychomotor = cleaned_data.get("modality_psychomotor")
-        psychomotor = cleaned_data.get("psychomotor")
-
         attended_math = cleaned_data.get("attended_math")
         modality_math = cleaned_data.get("modality_math")
         math = cleaned_data.get("math")
-
-        attended_social = cleaned_data.get("attended_social")
-        modality_social = cleaned_data.get("modality_social")
-        social_emotional = cleaned_data.get("social_emotional")
 
         attended_science = cleaned_data.get("attended_science")
         modality_science = cleaned_data.get("modality_science")
         science = cleaned_data.get("science")
 
-        attended_artistic = cleaned_data.get("attended_artistic")
-        modality_artistic = cleaned_data.get("modality_artistic")
-        artistic = cleaned_data.get("artistic")
+        attended_biology = cleaned_data.get("attended_biology")
+        modality_biology = cleaned_data.get("modality_biology")
+        biology = cleaned_data.get("biology")
 
+        attended_chemistry = cleaned_data.get("attended_chemistry")
+        modality_chemistry = cleaned_data.get("modality_chemistry")
+        chemistry = cleaned_data.get("chemistry")
 
-        if attended_science == 'yes':
-            if not modality_science:
-                self.add_error('modality_science', 'This field is required')
-            if science is None:
-                self.add_error('science', 'This field is required')
+        attended_physics = cleaned_data.get("attended_physics")
+        modality_physics = cleaned_data.get("modality_physics")
+        physics = cleaned_data.get("physics")
 
-        if attended_artistic == 'yes':
-            if not modality_artistic:
-                self.add_error('modality_artistic', 'This field is required')
-            if artistic is None:
-                self.add_error('artistic', 'This field is required')
 
 
         if attended_arabic == 'yes':
@@ -3848,23 +3853,36 @@ class RSForm(CommonForm):
             if english is None:
                 self.add_error('english', 'This field is required')
 
-        if attended_psychomotor == 'yes':
-            if not modality_psychomotor:
-                self.add_error('modality_psychomotor', 'This field is required')
-            if psychomotor is None:
-                self.add_error('psychomotor', 'This field is required')
-
         if attended_math == 'yes':
             if not modality_math:
                 self.add_error('modality_math', 'This field is required')
             if math is None:
                 self.add_error('math', 'This field is required')
 
-        if attended_social == 'yes':
-            if not modality_social:
-                self.add_error('modality_social', 'This field is required')
-            if social_emotional is None:
-                self.add_error('social_emotional', 'This field is required')
+        if attended_science == 'yes':
+            if not modality_science:
+                self.add_error('modality_science', 'This field is required')
+            if science is None:
+                self.add_error('science', 'This field is required')
+
+        if attended_biology == 'yes':
+            if not modality_biology:
+                self.add_error('modality_biology', 'This field is required')
+            if biology is None:
+                self.add_error('biology', 'This field is required')
+
+        if attended_chemistry == 'yes':
+            if not modality_chemistry:
+                self.add_error('modality_chemistry', 'This field is required')
+            if chemistry is None:
+                self.add_error('chemistry', 'This field is required')
+
+
+        if attended_physics == 'yes':
+            if not modality_physics:
+                self.add_error('modality_physics', 'This field is required')
+            if physics is None:
+                self.add_error('physics', 'This field is required')
 
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:
@@ -3999,15 +4017,10 @@ class RSForm(CommonForm):
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
 
+            # , ,
+
         #grades Max Value validation
         registration_level = cleaned_data.get("registration_level")
-        arabic = cleaned_data.get("arabic")
-        english = cleaned_data.get("english")
-        math = cleaned_data.get("math")
-        social_emotional = cleaned_data.get("social_emotional")
-        psychomotor = cleaned_data.get("psychomotor")
-        science = cleaned_data.get("science")
-        artistic = cleaned_data.get("artistic")
 
         if registration_level == 'level_two':
             if arabic > 48:
@@ -4016,14 +4029,14 @@ class RSForm(CommonForm):
                 self.add_error('english', 'This value is greater that 48')
             if math > 44:
                 self.add_error('math', 'This value is greater that 44')
-            if social_emotional > 40:
-                self.add_error('social_emotional', 'This value is greater that 40')
-            if psychomotor > 34:
-                self.add_error('psychomotor', 'This value is greater that 34')
             if science > 36:
                 self.add_error('science', 'This value is greater that 36')
-            if artistic > 12:
-                self.add_error('artistic', 'This value is greater that 12')
+            if biology > 40:
+                self.add_error('biology', 'This value is greater that 40')
+            if chemistry > 34:
+                self.add_error('chemistry', 'This value is greater that 34')
+            if physics > 12:
+                self.add_error('physics', 'This value is greater that 12')
         else:
             if arabic > 60:
                 self.add_error('arabic', 'This value is greater that 60')
@@ -4031,19 +4044,20 @@ class RSForm(CommonForm):
                 self.add_error('english', 'This value is greater that 60')
             if math > 46:
                 self.add_error('math', 'This value is greater that 46')
-            if social_emotional > 40:
-                self.add_error('social_emotional', 'This value is greater that 40')
-            if psychomotor > 36:
-                self.add_error('psychomotor', 'This value is greater that 36')
             if science > 36:
                 self.add_error('science', 'This value is greater that 36')
-            if artistic > 12:
-                self.add_error('artistic', 'This value is greater that 12')
+            if biology > 40:
+                self.add_error('biology', 'This value is greater that 40')
+            if chemistry > 36:
+                self.add_error('chemistry', 'This value is greater that 36')
+            if physics > 12:
+                self.add_error('physics', 'This value is greater that 12')
 
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(RSForm, self).save(request=request, instance=instance, serializer=RSSerializer)
         instance.pre_test = {
+            # arabic, english, math, science, biology, chemistry, physics
             "RS_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
             "RS_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
             "RS_ASSESSMENT/arabic": request.POST.get('arabic'),
@@ -4052,25 +4066,25 @@ class RSForm(CommonForm):
             "RS_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             "RS_ASSESSMENT/english": request.POST.get('english'),
 
-            "RS_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-            "RS_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
-            "RS_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
-
             "RS_ASSESSMENT/attended_math": request.POST.get('attended_math'),
             "RS_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
             "RS_ASSESSMENT/math": request.POST.get('math'),
-
-            "RS_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-            "RS_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
-            "RS_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
 
             "RS_ASSESSMENT/attended_science": request.POST.get('attended_science'),
             "RS_ASSESSMENT/modality_science": request.POST.getlist('modality_science'),
             "RS_ASSESSMENT/science": request.POST.get('science'),
 
-            "RS_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
-            "RS_ASSESSMENT/modality_artistic": request.POST.getlist('modality_artistic'),
-            "RS_ASSESSMENT/artistic": request.POST.get('artistic'),
+            "RS_ASSESSMENT/attended_biology": request.POST.get('attended_biology'),
+            "RS_ASSESSMENT/modality_biology": request.POST.getlist('modality_biology'),
+            "RS_ASSESSMENT/biology": request.POST.get('biology'),
+
+            "RS_ASSESSMENT/attended_chemistry": request.POST.get('attended_chemistry'),
+            "RS_ASSESSMENT/modality_chemistry": request.POST.getlist('modality_chemistry'),
+            "RS_ASSESSMENT/chemistry": request.POST.get('chemistry'),
+
+            "RS_ASSESSMENT/attended_physics": request.POST.get('attended_physics'),
+            "RS_ASSESSMENT/modality_physics": request.POST.getlist('modality_physics'),
+            "RS_ASSESSMENT/physics": request.POST.get('physics'),
         }
         instance.save()
 
@@ -4132,6 +4146,8 @@ class RSForm(CommonForm):
             'labour_weekly_income',
             'source_of_transportation',
             'student_p_code',
+            'grade_level',
+            'source_join_fe'
         )
 
     class Media:
@@ -8879,8 +8895,10 @@ class CBECEMidAssessmentForm(forms.ModelForm):
         modality_artistic = cleaned_data.get("modality_artistic")
         artistic = cleaned_data.get("artistic")
 
-        test_done = cleaned_data.get("test_done")
+        test_done = cleaned_data.get("mid_test_done")
+
         if test_done == 'yes':
+
             if attended_science == 'yes':
                 if not modality_science:
                     self.add_error('modality_science', 'This field is required')
