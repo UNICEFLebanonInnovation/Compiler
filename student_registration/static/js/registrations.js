@@ -280,13 +280,81 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_have_barcode', function(){
         reorganizeForm();
     });
-
-    $(document).on('change', 'select#id_participation, select#id_follow_up_type, select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
-        'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
-        'select#id_barriers_single, select#id_test_done , select#id_pss_session_modality,  select#id_covid_session_attended ,  select#id_followup_session_attended ', function(){
-       reorganize_pre_assessment();
+    $(document).on('change', 'select#id_grade_level', function(){
+        reorganize_pre_assessment();
     });
 
+    $(document).on('change', 'select#id_participation', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_follow_up_type', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_arabic', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_english', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_math', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_social', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_psychomotor', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_science', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_artistic', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_biology', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_chemistry', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_attended_physics', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_parent_attended', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_barriers_single', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_test_done', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_followup_session_attended', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_pss_session_modality', function(){
+        reorganize_pre_assessment();
+    });
+
+    $(document).on('change', 'select#id_covid_session_attended', function(){
+        reorganize_pre_assessment();
+    });
 
 
     $(document).on('blur', arabic_fields, function(){
@@ -1072,6 +1140,17 @@ function reorganize_pre_assessment()
     var attended_science = $('select#id_attended_science').val();
     var attended_artistic = $('select#id_attended_artistic').val();
 
+
+    var attended_biology = $('select#id_attended_biology').val();
+    var attended_chemistry = $('select#id_attended_chemistry').val();
+    var attended_physics = $('select#id_attended_physics').val();
+
+
+    var grade_level = $('select#id_grade_level').val();
+
+
+
+
     var pss_session_attended = $('select#id_pss_session_attended').val();
     var covid_session_attended = $('select#id_covid_session_attended').val();
     var followup_session_attended = $('select#id_followup_session_attended').val();
@@ -1245,6 +1324,59 @@ function reorganize_pre_assessment()
     else{
         $('#id_artistic').val('');
         $('select#id_modality_artistic').val("");
+    }
+
+    // attended_biology
+    if(attended_biology == 'yes'){
+        $('div#div_id_biology').removeClass('d-none');
+        $('#span_biology').removeClass('d-none');
+        $('div#div_id_modality_biology').removeClass('d-none');
+        $('#span_modality_biology').removeClass('d-none');
+    }
+    else{
+        $('#id_biology').val('');
+        $('select#id_modality_biology').val("");
+    }
+
+    // attended_chemistry
+    if(attended_chemistry == 'yes'){
+        $('div#div_id_chemistry').removeClass('d-none');
+        $('#span_chemistry').removeClass('d-none');
+        $('div#div_id_modality_chemistry').removeClass('d-none');
+        $('#span_modality_chemistry').removeClass('d-none');
+    }
+    else{
+        $('#id_chemistry').val('');
+        $('select#id_modality_chemistry').val("");
+    }
+
+    // attended_physics
+    if(attended_physics == 'yes'){
+        $('div#div_id_physics').removeClass('d-none');
+        $('#span_physics').removeClass('d-none');
+        $('div#div_id_modality_physics').removeClass('d-none');
+        $('#span_modality_physics').removeClass('d-none');
+    }
+    else{
+        $('#id_physics').val('');
+        $('select#id_modality_physics').val("");
+    }
+
+    // follow_up_type
+    $('div#div_grd6').addClass('d-none');
+    $('div#div_grd7').addClass('d-none');
+    alert(grade_level);
+    if(grade_level == 'grade6'){
+        $('div#div_grd6').removeClass('d-none');
+    }else if(grade_level in 'grade7'){
+        $('div#div_grd7').removeClass('d-none');
+
+    }else if(grade_level in 'grade8'){
+        $('div#div_grd7').removeClass('d-none');
+
+    }else if(grade_level in 'grade9'){
+        $('div#div_grd7').removeClass('d-none');
+
     }
 
     // pss_session_modality

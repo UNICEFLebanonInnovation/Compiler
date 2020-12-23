@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-22 20:36+0200\n"
+"POT-Creation-Date: 2020-12-23 14:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,7 +67,7 @@ msgstr " المستوى الحالي"
 #: student_registration/alp/filters.py:74
 #: student_registration/backends/tasks.py:545
 #: student_registration/clm/filters.py:72
-#: student_registration/clm/models.py:2117
+#: student_registration/clm/models.py:2119
 #: student_registration/enrollments/filters.py:13
 #: student_registration/enrollments/filters.py:54
 #: student_registration/staffenroll/filters.py:11
@@ -79,7 +79,7 @@ msgstr "الشعبة"
 #: student_registration/alp/forms.py:900 student_registration/clm/filters.py:21
 #: student_registration/clm/forms.py:190 student_registration/clm/forms.py:195
 #: student_registration/clm/forms.py:3282
-#: student_registration/clm/forms.py:4633
+#: student_registration/clm/forms.py:4667
 #: student_registration/clm/inclusion_filters.py:15
 #: student_registration/clm/inclusion_forms.py:125
 #: student_registration/clm/inclusion_forms.py:130
@@ -115,64 +115,64 @@ msgstr " الجنسية"
 #: student_registration/clm/forms.py:3222
 #: student_registration/clm/forms.py:3239
 #: student_registration/clm/forms.py:3257
-#: student_registration/clm/forms.py:4245
-#: student_registration/clm/forms.py:4503
-#: student_registration/clm/forms.py:4521
-#: student_registration/clm/forms.py:4538
+#: student_registration/clm/forms.py:4279
+#: student_registration/clm/forms.py:4537
 #: student_registration/clm/forms.py:4555
-#: student_registration/clm/forms.py:4574
-#: student_registration/clm/forms.py:4591
+#: student_registration/clm/forms.py:4572
+#: student_registration/clm/forms.py:4589
 #: student_registration/clm/forms.py:4608
-#: student_registration/clm/forms.py:6295
-#: student_registration/clm/forms.py:6302
-#: student_registration/clm/forms.py:6319
-#: student_registration/clm/forms.py:6354
-#: student_registration/clm/forms.py:6371
-#: student_registration/clm/forms.py:6389
-#: student_registration/clm/forms.py:6474
-#: student_registration/clm/forms.py:6480
-#: student_registration/clm/forms.py:6510
-#: student_registration/clm/forms.py:6540
-#: student_registration/clm/forms.py:6571
-#: student_registration/clm/forms.py:6577
-#: student_registration/clm/forms.py:7039
-#: student_registration/clm/forms.py:7046
-#: student_registration/clm/forms.py:7063
-#: student_registration/clm/forms.py:7081
-#: student_registration/clm/forms.py:7098
+#: student_registration/clm/forms.py:4625
+#: student_registration/clm/forms.py:4642
+#: student_registration/clm/forms.py:6329
+#: student_registration/clm/forms.py:6336
+#: student_registration/clm/forms.py:6353
+#: student_registration/clm/forms.py:6388
+#: student_registration/clm/forms.py:6405
+#: student_registration/clm/forms.py:6423
+#: student_registration/clm/forms.py:6508
+#: student_registration/clm/forms.py:6514
+#: student_registration/clm/forms.py:6544
+#: student_registration/clm/forms.py:6574
+#: student_registration/clm/forms.py:6605
+#: student_registration/clm/forms.py:6611
+#: student_registration/clm/forms.py:7073
+#: student_registration/clm/forms.py:7080
+#: student_registration/clm/forms.py:7097
 #: student_registration/clm/forms.py:7115
-#: student_registration/clm/forms.py:7133
-#: student_registration/clm/forms.py:7216
-#: student_registration/clm/forms.py:7224
-#: student_registration/clm/forms.py:7230
-#: student_registration/clm/forms.py:7260
-#: student_registration/clm/forms.py:7290
-#: student_registration/clm/forms.py:7321
-#: student_registration/clm/forms.py:7327
-#: student_registration/clm/forms.py:7814
-#: student_registration/clm/forms.py:7821
-#: student_registration/clm/forms.py:7838
-#: student_registration/clm/forms.py:7856
-#: student_registration/clm/forms.py:7873
+#: student_registration/clm/forms.py:7132
+#: student_registration/clm/forms.py:7149
+#: student_registration/clm/forms.py:7167
+#: student_registration/clm/forms.py:7250
+#: student_registration/clm/forms.py:7258
+#: student_registration/clm/forms.py:7264
+#: student_registration/clm/forms.py:7294
+#: student_registration/clm/forms.py:7324
+#: student_registration/clm/forms.py:7355
+#: student_registration/clm/forms.py:7361
+#: student_registration/clm/forms.py:7848
+#: student_registration/clm/forms.py:7855
+#: student_registration/clm/forms.py:7872
 #: student_registration/clm/forms.py:7890
-#: student_registration/clm/forms.py:7909
-#: student_registration/clm/forms.py:7926
+#: student_registration/clm/forms.py:7907
+#: student_registration/clm/forms.py:7924
 #: student_registration/clm/forms.py:7943
-#: student_registration/clm/forms.py:8025
-#: student_registration/clm/forms.py:8033
-#: student_registration/clm/forms.py:8039
-#: student_registration/clm/forms.py:8069
-#: student_registration/clm/forms.py:8099
-#: student_registration/clm/forms.py:8130
-#: student_registration/clm/forms.py:8136
-#: student_registration/clm/forms.py:8612
-#: student_registration/clm/forms.py:8618
-#: student_registration/clm/forms.py:8635
+#: student_registration/clm/forms.py:7960
+#: student_registration/clm/forms.py:7977
+#: student_registration/clm/forms.py:8059
+#: student_registration/clm/forms.py:8067
+#: student_registration/clm/forms.py:8073
+#: student_registration/clm/forms.py:8103
+#: student_registration/clm/forms.py:8133
+#: student_registration/clm/forms.py:8164
+#: student_registration/clm/forms.py:8170
+#: student_registration/clm/forms.py:8646
 #: student_registration/clm/forms.py:8652
 #: student_registration/clm/forms.py:8669
-#: student_registration/clm/forms.py:8688
-#: student_registration/clm/forms.py:8705
+#: student_registration/clm/forms.py:8686
+#: student_registration/clm/forms.py:8703
 #: student_registration/clm/forms.py:8722
+#: student_registration/clm/forms.py:8739
+#: student_registration/clm/forms.py:8756
 #: student_registration/clm/inclusion_forms.py:25
 #: student_registration/clm/models.py:133
 #: student_registration/clm/models.py:137
@@ -188,8 +188,8 @@ msgstr " الجنسية"
 #: student_registration/clm/models.py:708
 #: student_registration/clm/models.py:715
 #: student_registration/clm/models.py:722
-#: student_registration/clm/models.py:2638
-#: student_registration/clm/models.py:2816
+#: student_registration/clm/models.py:2660
+#: student_registration/clm/models.py:2838
 #: student_registration/enrollments/forms.py:37
 #: student_registration/enrollments/forms.py:79
 #: student_registration/enrollments/forms.py:85
@@ -238,64 +238,64 @@ msgstr "نعم"
 #: student_registration/clm/forms.py:3222
 #: student_registration/clm/forms.py:3239
 #: student_registration/clm/forms.py:3257
-#: student_registration/clm/forms.py:4245
-#: student_registration/clm/forms.py:4503
-#: student_registration/clm/forms.py:4521
-#: student_registration/clm/forms.py:4538
+#: student_registration/clm/forms.py:4279
+#: student_registration/clm/forms.py:4537
 #: student_registration/clm/forms.py:4555
-#: student_registration/clm/forms.py:4574
-#: student_registration/clm/forms.py:4591
+#: student_registration/clm/forms.py:4572
+#: student_registration/clm/forms.py:4589
 #: student_registration/clm/forms.py:4608
-#: student_registration/clm/forms.py:6295
-#: student_registration/clm/forms.py:6302
-#: student_registration/clm/forms.py:6319
-#: student_registration/clm/forms.py:6354
-#: student_registration/clm/forms.py:6371
-#: student_registration/clm/forms.py:6389
-#: student_registration/clm/forms.py:6475
-#: student_registration/clm/forms.py:6480
-#: student_registration/clm/forms.py:6510
-#: student_registration/clm/forms.py:6540
-#: student_registration/clm/forms.py:6571
-#: student_registration/clm/forms.py:6577
-#: student_registration/clm/forms.py:7039
-#: student_registration/clm/forms.py:7046
-#: student_registration/clm/forms.py:7063
-#: student_registration/clm/forms.py:7081
-#: student_registration/clm/forms.py:7098
+#: student_registration/clm/forms.py:4625
+#: student_registration/clm/forms.py:4642
+#: student_registration/clm/forms.py:6329
+#: student_registration/clm/forms.py:6336
+#: student_registration/clm/forms.py:6353
+#: student_registration/clm/forms.py:6388
+#: student_registration/clm/forms.py:6405
+#: student_registration/clm/forms.py:6423
+#: student_registration/clm/forms.py:6509
+#: student_registration/clm/forms.py:6514
+#: student_registration/clm/forms.py:6544
+#: student_registration/clm/forms.py:6574
+#: student_registration/clm/forms.py:6605
+#: student_registration/clm/forms.py:6611
+#: student_registration/clm/forms.py:7073
+#: student_registration/clm/forms.py:7080
+#: student_registration/clm/forms.py:7097
 #: student_registration/clm/forms.py:7115
-#: student_registration/clm/forms.py:7133
-#: student_registration/clm/forms.py:7216
-#: student_registration/clm/forms.py:7225
-#: student_registration/clm/forms.py:7230
-#: student_registration/clm/forms.py:7260
-#: student_registration/clm/forms.py:7290
-#: student_registration/clm/forms.py:7321
-#: student_registration/clm/forms.py:7327
-#: student_registration/clm/forms.py:7814
-#: student_registration/clm/forms.py:7821
-#: student_registration/clm/forms.py:7838
-#: student_registration/clm/forms.py:7856
-#: student_registration/clm/forms.py:7873
+#: student_registration/clm/forms.py:7132
+#: student_registration/clm/forms.py:7149
+#: student_registration/clm/forms.py:7167
+#: student_registration/clm/forms.py:7250
+#: student_registration/clm/forms.py:7259
+#: student_registration/clm/forms.py:7264
+#: student_registration/clm/forms.py:7294
+#: student_registration/clm/forms.py:7324
+#: student_registration/clm/forms.py:7355
+#: student_registration/clm/forms.py:7361
+#: student_registration/clm/forms.py:7848
+#: student_registration/clm/forms.py:7855
+#: student_registration/clm/forms.py:7872
 #: student_registration/clm/forms.py:7890
-#: student_registration/clm/forms.py:7909
-#: student_registration/clm/forms.py:7926
+#: student_registration/clm/forms.py:7907
+#: student_registration/clm/forms.py:7924
 #: student_registration/clm/forms.py:7943
-#: student_registration/clm/forms.py:8025
-#: student_registration/clm/forms.py:8034
-#: student_registration/clm/forms.py:8039
-#: student_registration/clm/forms.py:8069
-#: student_registration/clm/forms.py:8099
-#: student_registration/clm/forms.py:8130
-#: student_registration/clm/forms.py:8136
-#: student_registration/clm/forms.py:8612
-#: student_registration/clm/forms.py:8618
-#: student_registration/clm/forms.py:8635
+#: student_registration/clm/forms.py:7960
+#: student_registration/clm/forms.py:7977
+#: student_registration/clm/forms.py:8059
+#: student_registration/clm/forms.py:8068
+#: student_registration/clm/forms.py:8073
+#: student_registration/clm/forms.py:8103
+#: student_registration/clm/forms.py:8133
+#: student_registration/clm/forms.py:8164
+#: student_registration/clm/forms.py:8170
+#: student_registration/clm/forms.py:8646
 #: student_registration/clm/forms.py:8652
 #: student_registration/clm/forms.py:8669
-#: student_registration/clm/forms.py:8688
-#: student_registration/clm/forms.py:8705
+#: student_registration/clm/forms.py:8686
+#: student_registration/clm/forms.py:8703
 #: student_registration/clm/forms.py:8722
+#: student_registration/clm/forms.py:8739
+#: student_registration/clm/forms.py:8756
 #: student_registration/clm/inclusion_forms.py:25
 #: student_registration/clm/models.py:134
 #: student_registration/clm/models.py:138
@@ -312,9 +312,9 @@ msgstr "نعم"
 #: student_registration/clm/models.py:708
 #: student_registration/clm/models.py:715
 #: student_registration/clm/models.py:722
-#: student_registration/clm/models.py:2638
-#: student_registration/clm/models.py:2817
-#: student_registration/clm/models.py:2842
+#: student_registration/clm/models.py:2660
+#: student_registration/clm/models.py:2839
+#: student_registration/clm/models.py:2864
 #: student_registration/enrollments/forms.py:37
 #: student_registration/enrollments/forms.py:79
 #: student_registration/enrollments/forms.py:85
@@ -587,7 +587,7 @@ msgstr "الجنس"
 #: student_registration/alp/forms.py:144 student_registration/alp/forms.py:884
 #: student_registration/clm/forms.py:398 student_registration/clm/forms.py:1626
 #: student_registration/clm/forms.py:2872
-#: student_registration/clm/forms.py:4229
+#: student_registration/clm/forms.py:4263
 #: student_registration/clm/inclusion_forms.py:168
 #: student_registration/enrollments/forms.py:160
 #: student_registration/enrollments/forms.py:1512
@@ -698,7 +698,7 @@ msgstr "رمز رقم الهاتف "
 #: student_registration/backends/tasks.py:370
 #: student_registration/backends/tasks.py:917
 #: student_registration/clm/models.py:773
-#: student_registration/clm/models.py:3012
+#: student_registration/clm/models.py:3034
 #: student_registration/dashboard/views.py:264
 #: student_registration/dashboard/views.py:352
 #: student_registration/enrollments/forms.py:227
@@ -736,21 +736,21 @@ msgstr "البيانات الأساسية"
 #: student_registration/alp/forms.py:1506
 #: student_registration/clm/forms.py:1200
 #: student_registration/clm/forms.py:2435
-#: student_registration/clm/forms.py:3760
-#: student_registration/clm/forms.py:5093
-#: student_registration/clm/forms.py:5664
-#: student_registration/clm/forms.py:5912
-#: student_registration/clm/forms.py:6163
-#: student_registration/clm/forms.py:6812
-#: student_registration/clm/forms.py:7561
-#: student_registration/clm/forms.py:8388
-#: student_registration/clm/forms.py:8862
-#: student_registration/clm/forms.py:9173
-#: student_registration/clm/forms.py:9275
-#: student_registration/clm/forms.py:9384
-#: student_registration/clm/forms.py:9486
-#: student_registration/clm/forms.py:9591
-#: student_registration/clm/forms.py:9693
+#: student_registration/clm/forms.py:3794
+#: student_registration/clm/forms.py:5127
+#: student_registration/clm/forms.py:5698
+#: student_registration/clm/forms.py:5946
+#: student_registration/clm/forms.py:6197
+#: student_registration/clm/forms.py:6846
+#: student_registration/clm/forms.py:7595
+#: student_registration/clm/forms.py:8422
+#: student_registration/clm/forms.py:8896
+#: student_registration/clm/forms.py:9207
+#: student_registration/clm/forms.py:9309
+#: student_registration/clm/forms.py:9418
+#: student_registration/clm/forms.py:9520
+#: student_registration/clm/forms.py:9625
+#: student_registration/clm/forms.py:9727
 #: student_registration/clm/inclusion_forms.py:691
 #: student_registration/clm/inclusion_forms.py:1040
 #: student_registration/clm/inclusion_forms.py:1156
@@ -791,8 +791,8 @@ msgstr "حفظ"
 #: student_registration/alp/forms.py:276 student_registration/alp/forms.py:1173
 #: student_registration/clm/forms.py:1201
 #: student_registration/clm/forms.py:2436
-#: student_registration/clm/forms.py:3761
-#: student_registration/clm/forms.py:5094
+#: student_registration/clm/forms.py:3795
+#: student_registration/clm/forms.py:5128
 #: student_registration/clm/inclusion_forms.py:692
 #: student_registration/enrollments/forms.py:692
 msgid "Save and add another"
@@ -804,12 +804,12 @@ msgstr ""
 #: student_registration/alp/forms.py:1507
 #: student_registration/clm/forms.py:1202
 #: student_registration/clm/forms.py:2437
-#: student_registration/clm/forms.py:3763
-#: student_registration/clm/forms.py:5096
-#: student_registration/clm/forms.py:6814
-#: student_registration/clm/forms.py:7563
-#: student_registration/clm/forms.py:8390
-#: student_registration/clm/forms.py:8864
+#: student_registration/clm/forms.py:3797
+#: student_registration/clm/forms.py:5130
+#: student_registration/clm/forms.py:6848
+#: student_registration/clm/forms.py:7597
+#: student_registration/clm/forms.py:8424
+#: student_registration/clm/forms.py:8898
 #: student_registration/clm/inclusion_forms.py:693
 #: student_registration/clm/inclusion_forms.py:1042
 #: student_registration/enrollments/forms.py:695
@@ -830,21 +830,21 @@ msgstr "هل متأكد انك تريد إلغاء هذا التسجيل؟"
 #: student_registration/alp/forms.py:1507
 #: student_registration/clm/forms.py:1202
 #: student_registration/clm/forms.py:2437
-#: student_registration/clm/forms.py:3763
-#: student_registration/clm/forms.py:5096
-#: student_registration/clm/forms.py:5665
-#: student_registration/clm/forms.py:5913
-#: student_registration/clm/forms.py:6164
-#: student_registration/clm/forms.py:6814
-#: student_registration/clm/forms.py:7563
-#: student_registration/clm/forms.py:8390
-#: student_registration/clm/forms.py:8864
-#: student_registration/clm/forms.py:9174
-#: student_registration/clm/forms.py:9276
-#: student_registration/clm/forms.py:9385
-#: student_registration/clm/forms.py:9487
-#: student_registration/clm/forms.py:9592
-#: student_registration/clm/forms.py:9694
+#: student_registration/clm/forms.py:3797
+#: student_registration/clm/forms.py:5130
+#: student_registration/clm/forms.py:5699
+#: student_registration/clm/forms.py:5947
+#: student_registration/clm/forms.py:6198
+#: student_registration/clm/forms.py:6848
+#: student_registration/clm/forms.py:7597
+#: student_registration/clm/forms.py:8424
+#: student_registration/clm/forms.py:8898
+#: student_registration/clm/forms.py:9208
+#: student_registration/clm/forms.py:9310
+#: student_registration/clm/forms.py:9419
+#: student_registration/clm/forms.py:9521
+#: student_registration/clm/forms.py:9626
+#: student_registration/clm/forms.py:9728
 #: student_registration/clm/inclusion_forms.py:693
 #: student_registration/clm/inclusion_forms.py:1042
 #: student_registration/clm/inclusion_forms.py:1157
@@ -867,19 +867,19 @@ msgstr "العودة الى القائمة"
 #: student_registration/alp/forms.py:1196
 #: student_registration/alp/forms.py:1399
 #: student_registration/alp/forms.py:1516 student_registration/clm/forms.py:287
-#: student_registration/clm/forms.py:299 student_registration/clm/forms.py:5711
-#: student_registration/clm/forms.py:5962
-#: student_registration/clm/forms.py:6212
-#: student_registration/clm/forms.py:6949
-#: student_registration/clm/forms.py:7710
-#: student_registration/clm/forms.py:8561
-#: student_registration/clm/forms.py:9015
-#: student_registration/clm/forms.py:9182
-#: student_registration/clm/forms.py:9284
-#: student_registration/clm/forms.py:9393
-#: student_registration/clm/forms.py:9495
-#: student_registration/clm/forms.py:9600
-#: student_registration/clm/forms.py:9702
+#: student_registration/clm/forms.py:299 student_registration/clm/forms.py:5745
+#: student_registration/clm/forms.py:5996
+#: student_registration/clm/forms.py:6246
+#: student_registration/clm/forms.py:6983
+#: student_registration/clm/forms.py:7744
+#: student_registration/clm/forms.py:8595
+#: student_registration/clm/forms.py:9049
+#: student_registration/clm/forms.py:9216
+#: student_registration/clm/forms.py:9318
+#: student_registration/clm/forms.py:9427
+#: student_registration/clm/forms.py:9529
+#: student_registration/clm/forms.py:9634
+#: student_registration/clm/forms.py:9736
 #: student_registration/clm/inclusion_forms.py:879
 #: student_registration/clm/inclusion_forms.py:891
 #: student_registration/clm/inclusion_forms.py:1051
@@ -924,8 +924,8 @@ msgstr "غرفة امتحان الدخول"
 #: student_registration/backends/tasks.py:381
 #: student_registration/backends/tasks.py:392
 #: student_registration/clm/models.py:123
-#: student_registration/clm/models.py:2017
-#: student_registration/clm/models.py:2498
+#: student_registration/clm/models.py:2019
+#: student_registration/clm/models.py:2520
 #: student_registration/enrollments/forms.py:905
 #: student_registration/enrollments/forms.py:993
 #: student_registration/enrollments/forms.py:1087
@@ -951,8 +951,8 @@ msgstr "اللغة العربية"
 #: student_registration/alp/forms.py:1441
 #: student_registration/alp/models.py:263
 #: student_registration/alp/models.py:349
-#: student_registration/clm/models.py:2023
-#: student_registration/clm/models.py:2504
+#: student_registration/clm/models.py:2025
+#: student_registration/clm/models.py:2526
 #: student_registration/enrollments/models.py:291
 #: student_registration/enrollments/models.py:433
 msgid "Foreign Language"
@@ -966,8 +966,8 @@ msgstr " اللغة الأجنبية"
 #: student_registration/backends/tasks.py:240
 #: student_registration/backends/tasks.py:385
 #: student_registration/backends/tasks.py:396
-#: student_registration/clm/models.py:2029
-#: student_registration/clm/models.py:2510
+#: student_registration/clm/models.py:2031
+#: student_registration/clm/models.py:2532
 #: student_registration/enrollments/forms.py:925
 #: student_registration/enrollments/forms.py:1017
 #: student_registration/enrollments/forms.py:1117
@@ -995,12 +995,12 @@ msgstr "الرياضيات"
 #: student_registration/backends/tasks.py:239
 #: student_registration/backends/tasks.py:386
 #: student_registration/backends/tasks.py:397
-#: student_registration/clm/models.py:2035
-#: student_registration/clm/models.py:2041
-#: student_registration/clm/models.py:2047
-#: student_registration/clm/models.py:2053
-#: student_registration/clm/models.py:2059
-#: student_registration/clm/models.py:2516
+#: student_registration/clm/models.py:2037
+#: student_registration/clm/models.py:2043
+#: student_registration/clm/models.py:2049
+#: student_registration/clm/models.py:2055
+#: student_registration/clm/models.py:2061
+#: student_registration/clm/models.py:2538
 #: student_registration/enrollments/forms.py:930
 #: student_registration/enrollments/forms.py:1023
 #: student_registration/enrollments/models.py:326
@@ -1034,7 +1034,7 @@ msgstr "العلامات"
 #: student_registration/backends/tasks.py:411
 #: student_registration/clm/forms.py:375 student_registration/clm/forms.py:1603
 #: student_registration/clm/forms.py:2886
-#: student_registration/clm/forms.py:4243
+#: student_registration/clm/forms.py:4277
 #: student_registration/clm/models.py:709
 #: student_registration/enrollments/forms.py:77
 #: student_registration/enrollments/forms.py:1684
@@ -1216,11 +1216,11 @@ msgstr "نتيجة ال Post-test"
 #: student_registration/alp/models.py:31 student_registration/clm/forms.py:389
 #: student_registration/clm/forms.py:1617
 #: student_registration/clm/forms.py:2906
-#: student_registration/clm/forms.py:4257
+#: student_registration/clm/forms.py:4291
 #: student_registration/clm/models.py:1437
 #: student_registration/clm/models.py:1678
-#: student_registration/clm/models.py:2133
-#: student_registration/clm/models.py:2545
+#: student_registration/clm/models.py:2135
+#: student_registration/clm/models.py:2567
 msgid "Round start date"
 msgstr "تاريخ بداية الدورة في المركز"
 
@@ -1262,14 +1262,14 @@ msgstr "انشأ من قبل"
 
 #: student_registration/alp/models.py:102
 #: student_registration/clm/models.py:693
-#: student_registration/clm/models.py:2984
+#: student_registration/clm/models.py:3006
 msgid "Modified by"
 msgstr "اخر تعديل من قبل"
 
 #: student_registration/alp/models.py:114 student_registration/clm/forms.py:132
 #: student_registration/clm/inclusion_forms.py:90
 #: student_registration/clm/models.py:278
-#: student_registration/clm/models.py:2926
+#: student_registration/clm/models.py:2948
 msgid "Location"
 msgstr "إسم الموقع/المركز"
 
@@ -1321,8 +1321,8 @@ msgstr "نتيجة امتحان ال Post-test"
 #: student_registration/backends/tasks.py:400
 #: student_registration/clm/inclusion_forms.py:681
 #: student_registration/clm/models.py:744
-#: student_registration/clm/models.py:3006
-#: student_registration/clm/models.py:3398
+#: student_registration/clm/models.py:3028
+#: student_registration/clm/models.py:3420
 #: student_registration/schools/models.py:83
 #: student_registration/schools/models.py:751
 msgid "Comments"
@@ -1423,7 +1423,7 @@ msgstr "عدد التلامذة المصرح عنهم من قبل المدير"
 #: student_registration/clm/inclusion_filters.py:14
 #: student_registration/clm/inclusion_forms.py:79
 #: student_registration/clm/models.py:266
-#: student_registration/clm/models.py:2914
+#: student_registration/clm/models.py:2936
 #: student_registration/dashboard/views.py:252
 #: student_registration/dashboard/views.py:340
 #: student_registration/dashboard/views.py:961
@@ -1442,7 +1442,7 @@ msgstr "المركز: القضاء"
 #: student_registration/clm/inclusion_filters.py:13
 #: student_registration/clm/inclusion_forms.py:73
 #: student_registration/clm/models.py:260
-#: student_registration/clm/models.py:2908
+#: student_registration/clm/models.py:2930
 #: student_registration/dashboard/views.py:253
 #: student_registration/dashboard/views.py:341
 #: student_registration/dashboard/views.py:962
@@ -1547,7 +1547,7 @@ msgstr "السنة الدراسية"
 #: student_registration/backends/tasks.py:41
 #: student_registration/backends/tasks.py:210
 #: student_registration/clm/models.py:728
-#: student_registration/clm/models.py:2990
+#: student_registration/clm/models.py:3012
 #: student_registration/enrollments/forms.py:135
 #: student_registration/enrollments/forms.py:1734
 #: student_registration/enrollments/models.py:508
@@ -1985,10 +1985,10 @@ msgstr " متسرب من التعليم"
 #: student_registration/clm/filters.py:18 student_registration/clm/forms.py:137
 #: student_registration/clm/forms.py:383 student_registration/clm/forms.py:1611
 #: student_registration/clm/forms.py:2900
-#: student_registration/clm/forms.py:4251
+#: student_registration/clm/forms.py:4285
 #: student_registration/clm/inclusion_filters.py:12
 #: student_registration/clm/models.py:253
-#: student_registration/clm/models.py:2902
+#: student_registration/clm/models.py:2924
 msgid "Round"
 msgstr "رقم الدورة"
 
@@ -1997,17 +1997,16 @@ msgstr "رقم الدورة"
 #: student_registration/clm/models.py:298
 #: student_registration/clm/models.py:751
 #: student_registration/clm/models.py:762
-#: student_registration/clm/models.py:2938
+#: student_registration/clm/models.py:2960
 msgid "Disability"
 msgstr "احتياجات خاصة"
 
 #: student_registration/clm/filters.py:74
-#: student_registration/clm/models.py:1980
 msgid "Registered in school"
 msgstr "مسجل في مدرسة "
 
 #: student_registration/clm/filters.py:75
-#: student_registration/clm/models.py:1993
+#: student_registration/clm/models.py:1995
 #: student_registration/enrollments/filters.py:14
 #: student_registration/enrollments/filters.py:53
 #: student_registration/schools/models.py:2290
@@ -2019,8 +2018,8 @@ msgstr "الصف"
 #: student_registration/clm/filters.py:107
 #: student_registration/clm/models.py:1408
 #: student_registration/clm/models.py:1649
-#: student_registration/clm/models.py:1961
-#: student_registration/clm/models.py:2461
+#: student_registration/clm/models.py:1963
+#: student_registration/clm/models.py:2483
 msgid "Cycle"
 msgstr "رقم"
 
@@ -2054,25 +2053,25 @@ msgstr "ارمل / ارملة"
 msgid "Single"
 msgstr "أعزب / عزباء"
 
-#: student_registration/clm/forms.py:78 student_registration/clm/forms.py:6255
-#: student_registration/clm/forms.py:7000
-#: student_registration/clm/forms.py:7762
+#: student_registration/clm/forms.py:78 student_registration/clm/forms.py:6289
+#: student_registration/clm/forms.py:7034
+#: student_registration/clm/forms.py:7796
 #: student_registration/clm/inclusion_forms.py:51
 #: student_registration/clm/models.py:172
 msgid "Less than 5 absence days"
 msgstr "غياب اقل من 5 ايام/او ما يعادلها بالنسبة للتعليم عن بعد"
 
-#: student_registration/clm/forms.py:79 student_registration/clm/forms.py:6256
-#: student_registration/clm/forms.py:7001
-#: student_registration/clm/forms.py:7763
+#: student_registration/clm/forms.py:79 student_registration/clm/forms.py:6290
+#: student_registration/clm/forms.py:7035
+#: student_registration/clm/forms.py:7797
 #: student_registration/clm/inclusion_forms.py:52
 #: student_registration/clm/models.py:173
 msgid "5 to 10 absence days"
 msgstr "غياب ما بين 10-5 ايام/او ما يعادلها بالنسبة للتعليم عن بعد"
 
-#: student_registration/clm/forms.py:80 student_registration/clm/forms.py:6257
-#: student_registration/clm/forms.py:7002
-#: student_registration/clm/forms.py:7764
+#: student_registration/clm/forms.py:80 student_registration/clm/forms.py:6291
+#: student_registration/clm/forms.py:7036
+#: student_registration/clm/forms.py:7798
 #: student_registration/clm/inclusion_forms.py:53
 #: student_registration/clm/models.py:174
 msgid "10 to 15 absence days"
@@ -2083,13 +2082,13 @@ msgstr "غياب ما بين 10-15 ايام/او ما يعادلها بالنس�
 msgid "More than 15 absence days"
 msgstr "أكثر من 15 أيام غياب"
 
-#: student_registration/clm/forms.py:82 student_registration/clm/forms.py:6254
-#: student_registration/clm/forms.py:6999
-#: student_registration/clm/forms.py:7761
+#: student_registration/clm/forms.py:82 student_registration/clm/forms.py:6288
+#: student_registration/clm/forms.py:7033
+#: student_registration/clm/forms.py:7795
 #: student_registration/clm/inclusion_forms.py:55
 #: student_registration/clm/inclusion_forms.py:976
 #: student_registration/clm/models.py:171
-#: student_registration/clm/models.py:2821
+#: student_registration/clm/models.py:2843
 msgid "No Absence"
 msgstr "لا غياب"
 
@@ -2119,21 +2118,21 @@ msgstr "رفع إلى التعليم النظامي - الصف الأول"
 msgid "Referred to another program"
 msgstr "أحيل إلى برنامج آخر خلال الدورة"
 
-#: student_registration/clm/forms.py:92 student_registration/clm/forms.py:6276
-#: student_registration/clm/forms.py:7021
-#: student_registration/clm/forms.py:7783
+#: student_registration/clm/forms.py:92 student_registration/clm/forms.py:6310
+#: student_registration/clm/forms.py:7055
+#: student_registration/clm/forms.py:7817
 #: student_registration/clm/inclusion_forms.py:65
 #: student_registration/clm/models.py:1390
 #: student_registration/clm/models.py:1631
 #: student_registration/clm/models.py:1882
-#: student_registration/clm/models.py:2430
+#: student_registration/clm/models.py:2452
 msgid "Dropout, referral not possible"
 msgstr "التسرب من الدورة"
 
 #: student_registration/clm/forms.py:97 student_registration/clm/forms.py:358
 #: student_registration/clm/forms.py:1586
-#: student_registration/clm/forms.py:6245
-#: student_registration/clm/forms.py:6990
+#: student_registration/clm/forms.py:6279
+#: student_registration/clm/forms.py:7024
 #: student_registration/clm/models.py:224
 #: student_registration/clm/models.py:1394
 #: student_registration/clm/models.py:1635
@@ -2143,23 +2142,23 @@ msgstr "المستوى الأول"
 #: student_registration/clm/forms.py:98 student_registration/clm/forms.py:359
 #: student_registration/clm/forms.py:1587
 #: student_registration/clm/forms.py:2808
-#: student_registration/clm/forms.py:4165
-#: student_registration/clm/forms.py:6246
-#: student_registration/clm/forms.py:6991
-#: student_registration/clm/forms.py:7753
-#: student_registration/clm/forms.py:8605
+#: student_registration/clm/forms.py:4199
+#: student_registration/clm/forms.py:6280
+#: student_registration/clm/forms.py:7025
+#: student_registration/clm/forms.py:7787
+#: student_registration/clm/forms.py:8639
 #: student_registration/clm/models.py:225
 #: student_registration/clm/models.py:1395
 #: student_registration/clm/models.py:1636
 #: student_registration/clm/models.py:1886
-#: student_registration/clm/models.py:2434
+#: student_registration/clm/models.py:2456
 msgid "Level two"
 msgstr "المستوى الثاني"
 
 #: student_registration/clm/forms.py:126
 #: student_registration/clm/inclusion_forms.py:85
 #: student_registration/clm/models.py:272
-#: student_registration/clm/models.py:2920
+#: student_registration/clm/models.py:2942
 msgid "Cadaster"
 msgstr "المركز: منطقة عقارية"
 
@@ -2172,7 +2171,7 @@ msgid "The area where the child resides"
 msgstr "عنوان اقامة الطفل (القرية,الشارع,البناية/المخيم)"
 
 #: student_registration/clm/forms.py:208 student_registration/clm/forms.py:3288
-#: student_registration/clm/forms.py:4639
+#: student_registration/clm/forms.py:4673
 #: student_registration/clm/inclusion_forms.py:139
 msgid "P-Code If a child lives in a tent / Brax in a random camp"
 msgstr "P-Code إذا كان الطفل يسكن في خيمة / في مخيم عشوائي"
@@ -2191,44 +2190,44 @@ msgid "What is the educational level of the father?"
 msgstr "ما هو المستوى التعليمي للأب؟"
 
 #: student_registration/clm/forms.py:360 student_registration/clm/forms.py:2809
-#: student_registration/clm/forms.py:4166
-#: student_registration/clm/forms.py:6992
-#: student_registration/clm/forms.py:7754
-#: student_registration/clm/forms.py:8606
+#: student_registration/clm/forms.py:4200
+#: student_registration/clm/forms.py:7026
+#: student_registration/clm/forms.py:7788
+#: student_registration/clm/forms.py:8640
 #: student_registration/clm/models.py:226
 #: student_registration/clm/models.py:1396
 #: student_registration/clm/models.py:1887
-#: student_registration/clm/models.py:2435
+#: student_registration/clm/models.py:2457
 msgid "Level three"
 msgstr "المستوى الثالث"
 
 #: student_registration/clm/forms.py:366 student_registration/clm/forms.py:1594
 #: student_registration/clm/forms.py:2878
-#: student_registration/clm/forms.py:4235
+#: student_registration/clm/forms.py:4269
 #: student_registration/clm/inclusion_forms.py:163
 #: student_registration/clm/models.py:247
 #: student_registration/clm/models.py:1432
 #: student_registration/clm/models.py:1673
-#: student_registration/clm/models.py:2540
-#: student_registration/clm/models.py:2896
+#: student_registration/clm/models.py:2562
+#: student_registration/clm/models.py:2918
 msgid "First attendance date"
 msgstr "تاريخ حضور الطفل للمرة الأولى في الدورة"
 
 #: student_registration/clm/forms.py:370 student_registration/clm/forms.py:1598
 #: student_registration/clm/forms.py:2882
-#: student_registration/clm/forms.py:4239
+#: student_registration/clm/forms.py:4273
 msgid "Miss school date"
 msgstr "يرجى تحديد تاريخ التسرب من الدراسة"
 
 #: student_registration/clm/forms.py:393 student_registration/clm/forms.py:1621
-#: student_registration/clm/forms.py:6582
-#: student_registration/clm/forms.py:7332
-#: student_registration/clm/forms.py:8144
-#: student_registration/clm/forms.py:8741
+#: student_registration/clm/forms.py:6616
+#: student_registration/clm/forms.py:7366
+#: student_registration/clm/forms.py:8178
+#: student_registration/clm/forms.py:8775
 #: student_registration/clm/models.py:1444
 #: student_registration/clm/models.py:1685
-#: student_registration/clm/models.py:2140
-#: student_registration/clm/models.py:2552
+#: student_registration/clm/models.py:2142
+#: student_registration/clm/models.py:2574
 msgid "Registration level"
 msgstr "مستوى التسجيل"
 
@@ -2242,38 +2241,38 @@ msgstr " هل لدى الطفل المشارك أطفال؟"
 
 #: student_registration/clm/forms.py:417 student_registration/clm/forms.py:1645
 #: student_registration/clm/forms.py:3293
-#: student_registration/clm/forms.py:4644
+#: student_registration/clm/forms.py:4678
 #: student_registration/clm/inclusion_forms.py:173
 #: student_registration/clm/models.py:1478
 #: student_registration/clm/models.py:1717
-#: student_registration/clm/models.py:2167
-#: student_registration/clm/models.py:2579
+#: student_registration/clm/models.py:2169
+#: student_registration/clm/models.py:2601
 msgid "How many children does this child have?"
 msgstr "حدد عدد الأطفال"
 
 #: student_registration/clm/forms.py:422 student_registration/clm/forms.py:1650
 #: student_registration/clm/forms.py:2912
-#: student_registration/clm/forms.py:4263
+#: student_registration/clm/forms.py:4297
 #: student_registration/clm/inclusion_forms.py:177
 #: student_registration/clm/models.py:309
 #: student_registration/clm/models.py:316
-#: student_registration/clm/models.py:2945
+#: student_registration/clm/models.py:2967
 msgid "Does the child participate in work?"
 msgstr "هل يشارك الطفل في عمل؟"
 
 #: student_registration/clm/forms.py:428 student_registration/clm/forms.py:1656
 #: student_registration/clm/forms.py:2918
-#: student_registration/clm/forms.py:4269
+#: student_registration/clm/forms.py:4303
 #: student_registration/clm/inclusion_forms.py:183
 #: student_registration/clm/models.py:334
 #: student_registration/clm/models.py:341
-#: student_registration/clm/models.py:2952
+#: student_registration/clm/models.py:2974
 msgid "What is the type of work ?"
 msgstr "ما هو نوع العمل ؟"
 
 #: student_registration/clm/forms.py:433 student_registration/clm/forms.py:1661
 #: student_registration/clm/forms.py:2923
-#: student_registration/clm/forms.py:4274
+#: student_registration/clm/forms.py:4308
 #: student_registration/clm/models.py:347
 msgid ""
 "Please specify(hotel, restaurant, transport, personal services such as "
@@ -2284,7 +2283,7 @@ msgstr ""
 
 #: student_registration/clm/forms.py:438 student_registration/clm/forms.py:1665
 #: student_registration/clm/forms.py:2927
-#: student_registration/clm/forms.py:4278
+#: student_registration/clm/forms.py:4312
 #: student_registration/clm/inclusion_forms.py:188
 #: student_registration/clm/models.py:352
 msgid "How many hours does this child work in a day?"
@@ -2292,38 +2291,38 @@ msgstr "كم ساعة يعمل هذا الطفل في الأسبوع؟"
 
 #: student_registration/clm/forms.py:442 student_registration/clm/forms.py:1669
 #: student_registration/clm/forms.py:2931
-#: student_registration/clm/forms.py:4282
+#: student_registration/clm/forms.py:4316
 #: student_registration/clm/models.py:323
 msgid "What is the income of the child per week?"
 msgstr "كم يجني الطفل من العمل في الاسبوع؟"
 
 #: student_registration/clm/forms.py:449 student_registration/clm/forms.py:1676
 #: student_registration/clm/forms.py:2938
-#: student_registration/clm/forms.py:4289
+#: student_registration/clm/forms.py:4323
 #: student_registration/clm/models.py:791
-#: student_registration/clm/models.py:1948
-#: student_registration/clm/models.py:2455
-#: student_registration/clm/models.py:3067
+#: student_registration/clm/models.py:1950
+#: student_registration/clm/models.py:2477
+#: student_registration/clm/models.py:3089
 msgid "Education status"
 msgstr "الوضع الدراسي للطفل عند التسجيل في الدورة"
 
 #: student_registration/clm/forms.py:453 student_registration/clm/forms.py:1680
 #: student_registration/clm/forms.py:2942
-#: student_registration/clm/forms.py:4293
+#: student_registration/clm/forms.py:4327
 #: student_registration/clm/models.py:786
-#: student_registration/clm/models.py:1943
-#: student_registration/clm/models.py:2450
-#: student_registration/clm/models.py:3063
+#: student_registration/clm/models.py:1945
+#: student_registration/clm/models.py:2472
+#: student_registration/clm/models.py:3085
 msgid "Out of school"
 msgstr "لم يسجل ابدا في المدرسة من قبل"
 
 #: student_registration/clm/forms.py:454 student_registration/clm/forms.py:1681
 #: student_registration/clm/forms.py:2944
-#: student_registration/clm/forms.py:4295
+#: student_registration/clm/forms.py:4329
 #: student_registration/clm/models.py:787
-#: student_registration/clm/models.py:1945
-#: student_registration/clm/models.py:2452
-#: student_registration/clm/models.py:3064
+#: student_registration/clm/models.py:1947
+#: student_registration/clm/models.py:2474
+#: student_registration/clm/models.py:3086
 msgid "Enrolled in formal education but did not continue"
 msgstr "كان مسجلاً في مدرسة نظامية ولم يكمل"
 
@@ -2333,140 +2332,140 @@ msgstr "كان مسجلاً في مدرسة غير نظامية ولم يكمل"
 
 #: student_registration/clm/forms.py:461 student_registration/clm/forms.py:1688
 #: student_registration/clm/forms.py:2951
-#: student_registration/clm/forms.py:4302
+#: student_registration/clm/forms.py:4336
 #: student_registration/clm/inclusion_forms.py:192
 #: student_registration/clm/models.py:853
-#: student_registration/clm/models.py:3129
+#: student_registration/clm/models.py:3151
 msgid "Specify the nationality"
 msgstr " حدد الجنسية"
 
 #: student_registration/clm/forms.py:469 student_registration/clm/forms.py:1696
 #: student_registration/clm/forms.py:2959
-#: student_registration/clm/forms.py:4310
+#: student_registration/clm/forms.py:4344
 #: student_registration/clm/inclusion_forms.py:200
 msgid "Main Phone number"
 msgstr "رقم الهاتف الأساسي"
 
 #: student_registration/clm/forms.py:475 student_registration/clm/forms.py:1702
 #: student_registration/clm/forms.py:2965
-#: student_registration/clm/forms.py:4316
+#: student_registration/clm/forms.py:4350
 #: student_registration/clm/inclusion_forms.py:206
 msgid "Main Phone number confirm"
 msgstr "تأكيد رقم الهاتف الأساسي"
 
 #: student_registration/clm/forms.py:481 student_registration/clm/forms.py:1708
 #: student_registration/clm/forms.py:2971
-#: student_registration/clm/forms.py:4322
+#: student_registration/clm/forms.py:4356
 #: student_registration/clm/inclusion_forms.py:212
 msgid "Second Phone Number"
 msgstr "رقم الهاتف الثانوي"
 
 #: student_registration/clm/forms.py:487 student_registration/clm/forms.py:1714
 #: student_registration/clm/forms.py:2977
-#: student_registration/clm/forms.py:4328
+#: student_registration/clm/forms.py:4362
 #: student_registration/clm/inclusion_forms.py:218
 msgid "Second Phone Number confirm"
 msgstr "تأكيد رقم الهاتف الثانوي"
 
 #: student_registration/clm/forms.py:490 student_registration/clm/forms.py:1717
 #: student_registration/clm/forms.py:2980
-#: student_registration/clm/forms.py:4331
+#: student_registration/clm/forms.py:4365
 #: student_registration/clm/inclusion_forms.py:221
 msgid "ID type of the caretaker"
 msgstr "نوع بطاقة تعريف ولي الأمر"
 
 #: student_registration/clm/forms.py:491 student_registration/clm/forms.py:1718
 #: student_registration/clm/forms.py:2981
-#: student_registration/clm/forms.py:4332
+#: student_registration/clm/forms.py:4366
 #: student_registration/clm/inclusion_forms.py:222
 msgid "Child no ID confirmation popup message"
 msgstr "هل انت متأكد ان الطفل لا يملك اي نوع من البطاقات المدرجه اعلاه؟ "
 
 #: student_registration/clm/forms.py:495 student_registration/clm/forms.py:1722
 #: student_registration/clm/forms.py:2985
-#: student_registration/clm/forms.py:4336
+#: student_registration/clm/forms.py:4370
 #: student_registration/clm/inclusion_forms.py:226
 #: student_registration/clm/models.py:799
 #: student_registration/clm/models.py:928
-#: student_registration/clm/models.py:3075
+#: student_registration/clm/models.py:3097
 msgid "UNHCR Registered"
 msgstr ""
 
 #: student_registration/clm/forms.py:496 student_registration/clm/forms.py:1723
 #: student_registration/clm/forms.py:2986
-#: student_registration/clm/forms.py:4337
+#: student_registration/clm/forms.py:4371
 #: student_registration/clm/inclusion_forms.py:227
 #: student_registration/clm/models.py:800
 #: student_registration/clm/models.py:929
-#: student_registration/clm/models.py:3076
+#: student_registration/clm/models.py:3098
 msgid "UNHCR Recorded"
 msgstr ""
 
 #: student_registration/clm/forms.py:497 student_registration/clm/forms.py:1724
 #: student_registration/clm/forms.py:2987
-#: student_registration/clm/forms.py:4338
+#: student_registration/clm/forms.py:4372
 #: student_registration/clm/inclusion_forms.py:228
 #: student_registration/clm/models.py:801
 #: student_registration/clm/models.py:930
-#: student_registration/clm/models.py:3077
+#: student_registration/clm/models.py:3099
 msgid "Syrian national ID"
 msgstr "بطاقة الهوية السورية"
 
 #: student_registration/clm/forms.py:498 student_registration/clm/forms.py:1725
 #: student_registration/clm/forms.py:2988
-#: student_registration/clm/forms.py:4339
+#: student_registration/clm/forms.py:4373
 #: student_registration/clm/inclusion_forms.py:229
 #: student_registration/clm/models.py:802
 #: student_registration/clm/models.py:931
-#: student_registration/clm/models.py:3078
+#: student_registration/clm/models.py:3100
 msgid "Palestinian national ID"
 msgstr "البطاقة الفلسطنية"
 
 #: student_registration/clm/forms.py:499 student_registration/clm/forms.py:1726
 #: student_registration/clm/forms.py:2989
-#: student_registration/clm/forms.py:4340
+#: student_registration/clm/forms.py:4374
 #: student_registration/clm/inclusion_forms.py:230
 #: student_registration/clm/models.py:803
 #: student_registration/clm/models.py:932
-#: student_registration/clm/models.py:3079
+#: student_registration/clm/models.py:3101
 msgid "Lebanese national ID"
 msgstr "بطاقة الهوية اللبنانية"
 
 #: student_registration/clm/forms.py:500 student_registration/clm/forms.py:1727
 #: student_registration/clm/forms.py:2990
-#: student_registration/clm/forms.py:4341
+#: student_registration/clm/forms.py:4375
 #: student_registration/clm/inclusion_forms.py:231
 #: student_registration/clm/models.py:804
-#: student_registration/clm/models.py:3080
+#: student_registration/clm/models.py:3102
 msgid "Other nationality"
 msgstr "من جنسية أخرى"
 
 #: student_registration/clm/forms.py:501 student_registration/clm/forms.py:1728
 #: student_registration/clm/forms.py:2991
-#: student_registration/clm/forms.py:4342
+#: student_registration/clm/forms.py:4376
 #: student_registration/clm/inclusion_forms.py:232
 #: student_registration/clm/models.py:805
-#: student_registration/clm/models.py:3081
+#: student_registration/clm/models.py:3103
 msgid "Child have no ID"
 msgstr "بدون اوراق "
 
 #: student_registration/clm/forms.py:509 student_registration/clm/forms.py:1736
 #: student_registration/clm/forms.py:2999
-#: student_registration/clm/forms.py:4350
+#: student_registration/clm/forms.py:4384
 #: student_registration/clm/inclusion_forms.py:240
 msgid "UNHCR Case Number"
 msgstr ""
 
 #: student_registration/clm/forms.py:515 student_registration/clm/forms.py:1742
 #: student_registration/clm/forms.py:3005
-#: student_registration/clm/forms.py:4356
+#: student_registration/clm/forms.py:4390
 #: student_registration/clm/inclusion_forms.py:246
 msgid "Confirm UNHCR Case Number"
 msgstr ""
 
 #: student_registration/clm/forms.py:522 student_registration/clm/forms.py:1749
 #: student_registration/clm/forms.py:3012
-#: student_registration/clm/forms.py:4363
+#: student_registration/clm/forms.py:4397
 #: student_registration/clm/inclusion_forms.py:253
 msgid ""
 "Caretaker Individual ID from the certificate (Optional, in case not listed "
@@ -2475,7 +2474,7 @@ msgstr ""
 
 #: student_registration/clm/forms.py:529 student_registration/clm/forms.py:1756
 #: student_registration/clm/forms.py:3019
-#: student_registration/clm/forms.py:4370
+#: student_registration/clm/forms.py:4404
 #: student_registration/clm/inclusion_forms.py:260
 msgid ""
 "Confirm Caretaker Individual ID from the certificate (Optional, in case not "
@@ -2484,7 +2483,7 @@ msgstr ""
 
 #: student_registration/clm/forms.py:536 student_registration/clm/forms.py:1763
 #: student_registration/clm/forms.py:3026
-#: student_registration/clm/forms.py:4377
+#: student_registration/clm/forms.py:4411
 #: student_registration/clm/inclusion_forms.py:267
 msgid ""
 "Individual ID of the Child from the certificate (Optional, in case not "
@@ -2493,7 +2492,7 @@ msgstr ""
 
 #: student_registration/clm/forms.py:543 student_registration/clm/forms.py:1770
 #: student_registration/clm/forms.py:3033
-#: student_registration/clm/forms.py:4384
+#: student_registration/clm/forms.py:4418
 #: student_registration/clm/inclusion_forms.py:273
 msgid ""
 "Confirm Individual ID of the Child from the certificate (Optional, in case "
@@ -2502,56 +2501,56 @@ msgstr ""
 
 #: student_registration/clm/forms.py:549 student_registration/clm/forms.py:1776
 #: student_registration/clm/forms.py:3039
-#: student_registration/clm/forms.py:4390
+#: student_registration/clm/forms.py:4424
 #: student_registration/clm/inclusion_forms.py:280
 msgid "UNHCR Barcode number (Shifra number)"
 msgstr ""
 
 #: student_registration/clm/forms.py:555 student_registration/clm/forms.py:1782
 #: student_registration/clm/forms.py:3045
-#: student_registration/clm/forms.py:4396
+#: student_registration/clm/forms.py:4430
 #: student_registration/clm/inclusion_forms.py:286
 msgid "Confirm UNHCR Barcode number (Shifra number)"
 msgstr ""
 
 #: student_registration/clm/forms.py:562 student_registration/clm/forms.py:1789
 #: student_registration/clm/forms.py:3052
-#: student_registration/clm/forms.py:4403
+#: student_registration/clm/forms.py:4437
 #: student_registration/clm/inclusion_forms.py:292
 msgid "Lebanese ID number of the child (Optional)"
 msgstr ""
 
 #: student_registration/clm/forms.py:568 student_registration/clm/forms.py:1795
 #: student_registration/clm/forms.py:3058
-#: student_registration/clm/forms.py:4409
+#: student_registration/clm/forms.py:4443
 #: student_registration/clm/inclusion_forms.py:298
 msgid "Confirm Lebanese ID number of the child (optional)"
 msgstr ""
 
 #: student_registration/clm/forms.py:573 student_registration/clm/forms.py:1800
 #: student_registration/clm/forms.py:3063
-#: student_registration/clm/forms.py:4414
+#: student_registration/clm/forms.py:4448
 #: student_registration/clm/inclusion_forms.py:303
 msgid "National ID number of the child (Optional)"
 msgstr ""
 
 #: student_registration/clm/forms.py:578 student_registration/clm/forms.py:1805
 #: student_registration/clm/forms.py:3068
-#: student_registration/clm/forms.py:4419
+#: student_registration/clm/forms.py:4453
 #: student_registration/clm/inclusion_forms.py:308
 msgid "Confirm National ID number of the child (Optional)"
 msgstr ""
 
 #: student_registration/clm/forms.py:582 student_registration/clm/forms.py:1809
 #: student_registration/clm/forms.py:3072
-#: student_registration/clm/forms.py:4423
+#: student_registration/clm/forms.py:4457
 #: student_registration/clm/inclusion_forms.py:312
 msgid "Palestinian ID number of the child (Optional)"
 msgstr ""
 
 #: student_registration/clm/forms.py:586 student_registration/clm/forms.py:1813
 #: student_registration/clm/forms.py:3076
-#: student_registration/clm/forms.py:4427
+#: student_registration/clm/forms.py:4461
 #: student_registration/clm/inclusion_forms.py:316
 msgid "Confirm Palestinian ID number of the child (optional)"
 msgstr ""
@@ -2559,49 +2558,49 @@ msgstr ""
 #: student_registration/clm/forms.py:592 student_registration/clm/forms.py:1819
 #: student_registration/clm/forms.py:1831
 #: student_registration/clm/forms.py:3082
-#: student_registration/clm/forms.py:4433
+#: student_registration/clm/forms.py:4467
 #: student_registration/clm/inclusion_forms.py:322
 msgid "Lebanese ID number of the caretaker (Mandatory)"
 msgstr ""
 
 #: student_registration/clm/forms.py:598 student_registration/clm/forms.py:1825
 #: student_registration/clm/forms.py:3088
-#: student_registration/clm/forms.py:4439
+#: student_registration/clm/forms.py:4473
 #: student_registration/clm/inclusion_forms.py:328
 msgid "Confirm Lebanese ID number of the caretaker (Mandatory)"
 msgstr ""
 
 #: student_registration/clm/forms.py:603 student_registration/clm/forms.py:1836
 #: student_registration/clm/forms.py:3093
-#: student_registration/clm/forms.py:4444
+#: student_registration/clm/forms.py:4478
 #: student_registration/clm/inclusion_forms.py:333
 msgid "National ID number of the Caretaker (Mandatory)"
 msgstr ""
 
 #: student_registration/clm/forms.py:608 student_registration/clm/forms.py:1841
 #: student_registration/clm/forms.py:3098
-#: student_registration/clm/forms.py:4449
+#: student_registration/clm/forms.py:4483
 #: student_registration/clm/inclusion_forms.py:338
 msgid "Confirm National ID number of the Caretaker (Mandatory)"
 msgstr ""
 
 #: student_registration/clm/forms.py:613 student_registration/clm/forms.py:1846
 #: student_registration/clm/forms.py:3103
-#: student_registration/clm/forms.py:4454
+#: student_registration/clm/forms.py:4488
 #: student_registration/clm/inclusion_forms.py:343
 msgid "Palestinian ID number of the Caretaker (Mandatory)"
 msgstr ""
 
 #: student_registration/clm/forms.py:618 student_registration/clm/forms.py:1851
 #: student_registration/clm/forms.py:3108
-#: student_registration/clm/forms.py:4459
+#: student_registration/clm/forms.py:4493
 #: student_registration/clm/inclusion_forms.py:348
 msgid "Confirm Palestinian ID number of the Caretaker (Mandatory)"
 msgstr ""
 
 #: student_registration/clm/forms.py:623 student_registration/clm/forms.py:1856
 #: student_registration/clm/forms.py:3113
-#: student_registration/clm/forms.py:4464
+#: student_registration/clm/forms.py:4498
 #: student_registration/clm/inclusion_forms.py:352
 #, fuzzy
 #| msgid "ID type of the caretaker"
@@ -2610,21 +2609,21 @@ msgstr "نوع بطاقة تعريف ولي الأمر"
 
 #: student_registration/clm/forms.py:627 student_registration/clm/forms.py:1860
 #: student_registration/clm/forms.py:3117
-#: student_registration/clm/forms.py:4468
+#: student_registration/clm/forms.py:4502
 #: student_registration/clm/inclusion_forms.py:356
 msgid "Confirm ID number of the Caretaker (Mandatory)"
 msgstr ""
 
 #: student_registration/clm/forms.py:631 student_registration/clm/forms.py:1864
 #: student_registration/clm/forms.py:3121
-#: student_registration/clm/forms.py:4472
+#: student_registration/clm/forms.py:4506
 #: student_registration/clm/inclusion_forms.py:360
 msgid " ID number of the child (Optional)"
 msgstr ""
 
 #: student_registration/clm/forms.py:635 student_registration/clm/forms.py:1868
 #: student_registration/clm/forms.py:3125
-#: student_registration/clm/forms.py:4476
+#: student_registration/clm/forms.py:4510
 #: student_registration/clm/inclusion_forms.py:364
 msgid "Confirm ID number of the child (optional)"
 msgstr ""
@@ -2635,14 +2634,14 @@ msgstr "مصدر احالة الطفل  إلى برنامج BLN"
 
 #: student_registration/clm/forms.py:647 student_registration/clm/forms.py:1880
 #: student_registration/clm/forms.py:3137
-#: student_registration/clm/forms.py:4488
+#: student_registration/clm/forms.py:4522
 #: student_registration/clm/inclusion_forms.py:374
 #: student_registration/clm/models.py:901
 #: student_registration/clm/models.py:1523
 #: student_registration/clm/models.py:1762
-#: student_registration/clm/models.py:2211
-#: student_registration/clm/models.py:2623
-#: student_registration/clm/models.py:2880
+#: student_registration/clm/models.py:2213
+#: student_registration/clm/models.py:2645
+#: student_registration/clm/models.py:2902
 msgid "Referred by CP partner"
 msgstr " احالة من قبل شركاء حماية الطفل CP partner"
 
@@ -2651,80 +2650,79 @@ msgstr " احالة من قبل شركاء حماية الطفل CP partner"
 #: student_registration/clm/models.py:902
 #: student_registration/clm/models.py:1524
 #: student_registration/clm/models.py:1763
-#: student_registration/clm/models.py:2881
+#: student_registration/clm/models.py:2903
 msgid "Referred by youth partner"
 msgstr "احالة من قبل شركاء برنامج الشباب والمراهقين youth"
 
 #: student_registration/clm/forms.py:649 student_registration/clm/forms.py:1882
 #: student_registration/clm/forms.py:3138
-#: student_registration/clm/forms.py:4489
+#: student_registration/clm/forms.py:4523
 #: student_registration/clm/inclusion_forms.py:376
 #: student_registration/clm/models.py:904
 #: student_registration/clm/models.py:1525
 #: student_registration/clm/models.py:1764
-#: student_registration/clm/models.py:2212
-#: student_registration/clm/models.py:2624
-#: student_registration/clm/models.py:2883
+#: student_registration/clm/models.py:2214
+#: student_registration/clm/models.py:2646
+#: student_registration/clm/models.py:2905
 msgid "Family walked in to NGO"
 msgstr "من قبل اهل الطفل مباشرة"
 
 #: student_registration/clm/forms.py:650 student_registration/clm/forms.py:1883
 #: student_registration/clm/forms.py:3139
-#: student_registration/clm/forms.py:4490
+#: student_registration/clm/forms.py:4524
 #: student_registration/clm/inclusion_forms.py:377
 #: student_registration/clm/models.py:900
 #: student_registration/clm/models.py:1526
 #: student_registration/clm/models.py:1765
-#: student_registration/clm/models.py:2213
-#: student_registration/clm/models.py:2625
-#: student_registration/clm/models.py:2879
+#: student_registration/clm/models.py:2215
+#: student_registration/clm/models.py:2647
+#: student_registration/clm/models.py:2901
 msgid "Referral from another NGO"
 msgstr "إحالة من جمعية أخرى"
 
 #: student_registration/clm/forms.py:651 student_registration/clm/forms.py:1884
 #: student_registration/clm/forms.py:3140
-#: student_registration/clm/forms.py:4491
+#: student_registration/clm/forms.py:4525
 #: student_registration/clm/inclusion_forms.py:378
 #: student_registration/clm/models.py:903
 #: student_registration/clm/models.py:1527
 #: student_registration/clm/models.py:1766
-#: student_registration/clm/models.py:2214
-#: student_registration/clm/models.py:2626
-#: student_registration/clm/models.py:2882
+#: student_registration/clm/models.py:2216
+#: student_registration/clm/models.py:2648
+#: student_registration/clm/models.py:2904
 msgid "Referral from Municipality"
 msgstr "احالة من قبل البلدية / مرجع رسمي"
 
 #: student_registration/clm/forms.py:652 student_registration/clm/forms.py:1885
 #: student_registration/clm/forms.py:3141
-#: student_registration/clm/forms.py:4492
+#: student_registration/clm/forms.py:4526
 #: student_registration/clm/inclusion_forms.py:379
 #: student_registration/clm/models.py:898
 #: student_registration/clm/models.py:1528
 #: student_registration/clm/models.py:1767
-#: student_registration/clm/models.py:2215
-#: student_registration/clm/models.py:2627
-#: student_registration/clm/models.py:2877
+#: student_registration/clm/models.py:2217
+#: student_registration/clm/models.py:2649
+#: student_registration/clm/models.py:2899
 msgid "Direct outreach"
 msgstr "احالة من قبل حملات التوعية الجمعية"
 
 #: student_registration/clm/forms.py:653 student_registration/clm/forms.py:1886
 #: student_registration/clm/forms.py:3142
-#: student_registration/clm/forms.py:4493
+#: student_registration/clm/forms.py:4527
 #: student_registration/clm/inclusion_forms.py:380
 #: student_registration/clm/models.py:899
 #: student_registration/clm/models.py:1529
 #: student_registration/clm/models.py:1768
-#: student_registration/clm/models.py:2216
-#: student_registration/clm/models.py:2628
-#: student_registration/clm/models.py:2878
+#: student_registration/clm/models.py:2218
+#: student_registration/clm/models.py:2650
+#: student_registration/clm/models.py:2900
 msgid "List database"
 msgstr " احلة عن طريق Profiling Database"
 
 #: student_registration/clm/forms.py:654
 #: student_registration/clm/inclusion_forms.py:381
 #: student_registration/clm/models.py:1530
-#: student_registration/clm/models.py:1929
-#: student_registration/clm/models.py:2884
+#: student_registration/clm/models.py:2906
 #: student_registration/templates/clm/abln_monitoring_questioner.html:30
 #: student_registration/templates/clm/abln_referral.html:28
 msgid "ABLN"
@@ -2732,11 +2730,11 @@ msgstr "إحالة من برنامج ABLN إالى  BLN programme"
 
 #: student_registration/clm/forms.py:659 student_registration/clm/forms.py:1892
 #: student_registration/clm/forms.py:3150
-#: student_registration/clm/forms.py:4501
-#: student_registration/clm/forms.py:6317
-#: student_registration/clm/forms.py:7061
-#: student_registration/clm/forms.py:7836
-#: student_registration/clm/forms.py:8616
+#: student_registration/clm/forms.py:4535
+#: student_registration/clm/forms.py:6351
+#: student_registration/clm/forms.py:7095
+#: student_registration/clm/forms.py:7870
+#: student_registration/clm/forms.py:8650
 msgid "Attended Arabic test"
 msgstr "هل خضع التلميذ إلى تقييم في تطوير اللغة العربية"
 
@@ -2753,45 +2751,45 @@ msgstr "هل خضع التلميذ إلى تقييم في تطوير اللغة 
 #: student_registration/clm/forms.py:3226
 #: student_registration/clm/forms.py:3243
 #: student_registration/clm/forms.py:3261
-#: student_registration/clm/forms.py:4508
-#: student_registration/clm/forms.py:4525
 #: student_registration/clm/forms.py:4542
 #: student_registration/clm/forms.py:4559
-#: student_registration/clm/forms.py:4578
-#: student_registration/clm/forms.py:4595
+#: student_registration/clm/forms.py:4576
+#: student_registration/clm/forms.py:4593
 #: student_registration/clm/forms.py:4612
-#: student_registration/clm/forms.py:6324
+#: student_registration/clm/forms.py:4629
+#: student_registration/clm/forms.py:4646
 #: student_registration/clm/forms.py:6358
-#: student_registration/clm/forms.py:6375
-#: student_registration/clm/forms.py:6393
-#: student_registration/clm/forms.py:6488
-#: student_registration/clm/forms.py:6518
-#: student_registration/clm/forms.py:6549
-#: student_registration/clm/forms.py:7068
-#: student_registration/clm/forms.py:7085
+#: student_registration/clm/forms.py:6392
+#: student_registration/clm/forms.py:6409
+#: student_registration/clm/forms.py:6427
+#: student_registration/clm/forms.py:6522
+#: student_registration/clm/forms.py:6552
+#: student_registration/clm/forms.py:6583
 #: student_registration/clm/forms.py:7102
 #: student_registration/clm/forms.py:7119
-#: student_registration/clm/forms.py:7137
-#: student_registration/clm/forms.py:7238
-#: student_registration/clm/forms.py:7268
-#: student_registration/clm/forms.py:7299
-#: student_registration/clm/forms.py:7843
-#: student_registration/clm/forms.py:7860
+#: student_registration/clm/forms.py:7136
+#: student_registration/clm/forms.py:7153
+#: student_registration/clm/forms.py:7171
+#: student_registration/clm/forms.py:7272
+#: student_registration/clm/forms.py:7302
+#: student_registration/clm/forms.py:7333
 #: student_registration/clm/forms.py:7877
 #: student_registration/clm/forms.py:7894
-#: student_registration/clm/forms.py:7913
-#: student_registration/clm/forms.py:7930
+#: student_registration/clm/forms.py:7911
+#: student_registration/clm/forms.py:7928
 #: student_registration/clm/forms.py:7947
-#: student_registration/clm/forms.py:8047
-#: student_registration/clm/forms.py:8077
-#: student_registration/clm/forms.py:8108
-#: student_registration/clm/forms.py:8622
-#: student_registration/clm/forms.py:8639
+#: student_registration/clm/forms.py:7964
+#: student_registration/clm/forms.py:7981
+#: student_registration/clm/forms.py:8081
+#: student_registration/clm/forms.py:8111
+#: student_registration/clm/forms.py:8142
 #: student_registration/clm/forms.py:8656
 #: student_registration/clm/forms.py:8673
-#: student_registration/clm/forms.py:8692
-#: student_registration/clm/forms.py:8709
+#: student_registration/clm/forms.py:8690
+#: student_registration/clm/forms.py:8707
 #: student_registration/clm/forms.py:8726
+#: student_registration/clm/forms.py:8743
+#: student_registration/clm/forms.py:8760
 msgid "Please indicate modality"
 msgstr " يرجى تحديد الألية المتبعة"
 
@@ -2808,36 +2806,36 @@ msgstr " يرجى تحديد الألية المتبعة"
 #: student_registration/clm/forms.py:3232
 #: student_registration/clm/forms.py:3249
 #: student_registration/clm/forms.py:3267
-#: student_registration/clm/forms.py:4514
-#: student_registration/clm/forms.py:4531
 #: student_registration/clm/forms.py:4548
-#: student_registration/clm/forms.py:4566
-#: student_registration/clm/forms.py:4584
-#: student_registration/clm/forms.py:4601
+#: student_registration/clm/forms.py:4565
+#: student_registration/clm/forms.py:4582
+#: student_registration/clm/forms.py:4600
 #: student_registration/clm/forms.py:4618
-#: student_registration/clm/forms.py:6330
+#: student_registration/clm/forms.py:4635
+#: student_registration/clm/forms.py:4652
 #: student_registration/clm/forms.py:6364
-#: student_registration/clm/forms.py:6382
-#: student_registration/clm/forms.py:6399
-#: student_registration/clm/forms.py:7074
-#: student_registration/clm/forms.py:7091
+#: student_registration/clm/forms.py:6398
+#: student_registration/clm/forms.py:6416
+#: student_registration/clm/forms.py:6433
 #: student_registration/clm/forms.py:7108
-#: student_registration/clm/forms.py:7126
-#: student_registration/clm/forms.py:7143
-#: student_registration/clm/forms.py:7849
-#: student_registration/clm/forms.py:7866
+#: student_registration/clm/forms.py:7125
+#: student_registration/clm/forms.py:7142
+#: student_registration/clm/forms.py:7160
+#: student_registration/clm/forms.py:7177
 #: student_registration/clm/forms.py:7883
-#: student_registration/clm/forms.py:7901
-#: student_registration/clm/forms.py:7919
-#: student_registration/clm/forms.py:7936
+#: student_registration/clm/forms.py:7900
+#: student_registration/clm/forms.py:7917
+#: student_registration/clm/forms.py:7935
 #: student_registration/clm/forms.py:7953
-#: student_registration/clm/forms.py:8628
-#: student_registration/clm/forms.py:8645
+#: student_registration/clm/forms.py:7970
+#: student_registration/clm/forms.py:7987
 #: student_registration/clm/forms.py:8662
-#: student_registration/clm/forms.py:8680
-#: student_registration/clm/forms.py:8698
-#: student_registration/clm/forms.py:8715
+#: student_registration/clm/forms.py:8679
+#: student_registration/clm/forms.py:8696
+#: student_registration/clm/forms.py:8714
 #: student_registration/clm/forms.py:8732
+#: student_registration/clm/forms.py:8749
+#: student_registration/clm/forms.py:8766
 #: student_registration/clm/models.py:1134
 #: student_registration/clm/models.py:1150
 #: student_registration/clm/models.py:1166
@@ -2845,63 +2843,63 @@ msgid "Results"
 msgstr "النتيجة"
 
 #: student_registration/clm/forms.py:677 student_registration/clm/forms.py:3168
-#: student_registration/clm/forms.py:4519
-#: student_registration/clm/forms.py:7079
-#: student_registration/clm/forms.py:7854
-#: student_registration/clm/forms.py:8633
+#: student_registration/clm/forms.py:4553
+#: student_registration/clm/forms.py:7113
+#: student_registration/clm/forms.py:7888
+#: student_registration/clm/forms.py:8667
 msgid "Attended English test"
 msgstr "هل خضع التلميذ إلى  تقييم في تطوير اللغة الأجنية (اللغة الثانية)"
 
 #: student_registration/clm/forms.py:694 student_registration/clm/forms.py:1932
 #: student_registration/clm/forms.py:3185
-#: student_registration/clm/forms.py:4536
-#: student_registration/clm/forms.py:6352
-#: student_registration/clm/forms.py:7096
-#: student_registration/clm/forms.py:7871
-#: student_registration/clm/forms.py:8650
+#: student_registration/clm/forms.py:4570
+#: student_registration/clm/forms.py:6386
+#: student_registration/clm/forms.py:7130
+#: student_registration/clm/forms.py:7905
+#: student_registration/clm/forms.py:8684
 msgid "Attended Math test"
 msgstr "هل خضع التلميذ إلى  تقييم التّطوّر الإدراكي- الرّياضيات"
 
 #: student_registration/clm/forms.py:711 student_registration/clm/forms.py:1949
-#: student_registration/clm/forms.py:4553
-#: student_registration/clm/forms.py:6369
-#: student_registration/clm/forms.py:7113
-#: student_registration/clm/forms.py:7888
-#: student_registration/clm/forms.py:8667
+#: student_registration/clm/forms.py:4587
+#: student_registration/clm/forms.py:6403
+#: student_registration/clm/forms.py:7147
+#: student_registration/clm/forms.py:7922
+#: student_registration/clm/forms.py:8701
 msgid "Attended Social test"
 msgstr "هل خضع التلميذ إلى تقييم التّطوّر الاجتماعيّ العاطفيّ"
 
 #: student_registration/clm/forms.py:729 student_registration/clm/forms.py:1968
-#: student_registration/clm/forms.py:4606
-#: student_registration/clm/forms.py:7941
-#: student_registration/clm/forms.py:8720
+#: student_registration/clm/forms.py:4640
+#: student_registration/clm/forms.py:7975
+#: student_registration/clm/forms.py:8754
 msgid "Attended Artistic test"
 msgstr "هل خضع التلميذ إلى تقييم التّطوّر الفنّيّ"
 
 #: student_registration/clm/forms.py:746 student_registration/clm/forms.py:1985
 #: student_registration/clm/forms.py:3272
-#: student_registration/clm/forms.py:4623
+#: student_registration/clm/forms.py:4657
 #: student_registration/clm/inclusion_forms.py:150
 #: student_registration/clm/models.py:1451
 #: student_registration/clm/models.py:1692
-#: student_registration/clm/models.py:2147
-#: student_registration/clm/models.py:2559
-#: student_registration/clm/models.py:3262
+#: student_registration/clm/models.py:2149
+#: student_registration/clm/models.py:2581
+#: student_registration/clm/models.py:3284
 msgid "Main Caregiver"
 msgstr "من هو ولي الأمر الرئيسي"
 
 #: student_registration/clm/forms.py:750 student_registration/clm/forms.py:1989
 #: student_registration/clm/forms.py:3276
-#: student_registration/clm/forms.py:4627
-#: student_registration/clm/forms.py:6498
-#: student_registration/clm/forms.py:6528
-#: student_registration/clm/forms.py:6559
-#: student_registration/clm/forms.py:7248
-#: student_registration/clm/forms.py:7278
-#: student_registration/clm/forms.py:7309
-#: student_registration/clm/forms.py:8057
-#: student_registration/clm/forms.py:8087
-#: student_registration/clm/forms.py:8118
+#: student_registration/clm/forms.py:4661
+#: student_registration/clm/forms.py:6532
+#: student_registration/clm/forms.py:6562
+#: student_registration/clm/forms.py:6593
+#: student_registration/clm/forms.py:7282
+#: student_registration/clm/forms.py:7312
+#: student_registration/clm/forms.py:7343
+#: student_registration/clm/forms.py:8091
+#: student_registration/clm/forms.py:8121
+#: student_registration/clm/forms.py:8152
 #: student_registration/clm/inclusion_forms.py:154
 #: student_registration/clm/models.py:549
 #: student_registration/clm/models.py:589
@@ -2909,23 +2907,23 @@ msgstr "من هو ولي الأمر الرئيسي"
 #: student_registration/clm/models.py:1400
 #: student_registration/clm/models.py:1641
 #: student_registration/clm/models.py:1891
-#: student_registration/clm/models.py:2439
-#: student_registration/clm/models.py:2867
+#: student_registration/clm/models.py:2461
+#: student_registration/clm/models.py:2889
 msgid "Mother"
 msgstr "الأم"
 
 #: student_registration/clm/forms.py:751 student_registration/clm/forms.py:1990
 #: student_registration/clm/forms.py:3277
-#: student_registration/clm/forms.py:4628
-#: student_registration/clm/forms.py:6499
-#: student_registration/clm/forms.py:6529
-#: student_registration/clm/forms.py:6560
-#: student_registration/clm/forms.py:7249
-#: student_registration/clm/forms.py:7279
-#: student_registration/clm/forms.py:7310
-#: student_registration/clm/forms.py:8058
-#: student_registration/clm/forms.py:8088
-#: student_registration/clm/forms.py:8119
+#: student_registration/clm/forms.py:4662
+#: student_registration/clm/forms.py:6533
+#: student_registration/clm/forms.py:6563
+#: student_registration/clm/forms.py:6594
+#: student_registration/clm/forms.py:7283
+#: student_registration/clm/forms.py:7313
+#: student_registration/clm/forms.py:7344
+#: student_registration/clm/forms.py:8092
+#: student_registration/clm/forms.py:8122
+#: student_registration/clm/forms.py:8153
 #: student_registration/clm/inclusion_forms.py:155
 #: student_registration/clm/models.py:550
 #: student_registration/clm/models.py:590
@@ -2933,27 +2931,27 @@ msgstr "الأم"
 #: student_registration/clm/models.py:1401
 #: student_registration/clm/models.py:1642
 #: student_registration/clm/models.py:1892
-#: student_registration/clm/models.py:2440
-#: student_registration/clm/models.py:2868
+#: student_registration/clm/models.py:2462
+#: student_registration/clm/models.py:2890
 msgid "Father"
 msgstr "الأب"
 
 #: student_registration/clm/forms.py:752 student_registration/clm/forms.py:1991
 #: student_registration/clm/forms.py:3278
-#: student_registration/clm/forms.py:4629
-#: student_registration/clm/forms.py:5520
-#: student_registration/clm/forms.py:5765
-#: student_registration/clm/forms.py:6016
-#: student_registration/clm/forms.py:6500
-#: student_registration/clm/forms.py:6530
-#: student_registration/clm/forms.py:6561
-#: student_registration/clm/forms.py:7250
-#: student_registration/clm/forms.py:7280
-#: student_registration/clm/forms.py:7311
-#: student_registration/clm/forms.py:7802
-#: student_registration/clm/forms.py:8059
-#: student_registration/clm/forms.py:8089
-#: student_registration/clm/forms.py:8120
+#: student_registration/clm/forms.py:4663
+#: student_registration/clm/forms.py:5554
+#: student_registration/clm/forms.py:5799
+#: student_registration/clm/forms.py:6050
+#: student_registration/clm/forms.py:6534
+#: student_registration/clm/forms.py:6564
+#: student_registration/clm/forms.py:6595
+#: student_registration/clm/forms.py:7284
+#: student_registration/clm/forms.py:7314
+#: student_registration/clm/forms.py:7345
+#: student_registration/clm/forms.py:7836
+#: student_registration/clm/forms.py:8093
+#: student_registration/clm/forms.py:8123
+#: student_registration/clm/forms.py:8154
 #: student_registration/clm/inclusion_forms.py:156
 #: student_registration/clm/models.py:194
 #: student_registration/clm/models.py:551
@@ -2966,31 +2964,31 @@ msgstr "الأب"
 #: student_registration/clm/models.py:1402
 #: student_registration/clm/models.py:1643
 #: student_registration/clm/models.py:1893
-#: student_registration/clm/models.py:2441
-#: student_registration/clm/models.py:2869
-#: student_registration/clm/models.py:3313
-#: student_registration/clm/models.py:3344
-#: student_registration/clm/models.py:3375
+#: student_registration/clm/models.py:2463
+#: student_registration/clm/models.py:2891
+#: student_registration/clm/models.py:3335
+#: student_registration/clm/models.py:3366
+#: student_registration/clm/models.py:3397
 #: student_registration/outreach/models.py:104
 #: student_registration/outreach/models.py:170
 msgid "Other"
 msgstr "آخر"
 
-#: student_registration/clm/forms.py:757 student_registration/clm/forms.py:5524
-#: student_registration/clm/forms.py:5769
-#: student_registration/clm/forms.py:6020
-#: student_registration/clm/forms.py:6289
-#: student_registration/clm/forms.py:6504
-#: student_registration/clm/forms.py:6534
-#: student_registration/clm/forms.py:6565
-#: student_registration/clm/forms.py:7033
-#: student_registration/clm/forms.py:7254
-#: student_registration/clm/forms.py:7284
-#: student_registration/clm/forms.py:7315
-#: student_registration/clm/forms.py:7808
-#: student_registration/clm/forms.py:8063
-#: student_registration/clm/forms.py:8093
-#: student_registration/clm/forms.py:8124
+#: student_registration/clm/forms.py:757 student_registration/clm/forms.py:5558
+#: student_registration/clm/forms.py:5803
+#: student_registration/clm/forms.py:6054
+#: student_registration/clm/forms.py:6323
+#: student_registration/clm/forms.py:6538
+#: student_registration/clm/forms.py:6568
+#: student_registration/clm/forms.py:6599
+#: student_registration/clm/forms.py:7067
+#: student_registration/clm/forms.py:7288
+#: student_registration/clm/forms.py:7318
+#: student_registration/clm/forms.py:7349
+#: student_registration/clm/forms.py:7842
+#: student_registration/clm/forms.py:8097
+#: student_registration/clm/forms.py:8127
+#: student_registration/clm/forms.py:8158
 #: student_registration/clm/models.py:419
 #: student_registration/clm/models.py:557
 #: student_registration/clm/models.py:597
@@ -3000,14 +2998,14 @@ msgid "Please specify"
 msgstr "يرجى التحديد"
 
 #: student_registration/clm/forms.py:789 student_registration/clm/forms.py:2022
-#: student_registration/clm/forms.py:3333
-#: student_registration/clm/forms.py:4673
+#: student_registration/clm/forms.py:3356
+#: student_registration/clm/forms.py:4707
 msgid "Search CLM student"
 msgstr "ابحث عن تلميذ قديم"
 
 #: student_registration/clm/forms.py:804 student_registration/clm/forms.py:2038
-#: student_registration/clm/forms.py:3348
-#: student_registration/clm/forms.py:4688
+#: student_registration/clm/forms.py:3371
+#: student_registration/clm/forms.py:4722
 msgid ""
 "Search by the following keywords: child first name, father name, last name, "
 "child number or partner internal number"
@@ -3016,48 +3014,48 @@ msgstr ""
 "التسلسلي الخاص بالجمعية ) او (الرقم  الخاص)"
 
 #: student_registration/clm/forms.py:814 student_registration/clm/forms.py:2048
-#: student_registration/clm/forms.py:3359
-#: student_registration/clm/forms.py:4699
+#: student_registration/clm/forms.py:3382
+#: student_registration/clm/forms.py:4733
 #: student_registration/clm/inclusion_forms.py:416
 msgid "General Information"
 msgstr "معلومات عامة عن الدورة"
 
 #: student_registration/clm/forms.py:861 student_registration/clm/forms.py:2095
-#: student_registration/clm/forms.py:3406
-#: student_registration/clm/forms.py:4746
+#: student_registration/clm/forms.py:3441
+#: student_registration/clm/forms.py:4780
 #: student_registration/clm/inclusion_forms.py:438
 msgid "Child Information"
 msgstr "المعلومات الشخصية للطفل"
 
 #: student_registration/clm/forms.py:928 student_registration/clm/forms.py:2162
-#: student_registration/clm/forms.py:3480
-#: student_registration/clm/forms.py:4813
+#: student_registration/clm/forms.py:3515
+#: student_registration/clm/forms.py:4847
 #: student_registration/clm/inclusion_forms.py:494
 msgid "Parent/Caregiver Information"
 msgstr "معلومات عن  ولي الأمر / الأهل او شخص أخر"
 
 #: student_registration/clm/forms.py:1109
 #: student_registration/clm/forms.py:2344
-#: student_registration/clm/forms.py:3656
-#: student_registration/clm/forms.py:4989
+#: student_registration/clm/forms.py:3691
+#: student_registration/clm/forms.py:5023
 #: student_registration/clm/inclusion_forms.py:662
 msgid "Family Status"
 msgstr "الوضع الاجتماعي للطفل"
 
 #: student_registration/clm/forms.py:1148
 #: student_registration/clm/forms.py:2383
-#: student_registration/clm/forms.py:3687
-#: student_registration/clm/forms.py:5020
-#: student_registration/clm/forms.py:6617
-#: student_registration/clm/forms.py:7368
-#: student_registration/clm/forms.py:8177
-#: student_registration/clm/forms.py:8774
+#: student_registration/clm/forms.py:3722
+#: student_registration/clm/forms.py:5054
+#: student_registration/clm/forms.py:6651
+#: student_registration/clm/forms.py:7402
+#: student_registration/clm/forms.py:8211
+#: student_registration/clm/forms.py:8808
 msgid "Assessment data"
 msgstr " التقييم"
 
 #: student_registration/clm/forms.py:1682
 #: student_registration/clm/models.py:788
-#: student_registration/clm/models.py:3065
+#: student_registration/clm/models.py:3087
 msgid "Enrolled in ABLN"
 msgstr "كان مسجلاً في مدرسة غير نظامية ولم يكمل"
 
@@ -3072,43 +3070,43 @@ msgid "specify"
 msgstr "يرجى التحديد"
 
 #: student_registration/clm/forms.py:2817
-#: student_registration/clm/forms.py:4174
+#: student_registration/clm/forms.py:4208
 msgid "In which cycle is this child registered?"
 msgstr "في أي مستوى هذا الطفل مسجل؟"
 
 #: student_registration/clm/forms.py:2832
-#: student_registration/clm/forms.py:4189
+#: student_registration/clm/forms.py:4223
 msgid "The school where the child is attending the program"
 msgstr "المدرسة التي يحضر فيها الطفل البرنامج"
 
 #: student_registration/clm/forms.py:2839
-#: student_registration/clm/forms.py:4196
-#: student_registration/clm/models.py:2004
-#: student_registration/clm/models.py:2485
+#: student_registration/clm/forms.py:4230
+#: student_registration/clm/models.py:2006
+#: student_registration/clm/models.py:2507
 msgid "Where was the child referred?"
 msgstr "من أين تم إحالة الطفل؟"
 
 #: student_registration/clm/forms.py:2845
-#: student_registration/clm/forms.py:4202
+#: student_registration/clm/forms.py:4236
 msgid "What is the measurement of the child's arm circumference? (Centimeter)"
 msgstr "ما هو قياس محيط ذراع الطفل؟ (بالسنتمتر)"
 
 #: student_registration/clm/forms.py:2849
-#: student_registration/clm/forms.py:4206
+#: student_registration/clm/forms.py:4240
 #: student_registration/clm/models.py:1859
-#: student_registration/clm/models.py:2413
+#: student_registration/clm/models.py:2435
 msgid "< 11.5 CM (severe malnutrition)"
 msgstr "<11.5 سم (سوء التغذية الحاد)"
 
 #: student_registration/clm/forms.py:2850
-#: student_registration/clm/forms.py:4207
+#: student_registration/clm/forms.py:4241
 #: student_registration/clm/models.py:1860
-#: student_registration/clm/models.py:2414
+#: student_registration/clm/models.py:2436
 msgid "< 12.5 CM (moderate malnutrition)"
 msgstr "<12.5 سم (سوء التغذية المعتدل)"
 
 #: student_registration/clm/forms.py:2854
-#: student_registration/clm/forms.py:4211
+#: student_registration/clm/forms.py:4245
 msgid "Final grade"
 msgstr "العلامة النهائية"
 
@@ -3121,124 +3119,163 @@ msgid "Source of identification of the child to RS"
 msgstr "مصدر احالة الطفل  إلى برنامج BLN"
 
 #: student_registration/clm/forms.py:3143
-#: student_registration/clm/forms.py:4494
-#: student_registration/clm/models.py:2217
-#: student_registration/clm/models.py:2629
+#: student_registration/clm/forms.py:4528
+#: student_registration/clm/models.py:2219
+#: student_registration/clm/models.py:2651
 msgid "From hosted community"
 msgstr "إحالة من المجتمع المضيف"
 
 #: student_registration/clm/forms.py:3144
-#: student_registration/clm/forms.py:4495
-#: student_registration/clm/models.py:2218
-#: student_registration/clm/models.py:2630
+#: student_registration/clm/forms.py:4529
+#: student_registration/clm/models.py:2220
+#: student_registration/clm/models.py:2652
 msgid "From displaced community"
 msgstr "إحالة من مجتمع النازحين"
 
 #: student_registration/clm/forms.py:3202
 msgid "Attended biology test"
-msgstr "هل خضع التلميذ إلى تقييم في تطوير اللغة العربية"
+msgstr "هل خضع التلميذ إلى  تقييم في مادة علوم الحياة"
 
 #: student_registration/clm/forms.py:3220
-#: student_registration/clm/forms.py:4589
-#: student_registration/clm/forms.py:7924
-#: student_registration/clm/forms.py:8703
+#: student_registration/clm/forms.py:4623
+#: student_registration/clm/forms.py:7958
+#: student_registration/clm/forms.py:8737
 msgid "Attended Science test"
 msgstr "هل خضع التلميذ إلى  تقييم التّطوّر الإدراكيّ - العلومّ"
 
 #: student_registration/clm/forms.py:3237
 msgid "Attended chemistry test"
-msgstr "هل خضع التلميذ إلى تقييم التّطوّر النّفسي الفني"
+msgstr "هل خضع التلميذ إلى  تقييم في مادة الكيمياء"
 
 #: student_registration/clm/forms.py:3255
 msgid "Attended physics test"
-msgstr "هل خضع التلميذ إلى تقييم التّطوّر الفنّيّ"
+msgstr "هل خضع التلميذ إلى  تقييم في مادة الفيزياء"
 
 #: student_registration/clm/forms.py:3297
-#: student_registration/clm/models.py:2227
+#: student_registration/clm/models.py:2229
 msgid ""
 "What was the child education level when first joining formal education in "
 "lebanon"
-msgstr "ما هو المستوى التعليمي للطفل عند التسجيل لأول مرة في التعليم الرسمي في لبنان"
+msgstr ""
+"ما هو المستوى التعليمي للطفل عند التسجيل لأول مرة في التعليم الرسمي في لبنان"
 
 #: student_registration/clm/forms.py:3303
-#: student_registration/clm/models.py:2234
+#: student_registration/clm/models.py:2236
 msgid "From where did the child first come to join  FE"
 msgstr " مصدر إحالة الطفل عند التسجيل لأول مرة في التعليم الرسمي"
 
-#: student_registration/clm/forms.py:4296
-#: student_registration/clm/models.py:1946
-#: student_registration/clm/models.py:2453
+#: student_registration/clm/forms.py:3309
+#: student_registration/clm/models.py:1982
+#, fuzzy
+#| msgid "Enrollment"
+msgid "School of Enrollment"
+msgstr "التسجيل"
+
+#: student_registration/clm/forms.py:3315
+#: student_registration/clm/models.py:1896
+#: student_registration/clm/models.py:1989
+msgid "Shift"
+msgstr "دوام التعليم"
+
+#: student_registration/clm/forms.py:3320
+#: student_registration/clm/models.py:2256
+msgid "Grade of registeration"
+msgstr " ما هو المستوى التعليمي للطفل عند التسجيل لأول مرة في التعليم الرسمي في لبنان"
+
+#: student_registration/clm/forms.py:3324
+#: student_registration/clm/models.py:2251
+msgid "6"
+msgstr ""
+
+#: student_registration/clm/forms.py:3325
+#: student_registration/clm/models.py:2252
+msgid "7"
+msgstr ""
+
+#: student_registration/clm/forms.py:3326
+#: student_registration/clm/models.py:2253
+msgid "8"
+msgstr ""
+
+#: student_registration/clm/forms.py:3327
+#: student_registration/clm/models.py:2254
+msgid "9"
+msgstr ""
+
+#: student_registration/clm/forms.py:4330
+#: student_registration/clm/models.py:1948
+#: student_registration/clm/models.py:2475
 msgid "Enrolled in CBECE"
 msgstr "كان مسجلاً في مدرسة غير نظامية ولم يكمل"
 
-#: student_registration/clm/forms.py:4483
+#: student_registration/clm/forms.py:4517
 msgid "Source of identification of the child to CBECE"
 msgstr "مصدر احالة الطفل  إلى برنامج CBECE"
 
-#: student_registration/clm/forms.py:4572
-#: student_registration/clm/forms.py:6387
-#: student_registration/clm/forms.py:7131
-#: student_registration/clm/forms.py:7907
-#: student_registration/clm/forms.py:8686
+#: student_registration/clm/forms.py:4606
+#: student_registration/clm/forms.py:6421
+#: student_registration/clm/forms.py:7165
+#: student_registration/clm/forms.py:7941
+#: student_registration/clm/forms.py:8720
 msgid "Attended Psychomotor test"
 msgstr "هل خضع التلميذ إلى تقييم التّطوّر النّفسي الفني"
 
-#: student_registration/clm/forms.py:5498
-#: student_registration/clm/forms.py:5743
-#: student_registration/clm/forms.py:5994
-#: student_registration/clm/forms.py:6307
-#: student_registration/clm/forms.py:7051
-#: student_registration/clm/forms.py:7826
+#: student_registration/clm/forms.py:5532
+#: student_registration/clm/forms.py:5777
+#: student_registration/clm/forms.py:6028
+#: student_registration/clm/forms.py:6341
+#: student_registration/clm/forms.py:7085
+#: student_registration/clm/forms.py:7860
 #: student_registration/clm/models.py:1206
 msgid "Did the child receive basic stationery?"
 msgstr " هل حصل الطفل على القرطاسية الأساسية؟"
 
-#: student_registration/clm/forms.py:5508
-#: student_registration/clm/forms.py:5753
-#: student_registration/clm/forms.py:6004
+#: student_registration/clm/forms.py:5542
+#: student_registration/clm/forms.py:5787
+#: student_registration/clm/forms.py:6038
 msgid "'Was the child involved in remote learning?"
 msgstr "هل شارك الطفل في التعلم عن بعد؟"
 
-#: student_registration/clm/forms.py:5513
-#: student_registration/clm/forms.py:5758
-#: student_registration/clm/forms.py:6009
+#: student_registration/clm/forms.py:5547
+#: student_registration/clm/forms.py:5792
+#: student_registration/clm/forms.py:6043
 #: student_registration/clm/models.py:1234
 msgid "what other reasons for this child not being engaged?"
 msgstr "ما هي أسباب عدم المشاركة؟"
 
-#: student_registration/clm/forms.py:5517
-#: student_registration/clm/forms.py:5762
-#: student_registration/clm/forms.py:6013
+#: student_registration/clm/forms.py:5551
+#: student_registration/clm/forms.py:5796
+#: student_registration/clm/forms.py:6047
 #: student_registration/clm/models.py:1229
 msgid "Child relocated"
 msgstr "تغيير مكان السكن"
 
-#: student_registration/clm/forms.py:5518
-#: student_registration/clm/forms.py:5763
-#: student_registration/clm/forms.py:6014
+#: student_registration/clm/forms.py:5552
+#: student_registration/clm/forms.py:5797
+#: student_registration/clm/forms.py:6048
 #: student_registration/clm/models.py:1230
 msgid "Child is not reachable"
 msgstr "عدم القدرة للوصول إلى الطفل"
 
-#: student_registration/clm/forms.py:5519
-#: student_registration/clm/forms.py:5764
-#: student_registration/clm/forms.py:6015
+#: student_registration/clm/forms.py:5553
+#: student_registration/clm/forms.py:5798
+#: student_registration/clm/forms.py:6049
 #: student_registration/clm/models.py:1231
 msgid "Child did not fit the criteria - enrolled in previous FE"
 msgstr "الطفل لا يستوفي الشروط المطلوبة للمشاركة (كان مسجلًا في التعليم الرسمي)"
 
-#: student_registration/clm/forms.py:5528
-#: student_registration/clm/forms.py:5773
-#: student_registration/clm/forms.py:6024
+#: student_registration/clm/forms.py:5562
+#: student_registration/clm/forms.py:5807
+#: student_registration/clm/forms.py:6058
 #: student_registration/clm/models.py:1247
 msgid ""
 "Does the family have reliable internet service in their area during remote "
 "learning?"
 msgstr "هل  خدمة إنترنت متوفرة للأهل في منطقتهم أثناء التعلم عن بعد؟"
 
-#: student_registration/clm/forms.py:5534
-#: student_registration/clm/forms.py:5779
-#: student_registration/clm/forms.py:6030
+#: student_registration/clm/forms.py:5568
+#: student_registration/clm/forms.py:5813
+#: student_registration/clm/forms.py:6064
 #: student_registration/clm/models.py:1255
 msgid ""
 "Did both girls and boys in the same family participate in the class and have "
@@ -3247,39 +3284,39 @@ msgstr ""
 "هل شارك كل من الفتيات والفتيان من نفس العائلة في الفصل التعليمي وتمكنوا من "
 "استخدام الهاتف/الجهاز؟"
 
-#: student_registration/clm/forms.py:5539
-#: student_registration/clm/forms.py:5784
-#: student_registration/clm/forms.py:6035
+#: student_registration/clm/forms.py:5573
+#: student_registration/clm/forms.py:5818
+#: student_registration/clm/forms.py:6069
 #: student_registration/clm/models.py:1259
 msgid "Explain"
 msgstr "اشرح"
 
-#: student_registration/clm/forms.py:5543
-#: student_registration/clm/forms.py:5788
-#: student_registration/clm/forms.py:6039
+#: student_registration/clm/forms.py:5577
+#: student_registration/clm/forms.py:5822
+#: student_registration/clm/forms.py:6073
 #: student_registration/clm/models.py:1266
 msgid "Frequency of Child Engagement in remote learning?"
 msgstr "معدل انخراط الطفل في التعلم عن بعد؟"
 
-#: student_registration/clm/forms.py:5548
-#: student_registration/clm/forms.py:5793
-#: student_registration/clm/forms.py:6044
+#: student_registration/clm/forms.py:5582
+#: student_registration/clm/forms.py:5827
+#: student_registration/clm/forms.py:6078
 #: student_registration/clm/models.py:1273
 msgid "How well did the child meet the learning outcomes?"
 msgstr "الى اي مدى تمكن الطفل من تحقيق نتائج التعلم المرجوة؟"
 
-#: student_registration/clm/forms.py:5554
-#: student_registration/clm/forms.py:5799
-#: student_registration/clm/forms.py:6050
+#: student_registration/clm/forms.py:5588
+#: student_registration/clm/forms.py:5833
+#: student_registration/clm/forms.py:6084
 #: student_registration/clm/models.py:1280
 msgid ""
 "How do you rate the parents learning support provided to the child through "
 "this Remote learning phase?"
 msgstr "كيف تقيم دعم اأهل الطفل في تقديم المساعدة المطلوبة؟"
 
-#: student_registration/clm/forms.py:5560
-#: student_registration/clm/forms.py:5805
-#: student_registration/clm/forms.py:6056
+#: student_registration/clm/forms.py:5594
+#: student_registration/clm/forms.py:5839
+#: student_registration/clm/forms.py:6090
 msgid ""
 "Has the child directly been reached with awareness directlymessaging on "
 "Covid-19 and prevention measures?"
@@ -3287,20 +3324,20 @@ msgstr ""
 "هل تم التواصل مع مقدم الرعاية /الاهل مباشرةً من خلال رسائل التوعية حول "
 "Covid-19 وتدابير الوقاية؟"
 
-#: student_registration/clm/forms.py:5565
-#: student_registration/clm/forms.py:5576
-#: student_registration/clm/forms.py:5810
-#: student_registration/clm/forms.py:5821
-#: student_registration/clm/forms.py:6061
-#: student_registration/clm/forms.py:6072
+#: student_registration/clm/forms.py:5599
+#: student_registration/clm/forms.py:5610
+#: student_registration/clm/forms.py:5844
+#: student_registration/clm/forms.py:5855
+#: student_registration/clm/forms.py:6095
+#: student_registration/clm/forms.py:6106
 #: student_registration/clm/models.py:1294
 #: student_registration/clm/models.py:1309
 msgid "How often?"
 msgstr " كم مرة؟"
 
-#: student_registration/clm/forms.py:5571
-#: student_registration/clm/forms.py:5816
-#: student_registration/clm/forms.py:6067
+#: student_registration/clm/forms.py:5605
+#: student_registration/clm/forms.py:5850
+#: student_registration/clm/forms.py:6101
 msgid ""
 "Has the parents directly been reached with awareness messaging on Covid-19 "
 "and prevention measures?"
@@ -3308,157 +3345,157 @@ msgstr ""
 "هل تم التواصل مع الأطفل مباشرةً من خلال رسائل التوعية حول Covid-19 وتدابير "
 "الوقاية؟"
 
-#: student_registration/clm/forms.py:5582
-#: student_registration/clm/forms.py:5827
-#: student_registration/clm/forms.py:6078
+#: student_registration/clm/forms.py:5616
+#: student_registration/clm/forms.py:5861
+#: student_registration/clm/forms.py:6112
 #: student_registration/clm/models.py:1317
 msgid ""
 "Was any follow-up done to ensure messages were well received, understood and "
 "adopted?"
 msgstr "هل تم إجراء أي متابعة لضمان تلقي الرسائل وفهمها واعتمادها بشكل جيد؟"
 
-#: student_registration/clm/forms.py:5587
-#: student_registration/clm/forms.py:5832
-#: student_registration/clm/forms.py:6083
+#: student_registration/clm/forms.py:5621
+#: student_registration/clm/forms.py:5866
+#: student_registration/clm/forms.py:6117
 #: student_registration/clm/models.py:1324
 msgid "With who child and/or caregiver?"
 msgstr "مع من تم التواصل الطفل مع/او مقدم الرعاية؟"
 
-#: student_registration/clm/forms.py:5748
-#: student_registration/clm/forms.py:6312
-#: student_registration/clm/forms.py:7056
+#: student_registration/clm/forms.py:5782
+#: student_registration/clm/forms.py:6346
+#: student_registration/clm/forms.py:7090
 #: student_registration/clm/models.py:1213
 msgid "Did the child benefit from the PSS kit?"
 msgstr " هل حصل الطفل على عدة الدعم النفسي؟"
 
-#: student_registration/clm/forms.py:6250
-#: student_registration/clm/forms.py:6995
-#: student_registration/clm/forms.py:7757
+#: student_registration/clm/forms.py:6284
+#: student_registration/clm/forms.py:7029
+#: student_registration/clm/forms.py:7791
 #: student_registration/clm/inclusion_forms.py:972
 msgid "How was the level of child participation in the program?"
 msgstr "كيف كان مستوى مشاركة الطفل في البرنامج؟"
 
-#: student_registration/clm/forms.py:6258
-#: student_registration/clm/forms.py:7003
-#: student_registration/clm/forms.py:7765
+#: student_registration/clm/forms.py:6292
+#: student_registration/clm/forms.py:7037
+#: student_registration/clm/forms.py:7799
 #: student_registration/clm/models.py:175
 msgid "15 to 25 absence days"
 msgstr "غياب ما بين 25-15 ايام/او ما يعادلها بالنسبة للتعليم عن بعد"
 
-#: student_registration/clm/forms.py:6259
-#: student_registration/clm/forms.py:7004
-#: student_registration/clm/forms.py:7766
+#: student_registration/clm/forms.py:6293
+#: student_registration/clm/forms.py:7038
+#: student_registration/clm/forms.py:7800
 #: student_registration/clm/models.py:176
 msgid "More than 25 absence days"
 msgstr "غياب اكثر من 25 ايام/او ما يعادلها بالنسبة للتعليم عن بعدب"
 
-#: student_registration/clm/forms.py:6265
-#: student_registration/clm/forms.py:7010
-#: student_registration/clm/forms.py:7772
+#: student_registration/clm/forms.py:6299
+#: student_registration/clm/forms.py:7044
+#: student_registration/clm/forms.py:7806
 #: student_registration/clm/inclusion_forms.py:986
 msgid "Based on the overall score, what is the recommended learning path?"
 msgstr "استنادا إلى الدرجة الكلية، ما هو المسار التعليمي الموصى به؟"
 
-#: student_registration/clm/forms.py:6270
-#: student_registration/clm/forms.py:7015
-#: student_registration/clm/forms.py:7777
+#: student_registration/clm/forms.py:6304
+#: student_registration/clm/forms.py:7049
+#: student_registration/clm/forms.py:7811
 #: student_registration/clm/inclusion_forms.py:990
 #: student_registration/clm/models.py:215
 #: student_registration/clm/models.py:1384
 #: student_registration/clm/models.py:1625
 #: student_registration/clm/models.py:1876
-#: student_registration/clm/models.py:2424
-#: student_registration/clm/models.py:2858
+#: student_registration/clm/models.py:2446
+#: student_registration/clm/models.py:2880
 msgid "Graduated to the next round, same level"
 msgstr "إكمال في نفس المستوى في الدورة القادمة"
 
-#: student_registration/clm/forms.py:6271
-#: student_registration/clm/forms.py:7016
+#: student_registration/clm/forms.py:6305
+#: student_registration/clm/forms.py:7050
 #: student_registration/clm/inclusion_forms.py:991
 #: student_registration/clm/models.py:216
 #: student_registration/clm/models.py:1385
 #: student_registration/clm/models.py:1626
-#: student_registration/clm/models.py:2859
+#: student_registration/clm/models.py:2881
 msgid "Graduated to the next round, higher level"
 msgstr "يرفع إالى المستوى الأعلى في الدورة القادمة"
 
-#: student_registration/clm/forms.py:6272
-#: student_registration/clm/forms.py:7017
+#: student_registration/clm/forms.py:6306
+#: student_registration/clm/forms.py:7051
 #: student_registration/clm/models.py:1386
 #: student_registration/clm/models.py:1878
-#: student_registration/clm/models.py:2426
+#: student_registration/clm/models.py:2448
 msgid "referred to ALP"
 msgstr "أحيل إلى برنامج ALP"
 
-#: student_registration/clm/forms.py:6273
-#: student_registration/clm/forms.py:7018
+#: student_registration/clm/forms.py:6307
+#: student_registration/clm/forms.py:7052
 #: student_registration/clm/models.py:1387
 msgid "Referred to public school"
 msgstr "يرفع الى التعليم الرسمي"
 
-#: student_registration/clm/forms.py:6274
-#: student_registration/clm/forms.py:7019
+#: student_registration/clm/forms.py:6308
+#: student_registration/clm/forms.py:7053
 #: student_registration/clm/models.py:1388
 #: student_registration/clm/models.py:1880
-#: student_registration/clm/models.py:2428
+#: student_registration/clm/models.py:2450
 msgid "Referred to TVET"
 msgstr "الأحالة الى التعليم المهني و التقني (TVET)"
 
-#: student_registration/clm/forms.py:6275
-#: student_registration/clm/forms.py:7020
+#: student_registration/clm/forms.py:6309
+#: student_registration/clm/forms.py:7054
 #: student_registration/clm/inclusion_forms.py:993
 #: student_registration/clm/models.py:1389
 #: student_registration/clm/models.py:1628
-#: student_registration/clm/models.py:2861
+#: student_registration/clm/models.py:2883
 msgid "Referred to YBLN"
 msgstr "الأحالة إالى برنامج المراهقين (YBLN)"
 
-#: student_registration/clm/forms.py:6277
+#: student_registration/clm/forms.py:6311
 #: student_registration/clm/inclusion_forms.py:992
 #: student_registration/clm/models.py:1627
-#: student_registration/clm/models.py:2860
+#: student_registration/clm/models.py:2882
 msgid "Referred to BLN"
 msgstr " الأحالة من ABLN إلى برنامج BLN"
 
-#: student_registration/clm/forms.py:6282
-#: student_registration/clm/forms.py:7026
-#: student_registration/clm/forms.py:7788
+#: student_registration/clm/forms.py:6316
+#: student_registration/clm/forms.py:7060
+#: student_registration/clm/forms.py:7822
 #: student_registration/clm/inclusion_forms.py:1001
 msgid ""
 "The main barriers affecting the daily attendance and performance of the "
 "child or drop out of programme? (Select more than one if applicable)"
 msgstr "السبب الرئيسي للغياب"
 
-#: student_registration/clm/forms.py:6293
-#: student_registration/clm/forms.py:7037
-#: student_registration/clm/forms.py:7812
+#: student_registration/clm/forms.py:6327
+#: student_registration/clm/forms.py:7071
+#: student_registration/clm/forms.py:7846
 msgid "Post test has been done"
 msgstr "هل خضع التلميذ الى التقييم النهائي (Post-test)؟"
 
-#: student_registration/clm/forms.py:6300
-#: student_registration/clm/forms.py:7044
-#: student_registration/clm/forms.py:7819
+#: student_registration/clm/forms.py:6334
+#: student_registration/clm/forms.py:7078
+#: student_registration/clm/forms.py:7853
 #: student_registration/clm/models.py:434
 msgid "Round complete"
 msgstr "هل اتم الطفل الدورة بنجاح؟"
 
-#: student_registration/clm/forms.py:6405
-#: student_registration/clm/forms.py:7149
-#: student_registration/clm/forms.py:7958
+#: student_registration/clm/forms.py:6439
+#: student_registration/clm/forms.py:7183
+#: student_registration/clm/forms.py:7992
 #: student_registration/clm/models.py:446
 msgid "Type of follow up"
 msgstr "نوع المتابعة"
 
-#: student_registration/clm/forms.py:6408
-#: student_registration/clm/forms.py:7152
-#: student_registration/clm/forms.py:7961
+#: student_registration/clm/forms.py:6442
+#: student_registration/clm/forms.py:7186
+#: student_registration/clm/forms.py:7995
 #: student_registration/clm/models.py:441
 msgid "----------"
 msgstr ""
 
-#: student_registration/clm/forms.py:6409
-#: student_registration/clm/forms.py:7153
-#: student_registration/clm/forms.py:7962
+#: student_registration/clm/forms.py:6443
+#: student_registration/clm/forms.py:7187
+#: student_registration/clm/forms.py:7996
 #: student_registration/clm/models.py:442
 #: student_registration/clm/models.py:469
 #: student_registration/clm/models.py:483
@@ -3466,216 +3503,216 @@ msgstr ""
 msgid "Phone Call"
 msgstr "إتصال هاتفي"
 
-#: student_registration/clm/forms.py:6410
-#: student_registration/clm/forms.py:7154
-#: student_registration/clm/forms.py:7963
+#: student_registration/clm/forms.py:6444
+#: student_registration/clm/forms.py:7188
+#: student_registration/clm/forms.py:7997
 #: student_registration/clm/models.py:443
 msgid "House Visit"
 msgstr "زيارة منزلية"
 
-#: student_registration/clm/forms.py:6411
-#: student_registration/clm/forms.py:7155
-#: student_registration/clm/forms.py:7964
+#: student_registration/clm/forms.py:6445
+#: student_registration/clm/forms.py:7189
+#: student_registration/clm/forms.py:7998
 #: student_registration/clm/models.py:444
 msgid "Family Visit"
 msgstr "زيارة الأهل للمركز"
 
-#: student_registration/clm/forms.py:6416
-#: student_registration/clm/forms.py:7160
-#: student_registration/clm/forms.py:7969
+#: student_registration/clm/forms.py:6450
+#: student_registration/clm/forms.py:7194
+#: student_registration/clm/forms.py:8003
 #: student_registration/clm/models.py:452
 msgid "Please enter the number phone calls"
 msgstr "الرجاء إدخال عدد الاتصالات"
 
-#: student_registration/clm/forms.py:6421
-#: student_registration/clm/forms.py:7165
-#: student_registration/clm/forms.py:7974
+#: student_registration/clm/forms.py:6455
+#: student_registration/clm/forms.py:7199
+#: student_registration/clm/forms.py:8008
 #: student_registration/clm/models.py:457
 msgid "Please enter the number of house visits"
 msgstr "الرجاء إدخال عدد الزيارات المنزلية"
 
-#: student_registration/clm/forms.py:6426
-#: student_registration/clm/forms.py:7170
-#: student_registration/clm/forms.py:7979
+#: student_registration/clm/forms.py:6460
+#: student_registration/clm/forms.py:7204
+#: student_registration/clm/forms.py:8013
 #: student_registration/clm/models.py:462
 #: student_registration/clm/models.py:660
 msgid "Please enter the number parent visits"
 msgstr "الرجاء إدخال عدد زيارة الأهل للمركز"
 
-#: student_registration/clm/forms.py:6431
-#: student_registration/clm/forms.py:6444
-#: student_registration/clm/forms.py:6457
-#: student_registration/clm/forms.py:7175
-#: student_registration/clm/forms.py:7188
-#: student_registration/clm/forms.py:7201
-#: student_registration/clm/forms.py:7984
-#: student_registration/clm/forms.py:7997
-#: student_registration/clm/forms.py:8010
+#: student_registration/clm/forms.py:6465
+#: student_registration/clm/forms.py:6478
+#: student_registration/clm/forms.py:6491
+#: student_registration/clm/forms.py:7209
+#: student_registration/clm/forms.py:7222
+#: student_registration/clm/forms.py:7235
+#: student_registration/clm/forms.py:8018
+#: student_registration/clm/forms.py:8031
+#: student_registration/clm/forms.py:8044
 #: student_registration/clm/models.py:476
 #: student_registration/clm/models.py:490
 #: student_registration/clm/models.py:504
 msgid "Result of follow up"
 msgstr "نتيجة المتابعة"
 
-#: student_registration/clm/forms.py:6434
-#: student_registration/clm/forms.py:6447
-#: student_registration/clm/forms.py:6460
-#: student_registration/clm/forms.py:7178
-#: student_registration/clm/forms.py:7191
-#: student_registration/clm/forms.py:7204
-#: student_registration/clm/forms.py:7987
-#: student_registration/clm/forms.py:8000
-#: student_registration/clm/forms.py:8013
+#: student_registration/clm/forms.py:6468
+#: student_registration/clm/forms.py:6481
+#: student_registration/clm/forms.py:6494
+#: student_registration/clm/forms.py:7212
+#: student_registration/clm/forms.py:7225
+#: student_registration/clm/forms.py:7238
+#: student_registration/clm/forms.py:8021
+#: student_registration/clm/forms.py:8034
+#: student_registration/clm/forms.py:8047
 msgid "Child returned to Round"
 msgstr "إعادة الطفل إالى الدورة"
 
-#: student_registration/clm/forms.py:6435
-#: student_registration/clm/forms.py:6448
-#: student_registration/clm/forms.py:6461
-#: student_registration/clm/forms.py:7179
-#: student_registration/clm/forms.py:7192
-#: student_registration/clm/forms.py:7205
-#: student_registration/clm/forms.py:7988
-#: student_registration/clm/forms.py:8001
-#: student_registration/clm/forms.py:8014
+#: student_registration/clm/forms.py:6469
+#: student_registration/clm/forms.py:6482
+#: student_registration/clm/forms.py:6495
+#: student_registration/clm/forms.py:7213
+#: student_registration/clm/forms.py:7226
+#: student_registration/clm/forms.py:7239
+#: student_registration/clm/forms.py:8022
+#: student_registration/clm/forms.py:8035
+#: student_registration/clm/forms.py:8048
 msgid "Child referred to specialized services"
 msgstr "إحالة الطفل إلى الخدمات المتخصصة"
 
-#: student_registration/clm/forms.py:6436
-#: student_registration/clm/forms.py:6449
-#: student_registration/clm/forms.py:6462
-#: student_registration/clm/forms.py:7180
-#: student_registration/clm/forms.py:7193
-#: student_registration/clm/forms.py:7206
-#: student_registration/clm/forms.py:7989
-#: student_registration/clm/forms.py:8002
-#: student_registration/clm/forms.py:8015
+#: student_registration/clm/forms.py:6470
+#: student_registration/clm/forms.py:6483
+#: student_registration/clm/forms.py:6496
+#: student_registration/clm/forms.py:7214
+#: student_registration/clm/forms.py:7227
+#: student_registration/clm/forms.py:7240
+#: student_registration/clm/forms.py:8023
+#: student_registration/clm/forms.py:8036
+#: student_registration/clm/forms.py:8049
 msgid "Child referred to protection"
 msgstr "إحالة الطفل إلى برنامج حماية الطفل"
 
-#: student_registration/clm/forms.py:6437
-#: student_registration/clm/forms.py:6450
-#: student_registration/clm/forms.py:6463
-#: student_registration/clm/forms.py:7181
-#: student_registration/clm/forms.py:7194
-#: student_registration/clm/forms.py:7207
-#: student_registration/clm/forms.py:7990
-#: student_registration/clm/forms.py:8003
-#: student_registration/clm/forms.py:8016
+#: student_registration/clm/forms.py:6471
+#: student_registration/clm/forms.py:6484
+#: student_registration/clm/forms.py:6497
+#: student_registration/clm/forms.py:7215
+#: student_registration/clm/forms.py:7228
+#: student_registration/clm/forms.py:7241
+#: student_registration/clm/forms.py:8024
+#: student_registration/clm/forms.py:8037
+#: student_registration/clm/forms.py:8050
 msgid "Child referred to Health programme"
 msgstr "إحالة الطفل إالى برنامج الصحة"
 
-#: student_registration/clm/forms.py:6438
-#: student_registration/clm/forms.py:6451
-#: student_registration/clm/forms.py:6464
-#: student_registration/clm/forms.py:7182
-#: student_registration/clm/forms.py:7195
-#: student_registration/clm/forms.py:7208
-#: student_registration/clm/forms.py:7991
-#: student_registration/clm/forms.py:8004
-#: student_registration/clm/forms.py:8017
+#: student_registration/clm/forms.py:6472
+#: student_registration/clm/forms.py:6485
+#: student_registration/clm/forms.py:6498
+#: student_registration/clm/forms.py:7216
+#: student_registration/clm/forms.py:7229
+#: student_registration/clm/forms.py:7242
+#: student_registration/clm/forms.py:8025
+#: student_registration/clm/forms.py:8038
+#: student_registration/clm/forms.py:8051
 msgid "Follow-up with parents"
 msgstr "االمتابعة مع ولي الأمر"
 
-#: student_registration/clm/forms.py:6439
-#: student_registration/clm/forms.py:6452
-#: student_registration/clm/forms.py:6465
-#: student_registration/clm/forms.py:7183
-#: student_registration/clm/forms.py:7196
-#: student_registration/clm/forms.py:7209
-#: student_registration/clm/forms.py:7992
-#: student_registration/clm/forms.py:8005
-#: student_registration/clm/forms.py:8018
+#: student_registration/clm/forms.py:6473
+#: student_registration/clm/forms.py:6486
+#: student_registration/clm/forms.py:6499
+#: student_registration/clm/forms.py:7217
+#: student_registration/clm/forms.py:7230
+#: student_registration/clm/forms.py:7243
+#: student_registration/clm/forms.py:8026
+#: student_registration/clm/forms.py:8039
+#: student_registration/clm/forms.py:8052
 msgid "Dropout/No Interest"
 msgstr "التسرب/ عدم الرغبة في التعلم"
 
-#: student_registration/clm/forms.py:6470
-#: student_registration/clm/forms.py:7220
-#: student_registration/clm/forms.py:8029
+#: student_registration/clm/forms.py:6504
+#: student_registration/clm/forms.py:7254
+#: student_registration/clm/forms.py:8063
 #: student_registration/clm/models.py:511
 msgid "CP Followup"
 msgstr " هل تم تحويل الطفل الى برنامج حماية الطفل (CP programme)"
 
-#: student_registration/clm/forms.py:6478
-#: student_registration/clm/forms.py:7228
-#: student_registration/clm/forms.py:8037
+#: student_registration/clm/forms.py:6512
+#: student_registration/clm/forms.py:7262
+#: student_registration/clm/forms.py:8071
 #: student_registration/clm/models.py:525
 #: student_registration/clm/models.py:564
 #: student_registration/clm/models.py:605
 msgid "Attended PSS Session"
 msgstr "هل خضع ولي أمر الطفل إلى جلسات الدعم النفسي والاجتماعيّ"
 
-#: student_registration/clm/forms.py:6483
-#: student_registration/clm/forms.py:6513
-#: student_registration/clm/forms.py:6543
-#: student_registration/clm/forms.py:7233
-#: student_registration/clm/forms.py:7263
-#: student_registration/clm/forms.py:7293
-#: student_registration/clm/forms.py:8042
-#: student_registration/clm/forms.py:8072
-#: student_registration/clm/forms.py:8102
+#: student_registration/clm/forms.py:6517
+#: student_registration/clm/forms.py:6547
+#: student_registration/clm/forms.py:6577
+#: student_registration/clm/forms.py:7267
+#: student_registration/clm/forms.py:7297
+#: student_registration/clm/forms.py:7327
+#: student_registration/clm/forms.py:8076
+#: student_registration/clm/forms.py:8106
+#: student_registration/clm/forms.py:8136
 msgid "Please enter the number of sessions"
 msgstr "الرجاء إدخال عدد الجلسات"
 
-#: student_registration/clm/forms.py:6494
-#: student_registration/clm/forms.py:6524
-#: student_registration/clm/forms.py:6555
-#: student_registration/clm/forms.py:7244
-#: student_registration/clm/forms.py:7274
-#: student_registration/clm/forms.py:7305
-#: student_registration/clm/forms.py:8053
-#: student_registration/clm/forms.py:8083
-#: student_registration/clm/forms.py:8114
+#: student_registration/clm/forms.py:6528
+#: student_registration/clm/forms.py:6558
+#: student_registration/clm/forms.py:6589
+#: student_registration/clm/forms.py:7278
+#: student_registration/clm/forms.py:7308
+#: student_registration/clm/forms.py:7339
+#: student_registration/clm/forms.py:8087
+#: student_registration/clm/forms.py:8117
+#: student_registration/clm/forms.py:8148
 msgid "Parent who attended the parents meeting"
 msgstr "من حضر"
 
-#: student_registration/clm/forms.py:6508
-#: student_registration/clm/forms.py:7258
-#: student_registration/clm/forms.py:8067
+#: student_registration/clm/forms.py:6542
+#: student_registration/clm/forms.py:7292
+#: student_registration/clm/forms.py:8101
 msgid "Attended covid Session"
 msgstr "هل خضع ولي أمر الطفل إلى جلسات التتوعية عن COVID-19"
 
-#: student_registration/clm/forms.py:6538
-#: student_registration/clm/forms.py:7288
-#: student_registration/clm/forms.py:8097
+#: student_registration/clm/forms.py:6572
+#: student_registration/clm/forms.py:7322
+#: student_registration/clm/forms.py:8131
 msgid "Attended followup Session"
 msgstr "هل خضع ولي أمر الطفل إلى جلسات متابعة"
 
-#: student_registration/clm/forms.py:6569
-#: student_registration/clm/forms.py:7319
-#: student_registration/clm/forms.py:8128
+#: student_registration/clm/forms.py:6603
+#: student_registration/clm/forms.py:7353
+#: student_registration/clm/forms.py:8162
 msgid "Did the child receive health exam"
 msgstr "هل خضع الطفل إالى الفحص الطبي؟"
 
-#: student_registration/clm/forms.py:6575
-#: student_registration/clm/forms.py:7325
-#: student_registration/clm/forms.py:8134
+#: student_registration/clm/forms.py:6609
+#: student_registration/clm/forms.py:7359
+#: student_registration/clm/forms.py:8168
 #: student_registration/clm/models.py:674
 msgid "Anything to worry about"
 msgstr "هل هناك شيئ يدعو للقلق"
 
-#: student_registration/clm/forms.py:6625
-#: student_registration/clm/forms.py:7376
-#: student_registration/clm/forms.py:8185
-#: student_registration/clm/forms.py:8782
+#: student_registration/clm/forms.py:6659
+#: student_registration/clm/forms.py:7410
+#: student_registration/clm/forms.py:8219
+#: student_registration/clm/forms.py:8816
 #: student_registration/clm/inclusion_forms.py:1024
 msgid "School evaluation"
 msgstr " تقييم المشاركة "
 
-#: student_registration/clm/forms.py:6718
-#: student_registration/clm/forms.py:7468
-#: student_registration/clm/forms.py:8294
+#: student_registration/clm/forms.py:6752
+#: student_registration/clm/forms.py:7502
+#: student_registration/clm/forms.py:8328
 msgid "Follow up"
 msgstr "المتابعة"
 
-#: student_registration/clm/forms.py:6751
-#: student_registration/clm/forms.py:7501
-#: student_registration/clm/forms.py:8327
+#: student_registration/clm/forms.py:6785
+#: student_registration/clm/forms.py:7535
+#: student_registration/clm/forms.py:8361
 msgid "Parents Meeting and Health Exam"
 msgstr "اجتماعات الأهل و الفحص الطبي"
 
-#: student_registration/clm/forms.py:7214
-#: student_registration/clm/forms.py:8023
+#: student_registration/clm/forms.py:7248
+#: student_registration/clm/forms.py:8057
 #: student_registration/clm/models.py:518
 #: student_registration/clm/models.py:553
 #: student_registration/clm/models.py:593
@@ -3683,125 +3720,125 @@ msgstr "اجتماعات الأهل و الفحص الطبي"
 msgid "Parents attended parents meeting"
 msgstr "هل حضر ولي أمر الطفل أجتماعات الأهل؟"
 
-#: student_registration/clm/forms.py:7778
+#: student_registration/clm/forms.py:7812
 #: student_registration/clm/models.py:1877
-#: student_registration/clm/models.py:2425
+#: student_registration/clm/models.py:2447
 msgid "Graduated to the next round, higher level round 3"
 msgstr "يرفع إالى المستوى الأعلى في الدورة القادمة (المستوى 3)"
 
-#: student_registration/clm/forms.py:7780
+#: student_registration/clm/forms.py:7814
 #: student_registration/clm/models.py:1879
-#: student_registration/clm/models.py:2427
+#: student_registration/clm/models.py:2449
 msgid "Referred to public school grade 1"
 msgstr "يرفع الى التعليم الرسمي الصف الأول"
 
-#: student_registration/clm/forms.py:7791
+#: student_registration/clm/forms.py:7825
 #: student_registration/clm/models.py:179
-#: student_registration/clm/models.py:2829
+#: student_registration/clm/models.py:2851
 msgid "Full time job to support family financially"
 msgstr "العمل لإعالة العائلة مادياً"
 
-#: student_registration/clm/forms.py:7792
+#: student_registration/clm/forms.py:7826
 #: student_registration/clm/models.py:180
-#: student_registration/clm/models.py:2830
+#: student_registration/clm/models.py:2852
 msgid "Seasonal work"
 msgstr "العمل الموسمي"
 
-#: student_registration/clm/forms.py:7793
+#: student_registration/clm/forms.py:7827
 #: student_registration/clm/models.py:183
 msgid "Availablity of Electronic Device"
 msgstr "عدم  وجود الجهاز الكتروني"
 
-#: student_registration/clm/forms.py:7794
+#: student_registration/clm/forms.py:7828
 #: student_registration/clm/models.py:184
 msgid "Internet Connectivity"
 msgstr "الاتصال بشبكة الإنترنت"
 
-#: student_registration/clm/forms.py:7795
+#: student_registration/clm/forms.py:7829
 #: student_registration/clm/models.py:185
-#: student_registration/clm/models.py:2832
+#: student_registration/clm/models.py:2854
 msgid "Sickness"
 msgstr "المرض"
 
-#: student_registration/clm/forms.py:7796
+#: student_registration/clm/forms.py:7830
 #: student_registration/clm/models.py:186
-#: student_registration/clm/models.py:2833
+#: student_registration/clm/models.py:2855
 msgid "Security"
 msgstr "الوضع الأمني"
 
-#: student_registration/clm/forms.py:7797
+#: student_registration/clm/forms.py:7831
 #: student_registration/clm/models.py:187
-#: student_registration/clm/models.py:2834
+#: student_registration/clm/models.py:2856
 msgid "Family moved"
 msgstr "تغيير اقامة السكن في لبنان"
 
-#: student_registration/clm/forms.py:7798
+#: student_registration/clm/forms.py:7832
 #: student_registration/clm/models.py:188
-#: student_registration/clm/models.py:2835
+#: student_registration/clm/models.py:2857
 msgid "Moved back to Syria"
 msgstr "العائلة انتقلت الى سوريا"
 
-#: student_registration/clm/forms.py:7799
+#: student_registration/clm/forms.py:7833
 #: student_registration/clm/models.py:189
 #: student_registration/clm/models.py:753
-#: student_registration/clm/models.py:2836
+#: student_registration/clm/models.py:2858
 msgid "Enrolled in formal education"
 msgstr "مسجل في التعليم الرسمي"
 
-#: student_registration/clm/forms.py:7800
+#: student_registration/clm/forms.py:7834
 #: student_registration/clm/models.py:191
-#: student_registration/clm/models.py:2838
+#: student_registration/clm/models.py:2860
 msgid "Violence/Bullying"
 msgstr "  تنمر/عنف ضد الطفل من قبل طفل أخر"
 
-#: student_registration/clm/forms.py:7801
+#: student_registration/clm/forms.py:7835
 #: student_registration/clm/models.py:192
-#: student_registration/clm/models.py:2839
+#: student_registration/clm/models.py:2861
 msgid "No interest in pursuing the programme/No value"
 msgstr "عدم الرغبة في التعلم/ لا قيمة"
 
-#: student_registration/clm/forms.py:8610
+#: student_registration/clm/forms.py:8644
 #, fuzzy
 #| msgid "Post test has been done"
 msgid "Mid test has been done"
 msgstr "هل خضع التلميذ الى التقييم النهائي (Post-test)؟"
 
-#: student_registration/clm/forms.py:9109
-#: student_registration/clm/forms.py:9321
-#: student_registration/clm/forms.py:9530
+#: student_registration/clm/forms.py:9143
+#: student_registration/clm/forms.py:9355
+#: student_registration/clm/forms.py:9564
 #: student_registration/clm/inclusion_forms.py:1093
 msgid "Referral 1"
 msgstr "الإحالة ١ "
 
-#: student_registration/clm/forms.py:9131
-#: student_registration/clm/forms.py:9343
-#: student_registration/clm/forms.py:9551
+#: student_registration/clm/forms.py:9165
+#: student_registration/clm/forms.py:9377
+#: student_registration/clm/forms.py:9585
 #: student_registration/clm/inclusion_forms.py:1115
 msgid "Referral 2"
 msgstr "الإحالة ٢ "
 
-#: student_registration/clm/forms.py:9153
-#: student_registration/clm/forms.py:9365
-#: student_registration/clm/forms.py:9572
+#: student_registration/clm/forms.py:9187
+#: student_registration/clm/forms.py:9399
+#: student_registration/clm/forms.py:9606
 #: student_registration/clm/inclusion_forms.py:1137
 msgid "Referral 3"
 msgstr " الإحالة ٣ "
 
-#: student_registration/clm/forms.py:9220
-#: student_registration/clm/forms.py:9431
-#: student_registration/clm/forms.py:9638
+#: student_registration/clm/forms.py:9254
+#: student_registration/clm/forms.py:9465
+#: student_registration/clm/forms.py:9672
 msgid "Follow-up first call"
 msgstr "المتابعة - الاتصال الاول"
 
-#: student_registration/clm/forms.py:9239
-#: student_registration/clm/forms.py:9450
-#: student_registration/clm/forms.py:9657
+#: student_registration/clm/forms.py:9273
+#: student_registration/clm/forms.py:9484
+#: student_registration/clm/forms.py:9691
 msgid "Follow-up second call"
 msgstr "المتابعة - الاتصال الثاني"
 
-#: student_registration/clm/forms.py:9258
-#: student_registration/clm/forms.py:9469
-#: student_registration/clm/forms.py:9676
+#: student_registration/clm/forms.py:9292
+#: student_registration/clm/forms.py:9503
+#: student_registration/clm/forms.py:9710
 msgid "Follow-up Household visit"
 msgstr "المتابعة - الزيارة المنزلية"
 
@@ -3810,8 +3847,7 @@ msgid "Disability Source of identification of the child"
 msgstr "مصدر احالة الطفل  إلى برنامج Disability"
 
 #: student_registration/clm/inclusion_forms.py:382
-#: student_registration/clm/models.py:1931
-#: student_registration/clm/models.py:2885
+#: student_registration/clm/models.py:2907
 #: student_registration/outreach/models.py:113
 #: student_registration/outreach/models.py:225
 #: student_registration/outreach/models.py:238
@@ -3824,44 +3860,44 @@ msgstr "إحالة من برنامج BLN إالى  ABLN programme"
 
 #: student_registration/clm/inclusion_forms.py:383
 #: student_registration/clm/models.py:1930
-#: student_registration/clm/models.py:2886
+#: student_registration/clm/models.py:2908
 #: student_registration/templates/clm/cbece_monitoring_questioner.html:30
 msgid "CBECE"
 msgstr ""
 
 #: student_registration/clm/inclusion_forms.py:384
-#: student_registration/clm/models.py:2887
+#: student_registration/clm/models.py:2909
 msgid "OCHA"
 msgstr ""
 
 #: student_registration/clm/inclusion_forms.py:385
-#: student_registration/clm/models.py:2888
+#: student_registration/clm/models.py:2910
 msgid "Non - UNICEF"
 msgstr ""
 
 #: student_registration/clm/inclusion_forms.py:977
-#: student_registration/clm/models.py:2822
+#: student_registration/clm/models.py:2844
 msgid "Less than 3 absence days"
 msgstr "أقل من 3 أيام غياب"
 
 #: student_registration/clm/inclusion_forms.py:978
-#: student_registration/clm/models.py:2823
+#: student_registration/clm/models.py:2845
 msgid "3 to 7 absence days"
 msgstr "3-7 أيام غياب"
 
 #: student_registration/clm/inclusion_forms.py:979
-#: student_registration/clm/models.py:2824
+#: student_registration/clm/models.py:2846
 msgid "7 to 12 absence days"
 msgstr "7-12 أيام غياب"
 
 #: student_registration/clm/inclusion_forms.py:980
-#: student_registration/clm/models.py:2825
+#: student_registration/clm/models.py:2847
 msgid "More than 12 absence days"
 msgstr "أكثر من 12 أيام غياب"
 
 #: student_registration/clm/inclusion_forms.py:995
 #: student_registration/clm/models.py:1630
-#: student_registration/clm/models.py:2863
+#: student_registration/clm/models.py:2885
 msgid "Referred to CBT"
 msgstr "أحيل إلى برنامج CBT"
 
@@ -3953,47 +3989,47 @@ msgid "Referral from the displaced community"
 msgstr "إحالة من مجتمع النازحين"
 
 #: student_registration/clm/models.py:190
-#: student_registration/clm/models.py:2837
+#: student_registration/clm/models.py:2859
 msgid "Marriage/Engagement/Pregnancy"
 msgstr "زواج/خطوبة"
 
 #: student_registration/clm/models.py:198
-#: student_registration/clm/models.py:2843
+#: student_registration/clm/models.py:2865
 msgid "Yes - Morning"
 msgstr "نعم - قبل الظهر"
 
 #: student_registration/clm/models.py:199
-#: student_registration/clm/models.py:2844
+#: student_registration/clm/models.py:2866
 msgid "Yes - Afternoon"
 msgstr "نعم - بعد الظهر"
 
 #: student_registration/clm/models.py:200
-#: student_registration/clm/models.py:2845
+#: student_registration/clm/models.py:2867
 msgid "Yes - All day"
 msgstr "نعم - كل النهار"
 
 #: student_registration/clm/models.py:204
-#: student_registration/clm/models.py:2849
+#: student_registration/clm/models.py:2871
 msgid "Agriculture"
 msgstr "الزراعة"
 
 #: student_registration/clm/models.py:205
-#: student_registration/clm/models.py:2850
+#: student_registration/clm/models.py:2872
 msgid "Building"
 msgstr "البناء"
 
 #: student_registration/clm/models.py:206
-#: student_registration/clm/models.py:2851
+#: student_registration/clm/models.py:2873
 msgid "Manufacturing"
 msgstr "التصنيع"
 
 #: student_registration/clm/models.py:207
-#: student_registration/clm/models.py:2852
+#: student_registration/clm/models.py:2874
 msgid "Retail / Store"
 msgstr "البيع بالمفرق / محل"
 
 #: student_registration/clm/models.py:208
-#: student_registration/clm/models.py:2853
+#: student_registration/clm/models.py:2875
 msgid "Begging"
 msgstr "تسول"
 
@@ -4008,16 +4044,16 @@ msgstr "خدمات مختلفة"
 #: student_registration/clm/models.py:1427
 #: student_registration/clm/models.py:1623
 #: student_registration/clm/models.py:1668
-#: student_registration/clm/models.py:2111
-#: student_registration/clm/models.py:2524
-#: student_registration/clm/models.py:2966
+#: student_registration/clm/models.py:2113
+#: student_registration/clm/models.py:2546
+#: student_registration/clm/models.py:2988
 msgid "Learning result"
 msgstr " نتيجة التعلم"
 
 #: student_registration/clm/models.py:214
 #: student_registration/clm/models.py:1383
 #: student_registration/clm/models.py:1875
-#: student_registration/clm/models.py:2423
+#: student_registration/clm/models.py:2445
 msgid "Graduated to the next level"
 msgstr "رفع إلى المستوى التالي"
 
@@ -4055,7 +4091,7 @@ msgid "Phone calls"
 msgstr "عن طريق الأتصال الهاتفي"
 
 #: student_registration/clm/models.py:292
-#: student_registration/clm/models.py:2932
+#: student_registration/clm/models.py:2954
 #: student_registration/enrollments/admin.py:471
 #: student_registration/enrollments/models.py:925
 #: student_registration/templates/alp/test_grading.html:19
@@ -4073,7 +4109,7 @@ msgid "Post-assessment"
 msgstr " التقييم في آخر البرنامج"
 
 #: student_registration/clm/models.py:390
-#: student_registration/clm/models.py:2959
+#: student_registration/clm/models.py:2981
 msgid "Participation"
 msgstr "المشاركة  "
 
@@ -4082,7 +4118,7 @@ msgid "Barriers"
 msgstr "الحواجز"
 
 #: student_registration/clm/models.py:415
-#: student_registration/clm/models.py:2973
+#: student_registration/clm/models.py:2995
 #, fuzzy
 #| msgid ""
 #| "The main barriers affecting the daily attendance and performance of the "
@@ -4091,7 +4127,7 @@ msgid "The main barriers affecting the daily attendance and performance"
 msgstr "السبب الرئيسي للغياب"
 
 #: student_registration/clm/models.py:427
-#: student_registration/clm/models.py:2639
+#: student_registration/clm/models.py:2661
 msgid "test_done"
 msgstr ""
 
@@ -4142,13 +4178,13 @@ msgid "\"Did the child receive health exam"
 msgstr "هل خضع الطفل إالى الفحص الطبي؟"
 
 #: student_registration/clm/models.py:733
-#: student_registration/clm/models.py:2995
+#: student_registration/clm/models.py:3017
 #: student_registration/users/models.py:21
 msgid "Partner"
 msgstr "الجمعية"
 
 #: student_registration/clm/models.py:740
-#: student_registration/clm/models.py:3002
+#: student_registration/clm/models.py:3024
 msgid "Internal number"
 msgstr "رقم تسلسلي خاص بالجمعية"
 
@@ -4173,103 +4209,103 @@ msgid "unsuccessful post test reason"
 msgstr "اسباب عدم القيام بال Post-test"
 
 #: student_registration/clm/models.py:779
-#: student_registration/clm/models.py:3018
+#: student_registration/clm/models.py:3040
 #, fuzzy
 #| msgid "Second Phone number confirm"
 msgid "Phone number confirm"
 msgstr "تأكيد رقم الهاتف الثانوي"
 
 #: student_registration/clm/models.py:807
-#: student_registration/clm/models.py:3083
+#: student_registration/clm/models.py:3105
 msgid "Child ID type"
 msgstr "نوع البطاقة"
 
 #: student_registration/clm/models.py:814
 #: student_registration/clm/models.py:942
-#: student_registration/clm/models.py:3090
-#: student_registration/clm/models.py:3175
+#: student_registration/clm/models.py:3112
+#: student_registration/clm/models.py:3197
 msgid "Case number"
 msgstr ""
 
 #: student_registration/clm/models.py:820
 #: student_registration/clm/models.py:948
-#: student_registration/clm/models.py:3096
-#: student_registration/clm/models.py:3181
+#: student_registration/clm/models.py:3118
+#: student_registration/clm/models.py:3203
 msgid "Case number confirm"
 msgstr ""
 
 #: student_registration/clm/models.py:827
 #: student_registration/clm/models.py:955
-#: student_registration/clm/models.py:3103
-#: student_registration/clm/models.py:3188
+#: student_registration/clm/models.py:3125
+#: student_registration/clm/models.py:3210
 msgid "Individual Case number"
 msgstr ""
 
 #: student_registration/clm/models.py:833
 #: student_registration/clm/models.py:961
-#: student_registration/clm/models.py:3109
-#: student_registration/clm/models.py:3194
+#: student_registration/clm/models.py:3131
+#: student_registration/clm/models.py:3216
 msgid "Individual Case number confirm"
 msgstr ""
 
 #: student_registration/clm/models.py:840
-#: student_registration/clm/models.py:3116
+#: student_registration/clm/models.py:3138
 msgid "Recorded number"
 msgstr ""
 
 #: student_registration/clm/models.py:846
-#: student_registration/clm/models.py:3122
+#: student_registration/clm/models.py:3144
 msgid "Recorded number confirm"
 msgstr ""
 
 #: student_registration/clm/models.py:860
 #: student_registration/clm/models.py:968
-#: student_registration/clm/models.py:3136
-#: student_registration/clm/models.py:3201
+#: student_registration/clm/models.py:3158
+#: student_registration/clm/models.py:3223
 msgid "Lebanese ID number "
 msgstr " رقم البطاقة اللبنانية"
 
 #: student_registration/clm/models.py:866
 #: student_registration/clm/models.py:974
-#: student_registration/clm/models.py:3142
-#: student_registration/clm/models.py:3207
+#: student_registration/clm/models.py:3164
+#: student_registration/clm/models.py:3229
 msgid "Lebanese ID number confirm"
 msgstr "تأكيد رقم الهوية اللبنانية"
 
 #: student_registration/clm/models.py:872
 #: student_registration/clm/models.py:980
-#: student_registration/clm/models.py:3148
-#: student_registration/clm/models.py:3213
+#: student_registration/clm/models.py:3170
+#: student_registration/clm/models.py:3235
 msgid "Syrian ID number "
 msgstr " رقم البطاقةالسورية"
 
 #: student_registration/clm/models.py:878
 #: student_registration/clm/models.py:986
-#: student_registration/clm/models.py:3154
-#: student_registration/clm/models.py:3219
+#: student_registration/clm/models.py:3176
+#: student_registration/clm/models.py:3241
 msgid "Syrian ID number confirm"
 msgstr ""
 
 #: student_registration/clm/models.py:884
 #: student_registration/clm/models.py:992
-#: student_registration/clm/models.py:3160
-#: student_registration/clm/models.py:3225
+#: student_registration/clm/models.py:3182
+#: student_registration/clm/models.py:3247
 msgid "Palestinian ID number "
 msgstr ""
 
 #: student_registration/clm/models.py:890
 #: student_registration/clm/models.py:998
-#: student_registration/clm/models.py:3166
-#: student_registration/clm/models.py:3231
+#: student_registration/clm/models.py:3188
+#: student_registration/clm/models.py:3253
 msgid "Palestinian ID number confirm"
 msgstr ""
 
 #: student_registration/clm/models.py:906
 #: student_registration/clm/models.py:1532
 #: student_registration/clm/models.py:1771
-#: student_registration/clm/models.py:2220
-#: student_registration/clm/models.py:2632
-#: student_registration/clm/models.py:2890
+#: student_registration/clm/models.py:2222
+#: student_registration/clm/models.py:2654
+#: student_registration/clm/models.py:2912
 msgid "Source of identification of the child"
 msgstr "مصدر احالة الطفل  إلى برنامج ABLN"
 
@@ -4298,28 +4334,28 @@ msgid "Parent ID type"
 msgstr "نوع البطاقة الخاصة "
 
 #: student_registration/clm/models.py:1004
-#: student_registration/clm/models.py:3237
+#: student_registration/clm/models.py:3259
 #, fuzzy
 #| msgid "ID number"
 msgid "ID number "
 msgstr "رقم البطاقة"
 
 #: student_registration/clm/models.py:1010
-#: student_registration/clm/models.py:3243
+#: student_registration/clm/models.py:3265
 #, fuzzy
 #| msgid "Second Phone number confirm"
 msgid "ID number confirm"
 msgstr "تأكيد رقم الهاتف الثانوي"
 
 #: student_registration/clm/models.py:1016
-#: student_registration/clm/models.py:3249
+#: student_registration/clm/models.py:3271
 #, fuzzy
 #| msgid "Syrian ID number "
 msgid "Child ID number "
 msgstr " رقم البطاقةالسورية"
 
 #: student_registration/clm/models.py:1022
-#: student_registration/clm/models.py:3255
+#: student_registration/clm/models.py:3277
 #, fuzzy
 #| msgid "Second Phone number confirm"
 msgid "Child ID number confirm"
@@ -4328,81 +4364,81 @@ msgstr "تأكيد رقم الهاتف الثانوي"
 #: student_registration/clm/models.py:1029
 #: student_registration/clm/models.py:1063
 #: student_registration/clm/models.py:1097
-#: student_registration/clm/models.py:3309
-#: student_registration/clm/models.py:3340
-#: student_registration/clm/models.py:3371
+#: student_registration/clm/models.py:3331
+#: student_registration/clm/models.py:3362
+#: student_registration/clm/models.py:3393
 msgid "CP (PSS and/or Case Management)"
 msgstr ""
 
 #: student_registration/clm/models.py:1030
 #: student_registration/clm/models.py:1064
 #: student_registration/clm/models.py:1098
-#: student_registration/clm/models.py:3310
-#: student_registration/clm/models.py:3341
-#: student_registration/clm/models.py:3372
+#: student_registration/clm/models.py:3332
+#: student_registration/clm/models.py:3363
+#: student_registration/clm/models.py:3394
 msgid "Health"
 msgstr ""
 
 #: student_registration/clm/models.py:1031
 #: student_registration/clm/models.py:1065
 #: student_registration/clm/models.py:1099
-#: student_registration/clm/models.py:3311
-#: student_registration/clm/models.py:3342
-#: student_registration/clm/models.py:3373
+#: student_registration/clm/models.py:3333
+#: student_registration/clm/models.py:3364
+#: student_registration/clm/models.py:3395
 msgid "WASH"
 msgstr ""
 
 #: student_registration/clm/models.py:1032
 #: student_registration/clm/models.py:1066
 #: student_registration/clm/models.py:1100
-#: student_registration/clm/models.py:3312
-#: student_registration/clm/models.py:3343
-#: student_registration/clm/models.py:3374
+#: student_registration/clm/models.py:3334
+#: student_registration/clm/models.py:3365
+#: student_registration/clm/models.py:3396
 msgid "Specialized Services"
 msgstr ""
 
 #: student_registration/clm/models.py:1037
 #: student_registration/clm/models.py:1071
 #: student_registration/clm/models.py:1105
-#: student_registration/clm/models.py:3314
-#: student_registration/clm/models.py:3345
-#: student_registration/clm/models.py:3376
+#: student_registration/clm/models.py:3336
+#: student_registration/clm/models.py:3367
+#: student_registration/clm/models.py:3398
 msgid "No need"
 msgstr ""
 
 #: student_registration/clm/models.py:1039
 #: student_registration/clm/models.py:1073
 #: student_registration/clm/models.py:1107
-#: student_registration/clm/models.py:3316
-#: student_registration/clm/models.py:3347
-#: student_registration/clm/models.py:3378
+#: student_registration/clm/models.py:3338
+#: student_registration/clm/models.py:3369
+#: student_registration/clm/models.py:3400
 msgid "Programme Type"
 msgstr " نوع البرنامج"
 
 #: student_registration/clm/models.py:1045
 #: student_registration/clm/models.py:1079
 #: student_registration/clm/models.py:1113
-#: student_registration/clm/models.py:3322
-#: student_registration/clm/models.py:3353
-#: student_registration/clm/models.py:3384
+#: student_registration/clm/models.py:3344
+#: student_registration/clm/models.py:3375
+#: student_registration/clm/models.py:3406
 msgid "School / Center"
 msgstr "رقم المدرسة"
 
 #: student_registration/clm/models.py:1050
 #: student_registration/clm/models.py:1084
 #: student_registration/clm/models.py:1118
-#: student_registration/clm/models.py:3327
-#: student_registration/clm/models.py:3358
-#: student_registration/clm/models.py:3389
+#: student_registration/clm/models.py:3349
+#: student_registration/clm/models.py:3380
+#: student_registration/clm/models.py:3411
 msgid "Referral date"
 msgstr "تاريخ الاحالة"
 
 #: student_registration/clm/models.py:1055
 #: student_registration/clm/models.py:1089
 #: student_registration/clm/models.py:1123
-#: student_registration/clm/models.py:3332
-#: student_registration/clm/models.py:3363
-#: student_registration/clm/models.py:3394
+#: student_registration/clm/models.py:3354
+#: student_registration/clm/models.py:3385
+#: student_registration/clm/models.py:3416
 msgid ""
 "Date when the receiving organization confirms accepting the child (or child "
 "receiving service)"
@@ -4424,22 +4460,22 @@ msgid "Visit date"
 msgstr "تاريخ الزيارة"
 
 #: student_registration/clm/models.py:1178
-#: student_registration/clm/models.py:3283
+#: student_registration/clm/models.py:3305
 msgid "Caretaker First Name"
 msgstr "الاسم الأول لولي الأمر"
 
 #: student_registration/clm/models.py:1184
-#: student_registration/clm/models.py:3289
+#: student_registration/clm/models.py:3311
 msgid "Caretaker Middle Name"
 msgstr "اسم والد ولي الأمر"
 
 #: student_registration/clm/models.py:1190
-#: student_registration/clm/models.py:3295
+#: student_registration/clm/models.py:3317
 msgid "Caretaker Last Name"
 msgstr "شهرة ولي الأمر"
 
 #: student_registration/clm/models.py:1196
-#: student_registration/clm/models.py:3301
+#: student_registration/clm/models.py:3323
 msgid "Caretaker Mother Name"
 msgstr "اسم والدة ولي الأمر"
 
@@ -4473,8 +4509,8 @@ msgstr ""
 
 #: student_registration/clm/models.py:1379
 #: student_registration/clm/models.py:1620
-#: student_registration/clm/models.py:2128
-#: student_registration/clm/models.py:2535
+#: student_registration/clm/models.py:2130
+#: student_registration/clm/models.py:2557
 msgid "miss_school_date"
 msgstr "يرجى تحديد تاريخ التسرب من الدراسة"
 
@@ -4485,17 +4521,17 @@ msgstr "الإحالة"
 
 #: student_registration/clm/models.py:1458
 #: student_registration/clm/models.py:1699
-#: student_registration/clm/models.py:2153
-#: student_registration/clm/models.py:2565
-#: student_registration/clm/models.py:3269
+#: student_registration/clm/models.py:2155
+#: student_registration/clm/models.py:2587
+#: student_registration/clm/models.py:3291
 msgid "Main Caregiver Nationality"
 msgstr "جنسية ولي الأمر"
 
 #: student_registration/clm/models.py:1471
 #: student_registration/clm/models.py:1711
-#: student_registration/clm/models.py:2160
-#: student_registration/clm/models.py:2572
-#: student_registration/clm/models.py:3276
+#: student_registration/clm/models.py:2162
+#: student_registration/clm/models.py:2594
+#: student_registration/clm/models.py:3298
 msgid "Other Caregiver Relationship"
 msgstr "ما هي صلة القرابة؟"
 
@@ -4503,12 +4539,12 @@ msgstr "ما هي صلة القرابة؟"
 #: student_registration/clm/models.py:1497
 #: student_registration/clm/models.py:1724
 #: student_registration/clm/models.py:1736
-#: student_registration/clm/models.py:2174
-#: student_registration/clm/models.py:2186
-#: student_registration/clm/models.py:2586
-#: student_registration/clm/models.py:2598
-#: student_registration/clm/models.py:3026
-#: student_registration/clm/models.py:3038
+#: student_registration/clm/models.py:2176
+#: student_registration/clm/models.py:2188
+#: student_registration/clm/models.py:2608
+#: student_registration/clm/models.py:2620
+#: student_registration/clm/models.py:3048
+#: student_registration/clm/models.py:3060
 msgid "Phone Main Caregiver"
 msgstr "ولي الأمر"
 
@@ -4516,12 +4552,12 @@ msgstr "ولي الأمر"
 #: student_registration/clm/models.py:1498
 #: student_registration/clm/models.py:1725
 #: student_registration/clm/models.py:1737
-#: student_registration/clm/models.py:2175
-#: student_registration/clm/models.py:2187
-#: student_registration/clm/models.py:2587
-#: student_registration/clm/models.py:2599
-#: student_registration/clm/models.py:3027
-#: student_registration/clm/models.py:3039
+#: student_registration/clm/models.py:2177
+#: student_registration/clm/models.py:2189
+#: student_registration/clm/models.py:2609
+#: student_registration/clm/models.py:2621
+#: student_registration/clm/models.py:3049
+#: student_registration/clm/models.py:3061
 msgid "Family Member"
 msgstr "أحد افراد العائلة"
 
@@ -4529,12 +4565,12 @@ msgstr "أحد افراد العائلة"
 #: student_registration/clm/models.py:1499
 #: student_registration/clm/models.py:1726
 #: student_registration/clm/models.py:1738
-#: student_registration/clm/models.py:2176
-#: student_registration/clm/models.py:2188
-#: student_registration/clm/models.py:2588
-#: student_registration/clm/models.py:2600
-#: student_registration/clm/models.py:3028
-#: student_registration/clm/models.py:3040
+#: student_registration/clm/models.py:2178
+#: student_registration/clm/models.py:2190
+#: student_registration/clm/models.py:2610
+#: student_registration/clm/models.py:2622
+#: student_registration/clm/models.py:3050
+#: student_registration/clm/models.py:3062
 msgid "Neighbors"
 msgstr "الجيران"
 
@@ -4542,44 +4578,44 @@ msgstr "الجيران"
 #: student_registration/clm/models.py:1500
 #: student_registration/clm/models.py:1727
 #: student_registration/clm/models.py:1739
-#: student_registration/clm/models.py:2177
-#: student_registration/clm/models.py:2189
-#: student_registration/clm/models.py:2589
-#: student_registration/clm/models.py:2601
-#: student_registration/clm/models.py:3029
-#: student_registration/clm/models.py:3041
+#: student_registration/clm/models.py:2179
+#: student_registration/clm/models.py:2191
+#: student_registration/clm/models.py:2611
+#: student_registration/clm/models.py:2623
+#: student_registration/clm/models.py:3051
+#: student_registration/clm/models.py:3063
 msgid "Shawish"
 msgstr "الشاويش"
 
 #: student_registration/clm/models.py:1490
 #: student_registration/clm/models.py:1729
-#: student_registration/clm/models.py:2179
-#: student_registration/clm/models.py:2591
-#: student_registration/clm/models.py:3031
+#: student_registration/clm/models.py:2181
+#: student_registration/clm/models.py:2613
+#: student_registration/clm/models.py:3053
 msgid "Phone Owner"
 msgstr "من الشخص الذي يجيب على هذا الرقم؟"
 
 #: student_registration/clm/models.py:1502
 #: student_registration/clm/models.py:1741
-#: student_registration/clm/models.py:2191
-#: student_registration/clm/models.py:2603
-#: student_registration/clm/models.py:3043
+#: student_registration/clm/models.py:2193
+#: student_registration/clm/models.py:2625
+#: student_registration/clm/models.py:3065
 msgid "Second Phone Owner"
 msgstr "من الشخص الذي يجيب على هذا الرقم؟"
 
 #: student_registration/clm/models.py:1508
 #: student_registration/clm/models.py:1747
-#: student_registration/clm/models.py:2197
-#: student_registration/clm/models.py:2609
-#: student_registration/clm/models.py:3049
+#: student_registration/clm/models.py:2199
+#: student_registration/clm/models.py:2631
+#: student_registration/clm/models.py:3071
 msgid "Second Phone number"
 msgstr "رقم الهاتف الثانوي"
 
 #: student_registration/clm/models.py:1514
 #: student_registration/clm/models.py:1753
-#: student_registration/clm/models.py:2203
-#: student_registration/clm/models.py:2615
-#: student_registration/clm/models.py:3055
+#: student_registration/clm/models.py:2205
+#: student_registration/clm/models.py:2637
+#: student_registration/clm/models.py:3077
 msgid "Second Phone number confirm"
 msgstr "تأكيد رقم الهاتف الثانوي"
 
@@ -4592,41 +4628,36 @@ msgid "Referred to ALP"
 msgstr "أحيل إلى برنامج ALP"
 
 #: student_registration/clm/models.py:1858
-#: student_registration/clm/models.py:2412
+#: student_registration/clm/models.py:2434
 msgid "MUAC"
 msgstr ""
 
 #: student_registration/clm/models.py:1863
 #: student_registration/clm/models.py:1906
-#: student_registration/clm/models.py:1968
-#: student_registration/clm/models.py:2417
-#: student_registration/clm/models.py:2468
+#: student_registration/clm/models.py:1970
+#: student_registration/clm/models.py:2439
+#: student_registration/clm/models.py:2490
 msgid "Program site"
 msgstr "موقع البرنامج"
 
 #: student_registration/clm/models.py:1864
 #: student_registration/clm/models.py:1907
-#: student_registration/clm/models.py:2418
+#: student_registration/clm/models.py:2440
 msgid "Inside the school"
 msgstr " داخل المدرسة"
 
 #: student_registration/clm/models.py:1865
 #: student_registration/clm/models.py:1908
-#: student_registration/clm/models.py:2419
+#: student_registration/clm/models.py:2441
 msgid "Outside the school"
 msgstr "خارج المدرسة"
 
 #: student_registration/clm/models.py:1881
-#: student_registration/clm/models.py:2429
+#: student_registration/clm/models.py:2451
 #, fuzzy
 #| msgid "Referred to CBT"
 msgid "Referred to YCBECE"
 msgstr "أحيل إلى برنامج CBT"
-
-#: student_registration/clm/models.py:1896
-#: student_registration/clm/models.py:1987
-msgid "Shift"
-msgstr "دوام التعليم"
 
 #: student_registration/clm/models.py:1897
 #: student_registration/enrollments/models.py:105
@@ -4643,7 +4674,7 @@ msgid "Second shift"
 msgstr "دوام بعد الظهر"
 
 #: student_registration/clm/models.py:1901
-#: student_registration/clm/models.py:1955
+#: student_registration/clm/models.py:1957
 msgid "Program type"
 msgstr " نوع البرنامج"
 
@@ -4665,66 +4696,48 @@ msgstr "غياب"
 
 #: student_registration/clm/models.py:1915
 #: student_registration/schools/forms.py:912
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 1"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1916
 #: student_registration/schools/forms.py:675
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 2"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1917
 #: student_registration/schools/forms.py:1149
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 3"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1918
 #: student_registration/schools/forms.py:1386
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 4"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1919
 #: student_registration/schools/forms.py:1623
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 5"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1920
 #: student_registration/schools/forms.py:1860
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 6"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1921
 #: student_registration/schools/forms.py:2109
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 7"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1922
 #: student_registration/schools/forms.py:2408
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 8"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1923
 #: student_registration/schools/forms.py:2711
-#, fuzzy
-#| msgid "Grades"
 msgid "Grade 9"
-msgstr "العلامات"
+msgstr ""
 
 #: student_registration/clm/models.py:1927
 #: student_registration/enrollments/forms.py:122
@@ -4748,62 +4761,62 @@ msgstr ""
 msgid "FE outside Lebanon"
 msgstr "التعليم الرسمي خارج لبنان"
 
-#: student_registration/clm/models.py:1974
-#: student_registration/clm/models.py:2474
+#: student_registration/clm/models.py:1976
+#: student_registration/clm/models.py:2496
 msgid "Attending in school"
 msgstr "يحضر في مدرسة"
 
-#: student_registration/clm/models.py:2011
-#: student_registration/clm/models.py:2492
+#: student_registration/clm/models.py:2013
+#: student_registration/clm/models.py:2514
 msgid "Child MUAC"
 msgstr ""
 
-#: student_registration/clm/models.py:2067
+#: student_registration/clm/models.py:2069
 msgid "Arabic reading - Pre"
 msgstr ""
 
-#: student_registration/clm/models.py:2074
+#: student_registration/clm/models.py:2076
 msgid "Arabic reading - Post"
 msgstr ""
 
-#: student_registration/clm/models.py:2082
+#: student_registration/clm/models.py:2084
 msgid "Self-assessment - Pre"
 msgstr ""
 
-#: student_registration/clm/models.py:2089
+#: student_registration/clm/models.py:2091
 msgid "Self-assessment - Post"
 msgstr ""
 
-#: student_registration/clm/models.py:2097
+#: student_registration/clm/models.py:2099
 msgid "Motivation - Pre"
 msgstr ""
 
-#: student_registration/clm/models.py:2104
+#: student_registration/clm/models.py:2106
 msgid "Motivation - Post"
 msgstr ""
 
-#: student_registration/clm/models.py:2784
+#: student_registration/clm/models.py:2806
 #: student_registration/enrollments/models.py:932
 msgid "Enrollment"
 msgstr "التسجيل"
 
-#: student_registration/clm/models.py:2790
+#: student_registration/clm/models.py:2812
 msgid "Assessment type"
 msgstr "نوع التقييم"
 
-#: student_registration/clm/models.py:2795
+#: student_registration/clm/models.py:2817
 msgid "Assessment date"
 msgstr "تاريخ التقييم"
 
-#: student_registration/clm/models.py:2801
+#: student_registration/clm/models.py:2823
 msgid "Assessment answers"
 msgstr "اجوبة التقييم"
 
-#: student_registration/clm/models.py:2831
+#: student_registration/clm/models.py:2853
 msgid "Cold Weather"
 msgstr "الطقس البارد"
 
-#: student_registration/clm/models.py:2854
+#: student_registration/clm/models.py:2876
 msgid ""
 "Other services (hotel, restaurant, transport, personal services such as "
 "cleaning, hair care, cooking and childcare)"

@@ -3304,6 +3304,29 @@ class RSForm(CommonForm):
         widget=forms.Select, required=True,
         choices=RS.SOURCE_JOIN_FE
     )
+    registered_in_school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        label=_('School of Enrollment'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
+    )
+    shift = forms.ChoiceField(
+        label=_("Shift"),
+        widget=forms.Select, required=True,
+        choices=RS.SCHOOL_SHIFTS
+    )
+    grade_registration =  forms.ChoiceField(
+        label=_("Grade of registeration"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('6', _('6')),
+            ('7', _('7')),
+            ('8', _('8')),
+            ('9', _('9')),
+        )
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -3382,21 +3405,33 @@ class RSForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('grade_registration', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('student_address', css_class='col-md-3'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
-                    Div('registration_level', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">10</span>'),
+                    Div('registration_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('first_attendance_date', css_class='col-md-3'),
                     css_class='row',
                 ),
+
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('registered_in_school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('shift', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                #
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
             ),
             Fieldset(
@@ -3720,7 +3755,7 @@ class RSForm(CommonForm):
                     Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_science">4.2</span>'),
                     Div('science', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grd6',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
@@ -3729,7 +3764,7 @@ class RSForm(CommonForm):
                     Div('modality_biology', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_biology">5.2</span>'),
                     Div('biology', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grd7',
                 ),
 
                 Div(
@@ -3739,7 +3774,7 @@ class RSForm(CommonForm):
                     Div('modality_chemistry', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_chemistry">6.2</span>'),
                     Div('chemistry', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grd7',
                 ),
 
                 Div(
@@ -3749,7 +3784,7 @@ class RSForm(CommonForm):
                     Div('modality_physics', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_physics">7.2</span>'),
                     Div('physics', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grd7',
                 ),
 
 
@@ -4019,39 +4054,39 @@ class RSForm(CommonForm):
 
             # , ,
 
-        #grades Max Value validation
-        registration_level = cleaned_data.get("registration_level")
-
-        if registration_level == 'level_two':
-            if arabic > 48:
-                self.add_error('arabic', 'This value is greater that 48')
-            if english > 48:
-                self.add_error('english', 'This value is greater that 48')
-            if math > 44:
-                self.add_error('math', 'This value is greater that 44')
-            if science > 36:
-                self.add_error('science', 'This value is greater that 36')
-            if biology > 40:
-                self.add_error('biology', 'This value is greater that 40')
-            if chemistry > 34:
-                self.add_error('chemistry', 'This value is greater that 34')
-            if physics > 12:
-                self.add_error('physics', 'This value is greater that 12')
-        else:
-            if arabic > 60:
-                self.add_error('arabic', 'This value is greater that 60')
-            if english > 60:
-                self.add_error('english', 'This value is greater that 60')
-            if math > 46:
-                self.add_error('math', 'This value is greater that 46')
-            if science > 36:
-                self.add_error('science', 'This value is greater that 36')
-            if biology > 40:
-                self.add_error('biology', 'This value is greater that 40')
-            if chemistry > 36:
-                self.add_error('chemistry', 'This value is greater that 36')
-            if physics > 12:
-                self.add_error('physics', 'This value is greater that 12')
+        # #grades Max Value validation
+        # registration_level = cleaned_data.get("registration_level")
+        #
+        # if registration_level == 'level_two':
+        #     if arabic > 48:
+        #         self.add_error('arabic', 'This value is greater that 48')
+        #     if english > 48:
+        #         self.add_error('english', 'This value is greater that 48')
+        #     if math > 44:
+        #         self.add_error('math', 'This value is greater that 44')
+        #     if science > 36:
+        #         self.add_error('science', 'This value is greater that 36')
+        #     if biology > 40:
+        #         self.add_error('biology', 'This value is greater that 40')
+        #     if chemistry > 34:
+        #         self.add_error('chemistry', 'This value is greater that 34')
+        #     if physics > 12:
+        #         self.add_error('physics', 'This value is greater that 12')
+        # else:
+        #     if arabic > 60:
+        #         self.add_error('arabic', 'This value is greater that 60')
+        #     if english > 60:
+        #         self.add_error('english', 'This value is greater that 60')
+        #     if math > 46:
+        #         self.add_error('math', 'This value is greater that 46')
+        #     if science > 36:
+        #         self.add_error('science', 'This value is greater that 36')
+        #     if biology > 40:
+        #         self.add_error('biology', 'This value is greater that 40')
+        #     if chemistry > 36:
+        #         self.add_error('chemistry', 'This value is greater that 36')
+        #     if physics > 12:
+        #         self.add_error('physics', 'This value is greater that 12')
 
 
     def save(self, request=None, instance=None, serializer=None):

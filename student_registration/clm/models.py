@@ -1979,7 +1979,7 @@ class RS(CLM):
         School,
         blank=False, null=True,
         related_name='+',
-        verbose_name=_('Registered in school')
+        verbose_name=_('School of Enrollment')
     )
     shift = models.CharField(
         max_length=50,
@@ -2242,6 +2242,19 @@ class RS(CLM):
     #     choices= YEAR_REGISTRATION ,
     #     verbose_name=_('Year of registration')
     # )
+    grade_registration = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('6', _('6')),
+            ('7', _('7')),
+            ('8', _('8')),
+            ('9', _('9')),
+        ),
+        verbose_name=_('Grade of registeration')
+    )
     class Meta:
         ordering = ['-id']
         verbose_name = "RS"
