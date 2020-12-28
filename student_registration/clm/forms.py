@@ -2889,18 +2889,18 @@ class RSForm(CommonForm):
         initial='yes'
     )
 
-    # round = forms.ModelChoiceField(
-    #     queryset=CLMRound.objects.filter(current_round_rs=True), widget=forms.Select,
-    #     label=_('Round'),
-    #     empty_label='-------',
-    #     required=True, to_field_name='id',
-    # )
     round = forms.ModelChoiceField(
-        queryset=CLMRound.objects.all(), widget=forms.Select,
+        queryset=CLMRound.objects.filter(current_round_rs=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
+    # round = forms.ModelChoiceField(
+    #     queryset=CLMRound.objects.all(), widget=forms.Select,
+    #     label=_('Round'),
+    #     empty_label='-------',
+    #     required=True, to_field_name='id',
+    # )
 
     round_start_date = forms.DateField(
         label=_("Round start date"),

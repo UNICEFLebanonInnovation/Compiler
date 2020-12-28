@@ -1404,8 +1404,8 @@ class RSAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = True
-        # kwargs['is_allowed_create'] = is_allowed_create('RS')
+        # kwargs['is_allowed_create'] = True
+        kwargs['is_allowed_create'] = is_allowed_create('RS')
         return super(RSAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):

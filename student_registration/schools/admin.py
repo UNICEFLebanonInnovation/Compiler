@@ -497,6 +497,7 @@ class CLMRoundAdmin(ImportExportModelAdmin):
         'current_round_abln',
         'current_round_cbece',
         'current_round_inclusion',
+        'current_round_rs'
     )
 
 

@@ -1365,7 +1365,7 @@ function reorganize_pre_assessment()
     // follow_up_type
     $('div#div_grd6').addClass('d-none');
     $('div#div_grd7').addClass('d-none');
-    alert(grade_level);
+    // alert(grade_level);
     if(grade_level == 'grade6'){
         $('div#div_grd6').removeClass('d-none');
     }else if(grade_level in 'grade7'){

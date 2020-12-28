@@ -33,6 +33,12 @@ def is_allowed_create(programme):
                 return True
             return False
 
+        if programme == 'RS':
+            current_round = current_round.get(current_round_rs=True)
+            if current_round.start_date_rs < current < current_round.end_date_rs:
+                return True
+        return False
+
     except Exception as ex:
         print(ex.message)
         return False
@@ -67,6 +73,12 @@ def is_allowed_edit(programme):
         if programme == 'Inclusion':
             current_round = current_round.get(current_round_inclusion=True)
             if current_round.start_date_inclusion_edit < current < current_round.end_date_inclusion_edit:
+                return True
+            return False
+
+        if programme == 'RS':
+            current_round = current_round.get(current_round_rs=True)
+            if current_round.start_date_rs_edit < current < current_round.end_date_rs_edit:
                 return True
             return False
 
