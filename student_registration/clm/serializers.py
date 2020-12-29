@@ -408,11 +408,9 @@ class RSSerializer(CLMSerializer):
         fields = CLMSerializer.Meta.fields + (
 
 
-            # 'shift',
             # 'grade',
             # 'section',
 
-            # 'registered_in_school',
             # 'student_family_status',
             # 'student_have_children',
 
@@ -487,7 +485,10 @@ class RSSerializer(CLMSerializer):
             'follow_up_done_with_who',
             'labours_other_specify',
             'grade_level',
-            'source_join_fe'
+            'source_join_fe',
+            'grade_registration',
+            'registered_in_school',
+            'shift'
         )
 
 

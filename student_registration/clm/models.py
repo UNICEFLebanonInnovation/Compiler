@@ -1881,11 +1881,6 @@ class RS(CLM):
             ('referred_to_ycbece', _('Referred to YCBECE')),
             ('dropout', _('Dropout, referral not possible')),
     )
-    REGISTRATION_LEVEL = (
-        ('', '----------'),
-        ('level_two', _('Level two')),
-        ('level_three', _('Level three'))
-    )
     MAIN_CAREGIVER = (
         ('', '----------'),
         ('mother', _('Mother')),
@@ -1975,10 +1970,8 @@ class RS(CLM):
         related_name='+',
         verbose_name=_('Attending in school')
     )
-    registered_in_school = models.ForeignKey(
-        School,
-        blank=False, null=True,
-        related_name='+',
+    registered_in_school =  models.TextField(
+        blank=True, null=True,
         verbose_name=_('School of Enrollment')
     )
     shift = models.CharField(
@@ -2133,13 +2126,6 @@ class RS(CLM):
         blank=True,
         null=True,
         verbose_name=_('Round start date')
-    )
-    registration_level = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=REGISTRATION_LEVEL,
-        verbose_name=_('Registration level')
     )
     main_caregiver = models.CharField(
         max_length=100,

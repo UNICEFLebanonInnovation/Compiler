@@ -3116,7 +3116,7 @@ msgstr "كان مسجلاً في مدرسة غير نظامية ولم يكمل"
 
 #: student_registration/clm/forms.py:3132
 msgid "Source of identification of the child to RS"
-msgstr "مصدر احالة الطفل  إلى برنامج BLN"
+msgstr "مصدر احالة الطفل  إلى برنامج RS"
 
 #: student_registration/clm/forms.py:3143
 #: student_registration/clm/forms.py:4528
