@@ -411,8 +411,9 @@ class RSSerializer(CLMSerializer):
             # 'grade',
             # 'section',
 
-            # 'student_family_status',
-            # 'student_have_children',
+            'student_have_children',
+            'student_family_status',
+            'student_number_children',
 
             'have_labour',
             'labours',

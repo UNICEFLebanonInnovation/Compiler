@@ -74,6 +74,56 @@ $(document).ready(function(){
     if($(document).find('#id_followup_visit_date_1').length == 1) {
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
+    $(document).on('change', 'select#id_student_nationality', function(){
+        reorganizeForm();
+    });
+    $(document).on('change', 'select#id_have_labour_single_selection', function(){
+        reorganizeForm();
+    });
+    $(document).on('change', 'select#id_labour_weekly_income', function(){
+        reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_student_family_status', function(){
+        family_status_single();
+    });
+    $(document).on('click', 'input[name=student_have_children]', function(){
+        reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_main_caregiver', function(){
+        var main_caregiver = $('select#id_main_caregiver').val();
+
+        $('div#div_id_other_caregiver_relationship').addClass('d-none');
+        $('#span_other_caregiver_relationship').addClass('d-none');
+
+        if(main_caregiver == 'father'){
+            var student_father_name = $('#id_student_father_name').val();
+            var student_last_name = $('#id_student_last_name').val();
+            $('#id_caretaker_first_name').val(student_father_name);
+            $('#id_caretaker_last_name').val(student_last_name);
+        }
+        else if(main_caregiver == 'mother'){
+            var student_mother_name = $('#id_student_mother_fullname').val();
+            $('#id_caretaker_mother_name').val(student_mother_name);
+        }
+
+        else if(main_caregiver == 'other'){
+            $('div#div_id_other_caregiver_relationship').removeClass('d-none');
+            $('#span_other_caregiver_relationship').removeClass('d-none');
+
+            $('#id_caretaker_first_name').val('');
+            $('#id_caretaker_last_name').val('');
+        }
+        else {
+            $('#id_caretaker_first_name').val('');
+            $('#id_caretaker_last_name').val('');
+        }
+    });
+
+    $(document).on('change', 'select#id_grade_registration', function(){
+        reorganize_pre_assessment();
+    });
 
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
@@ -139,6 +189,7 @@ $(document).ready(function(){
     if($(document).find('.justify-date-input').length >= 1) {
         $('.justify-date-input').datepicker({dateFormat: "yy-mm-dd"});
     }
+
     $("td[class='student.first_name']").addClass('font-bolder');
     $("td[class='student.father_name']").addClass('font-bolder');
     $("td[class='student.last_name']").addClass('font-bolder');
@@ -199,47 +250,6 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-
-    $(document).on('change', 'select#id_student_family_status', function(){
-         family_status_single();
-    });
-
-    $(document).on('change', 'select#id_student_nationality, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
-        reorganizeForm();
-
-    });
-
-
-    $(document).on('change', 'select#id_main_caregiver', function(){
-        var main_caregiver = $('select#id_main_caregiver').val();
-
-        $('div#div_id_other_caregiver_relationship').addClass('d-none');
-        $('#span_other_caregiver_relationship').addClass('d-none');
-
-        if(main_caregiver == 'father'){
-            var student_father_name = $('#id_student_father_name').val();
-            var student_last_name = $('#id_student_last_name').val();
-            $('#id_caretaker_first_name').val(student_father_name);
-            $('#id_caretaker_last_name').val(student_last_name);
-        }
-        else if(main_caregiver == 'mother'){
-            var student_mother_name = $('#id_student_mother_fullname').val();
-            $('#id_caretaker_mother_name').val(student_mother_name);
-        }
-
-        else if(main_caregiver == 'other'){
-            $('div#div_id_other_caregiver_relationship').removeClass('d-none');
-            $('#span_other_caregiver_relationship').removeClass('d-none');
-
-            $('#id_caretaker_first_name').val('');
-            $('#id_caretaker_last_name').val('');
-        }
-        else {
-            $('#id_caretaker_first_name').val('');
-            $('#id_caretaker_last_name').val('');
-        }
-    });
-
     $(document).on('change', 'select#id_main_caregiver_nationality', function(){
 
         var nationality = $('select#id_main_caregiver_nationality').val();
@@ -254,11 +264,6 @@ $(document).ready(function(){
             $('#id_main_caregiver_nationality_other').val('');
         }
     });
-
-    $(document).on('click', 'input[name=student_have_children]', function(){
-        reorganizeForm();
-    });
-
 
     $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
          verify_age_level();
@@ -279,9 +284,6 @@ $(document).ready(function(){
     });
     $(document).on('change', 'select#id_have_barcode', function(){
         reorganizeForm();
-    });
-    $(document).on('change', 'select#id_grade_level', function(){
-        reorganize_pre_assessment();
     });
 
     $(document).on('change', 'select#id_participation', function(){
@@ -443,7 +445,7 @@ $(document).ready(function(){
             patch_registration(item, callback());
         }
     });
-    $(document).on('click', '.delete-button', function(){
+     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
             var callback = function(){
@@ -842,13 +844,27 @@ function reorganizeForm()
     var remote_learning_reasons_not_engaged = $('select#id_remote_learning_reasons_not_engaged').val();
 
 
+    $('div#div_id_student_have_children').addClass('d-none');
+    $('#span_student_have_children').addClass('d-none');
+    if(family_status !='single'){
+        $('div#div_id_student_have_children').removeClass('d-none');
+        $('#span_student_have_children').removeClass('d-none');
+    }
+    else{
+        $('input:radio[name=student_have_children]').filter('[value=0]').prop('checked', true);
+        $('#id_student_number_children').val('');
+        $('div#div_id_student_number_children').addClass('d-none');
+        $('#span_student_number_children').addClass('d-none');
+        $('#span_student_have_children').addClass('d-none');
+    }
+
     $('div.child_id').addClass('d-none');
 
     // id_student_nationality
     $('div#div_id_other_nationality').addClass('d-none');
     $('#span_other_nationality').addClass('d-none');
 
-    alert(nationality);
+    // alert(nationality);
     if(nationality == '6'){
         $('#div_id_other_nationality').removeClass('d-none');
     $('#span_other_nationality').removeClass('d-none');
@@ -1111,8 +1127,7 @@ function family_status_single()
         $('#id_student_number_children').val('');
         $('div#div_id_student_number_children').addClass('d-none');
         $('#span_student_number_children').addClass('d-none');
-
-
+        $('#span_student_have_children').addClass('d-none');
     }
 }
 
@@ -1121,7 +1136,6 @@ function reorganize_pre_assessment()
 
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
-    var test_done = $('select#id_test_done').val();
     var follow_up_type = $('select#id_follow_up_type').val();
 
     var attended_arabic = $('select#id_attended_arabic').val();
@@ -1139,9 +1153,21 @@ function reorganize_pre_assessment()
     var attended_physics = $('select#id_attended_physics').val();
 
 
-    var grade_level = $('select#id_grade_level').val();
+    var grade_registration = $('select#id_grade_registration').val();
+    // grade_registration
+    $('div.grd6').addClass('d-none');
+    $('div.grd7').addClass('d-none');
 
+    if(grade_registration == '6'){
+        $('div.grd6').removeClass('d-none');
+    }else if(grade_registration == '7'){
+        $('div.grd7').removeClass('d-none');
+    }else if(grade_registration == '8'){
+        $('div.grd7').removeClass('d-none');
+    }else if(grade_registration == '9'){
+        $('div.grd7').removeClass('d-none');
 
+    }
 
 
     var pss_session_attended = $('select#id_pss_session_attended').val();
@@ -1355,22 +1381,6 @@ function reorganize_pre_assessment()
         $('select#id_modality_physics').val("");
     }
 
-    // follow_up_type
-    $('div#div_grd6').addClass('d-none');
-    $('div#div_grd7').addClass('d-none');
-    // alert(grade_level);
-    if(grade_level == 'grade6'){
-        $('div#div_grd6').removeClass('d-none');
-    }else if(grade_level in 'grade7'){
-        $('div#div_grd7').removeClass('d-none');
-
-    }else if(grade_level in 'grade8'){
-        $('div#div_grd7').removeClass('d-none');
-
-    }else if(grade_level in 'grade9'){
-        $('div#div_grd7').removeClass('d-none');
-
-    }
 
     // pss_session_modality
     $('div#div_id_pss_session_number').addClass('d-none');

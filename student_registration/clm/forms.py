@@ -2901,8 +2901,23 @@ class RSForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-
-
+    student_family_status = forms.ChoiceField(
+        label=_('What is the family status of the child?'),
+        widget=forms.Select, required=True,
+        choices=Student.FAMILY_STATUS,
+        initial='single'
+    )
+    student_have_children = forms.TypedChoiceField(
+        label=_("Does the child have children?"),
+        choices=YES_NO_CHOICE,
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=True,
+    )
+    student_number_children = forms.IntegerField(
+        label=_('How many children does this child have?'),
+        widget=forms.TextInput, required=False
+    )
     have_labour_single_selection = forms.ChoiceField(
         label=_('Does the child participate in work?'),
         widget=forms.Select, required=True,
@@ -3308,6 +3323,7 @@ class RSForm(CommonForm):
         )
     )
 
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(RSForm, self).__init__(*args, **kwargs)
@@ -3661,22 +3677,31 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_family_status', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id=span_student_have_children">1.1</span>'),
+                    Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
+                    HTML('<span class="badge badge-default" id="span_student_number_children">1.2</span>'),
+                    Div('student_number_children', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('have_labour_single_selection', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge badge-default">2.1</span>'),
                     Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
-                    HTML('<span class="badge badge-default" id="span_labours_other_specify">3.1.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_labours_other_specify">2.1.1</span>'),
                     Div('labours_other_specify', css_class='col-md-3'),
                     css_class='row',
                     id='labour_details_1'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3.2</span>'),
+                    HTML('<span class="badge badge-default">2.2</span>'),
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
-                    HTML('<span class="badge badge-default">3.3</span>'),
+                    HTML('<span class="badge badge-default">2.3</span>'),
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
                     id='labour_details_2'
@@ -3812,7 +3837,6 @@ class RSForm(CommonForm):
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
-
         labours_other_specify = cleaned_data.get("labours_other_specify")
 
         attended_arabic = cleaned_data.get("attended_arabic")
@@ -4018,10 +4042,7 @@ class RSForm(CommonForm):
                 self.add_error('other_number_confirm', msg)
 
         #grades Max Value validation
-
         grade_registration = cleaned_data.get("grade_registration")
-        print (type(grade_registration))
-
         if grade_registration == '6':
             if arabic > 20:
                 self.add_error('arabic', 'This value is greater that 20')
@@ -4029,15 +4050,6 @@ class RSForm(CommonForm):
                 self.add_error('english', 'This value is greater that 20')
             if math > 20:
                 self.add_error('math', 'This value is greater that 20')
-            print(science)
-            print(science)
-            print(science)
-            print(science)
-            print(science)
-            print(science)
-            print(science)
-            print(science)
-            print(science)
             if science > 20:
                 self.add_error('science', 'This value is greater that 20')
         else:
@@ -4097,6 +4109,9 @@ class RSForm(CommonForm):
             'have_labour_single_selection',
             'labours_single_selection',
             'labours_other_specify',
+            'student_have_children',
+            'student_family_status',
+            'student_number_children',
             'labour_hours',
             'phone_number',
             'phone_number_confirm',
