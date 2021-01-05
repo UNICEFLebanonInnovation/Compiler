@@ -2804,7 +2804,7 @@ class ABLNForm(CommonForm):
 
 class RSForm(CommonForm):
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 3)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 21, Person.CURRENT_YEAR - 5)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -3132,16 +3132,16 @@ class RSForm(CommonForm):
         required=True,
         choices=(
             ('', '----------'),
-            ('Referred by CP partner', _('Referred by CP partner')),
-            ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _('Referral from another NGO')),
-            ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database')),
-            ('From hosted community', _('From hosted community')),
-            ('From displaced community', _('From displaced community'))
+            ('Referral from school directors', _('Referral from school directors')),
+            ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
+            ('Other Sources', _('Other Sources'))
         ),
         initial=''
+    )
+
+    source_of_identification_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
 
     attended_arabic = forms.ChoiceField(
@@ -3488,10 +3488,15 @@ class RSForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">17</span>'),
-                    Div('source_of_transportation', css_class='col-md-3'),
-                    css_class='row d-none',
+                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">16.1</span>'),
+                    Div('source_of_identification_specify', css_class='col-md-3'),
+                    css_class='row',
                 ),
+                # Div(
+                #     HTML('<span class="badge badge-default">17</span>'),
+                #     Div('source_of_transportation', css_class='col-md-3'),
+                #     css_class='row d-none',
+                # ),
                 css_class='bd-callout bd-callout-warning child_data B_right_border'
             ),
             Fieldset(
@@ -4109,9 +4114,6 @@ class RSForm(CommonForm):
             'have_labour_single_selection',
             'labours_single_selection',
             'labours_other_specify',
-            'student_have_children',
-            'student_family_status',
-            'student_number_children',
             'labour_hours',
             'phone_number',
             'phone_number_confirm',
@@ -4146,23 +4148,26 @@ class RSForm(CommonForm):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'source_of_identification_specify',
             'other_nationality',
             # 'caretaker_first_name',
             # 'caretaker_middle_name',
             # 'caretaker_last_name',
             # 'caretaker_mother_name',
             'miss_school_date',
+            'student_have_children',
+            'student_family_status',
+            'student_number_children',
             'round_start_date',
             'cadaster',
             'main_caregiver',
             # 'main_caregiver_nationality',
             'other_caregiver_relationship',
             'labour_weekly_income',
-            'source_of_transportation',
+            # 'source_of_transportation',
             'student_p_code',
             'grade_level',
             'source_join_fe',
-
             'grade_registration',
             'registered_in_school',
             'shift'

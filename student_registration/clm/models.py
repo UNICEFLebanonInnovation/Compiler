@@ -1888,7 +1888,7 @@ class RS(CLM):
         ('other', _('Other')),
     )
     SCHOOL_SHIFTS = Choices(
-        ('', _('Shift')),
+        ('', _('----------')),
         ('first', _('First shift')),
         ('second', _('Second shift')),
     )
@@ -2196,17 +2196,17 @@ class RS(CLM):
         null=True,
         choices=Choices(
             ('', '----------'),
-            ('Referred by CP partner', _('Referred by CP partner')),
-            ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _('Referral from another NGO')),
-            ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database')),
-            ('From hosted community', _('From hosted community')),
-            ('From displaced community', _('From displaced community'))
+            ('Referral from school directors', _('Referral from school directors')),
+            ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
+            ('Other Sources', _('Other Sources'))
         ),
         verbose_name=_('Source of identification of the child')
     )
+    source_of_identification_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
     grade_level = models.CharField(
         max_length=50,
         blank=True,

@@ -226,6 +226,11 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
+     $(document).on('change', 'select#id_source_of_identification', function(){
+         alert('1');
+         reorganizeForm();
+    });
+
     $(document).on('change', 'select#id_follow_up_done', function(){
          reorganizeForm();
     });
@@ -843,6 +848,18 @@ function reorganizeForm()
     var remote_learning = $('select#id_remote_learning').val();
     var remote_learning_reasons_not_engaged = $('select#id_remote_learning_reasons_not_engaged').val();
 
+    var source_of_identification = $('select#id_source_of_identification').val();
+
+
+    // source_of_identification
+    $('div#div_id_source_of_identification_specify').addClass('d-none');
+    $('#span_source_of_identification_specify').addClass('d-none');
+
+    // alert(nationality);
+    if(source_of_identification == 'Other Sources'){
+        $('#div_id_source_of_identification_specify').removeClass('d-none');
+        $('#span_source_of_identification_specify').removeClass('d-none');
+    }
 
     $('div#div_id_student_have_children').addClass('d-none');
     $('#span_student_have_children').addClass('d-none');
@@ -869,6 +886,7 @@ function reorganizeForm()
         $('#div_id_other_nationality').removeClass('d-none');
     $('#span_other_nationality').removeClass('d-none');
     }
+
 
     // id_covid_message
     $('div#div_id_covid_message_how_often').addClass('d-none');
