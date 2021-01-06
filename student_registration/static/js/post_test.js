@@ -26,6 +26,7 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_participation,  select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
         'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
         'select#id_pss_parent_attended,  select#id_covid_parent_attended ,  select#id_followup_parent_attended ,' +
+        'select#id_attended_biology,  select#id_attended_chemistry ,  select#id_attended_physics ,' +
         'select#id_barriers_single, select#id_test_done , select#id_pss_session_attended,  select#id_covid_session_attended ,  select#id_followup_session_attended ', function(){
        reorganizeForm_post_assessment();
     });
@@ -94,6 +95,10 @@ function reorganizeForm_post_assessment()
 
     var attended_science = $('select#id_attended_science').val();
     var attended_artistic = $('select#id_attended_artistic').val();
+
+    var attended_biology = $('select#id_attended_biology').val();
+    var attended_chemistry = $('select#id_attended_chemistry').val();
+    var attended_physics = $('select#id_attended_physic').val();
 
     var pss_session_attended = $('select#id_pss_session_attended').val();
     var covid_session_attended = $('select#id_covid_session_attended').val();
@@ -171,6 +176,19 @@ function reorganizeForm_post_assessment()
         $('#id_artistic').val('');
         $('select#id_attended_artistic').val("no");
         $('select#id_modality_artistic').val("");
+
+
+        $('#id_biology').val('');
+        $('select#id_attended_biology').val("no");
+        $('select#id_modality_biology').val("");
+
+        $('#id_chemistry').val('');
+        $('select#id_attended_chemistry').val("no");
+        $('select#id_modality_chemistry').val("");
+
+        $('#id_physics').val('');
+        $('select#id_attended_physics').val("no");
+        $('select#id_modality_physics').val("");
     }
 
 
@@ -219,10 +237,29 @@ function reorganizeForm_post_assessment()
     $('div#div_id_modality_science').addClass('d-none');
     $('#span_modality_science').addClass('d-none');
 
-    $('div#div_id_artistic ').addClass('d-none');
-    $('#span_artistic ').addClass('d-none');
-    $('div#div_id_modality_artistic ').addClass('d-none');
-    $('#span_modality_artistic ').addClass('d-none');
+    $('div#div_id_artistic').addClass('d-none');
+    $('#span_artistic').addClass('d-none');
+    $('div#div_id_modality_artistic').addClass('d-none');
+    $('#span_modality_artistic').addClass('d-none');
+
+        // , , physics
+
+    $('div#div_id_biology').addClass('d-none');
+    $('#span_biology').addClass('d-none');
+    $('div#div_id_modality_biology').addClass('d-none');
+    $('#span_modality_biology').addClass('d-none');
+
+
+    $('div#div_id_chemistry').addClass('d-none');
+    $('#span_chemistry').addClass('d-none');
+    $('div#div_id_modality_chemistry').addClass('d-none');
+    $('#span_modality_chemistry').addClass('d-none');
+
+
+    $('div#div_id_physics').addClass('d-none');
+    $('#span_physics').addClass('d-none');
+    $('div#div_id_modality_physics').addClass('d-none');
+    $('#span_modality_physics').addClass('d-none');
 
     // attended_arabic
     if(attended_arabic == 'yes'){
@@ -309,6 +346,44 @@ function reorganizeForm_post_assessment()
         $('select#id_modality_artistic').val("");
     }
 
+
+    // biology, chemistry, physics
+    // attended_biology
+    if(attended_biology == 'yes'){
+        $('div#div_id_biology').removeClass('d-none');
+        $('#span_biology').removeClass('d-none');
+        $('div#div_id_modality_biology').removeClass('d-none');
+        $('#span_modality_biology').removeClass('d-none');
+    }
+    else{
+        $('#id_biology').val('');
+        $('select#id_modality_biology').val("");
+    }
+
+    // attended_chemistry
+    if(attended_chemistry == 'yes'){
+        $('div#div_id_chemistry').removeClass('d-none');
+        $('#span_chemistry').removeClass('d-none');
+        $('div#div_id_modality_chemistry').removeClass('d-none');
+        $('#span_modality_chemistry').removeClass('d-none');
+    }
+    else{
+        $('#id_chemistry').val('');
+        $('select#id_modality_chemistry').val("");
+    }
+
+    // attended_physics
+    if(attended_physics == 'yes'){
+        $('div#div_id_physics').removeClass('d-none');
+        $('#span_physics').removeClass('d-none');
+        $('div#div_id_modality_physics').removeClass('d-none');
+        $('#span_modality_physics').removeClass('d-none');
+    }
+    else{
+        $('#id_physics').val('');
+        $('select#id_modality_physics').val("");
+    }
+
     // pss_parent_attended
     $('#div_id_pss_parent_attended_other').addClass('d-none');
     $('#span_pss_parent_attended_other').addClass('d-none');
@@ -323,8 +398,8 @@ function reorganizeForm_post_assessment()
 
     // pss_session_modality
     $('div#div_id_pss_session_number').addClass('d-none');
-    $('#span_pss_session_number ').addClass('d-none');
-    $('div#div_id_pss_session_modality ').addClass('d-none');
+    $('#span_pss_session_number').addClass('d-none');
+    $('div#div_id_pss_session_modality').addClass('d-none');
     $('#span_pss_session_modality').addClass('d-none');
     // $('div#div_id_pss_parent_attended_other').addClass('d-none');
     // $('#span_pss_parent_attended_other').addClass('d-none');
@@ -364,8 +439,8 @@ function reorganizeForm_post_assessment()
 
     // covid_session_modality
     $('div#div_id_covid_session_number').addClass('d-none');
-    $('#span_covid_session_number ').addClass('d-none');
-    $('div#div_id_covid_session_modality ').addClass('d-none');
+    $('#span_covid_session_number').addClass('d-none');
+    $('div#div_id_covid_session_modality').addClass('d-none');
     $('#span_covid_session_modality').addClass('d-none');
     // $('div#div_id_covid_parent_attended_other').addClass('d-none');
     // $('#span_covid_parent_attended_other').addClass('d-none');
@@ -406,8 +481,8 @@ function reorganizeForm_post_assessment()
 
     // followup_session_modality
     $('div#div_id_followup_session_number').addClass('d-none');
-    $('#span_followup_session_number ').addClass('d-none');
-    $('div#div_id_followup_session_modality ').addClass('d-none');
+    $('#span_followup_session_number').addClass('d-none');
+    $('div#div_id_followup_session_modality').addClass('d-none');
     $('#span_followup_session_modality').addClass('d-none');
     // $('div#div_id_followup_parent_attended_other').addClass('d-none');
     // $('#span_followup_parent_attended_other').addClass('d-none');

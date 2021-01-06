@@ -1872,14 +1872,11 @@ class RS(CLM):
     # )
     LEARNING_RESULT = Choices(
             ('', '----------'),
-            ('graduated_to_cbece_next_level', _('Graduated to the next level')),
-            ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
-            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level round 3')),
-            ('referred_to_alp', _('referred to ALP')),
-            ('referred_public_school', _('Referred to public school grade 1')),
-            ('referred_to_tvet', _('Referred to TVET')),
-            ('referred_to_ycbece', _('Referred to YCBECE')),
-            ('dropout', _('Dropout, referral not possible')),
+            ('graduated_to_rs_next_round_higher_level', _('Progress to FE higher grade next year')),
+            ('graduated_to_rs_next_round_same_level', _('Repeat same grade next year')),
+            ('referred_alp', _('Referred to ALP')),
+            ('graduated_to_tvet', _('Referred to TVET')),
+            ('other', _('Other')),
     )
     MAIN_CAREGIVER = (
         ('', '----------'),
