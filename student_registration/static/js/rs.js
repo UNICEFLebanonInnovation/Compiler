@@ -227,7 +227,6 @@ $(document).ready(function(){
     });
 
      $(document).on('change', 'select#id_source_of_identification', function(){
-         alert('1');
          reorganizeForm();
     });
 

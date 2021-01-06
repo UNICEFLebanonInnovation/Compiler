@@ -36,6 +36,7 @@ from .forms import (
     BLNForm,
     ABLNForm,
     RSForm,
+    RSAssessmentForm,
     CBECEForm,
     BLNReferralForm,
     BLNFollowupForm,
@@ -1063,6 +1064,103 @@ class CBECEMidAssessmentView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(CBECEMidAssessmentView, self).form_valid(form)
 
+
+class RSPostAssessmentView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+    template_name = 'clm/rs_post_assessment.html'
+    form_class = RSAssessmentForm
+    success_url = '/clm/rs-list/'
+    group_required = [u"CLM_RS"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(RSPostAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = RS.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+
+        else:
+            data = RSSerializer(instance).data
+            if 'post_test' in data:
+                p_test = data['post_test']
+                if p_test:
+                    if "RS_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["RS_ASSESSMENT/attended_arabic"]
+
+                    if "RS_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["RS_ASSESSMENT/modality_arabic"]
+
+                    if "RS_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["RS_ASSESSMENT/arabic"]
+
+                    if "RS_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["RS_ASSESSMENT/attended_english"]
+
+                    if "RS_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["RS_ASSESSMENT/modality_english"]
+
+                    if "RS_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["RS_ASSESSMENT/english"]
+
+                    if "RS_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["RS_ASSESSMENT/attended_math"]
+
+                    if "RS_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["RS_ASSESSMENT/modality_math"]
+
+                    if "RS_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["RS_ASSESSMENT/math"]
+
+                    if "RS_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["RS_ASSESSMENT/attended_social"]
+
+                    if "RS_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["RS_ASSESSMENT/modality_social"]
+
+                    if "RS_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["RS_ASSESSMENT/social_emotional"]
+
+                    if "RS_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_psychomotor'] = p_test["RS_ASSESSMENT/attended_psychomotor"]
+
+                    if "RS_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_psychomotor'] = p_test["RS_ASSESSMENT/modality_psychomotor"]
+
+                    if "RS_ASSESSMENT/psychomotor" in p_test:
+                        data['psychomotor'] = p_test["RS_ASSESSMENT/psychomotor"]
+
+                    if "RS_ASSESSMENT/attended_science" in p_test:
+                        data['attended_science'] = p_test["RS_ASSESSMENT/attended_science"]
+
+                    if "RS_ASSESSMENT/modality_science" in p_test:
+                        data['modality_science'] = p_test["RS_ASSESSMENT/modality_science"]
+
+                    if "RS_ASSESSMENT/science" in p_test:
+                        data['science'] = p_test["RS_ASSESSMENT/science"]
+
+                    if "RS_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["RS_ASSESSMENT/attended_artistic"]
+
+                    if "RS_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["RS_ASSESSMENT/modality_artistic"]
+
+                    if "RS_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["RS_ASSESSMENT/artistic"]
+
+            return form_class(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = RS.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(RSPostAssessmentView, self).form_valid(form)
 
 class ABLNFollowupView(LoginRequiredMixin,
                        GroupRequiredMixin,

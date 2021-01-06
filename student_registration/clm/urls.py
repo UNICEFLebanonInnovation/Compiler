@@ -184,6 +184,11 @@ urlpatterns = [
         name='cbece_followup'
     ),
     url(
+        regex=r'^rs-post-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=views.RSPostAssessmentView.as_view(),
+        name='rs_post_assessment'
+    ),
+    url(
         'load-districts/$',
         views.load_districts,
         name='load_districts'

@@ -2875,7 +2875,7 @@ class RSForm(CommonForm):
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
-        required=False,
+        required=True,
     )
     new_registry = forms.ChoiceField(
         label=_("First time registered?"),
@@ -3304,7 +3304,7 @@ class RSForm(CommonForm):
     )
     registered_in_school = forms.CharField(
         label=_('School of Enrollment'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     shift = forms.ChoiceField(
         label=_("Shift"),
@@ -3843,6 +3843,13 @@ class RSForm(CommonForm):
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
         labours_other_specify = cleaned_data.get("labours_other_specify")
+
+        source_of_identification = cleaned_data.get("source_of_identification")
+        source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
+
+        if source_of_identification == 'Other Sources':
+            if not source_of_identification_specify:
+                self.add_error('source_of_identification_specify', 'This field is required')
 
         attended_arabic = cleaned_data.get("attended_arabic")
         modality_arabic = cleaned_data.get("modality_arabic")
@@ -9111,6 +9118,857 @@ class CBECEAdminForm(forms.ModelForm):
     class Meta:
         model = CBECE
         fields = '__all__'
+
+class RSAssessmentForm(forms.ModelForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
+    participation = forms.ChoiceField(
+        label=_('How was the level of child participation in the program?'),
+        widget=forms.Select, required=True,
+        choices=(
+                ('', '----------'),
+                ('no_absence', _('No Absence')),
+                ('less_than_5days', _('Less than 5 absence days')),
+                ('5_10_days', _('5 to 10 absence days')),
+                ('10_15_days', _('10 to 15 absence days')),
+                ('15_25_days', _('15 to 25 absence days')),
+                ('more_than_25days', _('More than 25 absence days')),
+
+            ),
+        initial=''
+    )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            # ('graduated_to_rs_next_level', _('Graduated to the next level')),
+            ('graduated_to_rs_next_round_same_level', _('Graduated to the next round, same level')),
+            ('graduated_to_rs_next_round_higher_level', _('Graduated to the next round, higher level round 3')),
+            # ('referred_to_alp', _('referred to ALP')),
+            ('referred_public_school', _('Referred to public school grade 1')),
+            # ('referred_to_tvet', _('Referred to TVET')),
+            # ('referred_to_yrs', _('Referred to YRS')),
+            ('dropout', _('Dropout, referral not possible')),
+        ),
+        initial=''
+    )
+    barriers_single = forms.ChoiceField(
+        label=_('The main barriers affecting the daily attendance and performance '
+                'of the child or drop out of programme? (Select more than one if applicable)'),
+        choices= (
+            ('Full time job to support family financially', _('Full time job to support family financially')),
+            ('seasonal_work', _('Seasonal work')),
+            ('availablity_electronic_device', _('Availablity of Electronic Device')),
+            ('internet_connectivity', _('Internet Connectivity')),
+            ('sickness', _('Sickness')),
+            ('security', _('Security')),
+            ('family_moved', _('Family moved')),
+            ('Moved back to Syria', _('Moved back to Syria')),
+            ('Enrolled in formal education', _('Enrolled in formal education')),
+            ('violence bullying', _('Violence/Bullying')),
+            ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
+            ('other', _('Other')),
+        ),
+        widget=forms.Select,
+        required=True
+    )
+    barriers_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    test_done = forms.ChoiceField(
+        label=_("Post test has been done"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    round_complete = forms.ChoiceField(
+        label=_("Round complete"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    basic_stationery = forms.ChoiceField(
+        label=_("Did the child receive basic stationery?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    # pss_kit = forms.ChoiceField(
+    #         label=_("Did the child benefit from the PSS kit?"),
+    #         widget=forms.Select, required=True,
+    #         choices=CLM.YES_NO
+    # )
+    attended_arabic = forms.ChoiceField(
+        label=_("Attended Arabic test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    modality_arabic = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    arabic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_english = forms.ChoiceField(
+        label=_("Attended English test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_english = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    english = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_math = forms.ChoiceField(
+        label=_("Attended Math test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_math = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    math = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_social = forms.ChoiceField(
+        label=_("Attended Social test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_social = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    social_emotional = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+
+    attended_psychomotor = forms.ChoiceField(
+        label=_("Attended Psychomotor test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_psychomotor = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    psychomotor = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_science = forms.ChoiceField(
+        label=_("Attended Science test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_science = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    science = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_artistic = forms.ChoiceField(
+        label=_("Attended Artistic test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    modality_artistic = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    artistic = forms.FloatField(
+        label=_('Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    follow_up_type = forms.ChoiceField(
+        label=_('Type of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('none', _('----------')),
+            ('Phone', _('Phone Call')),
+            ('House visit', _('House Visit')),
+            ('Family Visit', _('Family Visit')),
+        ),
+        initial=''
+    )
+    phone_call_number = forms.IntegerField(
+        label=_('Please enter the number phone calls'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    house_visit_number = forms.IntegerField(
+        label=_('Please enter the number of house visits'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    family_visit_number = forms.IntegerField(
+        label=_('Please enter the number parent visits'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    phone_call_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    house_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    family_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    parent_attended_visits = forms.ChoiceField(
+        label=_("Parents attended parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    cp_referral = forms.ChoiceField(
+        label=_("CP Followup"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('yes', _("Yes")),
+            ('no', _("No")))
+    )
+    pss_session_attended = forms.ChoiceField(
+        label=_("Attended PSS Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    pss_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    pss_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    pss_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    pss_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    covid_session_attended = forms.ChoiceField(
+        label=_("Attended covid Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    covid_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    covid_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    covid_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    covid_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    followup_session_attended = forms.ChoiceField(
+        label=_("Attended followup Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    followup_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+
+    followup_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    followup_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    followup_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    child_health_examed = forms.ChoiceField(
+        label=_("Did the child receive health exam"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    child_health_concern = forms.ChoiceField(
+        label=_("Anything to worry about"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    registration_level = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=False,
+        choices=REGISTRATION_LEVEL
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(RSAssessmentForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'RS'
+
+        display_assessment = ''
+        form_action = reverse('clm:rs_post_assessment', kwargs={'pk': instance.id})
+
+        if instance.post_test:
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='rs_post_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:rs_post_assessment', kwargs={'pk': instance.id}))
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    Div('registration_level', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('participation', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_barriers_single">1.1</span>'),
+                    Div('barriers_single', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_barriers_other">1.2</span>'),
+                    Div('barriers_other', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('test_done', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_round_complete">2.1</span>'),
+                    Div('round_complete', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('basic_stationery', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">4</span>'),
+                    # Div('pss_kit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('cp_referral', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('attended_arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">5.1</span>'),
+                    Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_arabic">5.2</span>'),
+                    Div('arabic', css_class='col-md-2'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('attended_english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">6.1</span>'),
+                    Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_english">6.2</span>'),
+                    Div('english', css_class='col-md-2'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('attended_math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">7.1</span>'),
+                    Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_math">7.2</span>'),
+                    Div('math', css_class='col-md-2'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('attended_science', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_science">8.1</span>'),
+                    Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_science">8.2</span>'),
+                    Div('science', css_class='col-md-2'),
+                    css_class='row grades',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('attended_social', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">9.1</span>'),
+                    Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">9.2</span>'),
+                    Div('social_emotional', css_class='col-md-2'),
+                    css_class='row grades',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('attended_psychomotor', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">10.1</span>'),
+                    Div('modality_psychomotor', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_psychomotor">10.2</span>'),
+                    Div('psychomotor', css_class='col-md-2'),
+                    css_class='row grades',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('attended_artistic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">11.1</span>'),
+                    Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_artistic">11.2</span>'),
+                    Div('artistic', css_class='col-md-2'),
+                    css_class='row grades',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('phone_call_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('phone_call_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('house_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('house_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('family_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('family_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                id='follow_up',
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>C</span>'), css_class='block_tag'),
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parents Meeting and Health Exam') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('parent_attended_visits', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2</span>'),
+                    # Div('visits_number', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('pss_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_session_modality">2.1</span>'),
+                    Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
+                    Div('pss_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">5</span>'),
+                    Div('pss_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
+                    Div('pss_parent_attended_other', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('covid_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_session_modality">3.1</span>'),
+                    Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
+                    Div('covid_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">5</span>'),
+                    Div('covid_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
+                    Div('covid_parent_attended_other', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('followup_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_modality">4.1</span>'),
+                    Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
+                    Div('followup_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">5</span>'),
+                    Div('followup_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
+                    Div('followup_parent_attended_other', css_class='col-md-2'),
+                    css_class='row',
+                ),
+
+                # Div(
+                #     HTML('<span class="badge badge-default">4</span>'),
+                #     Div('child_health_examed', css_class='col-md-4'),
+                #     HTML('<span class="badge badge-default">5</span>'),
+                #     Div('child_health_concern', css_class='col-md-4'),
+                #     css_class='row',
+                # ),
+                id= 'visits',
+                css_class='bd-callout bd-callout-warning C_right_border'+ display_assessment,
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(RSAssessmentForm, self).clean()
+
+        attended_arabic = cleaned_data.get("attended_arabic")
+        modality_arabic = cleaned_data.get("modality_arabic")
+        arabic = cleaned_data.get("arabic")
+
+        attended_english = cleaned_data.get("attended_english")
+        modality_english = cleaned_data.get("modality_english")
+        english = cleaned_data.get("english")
+
+        attended_psychomotor = cleaned_data.get("attended_psychomotor")
+        modality_psychomotor = cleaned_data.get("modality_psychomotor")
+        psychomotor = cleaned_data.get("psychomotor")
+
+        attended_math = cleaned_data.get("attended_math")
+        modality_math = cleaned_data.get("modality_math")
+        math = cleaned_data.get("math")
+
+        attended_social = cleaned_data.get("attended_social")
+        modality_social = cleaned_data.get("modality_social")
+        social_emotional = cleaned_data.get("social_emotional")
+
+        attended_science = cleaned_data.get("attended_science")
+        modality_science = cleaned_data.get("modality_science")
+        science = cleaned_data.get("science")
+
+        attended_artistic = cleaned_data.get("attended_artistic")
+        modality_artistic = cleaned_data.get("modality_artistic")
+        artistic = cleaned_data.get("artistic")
+
+        learning_result = cleaned_data.get("learning_result")
+        barriers_single = cleaned_data.get("barriers_single")
+        barriers_other = cleaned_data.get("barriers_other")
+
+        test_done = cleaned_data.get("test_done")
+        round_complete = cleaned_data.get("round_complete")
+
+        if test_done == 'yes':
+            if not round_complete:
+                self.add_error('round_complete', 'This field is required')
+
+        if learning_result != 'no_absence':
+            if not barriers_single:
+                self.add_error('barriers_single', 'This field is required')
+
+        if barriers_single == 'other':
+            if not barriers_other:
+                self.add_error('barriers_other', 'This field is required')
+
+        if test_done == 'yes':
+            if attended_science == 'yes':
+                if not modality_science:
+                    self.add_error('modality_science', 'This field is required')
+                if science is None:
+                    self.add_error('science', 'This field is required')
+
+            if attended_artistic == 'yes':
+                if not modality_artistic:
+                    self.add_error('modality_artistic', 'This field is required')
+                if artistic is None:
+                    self.add_error('artistic', 'This field is required')
+
+            if attended_arabic == 'yes':
+                if not modality_arabic:
+                    self.add_error('modality_arabic', 'This field is required')
+                if arabic is None:
+                    self.add_error('arabic', 'This field is required')
+
+            if attended_english == 'yes':
+                if not modality_english:
+                    self.add_error('modality_english', 'This field is required')
+                if english is None:
+                    self.add_error('english', 'This field is required')
+
+            if attended_psychomotor == 'yes':
+                if not modality_psychomotor:
+                    self.add_error('modality_psychomotor', 'This field is required')
+                if psychomotor is None:
+                    self.add_error('psychomotor', 'This field is required')
+
+            if attended_math == 'yes':
+                if not modality_math:
+                    self.add_error('modality_math', 'This field is required')
+                if math is None:
+                    self.add_error('math', 'This field is required')
+
+            if attended_social == 'yes':
+                if not modality_social:
+                    self.add_error('modality_social', 'This field is required')
+                if social_emotional is None:
+                    self.add_error('social_emotional', 'This field is required')
+
+            # grades Max Value validation
+            registration_level = cleaned_data.get("registration_level")
+
+            if registration_level == 'level_two':
+                if arabic > 48:
+                    self.add_error('arabic', 'This value is greater that 48')
+                if english > 48:
+                    self.add_error('english', 'This value is greater that 48')
+                if math > 44:
+                    self.add_error('math', 'This value is greater that 44')
+                if social_emotional > 40:
+                    self.add_error('social_emotional', 'This value is greater that 40')
+                if psychomotor > 34:
+                    self.add_error('psychomotor', 'This value is greater that 34')
+                if science > 36:
+                    self.add_error('science', 'This value is greater that 36')
+                if artistic > 12:
+                    self.add_error('artistic', 'This value is greater that 12')
+            else:
+                if arabic > 60:
+                    self.add_error('arabic', 'This value is greater that 60')
+                if english > 60:
+                    self.add_error('english', 'This value is greater that 60')
+                if math > 46:
+                    self.add_error('math', 'This value is greater that 46')
+                if social_emotional > 40:
+                    self.add_error('social_emotional', 'This value is greater that 40')
+                if psychomotor > 36:
+                    self.add_error('psychomotor', 'This value is greater that 36')
+                if science > 36:
+                    self.add_error('science', 'This value is greater that 36')
+                if artistic > 12:
+                    self.add_error('artistic', 'This value is greater that 12')
+
+    def save(self, instance=None, request=None):
+        instance = super(RSAssessmentForm, self).save()
+        # instance = super(RSAssessmentForm, self).save(request=request, instance=instance, serializer=RSSerializer)
+
+        instance.modified_by = request.user
+        # instance.pss_session_modality = request.POST.getlist('pss_session_modality')
+        # instance.covid_session_modality = request.POST.getlist('covid_session_modality')
+        # instance.followup_session_modality = request.POST.getlist('followup_session_modality')
+
+        instance.post_test = {
+                "RS_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+                "RS_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
+                "RS_ASSESSMENT/arabic": request.POST.get('arabic'),
+
+                "RS_ASSESSMENT/attended_english": request.POST.get('attended_english'),
+                "RS_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
+                "RS_ASSESSMENT/english": request.POST.get('english'),
+
+                "RS_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
+                "RS_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
+                "RS_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+
+                "RS_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+                "RS_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
+                "RS_ASSESSMENT/math": request.POST.get('math'),
+
+                "RS_ASSESSMENT/attended_social": request.POST.get('attended_social'),
+                "RS_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
+                "RS_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+
+                "RS_ASSESSMENT/attended_science": request.POST.get('attended_science'),
+                "RS_ASSESSMENT/modality_science": request.POST.getlist('modality_science'),
+                "RS_ASSESSMENT/science": request.POST.get('science'),
+
+                "RS_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
+                "RS_ASSESSMENT/modality_artistic": request.POST.getlist('modality_artistic'),
+                "RS_ASSESSMENT/artistic": request.POST.get('artistic')
+            }
+
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = RS
+        fields = (
+            'participation',
+            'barriers_single',
+            'barriers_other',
+            'test_done',
+            'round_complete',
+            'basic_stationery',
+            # 'pss_kit',
+            'learning_result',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'phone_call_follow_up_result' ,
+            'house_visit_follow_up_result' ,
+            'family_visit_follow_up_result' ,
+            'parent_attended_visits',
+            'pss_session_attended',
+            'pss_session_number',
+            'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
+            'covid_session_attended',
+            'covid_session_number',
+            'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
+            'followup_session_attended',
+            'followup_session_number',
+            'followup_session_modality',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
+            'cp_referral',
+            # 'child_health_examed',
+            # 'child_health_concern',
+        )
 
 class BLNReferralForm(forms.ModelForm):
 
