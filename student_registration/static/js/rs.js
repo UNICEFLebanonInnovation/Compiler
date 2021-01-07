@@ -90,6 +90,10 @@ $(document).ready(function(){
     $(document).on('click', 'input[name=student_have_children]', function(){
         reorganizeForm();
     });
+    
+    $(document).on('change', 'select#id_new_registry', function(){
+        reorganizeForm();
+    });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
         var main_caregiver = $('select#id_main_caregiver').val();
@@ -277,9 +281,6 @@ $(document).ready(function(){
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_new_registry', function(){
-        reorganizeForm();
-    });
     $(document).on('change', 'select#id_cycle', function(){
         reorganizeForm();
     });
