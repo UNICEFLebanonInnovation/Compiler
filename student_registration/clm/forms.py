@@ -3878,8 +3878,7 @@ class RSForm(CommonForm):
         attended_physics = cleaned_data.get("attended_physics")
         modality_physics = cleaned_data.get("modality_physics")
         physics = cleaned_data.get("physics")
-
-
+        grade_registration = cleaned_data.get("grade_registration")
 
         if attended_arabic == 'yes':
             if not modality_arabic:
@@ -3899,30 +3898,29 @@ class RSForm(CommonForm):
             if math is None:
                 self.add_error('math', 'This field is required')
 
-        if attended_science == 'yes':
-            if not modality_science:
-                self.add_error('modality_science', 'This field is required')
-            if science is None:
-                self.add_error('science', 'This field is required')
-
-        if attended_biology == 'yes':
-            if not modality_biology:
-                self.add_error('modality_biology', 'This field is required')
-            if biology is None:
-                self.add_error('biology', 'This field is required')
-
-        if attended_chemistry == 'yes':
-            if not modality_chemistry:
-                self.add_error('modality_chemistry', 'This field is required')
-            if chemistry is None:
-                self.add_error('chemistry', 'This field is required')
-
-
-        if attended_physics == 'yes':
-            if not modality_physics:
-                self.add_error('modality_physics', 'This field is required')
-            if physics is None:
-                self.add_error('physics', 'This field is required')
+        if grade_registration == '6':
+            if attended_science == 'yes':
+                if not modality_science:
+                    self.add_error('modality_science', 'This field is required')
+                if science is None:
+                    self.add_error('science', 'This field is required')
+                    
+        elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
+            if attended_biology == 'yes':
+                if not modality_biology:
+                    self.add_error('modality_biology', 'This field is required')
+                if biology is None:
+                    self.add_error('biology', 'This field is required')
+            if attended_chemistry == 'yes':
+                if not modality_chemistry:
+                    self.add_error('modality_chemistry', 'This field is required')
+                if chemistry is None:
+                    self.add_error('chemistry', 'This field is required')
+            if attended_physics == 'yes':
+                if not modality_physics:
+                    self.add_error('modality_physics', 'This field is required')
+                if physics is None:
+                    self.add_error('physics', 'This field is required')
 
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:
@@ -4054,7 +4052,6 @@ class RSForm(CommonForm):
                 self.add_error('other_number_confirm', msg)
 
         #grades Max Value validation
-        grade_registration = cleaned_data.get("grade_registration")
         if grade_registration == '6':
             if arabic > 20:
                 self.add_error('arabic', 'This value is greater that 20')
@@ -4064,7 +4061,8 @@ class RSForm(CommonForm):
                 self.add_error('math', 'This value is greater that 20')
             if science > 20:
                 self.add_error('science', 'This value is greater that 20')
-        else:
+
+        elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
             if arabic > 60:
                 self.add_error('arabic', 'This value is greater that 60')
             if english > 40:
