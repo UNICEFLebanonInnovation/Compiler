@@ -321,7 +321,7 @@ class BLNListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return BLN.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+                                    round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
         # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
         #     '-id')
 
@@ -681,7 +681,7 @@ class ABLNListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return ABLN.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+                                    round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
         # return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
         #     '-id')
 
