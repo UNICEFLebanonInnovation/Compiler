@@ -320,8 +320,10 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
-            '-id')
+        return BLN.objects.filter(partner=self.request.user.partner_id,
+                                    round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+        # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
+        #     '-id')
 
 
 class BLNReferralView(LoginRequiredMixin,
@@ -678,8 +680,10 @@ class ABLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
-            '-id')
+        return ABLN.objects.filter(partner=self.request.user.partner_id,
+                                    round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+        # return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
+        #     '-id')
 
 
 class ABLNReferralView(LoginRequiredMixin,
@@ -1677,9 +1681,9 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        # return RS.objects.filter(partner=self.request.user.partner_id,
-        #                             round__start_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
-        return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
+        return RS.objects.filter(partner=self.request.user.partner_id,
+                                    round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
+        # return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
 class CBECEAddView(LoginRequiredMixin,
@@ -1903,7 +1907,7 @@ class CBECEListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return CBECE.objects.filter(partner=self.request.user.partner_id,
-                                    round__start_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+                                    round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
         # return CBECE.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 

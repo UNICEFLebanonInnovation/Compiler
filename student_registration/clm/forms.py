@@ -3904,7 +3904,7 @@ class RSForm(CommonForm):
                     self.add_error('modality_science', 'This field is required')
                 if science is None:
                     self.add_error('science', 'This field is required')
-                    
+
         elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
             if attended_biology == 'yes':
                 if not modality_biology:
