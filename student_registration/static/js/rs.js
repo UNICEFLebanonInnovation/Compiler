@@ -90,8 +90,12 @@ $(document).ready(function(){
     $(document).on('click', 'input[name=student_have_children]', function(){
         reorganizeForm();
     });
-    
+
     $(document).on('change', 'select#id_new_registry', function(){
+        reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_miss_school', function(){
         reorganizeForm();
     });
 
@@ -849,6 +853,17 @@ function reorganizeForm()
     var remote_learning_reasons_not_engaged = $('select#id_remote_learning_reasons_not_engaged').val();
 
     var source_of_identification = $('select#id_source_of_identification').val();
+
+    var miss_school = $('select#id_miss_school').val();
+
+    // miss_school
+    $('div#div_id_miss_school_date').addClass('d-none');
+    $('#span_miss_school_date').addClass('d-none');
+    if(miss_school == 'yes'){
+        $('#div_id_miss_school_date').removeClass('d-none');
+        $('#span_miss_school_date').removeClass('d-none');
+    }
+
 
 
     // source_of_identification

@@ -2873,9 +2873,15 @@ class RSForm(CommonForm):
         label=_("First attendance date"),
         required=True
     )
+    miss_school = forms.ChoiceField(
+        label=_("Miss school?"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='no'
+    )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
-        required=True,
+        required=False,
     )
     new_registry = forms.ChoiceField(
         label=_("First time registered?"),
@@ -3476,12 +3482,12 @@ class RSForm(CommonForm):
                     Div('source_join_fe', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
-
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_miss_school_date">15</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('miss_school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_miss_school_date">15.1</span>'),
                     Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -3832,6 +3838,7 @@ class RSForm(CommonForm):
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
         miss_school_date = cleaned_data.get("miss_school_date")
+        miss_school = cleaned_data.get("miss_school")
         student_nationality = cleaned_data.get("student_nationality")
         other_nationality = cleaned_data.get("other_nationality")
         main_caregiver = cleaned_data.get("main_caregiver")
@@ -3850,6 +3857,11 @@ class RSForm(CommonForm):
         if source_of_identification == 'Other Sources':
             if not source_of_identification_specify:
                 self.add_error('source_of_identification_specify', 'This field is required')
+
+
+        if miss_school == 'yes':
+            if not miss_school_date:
+                self.add_error('miss_school_date', 'This field is required')
 
         attended_arabic = cleaned_data.get("attended_arabic")
         modality_arabic = cleaned_data.get("modality_arabic")

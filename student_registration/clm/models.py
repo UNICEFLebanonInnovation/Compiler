@@ -1923,6 +1923,7 @@ class RS(CLM):
         ('BLN', ('BLN')),
         ('YBLN', _('YBLN')),
         ('FE_outside_lebanon', _('FE outside Lebanon')),
+        ('FE__lebanon', _('FE Lebanon')),
     )
     # YEAR_REGISTRATION = Choices(
     #     ('year_1_2020', _('Year 1-2020')),

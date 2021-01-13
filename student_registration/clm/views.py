@@ -2046,6 +2046,7 @@ class RSViewSet(mixins.RetrieveModelMixin,
         return qs
 
     def delete(self, request, *args, **kwargs):
+        print('hhhhhh');
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
