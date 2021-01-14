@@ -203,12 +203,12 @@ class RSTable(CommonTable):
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/clm_edit_column.html',
                                         attrs={'url': '/clm/rs-edit/', 'programme': 'RS'})
-    # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-    #                                       template_name='django_tables2/clm_delete_column.html',
-    #                                       attrs={'url': '/api/clm-rs/', 'programme': 'RS'})
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
-                                          template_name='django_tables2/delete_column.html',
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-rs/', 'programme': 'RS'})
+    # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
+    #                                       template_name='django_tables2/delete_column.html',
+    #                                       attrs={'url': '/api/clm-rs/', 'programme': 'RS'})
     # monitoring_column = tables.TemplateColumn(verbose_name=_('monitoring'), orderable=False,
     #                                         template_name='django_tables2/clm_monitoring_column.html',
     #                                         attrs={'url': '/clm/rs-monitoring-questioner/', 'programme': 'RS'})
