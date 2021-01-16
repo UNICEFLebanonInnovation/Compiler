@@ -74,6 +74,16 @@ $(document).ready(function(){
     if($(document).find('#id_followup_visit_date_1').length == 1) {
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
+
+    $(document).on('click', '.delete-button', function(){
+        var item = $(this);
+        if(confirm($(this).attr('translation'))) {
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            delete_student(item, callback());
+        }
+    });
     $(document).on('change', 'select#id_student_nationality', function(){
         reorganizeForm();
     });
@@ -452,15 +462,6 @@ $(document).ready(function(){
                 item.parents('tr').remove();
             };
             patch_registration(item, callback());
-        }
-    });
-     $(document).on('click', '.delete-button', function(){
-        var item = $(this);
-        if(confirm($(this).attr('translation'))) {
-            var callback = function(){
-                item.parents('tr').remove();
-            };
-            delete_student(item, callback());
         }
     });
     $(document).on('click', '.cancel-button', function(e){

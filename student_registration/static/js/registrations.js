@@ -28,6 +28,16 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
+    $(document).on('click', '.delete-button', function(){
+        var item = $(this);
+        if(confirm($(this).attr('translation'))) {
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            delete_student(item, callback());
+        }
+    });
+
     if($(document).find('#id_registration_date').length == 1) {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
@@ -142,8 +152,6 @@ $(document).ready(function(){
         };
     }
 
-
-
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
 
@@ -215,7 +223,6 @@ $(document).ready(function(){
     reorganizeForm();
     reorganize_pre_assessment();
 
-
     $(document).on('change', 'select#id_level', function(){
 
          if($(document).find('#id_exam_result_arabic').length == 1) {
@@ -276,7 +283,16 @@ $(document).ready(function(){
         reorganizeForm();
 
     });
-
+    $(document).on('click', '.delete-button', function(){
+        alert('hiiiiiiiiiiiiiiiiiiiiii');
+        var item = $(this);
+        if(confirm($(this).attr('translation'))) {
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            delete_student(item, callback());
+        }
+    });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
         var main_caregiver = $('select#id_main_caregiver').val();
@@ -505,15 +521,6 @@ $(document).ready(function(){
                 item.parents('tr').remove();
             };
             patch_registration(item, callback());
-        }
-    });
-    $(document).on('click', '.delete-button', function(){
-        var item = $(this);
-        if(confirm($(this).attr('translation'))) {
-            var callback = function(){
-                item.parents('tr').remove();
-            };
-            delete_student(item, callback());
         }
     });
     $(document).on('click', '.cancel-button', function(e){
