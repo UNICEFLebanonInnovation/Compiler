@@ -8,26 +8,26 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('schools', '0127_auto_20210118_1704'),
+        ('schools', '0121_auto_20201228_0925'),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='classroom',
-        ),
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='evaluation',
-        ),
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='subject',
-        ),
-        migrations.DeleteModel(
-            name='Subject',
-        ),
-        migrations.DeleteModel(
-            name='EvaluationDt',
-        ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='classroom',
+        # ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='evaluation',
+        # ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='subject',
+        # ),
+        # migrations.DeleteModel(
+        #     name='Subject',
+        # ),
+        # migrations.DeleteModel(
+        #     name='EvaluationDt',
+        # ),
     ]
