@@ -463,6 +463,7 @@ class RSSerializer(CLMSerializer):
             'round_start_date',
             'registration_level',
             'cadaster',
+            'miss_school',
             'miss_school_date',
             # 'source_of_transportation',
             'main_caregiver',
@@ -491,8 +492,6 @@ class RSSerializer(CLMSerializer):
             'registered_in_school',
             'shift'
         )
-
-
 
 class CBECESerializer(CLMSerializer):
 

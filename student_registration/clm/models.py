@@ -2115,6 +2115,13 @@ class RS(CLM):
         blank=True, null=True,
         # help_text='/80'
     )
+    miss_school = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Miss school?')
+    )
     miss_school_date = models.DateField(
         blank=True,
         null=True,

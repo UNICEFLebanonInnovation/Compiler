@@ -3381,7 +3381,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         headers = {
             'id': 'enropllment_id',
             'new_registry': 'First time registered?',
-            # 'partner__name': 'Partner',
+            'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
             'source_of_identification_specify': 'Source of Identification Specify',
             'first_attendance_date': 'first attendance date',
@@ -3412,6 +3412,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'disability__name_en': 'Does the child have any disability or special need?',
             'internal_number': 'Internal number',
             'education_status': 'Education status',
+            'miss_school': 'Miss school',
             'miss_school_date': 'Miss school date',
             'grade_level': 'What was the child education level when first joining formal education in lebanon',
             'source_join_fe': 'From where did the child first come to join  FE',
@@ -3599,7 +3600,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         field_list = (
             'id'
             'new_registry',
-            # 'partner__name',
+            'partner__name',
             'source_of_identification',
             'source_of_identification_specify',
             'first_attendance_date',
@@ -3630,6 +3631,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'disability__name_en',
             'internal_number',
             'education_status',
+            'miss_school',
             'miss_school_date',
             'grade_level',
             'source_join_fe',
@@ -3880,7 +3882,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         }).values(
             'id',
             'new_registry',
-            # 'partner__name',
+            'partner__name',
             'source_of_identification',
             'source_of_identification_specify',
             'first_attendance_date',
@@ -3911,6 +3913,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'disability__name_en',
             'internal_number',
             'education_status',
+            'miss_school',
             'miss_school_date',
             'grade_level',
             'source_join_fe',

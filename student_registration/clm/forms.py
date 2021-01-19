@@ -3221,7 +3221,7 @@ class RSForm(CommonForm):
         min_value=0, required=False
     )
     attended_science = forms.ChoiceField(
-        label=_("Attended Science test"),
+        label=_("Attended RS Science test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -4171,6 +4171,7 @@ class RSForm(CommonForm):
             # 'caretaker_middle_name',
             # 'caretaker_last_name',
             # 'caretaker_mother_name',
+            'miss_school',
             'miss_school_date',
             'student_have_children',
             'student_family_status',
