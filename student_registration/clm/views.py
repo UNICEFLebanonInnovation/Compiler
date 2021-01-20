@@ -2139,6 +2139,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en': 'Cadaster',
             'location': 'Location',
             'student__address': 'Student Address',
+            'registration_level': 'Registration level',
             'language': 'The language supported in the program',
             'student__first_name': 'First name',
             'student__father_name': 'Father name',
@@ -2316,6 +2317,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en',
             'location',
             'student__address',
+            'registration_level',
             'language',
             'student__first_name',
             'student__father_name',
@@ -2568,6 +2570,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en',
             'location',
             'student__address',
+            'registration_level',
             'language',
             'student__first_name',
             'student__father_name',
@@ -2790,6 +2793,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en': 'Cadaster',
             'location': 'Location',
             'student__address': 'Student Address',
+            'registration_level': 'Registration level',
             'language': 'The language supported in the program',
             'student__first_name': 'First name',
             'student__father_name': 'Father name',
@@ -2945,6 +2949,8 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_date_1': 'Follow-up visit 1 date',
             'followup_visit_reason_1': 'Follow-up visit 1 reason',
             'followup_visit_result_1': 'Follow-up visit 1 result',
+            'cp_referral': 'CP Followup',
+
         }
 
         field_list = (
@@ -3175,6 +3181,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'cadaster__name_en',
             'location',
             'student__address',
+            'registration_level',
             'language',
             'student__first_name',
             'student__father_name',

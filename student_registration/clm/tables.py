@@ -251,7 +251,7 @@ class RSTable(CommonTable):
             # 'referral_column',
             # 'followup_column',
             'delete_column',
-            'post_assessment_column',
+            # 'post_assessment_column',
             # 'monitoring_column',
             'first_attendance_date',
             'round',
