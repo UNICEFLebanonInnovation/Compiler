@@ -9526,6 +9526,18 @@ class RSAssessmentForm(forms.ModelForm):
         choices=REGISTRATION_LEVEL
     )
 
+    grade_registration =  forms.ChoiceField(
+        label=_("Grade of registeration"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('6', _('6')),
+            ('7', _('7')),
+            ('8', _('8')),
+            ('9', _('9')),
+        )
+    )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(RSAssessmentForm, self).__init__(*args, **kwargs)
@@ -9565,7 +9577,7 @@ class RSAssessmentForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
                 ),
                 Div(
-                    Div('registration_level', css_class='col-md-3 d-none'),
+                    Div('grade_registration', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
@@ -9605,7 +9617,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
                     Div('arabic', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
@@ -9614,7 +9626,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
                     Div('english', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -9623,7 +9635,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
                     Div('math', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -9632,7 +9644,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_science">4.2</span>'),
                     Div('science', css_class='col-md-2'),
-                    css_class='row grd6',
+                    css_class='row grd6 grades',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -9641,7 +9653,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('modality_biology', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_biology">4.2</span>'),
                     Div('biology', css_class='col-md-2'),
-                    css_class='row grd7',
+                    css_class='row grd7 grades',
                 ),
 
                 Div(
@@ -9651,7 +9663,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('modality_chemistry', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_chemistry">5.2</span>'),
                     Div('chemistry', css_class='col-md-2'),
-                    css_class='row grd7',
+                    css_class='row grd7 grades',
                 ),
 
                 Div(
@@ -9661,7 +9673,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('modality_physics', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_physics">6.2</span>'),
                     Div('physics', css_class='col-md-2'),
-                    css_class='row grd7',
+                    css_class='row grd7 grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
@@ -9865,7 +9877,24 @@ class RSAssessmentForm(forms.ModelForm):
 
         # grades Max Value validation
         grade_registration = cleaned_data.get("grade_registration")
+        print(grade_registration)
+        print(grade_registration)
+        print(grade_registration)
+        print(grade_registration)
+        print(grade_registration)
+        print(grade_registration)
+        print(grade_registration)
+
+
         if grade_registration == '6':
+            print('six')
+            print('six')
+            print('six')
+            print('six')
+            print('six')
+            print('six')
+            print('six')
+            print('six')
             if arabic > 20:
                 self.add_error('arabic', 'This value is greater that 20')
             if english > 20:
@@ -9874,7 +9903,17 @@ class RSAssessmentForm(forms.ModelForm):
                 self.add_error('math', 'This value is greater that 20')
             if science > 20:
                 self.add_error('science', 'This value is greater that 20')
-        else:
+        elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
+            print('not six')
+            print('not six')
+            print('not six')
+            print('not six')
+            print('not six')
+            print('not six')
+            print('not six')
+            print('not six')
+            print('not six')
+
             if arabic > 60:
                 self.add_error('arabic', 'This value is greater that 60')
             if english > 40:

@@ -27,7 +27,8 @@ $(document).ready(function(){
         'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
         'select#id_pss_parent_attended,  select#id_covid_parent_attended ,  select#id_followup_parent_attended ,' +
         'select#id_attended_biology,  select#id_attended_chemistry ,  select#id_attended_physics ,' +
-        'select#id_barriers_single, select#id_test_done , select#id_pss_session_attended,  select#id_covid_session_attended ,  select#id_followup_session_attended ', function(){
+        'select#id_barriers_single,  select#id_test_done ,  select#id_pss_session_attended ,' +
+        'select#id_covid_session_attended,  select#id_followup_session_attended  ', function(){
        reorganizeForm_post_assessment();
     });
 
@@ -81,6 +82,7 @@ function pageScripts() {
 
 function reorganizeForm_post_assessment()
 {
+    alert('hiiiiiiiii');
 
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
@@ -142,6 +144,7 @@ function reorganizeForm_post_assessment()
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');
     $('div.grades').addClass('d-none');
+    $('#grades').addClass('hide');
 
     if(test_done == 'yes'){
     $('#div_id_round_complete').removeClass('d-none');
@@ -152,6 +155,7 @@ function reorganizeForm_post_assessment()
     }
     else
     {
+        alert('noooooo')
         $('select#id_round_complete').val("");
 
         // grades
@@ -189,6 +193,9 @@ function reorganizeForm_post_assessment()
         $('#id_physics').val('');
         $('select#id_attended_physics').val("no");
         $('select#id_modality_physics').val("");
+
+        $('div.grades').addClass('d-none');
+        $('#grades').addClass('hide');
     }
 
 
