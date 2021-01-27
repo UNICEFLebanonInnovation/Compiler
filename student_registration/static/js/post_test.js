@@ -82,7 +82,6 @@ function pageScripts() {
 
 function reorganizeForm_post_assessment()
 {
-    alert('hiiiiiiiii');
 
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
@@ -155,7 +154,6 @@ function reorganizeForm_post_assessment()
     }
     else
     {
-        alert('noooooo')
         $('select#id_round_complete').val("");
 
         // grades

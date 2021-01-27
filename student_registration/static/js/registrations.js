@@ -284,7 +284,6 @@ $(document).ready(function(){
 
     });
     $(document).on('click', '.delete-button', function(){
-        alert('hiiiiiiiiiiiiiiiiiiiiii');
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
             var callback = function(){
