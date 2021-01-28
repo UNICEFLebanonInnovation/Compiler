@@ -27,8 +27,8 @@ $(document).ready(function(){
         'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
         'select#id_pss_parent_attended,  select#id_covid_parent_attended ,  select#id_followup_parent_attended ,' +
         'select#id_attended_biology,  select#id_attended_chemistry ,  select#id_attended_physics ,' +
-        'select#id_barriers_single,  select#id_test_done ,  select#id_pss_session_attended ,' +
-        'select#id_covid_session_attended,  select#id_followup_session_attended  ', function(){
+        'select#id_barriers_single,  select#id_test_done ,  select#id_pss_session_attended , select#id_learning_result , ' +
+        'select#id_covid_session_attended,  select#id_followup_session_attended ,  select#id_parent_attended_visits ', function(){
        reorganizeForm_post_assessment();
     });
 
@@ -99,7 +99,7 @@ function reorganizeForm_post_assessment()
 
     var attended_biology = $('select#id_attended_biology').val();
     var attended_chemistry = $('select#id_attended_chemistry').val();
-    var attended_physics = $('select#id_attended_physic').val();
+    var attended_physics = $('select#id_attended_physics').val();
 
     var pss_session_attended = $('select#id_pss_session_attended').val();
     var covid_session_attended = $('select#id_covid_session_attended').val();
@@ -108,6 +108,11 @@ function reorganizeForm_post_assessment()
     var pss_parent_attended =  $('select#id_pss_parent_attended').val();
     var covid_parent_attended =  $('select#id_covid_parent_attended').val();
     var followup_parent_attended =  $('select#id_followup_parent_attended').val();
+
+    var parent_attended_visits = $('select#id_parent_attended_visits').val();
+    var grade_registration = $('select#id_grade_registration').val();
+
+    var learning_result = $('select#id_learning_result').val();
 
 
     // id_participation
@@ -138,6 +143,18 @@ function reorganizeForm_post_assessment()
     else
     {
         $('#id_barriers_other').val('');
+    }
+
+    // learning_result
+    $('div#div_id_learning_result_other').addClass('d-none');
+    $('#span_learning_result_other').addClass('d-none');
+    if(learning_result == 'other'){
+        $('#div_id_learning_result_other').removeClass('d-none');
+        $('#span_learning_result_other').removeClass('d-none');
+    }
+    else
+    {
+        $('#id_learning_result_other').val('');
     }
 
     $('div#div_id_round_complete').addClass('d-none');
@@ -194,6 +211,31 @@ function reorganizeForm_post_assessment()
 
         $('div.grades').addClass('d-none');
         $('#grades').addClass('hide');
+    }
+
+    // grade_registration
+    $('div.grd6').addClass('d-none');
+    $('#grd6').addClass('hide');
+    $('div.grd7').addClass('d-none');
+    $('#grd7').addClass('hide');
+    if(grade_registration == '6'){
+        $('#grd6').removeClass('hide');
+        $('div.grd6').removeClass('d-none');
+    }
+    else
+    {
+        $('div.grd6').addClass('d-none');
+        $('#grd6').addClass('hide');
+    }
+
+    if(grade_registration == '7' || grade_registration == '8' || grade_registration == '9'){
+        $('#grd7').removeClass('hide');
+        $('div.grd7').removeClass('d-none');
+    }
+    else
+    {
+        $('div.grd7').addClass('d-none');
+        $('#grd7').addClass('hide');
     }
 
 
@@ -468,7 +510,6 @@ function reorganizeForm_post_assessment()
         $('select#div_id_covid_session_modality').val("");
         $('#span_covid_parent_attended_other').val('');
         $('select#div_id_covid_parent_attended').val("");
-
     }
 
 
@@ -510,7 +551,34 @@ function reorganizeForm_post_assessment()
         $('select#div_id_followup_session_modality').val("");
         $('#span_followup_parent_attended_other').val('');
         $('select#div_id_followup_parent_attended').val("");
+    }
+
+    $('div.parent_visits').addClass('d-none');
+    $('#parent_visits').addClass('hide');
+
+    if(parent_attended_visits == 'yes'){
+    $('#parent_visits').removeClass('hide');
+    $('div.parent_visits').removeClass('d-none');
 
     }
+    else
+    {
+        $('#id_followup_session_number').val('');
+        $('select#div_id_followup_session_modality').val("");
+        $('#span_followup_parent_attended_other').val('');
+        $('select#div_id_followup_parent_attended').val("");
+        $('#id_covid_session_number').val('');
+        $('select#div_id_covid_session_modality').val("");
+        $('#span_covid_parent_attended_other').val('');
+        $('select#div_id_covid_parent_attended').val("");
+        $('#id_pss_session_number').val('');
+        $('select#div_id_pss_session_modality').val("");
+        $('#span_pss_parent_attended_other').val('');
+        $('select#div_id_pss_parent_attended').val("");
+        $('div.parent_visits').addClass('d-none');
+        $('#parent_visits').addClass('hide');
+    }
+
+
 
 }

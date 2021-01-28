@@ -2103,6 +2103,10 @@ class RS(CLM):
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
     )
+    learning_result_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,

@@ -1369,7 +1369,7 @@ function reorganize_pre_assessment()
         $('select#id_modality_physics').val("");
     }
 
-    // follow_up_type
+    // grade_level
     $('div#div_grd6').addClass('d-none');
     $('div#div_grd7').addClass('d-none');
     // alert(grade_level);

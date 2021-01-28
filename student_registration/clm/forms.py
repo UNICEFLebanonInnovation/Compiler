@@ -9164,6 +9164,10 @@ class RSAssessmentForm(forms.ModelForm):
         ),
         initial=''
     )
+    learning_result_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme? (Select more than one if applicable)'),
@@ -9606,6 +9610,11 @@ class RSAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_blearning_result_other">4.1</span>'),
+                    Div('learning_result_other', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('cp_referral', css_class='col-md-3'),
                     css_class='row',
@@ -9736,7 +9745,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('pss_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
                     Div('pss_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -9749,7 +9758,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('covid_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
                     Div('covid_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -9762,7 +9771,7 @@ class RSAssessmentForm(forms.ModelForm):
                     Div('followup_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
                     Div('followup_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
 
                 # Div(
@@ -9814,11 +9823,13 @@ class RSAssessmentForm(forms.ModelForm):
         physics = cleaned_data.get("physics")
 
         learning_result = cleaned_data.get("learning_result")
+        learning_result_other = cleaned_data.get("learning_result_other")
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
 
         test_done = cleaned_data.get("test_done")
         round_complete = cleaned_data.get("round_complete")
+
 
         if test_done == 'yes':
             if not round_complete:
@@ -9827,6 +9838,10 @@ class RSAssessmentForm(forms.ModelForm):
         if learning_result != 'no_absence':
             if not barriers_single:
                 self.add_error('barriers_single', 'This field is required')
+
+        if learning_result == 'other':
+            if not learning_result_other:
+                self.add_error('learning_result_other', 'This field is required')
 
         if barriers_single == 'other':
             if not barriers_other:
@@ -9877,24 +9892,11 @@ class RSAssessmentForm(forms.ModelForm):
 
         # grades Max Value validation
         grade_registration = cleaned_data.get("grade_registration")
-        print(grade_registration)
-        print(grade_registration)
-        print(grade_registration)
-        print(grade_registration)
-        print(grade_registration)
-        print(grade_registration)
-        print(grade_registration)
-
+        # print('---------------------------------------------------------')
+        # print(grade_registration)
+        # print('---------------------------------------------------------')
 
         if grade_registration == '6':
-            print('six')
-            print('six')
-            print('six')
-            print('six')
-            print('six')
-            print('six')
-            print('six')
-            print('six')
             if arabic > 20:
                 self.add_error('arabic', 'This value is greater that 20')
             if english > 20:
@@ -9904,15 +9906,6 @@ class RSAssessmentForm(forms.ModelForm):
             if science > 20:
                 self.add_error('science', 'This value is greater that 20')
         elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
-            print('not six')
-            print('not six')
-            print('not six')
-            print('not six')
-            print('not six')
-            print('not six')
-            print('not six')
-            print('not six')
-            print('not six')
 
             if arabic > 60:
                 self.add_error('arabic', 'This value is greater that 60')
