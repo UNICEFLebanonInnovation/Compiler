@@ -6809,7 +6809,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('pss_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">2.4</span>'),
                     Div('pss_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -6822,7 +6822,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('covid_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">3.4</span>'),
                     Div('covid_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -6835,7 +6835,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('followup_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">4.4</span>'),
                     Div('followup_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
 
                 # Div(
@@ -7559,7 +7559,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('pss_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">2.4</span>'),
                     Div('pss_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -7572,7 +7572,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('covid_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">3.4</span>'),
                     Div('covid_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -7585,7 +7585,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     Div('followup_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">4.4</span>'),
                     Div('followup_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 # Div(
                 #     HTML('<span class="badge badge-default">4</span>'),
@@ -8385,7 +8385,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('pss_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">5.1</span>'),
                     Div('pss_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -8398,7 +8398,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('covid_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">5.1</span>'),
                     Div('covid_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -8411,7 +8411,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                     Div('followup_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">5.1</span>'),
                     Div('followup_parent_attended_other', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row parent_visits',
                 ),
 
                 # Div(
