@@ -9866,35 +9866,35 @@ class RSAssessmentForm(forms.ModelForm):
                 if math is None:
                     self.add_error('math', 'This field is required')
 
-            if attended_science == 'yes':
-                if not modality_science:
-                    self.add_error('modality_science', 'This field is required')
-                if science is None:
-                    self.add_error('science', 'This field is required')
+            grade_registration = cleaned_data.get("grade_registration")
 
-            if attended_biology == 'yes':
-                if not modality_biology:
-                    self.add_error('modality_biology', 'This field is required')
-                if biology is None:
-                    self.add_error('biology', 'This field is required')
+            if grade_registration == '6' :
+                if attended_science == 'yes':
+                    if not modality_science:
+                        self.add_error('modality_science', 'This field is required')
+                    if science is None:
+                        self.add_error('science', 'This field is required')
+            elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
 
-            if attended_chemistry == 'yes':
-                if not modality_chemistry:
-                    self.add_error('modality_chemistry', 'This field is required')
-                if chemistry is None:
-                    self.add_error('chemistry', 'This field is required')
+                if attended_biology == 'yes':
+                    if not modality_biology:
+                        self.add_error('modality_biology', 'This field is required')
+                    if biology is None:
+                        self.add_error('biology', 'This field is required')
 
-            if attended_physics == 'yes':
-                if not modality_physics:
-                    self.add_error('modality_physics', 'This field is required')
-                if physics is None:
-                    self.add_error('physics', 'This field is required')
+                if attended_chemistry == 'yes':
+                    if not modality_chemistry:
+                        self.add_error('modality_chemistry', 'This field is required')
+                    if chemistry is None:
+                        self.add_error('chemistry', 'This field is required')
+
+                if attended_physics == 'yes':
+                    if not modality_physics:
+                        self.add_error('modality_physics', 'This field is required')
+                    if physics is None:
+                        self.add_error('physics', 'This field is required')
 
         # grades Max Value validation
-        grade_registration = cleaned_data.get("grade_registration")
-        # print('---------------------------------------------------------')
-        # print(grade_registration)
-        # print('---------------------------------------------------------')
 
         if grade_registration == '6':
             if arabic > 20:

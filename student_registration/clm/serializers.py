@@ -490,7 +490,8 @@ class RSSerializer(CLMSerializer):
             'source_join_fe',
             'grade_registration',
             'registered_in_school',
-            'shift'
+            'shift',
+            'learning_result_other'
         )
 
 class CBECESerializer(CLMSerializer):
