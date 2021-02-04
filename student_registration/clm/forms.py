@@ -9829,6 +9829,7 @@ class RSAssessmentForm(forms.ModelForm):
 
         test_done = cleaned_data.get("test_done")
         round_complete = cleaned_data.get("round_complete")
+        grade_registration = cleaned_data.get("grade_registration")
 
 
         if test_done == 'yes':
@@ -9866,8 +9867,6 @@ class RSAssessmentForm(forms.ModelForm):
                 if math is None:
                     self.add_error('math', 'This field is required')
 
-            grade_registration = cleaned_data.get("grade_registration")
-
             if grade_registration == '6' :
                 if attended_science == 'yes':
                     if not modality_science:
@@ -9894,31 +9893,30 @@ class RSAssessmentForm(forms.ModelForm):
                     if physics is None:
                         self.add_error('physics', 'This field is required')
 
-        # grades Max Value validation
+            # grades Max Value validation
+            if grade_registration == '6':
+                if arabic > 20:
+                    self.add_error('arabic', 'This value is greater that 20')
+                if english > 20:
+                    self.add_error('english', 'This value is greater that 20')
+                if math > 20:
+                    self.add_error('math', 'This value is greater that 20')
+                if science > 20:
+                    self.add_error('science', 'This value is greater that 20')
+            elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
 
-        if grade_registration == '6':
-            if arabic > 20:
-                self.add_error('arabic', 'This value is greater that 20')
-            if english > 20:
-                self.add_error('english', 'This value is greater that 20')
-            if math > 20:
-                self.add_error('math', 'This value is greater that 20')
-            if science > 20:
-                self.add_error('science', 'This value is greater that 20')
-        elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
-
-            if arabic > 60:
-                self.add_error('arabic', 'This value is greater that 60')
-            if english > 40:
-                self.add_error('english', 'This value is greater that 40')
-            if math > 60:
-                self.add_error('math', 'This value is greater that 60')
-            if biology > 20:
-                self.add_error('biology', 'This value is greater that 20')
-            if chemistry > 20:
-                self.add_error('chemistry', 'This value is greater that 20')
-            if physics > 20:
-                self.add_error('physics', 'This value is greater that 20')
+                if arabic > 60:
+                    self.add_error('arabic', 'This value is greater that 60')
+                if english > 40:
+                    self.add_error('english', 'This value is greater that 40')
+                if math > 60:
+                    self.add_error('math', 'This value is greater that 60')
+                if biology > 20:
+                    self.add_error('biology', 'This value is greater that 20')
+                if chemistry > 20:
+                    self.add_error('chemistry', 'This value is greater that 20')
+                if physics > 20:
+                    self.add_error('physics', 'This value is greater that 20')
 
 
     def save(self, instance=None, request=None):

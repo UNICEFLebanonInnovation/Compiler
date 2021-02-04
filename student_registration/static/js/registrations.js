@@ -1372,16 +1372,15 @@ function reorganize_pre_assessment()
     // grade_level
     $('div#div_grd6').addClass('d-none');
     $('div#div_grd7').addClass('d-none');
-    // alert(grade_level);
     if(grade_level == 'grade6'){
         $('div#div_grd6').removeClass('d-none');
-    }else if(grade_level in 'grade7'){
+    }else if(grade_level == 'grade7'){
         $('div#div_grd7').removeClass('d-none');
 
-    }else if(grade_level in 'grade8'){
+    }else if(grade_level == 'grade8'){
         $('div#div_grd7').removeClass('d-none');
 
-    }else if(grade_level in 'grade9'){
+    }else if(grade_level == 'grade9'){
         $('div#div_grd7').removeClass('d-none');
 
     }
