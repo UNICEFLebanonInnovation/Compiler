@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades
+from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades, FC
 
 
 def create_instance(validated_data, model):
@@ -497,6 +497,7 @@ class RSSerializer(CLMSerializer):
             'family_visit_number',
         )
 
+
 class CBECESerializer(CLMSerializer):
 
     def create(self, validated_data):
@@ -588,6 +589,60 @@ class CBECESerializer(CLMSerializer):
             'mid_test_done',
             'mid_test'
         )
+
+
+class FCSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FC
+        fields = (
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'numbers_child_monitored',
+            'topic_covered',
+            'materials_needed',
+            'materials_needed_reason_no',
+            'remote_learning',
+            'share_expectations_caregiver',
+            'share_expectations_no_reason',
+            'child_engaged_lesson',
+            'child_engaged_lesson_explain',
+            'child_participate_others',
+            'child_participate_others_no_explain',
+            'child_expected_work_independently',
+            'child_meet_lesson_objectives',
+            'child_meet_lesson_objectives_verified',
+            'homework_after_lesson',
+            'homework_after_lesson_explain',
+            'homework_score',
+            'homework_score_explain',
+            'parents_supporting_student',
+            'parents_supporting_student_explain',
+            'child_complete_printed_package',
+            'number_child_participate_online',
+            'how_make_sure_child_access_online',
+            'followup_not_join_online',
+            'times_voice_contact_child_caregiver',
+            'child_coping_home_learning',
+            'child_caregiver_challenges',
+            'actions_before_next_class',
+            'actions_before_next_class_how',
+            'girls_boys_participate_access_device',
+            'girls_boys_participate_explain',
+            'how_often_keep_touch_caregivers',
+            'how_keep_touch_caregivers',
+            'how_keep_touch_caregivers_specify',
+            'child_awareness_prevention_covid19',
+            'followup_done_messages',
+            'followup_followup_explain',
+            'child_practice_basic_handwashing',
+            'child_practice_basic_handwashing_explain',
+            'child_have_pss_wellbeing',
+            'child_have_pss_wellbeing_explain',
+            'additional_notes'
+        )
+
 
 
 class SelfPerceptionGradesSerializer(serializers.ModelSerializer):

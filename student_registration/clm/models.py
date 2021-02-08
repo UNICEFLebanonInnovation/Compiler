@@ -3439,3 +3439,135 @@ class Inclusion(TimeStampedModel):
         ordering = ['id']
         verbose_name = "Disability specialized"
         verbose_name_plural = "Disability specialized"
+
+
+class FC(CLM):
+    GRADE_LEVEL = Choices(
+        ('grade1', _('Grade 1')),
+        ('grade2', _('Grade 2')),
+        ('grade3', _('Grade 3')),
+        ('grade4', _('Grade 4')),
+        ('grade5', _('Grade 5')),
+        ('grade6', _('Grade 6')),
+        ('grade7', _('Grade 7')),
+        ('grade8', _('Grade 8')),
+        ('grade9', _('Grade 9'))
+    )
+    YES_NO = Choices(
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    facilitator_name = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Facilitator name')
+    )
+    subject_taught = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Subject taught')
+    )
+    date_of_monitoring = models.DateField(blank=True, null=True)
+
+    numbers_child_monitored = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('Number of times the child has been monitored to date')
+    )
+    topic_covered = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Activities/ topic covered')
+    )
+
+
+    basic_stationery = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child receive basic stationery?')
+    )
+
+    # materials_needed,
+    # materials_needed_reason_no,
+    # remote_learning,
+    # share_expectations_caregiver,
+    # share_expectations_no_reason,
+    # child_engaged_lesson,
+    # child_engaged_lesson_explain,
+    # child_participate_others,
+    # child_participate_others_no_explain,
+    # child_expected_work_independently,
+    # child_meet_lesson_objectives,
+    # child_meet_lesson_objectives_verified,
+    # homework_after_lesson,
+    # homework_after_lesson_explain,
+    # homework_score,
+    # homework_score_explain,
+    # parents_supporting_student,
+    # parents_supporting_student_explain,
+    # child_complete_printed_package,
+    # number_child_participate_online,
+    # how_make_sure_child_access_online,
+    # followup_not_join_online,
+    # times_voice_contact_child_caregiver,
+    # child_coping_home_learning,
+    # child_caregiver_challenges,
+    # actions_before_next_class,
+    # actions_before_next_class_how,
+    # girls_boys_participate_access_device,
+    # girls_boys_participate_explain,
+    # how_often_keep_touch_caregivers,
+    # how_keep_touch_caregivers,
+    # how_keep_touch_caregivers_specify,
+    # child_awareness_prevention_covid19,
+    # followup_done_messages,
+    # followup_followup_explain,
+    # child_practice_basic_handwashing,
+    # child_practice_basic_handwashing_explain,
+    # child_have_pss_wellbeing,
+    # child_have_pss_wellbeing_explain,
+    # additional_notes
+
+
+    # section = models.ForeignKey(
+    #     Section,
+    #     blank=True, null=True,
+    #     related_name='+',
+    #     verbose_name=_('Section')
+    # )
+    # source_of_identification = models.CharField(
+    #     max_length=100,
+    #     blank=True,
+    #     null=True,
+    #     choices=Choices(
+    #         ('', '----------'),
+    #         ('Referral from school directors', _('Referral from school directors')),
+    #         ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
+    #         ('Other Sources', _('Other Sources'))
+    #     ),
+    #     verbose_name=_('Source of identification of the child')
+    # )
+    # grade_level = models.CharField(
+    #     max_length=50,
+    #     blank=True,
+    #     null=True,
+    #     choices=GRADE_LEVEL,
+    #     verbose_name=_('What was the child education level when first joining formal education in lebanon')
+    # )
+    #
+    # source_of_identification_specify = models.TextField(
+    #     blank=True, null=True,
+    #     verbose_name=_('Please specify')
+    # )
+    # student_number_children = models.IntegerField(
+    #     blank=True,
+    #     null=True,
+    #     choices=((x, x) for x in range(0, 20)),
+    #     verbose_name=_('How many children does this child have?')
+    # )
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = "FC"
+        verbose_name_plural = "FC"
+

@@ -1132,7 +1132,6 @@ function family_status_single()
 
 function reorganize_pre_assessment()
 {
-
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
     var test_done = $('select#id_test_done').val();
