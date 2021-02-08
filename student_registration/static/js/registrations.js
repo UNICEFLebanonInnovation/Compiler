@@ -1147,17 +1147,11 @@ function reorganize_pre_assessment()
     var attended_science = $('select#id_attended_science').val();
     var attended_artistic = $('select#id_attended_artistic').val();
 
-
     var attended_biology = $('select#id_attended_biology').val();
     var attended_chemistry = $('select#id_attended_chemistry').val();
     var attended_physics = $('select#id_attended_physics').val();
 
-
     var grade_level = $('select#id_grade_level').val();
-
-
-
-
     var pss_session_attended = $('select#id_pss_session_attended').val();
     var covid_session_attended = $('select#id_covid_session_attended').val();
     var followup_session_attended = $('select#id_followup_session_attended').val();
@@ -1172,17 +1166,15 @@ function reorganize_pre_assessment()
     $('#follow_up').addClass('hide');
     $('#visits').addClass('hide');
 
-
-
     if(participation != 'no_absence'){
         $('#div_id_barriers_single').removeClass('d-none');
         $('#span_barriers_single').removeClass('d-none');
         $('#follow_up').removeClass('hide');
         $('#visits').removeClass('hide');
         // $('input[name=follow_up_type]').val('none').checked(true);
-        $('#id_phone_call_number').val('');
-        $('#id_house_visit_number').val('');
-        $('#id_family_visit_number').val('');
+        // $('#id_phone_call_number').val('');
+        // $('#id_house_visit_number').val('');
+        // $('#id_family_visit_number').val('');
     }
 
     if(barriers_single == 'other'){

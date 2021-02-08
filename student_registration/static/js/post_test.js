@@ -131,9 +131,9 @@ function reorganizeForm_post_assessment()
         // $('#follow_up').removeClass('hide');
         // $('#visits').removeClass('hide');
         // $('input[name=follow_up_type]').val('none').checked(true);
-        $('#id_phone_call_number').val('');
-        $('#id_house_visit_number').val('');
-        $('#id_family_visit_number').val('');
+        // $('#id_phone_call_number').val('');
+        // $('#id_house_visit_number').val('');
+        // $('#id_family_visit_number').val('');
     }
 
     if(barriers_single == 'other'){
@@ -152,10 +152,10 @@ function reorganizeForm_post_assessment()
         $('#div_id_learning_result_other').removeClass('d-none');
         $('#span_learning_result_other').removeClass('d-none');
     }
-    else
-    {
-        $('#id_learning_result_other').val('');
-    }
+    // else
+    // {
+    //     $('#id_learning_result_other').val('');
+    // }
 
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');

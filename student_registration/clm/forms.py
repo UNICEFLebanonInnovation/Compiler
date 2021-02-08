@@ -9996,6 +9996,7 @@ class RSAssessmentForm(forms.ModelForm):
             'followup_parent_attended_other',
             'followup_parent_attended',
             'cp_referral',
+            'learning_result_other',
             # 'child_health_examed',
             # 'child_health_concern',
         )

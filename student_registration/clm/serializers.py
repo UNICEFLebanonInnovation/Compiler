@@ -491,7 +491,10 @@ class RSSerializer(CLMSerializer):
             'grade_registration',
             'registered_in_school',
             'shift',
-            'learning_result_other'
+            'learning_result_other',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
         )
 
 class CBECESerializer(CLMSerializer):
