@@ -159,6 +159,12 @@ urlpatterns = [
         name='abln_post_assessment'
     ),
     url(
+        regex=r'^abln-pre-fc/(?P<pk>[\w.@+-]+)/$',
+        view=views.ABLNPreFCView.as_view(),
+        name='abln_pre_fc'
+    ),
+
+    url(
         regex=r'^bln-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNPostAssessmentView.as_view(),
         name='bln_post_assessment'

@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades, FC
+from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades,  ABLN_FC
 
 
 def create_instance(validated_data, model):
@@ -591,17 +591,19 @@ class CBECESerializer(CLMSerializer):
         )
 
 
-class FCSerializer(serializers.ModelSerializer):
+class ABLN_FCSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = FC
+        model = ABLN_FC
         fields = (
+            'abln',
+            'fc_type',
             'facilitator_name',
             'subject_taught',
             'date_of_monitoring',
             'numbers_child_monitored',
             'topic_covered',
-            'materials_needed',
+            'materials_needed_available',
             'materials_needed_reason_no',
             'remote_learning',
             'share_expectations_caregiver',
@@ -630,8 +632,8 @@ class FCSerializer(serializers.ModelSerializer):
             'actions_before_next_class_how',
             'girls_boys_participate_access_device',
             'girls_boys_participate_explain',
-            'how_often_keep_touch_caregivers',
-            'how_keep_touch_caregivers',
+            'how_often_contact_caregivers',
+            'how_contact_caregivers',
             'how_keep_touch_caregivers_specify',
             'child_awareness_prevention_covid19',
             'followup_done_messages',

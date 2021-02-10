@@ -1,5 +1,4 @@
-from __future__ import unicode_literals
-
+from __future__ import unicode_literals, absolute_import, division
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -1809,7 +1808,7 @@ class ABLN(CLM):
     def get_assessment_value(self, key, stage):
         assessment = getattr(self, stage)
         if assessment:
-            key = 'ABLN_ASSESSMENT/'+key
+            key = 'ABLN_ASSESSMENT/' + key
             return assessment.get(key, 0)
         return 0
 
@@ -1871,12 +1870,12 @@ class RS(CLM):
     #     ('graduated_next_level', _('No'))
     # )
     LEARNING_RESULT = Choices(
-            ('', '----------'),
-            ('graduated_to_rs_next_round_higher_level', _('Progress to FE higher grade next year')),
-            ('graduated_to_rs_next_round_same_level', _('Repeat same grade next year')),
-            ('referred_alp', _('Referred to ALP')),
-            ('graduated_to_tvet', _('Referred to TVET')),
-            ('other', _('Other')),
+        ('', '----------'),
+        ('graduated_to_rs_next_round_higher_level', _('Progress to FE higher grade next year')),
+        ('graduated_to_rs_next_round_same_level', _('Repeat same grade next year')),
+        ('referred_alp', _('Referred to ALP')),
+        ('graduated_to_tvet', _('Referred to TVET')),
+        ('other', _('Other')),
     )
     MAIN_CAREGIVER = (
         ('', '----------'),
@@ -1968,7 +1967,7 @@ class RS(CLM):
         related_name='+',
         verbose_name=_('Attending in school')
     )
-    registered_in_school =  models.TextField(
+    registered_in_school = models.TextField(
         blank=True, null=True,
         verbose_name=_('School of Enrollment')
     )
@@ -2250,6 +2249,7 @@ class RS(CLM):
         ),
         verbose_name=_('Grade of registeration')
     )
+
     class Meta:
         ordering = ['-id']
         verbose_name = "RS"
@@ -2272,7 +2272,7 @@ class RS(CLM):
     @property
     def posttest_total(self):
         try:
-            return self.post_test_arabic+self.post_test_language+self.post_test_math+self.post_test_science
+            return self.post_test_arabic + self.post_test_language + self.post_test_math + self.post_test_science
         except TypeError:
             return 0
 
@@ -2313,7 +2313,7 @@ class RS(CLM):
             try:
                 return '{}{}'.format(
                     round(((float(self.post_motivation_score) - float(self.pre_motivation_score)) /
-                            float(self.pre_motivation_score)) * 100.0, 2),
+                           float(self.pre_motivation_score)) * 100.0, 2),
                     '%')
             except ZeroDivisionError:
                 return 0.0
@@ -2349,8 +2349,8 @@ class RS(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='rs_post_test')
 
     def domain_improvement(self, domain_mame):
-        pre_test = getattr(self, 'pre_test_'+domain_mame)
-        post_test = getattr(self, 'post_test_'+domain_mame)
+        pre_test = getattr(self, 'pre_test_' + domain_mame)
+        post_test = getattr(self, 'post_test_' + domain_mame)
         if pre_test and post_test:
             try:
                 return round(((float(post_test) - float(pre_test)) /
@@ -2378,7 +2378,7 @@ class RS(CLM):
     def get_assessment_value(self, key, stage):
         assessment = getattr(self, stage)
         if assessment:
-            key = 'RS_ASSESSMENT/'+key
+            key = 'RS_ASSESSMENT/' + key
             return assessment.get(key, 0)
         return 0
 
@@ -2424,7 +2424,6 @@ class RS(CLM):
 
 
 class CBECE(CLM):
-
     MUAC = Choices(
         ('', _('MUAC')),
         ('1', _('< 11.5 CM (severe malnutrition)')),
@@ -2436,15 +2435,15 @@ class CBECE(CLM):
         ('out_school', _('Outside the school')),
     )
     LEARNING_RESULT = Choices(
-            ('', '----------'),
-            ('graduated_to_cbece_next_level', _('Graduated to the next level')),
-            ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
-            ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level round 3')),
-            ('referred_to_alp', _('referred to ALP')),
-            ('referred_public_school', _('Referred to public school grade 1')),
-            ('referred_to_tvet', _('Referred to TVET')),
-            ('referred_to_ycbece', _('Referred to YCBECE')),
-            ('dropout', _('Dropout, referral not possible')),
+        ('', '----------'),
+        ('graduated_to_cbece_next_level', _('Graduated to the next level')),
+        ('graduated_to_cbece_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_to_cbece_next_round_higher_level', _('Graduated to the next round, higher level round 3')),
+        ('referred_to_alp', _('referred to ALP')),
+        ('referred_public_school', _('Referred to public school grade 1')),
+        ('referred_to_tvet', _('Referred to TVET')),
+        ('referred_to_ycbece', _('Referred to YCBECE')),
+        ('dropout', _('Dropout, referral not possible')),
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -2746,12 +2745,12 @@ class CBECE(CLM):
     def calculate_score(self, stage):
         program_cycle = str(self.cycle_id)
         keys = [
-            'CBECE_ASSESSMENT/LanguageArtDomain'+program_cycle,
-            'CBECE_ASSESSMENT/CognitiveDomian'+program_cycle,
-            'CBECE_ASSESSMENT/ScienceDomain'+program_cycle,
-            'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_cycle,
-            'CBECE_ASSESSMENT/PsychomotorDomain'+program_cycle,
-            'CBECE_ASSESSMENT/ArtisticDomain'+program_cycle,
+            'CBECE_ASSESSMENT/LanguageArtDomain' + program_cycle,
+            'CBECE_ASSESSMENT/CognitiveDomian' + program_cycle,
+            'CBECE_ASSESSMENT/ScienceDomain' + program_cycle,
+            'CBECE_ASSESSMENT/SocialEmotionalDomain' + program_cycle,
+            'CBECE_ASSESSMENT/PsychomotorDomain' + program_cycle,
+            'CBECE_ASSESSMENT/ArtisticDomain' + program_cycle,
         ]
         super(CBECE, self).score(keys, stage)
 
@@ -2769,7 +2768,6 @@ class CBECE(CLM):
             'pre_PsychomotorDomain': self.get_score_value('CBECE_ASSESSMENT/PsychomotorDomain' + program_cycle,
                                                           'pre_test'),
             'pre_ArtisticDomain': self.get_score_value('CBECE_ASSESSMENT/ArtisticDomain' + program_cycle, 'pre_test'),
-
 
             'post_LanguageArtDomain': self.get_score_value('CBECE_ASSESSMENT/LanguageArtDomain' + program_cycle,
                                                            'post_test'),
@@ -2793,7 +2791,6 @@ class CBECE(CLM):
 
 
 class SelfPerceptionGrades(models.Model):
-
     enrollment = models.ForeignKey(
         RS,
         blank=True, null=True,
@@ -2828,7 +2825,6 @@ class SelfPerceptionGrades(models.Model):
 
 
 class Inclusion(TimeStampedModel):
-
     YES_NO = Choices(
         (1, _("Yes")),
         (0, _("No"))
@@ -2868,7 +2864,8 @@ class Inclusion(TimeStampedModel):
         ('manufacturing', _('Manufacturing')),
         ('retail_store', _('Retail / Store')),
         ('begging', _('Begging')),
-        ('other_many_other', _('Other services (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
+        ('other_many_other', _(
+            'Other services (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
         # ('other', _('Other')),
     )
     LEARNING_RESULT = Choices(
@@ -3078,7 +3075,8 @@ class Inclusion(TimeStampedModel):
         null=True,
         choices=Choices(
             ('out of school', _('Out of school')),
-            ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
+            ('enrolled in formal education but did not continue',
+             _("Enrolled in formal education but did not continue")),
             ('enrolled in ABLN', _("Enrolled in ABLN")),
         ),
         verbose_name=_('Education status')
@@ -3182,8 +3180,8 @@ class Inclusion(TimeStampedModel):
         null=True,
         verbose_name=_('Palestinian ID number confirm')
     )
-    no_child_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
-    no_parent_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
+    no_child_id_confirmation = models.CharField(max_length=50, blank=True, null=True, )
+    no_parent_id_confirmation = models.CharField(max_length=50, blank=True, null=True, )
 
     parent_case_number = models.CharField(
         max_length=50,
@@ -3441,21 +3439,41 @@ class Inclusion(TimeStampedModel):
         verbose_name_plural = "Disability specialized"
 
 
-class FC(CLM):
-    GRADE_LEVEL = Choices(
-        ('grade1', _('Grade 1')),
-        ('grade2', _('Grade 2')),
-        ('grade3', _('Grade 3')),
-        ('grade4', _('Grade 4')),
-        ('grade5', _('Grade 5')),
-        ('grade6', _('Grade 6')),
-        ('grade7', _('Grade 7')),
-        ('grade8', _('Grade 8')),
-        ('grade9', _('Grade 9'))
-    )
+class ABLN_FC(TimeStampedModel):
     YES_NO = Choices(
         ('yes', _("Yes")),
         ('no', _("No")),
+    )
+    CONTACT_LEARNING_CLOSED = Choices(
+        ('daily', _('Daily')),
+        ('two_three_per_week', _('2-3 times a week')),
+        ('weekly', _('Weekly')),
+        ('biweekly', _('Biweekly')),
+        ('monthly', _('Monthly')),
+        ('not_in_touch', _('Have not kept in touch with parents / caregivers.'))
+    )
+    CONTACT_CAREGIVER = Choices(
+        ('Phone_calls', _('Phone calls')),
+        ('WhatsApp', _('WhatsApp')),
+        ('text_whatsApp_messages', _('Text messages / WhatsApp messages ')),
+        ('other', _('Other'))
+    )
+    FC_TYPE = Choices(
+        ('pre', _("Pre")),
+        ('post', _("Post"))
+    )
+    abln = models.ForeignKey(
+        ABLN,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('abln')
+    )
+    fc_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=FC_TYPE,
+        verbose_name=_('FC Type')
     )
     facilitator_name = models.TextField(
         blank=True, null=True,
@@ -3465,7 +3483,11 @@ class FC(CLM):
         blank=True, null=True,
         verbose_name=_('Subject taught')
     )
-    date_of_monitoring = models.DateField(blank=True, null=True)
+    date_of_monitoring = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of monitoring')
+    )
 
     numbers_child_monitored = models.IntegerField(
         blank=True,
@@ -3477,97 +3499,248 @@ class FC(CLM):
         blank=True, null=True,
         verbose_name=_('Activities/ topic covered')
     )
-
-
-    basic_stationery = models.CharField(
+    materials_needed = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Materials needed for the lesson (teaching/ learning)')
+    )
+    materials_needed_available = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the child receive basic stationery?')
+        verbose_name=_('Did the child have these learning materials available for the lesson?')
+    )
+    materials_needed_reason_no = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Reason')
+    )
+    remote_learning = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child involved in remote learning?')
+    )
+    share_expectations_caregiver = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you share the expectations with their caregiver for the weekly engagement in learning?')
+    )
+    share_expectations_no_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Reason')
     )
 
-    # materials_needed,
-    # materials_needed_reason_no,
-    # remote_learning,
-    # share_expectations_caregiver,
-    # share_expectations_no_reason,
-    # child_engaged_lesson,
-    # child_engaged_lesson_explain,
-    # child_participate_others,
-    # child_participate_others_no_explain,
-    # child_expected_work_independently,
-    # child_meet_lesson_objectives,
-    # child_meet_lesson_objectives_verified,
-    # homework_after_lesson,
-    # homework_after_lesson_explain,
-    # homework_score,
-    # homework_score_explain,
-    # parents_supporting_student,
-    # parents_supporting_student_explain,
-    # child_complete_printed_package,
-    # number_child_participate_online,
-    # how_make_sure_child_access_online,
-    # followup_not_join_online,
-    # times_voice_contact_child_caregiver,
-    # child_coping_home_learning,
-    # child_caregiver_challenges,
-    # actions_before_next_class,
-    # actions_before_next_class_how,
-    # girls_boys_participate_access_device,
-    # girls_boys_participate_explain,
-    # how_often_keep_touch_caregivers,
-    # how_keep_touch_caregivers,
-    # how_keep_touch_caregivers_specify,
-    # child_awareness_prevention_covid19,
-    # followup_done_messages,
-    # followup_followup_explain,
-    # child_practice_basic_handwashing,
-    # child_practice_basic_handwashing_explain,
-    # child_have_pss_wellbeing,
-    # child_have_pss_wellbeing_explain,
-    # additional_notes
+    child_engaged_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child engaged in the lesson and understood the content?')
+    )
+    child_engaged_lesson_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('How was this verified?')
+    )
 
+    child_participate_others = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child participate with others on time?')
+    )
+    child_participate_others_no_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please explain Why')
+    )
 
-    # section = models.ForeignKey(
-    #     Section,
-    #     blank=True, null=True,
-    #     related_name='+',
-    #     verbose_name=_('Section')
-    # )
-    # source_of_identification = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=Choices(
-    #         ('', '----------'),
-    #         ('Referral from school directors', _('Referral from school directors')),
-    #         ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
-    #         ('Other Sources', _('Other Sources'))
-    #     ),
-    #     verbose_name=_('Source of identification of the child')
-    # )
-    # grade_level = models.CharField(
-    #     max_length=50,
-    #     blank=True,
-    #     null=True,
-    #     choices=GRADE_LEVEL,
-    #     verbose_name=_('What was the child education level when first joining formal education in lebanon')
-    # )
-    #
-    # source_of_identification_specify = models.TextField(
-    #     blank=True, null=True,
-    #     verbose_name=_('Please specify')
-    # )
-    # student_number_children = models.IntegerField(
-    #     blank=True,
-    #     null=True,
-    #     choices=((x, x) for x in range(0, 20)),
-    #     verbose_name=_('How many children does this child have?')
-    # )
+    child_expected_work_independently = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child expected to work independently?')
+    )
+    child_meet_lesson_objectives = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child meet the previous lesson objectives?')
+    )
+    child_meet_lesson_objectives_verified = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('How was this verified?')
+    )
+    homework_after_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was there any homework given after the lesson?')
+    )
+    homework_after_lesson_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please explain')
+    )
+
+    homework_score = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('(if applicable) What score did the child receive on the homework?')
+    )
+
+    homework_score_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('How was the Grading and Feedback on the homework given?')
+    )
+
+    parents_supporting_student = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Were parents supporting the student through this lesson?')
+    )
+    parents_supporting_student_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please explain')
+    )
+    child_complete_printed_package = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('(if applicable) Did the child complete the printed package for the week?')
+    )
+    number_child_participate_online = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('How many times did this child participate in online classes this week?')
+    )
+    how_make_sure_child_access_online = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('How did you make sure that the child was able to login/access the online lessons?')
+    )
+    followup_not_join_online = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('How do you follow up if the child does not join / engage in online learning?')
+    )
+    times_voice_contact_child_caregiver = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('How many times do you have voice contact with the child/caregiver per week?')
+    )
+    child_coping_home_learning = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child coping with home-based learning? ')
+    )
+
+    child_caregiver_challenges = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('What challenges does this child face? child/caregiver?')
+    )
+    actions_before_next_class = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Actions_before_next_class')
+    )
+    actions_before_next_class_how = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('how')
+    )
+    girls_boys_participate_access_device = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_(
+            '(if applicable) Did both girls and boys in the same family participate in the class and have access to the phone/ device?')
+    )
+    girls_boys_participate_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please explain')
+    )
+
+    how_often_contact_caregivers = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CONTACT_LEARNING_CLOSED,
+        verbose_name=_(
+            'How often do you keep in touch with parents /caregivers of this child since the learning center closed?')
+    )
+    how_contact_caregivers = ArrayField(
+        models.CharField(
+            choices=CONTACT_CAREGIVER,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('How do you keep in touch with parents / caregivers?')
+    )
+    how_keep_touch_caregivers_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please Specify')
+    )
+
+    child_awareness_prevention_covid19 = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Has the child been reached with awareness messaging on Covid-19 and prevention measures?')
+    )
+    followup_done_messages = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was any follow-up done with the child to ensure message(s) received and understood?')
+    )
+    followup_followup_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please Specify')
+    )
+
+    child_practice_basic_handwashing = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does this child practice basic handwashing? ')
+    )
+    child_practice_basic_handwashing_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please Specify')
+    )
+    child_have_pss_wellbeing = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_have_pss_wellbeing_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please Specify')
+    )
+    additional_notes = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
+    )
 
     class Meta:
         ordering = ['-id']
         verbose_name = "FC"
         verbose_name_plural = "FC"
-

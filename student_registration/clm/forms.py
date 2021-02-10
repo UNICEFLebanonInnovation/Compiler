@@ -37,6 +37,7 @@ from .models import (
     Disability,
     Assessment,
     CLMRound,
+    ABLN_FC
 )
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, ABLNSerializer
 
@@ -1578,7 +1579,6 @@ class BLNForm(CommonForm):
             # 'js/validator.js',
             # 'js/registrations.js',
         )
-
 
 class ABLNForm(CommonForm):
     REGISTRATION_LEVEL = (
@@ -10629,4 +10629,325 @@ class CBECEFollowupForm(forms.ModelForm):
     class Media:
         js = (
             # 'js/validator.js',
+        )
+
+class ABLNPreFCForm(forms.ModelForm):
+    facilitator_name = forms.CharField(
+        label=_('Facilitator name'),
+        widget=forms.TextInput, required=True
+    )
+    subject_taught = forms.CharField(
+        label=_('Subject taught'),
+        widget=forms.TextInput, required=True
+    )
+    date_of_monitoring = forms.DateField(
+        label=_("Date of monitoring"),
+        required=True
+    )
+    numbers_child_monitored = forms.IntegerField(
+        label=_('Number of times the child has been monitored to date'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    topic_covered = forms.CharField(
+        label=_('Activities/ topic covered'),
+        widget=forms.TextInput, required=True
+    )
+    materials_needed = forms.CharField(
+        label=_('Materials needed for the lesson (teaching/ learning)'),
+        widget=forms.TextInput, required=True
+    )
+
+    materials_needed_available = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child have these learning materials available for the lesson?')
+    )
+    materials_needed_reason_no = forms.CharField(
+        label=_('Reason'),
+        widget=forms.TextInput, required=True
+    )
+    remote_learning = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was the child involved in remote learning?')
+    )
+    share_expectations_caregiver = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did you share the expectations with their caregiver for the weekly engagement in learning?')
+    )
+    share_expectations_no_reason = forms.CharField(
+        label=_('Reason'),
+        widget=forms.TextInput, required=True
+    )
+    child_engaged_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was the child engaged in the lesson and understood the content?')
+    )
+    child_engaged_lesson_explain = forms.CharField(
+        label=_('How was this verified?'),
+        widget=forms.TextInput, required=True
+    )
+
+    child_participate_others = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child participate with others on time?')
+    )
+    child_participate_others_no_explain = forms.CharField(
+        label=_('Please explain Why'),
+        widget=forms.TextInput, required=True
+    )
+
+    child_expected_work_independently = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was the child expected to work independently?')
+    )
+    child_meet_lesson_objectives = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child meet the previous lesson objectives?')
+    )
+    child_meet_lesson_objectives_verified = forms.CharField(
+        label=_('How was this verified?'),
+        widget=forms.TextInput, required=True
+    )
+    homework_after_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was there any homework given after the lesson?')
+    )
+    homework_after_lesson_explain = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+    homework_score = forms.IntegerField(
+        label=_('(if applicable) What score did the child receive on the homework?'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    homework_score_explain = forms.CharField(
+        label=_('How was the Grading and Feedback on the homework given?'),
+        widget=forms.TextInput, required=True
+    )
+
+    parents_supporting_student = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Were parents supporting the student through this lesson?')
+    )
+    parents_supporting_student_explain = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+    child_complete_printed_package = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('(if applicable) Did the child complete the printed package for the week?')
+    )
+    number_child_participate_online = forms.IntegerField(
+        label=_('How many times did this child participate in online classes this week?'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+
+
+    how_make_sure_child_access_online = forms.CharField(
+        label=_('How did you make sure that the child was able to login/access the online lessons?'),
+        widget=forms.TextInput, required=True
+    )
+    followup_not_join_online = forms.CharField(
+        label=_('How do you follow up if the child does not join / engage in online learning?'),
+        widget=forms.TextInput, required=True
+    )
+    times_voice_contact_child_caregiver = forms.IntegerField(
+        label=_('How many times do you have voice contact with the child/caregiver per week?'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    child_coping_home_learning = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Is the child coping with home-based learning? ')
+    )
+    child_caregiver_challenges = forms.CharField(
+        label=_('What challenges does this child face? child/caregiver?'),
+        widget=forms.TextInput, required=True
+    )
+    actions_before_next_class = forms.CharField(
+        label=_('Actions_before_next_class'),
+        widget=forms.TextInput, required=True
+    )
+    actions_before_next_class_how = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+    girls_boys_participate_access_device = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_(
+            '(if applicable) Did both girls and boys in the same family participate in the class and have access to the phone/ device?')
+    )
+
+    girls_boys_participate_explain = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+
+    how_often_contact_caregivers = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.CONTACT_LEARNING_CLOSED ,
+        label=_('How often do you keep in touch with parents /caregivers of this child since the learning center closed?')
+    )
+
+    how_contact_caregivers = forms.MultipleChoiceField(
+        label=_('How do you keep in touch with parents / caregivers?'),
+        choices=ABLN_FC.CONTACT_CAREGIVER,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    how_keep_touch_caregivers_specify = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    child_awareness_prevention_covid19 = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Has the child been reached with awareness messaging on Covid-19 and prevention measures?')
+    )
+    followup_done_messages = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was any follow-up done with the child to ensure message(s) received and understood?')
+    )
+    followup_followup_explain = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    child_practice_basic_handwashing = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Does this child practice basic handwashing? ')
+    )
+    child_practice_basic_handwashing_explain = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    child_have_pss_wellbeing = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_have_pss_wellbeing_explain = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    additional_notes = forms.CharField(
+        label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
+        widget=forms.TextInput, required=True
+    )
+
+    # clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(ABLNPreFCForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['fc_type'].initial = 'Pre'
+
+        display_assessment = ''
+        form_action = reverse('clm:abln_pre_fc', kwargs={'pk': instance.id})
+
+        if instance.post_test:
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='pre_fc',
+                assessment_slug='abln_pre_fc',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:abln_pre_fc', kwargs={'pk': instance.id}))
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                ),
+            ),
+
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
+                     _('Are you sure you want to cancel this fc?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(ABLNPreFCForm, self).clean()
+
+    def save(self, instance=None, request=None):
+        instance = super(ABLNPreFCForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = ABLN_FC
+        fields = (
+            'abln',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'numbers_child_monitored',
+            'topic_covered',
+            'materials_needed_available',
+            'materials_needed_reason_no',
+            'remote_learning',
+            'share_expectations_caregiver',
+            'share_expectations_no_reason',
+            'child_engaged_lesson',
+            'child_engaged_lesson_explain',
+            'child_participate_others',
+            'child_participate_others_no_explain',
+            'child_expected_work_independently',
+            'child_meet_lesson_objectives',
+            'child_meet_lesson_objectives_verified',
+            'homework_after_lesson',
+            'homework_after_lesson_explain',
+            'homework_score',
+            'homework_score_explain',
+            'parents_supporting_student',
+            'parents_supporting_student_explain',
+            'child_complete_printed_package',
+            'number_child_participate_online',
+            'how_make_sure_child_access_online',
+            'followup_not_join_online',
+            'times_voice_contact_child_caregiver',
+            'child_coping_home_learning',
+            'child_caregiver_challenges',
+            'actions_before_next_class',
+            'actions_before_next_class_how',
+            'girls_boys_participate_access_device',
+            'girls_boys_participate_explain',
+            'how_often_contact_caregivers',
+            'how_contact_caregivers',
+            'how_keep_touch_caregivers_specify',
+            'child_awareness_prevention_covid19',
+            'followup_done_messages',
+            'followup_followup_explain',
+            'child_practice_basic_handwashing',
+            'child_practice_basic_handwashing_explain',
+            'child_have_pss_wellbeing',
+            'child_have_pss_wellbeing_explain',
+            'additional_notes'
         )

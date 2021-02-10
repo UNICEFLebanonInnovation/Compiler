@@ -31,7 +31,7 @@ from student_registration.locations.models import Location
 from student_registration.students.models import Person
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
-from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
+from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, ABLN_FC
 from .forms import (
     BLNForm,
     ABLNForm,
@@ -52,7 +52,7 @@ from .forms import (
     BLNMonitoringQuestionerForm,
     ABLNMonitoringQuestionerForm
 )
-from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
+from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer, ABLN_FCSerializer
 from .utils import is_allowed_create, is_allowed_edit
 
 
@@ -793,6 +793,37 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
         instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(ABLNPostAssessmentView, self).form_valid(form)
+class ABLNPreFCView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+    template_name = 'clm/abln_pre_fc.html'
+    form_class = ABLNAssessmentForm
+    success_url = '/clm/abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(ABLNPreFCView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = ABLN_FC.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+
+        else:
+            data = ABLN_FCSerializer(instance).data
+
+            return form_class(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = ABLN_FC.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(ABLNPreFCView, self).form_valid(form)
 
 class BLNPostAssessmentView(LoginRequiredMixin,
                             GroupRequiredMixin,
