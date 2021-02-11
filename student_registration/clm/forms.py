@@ -5545,7 +5545,7 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
     #         choices=CLM.YES_NO
     #     )
     remote_learning = forms.ChoiceField(
-        label=_("'Was the child involved in remote learning?"),
+        label=_("Was the child involved in remote learning?"),
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
     )
@@ -5790,7 +5790,7 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
             choices=CLM.YES_NO
         )
     remote_learning = forms.ChoiceField(
-        label=_("'Was the child involved in remote learning?"),
+        label=_("Was the child involved in remote learning?"),
         widget=forms.Select, required=True,
         choices=CLM.YES_NO
     )
@@ -10776,7 +10776,7 @@ class ABLNPreFCForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     actions_before_next_class = forms.CharField(
-        label=_('Actions_before_next_class'),
+        label=_('What specific actions need to be taken with this child before the next class?'),
         widget=forms.TextInput, required=True
     )
     actions_before_next_class_how = forms.CharField(
@@ -11065,7 +11065,7 @@ class ABLNPreFCForm(forms.ModelForm):
                 Div(
                     HTML('<span>H</span>'), css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Weekly lesson') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up actions') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),

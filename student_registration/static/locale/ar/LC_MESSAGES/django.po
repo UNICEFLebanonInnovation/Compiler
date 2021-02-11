@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-11 14:14+0200\n"
+"POT-Creation-Date: 2021-02-11 16:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3332,8 +3332,10 @@ msgstr " هل حصل الطفل على القرطاسية الأساسية؟"
 
 #: student_registration/clm/forms.py:5548
 #: student_registration/clm/forms.py:5793
-#: student_registration/clm/forms.py:6044
-msgid "'Was the child involved in remote learning?"
+#: student_registration/clm/forms.py:10673
+#: student_registration/clm/models.py:1220
+#: student_registration/clm/models.py:3524
+msgid "Was the child involved in remote learning?"
 msgstr "هل شارك الطفل في التعلم عن بعد؟"
 
 #: student_registration/clm/forms.py:5553
@@ -3467,6 +3469,10 @@ msgstr "مع من تم التواصل الطفل مع/او مقدم الرعاي
 #: student_registration/clm/models.py:1212
 msgid "Did the child benefit from the PSS kit?"
 msgstr " هل حصل الطفل على عدة الدعم النفسي؟"
+
+#: student_registration/clm/forms.py:6044
+msgid "'Was the child involved in remote learning?"
+msgstr "هل شارك الطفل في التعلم عن بعد؟"
 
 #: student_registration/clm/forms.py:6290
 #: student_registration/clm/forms.py:7035
@@ -4021,42 +4027,40 @@ msgstr "المتابعة - الزيارة المنزلية"
 
 #: student_registration/clm/forms.py:10636
 #: student_registration/clm/models.py:3482
-#, fuzzy
-#| msgid "Father name"
 msgid "Facilitator name"
-msgstr "اسم الاب"
+msgstr "اسم المعلّم/ةّ"
 
 #: student_registration/clm/forms.py:10640
 #: student_registration/clm/models.py:3486
-#, fuzzy
-#| msgid "Subjects"
 msgid "Subject taught"
-msgstr "المواد"
+msgstr "المادّة المُعطاة عند هذه الملاحظة"
 
 #: student_registration/clm/forms.py:10644
 #: student_registration/clm/models.py:3491
 msgid "Date of monitoring"
-msgstr ""
+msgstr "تاريخ إعطاء الدّرس (اليوم، الشّهر، السّنة)"
 
 #: student_registration/clm/forms.py:10648
 #: student_registration/clm/models.py:3498
 msgid "Number of times the child has been monitored to date"
-msgstr ""
+msgstr "عدد المرّات الّتي استُخدِمت فيها هذه اللّائحة لتقييم الطّفل"
 
 #: student_registration/clm/forms.py:10653
 #: student_registration/clm/models.py:3502
 msgid "Activities/ topic covered"
-msgstr ""
+msgstr "النّشاطات / المواضيع المُعطاة"
 
 #: student_registration/clm/forms.py:10657
 #: student_registration/clm/models.py:3506
 msgid "Materials needed for the lesson (teaching/ learning)"
 msgstr ""
+"الموادّ المطلوبة للدّرس (التّعليم / التّعلّم): هل توفّرت هذه الموادّ للطّفل لحصول "
+"التّعلّم؟"
 
 #: student_registration/clm/forms.py:10664
 #: student_registration/clm/models.py:3513
 msgid "Did the child have these learning materials available for the lesson?"
-msgstr ""
+msgstr "هل توفّرت هذه الموادّ للطّفل لحصول التّعلّم؟ا"
 
 #: student_registration/clm/forms.py:10667
 #: student_registration/clm/forms.py:10681
@@ -4068,63 +4072,51 @@ msgstr ""
 msgid "Reason"
 msgstr "السبب"
 
-#: student_registration/clm/forms.py:10673
-#: student_registration/clm/models.py:1220
-#: student_registration/clm/models.py:3524
-msgid "Was the child involved in remote learning?"
-msgstr ""
-
 #: student_registration/clm/forms.py:10678
 #: student_registration/clm/models.py:3531
 msgid ""
 "Did you share the expectations with their caregiver for the weekly "
 "engagement in learning?"
 msgstr ""
+"هل تمّت مشاركة أهداف التّعلّم / ما هو متوقّع من الانخراط في التّعلّم لهذا الأسبوع "
+"مع الأهل؟"
 
 #: student_registration/clm/forms.py:10687
 #: student_registration/clm/models.py:3543
-#, fuzzy
-#| msgid "Was the child engaged in remote learning?"
 msgid "Was the child engaged in the lesson and understood the content?"
-msgstr "هل شارك الطفل في التعلم عن بعد؟"
+msgstr "هل تفاعل الطّفل مع الدّرس وفهم المحتوى؟"
 
 #: student_registration/clm/forms.py:10690
 #: student_registration/clm/forms.py:10715
 #: student_registration/clm/models.py:3547
 #: student_registration/clm/models.py:3578
 msgid "How was this verified?"
-msgstr ""
+msgstr "كيف تمّ التّحقّق من ذلك؟ (مثلُا أيّ أسلوب تقييميّ استُخدِم)"
 
 #: student_registration/clm/forms.py:10697
 #: student_registration/clm/models.py:3555
-#, fuzzy
-#| msgid "Does the child participate in work?"
 msgid "Did the child participate with others on time?"
-msgstr "هل يشارك الطفل في عمل؟"
+msgstr "هل شارك الطّفل مع الآخرين في الوقت المحدّد؟"
 
 #: student_registration/clm/forms.py:10700
 #: student_registration/clm/models.py:3559
-#, fuzzy
-#| msgid "Please specify"
 msgid "Please explain Why"
-msgstr "يرجى التحديد"
+msgstr "الرّجاء توضيح لماذا؟"
 
 #: student_registration/clm/forms.py:10707
 #: student_registration/clm/models.py:3567
 msgid "Was the child expected to work independently?"
-msgstr ""
+msgstr "هل كان متوقّعًا من الطّفل أن يعمل باستقلاليّة؟"
 
 #: student_registration/clm/forms.py:10712
 #: student_registration/clm/models.py:3574
-#, fuzzy
-#| msgid "How well did the child meet the learning outcomes?"
 msgid "Did the child meet the previous lesson objectives?"
-msgstr "الى اي مدى تمكن الطفل من تحقيق نتائج التعلم المرجوة؟"
+msgstr "هل حقق الطفل أهداف الدرس السابقة؟"
 
 #: student_registration/clm/forms.py:10721
 #: student_registration/clm/models.py:3585
 msgid "Was there any homework given after the lesson?"
-msgstr ""
+msgstr "هل تمّ إعطاء واجب منزليّ بعد الدّرس؟"
 
 #: student_registration/clm/forms.py:10724
 #: student_registration/clm/forms.py:10743
@@ -4133,36 +4125,36 @@ msgstr ""
 #: student_registration/clm/models.py:3589
 #: student_registration/clm/models.py:3613
 #: student_registration/clm/models.py:3672
-#, fuzzy
-#| msgid "Please specify"
 msgid "Please explain"
 msgstr "يرجى التحديد"
 
 #: student_registration/clm/forms.py:10728
 #: student_registration/clm/models.py:3596
 msgid "(if applicable) What score did the child receive on the homework?"
-msgstr ""
+msgstr "(إذا كان ممكنًا) ما العلامة الّتي حصل عليها الطّفل من حلّ الواجب المنزليّ؟"
 
 #: student_registration/clm/forms.py:10733
 #: student_registration/clm/models.py:3601
 msgid "How was the Grading and Feedback on the homework given?"
 msgstr ""
+"كيف تمّت عمليّة وضع العلامات وإعطاء التّغذية الرّاجعة للطّفل فيما يتعلّق بالواجب "
+"المنزليّ؟"
 
 #: student_registration/clm/forms.py:10740
 #: student_registration/clm/models.py:3609
 msgid "Were parents supporting the student through this lesson?"
-msgstr ""
+msgstr "هل قام الأهل بدعم التّلميذ خلال هذا الدّرس؟"
 
 #: student_registration/clm/forms.py:10749
 #: student_registration/clm/models.py:3620
 msgid ""
 "(if applicable) Did the child complete the printed package for the week?"
-msgstr ""
+msgstr "(إذا كان ممكنًا) هل أتم الطّفل الحزمة المطبوعة لهذا الدّرس؟"
 
 #: student_registration/clm/forms.py:10752
 #: student_registration/clm/models.py:3626
 msgid "How many times did this child participate in online classes this week?"
-msgstr ""
+msgstr "كم يومًا شارك الطّفل في صفوف التّعلّم عن بُعد لهذا الأسبوع؟"
 
 #: student_registration/clm/forms.py:10757
 #: student_registration/clm/models.py:3630
@@ -4170,50 +4162,46 @@ msgid ""
 "How did you make sure that the child was able to login/access the online "
 "lessons?"
 msgstr ""
+"(إذا كان ممكنًا) كيف تأكّدت من أنّ الطّفل يستطيع تسجيل الدّخول / الوصول إلى الدّرس "
+"عبر الإنترنت؟"
 
 #: student_registration/clm/forms.py:10761
 #: student_registration/clm/models.py:3634
 msgid ""
 "How do you follow up if the child does not join / engage in online learning?"
-msgstr ""
+msgstr "كيف تتابع إذا لم ينضمّ الطّفل /يشارك في التّعليم عن بُعد؟\t"
 
 #: student_registration/clm/forms.py:10765
 #: student_registration/clm/models.py:3640
 msgid ""
 "How many times do you have voice contact with the child/caregiver per week?"
-msgstr ""
+msgstr "كم مرّةً يتمّ الاتّصال صوتيًّا بالطّفل / بالأهل خلال أسبوع؟ "
 
 #: student_registration/clm/forms.py:10772
 #: student_registration/clm/models.py:3647
-#, fuzzy
-#| msgid "Was the child engaged in remote learning?"
 msgid "Is the child coping with home-based learning? "
-msgstr "هل شارك الطفل في التعلم عن بعد؟"
+msgstr "هل الطّفل قادرٌ على مواكبة التّعلّم المنزليّ؟"
 
 #: student_registration/clm/forms.py:10775
 #: student_registration/clm/models.py:3652
-#, fuzzy
-#| msgid "How many children does this child have?"
 msgid "What challenges does this child face? child/caregiver?"
-msgstr "حدد عدد الأطفال"
+msgstr "ما هي التّحدّيات الّتي يواجهها الطّفل / الأهل؟"
 
 #: student_registration/clm/forms.py:10779
 #: student_registration/clm/models.py:3656
-msgid "Actions_before_next_class"
+msgid ""
+"What specific actions need to be taken with this child before the next class?"
 msgstr ""
+"ما هي الخطوات المحدّدة الّتي يجب اتّخاذها مع الطّفل قبل البدء بالصّفّ التّالي؟ كيف؟"
 
 #: student_registration/clm/forms.py:10790
 #: student_registration/clm/models.py:3668
-#, fuzzy
-#| msgid ""
-#| "Did both girls and boys in the same family participate in the class and "
-#| "have access to the phone/device?"
 msgid ""
 "(if applicable) Did both girls and boys in the same family participate in "
 "the class and have access to the phone/ device?"
 msgstr ""
-"هل شارك كل من الفتيات والفتيان من نفس العائلة في الفصل التعليمي وتمكنوا من "
-"استخدام الهاتف/الجهاز؟"
+"(إذا كان ممكنًا) هل شارك الأطفال الذّكور والإناث لنفس العائلة في الصّفوف "
+"واستطاعوا الوصول إلى الهاتف / الجهاز؟"
 
 #: student_registration/clm/forms.py:10800
 #: student_registration/clm/models.py:3681
@@ -4221,11 +4209,13 @@ msgid ""
 "How often do you keep in touch with parents /caregivers of this child since "
 "the learning center closed?"
 msgstr ""
+"كم مرّة في الغالب يتمّ المحافظة على التّواصل مع أهل هذا الطّفل لتقديم التّوعية / "
+"الدّعم النّفسيّ الاجتماعيّ / إلخ"
 
 #: student_registration/clm/forms.py:10803
 #: student_registration/clm/models.py:3692
 msgid "How do you keep in touch with parents / caregivers?"
-msgstr ""
+msgstr "كيف تحافظ على التّواصل مع الأهل؟"
 
 #: student_registration/clm/forms.py:10809
 #: student_registration/clm/forms.py:10823
@@ -4235,94 +4225,80 @@ msgstr ""
 #: student_registration/clm/models.py:3715
 #: student_registration/clm/models.py:3727
 #: student_registration/clm/models.py:3738
-#, fuzzy
-#| msgid "Please specify"
 msgid "Please Specify"
 msgstr "يرجى التحديد"
 
 #: student_registration/clm/forms.py:10815
 #: student_registration/clm/models.py:3704
-#, fuzzy
-#| msgid ""
-#| "Has the child directly been reached with awareness messaging on Covid-19 "
-#| "and prevention measures?"
 msgid ""
 "Has the child been reached with awareness messaging on Covid-19 and "
 "prevention measures?"
-msgstr ""
-"هل تم التواصل مع الطفل مباشرةً من خلال رسائل التوعية حول Covid-19 وتدابير "
-"الوقاية؟"
+msgstr "هل تمّ حصول الطّفل على رسائل التّوعية وطرق الوقاية من كوفيد 19؟"
 
 #: student_registration/clm/forms.py:10820
 #: student_registration/clm/models.py:3711
-#, fuzzy
-#| msgid ""
-#| "Was any follow-up done to ensure messages were well received, understood "
-#| "and adopted?"
 msgid ""
 "Was any follow-up done with the child to ensure message(s) received and "
 "understood?"
-msgstr "هل تم إجراء أي متابعة لضمان تلقي الرسائل وفهمها واعتمادها بشكل جيد؟"
+msgstr "هل تمّت المتابعة مع الطّفل للتّأكّد من حصوله على الرّسائل وفهمها؟"
 
 #: student_registration/clm/forms.py:10829
 #: student_registration/clm/models.py:3723
-#, fuzzy
-#| msgid "Does the child participate in work?"
 msgid "Does this child practice basic handwashing? "
-msgstr "هل يشارك الطفل في عمل؟"
+msgstr " هل يمارس هذا الطّفل غسل اليدين الأساسيّ؟"
 
 #: student_registration/clm/forms.py:10838
 #: student_registration/clm/models.py:3734
-#, fuzzy
-#| msgid "Does the child have any disability or special need?"
 msgid "Does the child have any PSS/ wellbeing needs?"
-msgstr "هل يعاني الطفل من أي إعاقة أو حاجة خاصة؟"
+msgstr ""
+"ها هي الاحتياجات المحدّدة لهذا الطّفل فيما يتعلّق بالدّعم النّفسيّ الاجتماعيّ "
+"والرّفاهيّة؟"
 
 #: student_registration/clm/forms.py:10845
 #: student_registration/clm/models.py:3742
 msgid "Additional notes/ specific challenges/ follow up action/ referrals etc."
-msgstr ""
+msgstr "ملاحظات إضافيّة / تحدّيات معيّنة / عمليّة متابعة / الإحالة إلخ"
 
 #: student_registration/clm/forms.py:10888
 msgid "FE Partner & Facilitator details"
-msgstr ""
+msgstr "معلومات شريك التّعليم غير النّظاميّ والمعلّم/ة"
 
 #: student_registration/clm/forms.py:10910
 msgid "Individual child details"
-msgstr ""
+msgstr "معلومات الطّفل"
 
 #: student_registration/clm/forms.py:10926
 msgid "Lesson details"
-msgstr ""
+msgstr "معلومات الدّرس"
 
 #: student_registration/clm/forms.py:10949
 msgid "Content shared this week (subject)"
-msgstr ""
+msgstr "الطّريقة و التّحضير"
 
 #: student_registration/clm/forms.py:10964
 msgid "Modality & preparation:"
 msgstr ""
 
 #: student_registration/clm/forms.py:10981
-#: student_registration/clm/forms.py:11068
-#, fuzzy
-#| msgid "Weekly"
 msgid "Weekly lesson"
-msgstr "كل أسبوع"
+msgstr "الدّرس الأسبوعيّ"
 
 #: student_registration/clm/forms.py:11039
 msgid "Feedback about home-based/distance learning from this child/caregiver"
 msgstr ""
+"التّغذية الرّاجعة حول التّعلّم المنزلي / التّعلّم عن بُعد من هذا الطّفل / الأهل"
+
+#: student_registration/clm/forms.py:11068
+msgid "Follow up actions"
+msgstr "عمليّة المتابعة"
 
 #: student_registration/clm/forms.py:11092
-#, fuzzy
-#| msgid "General Notifications"
 msgid "Gender considerations"
-msgstr "رسائل عامة"
+msgstr "اعتبارات الاختلاف الجنسيّ"
 
 #: student_registration/clm/forms.py:11109
 msgid "Covid-19 PSS/ Wellbeing"
-msgstr ""
+msgstr "الدّعم النّفسيّ الاجتماعي / الرّفاه المتعلّق بكوفيد 19"
 
 #: student_registration/clm/inclusion_forms.py:369
 msgid "Disability Source of identification of the child"
@@ -4411,21 +4387,21 @@ msgstr "الطفل و مقدم الرعاية"
 #: student_registration/clm/models.py:3448
 #: student_registration/staffenroll/models.py:32
 msgid "Daily"
-msgstr "يومياً"
+msgstr "يوميًّا"
 
 #: student_registration/clm/models.py:149
 msgid "Every 2-3 days"
-msgstr "كل يومين او ثلاث"
+msgstr "مرّتين أو ثلاث مرّات في الأسبوع"
 
 #: student_registration/clm/models.py:150
 #: student_registration/clm/models.py:3450
 msgid "Weekly"
-msgstr "كل أسبوع"
+msgstr "أسبوعيًّا"
 
 #: student_registration/clm/models.py:151
 #: student_registration/clm/models.py:3451
 msgid "Biweekly"
-msgstr "كل اسبوعين"
+msgstr "كلّ أسبوعين"
 
 #: student_registration/clm/models.py:152
 #: student_registration/clm/models.py:3452
@@ -4574,7 +4550,7 @@ msgstr "عن طريق اتصال Whatsapp"
 #: student_registration/clm/models.py:239
 #: student_registration/clm/models.py:3456
 msgid "Phone calls"
-msgstr "عن طريق الأتصال الهاتفي"
+msgstr "اتّصال هاتفيّ"
 
 #: student_registration/clm/models.py:291
 #: student_registration/clm/models.py:2946
@@ -5301,19 +5277,19 @@ msgstr ""
 
 #: student_registration/clm/models.py:3449
 msgid "2-3 times a week"
-msgstr ""
+msgstr " مرّتين أو ثلاث مرّات في الأسبوع"
 
 #: student_registration/clm/models.py:3453
 msgid "Have not kept in touch with parents / caregivers."
-msgstr ""
+msgstr "لم نحافظ على التّواصل مع الأهل"
 
 #: student_registration/clm/models.py:3457
 msgid "WhatsApp"
-msgstr ""
+msgstr "رسائل صوتيّة عبر الواتس أب"
 
 #: student_registration/clm/models.py:3458
 msgid "Text messages / WhatsApp messages "
-msgstr ""
+msgstr "رسائل مكتوبة / عبر الواتس أب"
 
 #: student_registration/clm/models.py:3462
 msgid "Pre 1"
@@ -5324,16 +5300,12 @@ msgid "Pre 2"
 msgstr ""
 
 #: student_registration/clm/models.py:3464
-#, fuzzy
-#| msgid "Post-test"
 msgid "Post 1"
-msgstr "مجموع علامات ال Post-test"
+msgstr ""
 
 #: student_registration/clm/models.py:3465
-#, fuzzy
-#| msgid "Post-test"
 msgid "Post 2"
-msgstr "مجموع علامات ال Post-test"
+msgstr ""
 
 #: student_registration/clm/models.py:3471
 msgid "abln"
@@ -5442,8 +5414,6 @@ msgid "Is Present"
 msgstr "حاضر"
 
 #: student_registration/dashboard/views.py:976
-#, fuzzy
-#| msgid "Phone Call"
 msgid "Phone"
 msgstr "إتصال هاتفي"
 
@@ -5454,8 +5424,6 @@ msgid "attend"
 msgstr "لا حضور اليوم"
 
 #: student_registration/dashboard/views.py:980
-#, fuzzy
-#| msgid "Absent"
 msgid "absent"
 msgstr "غائب"
 
@@ -7595,8 +7563,6 @@ msgid "Change password?"
 msgstr "تعديل كلمة السر"
 
 #: student_registration/templates/base2.html:165
-#, fuzzy
-#| msgid "Follow-up"
 msgid "Follow us"
 msgstr "المتابعة"
 

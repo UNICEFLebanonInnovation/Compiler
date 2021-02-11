@@ -3653,7 +3653,7 @@ class ABLN_FC(TimeStampedModel):
     )
     actions_before_next_class = models.TextField(
         blank=True, null=True,
-        verbose_name=_('Actions_before_next_class')
+        verbose_name=_('What specific actions need to be taken with this child before the next class?')
     )
     actions_before_next_class_how = models.TextField(
         blank=True, null=True,

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-11 14:14+0200\n"
+"POT-Creation-Date: 2021-02-11 16:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3327,8 +3327,10 @@ msgstr ""
 
 #: student_registration/clm/forms.py:5548
 #: student_registration/clm/forms.py:5793
-#: student_registration/clm/forms.py:6044
-msgid "'Was the child involved in remote learning?"
+#: student_registration/clm/forms.py:10673
+#: student_registration/clm/models.py:1220
+#: student_registration/clm/models.py:3524
+msgid "Was the child involved in remote learning?"
 msgstr ""
 
 #: student_registration/clm/forms.py:5553
@@ -3455,6 +3457,10 @@ msgstr ""
 #: student_registration/clm/forms.py:7096
 #: student_registration/clm/models.py:1212
 msgid "Did the child benefit from the PSS kit?"
+msgstr ""
+
+#: student_registration/clm/forms.py:6044
+msgid "'Was the child involved in remote learning?"
 msgstr ""
 
 #: student_registration/clm/forms.py:6290
@@ -4051,12 +4057,6 @@ msgstr ""
 msgid "Reason"
 msgstr ""
 
-#: student_registration/clm/forms.py:10673
-#: student_registration/clm/models.py:1220
-#: student_registration/clm/models.py:3524
-msgid "Was the child involved in remote learning?"
-msgstr ""
-
 #: student_registration/clm/forms.py:10678
 #: student_registration/clm/models.py:3531
 msgid ""
@@ -4168,7 +4168,8 @@ msgstr ""
 
 #: student_registration/clm/forms.py:10779
 #: student_registration/clm/models.py:3656
-msgid "Actions_before_next_class"
+msgid ""
+"What specific actions need to be taken with this child before the next class?"
 msgstr ""
 
 #: student_registration/clm/forms.py:10790
@@ -4251,12 +4252,15 @@ msgid "Modality & preparation:"
 msgstr ""
 
 #: student_registration/clm/forms.py:10981
-#: student_registration/clm/forms.py:11068
 msgid "Weekly lesson"
 msgstr ""
 
 #: student_registration/clm/forms.py:11039
 msgid "Feedback about home-based/distance learning from this child/caregiver"
+msgstr ""
+
+#: student_registration/clm/forms.py:11068
+msgid "Follow up actions"
 msgstr ""
 
 #: student_registration/clm/forms.py:11092
