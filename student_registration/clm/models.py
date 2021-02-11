@@ -3459,8 +3459,10 @@ class ABLN_FC(TimeStampedModel):
         ('other', _('Other'))
     )
     FC_TYPE = Choices(
-        ('pre', _("Pre")),
-        ('post', _("Post"))
+        ('pre1', _("Pre 1")),
+        ('pre2', _("Pre 2")),
+        ('post1', _("Post 1")),
+        ('post2', _("Post 2"))
     )
     abln = models.ForeignKey(
         ABLN,
@@ -3708,7 +3710,7 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Was any follow-up done with the child to ensure message(s) received and understood?')
     )
-    followup_followup_explain = models.TextField(
+    followup_explain = models.TextField(
         blank=True, null=True,
         verbose_name=_('Please Specify')
     )

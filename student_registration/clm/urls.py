@@ -159,11 +159,23 @@ urlpatterns = [
         name='abln_post_assessment'
     ),
     url(
-        regex=r'^abln-pre-fc/(?P<pk>[\w.@+-]+)/$',
-        view=views.ABLNPreFCView.as_view(),
+        regex=r'^abln-pre-fc-edit/(?P<abln_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+        view=views.ABLNPreFCEditView.as_view(),
+        name='abln_pre_fc_edit'
+    ),
+    url(
+        regex=r'^abln-pre-fc-add/(?P<abln_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+        view=views.ABLNPreFCAddView.as_view(),
+        name='abln_pre_fc_add'
+    ),
+    url(
+        regex=r'^abln-pre-fc/(?P<abln_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+        view=views.ABLNFCView.as_view(),
         name='abln_pre_fc'
     ),
 
+    # re_path(r'^articles/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/$', views.month_archive),
+    #
     url(
         regex=r'^bln-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNPostAssessmentView.as_view(),

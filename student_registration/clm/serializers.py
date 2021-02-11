@@ -596,13 +596,14 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
     class Meta:
         model = ABLN_FC
         fields = (
-            'abln',
+            'abln_id',
             'fc_type',
             'facilitator_name',
             'subject_taught',
             'date_of_monitoring',
             'numbers_child_monitored',
             'topic_covered',
+            'materials_needed',
             'materials_needed_available',
             'materials_needed_reason_no',
             'remote_learning',
@@ -637,7 +638,7 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
             'how_keep_touch_caregivers_specify',
             'child_awareness_prevention_covid19',
             'followup_done_messages',
-            'followup_followup_explain',
+            'followup_explain',
             'child_practice_basic_handwashing',
             'child_practice_basic_handwashing_explain',
             'child_have_pss_wellbeing',

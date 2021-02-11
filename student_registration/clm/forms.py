@@ -10753,8 +10753,6 @@ class ABLNPreFCForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-
-
     how_make_sure_child_access_online = forms.CharField(
         label=_('How did you make sure that the child was able to login/access the online lessons?'),
         widget=forms.TextInput, required=True
@@ -10791,7 +10789,6 @@ class ABLNPreFCForm(forms.ModelForm):
         label=_(
             '(if applicable) Did both girls and boys in the same family participate in the class and have access to the phone/ device?')
     )
-
     girls_boys_participate_explain = forms.CharField(
         label=_('Please explain'),
         widget=forms.TextInput, required=True
@@ -10802,7 +10799,6 @@ class ABLNPreFCForm(forms.ModelForm):
         choices=ABLN_FC.CONTACT_LEARNING_CLOSED ,
         label=_('How often do you keep in touch with parents /caregivers of this child since the learning center closed?')
     )
-
     how_contact_caregivers = forms.MultipleChoiceField(
         label=_('How do you keep in touch with parents / caregivers?'),
         choices=ABLN_FC.CONTACT_CAREGIVER,
@@ -10823,7 +10819,7 @@ class ABLNPreFCForm(forms.ModelForm):
         choices=ABLN_FC.YES_NO ,
         label=_('Was any follow-up done with the child to ensure message(s) received and understood?')
     )
-    followup_followup_explain = forms.CharField(
+    followup_explain = forms.CharField(
         label=_('Please Specify'),
         widget=forms.TextInput, required=True
     )
@@ -10850,28 +10846,35 @@ class ABLNPreFCForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
 
-    # clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    abln_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    fc_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ABLNPreFCForm, self).__init__(*args, **kwargs)
 
-        post_test = ''
-        post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['fc_type'].initial = 'Pre'
+        data = kwargs['initial'] if 'initial' in kwargs else ''
+        abln_id= data.get('abln_id')
+        fc_type= data.get('fc_type')
 
-        display_assessment = ''
-        form_action = reverse('clm:abln_pre_fc', kwargs={'pk': instance.id})
+        print('------------------------------------------------------------------------')
+        print('------------------------------------------------------------------------')
+        print('------------------------------------------------------------------------')
 
-        if instance.post_test:
-            post_test_button = ' btn-outline-success '
-            post_test = instance.assessment_form(
-                stage='pre_fc',
-                assessment_slug='abln_pre_fc',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:abln_pre_fc', kwargs={'pk': instance.id}))
-            )
+        print (abln_id)
+        print (fc_type)
+
+        print('------------------------------------------------------------------------')
+        print('------------------------------------------------------------------------')
+        print('------------------------------------------------------------------------')
+        form_action = reverse('clm:abln_pre_fc_add', kwargs = {'abln_id': abln_id, 'fc_type': fc_type})
+        self.fields['abln_id'].initial = abln_id
+        self.fields['fc_type'].initial = fc_type
+
+        if instance:
+            form_action = reverse('clm:abln_pre_fc_edit', kwargs = {'abln_id': abln_id, 'fc_type': fc_type})
+            # form_action = reverse('clm:abln_pre_fc_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -10880,14 +10883,281 @@ class ABLNPreFCForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('FE Partner & Facilitator details') + '</h4>')
                 ),
+                Div(
+                    'enrollment_id',
+                    'abln_id',
+                    'fc_type',
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('facilitator_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('subject_taught', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Individual child details') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('date_of_monitoring', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('numbers_child_monitored', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  B_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(HTML('<span>C</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Lesson details') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('topic_covered', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('materials_needed', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('materials_needed_available', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_materials_needed_reason_no">3.1</span>'),
+                    Div('materials_needed_reason_no', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  C_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>D</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Content shared this week (subject)') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  D_right_border'
             ),
 
+            Fieldset(
+                None,
+                Div(HTML('<span>E</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Modality & preparation:') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('share_expectations_caregiver', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_no_reason">1.1</span>'),
+                    Div('share_expectations_no_reason', css_class='col-md-3', css_id='student_have_children'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data D_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>F</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Weekly lesson') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_engaged_lesson', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_engaged_lesson_explain">1.1</span>'),
+                    Div('child_engaged_lesson_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('child_participate_others', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_participate_others_no_explain">2.1</span>'),
+                    Div('child_participate_others_no_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('child_meet_lesson_objectives', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('child_meet_lesson_objectives_verified', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('homework_after_lesson', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_homework_after_lesson_explain">5.1</span>'),
+                    Div('homework_after_lesson_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('homework_score', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_homework_score_explain">6.1</span>'),
+                    Div('homework_score_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('parents_supporting_student', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_parents_supporting_student_explain">6.1</span>'),
+                    Div('parents_supporting_student_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning F_right_border'
+            ),
+
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>G</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Feedback about home-based/distance learning from this child/caregiver') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_complete_printed_package', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('number_child_participate_online', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('how_make_sure_child_access_online', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('followup_not_join_online', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('times_voice_contact_child_caregiver', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>H</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Weekly lesson') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_coping_home_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_engaged_lesson_explain">2</span>'),
+                    Div('child_caregiver_challenges', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('actions_before_next_class', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_actions_before_next_class_how">3.1</span>'),
+                    Div('actions_before_next_class_how', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>H</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Gender considerations') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('girls_boys_participate_access_device', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_girls_boys_participate_explain">1.1</span>'),
+                    Div('girls_boys_participate_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>I</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Covid-19 PSS/ Wellbeing') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('how_often_contact_caregivers', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('how_contact_caregivers', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_how_keep_touch_caregivers_specify">2.1</span>'),
+                    Div('how_keep_touch_caregivers_specify', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('child_awareness_prevention_covid19', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('followup_done_messages', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_followup_explain">4.1</span>'),
+                    Div('followup_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('child_practice_basic_handwashing', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_practice_basic_handwashing_explain">4.1</span>'),
+                    Div('child_practice_basic_handwashing_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('child_have_pss_wellbeing', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_have_pss_wellbeing_explain">4.1</span>'),
+                    Div('child_have_pss_wellbeing_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('additional_notes', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                # ''
+                css_class='bd-callout bd-callout-warning D_right_border'
+            ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
-                     _('Are you sure you want to cancel this fc?') + '">' + _('Back to list') + '</a>'),
+                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
+                    'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 
@@ -10903,7 +11173,7 @@ class ABLNPreFCForm(forms.ModelForm):
     class Meta:
         model = ABLN_FC
         fields = (
-            'abln',
+            'abln_id',
             'fc_type',
             'facilitator_name',
             'subject_taught',
@@ -10944,7 +11214,7 @@ class ABLNPreFCForm(forms.ModelForm):
             'how_keep_touch_caregivers_specify',
             'child_awareness_prevention_covid19',
             'followup_done_messages',
-            'followup_followup_explain',
+            'followup_explain',
             'child_practice_basic_handwashing',
             'child_practice_basic_handwashing_explain',
             'child_have_pss_wellbeing',

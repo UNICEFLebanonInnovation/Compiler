@@ -50,7 +50,8 @@ from .forms import (
     CBECEReferralForm,
     CBECEMonitoringQuestionerForm,
     BLNMonitoringQuestionerForm,
-    ABLNMonitoringQuestionerForm
+    ABLNMonitoringQuestionerForm,
+    ABLNPreFCForm
 )
 from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer, ABLN_FCSerializer
 from .utils import is_allowed_create, is_allowed_edit
@@ -793,11 +794,86 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
         instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(ABLNPostAssessmentView, self).form_valid(form)
-class ABLNPreFCView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
-    template_name = 'clm/abln_pre_fc.html'
-    form_class = ABLNAssessmentForm
+
+# print(qs.query)
+
+class ABLNFCView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    # template_name = 'clm/abln_pre_fc_create_form.html'
+    form_class = ABLNPreFCForm
+    success_url = '/clm/abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_success_url(self):
+        print('------------------------------------------------------------------------')
+        print(self.kwargs['abln_id'])
+        print('------------------------------------------------------------------------')
+        print(self.kwargs['fc_type'])
+        print('------------------------------------------------------------------------')
+        print('------------------------------------------------------------------------')
+        fc = ABLN_FC.objects.get(abln_id=self.kwargs['abln_id'], fc_type=self.kwargs['fc_type'])
+        print(fc)
+
+
+        # if self.request.POST.get('save_add_another', None):
+        #     return '/clm/abln-add/'
+        # if self.request.POST.get('save_and_continue', None):
+        #     return '/clm/abln-edit/' + str(self.request.session.get('instance_id')) + '/'
+        # if self.request.POST.get('save_and_pretest', None):
+        #     return assessment_form(
+        #         instance_id=self.request.session.get('instance_id'),
+        #         stage='pre_test',
+        #         enrollment_model='ABLN',
+        #         assessment_slug='abln_pre_test',
+        #         callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
+        #                                                          kwargs={
+        #                                                              'pk': self.request.session.get('instance_id')})))
+        # return self.success_url
+    #
+    # def get_context_data(self, **kwargs):
+    #     force_default_language(self.request)
+    #     """Insert the form into the context dict."""
+    #     if 'form' not in kwargs:
+    #         kwargs['form'] = self.get_form()
+    #     kwargs['is_allowed_create'] = is_allowed_create('ABLN')
+    #     return super(ABLNFCView, self).get_context_data(**kwargs)
+    #
+    # def get_initial(self):
+    #     initial = super(ABLNFCView, self).get_initial()
+    #     data = {
+    #         'new_registry': self.request.GET.get('new_registry', ''),
+    #         'student_outreached': self.request.GET.get('student_outreached', ''),
+    #         'have_barcode': self.request.GET.get('have_barcode', '')
+    #     }
+    #     if self.request.GET.get('enrollment_id'):
+    #         instance = ABLN.objects.get(id=self.request.GET.get('enrollment_id'))
+    #         data = ABLNSerializer(instance).data
+    #         data['student_nationality'] = data['student_nationality_id']
+    #         data['learning_result'] = ''
+    #
+    #     if self.request.GET.get('child_id'):
+    #         instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+    #         data = ChildSerializer(instance).data
+    #     if data:
+    #         data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+    #         data['student_outreached'] = self.request.GET.get('student_outreached', '')
+    #         data['have_barcode'] = self.request.GET.get('have_barcode', '')
+    #     initial = data
+    #
+    #     return initial
+    #
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(ABLNAddView, self).form_valid(form)
+
+
+
+class ABLNPreFCAddView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'clm/abln_pre_fc_create_form.html'
+    form_class = ABLNPreFCForm
     success_url = '/clm/abln-list/'
     group_required = [u"CLM_ABLN"]
 
@@ -806,24 +882,70 @@ class ABLNPreFCView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(ABLNPreFCView, self).get_context_data(**kwargs)
+        return super(ABLNPreFCAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(ABLNPreFCAddView, self).get_initial()
+        data = {
+            'abln_id': self.kwargs['abln_id'],
+            'fc_type': self.kwargs['fc_type']
+        }
+        data['abln_id'] = self.kwargs['abln_id']
+        data['fc_type'] = self.kwargs['fc_type']
+
+        # if self.request.GET.get('abln_id'):
+        #     data['abln_id'] = self.request.GET.get('abln_id')
+        # if self.request.GET.get('fc_type'):
+        #     data['fc_type'] = self.request.GET.get('fc_type')
+
+        print('-------------view-----------------------------------------------------------')
+        print('-------------view-----------------------------------------------------------')
+        print('-------------view-----------------------------------------------------------')
+
+        print (data)
+        print('-------------view-----------------------------------------------------------')
+        print('-------------view-----------------------------------------------------------')
+        print('-------------view-----------------------------------------------------------')
+
+
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(ABLNPreFCAddView, self).form_valid(form)
+
+
+class ABLNPreFCEditView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+    template_name = 'clm/abln_pre_fc_edit_form.html'
+    form_class = ABLNPreFCForm
+    success_url = '/clm/abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(ABLNPreFCEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = ABLN_FC.objects.get(id=self.kwargs['pk'])
-
+        instance = ABLN_FC.objects.get(abln_id=self.kwargs['abln_id'], fc_type=self.kwargs['fc_type'])
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
-
         else:
             data = ABLN_FCSerializer(instance).data
 
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = ABLN_FC.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN_FC.objects.get(abln_id=self.kwargs['abln_id'], fc_type=self.kwargs['fc_type'])
         form.save(request=self.request, instance=instance)
-        return super(ABLNPreFCView, self).form_valid(form)
+        return super(ABLNPreFCEditView, self).form_valid(form)
 
 class BLNPostAssessmentView(LoginRequiredMixin,
                             GroupRequiredMixin,
@@ -2077,7 +2199,6 @@ class RSViewSet(mixins.RetrieveModelMixin,
         return qs
 
     def delete(self, request, *args, **kwargs):
-        print('hhhhhh');
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})

@@ -142,7 +142,7 @@ class ABLNTable(CommonTable):
                                                    attrs={'url': '/clm/abln-post-assessment/', 'programme': 'ABLN'})
     pre_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_pre_fc1_column.html',
-                                                   attrs={'url': '/clm/abln-pre-fc/', 'programme': 'ABLN'})
+                                                   attrs={'url': '/clm/abln-pre-fc-add/', 'programme': 'ABLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
