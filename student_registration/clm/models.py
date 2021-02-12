@@ -3464,11 +3464,11 @@ class ABLN_FC(TimeStampedModel):
         ('post1', _("Post 1")),
         ('post2', _("Post 2"))
     )
-    abln = models.ForeignKey(
+    enrollment = models.ForeignKey(
         ABLN,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
-        verbose_name=_('abln')
+        verbose_name=_('Enrollment')
     )
     fc_type = models.CharField(
         max_length=50,
