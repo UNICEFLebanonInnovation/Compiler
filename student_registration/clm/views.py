@@ -888,10 +888,10 @@ class ABLNFCAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(ABLNFCAddView, self).get_initial()
         data = {
-            'abln': self.kwargs['abln'],
+            'enrollment_id': self.kwargs['enrollment_id'],
             'fc_type': self.kwargs['fc_type']
         }
-        data['abln'] = self.kwargs['abln']
+        data['enrollment_id'] = self.kwargs['enrollment_id']
         data['fc_type'] = self.kwargs['fc_type']
         initial = data
 

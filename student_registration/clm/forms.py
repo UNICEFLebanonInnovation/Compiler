@@ -10846,7 +10846,7 @@ class ABLNFCForm(forms.ModelForm):
     #     widget=forms.TextInput, required=True
     # )
 
-    # enrollment = forms.CharField(widget=forms.HiddenInput, required=True)
+    enrollment_id = forms.CharField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -10855,27 +10855,26 @@ class ABLNFCForm(forms.ModelForm):
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         data = kwargs['initial'] if 'initial' in kwargs else ''
-        # abln= data.get('abln')
+        enrollment_id= data.get('enrollment_id')
         fc_type= data.get('fc_type')
 
         print('------------------------------------------------------------------------')
         print('------------------------------------------------------------------------')
         print('------------------------------------------------------------------------')
 
-        # print (abln)
+        print (enrollment_id)
         print (fc_type)
 
         print('------------------------------------------------------------------------')
         print('------------------------------------------------------------------------')
         print('------------------------------------------------------------------------')
-        form_action = reverse('clm:abln_fc_add', kwargs = {'abln': 7150, 'fc_type': fc_type})
+        form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': 7150, 'fc_type': fc_type})
 
-        # self.fields['enrollment'].initial = abln
+        self.fields['enrollment_id'].initial = enrollment_id
         self.fields['fc_type'].initial = fc_type
 
         if instance:
-            form_action = reverse('clm:abln_fc_add', kwargs = {'abln': 7150, 'fc_type': fc_type})
-            # form_action = reverse('clm:abln_pre_fc_edit', kwargs={'pk': instance.id})
+            form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': enrollment_id, 'fc_type': fc_type})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -10890,7 +10889,6 @@ class ABLNFCForm(forms.ModelForm):
                 ),
                 Div(
                     'enrollment_id',
-                    # 'abln',
                     'fc_type',
                     css_class='row',
                 ),
@@ -11170,21 +11168,12 @@ class ABLNFCForm(forms.ModelForm):
         serializer = ABLN_FCSerializer(data=request.POST)
         if serializer.is_valid():
             fctype= serializer.validated_data['fc_type']
-
-        instance = self.Meta.model.objects.filter(enrollment_id=7150, fc_type= fctype).first()
+        enrollment_id =self.fields['enrollment_id'].initial
+        instance = self.Meta.model.objects.filter(enrollment_id=enrollment_id, fc_type= fctype).first()
 
         if instance:
             serializer = ABLN_FCSerializer(instance, data=request.POST)
             if serializer.is_valid():
-                print('-------------------in save--------------------')
-                print(serializer.validated_data)
-                #print(serializer.validated_data['abln'])
-                print(serializer.validated_data['fc_type'])
-                print('-------------------instance--------------------')
-
-                print(instance)
-                print('-------------------in save--------------------')
-
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
@@ -11196,19 +11185,10 @@ class ABLNFCForm(forms.ModelForm):
             serializer = ABLN_FCSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-
-                print('-------------------in save--------------------')
-                # print(serializer.validated_data)
-                print(request.POST)
-                # print(serializer.validated_data['abln'])
-                # print(serializer.validated_data['fc_type'])
-                print('-------------------instance--------------------')
-
-                print(instance)
-                print('-------------------in save--------------------')
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
+                instance.enrollment_id = enrollment_id
                 instance.save()
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
@@ -11220,7 +11200,7 @@ class ABLNFCForm(forms.ModelForm):
     class Meta:
         model = ABLN_FC
         fields = (
-            # 'abln',
+            'enrollment_id',
             'fc_type',
             'facilitator_name',
             'subject_taught',

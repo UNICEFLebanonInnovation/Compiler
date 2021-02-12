@@ -592,11 +592,12 @@ class CBECESerializer(CLMSerializer):
 
 
 class ABLN_FCSerializer(serializers.ModelSerializer):
+    # enrollment_id = serializers.IntegerField(source='enrollment.id', read_only=True)
 
     class Meta:
         model = ABLN_FC
         fields = (
-            # 'abln',
+            'enrollment',
             'fc_type',
             'facilitator_name',
             'subject_taught',

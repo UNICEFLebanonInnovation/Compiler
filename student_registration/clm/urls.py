@@ -159,7 +159,7 @@ urlpatterns = [
         name='abln_post_assessment'
     ),
     url(
-        regex=r'^abln-fc-add/(?P<abln>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+        regex=r'^abln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
         view=views.ABLNFCAddView.as_view(),
         name='abln_fc_add'
     ),
