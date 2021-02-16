@@ -10879,7 +10879,6 @@ class ABLNFCForm(forms.ModelForm):
             enrollment_id= data['enrollment_id']
             fc_type= data['fc_type']
 
-            form_action = reverse('clm:abln_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
 
             print('-----------data Form fc_type--------------------------')
 
@@ -10897,8 +10896,11 @@ class ABLNFCForm(forms.ModelForm):
 
             print('--------------data Form fc_type-----------------------')
 
-            if instance:
-                form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': enrollment_id, 'fc_type': fc_type})
+
+            form_action = reverse('clm:abln_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
+
+        else:
+            form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': instance.enrollment_id, 'fc_type': instance.fc_type})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -11192,13 +11194,6 @@ class ABLNFCForm(forms.ModelForm):
 
     def save(self, request=None, instance=None):
 
-        print('-----------save-------------------------')
-        serializer = ABLN_FCSerializer(data=request.POST)
-        if serializer.is_valid():
-            fctype= serializer.validated_data['fc_type']
-        enrollment_id =self.fields['enrollment_id'].initial
-        instance = self.Meta.model.objects.filter(enrollment_id=enrollment_id, fc_type= fctype).first()
-
         if instance:
             serializer = ABLN_FCSerializer(instance, data=request.POST)
             if serializer.is_valid():
@@ -11222,7 +11217,7 @@ class ABLNFCForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
-                instance.enrollment_id = enrollment_id
+                # instance.enrollment_id = enrollment_id
                 instance.save()
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
