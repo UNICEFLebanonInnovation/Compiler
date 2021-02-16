@@ -597,7 +597,7 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
     class Meta:
         model = ABLN_FC
         fields = (
-            'enrollment',
+            'enrollment_id',
             'fc_type',
             'facilitator_name',
             'subject_taught',

@@ -795,80 +795,6 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(ABLNPostAssessmentView, self).form_valid(form)
 
-# print(qs.query)
-
-class ABLNFCView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
-    # template_name = 'clm/abln_pre_fc_create_form.html'
-    form_class = ABLNFCForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
-
-    def get_success_url(self):
-        print('------------------------------------------------------------------------')
-        print(self.kwargs['abln'])
-        print('------------------------------------------------------------------------')
-        print(self.kwargs['fc_type'])
-        print('------------------------------------------------------------------------')
-        print('------------------------------------------------------------------------')
-        fc = ABLN_FC.objects.get(abln=self.kwargs['abln'], fc_type=self.kwargs['fc_type'])
-        print(fc)
-
-
-        # if self.request.POST.get('save_add_another', None):
-        #     return '/clm/abln-add/'
-        # if self.request.POST.get('save_and_continue', None):
-        #     return '/clm/abln-edit/' + str(self.request.session.get('instance_id')) + '/'
-        # if self.request.POST.get('save_and_pretest', None):
-        #     return assessment_form(
-        #         instance_id=self.request.session.get('instance_id'),
-        #         stage='pre_test',
-        #         enrollment_model='ABLN',
-        #         assessment_slug='abln_pre_test',
-        #         callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
-        #                                                          kwargs={
-        #                                                              'pk': self.request.session.get('instance_id')})))
-        # return self.success_url
-    #
-    # def get_context_data(self, **kwargs):
-    #     force_default_language(self.request)
-    #     """Insert the form into the context dict."""
-    #     if 'form' not in kwargs:
-    #         kwargs['form'] = self.get_form()
-    #     kwargs['is_allowed_create'] = is_allowed_create('ABLN')
-    #     return super(ABLNFCView, self).get_context_data(**kwargs)
-    #
-    # def get_initial(self):
-    #     initial = super(ABLNFCView, self).get_initial()
-    #     data = {
-    #         'new_registry': self.request.GET.get('new_registry', ''),
-    #         'student_outreached': self.request.GET.get('student_outreached', ''),
-    #         'have_barcode': self.request.GET.get('have_barcode', '')
-    #     }
-    #     if self.request.GET.get('enrollment_id'):
-    #         instance = ABLN.objects.get(id=self.request.GET.get('enrollment_id'))
-    #         data = ABLNSerializer(instance).data
-    #         data['student_nationality'] = data['student_nationality_id']
-    #         data['learning_result'] = ''
-    #
-    #     if self.request.GET.get('child_id'):
-    #         instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
-    #         data = ChildSerializer(instance).data
-    #     if data:
-    #         data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-    #         data['student_outreached'] = self.request.GET.get('student_outreached', '')
-    #         data['have_barcode'] = self.request.GET.get('have_barcode', '')
-    #     initial = data
-    #
-    #     return initial
-    #
-
-    def form_valid(self, form):
-        form.save(self.request)
-        return super(ABLN, self).form_valid(form)
-
-
 
 class ABLNFCAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
@@ -891,15 +817,55 @@ class ABLNFCAddView(LoginRequiredMixin,
             'enrollment_id': self.kwargs['enrollment_id'],
             'fc_type': self.kwargs['fc_type']
         }
+        print('------------------------------------------------------------------------')
+
         data['enrollment_id'] = self.kwargs['enrollment_id']
         data['fc_type'] = self.kwargs['fc_type']
         initial = data
 
         return initial
 
-    def form_valid(self, form):
-        form.save(self.request)
-        return super(ABLNFCAddView, self).form_valid(form)
+    def get_form(self, form_class=None):
+
+        print('----------------------------------------------------')
+        print(self.kwargs['enrollment_id'])
+        print(self.kwargs['fc_type'])
+        print('----------------------------------------------------')
+
+        instance = ABLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+        # instance = ABLN_FC.objects.get(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type'])
+        print('-------------------instance---------------------------------')
+        print(instance)
+        print('--------------------instance--------------------------------')
+
+        if self.request.method == "POST":
+            return ABLNFCForm(self.request.POST, instance=instance, request=self.request)
+        else:
+            if instance:
+                data = ABLN_FCSerializer(instance).data
+                print('---------------data view -------------------------------------')
+                print(data)
+                print('-----------------data view-----------------------------------')
+                data['enrollment_id'] = data['enrollment_id']
+                return ABLNFCForm(data, initial=data, instance=instance, request=self.request)
+
+            else:
+                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                return ABLNFCForm(self.request.POST, initial = data, instance=instance, request=self.request)
+
+
+    # def form_valid(self, form):
+    #     instance = ABLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+    #     print('-------------------instance save ---------------------------------')
+    #     print(instance)
+    #     print('--------------------instance save --------------------------------')
+    #
+    #     if instance:
+    #         form.save(request=self.request, instance=instance)
+    #     else:
+    #         form.save(self.request)
+    #
+    #     return super(ABLNFCAddView, self).form_valid(form)
 
 
 

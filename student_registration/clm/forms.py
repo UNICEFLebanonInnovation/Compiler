@@ -10849,32 +10849,56 @@ class ABLNFCForm(forms.ModelForm):
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    # display_registry = ''
+    # instance = kwargs['instance'] if 'instance' in kwargs else ''
+    # form_action = reverse('clm:abln_add')
+    # self.fields['clm_type'].initial = 'ABLN'
+    # self.fields['new_registry'].initial = 'yes'
+    # if instance:
+    #     display_registry = ' d-none'
+    #     form_action = reverse('clm:abln_edit', kwargs={'pk': instance.id})
+    #
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ABLNFCForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
+
+        print('-----------Form instance--------------------------')
+        print instance
+
         data = kwargs['initial'] if 'initial' in kwargs else ''
-        enrollment_id= data.get('enrollment_id')
-        fc_type= data.get('fc_type')
+        print('-----------data Form--------------------------')
 
-        print('------------------------------------------------------------------------')
-        print('------------------------------------------------------------------------')
-        print('------------------------------------------------------------------------')
+        print(data)
+        print('--------------data Form-----------------------')
 
-        print (enrollment_id)
-        print (fc_type)
+        if data != '':
 
-        print('------------------------------------------------------------------------')
-        print('------------------------------------------------------------------------')
-        print('------------------------------------------------------------------------')
-        form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': 7150, 'fc_type': fc_type})
+            enrollment_id= data['enrollment_id']
+            fc_type= data['fc_type']
 
-        self.fields['enrollment_id'].initial = enrollment_id
-        self.fields['fc_type'].initial = fc_type
+            form_action = reverse('clm:abln_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
 
-        if instance:
-            form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': enrollment_id, 'fc_type': fc_type})
+            print('-----------data Form fc_type--------------------------')
+
+            print(enrollment_id)
+            print(fc_type)
+
+            print('--------------data Form fc_type-----------------------')
+            self.fields['enrollment_id'].initial = enrollment_id
+            self.fields['fc_type'].initial = fc_type
+
+            print('-----------data Form fc_type--------------------------')
+
+            print(enrollment_id)
+            print(fc_type)
+
+            print('--------------data Form fc_type-----------------------')
+
+            if instance:
+                form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': enrollment_id, 'fc_type': fc_type})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -10888,8 +10912,11 @@ class ABLNFCForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('FE Partner & Facilitator details') + '</h4>')
                 ),
                 Div(
-                    'enrollment_id',
-                    'fc_type',
+                    Div('enrollment_id', css_class='col-md-3 d-none'),
+                    Div('fc_type', css_class='col-md-3 d-none'),
+
+                    # 'enrollment_id',
+                    # 'fc_type',
                     css_class='row',
                 ),
                 Div(
@@ -11153,7 +11180,6 @@ class ABLNFCForm(forms.ModelForm):
             # ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
@@ -11165,6 +11191,8 @@ class ABLNFCForm(forms.ModelForm):
 
 
     def save(self, request=None, instance=None):
+
+        print('-----------save-------------------------')
         serializer = ABLN_FCSerializer(data=request.POST)
         if serializer.is_valid():
             fctype= serializer.validated_data['fc_type']
@@ -11175,6 +11203,12 @@ class ABLNFCForm(forms.ModelForm):
             serializer = ABLN_FCSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+
+                print ('-----------erializer.validated_data--------------')
+                print(serializer.validated_data)
+                print ('-----------erializer.validated_data--------------')
+
+
                 instance.modified_by = request.user
                 instance.save()
                 request.session['instance_id'] = instance.id
