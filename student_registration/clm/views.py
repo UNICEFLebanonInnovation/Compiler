@@ -9,7 +9,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, Http
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
-from django.db.models import Q, Sum, Avg, F, Func
+from django.db.models import Q, Sum, Avg, F, Func, When
 from django.db.models.expressions import RawSQL
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
@@ -224,12 +224,18 @@ class BLNEditView(LoginRequiredMixin,
 
                     if "BLN_ASSESSMENT/attended_artistic" in p_test:
                         data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_artistic"]
+                    elif "BLN_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
 
                     if "BLN_ASSESSMENT/modality_artistic" in p_test:
                         data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_artistic"]
+                    elif "BLN_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
 
-                    if "BLN_ASSESSMENT/artistic" in p_test:
+                    if "BLN_ASSESSMENT/modality_artistic" in p_test:
                         data['artistic'] = p_test["BLN_ASSESSMENT/artistic"]
+                    elif "BLN_ASSESSMENT/psychomotor" in p_test:
+                        data['artistic'] = p_test["BLN_ASSESSMENT/psychomotor"]
 
             return BLNForm(data, instance=instance, request=self.request)
 
@@ -841,14 +847,16 @@ class ABLNFCAddView(LoginRequiredMixin,
         if self.request.method == "POST":
 
             print('########################post############################')
-            return ABLNFCForm(self.request.POST, instance=instance, request=self.request)
+            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+
+            return ABLNFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
         else:
             if instance:
                 data = ABLN_FCSerializer(instance).data
                 print('---------------data view -------------------------------------')
                 print(data)
                 print('-----------------data view-----------------------------------')
-                data['enrollment_id'] = data['enrollment_id']
+
                 return ABLNFCForm(data, initial=data, instance=instance, request=self.request)
 
             else:
@@ -856,7 +864,7 @@ class ABLNFCAddView(LoginRequiredMixin,
 
                 print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
                 print(data)
-                return ABLNFCForm(self.request.POST, initial = data, instance=instance, request=self.request)
+                return ABLNFCForm(initial = data,request=self.request)
 
 
     def form_valid(self, form):
@@ -868,7 +876,6 @@ class ABLNFCAddView(LoginRequiredMixin,
         print('----------------------------------------------------')
 
         print('-------------------instance save ---------------------------------')
-        print(instance.id)
         print('--------------------instance save --------------------------------')
 
         if instance:
@@ -945,14 +952,20 @@ class BLNPostAssessmentView(LoginRequiredMixin,
                     if "BLN_ASSESSMENT/social_emotional" in p_test:
                         data['social_emotional'] = p_test["BLN_ASSESSMENT/social_emotional"]
 
-                    if "BLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+                    if "BLN_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_artistic"]
+                    elif "BLN_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
 
-                    if "BLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
+                    if "BLN_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_artistic"]
+                    elif "BLN_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
 
-                    if "BLN_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["BLN_ASSESSMENT/psychomotor"]
+                    if "BLN_ASSESSMENT/modality_artistic" in p_test:
+                        data['artistic'] = p_test["BLN_ASSESSMENT/artistic"]
+                    elif "BLN_ASSESSMENT/psychomotor" in p_test:
+                        data['artistic'] = p_test["BLN_ASSESSMENT/psychomotor"]
 
             return form_class(data, instance=instance, request=self.request)
 
@@ -2329,6 +2342,11 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_attended_psychomotor': 'pre test attended psychomotor',
             'pre_test_modality_psychomotor': 'pre test modality psychomotor',
             'pre_test_psychomotor': 'pre test psychomotor',
+
+            'pre_test_attended_artistic': 'pre test attended artistic',
+            'pre_test_modality_artistic': 'pre test modality artistic',
+            'pre_test_artistic': 'pre test artistic',
+
             'pre_test_attended_math': 'pre test attended math',
             'pre_test_modality_math': 'pre test modality math',
             'pre_test_math': 'pre test math',
@@ -2345,6 +2363,11 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_psychomotor': 'post test attended psychomotor',
             'post_test_modality_psychomotor': 'post test modality psychomotor',
             'post_test_psychomotor': 'post test psychomotor',
+
+            'post_test_attended_artistic': 'post test attended artistic',
+            'post_test_modality_artistic': 'post test modality artistic',
+            'post_test_artistic': 'post test artistic',
+
             'post_test_attended_math': 'post test attended math',
             'post_test_modality_math': 'post test modality math',
             'post_test_math': 'post test math',
@@ -2506,6 +2529,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_psychomotor',
             'pre_test_psychomotor',
 
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
+            'pre_test_artistic',
+
             'pre_test_attended_math',
             'pre_test_modality_math',
             'pre_test_math',
@@ -2527,6 +2554,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_psychomotor',
             'post_test_modality_psychomotor',
             'post_test_psychomotor',
+
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
+            'post_test_artistic',
 
             'post_test_attended_math',
             'post_test_modality_math',
@@ -2618,6 +2649,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_psychomotor': "pre_test->>'BLN_ASSESSMENT/modality_psychomotor'",
             'pre_test_psychomotor': "pre_test->>'BLN_ASSESSMENT/psychomotor'",
 
+            'pre_test_attended_artistic': "pre_test->>'BLN_ASSESSMENT/attended_artistic'",
+            'pre_test_modality_artistic': "pre_test->>'BLN_ASSESSMENT/modality_artistic'",
+            'pre_test_artistic': "pre_test->>'BLN_ASSESSMENT/artistic'",
+
             'pre_test_attended_math': "pre_test->>'BLN_ASSESSMENT/attended_math'",
             'pre_test_modality_math': "pre_test->>'BLN_ASSESSMENT/modality_math'",
             'pre_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
@@ -2637,6 +2672,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_psychomotor': "post_test->>'BLN_ASSESSMENT/attended_psychomotor'",
             'post_test_modality_psychomotor': "post_test->>'BLN_ASSESSMENT/modality_psychomotor'",
             'post_test_psychomotor': "post_test->>'BLN_ASSESSMENT/psychomotor'",
+
+            'post_test_attended_artistic': "post_test->>'BLN_ASSESSMENT/attended_artistic'",
+            'post_test_modality_artistic': "post_test->>'BLN_ASSESSMENT/modality_artistic'",
+            'post_test_artistic': "post_test->>'BLN_ASSESSMENT/artistic'",
 
             'post_test_attended_math': "post_test->>'BLN_ASSESSMENT/attended_math'",
             'post_test_modality_math': "post_test->>'BLN_ASSESSMENT/modality_math'",
@@ -2717,6 +2756,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_psychomotor',
             'pre_test_psychomotor',
 
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
+            'pre_test_artistic',
+
             'pre_test_attended_math',
             'pre_test_modality_math',
             'pre_test_math',
@@ -2738,6 +2781,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_psychomotor',
             'post_test_modality_psychomotor',
             'post_test_psychomotor',
+
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
+            'post_test_artistic',
 
             'post_test_attended_math',
             'post_test_modality_math',

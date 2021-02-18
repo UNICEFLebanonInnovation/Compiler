@@ -7167,19 +7167,21 @@ class BLNAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    attended_psychomotor = forms.ChoiceField(
-        label=_("Attended Psychomotor test"),
+
+
+    attended_artistic = forms.ChoiceField(
+        label=_("Attended Artistic test"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    modality_psychomotor = forms.MultipleChoiceField(
+    modality_artistic = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
         choices=CLM.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    psychomotor = forms.FloatField(
+    artistic = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -7489,11 +7491,11 @@ class BLNAssessmentForm(forms.ModelForm):
 
                 Div(
                     HTML('<span class="badge badge-default">10</span>'),
-                    Div('attended_psychomotor', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_psychomotor">10.1</span>'),
-                    Div('modality_psychomotor', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_psychomotor">10.2</span>'),
-                    Div('psychomotor', css_class='col-md-2'),
+                    Div('attended_artistic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">10.1</span>'),
+                    Div('modality_artistic', css_class='col-md-2  multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_artistic">10.2</span>'),
+                    Div('artistic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
@@ -7615,9 +7617,9 @@ class BLNAssessmentForm(forms.ModelForm):
         modality_english = cleaned_data.get("modality_english")
         english = cleaned_data.get("english")
 
-        attended_psychomotor = cleaned_data.get("attended_psychomotor")
-        modality_psychomotor = cleaned_data.get("modality_psychomotor")
-        psychomotor = cleaned_data.get("psychomotor")
+        attended_artistic = cleaned_data.get("attended_artistic")
+        modality_artistic = cleaned_data.get("modality_artistic")
+        artistic = cleaned_data.get("artistic")
 
         attended_math = cleaned_data.get("attended_math")
         modality_math = cleaned_data.get("modality_math")
@@ -7659,11 +7661,11 @@ class BLNAssessmentForm(forms.ModelForm):
                 if english is None:
                     self.add_error('english', 'This field is required')
 
-            if attended_psychomotor == 'yes':
-                if not modality_psychomotor:
-                    self.add_error('modality_psychomotor', 'This field is required')
-                if psychomotor is None:
-                    self.add_error('psychomotor', 'This field is required')
+            if attended_artistic == 'yes':
+                if not modality_artistic:
+                    self.add_error('modality_artistic', 'This field is required')
+                if artistic is None:
+                    self.add_error('artistic', 'This field is required')
 
             if attended_math == 'yes':
                 if not modality_math:
@@ -7689,8 +7691,8 @@ class BLNAssessmentForm(forms.ModelForm):
                     self.add_error('math', 'This value is greater that 18')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if psychomotor > 8:
-                    self.add_error('psychomotor', 'This value is greater that 8')
+                if artistic > 8:
+                    self.add_error('artistic', 'This value is greater that 8')
             elif registration_level == 'level_two':
                 if arabic > 52:
                     self.add_error('arabic', 'This value is greater that 52')
@@ -7700,8 +7702,8 @@ class BLNAssessmentForm(forms.ModelForm):
                     self.add_error('math', 'This value is greater that 30')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if psychomotor > 8:
-                    self.add_error('psychomotor', 'This value is greater that 8')
+                if artistic > 8:
+                    self.add_error('artistic', 'This value is greater that 8')
             else:
                 if arabic > 58:
                     self.add_error('arabic', 'This value is greater that 58')
@@ -7711,8 +7713,8 @@ class BLNAssessmentForm(forms.ModelForm):
                     self.add_error('math', 'This value is greater that 32')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if psychomotor > 8:
-                    self.add_error('psychomotor', 'This value is greater that 8')
+                if artistic > 8:
+                    self.add_error('artistic', 'This value is greater that 8')
 
 
     def save(self, instance=None, request=None):
@@ -7733,9 +7735,9 @@ class BLNAssessmentForm(forms.ModelForm):
                 "BLN_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
                 "BLN_ASSESSMENT/english": request.POST.get('english'),
 
-                "BLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
-                "BLN_ASSESSMENT/modality_psychomotor": request.POST.getlist('modality_psychomotor'),
-                "BLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+                "BLN_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
+                "BLN_ASSESSMENT/modality_artistic": request.POST.getlist('modality_artistic'),
+                "BLN_ASSESSMENT/artistic": request.POST.get('artistic'),
 
                 "BLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
                 "BLN_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
@@ -10640,6 +10642,202 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Subject taught'),
         widget=forms.TextInput, required=True
     )
+    #
+    # \enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True, initial = 7150)
+    # enrollment = forms.IntegerField(widget=forms.HiddenInput, required=True, initial = 7150)
+
+
+    enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
+    fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(ABLNFCForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else None
+
+        print('-----------Form instance--------------------------')
+        print instance
+
+        data = kwargs['initial'] if 'initial' in kwargs else ''
+        print('-----------data Form--------------------------')
+
+        print(data)
+        print('--------------data Form-----------------------')
+
+        if data != '':
+
+            enrollment_id= data['enrollment_id']
+            fc_type= data['fc_type']
+
+
+            print('-----------data Form fc_type--------------------------')
+
+            print(enrollment_id)
+            print(fc_type)
+
+            print('--------------data Form fc_type-----------------------')
+            self.fields['enrollment_id'].initial = enrollment_id
+            self.fields['fc_type'].initial = fc_type
+
+            print('-----------data Form fc_type--------------------------')
+
+            print(enrollment_id)
+            print(fc_type)
+
+            print 'enrollment_id initial'
+            print(self.fields['enrollment_id'].initial)
+            print('--------------data Form fc_type-----------------------')
+
+
+            form_action = reverse('clm:abln_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
+
+        elif instance:
+            form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': instance.enrollment_id, 'fc_type': instance.fc_type})
+
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('FE Partner & Facilitator details') + '</h4>')
+                ),
+                Div(
+                    Div('enrollment_id', css_class='col-md-3 d-none'),
+                    # Div('enrollment', css_class='col-md-3 d-none'),
+                    Div('fc_type', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('facilitator_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('subject_taught', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
+                    'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(ABLNFCForm, self).clean()
+
+
+    def save(self, request=None, instance=None):
+
+        if instance:
+            serializer = ABLN_FCSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+
+                print ('-----------erializer.validated_data--------------')
+                print(serializer.validated_data)
+                print ('-----------erializer.validated_data--------------')
+
+
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+
+            serializer = ABLN_FCSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.owner = request.user
+                instance.modified_by = request.user
+                instance.partner = request.user.partner
+
+                print 'validated data'
+                print serializer.validated_data
+                print request.POST
+
+                instance.enrollment_id = request.POST['enrollment_id']
+
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+        return instance
+
+    class Meta:
+        model = ABLN_FC
+        fields = (
+            'enrollment_id',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            # 'date_of_monitoring',
+            # 'numbers_child_monitored',
+            # 'topic_covered',
+            # 'materials_needed_available',
+            # 'materials_needed_reason_no',
+            # 'remote_learning',
+            # 'share_expectations_caregiver',
+            # 'share_expectations_no_reason',
+            # 'child_engaged_lesson',
+            # 'child_engaged_lesson_explain',
+            # 'child_participate_others',
+            # 'child_participate_others_no_explain',
+            # 'child_expected_work_independently',
+            # 'child_meet_lesson_objectives',
+            # 'child_meet_lesson_objectives_verified',
+            # 'homework_after_lesson',
+            # 'homework_after_lesson_explain',
+            # 'homework_score',
+            # 'homework_score_explain',
+            # 'parents_supporting_student',
+            # 'parents_supporting_student_explain',
+            # 'child_complete_printed_package',
+            # 'number_child_participate_online',
+            # 'how_make_sure_child_access_online',
+            # 'followup_not_join_online',
+            # 'times_voice_contact_child_caregiver',
+            # 'child_coping_home_learning',
+            # 'child_caregiver_challenges',
+            # 'actions_before_next_class',
+            # 'actions_before_next_class_how',
+            # 'girls_boys_participate_access_device',
+            # 'girls_boys_participate_explain',
+            # 'how_often_contact_caregivers',
+            # 'how_contact_caregivers',
+            # 'how_keep_touch_caregivers_specify',
+            # 'child_awareness_prevention_covid19',
+            # 'followup_done_messages',
+            # 'followup_explain',
+            # 'child_practice_basic_handwashing',
+            # 'child_practice_basic_handwashing_explain',
+            # 'child_have_pss_wellbeing',
+            # 'child_have_pss_wellbeing_explain',
+            # 'additional_notes'
+        )
+
+
+class ABLNFCForm1(forms.ModelForm):
+    facilitator_name = forms.CharField(
+        label=_('Facilitator name'),
+        widget=forms.TextInput, required=True
+    )
+    subject_taught = forms.CharField(
+        label=_('Subject taught'),
+        widget=forms.TextInput, required=True
+    )
     # date_of_monitoring = forms.DateField(
     #     label=_("Date of monitoring"),
     #     required=True
@@ -10847,7 +11045,7 @@ class ABLNFCForm(forms.ModelForm):
     # )
 
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=True)
-    fc_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
 
     # display_registry = ''
     # instance = kwargs['instance'] if 'instance' in kwargs else ''

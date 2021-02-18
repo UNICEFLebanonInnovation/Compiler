@@ -163,7 +163,7 @@ class ABLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
-            'pre_fc1_column',
+            # 'pre_fc1_column',
             # 'monitoring_column',
             # 'referral_column',
             # 'followup_column',
