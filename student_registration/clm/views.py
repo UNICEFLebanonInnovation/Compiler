@@ -805,7 +805,7 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
 class ABLNFCAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
-    template_name = 'clm/abln_pre_fc_create_form.html'
+    template_name = 'clm/abln_fc_form.html'
     form_class = ABLNFCForm
     success_url = '/clm/abln-list/'
     group_required = [u"CLM_ABLN"]

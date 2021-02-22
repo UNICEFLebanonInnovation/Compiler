@@ -3726,11 +3726,8 @@ class ABLN_FC(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Please Specify')
     )
-    child_have_pss_wellbeing = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
+    child_have_pss_wellbeing = models.TextField(
+        blank=True, null=True,
         verbose_name=_('Does the child have any PSS/ wellbeing needs?')
     )
     child_have_pss_wellbeing_explain = models.TextField(
