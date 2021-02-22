@@ -11198,9 +11198,6 @@ class ABLNFCForm(forms.ModelForm):
             if not child_participate_others_no_explain:
                 self.add_error('child_participate_others_no_explain', 'This field is required')
 
-        if homework_after_lesson == 'no':
-            if not homework_after_lesson_explain:
-                self.add_error('homework_after_lesson_explain', 'This field is required')
 
         if homework_after_lesson == 'yes':
             if not homework_after_lesson_explain:
