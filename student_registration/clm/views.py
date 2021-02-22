@@ -823,7 +823,6 @@ class ABLNFCAddView(LoginRequiredMixin,
             'enrollment_id': self.kwargs['enrollment_id'],
             'fc_type': self.kwargs['fc_type']
         }
-        print('------------------------------------------------------------------------')
 
         data['enrollment_id'] = self.kwargs['enrollment_id']
         data['fc_type'] = self.kwargs['fc_type']
@@ -833,56 +832,31 @@ class ABLNFCAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
 
-        print('----------------------------------------------------')
-        print(self.kwargs['enrollment_id'])
-        print(self.kwargs['fc_type'])
-        print('----------------------------------------------------')
 
         instance = ABLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
-        # instance = ABLN_FC.objects.get(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type'])
-        print('-------------------instance---------------------------------')
-        print(instance)
-        print('--------------------instance--------------------------------')
 
         if self.request.method == "POST":
-
-            print('########################post############################')
             data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
 
             return ABLNFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
         else:
             if instance:
                 data = ABLN_FCSerializer(instance).data
-                print('---------------data view -------------------------------------')
-                print(data)
-                print('-----------------data view-----------------------------------')
 
                 return ABLNFCForm(data, initial=data, instance=instance, request=self.request)
 
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
-
-                print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-                print(data)
                 return ABLNFCForm(initial = data,request=self.request)
 
 
     def form_valid(self, form):
         instance = ABLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
 
-        print('------------------------check field value----------------------------')
-        print(self.kwargs['enrollment_id'])
-        print(self.kwargs['fc_type'])
-        print('----------------------------------------------------')
-
-        print('-------------------instance save ---------------------------------')
-        print('--------------------instance save --------------------------------')
 
         if instance:
-            print('instance update')
             form.save(request=self.request, instance=instance)
         else:
-            print( 'insert')
             form.save(self.request)
 
         return super(ABLNFCAddView, self).form_valid(form)

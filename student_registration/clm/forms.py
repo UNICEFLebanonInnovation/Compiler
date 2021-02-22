@@ -10642,6 +10642,212 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Subject taught'),
         widget=forms.TextInput, required=True
     )
+
+    date_of_monitoring = forms.DateField(
+        label=_("Date of monitoring"),
+        required=True
+    )
+    numbers_child_monitored = forms.IntegerField(
+        label=_('Number of times the child has been monitored to date'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    topic_covered = forms.CharField(
+        label=_('Activities/ topic covered'),
+        widget=forms.TextInput, required=True
+    )
+    materials_needed = forms.CharField(
+        label=_('Materials needed for the lesson (teaching/ learning)'),
+        widget=forms.TextInput, required=True
+    )
+
+    materials_needed_available = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child have these learning materials available for the lesson?')
+    )
+    materials_needed_reason_no = forms.CharField(
+        label=_('Reason'),
+        widget=forms.TextInput, required=True
+    )
+    remote_learning = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was the child involved in remote learning?')
+    )
+    share_expectations_caregiver = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did you share the expectations with their caregiver for the weekly engagement in learning?')
+    )
+    share_expectations_no_reason = forms.CharField(
+        label=_('Reason'),
+        widget=forms.TextInput, required=True
+    )
+    child_engaged_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was the child engaged in the lesson and understood the content?')
+    )
+    child_engaged_lesson_explain = forms.CharField(
+        label=_('How was this verified?'),
+        widget=forms.TextInput, required=True
+    )
+
+    child_participate_others = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child participate with others on time?')
+    )
+    child_participate_others_no_explain = forms.CharField(
+        label=_('Please explain Why'),
+        widget=forms.TextInput, required=True
+    )
+
+    child_expected_work_independently = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was the child expected to work independently?')
+    )
+    child_meet_lesson_objectives = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child meet the previous lesson objectives?')
+    )
+    child_meet_lesson_objectives_verified = forms.CharField(
+        label=_('How was this verified?'),
+        widget=forms.TextInput, required=True
+    )
+    homework_after_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was there any homework given after the lesson?')
+    )
+    homework_after_lesson_explain = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+    homework_score = forms.IntegerField(
+        label=_('(if applicable) What score did the child receive on the homework?'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    homework_score_explain = forms.CharField(
+        label=_('How was the Grading and Feedback on the homework given?'),
+        widget=forms.TextInput, required=True
+    )
+
+    parents_supporting_student = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Were parents supporting the student through this lesson?')
+    )
+    parents_supporting_student_explain = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+    child_complete_printed_package = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('(if applicable) Did the child complete the printed package for the week?')
+    )
+    number_child_participate_online = forms.IntegerField(
+        label=_('How many times did this child participate in online classes this week?'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    how_make_sure_child_access_online = forms.CharField(
+        label=_('How did you make sure that the child was able to login/access the online lessons?'),
+        widget=forms.TextInput, required=True
+    )
+    followup_not_join_online = forms.CharField(
+        label=_('How do you follow up if the child does not join / engage in online learning?'),
+        widget=forms.TextInput, required=True
+    )
+    times_voice_contact_child_caregiver = forms.IntegerField(
+        label=_('How many times do you have voice contact with the child/caregiver per week?'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    child_coping_home_learning = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Is the child coping with home-based learning? ')
+    )
+    child_caregiver_challenges = forms.CharField(
+        label=_('What challenges does this child face? child/caregiver?'),
+        widget=forms.TextInput, required=True
+    )
+    actions_before_next_class = forms.CharField(
+        label=_('What specific actions need to be taken with this child before the next class?'),
+        widget=forms.TextInput, required=True
+    )
+    actions_before_next_class_how = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+    girls_boys_participate_access_device = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_(
+            '(if applicable) Did both girls and boys in the same family participate in the class and have access to the phone/ device?')
+    )
+    girls_boys_participate_explain = forms.CharField(
+        label=_('Please explain'),
+        widget=forms.TextInput, required=True
+    )
+
+    how_often_contact_caregivers = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.CONTACT_LEARNING_CLOSED ,
+        label=_('How often do you keep in touch with parents /caregivers of this child since the learning center closed?')
+    )
+    how_contact_caregivers = forms.MultipleChoiceField(
+        label=_('How do you keep in touch with parents / caregivers?'),
+        choices=ABLN_FC.CONTACT_CAREGIVER,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    how_keep_touch_caregivers_specify = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    child_awareness_prevention_covid19 = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Has the child been reached with awareness messaging on Covid-19 and prevention measures?')
+    )
+    followup_done_messages = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was any follow-up done with the child to ensure message(s) received and understood?')
+    )
+    followup_explain = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    child_practice_basic_handwashing = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Does this child practice basic handwashing? ')
+    )
+    child_practice_basic_handwashing_explain = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    child_have_pss_wellbeing = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_have_pss_wellbeing_explain = forms.CharField(
+        label=_('Please Specify'),
+        widget=forms.TextInput, required=True
+    )
+    additional_notes = forms.CharField(
+        label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
+        widget=forms.TextInput, required=True
+    )
     #
     # \enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True, initial = 7150)
     # enrollment = forms.IntegerField(widget=forms.HiddenInput, required=True, initial = 7150)
@@ -10657,40 +10863,15 @@ class ABLNFCForm(forms.ModelForm):
 
         instance = kwargs['instance'] if 'instance' in kwargs else None
 
-        print('-----------Form instance--------------------------')
-        print instance
 
         data = kwargs['initial'] if 'initial' in kwargs else ''
-        print('-----------data Form--------------------------')
-
-        print(data)
-        print('--------------data Form-----------------------')
 
         if data != '':
 
             enrollment_id= data['enrollment_id']
             fc_type= data['fc_type']
-
-
-            print('-----------data Form fc_type--------------------------')
-
-            print(enrollment_id)
-            print(fc_type)
-
-            print('--------------data Form fc_type-----------------------')
             self.fields['enrollment_id'].initial = enrollment_id
             self.fields['fc_type'].initial = fc_type
-
-            print('-----------data Form fc_type--------------------------')
-
-            print(enrollment_id)
-            print(fc_type)
-
-            print 'enrollment_id initial'
-            print(self.fields['enrollment_id'].initial)
-            print('--------------data Form fc_type-----------------------')
-
-
             form_action = reverse('clm:abln_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
 
         elif instance:
@@ -10723,6 +10904,256 @@ class ABLNFCForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning  A_right_border'
             ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Individual child details') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('date_of_monitoring', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('numbers_child_monitored', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  B_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(HTML('<span>C</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Lesson details') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('topic_covered', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('materials_needed', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('materials_needed_available', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_materials_needed_reason_no">3.1</span>'),
+                    Div('materials_needed_reason_no', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  C_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>D</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Content shared this week (subject)') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('remote_learning', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  D_right_border'
+            ),
+
+            Fieldset(
+                None,
+                Div(HTML('<span>E</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Modality & preparation:') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('share_expectations_caregiver', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_no_reason">1.1</span>'),
+                    Div('share_expectations_no_reason', css_class='col-md-3', css_id='student_have_children'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data D_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>F</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Weekly lesson') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_engaged_lesson', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_engaged_lesson_explain">1.1</span>'),
+                    Div('child_engaged_lesson_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('child_participate_others', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_participate_others_no_explain">2.1</span>'),
+                    Div('child_participate_others_no_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('child_meet_lesson_objectives', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('child_meet_lesson_objectives_verified', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('homework_after_lesson', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_homework_after_lesson_explain">5.1</span>'),
+                    Div('homework_after_lesson_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('homework_score', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_homework_score_explain">6.1</span>'),
+                    Div('homework_score_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('parents_supporting_student', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_parents_supporting_student_explain">6.1</span>'),
+                    Div('parents_supporting_student_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning F_right_border'
+            ),
+
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>G</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Feedback about home-based/distance learning from this child/caregiver') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_complete_printed_package', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('number_child_participate_online', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('how_make_sure_child_access_online', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('followup_not_join_online', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('times_voice_contact_child_caregiver', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>H</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up actions') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_coping_home_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_engaged_lesson_explain">2</span>'),
+                    Div('child_caregiver_challenges', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('actions_before_next_class', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_actions_before_next_class_how">3.1</span>'),
+                    Div('actions_before_next_class_how', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>H</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Gender considerations') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('girls_boys_participate_access_device', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_girls_boys_participate_explain">1.1</span>'),
+                    Div('girls_boys_participate_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
+            ),
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>I</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Covid-19 PSS/ Wellbeing') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('how_often_contact_caregivers', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('how_contact_caregivers', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_how_keep_touch_caregivers_specify">2.1</span>'),
+                    Div('how_keep_touch_caregivers_specify', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('child_awareness_prevention_covid19', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('followup_done_messages', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_followup_explain">4.1</span>'),
+                    Div('followup_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('child_practice_basic_handwashing', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_practice_basic_handwashing_explain">4.1</span>'),
+                    Div('child_practice_basic_handwashing_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('child_have_pss_wellbeing', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_have_pss_wellbeing_explain">4.1</span>'),
+                    Div('child_have_pss_wellbeing_explain', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('additional_notes', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                # ''
+                css_class='bd-callout bd-callout-warning D_right_border'
+            ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
@@ -10741,12 +11172,6 @@ class ABLNFCForm(forms.ModelForm):
             serializer = ABLN_FCSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
-
-                print ('-----------erializer.validated_data--------------')
-                print(serializer.validated_data)
-                print ('-----------erializer.validated_data--------------')
-
-
                 instance.modified_by = request.user
                 instance.save()
                 request.session['instance_id'] = instance.id
@@ -10761,11 +11186,6 @@ class ABLNFCForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
-
-                print 'validated data'
-                print serializer.validated_data
-                print request.POST
-
                 instance.enrollment_id = request.POST['enrollment_id']
 
                 instance.save()
@@ -10783,49 +11203,49 @@ class ABLNFCForm(forms.ModelForm):
             'fc_type',
             'facilitator_name',
             'subject_taught',
-            # 'date_of_monitoring',
-            # 'numbers_child_monitored',
-            # 'topic_covered',
-            # 'materials_needed_available',
-            # 'materials_needed_reason_no',
-            # 'remote_learning',
-            # 'share_expectations_caregiver',
-            # 'share_expectations_no_reason',
-            # 'child_engaged_lesson',
-            # 'child_engaged_lesson_explain',
-            # 'child_participate_others',
-            # 'child_participate_others_no_explain',
-            # 'child_expected_work_independently',
-            # 'child_meet_lesson_objectives',
-            # 'child_meet_lesson_objectives_verified',
-            # 'homework_after_lesson',
-            # 'homework_after_lesson_explain',
-            # 'homework_score',
-            # 'homework_score_explain',
-            # 'parents_supporting_student',
-            # 'parents_supporting_student_explain',
-            # 'child_complete_printed_package',
-            # 'number_child_participate_online',
-            # 'how_make_sure_child_access_online',
-            # 'followup_not_join_online',
-            # 'times_voice_contact_child_caregiver',
-            # 'child_coping_home_learning',
-            # 'child_caregiver_challenges',
-            # 'actions_before_next_class',
-            # 'actions_before_next_class_how',
-            # 'girls_boys_participate_access_device',
-            # 'girls_boys_participate_explain',
-            # 'how_often_contact_caregivers',
-            # 'how_contact_caregivers',
-            # 'how_keep_touch_caregivers_specify',
-            # 'child_awareness_prevention_covid19',
-            # 'followup_done_messages',
-            # 'followup_explain',
-            # 'child_practice_basic_handwashing',
-            # 'child_practice_basic_handwashing_explain',
-            # 'child_have_pss_wellbeing',
-            # 'child_have_pss_wellbeing_explain',
-            # 'additional_notes'
+            'date_of_monitoring',
+            'numbers_child_monitored',
+            'topic_covered',
+            'materials_needed_available',
+            'materials_needed_reason_no',
+            'remote_learning',
+            'share_expectations_caregiver',
+            'share_expectations_no_reason',
+            'child_engaged_lesson',
+            'child_engaged_lesson_explain',
+            'child_participate_others',
+            'child_participate_others_no_explain',
+            'child_expected_work_independently',
+            'child_meet_lesson_objectives',
+            'child_meet_lesson_objectives_verified',
+            'homework_after_lesson',
+            'homework_after_lesson_explain',
+            'homework_score',
+            'homework_score_explain',
+            'parents_supporting_student',
+            'parents_supporting_student_explain',
+            'child_complete_printed_package',
+            'number_child_participate_online',
+            'how_make_sure_child_access_online',
+            'followup_not_join_online',
+            'times_voice_contact_child_caregiver',
+            'child_coping_home_learning',
+            'child_caregiver_challenges',
+            'actions_before_next_class',
+            'actions_before_next_class_how',
+            'girls_boys_participate_access_device',
+            'girls_boys_participate_explain',
+            'how_often_contact_caregivers',
+            'how_contact_caregivers',
+            'how_keep_touch_caregivers_specify',
+            'child_awareness_prevention_covid19',
+            'followup_done_messages',
+            'followup_explain',
+            'child_practice_basic_handwashing',
+            'child_practice_basic_handwashing_explain',
+            'child_have_pss_wellbeing',
+            'child_have_pss_wellbeing_explain',
+            'additional_notes'
         )
 
 
