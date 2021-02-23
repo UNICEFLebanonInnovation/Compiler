@@ -11014,19 +11014,20 @@ class ABLNFCForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default" id="span_homework_score">6</span>'),
                     Div('homework_score', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_homework_score_explain">6.1</span>'),
                     Div('homework_score_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default" id="span_parents_supporting_student">7</span>'),
                     Div('parents_supporting_student', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_parents_supporting_student_explain">7.1</span>'),
                     Div('parents_supporting_student_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
+                id='weekly_lesson',
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
 
@@ -11057,6 +11058,7 @@ class ABLNFCForm(forms.ModelForm):
                     Div('times_voice_contact_child_caregiver', css_class='col-md-3'),
                     css_class='row',
                 ),
+                id='feedback',
                 css_class='bd-callout bd-callout-warning B_right_border'
             ),
             Fieldset(
@@ -11081,7 +11083,8 @@ class ABLNFCForm(forms.ModelForm):
                     Div('actions_before_next_class_how', css_class='col-md-3 '),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning C_right_border'
+                css_class='bd-callout bd-callout-warning C_right_border',
+                id='follow_up',
             ),
             Fieldset(
 
@@ -11098,6 +11101,7 @@ class ABLNFCForm(forms.ModelForm):
                     Div('girls_boys_participate_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
+                id='gender_considerations',
                 css_class='bd-callout bd-callout-warning D_right_border'
             ),
             Fieldset(
@@ -11124,14 +11128,14 @@ class ABLNFCForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_done_messages">4</span>'),
                     Div('followup_done_messages', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_followup_explain">4.1</span>'),
                     Div('followup_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default" id="span_child_practice_basic_handwashing">5</span>'),
                     Div('child_practice_basic_handwashing', css_class='col-md-3'),
                     HTML(
                         '<span class="badge badge-default" id="span_child_practice_basic_handwashing_explain">5.1</span>'),
@@ -11139,14 +11143,14 @@ class ABLNFCForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default" id="span_child_have_pss_wellbeing">6</span>'),
                     Div('child_have_pss_wellbeing', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_child_have_pss_wellbeing_explain">6.1</span>'),
                     Div('child_have_pss_wellbeing_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default" id="span_additional_notes">4</span>'),
                     Div('additional_notes', css_class='col-md-3'),
                     css_class='row',
                 ),

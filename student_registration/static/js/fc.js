@@ -20,15 +20,37 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
-    alert('hiiiiiiii  ');
     reorganizeForm();
 
-
-
-    $(document).on('change', 'select#id_materials_needed_available,  select#id_share_expectations_caregiver, select#id_child_participate_others,  select#id_homework_after_lesson,  ' +
-        'select#id_homework_after_lesson,  select#id_how_contact_caregivers ,  select#id_child_awareness_prevention_covid19  ', function(){
-       reorganizeForm();
+    $(document).on('change', 'select#id_materials_needed_available, ' +
+        'select#id_remote_learning, ' +
+        'select#id_share_expectations_caregiver, ' +
+        'select#id_child_participate_others,  ' +
+        'select#id_homework_after_lesson,  ' +
+        'select#id_child_awareness_prevention_covid19 ', function(){
+                alert('change');
+                reorganizeForm();
     });
+
+    $(document).on('click', 'input[name=how_contact_caregivers]', function () {
+        alert('how_contact_caregivers')
+
+        var how_contact_caregivers = $('input[id=id_how_contact_caregivers_4]:checked').val();
+
+        if (how_contact_caregivers == 'other') {
+            $('div#div_id_how_keep_touch_caregivers_specify').removeClass('d-none');
+            $('#span_how_keep_touch_caregivers_specify').removeClass('d-none');
+        }
+        else
+        {
+            $('div#div_id_how_keep_touch_caregivers_specify').addClass('d-none');
+            $('#span_how_keep_touch_caregivers_specify').addClass('d-none');
+            $('#id_how_keep_touch_caregivers_specify').val('');
+
+        }
+
+    });
+
 
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
@@ -80,18 +102,28 @@ function pageScripts() {
 
 function reorganizeForm()
 {
-
-    alert('helo');
-
-
-
-
+    var remote_learning = $('select#id_remote_learning').val();
     var materials_needed_available = $('select#id_materials_needed_available').val();
     var share_expectations_caregiver = $('select#id_share_expectations_caregiver').val();
     var child_participate_others = $('select#id_child_participate_others').val();
     var homework_after_lesson = $('select#id_homework_after_lesson').val();
-    var how_contact_caregivers = $('select#id_how_contact_caregivers').val();
     var child_awareness_prevention_covid19 = $('select#id_child_awareness_prevention_covid19').val();
+
+    alert (remote_learning);
+    
+    if(remote_learning =='no'){
+        $('#weekly_lesson').removeClass('hide');
+        $('#feedback').removeClass('hide');
+        $('#follow_up').removeClass('hide');
+        $('#gender_considerations').removeClass('hide');
+    }
+    else
+    {
+        $('#weekly_lesson').addClass('hide');
+        $('#feedback').addClass('hide');
+        $('#follow_up').addClass('hide');
+        $('#gender_considerations').addClass('hide');
+    }
 
 
     $('div#div_id_materials_needed_reason_no').addClass('d-none');
@@ -105,14 +137,14 @@ function reorganizeForm()
     }
 
     $('div#div_id_share_expectations_no_reason').addClass('d-none');
-    $('#span_share_expectations_caregiver').addClass('d-none');
+    $('#span_share_expectations_no_reason').addClass('d-none');
     if(share_expectations_caregiver == 'no'){
         $('div#div_id_share_expectations_no_reason').removeClass('d-none');
-        $('#span_share_expectations_caregiver').removeClass('d-none');
+        $('#span_share_expectations_no_reason').removeClass('d-none');
 
     }
     else{
-        $('#id_share_expectations_caregiver').val('');
+        $('#id_share_expectations_no_reason').val('');
 
     }
 
@@ -154,22 +186,13 @@ function reorganizeForm()
         $('#span_parents_supporting_student_explain').removeClass('d-none');
     }
     else{
+
+        $('#id_homework_after_lesson_explain').val('');
         $('#id_materials_needed_reason_no').val('');
         $('#id_homework_score').val('');
         $('#id_homework_score_explain').val('');
         $('#id_parents_supporting_student').val('');
         $('#id_parents_supporting_student_explain').val('');
-    }
-
-
-    $('div#div_id_how_keep_touch_caregivers_specify').addClass('d-none');
-    $('#span_how_keep_touch_caregivers_specify').addClass('d-none');
-    if(how_contact_caregivers == 'other'){
-        $('div#div_id_how_keep_touch_caregivers_specify').removeClass('d-none');
-        $('#span_how_keep_touch_caregivers_specify').removeClass('d-none');
-    }
-    else{
-        $('#id_how_keep_touch_caregivers_specify').val('');
     }
 
 
