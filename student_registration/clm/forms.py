@@ -9174,6 +9174,7 @@ class RSAssessmentForm(forms.ModelForm):
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme? (Select more than one if applicable)'),
         choices= (
+            ('', '----------'),
             ('Full time job to support family financially', _('Full time job to support family financially')),
             ('seasonal_work', _('Seasonal work')),
             ('availablity_electronic_device', _('Availablity of Electronic Device')),
@@ -9188,7 +9189,7 @@ class RSAssessmentForm(forms.ModelForm):
             ('other', _('Other')),
         ),
         widget=forms.Select,
-        required=True
+        required=False
     )
     barriers_other = forms.CharField(
         label=_('Please specify'),
@@ -9838,7 +9839,7 @@ class RSAssessmentForm(forms.ModelForm):
             if not round_complete:
                 self.add_error('round_complete', 'This field is required')
 
-        if learning_result != 'no_absence':
+        if not learning_result and learning_result != 'no_absence':
             if not barriers_single:
                 self.add_error('barriers_single', 'This field is required')
 
@@ -10685,17 +10686,17 @@ class ABLNFCForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     child_engaged_lesson = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('Was the child engaged in the lesson and understood the content?')
     )
     child_engaged_lesson_explain = forms.CharField(
         label=_('How was this verified?'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
 
     child_participate_others = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('Did the child participate with others on time?')
     )
@@ -10705,21 +10706,21 @@ class ABLNFCForm(forms.ModelForm):
     )
 
     child_expected_work_independently = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('Was the child expected to work independently?')
     )
     child_meet_lesson_objectives = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('Did the child meet the previous lesson objectives?')
     )
     child_meet_lesson_objectives_verified = forms.CharField(
         label=_('How was this verified?'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     homework_after_lesson = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('Was there any homework given after the lesson?')
     )
@@ -10747,7 +10748,7 @@ class ABLNFCForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     child_complete_printed_package = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('(if applicable) Did the child complete the printed package for the week?')
     )
@@ -10758,11 +10759,11 @@ class ABLNFCForm(forms.ModelForm):
     )
     how_make_sure_child_access_online = forms.CharField(
         label=_('How did you make sure that the child was able to login/access the online lessons?'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     followup_not_join_online = forms.CharField(
         label=_('How do you follow up if the child does not join / engage in online learning?'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     times_voice_contact_child_caregiver = forms.IntegerField(
         label=_('How many times do you have voice contact with the child/caregiver per week?'),
@@ -10770,33 +10771,32 @@ class ABLNFCForm(forms.ModelForm):
         min_value=0, required=False
     )
     child_coping_home_learning = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('Is the child coping with home-based learning? ')
     )
     child_caregiver_challenges = forms.CharField(
         label=_('What challenges does this child face? child/caregiver?'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     actions_before_next_class = forms.CharField(
         label=_('What specific actions need to be taken with this child before the next class?'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
-    actions_before_next_class_how = forms.CharField(
-        label=_('Please explain'),
-        widget=forms.TextInput, required=True
-    )
+    # actions_before_next_class_how = forms.CharField(
+    #     label=_('Please explain'),
+    #     widget=forms.TextInput, required=False
+    # )
     girls_boys_participate_access_device = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_(
             '(if applicable) Did both girls and boys in the same family participate in the class and have access to the phone/ device?')
     )
     girls_boys_participate_explain = forms.CharField(
         label=_('Please explain'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
-
     how_often_contact_caregivers = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=ABLN_FC.CONTACT_LEARNING_CLOSED ,
@@ -10839,10 +10839,10 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Does the child have any PSS/ wellbeing needs?'),
         widget=forms.TextInput, required=False
     )
-    child_have_pss_wellbeing_explain = forms.CharField(
-        label=_('Please Specify'),
-        widget=forms.TextInput, required=False
-    )
+    # child_have_pss_wellbeing_explain = forms.CharField(
+    #     label=_('Please Specify'),
+    #     widget=forms.TextInput, required=False
+    # )
     additional_notes = forms.CharField(
         label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
         widget=forms.TextInput, required=True
@@ -11079,8 +11079,8 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('actions_before_next_class', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_actions_before_next_class_how">3.1</span>'),
-                    Div('actions_before_next_class_how', css_class='col-md-3 '),
+                    # HTML('<span class="badge badge-default" id="span_actions_before_next_class_how">3.1</span>'),
+                    # Div('actions_before_next_class_how', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning C_right_border',
@@ -11145,12 +11145,12 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default" id="span_child_have_pss_wellbeing">6</span>'),
                     Div('child_have_pss_wellbeing', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_child_have_pss_wellbeing_explain">6.1</span>'),
-                    Div('child_have_pss_wellbeing_explain', css_class='col-md-3 '),
+                    # HTML('<span class="badge badge-default" id="span_child_have_pss_wellbeing_explain">6.1</span>'),
+                    # Div('child_have_pss_wellbeing_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_additional_notes">4</span>'),
+                    HTML('<span class="badge badge-default" id="span_additional_notes">7</span>'),
                     Div('additional_notes', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -11172,14 +11172,6 @@ class ABLNFCForm(forms.ModelForm):
         materials_needed_reason_no = cleaned_data.get("materials_needed_reason_no")
         share_expectations_caregiver = cleaned_data.get("share_expectations_caregiver")
         share_expectations_no_reason = cleaned_data.get("share_expectations_no_reason")
-        child_participate_others = cleaned_data.get("child_participate_others")
-        child_participate_others_no_explain = cleaned_data.get("child_participate_others_no_explain")
-        homework_after_lesson = cleaned_data.get("homework_after_lesson")
-        homework_after_lesson_explain = cleaned_data.get("homework_after_lesson_explain")
-        homework_score = cleaned_data.get("homework_score")
-        homework_score_explain = cleaned_data.get("homework_score_explain")
-        parents_supporting_student = cleaned_data.get("parents_supporting_student")
-        parents_supporting_student_explain = cleaned_data.get("parents_supporting_student_explain")
         how_contact_caregivers = cleaned_data.get("how_contact_caregivers")
         how_keep_touch_caregivers_specify = cleaned_data.get("how_keep_touch_caregivers_specify")
         child_awareness_prevention_covid19 = cleaned_data.get("child_awareness_prevention_covid19")
@@ -11188,7 +11180,7 @@ class ABLNFCForm(forms.ModelForm):
         child_practice_basic_handwashing = cleaned_data.get("child_practice_basic_handwashing")
         child_practice_basic_handwashing_explain = cleaned_data.get("child_practice_basic_handwashing_explain")
         child_have_pss_wellbeing = cleaned_data.get("child_have_pss_wellbeing")
-        child_have_pss_wellbeing_explain = cleaned_data.get("child_have_pss_wellbeing_explain")
+        # child_have_pss_wellbeing_explain = cleaned_data.get("child_have_pss_wellbeing_explain")
 
         if materials_needed_available == 'no':
             if not materials_needed_reason_no:
@@ -11197,23 +11189,6 @@ class ABLNFCForm(forms.ModelForm):
         if share_expectations_caregiver == 'no':
             if not share_expectations_no_reason:
                 self.add_error('share_expectations_no_reason', 'This field is required')
-
-        if child_participate_others == 'no':
-            if not child_participate_others_no_explain:
-                self.add_error('child_participate_others_no_explain', 'This field is required')
-
-
-        if homework_after_lesson == 'yes':
-            if not homework_after_lesson_explain:
-                self.add_error('homework_after_lesson_explain', 'This field is required')
-            if not homework_score:
-                self.add_error('homework_score', 'This field is required')
-            if not homework_score_explain:
-                self.add_error('homework_score_explain', 'This field is required')
-            if not parents_supporting_student:
-                self.add_error('parents_supporting_student', 'This field is required')
-            if not parents_supporting_student_explain:
-                self.add_error('parents_supporting_student_explain', 'This field is required')
 
         if how_contact_caregivers == 'other':
             if not how_keep_touch_caregivers_specify:
@@ -11230,8 +11205,93 @@ class ABLNFCForm(forms.ModelForm):
                 self.add_error('child_practice_basic_handwashing_explain', 'This field is required')
             if not child_have_pss_wellbeing:
                 self.add_error('child_have_pss_wellbeing', 'This field is required')
-            if not child_have_pss_wellbeing_explain:
-                self.add_error('child_have_pss_wellbeing_explain', 'This field is required')
+            # if not child_have_pss_wellbeing_explain:
+            #     self.add_error('child_have_pss_wellbeing_explain', 'This field is required')
+
+        homework_after_lesson = cleaned_data.get("homework_after_lesson")
+        homework_after_lesson_explain = cleaned_data.get("homework_after_lesson_explain")
+        homework_score = cleaned_data.get("homework_score")
+        homework_score_explain = cleaned_data.get("homework_score_explain")
+        parents_supporting_student = cleaned_data.get("parents_supporting_student")
+        parents_supporting_student_explain = cleaned_data.get("parents_supporting_student_explain")
+        child_participate_others = cleaned_data.get("child_participate_others")
+        child_participate_others_no_explain = cleaned_data.get("child_participate_others_no_explain")
+        remote_learning = cleaned_data.get("remote_learning")
+        child_engaged_lesson = cleaned_data.get("child_engaged_lesson")
+        child_engaged_lesson_explain = cleaned_data.get("child_engaged_lesson_explain")
+        child_expected_work_independently = cleaned_data.get("child_expected_work_independently")
+        child_meet_lesson_objectives = cleaned_data.get("child_meet_lesson_objectives")
+        child_meet_lesson_objectives_verified = cleaned_data.get("child_meet_lesson_objectives_verified")
+        child_complete_printed_package = cleaned_data.get("child_complete_printed_package")
+        number_child_participate_online = cleaned_data.get("number_child_participate_online")
+        how_make_sure_child_access_online = cleaned_data.get("how_make_sure_child_access_online")
+        followup_not_join_online = cleaned_data.get("followup_not_join_online")
+        times_voice_contact_child_caregiver = cleaned_data.get("times_voice_contact_child_caregiver")
+        child_coping_home_learning = cleaned_data.get("child_coping_home_learning")
+        child_caregiver_challenges = cleaned_data.get("child_caregiver_challenges")
+        actions_before_next_class = cleaned_data.get("actions_before_next_class")
+        # actions_before_next_class_how = cleaned_data.get("actions_before_next_class_how")
+        girls_boys_participate_access_device = cleaned_data.get("girls_boys_participate_access_device")
+        girls_boys_participate_explain = cleaned_data.get("girls_boys_participate_explain")
+
+
+        if remote_learning == 'yes':
+            if not child_engaged_lesson:
+                self.add_error('child_engaged_lesson', 'This field is required')
+            if not child_engaged_lesson_explain:
+                self.add_error('child_engaged_lesson_explain', 'This field is required')
+            if not child_participate_others:
+                self.add_error('child_participate_others', 'This field is required')
+            else :
+                if child_participate_others == 'no':
+                    if not child_participate_others_no_explain:
+                        self.add_error('child_participate_others_no_explain', 'This field is required')
+
+            if not child_expected_work_independently:
+                self.add_error('child_expected_work_independently', 'This field is required')
+            if not child_meet_lesson_objectives:
+                self.add_error('child_meet_lesson_objectives', 'This field is required')
+            if not child_meet_lesson_objectives_verified:
+                self.add_error('child_meet_lesson_objectives_verified', 'This field is required')
+            if not homework_after_lesson:
+                self.add_error('homework_after_lesson', 'This field is required')
+            else:
+                if homework_after_lesson == 'yes':
+                    if not homework_after_lesson_explain:
+                        self.add_error('homework_after_lesson_explain', 'This field is required')
+                    if not homework_score:
+                        self.add_error('homework_score', 'This field is required')
+                    if not homework_score_explain:
+                        self.add_error('homework_score_explain', 'This field is required')
+                    if not parents_supporting_student:
+                        self.add_error('parents_supporting_student', 'This field is required')
+                    if not parents_supporting_student_explain:
+                        self.add_error('parents_supporting_student_explain', 'This field is required')
+
+
+            if not child_complete_printed_package:
+                self.add_error('child_complete_printed_package', 'This field is required')
+            if not number_child_participate_online:
+                self.add_error('number_child_participate_online', 'This field is required')
+            if not how_make_sure_child_access_online:
+                self.add_error('how_make_sure_child_access_online', 'This field is required')
+            if not followup_not_join_online:
+                self.add_error('followup_not_join_online', 'This field is required')
+            if not times_voice_contact_child_caregiver:
+                self.add_error('times_voice_contact_child_caregiver', 'This field is required')
+            if not child_coping_home_learning:
+                self.add_error('child_coping_home_learning', 'This field is required')
+            if not child_caregiver_challenges:
+                self.add_error('child_caregiver_challenges', 'This field is required')
+            if not actions_before_next_class:
+                self.add_error('actions_before_next_class', 'This field is required')
+            # if not actions_before_next_class_how:
+            #     self.add_error('actions_before_next_class_how', 'This field is required')
+            if not girls_boys_participate_access_device:
+                self.add_error('girls_boys_participate_access_device', 'This field is required')
+            if not girls_boys_participate_explain:
+                self.add_error('girls_boys_participate_explain', 'This field is required')
+
 
     def save(self, request=None, instance=None):
 
@@ -11299,7 +11359,7 @@ class ABLNFCForm(forms.ModelForm):
             'child_coping_home_learning',
             'child_caregiver_challenges',
             'actions_before_next_class',
-            'actions_before_next_class_how',
+            # 'actions_before_next_class_how',
             'girls_boys_participate_access_device',
             'girls_boys_participate_explain',
             'how_often_contact_caregivers',
@@ -11311,6 +11371,6 @@ class ABLNFCForm(forms.ModelForm):
             'child_practice_basic_handwashing',
             'child_practice_basic_handwashing_explain',
             'child_have_pss_wellbeing',
-            'child_have_pss_wellbeing_explain',
+            # 'child_have_pss_wellbeing_explain',
             'additional_notes'
         )

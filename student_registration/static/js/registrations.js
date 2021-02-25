@@ -1175,6 +1175,11 @@ function reorganize_pre_assessment()
         // $('#id_house_visit_number').val('');
         // $('#id_family_visit_number').val('');
     }
+    else
+    {
+        $('#id_barriers_single').val('');
+
+    }
 
     if(barriers_single == 'other'){
         $('#div_id_barriers_other').removeClass('d-none');

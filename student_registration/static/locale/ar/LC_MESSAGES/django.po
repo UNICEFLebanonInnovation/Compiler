@@ -3310,7 +3310,7 @@ msgstr "إحالة من مجتمع النازحين"
 #: student_registration/clm/forms.py:7947
 #: student_registration/clm/forms.py:8726
 msgid "Attended Psychomotor test"
-msgstr "هل خضع التلميذ إلى تقييم التّطوّر النّفسي الفني"
+msgstr "هل خضع التلميذ إلى تقييم االتطور النفسي الحركي"
 
 #: student_registration/clm/forms.py:4629
 #: student_registration/clm/forms.py:7964

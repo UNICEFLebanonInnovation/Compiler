@@ -143,6 +143,16 @@ class ABLNTable(CommonTable):
     pre_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_pre_fc1_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
+    post_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc1_column.html',
+                                                   attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
+    pre_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc2_column.html',
+                                                   attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
+    post_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc2_column.html',
+                                                   attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
+
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
@@ -164,9 +174,9 @@ class ABLNTable(CommonTable):
             'delete_column',
             'post_assessment_column',
             'pre_fc1_column',
-            # 'monitoring_column',
-            # 'referral_column',
-            # 'followup_column',
+            'post_fc1_column',
+            'pre_fc2_column',
+            'post_fc2_column',
             'first_attendance_date',
             'round',
             # 'cycle',

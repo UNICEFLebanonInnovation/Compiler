@@ -28,13 +28,10 @@ $(document).ready(function(){
         'select#id_child_participate_others,  ' +
         'select#id_homework_after_lesson,  ' +
         'select#id_child_awareness_prevention_covid19 ', function(){
-                alert('change');
                 reorganizeForm();
     });
 
     $(document).on('click', 'input[name=how_contact_caregivers]', function () {
-        alert('how_contact_caregivers')
-
         var how_contact_caregivers = $('input[id=id_how_contact_caregivers_4]:checked').val();
 
         if (how_contact_caregivers == 'other') {
@@ -109,16 +106,18 @@ function reorganizeForm()
     var homework_after_lesson = $('select#id_homework_after_lesson').val();
     var child_awareness_prevention_covid19 = $('select#id_child_awareness_prevention_covid19').val();
 
-    alert (remote_learning);
-    
-    if(remote_learning =='no'){
+    $('#weekly_lesson').addClass('hide');
+    $('#feedback').addClass('hide');
+    $('#follow_up').addClass('hide');
+    $('#gender_considerations').addClass('hide');
+
+    if (remote_learning == 'yes') {
         $('#weekly_lesson').removeClass('hide');
         $('#feedback').removeClass('hide');
         $('#follow_up').removeClass('hide');
         $('#gender_considerations').removeClass('hide');
     }
-    else
-    {
+    else {
         $('#weekly_lesson').addClass('hide');
         $('#feedback').addClass('hide');
         $('#follow_up').addClass('hide');
