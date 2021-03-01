@@ -175,6 +175,7 @@ class CLM(TimeStampedModel):
         ('more_than_25days', _('More than 25 absence days')),
     )
     BARRIERS = Choices(
+        ('', '----------'),
         ('Full time job to support family financially', _('Full time job to support family financially')),
         ('seasonal_work', _('Seasonal work')),
         # ('cold_weather', _('Cold Weather')),

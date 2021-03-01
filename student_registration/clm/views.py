@@ -2299,6 +2299,13 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'covid_message_how_often': 'How often?',
             'covid_parents_message': 'Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures?',
             'covid_parents_message_how_often': 'How often?',
+
+            'covid_session_attended': 'Attended covid Session?',
+            'covid_session_number': 'Please enter the number of sessions',
+            'covid_session_modality': 'Please indicate modality',
+            'covid_parent_attended': 'Parent who attended the parents meeting',
+            'covid_parent_attended_other': 'Please specify',
+
             'follow_up_done': 'Was any follow-up done to ensure messages were well received, understood and adopted?',
             'follow_up_done_with_who': 'With who child and/or caregiver?',
 

@@ -6323,7 +6323,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                 'of the child or drop out of programme? (Select more than one if applicable)'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
-        required=True
+        required=False
     )
     barriers_other = forms.CharField(
         label=_('Please specify'),
@@ -7067,7 +7067,7 @@ class BLNAssessmentForm(forms.ModelForm):
                 'of the child or drop out of programme? (Select more than one if applicable)'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
-        required=True
+        required=False
     )
     barriers_other = forms.CharField(
         label=_('Please specify'),
@@ -7830,6 +7830,7 @@ class CBECEAssessmentForm(forms.ModelForm):
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme? (Select more than one if applicable)'),
         choices= (
+            ('', '----------'),
             ('Full time job to support family financially', _('Full time job to support family financially')),
             ('seasonal_work', _('Seasonal work')),
             ('availablity_electronic_device', _('Availablity of Electronic Device')),
@@ -7844,7 +7845,7 @@ class CBECEAssessmentForm(forms.ModelForm):
             ('other', _('Other')),
         ),
         widget=forms.Select,
-        required=True
+        required=False
     )
     barriers_other = forms.CharField(
         label=_('Please specify'),
