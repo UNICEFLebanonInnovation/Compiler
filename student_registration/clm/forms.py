@@ -10644,9 +10644,12 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Subject taught'),
         widget=forms.TextInput, required=True
     )
-
     date_of_monitoring = forms.DateField(
         label=_("Date of monitoring"),
+        required=True
+    )
+    date_start_online = forms.DateField(
+        label=_("Date start online"),
         required=True
     )
     numbers_child_monitored = forms.IntegerField(
@@ -10658,14 +10661,13 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Activities/ topic covered'),
         widget=forms.TextInput, required=True
     )
-    materials_needed = forms.CharField(
-        label=_('Materials needed for the lesson (teaching/ learning)'),
-        widget=forms.TextInput, required=True
-    )
-
+    # materials_needed = forms.CharField(
+    #     label=_('Materials needed for the lesson (teaching/ learning)'),
+    #     widget=forms.TextInput, required=True
+    # )
     materials_needed_available = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=ABLN_FC.YES_NO ,
+        choices=ABLN_FC.YES_NO,
         label=_('Did the child have these learning materials available for the lesson?')
     )
     materials_needed_reason_no = forms.CharField(
@@ -10676,6 +10678,10 @@ class ABLNFCForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=ABLN_FC.YES_NO ,
         label=_('Was the child involved in remote learning?')
+    )
+    remote_learning_reason = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
     )
     share_expectations_caregiver = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -10711,12 +10717,7 @@ class ABLNFCForm(forms.ModelForm):
         choices=ABLN_FC.YES_NO ,
         label=_('Was the child expected to work independently?')
     )
-    child_meet_lesson_objectives = forms.ChoiceField(
-        widget=forms.Select, required=False,
-        choices=ABLN_FC.YES_NO ,
-        label=_('Did the child meet the previous lesson objectives?')
-    )
-    child_meet_lesson_objectives_verified = forms.CharField(
+    child_expected_work_independently_verified = forms.CharField(
         label=_('How was this verified?'),
         widget=forms.TextInput, required=False
     )
@@ -10753,10 +10754,18 @@ class ABLNFCForm(forms.ModelForm):
         choices=ABLN_FC.YES_NO ,
         label=_('(if applicable) Did the child complete the printed package for the week?')
     )
-    number_child_participate_online = forms.IntegerField(
+    number_child_participate_online = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=(
+            ('1', _('1')),
+            ('2', _('2')),
+            ('3', _('3')),
+            ('4', _('4')),
+            ('5', _('5')),
+            ('6', _('6')),
+            ('7', _('7')),
+        ),
         label=_('How many times did this child participate in online classes this week?'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
     )
     how_make_sure_child_access_online = forms.CharField(
         label=_('How did you make sure that the child was able to login/access the online lessons?'),
@@ -10915,6 +10924,8 @@ class ABLNFCForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('date_of_monitoring', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('date_start_online', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('numbers_child_monitored', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -10930,13 +10941,8 @@ class ABLNFCForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('topic_covered', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('materials_needed', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
                     Div('materials_needed_available', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_materials_needed_reason_no">3.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_materials_needed_reason_no">2.1</span>'),
                     Div('materials_needed_reason_no', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -10953,6 +10959,9 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('remote_learning', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_remote_learning_reason">1.1</span>'),
+                    Div('remote_learning_reason', css_class='col-md-3'),
+
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning  D_right_border'
@@ -10998,33 +11007,28 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('child_expected_work_independently_verified', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('child_meet_lesson_objectives', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4.1</span>'),
-                    Div('child_meet_lesson_objectives_verified', css_class='col-md-3 '),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
                     Div('homework_after_lesson', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_homework_after_lesson_explain">5.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_homework_after_lesson_explain">4.1</span>'),
                     Div('homework_after_lesson_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_homework_score">6</span>'),
+                    HTML('<span class="badge badge-default" id="span_homework_score">5</span>'),
                     Div('homework_score', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_homework_score_explain">6.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_homework_score_explain">5.1</span>'),
                     Div('homework_score_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_parents_supporting_student">7</span>'),
+                    HTML('<span class="badge badge-default" id="span_parents_supporting_student">6</span>'),
                     Div('parents_supporting_student', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_parents_supporting_student_explain">7.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_parents_supporting_student_explain">6.1</span>'),
                     Div('parents_supporting_student_explain', css_class='col-md-3 '),
                     css_class='row',
                 ),
@@ -11218,11 +11222,11 @@ class ABLNFCForm(forms.ModelForm):
         child_participate_others = cleaned_data.get("child_participate_others")
         child_participate_others_no_explain = cleaned_data.get("child_participate_others_no_explain")
         remote_learning = cleaned_data.get("remote_learning")
+        remote_learning_reason = cleaned_data.get("remote_learning_reason")
         child_engaged_lesson = cleaned_data.get("child_engaged_lesson")
         child_engaged_lesson_explain = cleaned_data.get("child_engaged_lesson_explain")
         child_expected_work_independently = cleaned_data.get("child_expected_work_independently")
-        child_meet_lesson_objectives = cleaned_data.get("child_meet_lesson_objectives")
-        child_meet_lesson_objectives_verified = cleaned_data.get("child_meet_lesson_objectives_verified")
+        child_expected_work_independently_verified = cleaned_data.get("child_expected_work_independently_verified")
         child_complete_printed_package = cleaned_data.get("child_complete_printed_package")
         number_child_participate_online = cleaned_data.get("number_child_participate_online")
         how_make_sure_child_access_online = cleaned_data.get("how_make_sure_child_access_online")
@@ -11250,10 +11254,8 @@ class ABLNFCForm(forms.ModelForm):
 
             if not child_expected_work_independently:
                 self.add_error('child_expected_work_independently', 'This field is required')
-            if not child_meet_lesson_objectives:
-                self.add_error('child_meet_lesson_objectives', 'This field is required')
-            if not child_meet_lesson_objectives_verified:
-                self.add_error('child_meet_lesson_objectives_verified', 'This field is required')
+            if not child_expected_work_independently_verified:
+                self.add_error('child_expected_work_independently_verified', 'This field is required')
             if not homework_after_lesson:
                 self.add_error('homework_after_lesson', 'This field is required')
             else:
@@ -11292,6 +11294,10 @@ class ABLNFCForm(forms.ModelForm):
                 self.add_error('girls_boys_participate_access_device', 'This field is required')
             if not girls_boys_participate_explain:
                 self.add_error('girls_boys_participate_explain', 'This field is required')
+        else:
+            if not remote_learning_reason:
+                self.add_error('remote_learning_reason', 'This field is required')
+
 
 
     def save(self, request=None, instance=None):
@@ -11331,12 +11337,14 @@ class ABLNFCForm(forms.ModelForm):
             'fc_type',
             'facilitator_name',
             'subject_taught',
-            'date_of_monitoring',
             'numbers_child_monitored',
             'topic_covered',
+            'date_of_monitoring',
+            'date_start_online',
             'materials_needed_available',
             'materials_needed_reason_no',
             'remote_learning',
+            'remote_learning_reason',
             'share_expectations_caregiver',
             'share_expectations_no_reason',
             'child_engaged_lesson',
@@ -11344,8 +11352,7 @@ class ABLNFCForm(forms.ModelForm):
             'child_participate_others',
             'child_participate_others_no_explain',
             'child_expected_work_independently',
-            'child_meet_lesson_objectives',
-            'child_meet_lesson_objectives_verified',
+            'child_expected_work_independently_verified',
             'homework_after_lesson',
             'homework_after_lesson_explain',
             'homework_score',

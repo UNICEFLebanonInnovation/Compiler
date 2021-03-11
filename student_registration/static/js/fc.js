@@ -20,6 +20,13 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
+    if($(document).find('#id_date_of_monitoring').length == 1) {
+        $('#id_date_of_monitoring').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_date_start_online').length == 1) {
+        $('#id_date_start_online').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
     reorganizeForm();
 
     $(document).on('change', 'select#id_materials_needed_available, ' +
@@ -100,6 +107,7 @@ function pageScripts() {
 function reorganizeForm()
 {
     var remote_learning = $('select#id_remote_learning').val();
+
     var materials_needed_available = $('select#id_materials_needed_available').val();
     var share_expectations_caregiver = $('select#id_share_expectations_caregiver').val();
     var child_participate_others = $('select#id_child_participate_others').val();
@@ -110,14 +118,19 @@ function reorganizeForm()
     $('#feedback').addClass('hide');
     $('#follow_up').addClass('hide');
     $('#gender_considerations').addClass('hide');
+    $('div#div_id_remote_learning_reason').addClass('d-none');
+    $('#span_remote_learning_reason').addClass('d-none');
 
     if (remote_learning == 'yes') {
         $('#weekly_lesson').removeClass('hide');
         $('#feedback').removeClass('hide');
         $('#follow_up').removeClass('hide');
         $('#gender_considerations').removeClass('hide');
+
     }
     else {
+        $('div#div_id_remote_learning_reason').removeClass('d-none');
+        $('#span_remote_learning_reason').removeClass('d-none');
         $('#weekly_lesson').addClass('hide');
         $('#feedback').addClass('hide');
         $('#follow_up').addClass('hide');

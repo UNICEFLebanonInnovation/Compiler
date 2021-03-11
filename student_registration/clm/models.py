@@ -1629,6 +1629,9 @@ class ABLN(CLM):
         ('referred_to_alp', _('Referred to ALP')),
         ('referred_to_cbt', _('Referred to CBT')),
         ('dropout', _('Dropout, referral not possible')),
+        ('referred_public_school', _('Referred to public school')),
+        ('referred_to_tvet', _('Referred to TVET')),
+
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -3491,7 +3494,11 @@ class ABLN_FC(TimeStampedModel):
         null=True,
         verbose_name=_('Date of monitoring')
     )
-
+    date_start_online = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date start online')
+    )
     numbers_child_monitored = models.IntegerField(
         blank=True,
         null=True,
@@ -3523,6 +3530,10 @@ class ABLN_FC(TimeStampedModel):
         null=True,
         choices=YES_NO,
         verbose_name=_('Was the child involved in remote learning?')
+    )
+    remote_learning_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Reason')
     )
     share_expectations_caregiver = models.CharField(
         max_length=10,
@@ -3567,14 +3578,7 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Was the child expected to work independently?')
     )
-    child_meet_lesson_objectives = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Did the child meet the previous lesson objectives?')
-    )
-    child_meet_lesson_objectives_verified = models.TextField(
+    child_expected_work_independently_verified = models.TextField(
         blank=True, null=True,
         verbose_name=_('How was this verified?')
     )
@@ -3620,11 +3624,20 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('(if applicable) Did the child complete the printed package for the week?')
     )
-    number_child_participate_online = models.IntegerField(
+    number_child_participate_online = models.CharField(
+        max_length=100,
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 20)),
-        verbose_name=_('How many times did this child participate in online classes this week?')
+        choices=Choices(
+            ('1', _('1')),
+            ('2', _('2')),
+            ('3', _('3')),
+            ('4', _('4')),
+            ('5', _('5')),
+            ('6', _('6')),
+            ('7', _('7')),
+        ),
+        verbose_name=_('Programme Type')
     )
     how_make_sure_child_access_online = models.TextField(
         blank=True, null=True,
