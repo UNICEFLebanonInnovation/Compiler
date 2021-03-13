@@ -88,6 +88,12 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_new_registry', function(){
         reorganizeForm();
     });
+    //   $(document).on('change', 'select#id_round', function(){
+    //
+    //     dulplicate_search();
+    //
+    // });
+
 
     if($(document).find('#id_search_clm_student').length == 1) {
 
@@ -298,6 +304,7 @@ $(document).ready(function(){
 
         $('div#div_id_other_caregiver_relationship').addClass('d-none');
         $('#span_other_caregiver_relationship').addClass('d-none');
+        alert('caretaker_first_name');
 
         if(main_caregiver == 'father'){
             var student_father_name = $('#id_student_father_name').val();
@@ -825,6 +832,7 @@ function urlParam(name){
 
 function reorganizeForm()
 {
+
     var new_registry = $('select#id_new_registry').val();
     var outreached = $('select#id_student_outreached').val();
     var have_barcode = $('select#id_have_barcode').val();
@@ -1108,7 +1116,6 @@ function reorganizeForm()
 
 
 }
-
 
 function family_status_single()
 {
@@ -1440,6 +1447,56 @@ function reorganize_pre_assessment()
     {
         $('#id_parent_attended_other').val('');
     }
+
+
+}
+
+
+function dulplicate_search()
+{
+    var round = $('select#id_round').val();
+    var new_registry = $('select#id_new_registry').val();
+    var clm_type= $('#id_clm_type').val();
+    var student_id= $('#id_student_id').val();
+
+
+    if(new_registry == 'no'){
+        // alert('search for student')
+
+        var data = {
+            round_id : round ,
+            new_registry : new_registry ,
+            clm_type : clm_type ,
+            student_id : student_id
+        };
+
+        requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
+        $.ajax({
+            type: "POST",
+            url: '/clm/search-clm-duplicate-registration/',
+            data: JSON.stringify(data),
+            cache: false,
+            async: false,
+            headers: requestHeaders,
+            dataType: 'json',
+            success: function (response) {
+
+                alert(response.result);
+                console.log(response);
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+    }
+    else
+    {
+
+    }
+
+
 
 
 }

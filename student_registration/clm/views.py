@@ -5152,3 +5152,72 @@ class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
         return {
             'result': instances.count(),
         }
+
+
+def search_clm_duplicate_registration(request):
+    from django.db.models.functions import Concat
+    from django.db.models import Value
+
+    student_id = 22193
+    # request.GET.get('student_id')
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    round_id = body['round_id']
+    new_registry = body['new_registry']
+    clm_type = body['clm_type']
+    student_id = body['student_id']
+
+
+    # filter_type= request.GET.get('filter_type')
+    #
+    # student_first_name= request.GET.get('student_first_name')
+    # student_father_name= request.GET.get('student_father_name')
+    # student_last_name= request.GET.get('student_last_name')
+    #
+    # phone_number= request.GET.get('phone_number')
+    #
+    # model = BLN
+    # if clm_type == 'RS':
+    #     model = RS
+    # elif clm_type == 'ABLN':
+    #     model = ABLN
+    # elif clm_type == 'CBECE':
+    #     model = CBECE
+    #
+    # qs = {}
+
+
+    # qs = model.objects.filter(
+    #     round=round_id, student= student_id
+    # ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+    #                  'student__last_name', 'student__mother_fullname',
+    #                  'student__sex', 'student__birthday_day', 'student__birthday_month',
+    #                  'student__birthday_year', 'round__name', 'internal_number').distinct()
+
+    # if filter_type=='student name':
+    #     qs = model.objects.filter(
+    #         round=round_id,
+    #         student__first_name= student_first_name,
+    #         student__father_name= student_father_name,
+    #         student__last_name =student_last_name
+    #     ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+    #              'student__last_name', 'student__mother_fullname',
+    #              'student__sex', 'student__birthday_day', 'student__birthday_month',
+    #              'student__birthday_year', 'round__name', 'internal_number').first()
+    # elif filter_type=='name phone':
+    #     qs = model.objects.filter(
+    #         round=round_id,
+    #         student__first_name= student_first_name,
+    #         student__father_name= student_father_name,
+    #         phone_number =phone_number
+    #     ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+    #              'student__last_name', 'student__mother_fullname',
+    #              'student__sex', 'student__birthday_day', 'student__birthday_month',
+    #              'student__birthday_year', 'round__name', 'internal_number').distinct()
+
+
+    #print json.dumps(list(qs))
+    return JsonResponse({'result': 'Test '+str(round_id)+ '  ' +str(new_registry)+ '  ' +str(clm_type) + '  ' +str(student_id)   })
+

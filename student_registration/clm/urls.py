@@ -209,6 +209,12 @@ urlpatterns = [
         name='search_clm_child'
     ),
     url(
+        'search-clm-duplicate-registration/$',
+        views.search_clm_duplicate_registration,
+        name='search_clm_duplicate_registration'
+    ),
+
+    url(
         regex=r'^exec-abln-update/$',
         view=views.ExecABLNUpdateView.as_view(),
         name='exec_abln_update'
