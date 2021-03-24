@@ -3013,6 +3013,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_attended_social': 'pre test attended social',
             'pre_test_modality_social': 'pre test modality social',
             'pre_test_social_emotional': 'pre test social emotional',
+            'pre_test_attended_artistic': 'pre test attended artistic',
+            'pre_test_modality_artistic': 'pre test modality artistic',
+            'pre_test_artistic': 'pre test artistic',
             'pre_test_score': 'pre test score',
             'post_test_attended_arabic': 'post test attended arabic',
             'post_test_modality_arabic': 'post test modality arabic',
@@ -3026,6 +3029,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_social': 'post test attended social',
             'post_test_modality_social': 'post test modality social',
             'post_test_social_emotional': 'post test social emotional',
+            'post_test_attended_artistic': 'post test attended artistic',
+            'post_test_modality_artistic': 'post test modality artistic',
+            'post_test_artistic': 'post test artistic',
             'post_test_score': 'post test score',
             'participation': 'Level of participation / Absence',
             'barriers_single': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
@@ -3169,15 +3175,46 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'unsuccessful_pretest_reason',
             'unsuccessful_posttest_reason',
 
+            'pre_test_attended_arabic',
+            'pre_test_modality_arabic',
             'pre_test_arabic',
-            'post_test_arabic',
-            'pre_test_math',
-            'post_test_math',
-            'pre_test_social_emotional',
-            'post_test_social_emotional',
+
+            'pre_test_attended_psychomotor',
+            'pre_test_modality_psychomotor',
             'pre_test_psychomotor',
-            'post_test_psychomotor',
+
+            'pre_test_attended_math',
+            'pre_test_modality_math',
+            'pre_test_math',
+
+            'pre_test_attended_social',
+            'pre_test_modality_social',
+            'pre_test_social_emotional',
+
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
             'pre_test_artistic',
+
+            'pre_test_score',
+
+            'post_test_attended_arabic',
+            'post_test_modality_arabic',
+            'post_test_arabic',
+
+            'post_test_attended_psychomotor',
+            'post_test_modality_psychomotor',
+            'post_test_psychomotor',
+
+            'post_test_attended_math',
+            'post_test_modality_math',
+            'post_test_math',
+
+            'post_test_attended_social',
+            'post_test_modality_social',
+            'post_test_social_emotional',
+
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
             'post_test_artistic',
             'pre_test_score',
             'post_test_score',
@@ -3270,6 +3307,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_social': "pre_test->>'ABLN_ASSESSMENT/modality_social'",
             'pre_test_social_emotional': "pre_test->>'ABLN_ASSESSMENT/social_emotional'",
 
+            'pre_test_attended_artistic': "pre_test->>'ABLN_ASSESSMENT/attended_artistic'",
+            'pre_test_modality_artistic': "pre_test->>'ABLN_ASSESSMENT/modality_artistic'",
+            'pre_test_artistic': "pre_test->>'ABLN_ASSESSMENT/artistic'",
+
             'post_test_attended_arabic': "post_test->>'ABLN_ASSESSMENT/attended_arabic'",
             'post_test_modality_arabic': "post_test->>'ABLN_ASSESSMENT/modality_arabic'",
             'post_test_arabic': "post_test->>'ABLN_ASSESSMENT/arabic'",
@@ -3285,6 +3326,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_social': "post_test->>'ABLN_ASSESSMENT/attended_social'",
             'post_test_modality_social': "post_test->>'ABLN_ASSESSMENT/modality_social'",
             'post_test_social_emotional': "post_test->>'ABLN_ASSESSMENT/social_emotional'",
+
+            'post_test_attended_artistic': "post_test->>'ABLN_ASSESSMENT/attended_artistic'",
+            'post_test_modality_artistic': "post_test->>'ABLN_ASSESSMENT/modality_artistic'",
+            'post_test_artistic': "post_test->>'ABLN_ASSESSMENT/artistic'",
         }).values(
             'id',
             'new_registry',
@@ -3363,6 +3408,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_social',
             'pre_test_social_emotional',
 
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
+            'pre_test_artistic',
+
             'pre_test_score',
 
             'post_test_attended_arabic',
@@ -3380,6 +3429,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_social',
             'post_test_modality_social',
             'post_test_social_emotional',
+
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
+            'post_test_artistic',
 
             'post_test_score',
             'participation',
