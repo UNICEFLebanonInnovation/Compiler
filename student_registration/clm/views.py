@@ -5211,66 +5211,87 @@ def search_clm_duplicate_registration(request):
     from django.db.models.functions import Concat
     from django.db.models import Value
 
-    student_id = 22193
-    # request.GET.get('student_id')
-
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
 
+    search_by= body['search_by']
     round_id = body['round_id']
-    new_registry = body['new_registry']
+    # new_registry = body['new_registry']
     clm_type = body['clm_type']
     student_id = body['student_id']
+    student_first_name = body['student_first_name']
+    student_father_name = body['student_father_name']
+    student_last_name = body['student_last_name']
+    phone_number = body['phone_number']
+
+    print (search_by);
+    print (round_id);
+    # print (new_registry);
+    print (clm_type);
+    print (student_id);
+    print (student_first_name);
+    print (student_father_name);
+    print (student_last_name);
+    print (phone_number);
 
 
-    # filter_type= request.GET.get('filter_type')
-    #
-    # student_first_name= request.GET.get('student_first_name')
-    # student_father_name= request.GET.get('student_father_name')
-    # student_last_name= request.GET.get('student_last_name')
-    #
-    # phone_number= request.GET.get('phone_number')
-    #
-    # model = BLN
-    # if clm_type == 'RS':
-    #     model = RS
-    # elif clm_type == 'ABLN':
-    #     model = ABLN
-    # elif clm_type == 'CBECE':
-    #     model = CBECE
-    #
-    # qs = {}
+    model = BLN
+    if clm_type == 'BLN':
+        model = BLN
+    if clm_type == 'RS':
+        model = RS
+    elif clm_type == 'ABLN':
+        model = ABLN
+    elif clm_type == 'CBECE':
+        model = CBECE
+
+    qs = {}
+
+    if search_by=='student id':
+        qs = model.objects.filter(
+            round=round_id, student= student_id
+        ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                         'student__last_name', 'student__mother_fullname',
+                         'student__sex', 'student__birthday_day', 'student__birthday_month',
+                         'student__birthday_year', 'round__name', 'internal_number').distinct()
+    elif search_by =='student name':
+        qs = model.objects.filter(
+            round=round_id,
+            student__first_name= student_first_name,
+            student__father_name= student_father_name,
+            student__last_name =student_last_name
+        ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                         'student__last_name', 'student__mother_fullname',
+                         'student__sex', 'student__birthday_day', 'student__birthday_month',
+                         'student__birthday_year', 'round__name', 'internal_number').distinct()
+    elif search_by =='phone':
+        qs = model.objects.filter(
+            round=round_id,
+            student__first_name= student_first_name,
+            student__father_name= student_father_name,
+            # student__last_name =student_last_name
+        ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                         'student__last_name', 'student__mother_fullname',
+                         'student__sex', 'student__birthday_day', 'student__birthday_month',
+                         'student__birthday_year', 'round__name', 'internal_number').distinct()
+
+        print qs.query
+    elif search_by == 'id':
+        it_type='unhhr'
+        # to work on it
+
+    print   json.dumps(list(qs))
+
+    qsjson = json.dumps(list(qs))
+    student = json.loads(qsjson)[0]
+    partner_name=  (student["partner__name"])
+
+    # return JsonResponse({'result':  str(partner_name) })
+    return JsonResponse({'result': 'The child already exists with the partner '+str(partner_name)})
 
 
-    # qs = model.objects.filter(
-    #     round=round_id, student= student_id
-    # ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
-    #                  'student__last_name', 'student__mother_fullname',
-    #                  'student__sex', 'student__birthday_day', 'student__birthday_month',
-    #                  'student__birthday_year', 'round__name', 'internal_number').distinct()
 
-    # if filter_type=='student name':
-    #     qs = model.objects.filter(
-    #         round=round_id,
-    #         student__first_name= student_first_name,
-    #         student__father_name= student_father_name,
-    #         student__last_name =student_last_name
-    #     ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
-    #              'student__last_name', 'student__mother_fullname',
-    #              'student__sex', 'student__birthday_day', 'student__birthday_month',
-    #              'student__birthday_year', 'round__name', 'internal_number').first()
-    # elif filter_type=='name phone':
-    #     qs = model.objects.filter(
-    #         round=round_id,
-    #         student__first_name= student_first_name,
-    #         student__father_name= student_father_name,
-    #         phone_number =phone_number
-    #     ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
-    #              'student__last_name', 'student__mother_fullname',
-    #              'student__sex', 'student__birthday_day', 'student__birthday_month',
-    #              'student__birthday_year', 'round__name', 'internal_number').distinct()
+    # return JsonResponse({'result': json.dumps(list(qs))})
 
-
-    #print json.dumps(list(qs))
-    return JsonResponse({'result': 'Test '+str(round_id)+ '  ' +str(new_registry)+ '  ' +str(clm_type) + '  ' +str(student_id)   })
+    # return JsonResponse({'result': 'Test '+str(round_id)+ '  ' +str(new_registry)+ '  ' +str(clm_type) + '  ' +str(student_id)   })
 

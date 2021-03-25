@@ -88,12 +88,36 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_new_registry', function(){
         reorganizeForm();
     });
-    //   $(document).on('change', 'select#id_round', function(){
-    //
-    //     dulplicate_search();
-    //
-    // });
 
+
+    $(document).on('change', 'select#id_round', function(){
+        if(new_registry == 'no'){
+        dulplicate_search('student id');
+        }
+        // alert('search for student')
+    });
+
+    $(document).on('change', 'input#id_student_first_name', function() {
+        dulplicate_search_student_name();
+    });
+    $(document).on('change', 'input#id_student_father_name', function() {
+        dulplicate_search_student_name();
+    });
+    $(document).on('change', 'input#id_student_last_name', function() {
+        dulplicate_search_student_name();
+    });
+
+    $(document).on('change', 'input#id_phone_number', function() {
+        var student_first_name= $('#id_student_first_name').val();
+        var student_father_name= $('#id_student_father_name').val();
+        var phone_number= $('#id_phone_number').val();
+
+        if (student_first_name!='' && student_father_name!='' && phone_number!='' )
+        {
+            dulplicate_search('phone');
+
+        }
+    });
 
     if($(document).find('#id_search_clm_student').length == 1) {
 
@@ -1452,22 +1476,43 @@ function reorganize_pre_assessment()
 }
 
 
-function dulplicate_search()
+function dulplicate_search_student_name()
 {
+    var student_first_name= $('#id_student_first_name').val();
+    var student_father_name= $('#id_student_father_name').val();
+    var student_last_name= $('#id_student_last_name').val();
+
+    if (student_first_name!='' && student_father_name!='' && student_last_name!='' )
+    {
+        dulplicate_search('student name');
+
+    }
+
+}
+
+function dulplicate_search(search_by)
+{
+    var search_by =  search_by
     var round = $('select#id_round').val();
     var new_registry = $('select#id_new_registry').val();
     var clm_type= $('#id_clm_type').val();
     var student_id= $('#id_student_id').val();
+    var student_first_name= $('#id_student_first_name').val();
+    var student_father_name= $('#id_student_father_name').val();
+    var student_last_name= $('#id_student_last_name').val();
+    var phone_number= $('#id_phone_number').val();
 
-
-    if(new_registry == 'no'){
-        // alert('search for student')
 
         var data = {
+            search_by: search_by,
             round_id : round ,
             new_registry : new_registry ,
             clm_type : clm_type ,
-            student_id : student_id
+            student_id : student_id,
+            student_first_name : student_first_name,
+            student_father_name : student_father_name,
+            student_last_name : student_last_name,
+            phone_number : phone_number
         };
 
         requestHeaders = getHeader();
@@ -1485,16 +1530,24 @@ function dulplicate_search()
 
                 alert(response.result);
                 console.log(response);
-            },
-            error: function(response) {
-                console.log(response);
-            }
-        });
-    }
-    else
-    {
+                // var result = JSON.parse(data.result);
+                //    if(!result.length){
+                //         var result = [{ error: 'No matches found',  value: response.term }];
+                //         response(result);
+                //      }else{
+                //         response(result);
+                //     }
+                },
+                error: function(response) {
+                    console.log(response);
+                }
 
-    }
+        });
+    // }
+    // else
+    // {
+    //
+    // }
 
 
 
