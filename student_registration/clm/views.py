@@ -5223,17 +5223,32 @@ def search_clm_duplicate_registration(request):
     student_father_name = body['student_father_name']
     student_last_name = body['student_last_name']
     phone_number = body['phone_number']
+    id_type = body['id_type']
+    case_number = body['case_number']
+    recorded_number = body['recorded_number']
+    parent_syrian_national_number = body['parent_syrian_national_number']
+    parent_sop_national_number = body['parent_sop_national_number']
+    parent_national_number = body['parent_national_number']
+    parent_other_number = body['parent_other_number']
 
-    print (search_by);
-    print (round_id);
-    # print (new_registry);
-    print (clm_type);
-    print (student_id);
-    print (student_first_name);
-    print (student_father_name);
-    print (student_last_name);
-    print (phone_number);
-
+    # print (search_by);
+    # print (round_id);
+    # # print (new_registry);
+    # print (clm_type);
+    # print (student_id);
+    # print (student_first_name);
+    # print (student_father_name);
+    # print (student_last_name);
+    # print (phone_number);
+    # print ('------------------------------------------------------------------------------------------------');
+    # print (id_type);
+    # print (case_number);
+    # print (recorded_number);
+    # print (parent_syrian_national_number);
+    # print (parent_sop_national_number);
+    # print (parent_national_number);
+    # print (parent_other_number);
+    # print ('------------------------------------------------------------------------------------------------');
 
     model = BLN
     if clm_type == 'BLN':
@@ -5274,24 +5289,64 @@ def search_clm_duplicate_registration(request):
                          'student__last_name', 'student__mother_fullname',
                          'student__sex', 'student__birthday_day', 'student__birthday_month',
                          'student__birthday_year', 'round__name', 'internal_number').distinct()
-
-        print qs.query
     elif search_by == 'id':
-        it_type='unhhr'
-        # to work on it
-
-    print   json.dumps(list(qs))
+        if id_type=='UNHCR Registered':
+            qs = model.objects.filter(
+                round=round_id,
+                student__first_name= student_first_name,
+                case_number=case_number
+            ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'round__name', 'internal_number').distinct()
+        elif id_type=='UNHCR Recorded':
+            qs = model.objects.filter(
+                round=round_id,
+                student__first_name= student_first_name,
+                recorded_number=recorded_number
+            ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'round__name', 'internal_number').distinct()
+        elif id_type == 'Syrian national ID':
+            qs = model.objects.filter(
+                round=round_id,
+                student__first_name= student_first_name,
+                parent_syrian_national_number=parent_syrian_national_number
+            ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'round__name', 'internal_number').distinct()
+        elif id_type == 'Palestinian national ID':
+            qs = model.objects.filter(
+                round=round_id,
+                student__first_name= student_first_name,
+                parent_sop_national_number=parent_sop_national_number
+            ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'round__name', 'internal_number').distinct()
+        elif id_type == 'Lebanese national ID':
+            qs = model.objects.filter(
+                round=round_id,
+                student__first_name= student_first_name,
+                parent_national_number=parent_national_number
+            ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'round__name', 'internal_number').distinct()
+        elif id_type == 'Other nationality':
+            qs = model.objects.filter(
+                round=round_id,
+                student__first_name= student_first_name,
+                parent_other_number=parent_other_number
+            ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'round__name', 'internal_number').distinct()
 
     qsjson = json.dumps(list(qs))
     student = json.loads(qsjson)[0]
     partner_name=  (student["partner__name"])
 
     return JsonResponse({'result':  str(partner_name) })
-    # return JsonResponse({'result': 'The child already exists with the partner '+str(partner_name)})
-
-
-
-    # return JsonResponse({'result': json.dumps(list(qs))})
-
-    # return JsonResponse({'result': 'Test '+str(round_id)+ '  ' +str(new_registry)+ '  ' +str(clm_type) + '  ' +str(student_id)   })
-

@@ -89,22 +89,35 @@ $(document).ready(function(){
         reorganizeForm();
     });
 
-
-    $(document).on('change', 'select#id_round', function(){
-        if(new_registry == 'no'){
-        dulplicate_search('student id');
+    $(document).on('change', 'select#id_round', function () {
+        if (new_registry == 'no') {
+            dulplicate_search('student id');
         }
-        // alert('search for student')
     });
 
-    $(document).on('change', 'input#id_student_first_name', function() {
+    $(document).on('change', 'input#id_student_first_name', function () {
         dulplicate_search_student_name();
     });
-    $(document).on('change', 'input#id_student_father_name', function() {
+
+    $(document).on('change', 'input#id_student_father_name', function () {
         dulplicate_search_student_name();
     });
-    $(document).on('change', 'input#id_student_last_name', function() {
+
+    $(document).on('change', 'input#id_student_last_name', function () {
         dulplicate_search_student_name();
+    });
+
+
+    $(document).on('change', 'input#id_case_number, ' +
+        'input#id_recorded_number, ' +
+        'input#id_parent_syrian_national_number, ' +
+        'input#id_parent_sop_national_number, ' +
+        'input#id_parent_national_number, ' +
+        'input#id_parent_other_number', function () {
+
+        alert('check');
+        dulplicate_search('id');
+
     });
 
     $(document).on('change', 'input#id_phone_number', function() {
@@ -221,6 +234,7 @@ $(document).ready(function(){
             $('#id_id_type').val('');
             $('#id_no_child_id_confirmation').val('');
         }
+
     });
 
     $(document).on('change', '#id_parent_id_type', function(){
@@ -1490,17 +1504,24 @@ function dulplicate_search_student_name()
 
 }
 
-function dulplicate_search(search_by)
-{
-    var search_by =  search_by
+function dulplicate_search(search_by) {
+
+    var search_by = search_by
     var round = $('select#id_round').val();
     var new_registry = $('select#id_new_registry').val();
-    var clm_type= $('#id_clm_type').val();
-    var student_id= $('#id_student_id').val();
-    var student_first_name= $('#id_student_first_name').val();
-    var student_father_name= $('#id_student_father_name').val();
-    var student_last_name= $('#id_student_last_name').val();
-    var phone_number= $('#id_phone_number').val();
+    var clm_type = $('#id_clm_type').val();
+    var student_id = $('#id_student_id').val();
+    var student_first_name = $('#id_student_first_name').val();
+    var student_father_name = $('#id_student_father_name').val();
+    var student_last_name = $('#id_student_last_name').val();
+    var phone_number = $('#id_phone_number').val();
+    var id_type = $('#id_id_type').val();
+    var case_number = $('#id_case_number').val();
+    var recorded_number = $('#id_recorded_number').val();
+    var parent_syrian_national_number = $('#id_parent_syrian_national_number').val();
+    var parent_sop_national_number = $('#id_parent_sop_national_number').val();
+    var parent_national_number = $('#id_parent_national_number').val();
+    var parent_other_number = $('#id_parent_other_number').val();
 
 
         var data = {
@@ -1512,7 +1533,14 @@ function dulplicate_search(search_by)
             student_first_name : student_first_name,
             student_father_name : student_father_name,
             student_last_name : student_last_name,
-            phone_number : phone_number
+            phone_number : phone_number,
+            id_type : id_type,
+            case_number : case_number,
+            recorded_number : recorded_number ,
+            parent_syrian_national_number : parent_syrian_national_number ,
+            parent_sop_national_number : parent_sop_national_number ,
+            parent_national_number : parent_national_number ,
+            parent_other_number : parent_other_number ,
         };
 
         requestHeaders = getHeader();
@@ -1527,11 +1555,26 @@ function dulplicate_search(search_by)
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
+                alert(response.result);
 
                 if(response.result != "")
                 {
+                    // $('.btn-primary').addClass('d-none');
+                    // document.getElementById('id-save_add_another').style.visibility = 'hidden';
+
+
                     alert("The child already exists with the partner "+response.result);
 
+                    // $('#').addClass('d-none');
+                    // alert("The child already exists with the partner "+response.result);
+
+                }
+                else
+                {
+                    // $('.btn-primary').removeClass('d-none');
+
+                    // $('#submit-id-save').removeClass('d-none');
+                    // $('#submit-id-save_add_another').removeClass('d-none');
                 }
 
                 console.log(response);
