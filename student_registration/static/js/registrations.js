@@ -90,6 +90,7 @@ $(document).ready(function(){
     });
 
     $(document).on('change', 'select#id_round', function () {
+        new_registry = $('#id_new_registry').val();
         if (new_registry == 'no') {
             dulplicate_search('student id');
         }
@@ -115,7 +116,6 @@ $(document).ready(function(){
         'input#id_parent_national_number, ' +
         'input#id_parent_other_number', function () {
 
-        alert('check');
         dulplicate_search('id');
 
     });
@@ -342,7 +342,6 @@ $(document).ready(function(){
 
         $('div#div_id_other_caregiver_relationship').addClass('d-none');
         $('#span_other_caregiver_relationship').addClass('d-none');
-        alert('caretaker_first_name');
 
         if(main_caregiver == 'father'){
             var student_father_name = $('#id_student_father_name').val();
@@ -1555,7 +1554,7 @@ function dulplicate_search(search_by) {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
-                alert(response.result);
+                // alert(response.result);
 
                 if(response.result != "")
                 {
@@ -1566,7 +1565,6 @@ function dulplicate_search(search_by) {
                     alert("The child already exists with the partner "+response.result);
 
                     // $('#').addClass('d-none');
-                    // alert("The child already exists with the partner "+response.result);
 
                 }
                 else
