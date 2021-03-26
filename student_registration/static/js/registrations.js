@@ -1528,7 +1528,12 @@ function dulplicate_search(search_by)
             dataType: 'json',
             success: function (response) {
 
-                alert(response.result);
+                if(response.result != "")
+                {
+                    alert("The child already exists with the partner "+response.result);
+
+                }
+
                 console.log(response);
                 // var result = JSON.parse(data.result);
                 //    if(!result.length){

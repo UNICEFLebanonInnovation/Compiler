@@ -5286,8 +5286,8 @@ def search_clm_duplicate_registration(request):
     student = json.loads(qsjson)[0]
     partner_name=  (student["partner__name"])
 
-    # return JsonResponse({'result':  str(partner_name) })
-    return JsonResponse({'result': 'The child already exists with the partner '+str(partner_name)})
+    return JsonResponse({'result':  str(partner_name) })
+    # return JsonResponse({'result': 'The child already exists with the partner '+str(partner_name)})
 
 
 
