@@ -17,7 +17,8 @@ from .models import (
     ABLN,
     RS,
     CBECE,
-    Inclusion
+    Inclusion,
+    Center
 )
 
 
@@ -891,6 +892,7 @@ class InclusionAdmin(ImportExportModelAdmin):
 admin.site.register(Assessment)
 admin.site.register(Cycle)
 admin.site.register(Site)
+admin.site.register(Center)
 admin.site.register(Referral)
 admin.site.register(Disability, DisabilityAdmin)
 admin.site.register(BLN, BLNAdmin)

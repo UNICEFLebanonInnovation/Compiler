@@ -115,6 +115,17 @@ class Disability(models.Model):
     def __unicode__(self):
         return self.name
 
+class Center(models.Model):
+
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Site / Center"
+        verbose_name_plural = "Sites / Centers"
+
+    def __unicode__(self):
+        return self.name
 
 class CLM(TimeStampedModel):
 
@@ -276,6 +287,12 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Location')
+    )
+    center = models.ForeignKey(
+        Center,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Site / Center')
     )
 
     language = models.CharField(
@@ -901,9 +918,16 @@ class CLM(TimeStampedModel):
             ('Referred by CP partner', _('Referred by CP partner')),
             ('Referred by youth partner', _('Referred by youth partner')),
             ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Family walked in to NGO', _('Family walked in to NGO'))
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('RIMS', _('RIMS')),
         ),
         verbose_name=_('Source of identification of the child')
+    )
+    rims_case_number  = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('RIMS Case Number')
     )
     source_of_transportation = models.CharField(
         max_length=100,

@@ -75,6 +75,50 @@ $(document).ready(function(){
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+
+    $(document).on('change', 'select#id_round', function () {
+        new_registry = $('#id_new_registry').val();
+        if (new_registry == 'no') {
+            dulplicate_search('student id');
+        }
+    });
+
+    $(document).on('change', 'input#id_student_first_name', function () {
+        dulplicate_search_student_name();
+    });
+
+    $(document).on('change', 'input#id_student_father_name', function () {
+        dulplicate_search_student_name();
+    });
+
+    $(document).on('change', 'input#id_student_last_name', function () {
+        dulplicate_search_student_name();
+    });
+
+
+    $(document).on('change', 'input#id_case_number, ' +
+        'input#id_recorded_number, ' +
+        'input#id_parent_syrian_national_number, ' +
+        'input#id_parent_sop_national_number, ' +
+        'input#id_parent_national_number, ' +
+        'input#id_parent_other_number', function () {
+
+        dulplicate_search('id');
+
+    });
+
+    $(document).on('change', 'input#id_phone_number', function() {
+        var student_first_name= $('#id_student_first_name').val();
+        var student_father_name= $('#id_student_father_name').val();
+        var phone_number= $('#id_phone_number').val();
+
+        if (student_first_name!='' && student_father_name!='' && phone_number!='' )
+        {
+            dulplicate_search('phone');
+
+        }
+    });
+
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -235,6 +279,7 @@ $(document).ready(function(){
     $(document).find('select#id_school, select#id_registered_in_school, select#id_search_school, select#id_last_school')
                 .combobox()
                 .end();
+
 
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
@@ -871,10 +916,18 @@ function reorganizeForm()
     $('div#div_id_source_of_identification_specify').addClass('d-none');
     $('#span_source_of_identification_specify').addClass('d-none');
 
-    // alert(nationality);
+    $('div#div_id_rims_case_number').addClass('d-none');
+    $('#span_rims_case_number').addClass('d-none');
+
+
     if(source_of_identification == 'Other Sources'){
         $('#div_id_source_of_identification_specify').removeClass('d-none');
         $('#span_source_of_identification_specify').removeClass('d-none');
+    }
+
+    if(source_of_identification == 'RIMS'){
+        $('#div_id_rims_case_number').removeClass('d-none');
+        $('#span_rims_case_number').removeClass('d-none');
     }
 
     $('div#div_id_student_have_children').addClass('d-none');
@@ -1145,6 +1198,118 @@ function reorganizeForm()
 
 }
 
+
+function dulplicate_search_student_name()
+{
+    var student_first_name= $('#id_student_first_name').val();
+    var student_father_name= $('#id_student_father_name').val();
+    var student_last_name= $('#id_student_last_name').val();
+
+
+    if (student_first_name!='' && student_father_name!='' && student_last_name!='' )
+    {
+        dulplicate_search('student name');
+
+    }
+
+}
+
+function dulplicate_search(search_by) {
+
+    var search_by = search_by
+    var round = $('select#id_round').val();
+    var new_registry = $('select#id_new_registry').val();
+    var clm_type = $('#id_clm_type').val();
+    var student_id = $('#id_student_id').val();
+    var student_first_name = $('#id_student_first_name').val();
+    var student_father_name = $('#id_student_father_name').val();
+    var student_last_name = $('#id_student_last_name').val();
+    var phone_number = $('#id_phone_number').val();
+    var id_type = $('#id_id_type').val();
+    var case_number = $('#id_case_number').val();
+    var recorded_number = $('#id_recorded_number').val();
+    var parent_syrian_national_number = $('#id_parent_syrian_national_number').val();
+    var parent_sop_national_number = $('#id_parent_sop_national_number').val();
+    var parent_national_number = $('#id_parent_national_number').val();
+    var parent_other_number = $('#id_parent_other_number').val();
+
+
+        var data = {
+            search_by: search_by,
+            round_id : round ,
+            new_registry : new_registry ,
+            clm_type : clm_type ,
+            student_id : student_id,
+            student_first_name : student_first_name,
+            student_father_name : student_father_name,
+            student_last_name : student_last_name,
+            phone_number : phone_number,
+            id_type : '',
+            case_number : case_number,
+            recorded_number : recorded_number ,
+            parent_syrian_national_number : parent_syrian_national_number ,
+            parent_sop_national_number : parent_sop_national_number ,
+            parent_national_number : parent_national_number ,
+            parent_other_number : parent_other_number ,
+        };
+
+        requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
+        $.ajax({
+            type: "POST",
+            url: '/clm/search-clm-duplicate-registration/',
+            data: JSON.stringify(data),
+            cache: false,
+            async: false,
+            headers: requestHeaders,
+            dataType: 'json',
+            success: function (response) {
+                // alert(response.result);
+
+                if(response.result != "")
+                {
+                    // $('.btn-primary').addClass('d-none');
+                    // document.getElementById('id-save_add_another').style.visibility = 'hidden';
+
+
+                    alert("The child already exists with the partner  "+response.result);
+
+                    // $('#').addClass('d-none');
+
+                }
+                else
+                {
+                    // $('.btn-primary').removeClass('d-none');
+
+                    // $('#submit-id-save').removeClass('d-none');
+                    // $('#submit-id-save_add_another').removeClass('d-none');
+                }
+
+                console.log(response);
+                // var result = JSON.parse(data.result);
+                //    if(!result.length){
+                //         var result = [{ error: 'No matches found',  value: response.term }];
+                //         response(result);
+                //      }else{
+                //         response(result);
+                //     }
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+
+        });
+    // }
+    // else
+    // {
+    //
+    // }
+
+
+
+
+}
 
 function family_status_single()
 {

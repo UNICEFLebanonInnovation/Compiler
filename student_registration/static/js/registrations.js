@@ -85,8 +85,8 @@ $(document).ready(function(){
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
 
-    $(document).on('change', 'select#id_new_registry', function(){
-        reorganizeForm();
+     $(document).on('change', 'select#id_source_of_identification', function(){
+         reorganizeForm();
     });
 
     $(document).on('change', 'select#id_round', function () {
@@ -107,7 +107,6 @@ $(document).ready(function(){
     $(document).on('change', 'input#id_student_last_name', function () {
         dulplicate_search_student_name();
     });
-
 
     $(document).on('change', 'input#id_case_number, ' +
         'input#id_recorded_number, ' +
@@ -131,6 +130,11 @@ $(document).ready(function(){
 
         }
     });
+    $(document).on('change', 'select#id_new_registry', function(){
+        reorganizeForm();
+    });
+
+
 
     if($(document).find('#id_search_clm_student').length == 1) {
 
@@ -894,6 +898,15 @@ function reorganizeForm()
     var remote_learning = $('select#id_remote_learning').val();
     var remote_learning_reasons_not_engaged = $('select#id_remote_learning_reasons_not_engaged').val();
 
+    var source_of_identification = $('select#id_source_of_identification').val();
+
+    $('div#div_id_rims_case_number').addClass('d-none');
+    $('#span_rims_case_number').addClass('d-none');
+
+    if(source_of_identification == 'RIMS'){
+        $('#div_id_rims_case_number').removeClass('d-none');
+        $('#span_rims_case_number').removeClass('d-none');
+    }
 
     $('div.child_id').addClass('d-none');
 
@@ -1562,7 +1575,7 @@ function dulplicate_search(search_by) {
                     // document.getElementById('id-save_add_another').style.visibility = 'hidden';
 
 
-                    alert("The child already exists with the partner "+response.result);
+                    alert("The child already exists with the partner  "+response.result);
 
                     // $('#').addClass('d-none');
 

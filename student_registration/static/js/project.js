@@ -135,12 +135,19 @@ function scrollToBottom()
 
 function getHeader()
 {
+    var csrfHeader = csrftoken;
+
+    if(csrfHeader == null)
+    {
+        csrfHeader = $("[name=csrfmiddlewaretoken]").val();
+    }
+
     var header = {
         'Authorization': 'Token '+user_token,
 //        'HTTP_REFERER': $(location).attr('href'),
         'HTTP_REFERER': href_full_path,
         'Cookie': 'token=Token '+user_token,
-        'X-CSRFToken': csrftoken
+        'X-CSRFToken': csrfHeader
     };
     return header;
 }

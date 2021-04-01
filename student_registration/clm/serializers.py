@@ -152,6 +152,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'cadaster',
             'cadaster_name',
             'location',
+            'center',
             'outreach_barcode',
             'disability',
             'student_family_status',

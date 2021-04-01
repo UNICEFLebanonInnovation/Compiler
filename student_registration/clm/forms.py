@@ -37,7 +37,8 @@ from .models import (
     Disability,
     Assessment,
     CLMRound,
-    ABLN_FC
+    ABLN_FC,
+    Center
 )
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, ABLNSerializer, ABLN_FCSerializer
 
@@ -128,10 +129,6 @@ class CommonForm(forms.ModelForm):
         empty_label='-------',
         required=True, to_field_name='id',
         # initial=0
-    )
-    location = forms.CharField(
-        label=_("Location"),
-        widget=forms.TextInput, required=True
     )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.all(), widget=forms.Select,
@@ -311,7 +308,6 @@ class CommonForm(forms.ModelForm):
             'governorate',
             'district',
             'cadaster',
-            'location',
             'language',
             'student_first_name',
             'student_father_name',
@@ -373,7 +369,7 @@ class BLNForm(CommonForm):
     )
 
     new_registry = forms.ChoiceField(
-        label=_("First time registered?"),
+        label=_("First time registered BLN?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -395,6 +391,13 @@ class BLNForm(CommonForm):
         widget=forms.Select, required=True,
         choices=REGISTRATION_LEVEL
     )
+    center = forms.ModelChoiceField(
+        queryset=Center.objects.all(), widget=forms.Select,
+        label=_('Site / Center'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -652,9 +655,14 @@ class BLNForm(CommonForm):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
-            ('abln', _('ABLN'))
+            ('abln', _('ABLN')),
+            ('RIMS', _('RIMS'))
         ),
         initial=''
+    )
+    rims_case_number = forms.CharField(
+        required=False,
+        label=_('RIMS Case Number')
     )
     attended_arabic = forms.ChoiceField(
         label=_("Attended Arabic test"),
@@ -835,7 +843,7 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('location', css_class='col-md-3'),
+                    Div('center', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
@@ -913,6 +921,8 @@ class BLNForm(CommonForm):
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
+                    Div('rims_case_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -1551,6 +1561,7 @@ class BLNForm(CommonForm):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
             'other_nationality',
             'education_status',
             'caretaker_first_name',
@@ -1600,7 +1611,7 @@ class ABLNForm(CommonForm):
     )
 
     new_registry = forms.ChoiceField(
-        label=_("First time registered?"),
+        label=_("First time registered ABLN?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -1621,6 +1632,12 @@ class ABLNForm(CommonForm):
         label=_("Registration level"),
         widget=forms.Select, required=True,
         choices=REGISTRATION_LEVEL
+    )
+    center = forms.ModelChoiceField(
+        queryset=Center.objects.all(), widget=forms.Select,
+        label=_('Site / Center'),
+        empty_label='-------',
+        required=True, to_field_name='id',
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -1884,9 +1901,14 @@ class ABLNForm(CommonForm):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
+            ('RIMS', _('RIMS')),
             # ('bln', _('BLN'))
         ),
         initial=''
+    )
+    rims_case_number = forms.CharField(
+        required=False,
+        label=_('RIMS Case Number')
     )
     attended_arabic = forms.ChoiceField(
         label=_("Attended Arabic test"),
@@ -2068,7 +2090,7 @@ class ABLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('location', css_class='col-md-3'),
+                    Div('center', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
@@ -2146,6 +2168,8 @@ class ABLNForm(CommonForm):
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
+                    Div('rims_case_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -2773,6 +2797,7 @@ class ABLNForm(CommonForm):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
             'other_nationality',
             'education_status',
             'caretaker_first_name',
@@ -2822,6 +2847,11 @@ class RSForm(CommonForm):
     #         ('out_school', _('Outside the school')),
     #     )
     # )
+
+    location = forms.CharField(
+        label=_("Location"),
+        widget=forms.TextInput, required=False
+    )
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
         label=_('The school where the child is attending the program'),
@@ -3140,9 +3170,14 @@ class RSForm(CommonForm):
             ('', '----------'),
             ('Referral from school directors', _('Referral from school directors')),
             ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
-            ('Other Sources', _('Other Sources'))
+            ('Other Sources', _('Other Sources')),
+            ('RIMS', _('RIMS'))
         ),
         initial=''
+    )
+    rims_case_number = forms.CharField(
+        required=False,
+        label=_('RIMS Case Number')
     )
 
     source_of_identification_specify = forms.CharField(
@@ -3494,7 +3529,9 @@ class RSForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">16.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_rims_case_number">16.1</span>'),
+                    Div('rims_case_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">16.2</span>'),
                     Div('source_of_identification_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4126,6 +4163,7 @@ class RSForm(CommonForm):
     class Meta:
         model = RS
         fields = CommonForm.Meta.fields + (
+            'location',
             'first_attendance_date',
             'student_birthday_year',
             'have_labour_single_selection',
@@ -4165,6 +4203,7 @@ class RSForm(CommonForm):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number' ,
             'source_of_identification_specify',
             'other_nationality',
             # 'caretaker_first_name',
@@ -4215,6 +4254,14 @@ class CBECEForm(CommonForm):
         required=False, to_field_name='id',
         initial=0
     )
+
+    center = forms.ModelChoiceField(
+        queryset=Center.objects.all(), widget=forms.Select,
+        label=_('Site / Center'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+
     # site = forms.ChoiceField(
     #     widget=forms.Select, required=True,
     #     label=_('Where is the program?'),
@@ -4532,9 +4579,14 @@ class CBECEForm(CommonForm):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('From hosted community', _('From hosted community')),
-            ('From displaced community', _('From displaced community'))
+            ('From displaced community', _('From displaced community')),
+            ('RIMS', _('RIMS'))
         ),
         initial=''
+    )
+    rims_case_number = forms.CharField(
+        required=False,
+        label=_('RIMS Case Number')
     )
 
     attended_arabic = forms.ChoiceField(
@@ -4759,7 +4811,7 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('location', css_class='col-md-3'),
+                    Div('center', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
@@ -4837,6 +4889,8 @@ class CBECEForm(CommonForm):
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
+                    Div('rims_case_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -5507,6 +5561,7 @@ class CBECEForm(CommonForm):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
             'other_nationality',
             'education_status',
             # 'caretaker_first_name',
