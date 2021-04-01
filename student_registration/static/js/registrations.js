@@ -1576,16 +1576,16 @@ function dulplicate_search(search_by) {
 
 
                     alert("The child already exists with the partner  "+response.result);
-
+                    $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
+                    $(':input[type="submit"][name="save"]').prop('disabled', true);
                     // $('#').addClass('d-none');
 
                 }
                 else
                 {
-                    // $('.btn-primary').removeClass('d-none');
 
-                    // $('#submit-id-save').removeClass('d-none');
-                    // $('#submit-id-save_add_another').removeClass('d-none');
+                    $(':input[type="submit"][name="save_add_another"]').prop('disabled', false);
+                    $(':input[type="submit"][name="save"]').prop('disabled', false);
                 }
 
                 console.log(response);
