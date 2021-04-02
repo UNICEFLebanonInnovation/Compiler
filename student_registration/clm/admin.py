@@ -889,10 +889,24 @@ class InclusionAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class CenterResource(resources.ModelResource):
+    class Meta:
+        model = Center
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = fields
+
+
+class CenterAdmin(ImportExportModelAdmin):
+    resource_class = CenterResource
+
+
 admin.site.register(Assessment)
 admin.site.register(Cycle)
 admin.site.register(Site)
-admin.site.register(Center)
+admin.site.register(Center, CenterAdmin)
 admin.site.register(Referral)
 admin.site.register(Disability, DisabilityAdmin)
 admin.site.register(BLN, BLNAdmin)

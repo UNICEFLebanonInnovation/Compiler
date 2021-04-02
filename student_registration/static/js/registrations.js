@@ -1613,7 +1613,6 @@ function dulplicate_search(search_by) {
 
 }
 
-
 function moved_student(item, moved_date)
 {
     var data = {moved: item, moved_date: moved_date};
