@@ -1551,7 +1551,8 @@ class BLN(CLM):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
-            ('abln', _('ABLN'))
+            ('abln', _('ABLN')),
+            ('RIMS', _('RIMS'))
         ),
         verbose_name=_('Source of identification of the child')
     )
@@ -1793,6 +1794,7 @@ class ABLN(CLM):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
+            ('RIMS', _('RIMS')),
             # ('bln', _('BLN'))
         ),
         verbose_name=_('Source of identification of the child')
@@ -2234,7 +2236,8 @@ class RS(CLM):
             ('', '----------'),
             ('Referral from school directors', _('Referral from school directors')),
             ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
-            ('Other Sources', _('Other Sources'))
+            ('Other Sources', _('Other Sources')),
+            ('RIMS', _('RIMS')),
         ),
         verbose_name=_('Source of identification of the child')
     )
@@ -2671,7 +2674,8 @@ class CBECE(CLM):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('From hosted community', _('From hosted community')),
-            ('From displaced community', _('From displaced community'))
+            ('From displaced community', _('From displaced community')),
+            ('RIMS', _('RIMS')),
         ),
         verbose_name=_('Source of identification of the child')
     )
@@ -2928,10 +2932,16 @@ class Inclusion(TimeStampedModel):
             ('cbece', _('CBECE')),
             ('ocha', _('OCHA')),
             ('non unicef', _('Non - UNICEF')),
+            ('RIMS', _('RIMS')),
         ),
         verbose_name=_('Source of identification of the child')
     )
-
+    rims_case_number  = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('RIMS Case Number')
+    )
     first_attendance_date = models.DateField(
         blank=True,
         null=True,

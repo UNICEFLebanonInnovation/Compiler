@@ -1519,6 +1519,7 @@ function dulplicate_search_student_name()
 function dulplicate_search(search_by) {
 
     var search_by = search_by
+
     var round = $('select#id_round').val();
     var new_registry = $('select#id_new_registry').val();
     var clm_type = $('#id_clm_type').val();
@@ -1529,24 +1530,25 @@ function dulplicate_search(search_by) {
     var phone_number = $('#id_phone_number').val();
 
 
-        var data = {
-            search_by: search_by,
-            round_id : round ,
-            new_registry : new_registry ,
-            clm_type : clm_type ,
-            student_id : student_id,
-            student_first_name : student_first_name,
-            student_father_name : student_father_name,
-            student_last_name : student_last_name,
-            phone_number : phone_number,
-            id_type : id_type,
-            case_number : case_number,
-            recorded_number : recorded_number ,
-            parent_syrian_national_number : parent_syrian_national_number ,
-            parent_sop_national_number : parent_sop_national_number ,
-            parent_national_number : parent_national_number ,
-            parent_other_number : parent_other_number ,
-        };
+
+    var data = {
+        search_by: search_by,
+        round_id : round ,
+        new_registry : new_registry ,
+        clm_type : clm_type ,
+        student_id : student_id,
+        student_first_name : student_first_name,
+        student_father_name : student_father_name,
+        student_last_name : student_last_name,
+        phone_number : phone_number,
+        id_type : '',
+        case_number : '',
+        recorded_number : '' ,
+        parent_syrian_national_number : '' ,
+        parent_sop_national_number : '' ,
+        parent_national_number : '' ,
+        parent_other_number : '' ,
+    };
 
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';

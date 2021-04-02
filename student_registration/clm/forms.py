@@ -2914,7 +2914,7 @@ class RSForm(CommonForm):
         required=False,
     )
     new_registry = forms.ChoiceField(
-        label=_("First time registered?"),
+        label=_("First time registered RS?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -3890,10 +3890,14 @@ class RSForm(CommonForm):
 
         source_of_identification = cleaned_data.get("source_of_identification")
         source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
+        rims_case_number = cleaned_data.get("rims_case_number")
 
         if source_of_identification == 'Other Sources':
             if not source_of_identification_specify:
                 self.add_error('source_of_identification_specify', 'This field is required')
+        if source_of_identification == 'RIMS':
+            if not rims_case_number:
+                self.add_error('rims_case_number', 'This field is required')
 
 
         if miss_school == 'yes':
@@ -4327,7 +4331,7 @@ class CBECEForm(CommonForm):
         required=False,
     )
     new_registry = forms.ChoiceField(
-        label=_("First time registered?"),
+        label=_("First time registered CBECE?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'

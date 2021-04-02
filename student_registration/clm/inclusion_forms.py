@@ -383,8 +383,13 @@ class InclusionForm(forms.ModelForm):
             ('cbece', _('CBECE')),
             ('ocha', _('OCHA')),
             ('non unicef', _('Non - UNICEF')),
+            ('RIMS', _('RIMS'))
         ),
         initial=''
+    )
+    rims_case_number = forms.CharField(
+        required=False,
+        label=_('RIMS Case Number')
     )
 
     def __init__(self, *args, **kwargs):
@@ -483,6 +488,8 @@ class InclusionForm(forms.ModelForm):
                     Div('first_attendance_date', css_class='col-md-3 d-none'),
                     HTML('<span class="badge badge-default">13</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_rims_case_number">13.1</span>'),
+                    Div('rims_case_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data B_right_border'
@@ -740,6 +747,16 @@ class InclusionForm(forms.ModelForm):
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
 
+
+
+        source_of_identification = cleaned_data.get("source_of_identification")
+        rims_case_number = cleaned_data.get("rims_case_number")
+
+        if source_of_identification == 'RIMS':
+            if not rims_case_number:
+                self.add_error('rims_case_number', 'This field is required')
+
+
         # if education_status != 'out of school':
         #     if not miss_school_date:
         #         self.add_error('miss_school_date', 'This field is required')
@@ -954,6 +971,7 @@ class InclusionForm(forms.ModelForm):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
             'other_nationality',
             'caretaker_first_name',
             'caretaker_middle_name',

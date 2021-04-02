@@ -1245,12 +1245,12 @@ function dulplicate_search(search_by) {
             student_last_name : student_last_name,
             phone_number : phone_number,
             id_type : '',
-            case_number : case_number,
-            recorded_number : recorded_number ,
-            parent_syrian_national_number : parent_syrian_national_number ,
-            parent_sop_national_number : parent_sop_national_number ,
-            parent_national_number : parent_national_number ,
-            parent_other_number : parent_other_number ,
+            case_number : '',
+            recorded_number : '' ,
+            parent_syrian_national_number : '' ,
+            parent_sop_national_number : '' ,
+            parent_national_number : '' ,
+            parent_other_number : '' ,
         };
 
         requestHeaders = getHeader();
