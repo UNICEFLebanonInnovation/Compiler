@@ -5230,23 +5230,6 @@ def search_clm_duplicate_registration(request):
     parent_national_number = body['parent_national_number']
     parent_other_number = body['parent_other_number']
 
-    # print (search_by);
-    # print (round_id);
-    # print (clm_type);
-    # print (student_id);
-    # print (student_first_name);
-    # print (student_father_name);
-    # print (student_last_name);
-    # print (phone_number);
-    # print ('------------------------------------------------------------------------------------------------');
-    # print (id_type);
-    # print (case_number);
-    # print (recorded_number);
-    # print (parent_syrian_national_number);
-    # print (parent_sop_national_number);
-    # print (parent_national_number);
-    # print (parent_other_number);
-    # print ('------------------------------------------------------------------------------------------------');
 
     model = BLN
     if clm_type == 'BLN':
@@ -5265,7 +5248,7 @@ def search_clm_duplicate_registration(request):
     elif search_by == 'student name':
         qs = search_duplicate_student_name(model, round_id, student_first_name, student_father_name, student_last_name)
     elif search_by == 'phone':
-        qs = search_duplicate_phone(model, round_id, student_first_name, student_father_name, phone_number)
+        qs = search_duplicate_phone(model, round_id, student_first_name, phone_number)
     elif search_by == 'id':
         qs = search_duplicate_case(model, round_id, id_type, student_first_name, case_number, recorded_number,
                                    parent_syrian_national_number, parent_sop_national_number, parent_national_number,
@@ -5339,13 +5322,12 @@ def search_duplicate_student_name(model, round_id, student_first_name, student_f
     return qs
 
 
-def search_duplicate_phone(model, round_id, student_first_name, student_father_name, phone_number):
+def search_duplicate_phone(model, round_id, student_first_name, phone_number):
     model = model
     qs = {}
     qs = model.objects.filter(
         round=round_id,
         student__first_name=student_first_name,
-        student__father_name=student_father_name,
         phone_number=phone_number
     ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
              'student__last_name', 'student__mother_fullname',

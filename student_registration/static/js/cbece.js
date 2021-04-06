@@ -1550,6 +1550,7 @@ function dulplicate_search(search_by) {
         parent_other_number : '' ,
     };
 
+    
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
 
