@@ -5230,7 +5230,6 @@ def search_clm_duplicate_registration(request):
     parent_national_number = body['parent_national_number']
     parent_other_number = body['parent_other_number']
 
-
     model = BLN
     if clm_type == 'BLN':
         model = BLN

@@ -121,10 +121,10 @@ $(document).ready(function(){
 
     $(document).on('change', 'input#id_phone_number', function() {
         var student_first_name= $('#id_student_first_name').val();
-        var student_father_name= $('#id_student_father_name').val();
+        // var student_father_name= $('#id_student_father_name').val();
         var phone_number= $('#id_phone_number').val();
 
-        if (student_first_name!='' && student_father_name!='' && phone_number!='' )
+        if (student_first_name!='' && phone_number!='' )
         {
             dulplicate_search('phone');
 
@@ -1527,6 +1527,13 @@ function dulplicate_search(search_by) {
     var student_father_name = $('#id_student_father_name').val();
     var student_last_name = $('#id_student_last_name').val();
     var phone_number = $('#id_phone_number').val();
+    var id_type = $('#id_id_type').val();
+    var case_number = $('#id_case_number').val();
+    var recorded_number = $('#id_recorded_number').val();
+    var parent_syrian_national_number = $('#id_parent_syrian_national_number').val();
+    var parent_sop_national_number = $('#id_parent_sop_national_number').val();
+    var parent_national_number = $('#id_parent_national_number').val();
+    var parent_other_number = $('#id_parent_other_number').val();
 
 
         var data = {
