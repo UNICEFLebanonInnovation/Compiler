@@ -229,6 +229,7 @@ class CommonForm(forms.ModelForm):
     )
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
 
@@ -332,6 +333,7 @@ class CommonForm(forms.ModelForm):
             # 'learning_result',
             'student_id',
             'enrollment_id',
+            'partner_name',
             # 'comments',
             # 'unsuccessful_pretest_reason',
             # 'unsuccessful_posttest_reason',
@@ -801,6 +803,7 @@ class BLNForm(CommonForm):
                     'clm_type',
                     'student_id',
                     'enrollment_id',
+                    'partner_name',
                     css_class='row',
                 ),
                 Div(
@@ -2047,6 +2050,7 @@ class ABLNForm(CommonForm):
                     'clm_type',
                     'student_id',
                     'enrollment_id',
+                    'partner_name',
                     css_class='row',
                 ),
                 Div(
@@ -3396,6 +3400,7 @@ class RSForm(CommonForm):
                     'clm_type',
                     'student_id',
                     'enrollment_id',
+                    'partner_name',
                     css_class='row',
                 ),
                 Div(
@@ -4772,6 +4777,7 @@ class CBECEForm(CommonForm):
                     'clm_type',
                     'student_id',
                     'enrollment_id',
+                    'partner_name',
                     css_class='row',
                 ),
                 Div(
@@ -10916,10 +10922,6 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
         widget=forms.TextInput, required=True
     )
-    #
-    # \enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True, initial = 7150)
-    # enrollment = forms.IntegerField(widget=forms.HiddenInput, required=True, initial = 7150)
-
 
     enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=True)

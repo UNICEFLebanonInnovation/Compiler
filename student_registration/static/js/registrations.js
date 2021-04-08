@@ -26,7 +26,21 @@ $(window).load(function () {
 
 });
 
-$(document).ready(function(){
+$(document).ready(function() {
+
+    // enrollment_id = $('#id_enrollment_id').val();
+    // partner_name = $('#id_partner_name').val();
+    //
+    // if (enrollment_id > 0)
+    // {
+    //     if (isAddPage())
+    //     {
+    //         alert("The child already exists with the partner " + partner_name);
+    //         $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
+    //         $(':input[type="submit"][name="save"]').prop('disabled', true);
+    //     }
+    // }
+    check_duplicate_registration();
 
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
@@ -871,6 +885,36 @@ function urlParam(name){
     return 0;
 }
 
+
+function check_duplicate_registration()
+{
+    enrollment_id = $('#id_enrollment_id').val();
+    partner_name = $('#id_partner_name').val();
+    id_round = $('#id_round').val();
+
+    if (enrollment_id > 0 && id_round > 0)
+    {
+        if (isAddPage())
+        {
+            alert("The child already exists with the partner " + partner_name);
+            $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
+            $(':input[type="submit"][name="save"]').prop('disabled', true);
+        }
+        else
+        {
+            $(':input[type="submit"][name="save_add_another"]').prop('disabled', false);
+            $(':input[type="submit"][name="save"]').prop('disabled', false);
+        }
+    }
+}
+function isAddPage()
+{
+
+    var url_loc = window.location.toString();
+
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add(\/*)(\?.*)?$/i)>=0);
+
+}
 function reorganizeForm()
 {
 
@@ -1571,10 +1615,6 @@ function dulplicate_search(search_by) {
 
                 if(response.result != "")
                 {
-                    // $('.btn-primary').addClass('d-none');
-                    // document.getElementById('id-save_add_another').style.visibility = 'hidden';
-
-
                     alert("The child already exists with the partner  "+response.result);
                     $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
                     $(':input[type="submit"][name="save"]').prop('disabled', true);
@@ -1583,19 +1623,11 @@ function dulplicate_search(search_by) {
                 }
                 else
                 {
-
                     $(':input[type="submit"][name="save_add_another"]').prop('disabled', false);
                     $(':input[type="submit"][name="save"]').prop('disabled', false);
                 }
 
                 console.log(response);
-                // var result = JSON.parse(data.result);
-                //    if(!result.length){
-                //         var result = [{ error: 'No matches found',  value: response.term }];
-                //         response(result);
-                //      }else{
-                //         response(result);
-                //     }
                 },
                 error: function(response) {
                     console.log(response);

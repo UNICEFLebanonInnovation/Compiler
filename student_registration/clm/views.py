@@ -5275,7 +5275,7 @@ def search_clm_duplicate_registration(request):
         qs = search_duplicate_student_name(model, round_id, student_first_name, student_father_name,
                                            student_last_name)
     elif search_by == 'phone':
-        qs = search_duplicate_phone(model, round_id, student_first_name, student_father_name, phone_number)
+        qs = search_duplicate_phone(model, round_id, student_first_name, phone_number)
     elif search_by == 'id':
         qs = search_duplicate_case(model, round_id, id_type, student_first_name, case_number, recorded_number,
                                    parent_syrian_national_number, parent_sop_national_number,
