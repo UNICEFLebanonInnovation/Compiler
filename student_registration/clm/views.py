@@ -5169,10 +5169,12 @@ def search_clm_child(request):
 
     if terms:
         if len(terms.split()) > 1:
+
+            # .filter(partner=request.user.partner_id) \
+
             qs = model.objects.annotate(fullname=Concat('student__first_name', Value(' '),
                                                         'student__father_name', Value(' '),
                                                         'student__last_name')) \
-                .filter(partner=request.user.partner_id) \
                 .filter(fullname__icontains=terms) \
                 .values('id', 'student__first_name', 'student__father_name',
                         'student__last_name', 'student__mother_fullname',
@@ -5180,7 +5182,9 @@ def search_clm_child(request):
                         'student__birthday_year', 'round__name', 'internal_number').distinct()
         else:
             # for term in terms:
-            qs = model.objects.filter(partner=request.user.partner_id).filter(
+            # .filter(partner=request.user.partner_id)
+            qs = model.objects\
+                .filter(
                 Q(student__first_name__contains=term) |
                 Q(student__father_name__contains=term) |
                 Q(student__last_name__contains=term) |

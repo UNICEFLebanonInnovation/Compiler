@@ -902,7 +902,7 @@ function isAddPage()
 
     var url_loc = window.location.toString();
 
-    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add(\/*)(\?.*)?$/i)>=0);
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln|abln|cbece|rs|inclusion(\/*)(\?.*)?$/i)>=0);
 
 }
 

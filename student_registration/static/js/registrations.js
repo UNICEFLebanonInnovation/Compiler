@@ -28,18 +28,6 @@ $(window).load(function () {
 
 $(document).ready(function() {
 
-    // enrollment_id = $('#id_enrollment_id').val();
-    // partner_name = $('#id_partner_name').val();
-    //
-    // if (enrollment_id > 0)
-    // {
-    //     if (isAddPage())
-    //     {
-    //         alert("The child already exists with the partner " + partner_name);
-    //         $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
-    //         $(':input[type="submit"][name="save"]').prop('disabled', true);
-    //     }
-    // }
     check_duplicate_registration();
 
     $(document).on('click', '.delete-button', function(){
@@ -909,11 +897,8 @@ function check_duplicate_registration()
 }
 function isAddPage()
 {
-
     var url_loc = window.location.toString();
-
-    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add(\/*)(\?.*)?$/i)>=0);
-
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln|abln|cbece|rs|inclusion(\/*)(\?.*)?$/i)>=0);
 }
 function reorganizeForm()
 {
