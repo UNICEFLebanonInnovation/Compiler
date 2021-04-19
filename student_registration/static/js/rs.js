@@ -28,6 +28,8 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
+    load_centers();
+
     check_duplicate_registration();
 
     if($(document).find('#id_registration_date').length == 1) {
@@ -1934,4 +1936,19 @@ function load_cadasters(url)
         }
     })
 }
-
+function load_centers()
+{
+    alert('hi');
+    var url = "{% url 'clm:load_centers' %}";
+    var value = $("#id_partner_id").val();
+    alert(value);
+    $.ajax({
+        url: url,
+        data: {
+            'partner_id': value
+        },
+        success: function (data) {
+            $("#id_center").html(data);
+        }
+    })
+}

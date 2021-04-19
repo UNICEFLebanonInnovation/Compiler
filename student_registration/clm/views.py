@@ -31,7 +31,7 @@ from student_registration.locations.models import Location
 from student_registration.students.models import Person
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
-from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, ABLN_FC
+from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, ABLN_FC, Center
 from .forms import (
     BLNForm,
     ABLNForm,
@@ -102,6 +102,7 @@ class BLNAddView(LoginRequiredMixin,
                 stage='pre_test',
                 enrollment_model='BLN',
                 assessment_slug='bln_pre_test',
+                # partner_id=self.request.user.partner,
                 callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
                                                                  kwargs={
                                                                      'pk': self.request.session.get('instance_id')})))
@@ -5148,6 +5149,11 @@ def load_cadasters(request):
     id_district = request.GET.get('id_district')
     cities = Location.objects.filter(parent_id=id_district).order_by('name')
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
+
+def load_centers(request):
+    id_partner = request.GET.get('id_partner')
+    centers = Center.objects.filter(partner=id_partner).order_by('name')
+    return render(request, 'clm/center_dropdown_list_options.html', {'centers': centers})
 
 
 def search_clm_child(request):

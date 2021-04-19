@@ -230,8 +230,8 @@ class CommonForm(forms.ModelForm):
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
+    partner = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
-
 
     # participation = forms.ChoiceField(
     #     label=_('How was the level of child participation in the program?'),
@@ -334,6 +334,7 @@ class CommonForm(forms.ModelForm):
             'student_id',
             'enrollment_id',
             'partner_name',
+            'partner',
             # 'comments',
             # 'unsuccessful_pretest_reason',
             # 'unsuccessful_posttest_reason',
@@ -804,6 +805,7 @@ class BLNForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
+                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -1286,6 +1288,20 @@ class BLNForm(CommonForm):
         attended_social = cleaned_data.get("attended_social")
         modality_social = cleaned_data.get("modality_social")
         social_emotional = cleaned_data.get("social_emotional")
+
+
+        source_of_identification = cleaned_data.get("source_of_identification")
+        source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
+        rims_case_number = cleaned_data.get("rims_case_number")
+
+        if source_of_identification == 'Other Sources':
+            if not source_of_identification_specify:
+                self.add_error('source_of_identification_specify', 'This field is required')
+        if source_of_identification == 'RIMS':
+            if not rims_case_number:
+                self.add_error('rims_case_number', 'This field is required')
+
+
 
         if attended_arabic == 'yes':
             if not modality_arabic:
@@ -2051,6 +2067,7 @@ class ABLNForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
+                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -2536,6 +2553,17 @@ class ABLNForm(CommonForm):
         modality_social = cleaned_data.get("modality_social")
         social_emotional = cleaned_data.get("social_emotional")
 
+        source_of_identification = cleaned_data.get("source_of_identification")
+        source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
+        rims_case_number = cleaned_data.get("rims_case_number")
+
+        if source_of_identification == 'Other Sources':
+            if not source_of_identification_specify:
+                self.add_error('source_of_identification_specify', 'This field is required')
+        if source_of_identification == 'RIMS':
+            if not rims_case_number:
+                self.add_error('rims_case_number', 'This field is required')
+
         if attended_arabic == 'yes':
             if not modality_arabic:
                 self.add_error('modality_arabic', 'This field is required')
@@ -2833,7 +2861,7 @@ class ABLNForm(CommonForm):
 
 class RSForm(CommonForm):
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 21, Person.CURRENT_YEAR - 5)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 18, Person.CURRENT_YEAR - 8)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -2841,6 +2869,12 @@ class RSForm(CommonForm):
         label=_('In which cycle is this child registered?'),
         required=False, to_field_name='id',
         initial=0
+    )
+    center = forms.ModelChoiceField(
+        queryset=Center.objects.all(), widget=forms.Select,
+        label=_('Site / Center'),
+        empty_label='-------',
+        required=True, to_field_name='id',
     )
     # site = forms.ChoiceField(
     #     widget=forms.Select, required=True,
@@ -3401,6 +3435,7 @@ class RSForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
+                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -3442,9 +3477,10 @@ class RSForm(CommonForm):
                     Div('cadaster', css_class='col-md-3'),
                     css_class='row',
                 ),
+
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('location', css_class='col-md-3'),
+                    Div('center', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
@@ -4778,6 +4814,7 @@ class CBECEForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
+                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -5276,6 +5313,19 @@ class CBECEForm(CommonForm):
         attended_artistic = cleaned_data.get("attended_artistic")
         modality_artistic = cleaned_data.get("modality_artistic")
         artistic = cleaned_data.get("artistic")
+
+
+
+        source_of_identification = cleaned_data.get("source_of_identification")
+        source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
+        rims_case_number = cleaned_data.get("rims_case_number")
+
+        if source_of_identification == 'Other Sources':
+            if not source_of_identification_specify:
+                self.add_error('source_of_identification_specify', 'This field is required')
+        if source_of_identification == 'RIMS':
+            if not rims_case_number:
+                self.add_error('rims_case_number', 'This field is required')
 
 
         if attended_science == 'yes':

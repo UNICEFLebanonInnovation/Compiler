@@ -98,6 +98,7 @@ class CLMSerializer(serializers.ModelSerializer):
     district_name = serializers.CharField(source='district.name', read_only=True)
     cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
     partner_name = serializers.CharField(source='partner.name', read_only=True)
+    partner = serializers.CharField(source='partner.id', read_only=True)
     created = serializers.CharField(read_only=True)
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)

@@ -119,6 +119,13 @@ class Center(models.Model):
 
     name = models.CharField(max_length=100)
 
+    partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True, null=True,
+        verbose_name=_('Partner'),
+        related_name='+'
+    )
+
     class Meta:
         ordering = ['name']
         verbose_name = "Site / Center"

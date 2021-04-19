@@ -28,6 +28,7 @@ $(window).load(function () {
 
 $(document).ready(function() {
 
+    load_centers();
     check_duplicate_registration();
 
     $(document).on('click', '.delete-button', function(){
@@ -1904,3 +1905,19 @@ function load_cadasters(url)
     })
 }
 
+function load_centers()
+{
+    alert('hi');
+    var url = "{% url 'clm:load_centers' %}";
+    var value = $("#id_partner").val();
+    alert(value);
+    $.ajax({
+        url: url,
+        data: {
+            'id_partner': value
+        },
+        success: function (data) {
+            $("#id_center").html(data);
+        }
+    })
+}
