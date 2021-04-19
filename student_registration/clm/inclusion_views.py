@@ -112,7 +112,9 @@ class InclusionListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return Inclusion.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        return Inclusion.objects.filter(partner=self.request.user.partner_id,
+                                  round__current_year=True).order_by('-id')
+        # return Inclusion.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class InclusionReferralView(LoginRequiredMixin,

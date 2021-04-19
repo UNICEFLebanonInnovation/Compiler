@@ -102,7 +102,6 @@ class BLNAddView(LoginRequiredMixin,
                 stage='pre_test',
                 enrollment_model='BLN',
                 assessment_slug='bln_pre_test',
-                # partner_id=self.request.user.partner,
                 callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
                                                                  kwargs={
                                                                      'pk': self.request.session.get('instance_id')})))
@@ -328,10 +327,12 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+
         return BLN.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
-        # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
-        #     '-id')
+                                    round__current_year=True).order_by('-id')
+        # return BLN.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
+        # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
 class BLNReferralView(LoginRequiredMixin,
@@ -688,8 +689,12 @@ class ABLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+
         return ABLN.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
+                                  round__current_year=True).order_by('-id')
+
+        # return ABLN.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
         # return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
         #     '-id')
 
@@ -1757,8 +1762,11 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+
         return RS.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
+                                  round__current_year=True).order_by('-id')
+        # return RS.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
         # return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
@@ -1983,7 +1991,10 @@ class CBECEListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return CBECE.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+                                  round__current_year=True).order_by('-id')
+
+        # return CBECE.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
         # return CBECE.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
