@@ -143,6 +143,9 @@ class BLNAddView(LoginRequiredMixin,
         form.save(self.request)
         return super(BLNAddView, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+
+        return BLNForm(None, instance=None, request=self.request)
 
 class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
@@ -548,6 +551,10 @@ class ABLNAddView(LoginRequiredMixin,
     def form_valid(self, form):
         form.save(self.request)
         return super(ABLNAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+
+        return ABLNForm(None, instance=None, request=self.request)
 
 
 class ABLNEditView(LoginRequiredMixin,
@@ -1623,6 +1630,10 @@ class RSAddView(LoginRequiredMixin,
         form.save(self.request)
         return super(RSAddView, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+
+        return RSForm(None, instance=None, request=self.request)
+
 
 class RSEditView(LoginRequiredMixin,
                     GroupRequiredMixin,
@@ -1829,6 +1840,10 @@ class CBECEAddView(LoginRequiredMixin,
     def form_valid(self, form):
         form.save(self.request)
         return super(CBECEAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+
+        return CBECEForm(None, instance=None, request=self.request)
 
 
 class CBECEEditView(LoginRequiredMixin,
@@ -5160,12 +5175,6 @@ def load_cadasters(request):
     id_district = request.GET.get('id_district')
     cities = Location.objects.filter(parent_id=id_district).order_by('name')
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
-
-def load_centers(request):
-    id_partner = request.GET.get('id_partner')
-    centers = Center.objects.filter(partner=id_partner).order_by('name')
-    return render(request, 'clm/center_dropdown_list_options.html', {'centers': centers})
-
 
 def search_clm_child(request):
     from django.db.models.functions import Concat

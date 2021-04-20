@@ -28,7 +28,6 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
-    load_centers()
 
     check_duplicate_registration();
 
@@ -89,7 +88,7 @@ $(document).ready(function(){
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
 
-     $(document).on('change', 'select#id_source_of_identification', function(){
+    $(document).on('change', 'select#id_source_of_identification', function(){
          reorganizeForm();
     });
 
@@ -936,8 +935,18 @@ function reorganizeForm()
 
     var source_of_identification = $('select#id_source_of_identification').val();
 
+     // source_of_identification
+    $('div#div_id_source_of_identification_specify').addClass('d-none');
+    $('#span_source_of_identification_specify').addClass('d-none');
+
     $('div#div_id_rims_case_number').addClass('d-none');
     $('#span_rims_case_number').addClass('d-none');
+
+
+    if(source_of_identification == 'Other Sources'){
+        $('#div_id_source_of_identification_specify').removeClass('d-none');
+        $('#span_source_of_identification_specify').removeClass('d-none');
+    }
 
     if(source_of_identification == 'RIMS'){
         $('#div_id_rims_case_number').removeClass('d-none');
@@ -1900,19 +1909,4 @@ function load_cadasters(url)
     })
 }
 
-function load_centers()
-{
-    alert('hi');
-    var url = "{% url 'clm:load_centers' %}";
-    var value = $("#id_partner_id").val();
-    alert(value);
-    $.ajax({
-        url: url,
-        data: {
-            'partner_id': value
-        },
-        success: function (data) {
-            $("#id_center").html(data);
-        }
-    })
-}
+f

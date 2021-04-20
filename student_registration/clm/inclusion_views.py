@@ -56,6 +56,10 @@ class InclusionAddView(LoginRequiredMixin,
         form.save(self.request)
         return super(InclusionAddView, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+
+        return InclusionForm(None, instance=None, request=self.request)
+
 
 class InclusionEditView(LoginRequiredMixin,
                         GroupRequiredMixin,

@@ -230,7 +230,6 @@ class CommonForm(forms.ModelForm):
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
-    partner = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     # participation = forms.ChoiceField(
@@ -333,8 +332,7 @@ class CommonForm(forms.ModelForm):
             # 'learning_result',
             'student_id',
             'enrollment_id',
-            'partner_name',
-            'partner',
+            'partner_name'
             # 'comments',
             # 'unsuccessful_pretest_reason',
             # 'unsuccessful_posttest_reason',
@@ -360,7 +358,7 @@ class BLNForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 8)))
+    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 7)))
     YEARS_BLN.insert(0, ('', '---------'))
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
@@ -659,9 +657,14 @@ class BLNForm(CommonForm):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('abln', _('ABLN')),
-            ('RIMS', _('RIMS'))
+            ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
         ),
         initial=''
+    )
+    source_of_identification_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     rims_case_number = forms.CharField(
         required=False,
@@ -805,7 +808,6 @@ class BLNForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
-                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -926,9 +928,14 @@ class BLNForm(CommonForm):
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
-                    css_class='row',
+                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
+                    Div('source_of_identification_specify', css_class='col-md-3'),
+                    css_class='row d-none',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
@@ -1219,6 +1226,21 @@ class BLNForm(CommonForm):
                 css_class='button-group'
             )
         )
+
+        if instance:
+
+            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+        else:
+
+            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
+
+        self.fields['center'] = forms.ModelChoiceField(
+            queryset=queryset, widget=forms.Select,
+            label=_('Site / Center'),
+            empty_label='-------',
+            required=True, to_field_name='id',
+        )
+
 
     def clean(self):
         cleaned_data = super(BLNForm, self).clean()
@@ -1617,7 +1639,7 @@ class ABLNForm(CommonForm):
         ('level_two', _('Level two')),
         # ('level_three', _('Level three'))
     )
-    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 8)))
+    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 7)))
     YEARS_ABLN.insert(0, ('', '---------'))
 
     first_attendance_date = forms.DateField(
@@ -1921,9 +1943,14 @@ class ABLNForm(CommonForm):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
             # ('bln', _('BLN'))
         ),
         initial=''
+    )
+    source_of_identification_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     rims_case_number = forms.CharField(
         required=False,
@@ -2067,7 +2094,6 @@ class ABLNForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
-                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -2189,9 +2215,14 @@ class ABLNForm(CommonForm):
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
-                    css_class='row',
+                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
+                    Div('source_of_identification_specify', css_class='col-md-3'),
+                    css_class='row d-none',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
@@ -2482,6 +2513,20 @@ class ABLNForm(CommonForm):
                 HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
+        )
+
+        if instance:
+
+            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+        else:
+
+            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
+
+        self.fields['center'] = forms.ModelChoiceField(
+            queryset=queryset, widget=forms.Select,
+            label=_('Site / Center'),
+            empty_label='-------',
+            required=True, to_field_name='id',
         )
 
     def clean(self):
@@ -3209,9 +3254,14 @@ class RSForm(CommonForm):
             ('Referral from school directors', _('Referral from school directors')),
             ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
             ('Other Sources', _('Other Sources')),
-            ('RIMS', _('RIMS'))
+            ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
         ),
         initial=''
+    )
+    source_of_identification_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     rims_case_number = forms.CharField(
         required=False,
@@ -3435,7 +3485,6 @@ class RSForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
-                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -3572,7 +3621,7 @@ class RSForm(CommonForm):
                     Div('source_of_identification', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_rims_case_number">16.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">16.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">16.1</span>'),
                     Div('source_of_identification_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -3882,6 +3931,21 @@ class RSForm(CommonForm):
                 css_class='button-group'
             )
         )
+
+        if instance:
+
+            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+        else:
+
+            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
+
+        self.fields['center'] = forms.ModelChoiceField(
+            queryset=queryset, widget=forms.Select,
+            label=_('Site / Center'),
+            empty_label='-------',
+            required=True, to_field_name='id',
+        )
+
     def clean(self):
         cleaned_data = super(RSForm, self).clean()
 
@@ -4290,7 +4354,7 @@ class CBECEForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 3)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 2)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -4625,9 +4689,14 @@ class CBECEForm(CommonForm):
             ('List database', _('List database')),
             ('From hosted community', _('From hosted community')),
             ('From displaced community', _('From displaced community')),
-            ('RIMS', _('RIMS'))
+            ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
         ),
         initial=''
+    )
+    source_of_identification_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     rims_case_number = forms.CharField(
         required=False,
@@ -4814,7 +4883,6 @@ class CBECEForm(CommonForm):
                     'student_id',
                     'enrollment_id',
                     'partner_name',
-                    'partner',
                     css_class='row',
                 ),
                 Div(
@@ -4936,9 +5004,14 @@ class CBECEForm(CommonForm):
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
-                    css_class='row',
+                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
+                    Div('source_of_identification_specify', css_class='col-md-3'),
+                    css_class='row d-none',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
@@ -5238,6 +5311,21 @@ class CBECEForm(CommonForm):
                 css_class='button-group'
             )
         )
+
+        if instance:
+
+            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+        else:
+
+            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
+
+        self.fields['center'] = forms.ModelChoiceField(
+            queryset=queryset, widget=forms.Select,
+            label=_('Site / Center'),
+            empty_label='-------',
+            required=True, to_field_name='id',
+        )
+
     def clean(self):
         cleaned_data = super(CBECEForm, self).clean()
 
