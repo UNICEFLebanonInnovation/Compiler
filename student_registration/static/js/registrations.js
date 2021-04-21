@@ -944,7 +944,7 @@ function reorganizeForm()
         $('#span_source_of_identification_specify').removeClass('d-none');
     }
 
-    if(source_of_identification == 'RIMS'){ 
+    if(source_of_identification == 'RIMS'){
         $('#div_id_rims_case_number').removeClass('d-none');
         $('#span_rims_case_number').removeClass('d-none');
     }

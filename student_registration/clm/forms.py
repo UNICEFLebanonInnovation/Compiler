@@ -1607,6 +1607,7 @@ class BLNForm(CommonForm):
             'no_child_id_confirmation',
             'source_of_identification',
             'rims_case_number',
+            'source_of_identification_specify',
             'other_nationality',
             'education_status',
             'caretaker_first_name',
@@ -2883,6 +2884,7 @@ class ABLNForm(CommonForm):
             'no_child_id_confirmation',
             'source_of_identification',
             'rims_case_number',
+            'source_of_identification_specify',
             'other_nationality',
             'education_status',
             'caretaker_first_name',
@@ -2939,10 +2941,10 @@ class RSForm(CommonForm):
     #     )
     # )
 
-    location = forms.CharField(
-        label=_("Location"),
-        widget=forms.TextInput, required=False
-    )
+    # location = forms.CharField(
+    #     label=_("Location"),
+    #     widget=forms.TextInput, required=False
+    # )
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
         label=_('The school where the child is attending the program'),
@@ -3261,15 +3263,10 @@ class RSForm(CommonForm):
             ('', '----------'),
             ('Referral from school directors', _('Referral from school directors')),
             ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
-            ('Other Sources', _('Other Sources')),
             ('RIMS', _('RIMS')),
             ('Other Sources', _('Other Sources')),
         ),
         initial=''
-    )
-    source_of_identification_specify = forms.CharField(
-        label=_('Please specify'),
-        widget=forms.TextInput, required=False
     )
     rims_case_number = forms.CharField(
         required=False,
@@ -4280,7 +4277,7 @@ class RSForm(CommonForm):
     class Meta:
         model = RS
         fields = CommonForm.Meta.fields + (
-            'location',
+            # 'location',
             'first_attendance_date',
             'student_birthday_year',
             'have_labour_single_selection',
@@ -4395,7 +4392,11 @@ class CBECEForm(CommonForm):
         required=False, to_field_name='id',
         initial=0
     )
-
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
     referral = forms.MultipleChoiceField(
         label=_('Where was the child referred?'),
         choices=CLM.REFERRAL,
@@ -5722,6 +5723,7 @@ class CBECEForm(CommonForm):
             'no_child_id_confirmation',
             'source_of_identification',
             'rims_case_number',
+            'source_of_identification_specify',
             'other_nationality',
             'education_status',
             # 'caretaker_first_name',
