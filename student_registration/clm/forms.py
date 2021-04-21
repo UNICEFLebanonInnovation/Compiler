@@ -933,9 +933,13 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
                     HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
                     Div('source_of_identification_specify', css_class='col-md-3'),
-                    css_class='row d-none',
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
@@ -2220,9 +2224,13 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
                     HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
                     Div('source_of_identification_specify', css_class='col-md-3'),
-                    css_class='row d-none',
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
@@ -5009,9 +5017,13 @@ class CBECEForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
                     HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
                     Div('source_of_identification_specify', css_class='col-md-3'),
-                    css_class='row d-none',
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),

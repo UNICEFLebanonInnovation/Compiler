@@ -2792,7 +2792,7 @@ msgstr ""
 #: student_registration/clm/models.py:930
 #: student_registration/clm/models.py:2943
 msgid "RIMS Case Number"
-msgstr ""
+msgstr "رقم ملف RIMS"
 
 #: student_registration/clm/forms.py:668 student_registration/clm/forms.py:1914
 #: student_registration/clm/forms.py:3189
