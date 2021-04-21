@@ -144,8 +144,10 @@ class BLNAddView(LoginRequiredMixin,
         return super(BLNAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
-
-        return BLNForm(None, instance=None, request=self.request)
+        if self.request.method == "POST":
+            return BLNForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return BLNForm(None, instance=None, request=self.request)
 
 class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
@@ -553,8 +555,11 @@ class ABLNAddView(LoginRequiredMixin,
         return super(ABLNAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return ABLNForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return ABLNForm(None, instance=None, request=self.request)
 
-        return ABLNForm(None, instance=None, request=self.request)
 
 
 class ABLNEditView(LoginRequiredMixin,
@@ -1631,8 +1636,10 @@ class RSAddView(LoginRequiredMixin,
         return super(RSAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
-
-        return RSForm(None, instance=None, request=self.request)
+        if self.request.method == "POST":
+            return RSForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return RSForm(None, instance=None, request=self.request)
 
 
 class RSEditView(LoginRequiredMixin,
@@ -1843,7 +1850,10 @@ class CBECEAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
 
-        return CBECEForm(None, instance=None, request=self.request)
+        if self.request.method == "POST":
+            return CBECEForm(self.request.POST, instance=None, request=self.request)
+        else :
+            return CBECEForm(None, instance=None, request=self.request)
 
 
 class CBECEEditView(LoginRequiredMixin,
