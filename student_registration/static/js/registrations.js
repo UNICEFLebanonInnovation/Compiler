@@ -187,7 +187,7 @@ $(document).ready(function() {
 
         $("#id_search_clm_student").autocomplete("instance")._renderItem = function (ul, item) {
             if(item.error) {
-                return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+                return $("<li>").append('<dahiv class="error">No result found</dahiv>').appendTo(ul);
             }
             var full_name = item.student__first_name+" "+item.student__father_name+" "+item.student__last_name;
             var student_birthday = item.student__birthday_day+"/"+item.student__birthday_month+"/"+item.student__birthday_year;
@@ -846,7 +846,7 @@ $(document).ready(function() {
             return;
         }
         // Comment it to disable Ajax Page load
-        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
+        //$(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
 
         $(document).on('pjax:beforeReplace', function() {
             $('.content-wrap').css('opacity', '0.1');

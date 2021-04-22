@@ -147,7 +147,7 @@ class BLNAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return BLNForm(self.request.POST, instance=None, request=self.request)
         else:
-            return BLNForm(None, instance=None, request=self.request)
+            return BLNForm(None, instance=None, request=self.request,initial=self.get_initial())
 
 class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
@@ -558,8 +558,7 @@ class ABLNAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return ABLNForm(self.request.POST, instance=None, request=self.request)
         else:
-            return ABLNForm(None, instance=None, request=self.request)
-
+            return ABLNForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class ABLNEditView(LoginRequiredMixin,
@@ -1639,7 +1638,7 @@ class RSAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return RSForm(self.request.POST, instance=None, request=self.request)
         else:
-            return RSForm(None, instance=None, request=self.request)
+            return RSForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class RSEditView(LoginRequiredMixin,
@@ -1853,7 +1852,7 @@ class CBECEAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return CBECEForm(self.request.POST, instance=None, request=self.request)
         else :
-            return CBECEForm(None, instance=None, request=self.request)
+            return CBECEForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class CBECEEditView(LoginRequiredMixin,

@@ -58,7 +58,10 @@ class InclusionAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
 
-        return InclusionForm(None, instance=None, request=self.request)
+        if self.request.method == "POST":
+            return InclusionForm(self.request.POST, instance=None, request=self.request)
+        else :
+            return InclusionForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class InclusionEditView(LoginRequiredMixin,
