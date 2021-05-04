@@ -848,7 +848,7 @@ $(document).ready(function(){
             return;
         }
         // Comment it to disable Ajax Page load
-        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
+        // $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
 
         $(document).on('pjax:beforeReplace', function() {
             $('.content-wrap').css('opacity', '0.1');
@@ -876,7 +876,6 @@ function urlParam(name){
     return 0;
 }
 
-
 function check_duplicate_registration()
 {
     enrollment_id = $('#id_enrollment_id').val();
@@ -885,7 +884,7 @@ function check_duplicate_registration()
 
     if (enrollment_id > 0 && id_round > 0)
     {
-        if (isAddPage())
+        if (isAddPage() && ($('.errorlist').length == 0))
         {
             alert("The child already exists with the partner " + partner_name);
             $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
@@ -900,11 +899,8 @@ function check_duplicate_registration()
 }
 function isAddPage()
 {
-
     var url_loc = window.location.toString();
-
     return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add(\/*)(\?.*)?$/i)>=0);
-
 }
 
 function reorganizeForm()
@@ -1233,12 +1229,12 @@ function reorganizeForm()
 }
 
 
+
 function duplicate_search_student_name()
 {
     var student_first_name= $('#id_student_first_name').val();
     var student_father_name= $('#id_student_father_name').val();
     var student_last_name= $('#id_student_last_name').val();
-
 
     if (student_first_name!='' && student_father_name!='' && student_last_name!='' )
     {
@@ -1248,9 +1244,11 @@ function duplicate_search_student_name()
 
 }
 
+
 function duplicate_search(search_by) {
 
     if (isAddPage()) {
+
         var search_by = search_by
         var round = $('select#id_round').val();
         var new_registry = $('select#id_new_registry').val();
@@ -1300,6 +1298,7 @@ function duplicate_search(search_by) {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
+                // alert(response.result);
 
                 if (response.result != "") {
                     alert("The child already exists with the partner  " + response.result);
@@ -1320,6 +1319,8 @@ function duplicate_search(search_by) {
             }
 
         });
+
+
     }
 
 }

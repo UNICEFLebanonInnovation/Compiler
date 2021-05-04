@@ -187,7 +187,7 @@ $(document).ready(function() {
 
         $("#id_search_clm_student").autocomplete("instance")._renderItem = function (ul, item) {
             if(item.error) {
-                return $("<li>").append('<dahiv class="error">No result found</dahiv>').appendTo(ul);
+                return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
             }
             var full_name = item.student__first_name+" "+item.student__father_name+" "+item.student__last_name;
             var student_birthday = item.student__birthday_day+"/"+item.student__birthday_month+"/"+item.student__birthday_year;
@@ -883,7 +883,7 @@ function check_duplicate_registration()
 
     if (enrollment_id > 0 && id_round > 0)
     {
-        if (isAddPage())
+        if (isAddPage() && ($('.errorlist').length == 0))
         {
             alert("The child already exists with the partner " + partner_name);
             $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);

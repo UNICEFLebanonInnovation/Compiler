@@ -847,7 +847,7 @@ $(document).ready(function(){
             return;
         }
         // Comment it to disable Ajax Page load
-        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
+        // $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
 
         $(document).on('pjax:beforeReplace', function() {
             $('.content-wrap').css('opacity', '0.1');
@@ -884,7 +884,7 @@ function check_duplicate_registration()
 
     if (enrollment_id > 0 && id_round > 0)
     {
-        if (isAddPage())
+        if (isAddPage() && ($('.errorlist').length == 0))
         {
             alert("The child already exists with the partner " + partner_name);
             $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);

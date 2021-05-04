@@ -2916,7 +2916,7 @@ class ABLNForm(CommonForm):
 
 class RSForm(CommonForm):
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 18, Person.CURRENT_YEAR - 8)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 8)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
