@@ -31,7 +31,7 @@ from student_registration.locations.models import Location
 from student_registration.students.models import Person
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
-from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, ABLN_FC
+from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, ABLN_FC, Center
 from .forms import (
     BLNForm,
     ABLNForm,
@@ -143,6 +143,11 @@ class BLNAddView(LoginRequiredMixin,
         form.save(self.request)
         return super(BLNAddView, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return BLNForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return BLNForm(None, instance=None, request=self.request,initial=self.get_initial())
 
 class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
@@ -327,10 +332,12 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+
         return BLN.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
-        # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
-        #     '-id')
+                                    round__current_year=True).order_by('-id')
+        # return BLN.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
+        # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
 class BLNReferralView(LoginRequiredMixin,
@@ -547,6 +554,12 @@ class ABLNAddView(LoginRequiredMixin,
         form.save(self.request)
         return super(ABLNAddView, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return ABLNForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return ABLNForm(None, instance=None, request=self.request, initial=self.get_initial())
+
 
 class ABLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
@@ -687,8 +700,12 @@ class ABLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+
         return ABLN.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
+                                  round__current_year=True).order_by('-id')
+
+        # return ABLN.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
         # return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by(
         #     '-id')
 
@@ -1617,6 +1634,12 @@ class RSAddView(LoginRequiredMixin,
         form.save(self.request)
         return super(RSAddView, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return RSForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return RSForm(None, instance=None, request=self.request, initial=self.get_initial())
+
 
 class RSEditView(LoginRequiredMixin,
                     GroupRequiredMixin,
@@ -1756,8 +1779,11 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+
         return RS.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
+                                  round__current_year=True).order_by('-id')
+        # return RS.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
         # return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
@@ -1820,6 +1846,13 @@ class CBECEAddView(LoginRequiredMixin,
     def form_valid(self, form):
         form.save(self.request)
         return super(CBECEAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+
+        if self.request.method == "POST":
+            return CBECEForm(self.request.POST, instance=None, request=self.request)
+        else :
+            return CBECEForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
 class CBECEEditView(LoginRequiredMixin,
@@ -1982,7 +2015,10 @@ class CBECEListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return CBECE.objects.filter(partner=self.request.user.partner_id,
-                                    round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
+                                  round__current_year=True).order_by('-id')
+
+        # return CBECE.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
         # return CBECE.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
@@ -5148,7 +5184,6 @@ def load_cadasters(request):
     id_district = request.GET.get('id_district')
     cities = Location.objects.filter(parent_id=id_district).order_by('name')
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
-
 
 def search_clm_child(request):
     from django.db.models.functions import Concat

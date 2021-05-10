@@ -119,6 +119,13 @@ class Center(models.Model):
 
     name = models.CharField(max_length=100)
 
+    partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True, null=True,
+        verbose_name=_('Partner'),
+        related_name='+'
+    )
+
     class Meta:
         ordering = ['name']
         verbose_name = "Site / Center"
@@ -920,8 +927,13 @@ class CLM(TimeStampedModel):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
             ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
+    )
+    source_of_identification_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
     )
     rims_case_number  = models.CharField(
         max_length=50,
@@ -1556,7 +1568,8 @@ class BLN(CLM):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('abln', _('ABLN')),
-            ('RIMS', _('RIMS'))
+            ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
     )
@@ -1803,6 +1816,7 @@ class ABLN(CLM):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
             # ('bln', _('BLN'))
         ),
         verbose_name=_('Source of identification of the child')
@@ -2244,16 +2258,11 @@ class RS(CLM):
             ('', '----------'),
             ('Referral from school directors', _('Referral from school directors')),
             ('From Profiling Database (MEHE)', _('From Profiling Database (MEHE)')),
-            ('Other Sources', _('Other Sources')),
             ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
     )
-    source_of_identification_specify = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please specify')
-    )
-
     grade_level = models.CharField(
         max_length=50,
         blank=True,
@@ -2688,6 +2697,7 @@ class CBECE(CLM):
             ('From hosted community', _('From hosted community')),
             ('From displaced community', _('From displaced community')),
             ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
     )

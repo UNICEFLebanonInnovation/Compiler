@@ -98,6 +98,7 @@ class CLMSerializer(serializers.ModelSerializer):
     district_name = serializers.CharField(source='district.name', read_only=True)
     cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
     partner_name = serializers.CharField(source='partner.name', read_only=True)
+    partner = serializers.CharField(source='partner.id', read_only=True)
     created = serializers.CharField(read_only=True)
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
@@ -270,6 +271,8 @@ class BLNSerializer(CLMSerializer):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
+            'source_of_identification_specify',
             'other_nationality',
             'education_status',
             'caretaker_first_name',
@@ -360,6 +363,8 @@ class ABLNSerializer(CLMSerializer):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
+            'source_of_identification_specify',
             'other_nationality',
             'education_status',
             'caretaker_first_name',
@@ -455,6 +460,7 @@ class RSSerializer(CLMSerializer):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
             'source_of_identification_specify',
             'other_nationality',
             'education_status',
@@ -556,6 +562,8 @@ class CBECESerializer(CLMSerializer):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
+            'rims_case_number',
+            'source_of_identification_specify',
             'other_nationality',
             'education_status',
             'caretaker_first_name',
