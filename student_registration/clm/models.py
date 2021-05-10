@@ -1360,6 +1360,28 @@ class CLM(TimeStampedModel):
         verbose_name=_('With who child and/or caregiver?')
     )
 
+    child_received_books = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('child received books')
+    )
+    child_received_printout = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('child received printout')
+    )
+    child_received_internet = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('child received internet')
+    )
+
     @property
     def student_fullname(self):
         if self.student:

@@ -213,7 +213,6 @@ class CLMSerializer(serializers.ModelSerializer):
             'modified',
             'cycle_completed',
             'enrolled_at_school',
-            # 'internal',
         )
 
 
@@ -307,6 +306,9 @@ class BLNSerializer(CLMSerializer):
             'follow_up_done',
             'follow_up_done_with_who',
             'labours_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
         )
 
 
@@ -399,6 +401,9 @@ class ABLNSerializer(CLMSerializer):
             'follow_up_done',
             'follow_up_done_with_who',
             'labours_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
         )
 
 
@@ -502,6 +507,9 @@ class RSSerializer(CLMSerializer):
             'phone_call_number',
             'house_visit_number',
             'family_visit_number',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
         )
 
 
@@ -596,7 +604,10 @@ class CBECESerializer(CLMSerializer):
             'follow_up_done_with_who',
             'labours_other_specify',
             'mid_test_done',
-            'mid_test'
+            'mid_test',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
         )
 
 

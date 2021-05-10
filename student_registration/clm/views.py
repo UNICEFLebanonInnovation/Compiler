@@ -802,14 +802,15 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
                     if "ABLN_ASSESSMENT/social_emotional" in p_test:
                         data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
 
-                    if "ABLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
 
-                    if "ABLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["ABLN_ASSESSMENT/modality_psychomotor"]
+                    if "ABLN_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["ABLN_ASSESSMENT/attended_artistic"]
 
-                    if "ABLN_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["ABLN_ASSESSMENT/psychomotor"]
+                    if "ABLN_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["ABLN_ASSESSMENT/modality_artistic"]
+
+                    if "ABLN_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["ABLN_ASSESSMENT/artistic"]
 
             return form_class(data, instance=instance, request=self.request)
 
@@ -3040,9 +3041,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_attended_arabic': 'pre test attended arabic',
             'pre_test_modality_arabic': 'pre test modality arabic',
             'pre_test_arabic': 'pre test arabic',
-            'pre_test_attended_psychomotor': 'pre test attended psychomotor',
-            'pre_test_modality_psychomotor': 'pre test modality psychomotor',
-            'pre_test_psychomotor': 'pre test psychomotor',
+            'pre_test_attended_artistic': 'pre test attended artistic',
+            'pre_test_modality_artistic': 'pre test modality artistic',
+            'pre_test_artistic': 'pre test artistic',
             'pre_test_attended_math': 'pre test attended math',
             'pre_test_modality_math': 'pre test modality math',
             'pre_test_math': 'pre test math',
@@ -3056,9 +3057,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_attended_arabic': 'post test attended arabic',
             'post_test_modality_arabic': 'post test modality arabic',
             'post_test_arabic': 'post test arabic',
-            'post_test_attended_psychomotor': 'post test attended psychomotor',
-            'post_test_modality_psychomotor': 'post test modality psychomotor',
-            'post_test_psychomotor': 'post test psychomotor',
+            'post_test_attended_artistic': 'post test attended artistic',
+            'post_test_modality_artistic': 'post test modality artistic',
+            'post_test_artistic': 'post test artistic',
             'post_test_attended_math': 'post test attended math',
             'post_test_modality_math': 'post test modality math',
             'post_test_math': 'post test math',
@@ -3215,9 +3216,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_arabic',
             'pre_test_arabic',
 
-            'pre_test_attended_psychomotor',
-            'pre_test_modality_psychomotor',
-            'pre_test_psychomotor',
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
+            'pre_test_artistic',
 
             'pre_test_attended_math',
             'pre_test_modality_math',
@@ -3237,9 +3238,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_modality_arabic',
             'post_test_arabic',
 
-            'post_test_attended_psychomotor',
-            'post_test_modality_psychomotor',
-            'post_test_psychomotor',
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
+            'post_test_artistic',
 
             'post_test_attended_math',
             'post_test_modality_math',
@@ -3331,9 +3332,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_arabic': "pre_test->>'ABLN_ASSESSMENT/modality_arabic'",
             'pre_test_arabic': "pre_test->>'ABLN_ASSESSMENT/arabic'",
 
-            'pre_test_attended_psychomotor': "pre_test->>'ABLN_ASSESSMENT/attended_psychomotor'",
-            'pre_test_modality_psychomotor': "pre_test->>'ABLN_ASSESSMENT/modality_psychomotor'",
-            'pre_test_psychomotor': "pre_test->>'ABLN_ASSESSMENT/psychomotor'",
+            'pre_test_attended_artistic': "pre_test->>'ABLN_ASSESSMENT/attended_artistic'",
+            'pre_test_modality_artistic': "pre_test->>'ABLN_ASSESSMENT/modality_artistic'",
+            'pre_test_artistic': "pre_test->>'ABLN_ASSESSMENT/artistic'",
 
             'pre_test_attended_math': "pre_test->>'ABLN_ASSESSMENT/attended_math'",
             'pre_test_modality_math': "pre_test->>'ABLN_ASSESSMENT/modality_math'",
@@ -3351,9 +3352,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_modality_arabic': "post_test->>'ABLN_ASSESSMENT/modality_arabic'",
             'post_test_arabic': "post_test->>'ABLN_ASSESSMENT/arabic'",
 
-            'post_test_attended_psychomotor': "post_test->>'ABLN_ASSESSMENT/attended_psychomotor'",
-            'post_test_modality_psychomotor': "post_test->>'ABLN_ASSESSMENT/modality_psychomotor'",
-            'post_test_psychomotor': "post_test->>'ABLN_ASSESSMENT/psychomotor'",
+            'post_test_attended_artistic': "post_test->>'ABLN_ASSESSMENT/attended_artistic'",
+            'post_test_modality_artistic': "post_test->>'ABLN_ASSESSMENT/modality_artistic'",
+            'post_test_artistic': "post_test->>'ABLN_ASSESSMENT/artistic'",
 
             'post_test_attended_math': "post_test->>'ABLN_ASSESSMENT/attended_math'",
             'post_test_modality_math': "post_test->>'ABLN_ASSESSMENT/modality_math'",
@@ -3432,9 +3433,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_modality_arabic',
             'pre_test_arabic',
 
-            'pre_test_attended_psychomotor',
-            'pre_test_modality_psychomotor',
-            'pre_test_psychomotor',
+            'pre_test_attended_artistic',
+            'pre_test_modality_artistic',
+            'pre_test_artistic',
 
             'pre_test_attended_math',
             'pre_test_modality_math',
@@ -3454,9 +3455,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_modality_arabic',
             'post_test_arabic',
 
-            'post_test_attended_psychomotor',
-            'post_test_modality_psychomotor',
-            'post_test_psychomotor',
+            'post_test_attended_artistic',
+            'post_test_modality_artistic',
+            'post_test_artistic',
 
             'post_test_attended_math',
             'post_test_modality_math',
