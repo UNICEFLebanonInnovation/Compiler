@@ -1613,13 +1613,8 @@ function duplicate_search(search_by) {
             success: function (response) {
                 // alert(response.result);
 
-<<<<<<< HEAD
-                if(response.result != "")
-                {
-=======
                 if (response.result != "") {
                     alert("The child already exists with the partner  " + response.result);
->>>>>>> test-branch
                     $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
                     $(':input[type="submit"][name="save"]').prop('disabled', true);
                     // $('#').addClass('d-none');
@@ -1637,10 +1632,6 @@ function duplicate_search(search_by) {
             }
 
         });
-<<<<<<< HEAD
-
-=======
->>>>>>> test-branch
 
 
     }
