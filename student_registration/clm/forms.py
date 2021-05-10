@@ -6380,8 +6380,13 @@ class ABLNAssessmentForm(forms.ModelForm):
             ('referred_to_ybln', _('Referred to YBLN')),
             ('dropout', _('Dropout, referral not possible')),
             ('referred_to_bln', _('Referred to BLN')),
+            ('other', _('Other')),
         ),
         initial=''
+    )
+    learning_result_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
@@ -6694,7 +6699,6 @@ class ABLNAssessmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ABLNAssessmentForm, self).__init__(*args, **kwargs)
-
         post_test = ''
         post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -6732,6 +6736,8 @@ class ABLNAssessmentForm(forms.ModelForm):
 
                 Div(
                     Div('registration_level', css_class='col-md-3 d-none'),
+                    Div('clm_type', css_class='col-md-3 d-none'),
+
                     css_class='row',
                 ),
                 Div(
@@ -6760,8 +6766,13 @@ class ABLNAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">5.1</span>'),
+                    Div('learning_result_other', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('cp_referral', css_class='col-md-4'),
+                    Div('cp_referral', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -6944,6 +6955,8 @@ class ABLNAssessmentForm(forms.ModelForm):
         social_emotional = cleaned_data.get("social_emotional")
 
         learning_result = cleaned_data.get("learning_result")
+        learning_result_other = cleaned_data.get("learning_result")
+
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
 
@@ -6957,6 +6970,9 @@ class ABLNAssessmentForm(forms.ModelForm):
         if learning_result != 'no_absence':
             if not barriers_single:
                 self.add_error('barriers_single', 'This field is required')
+        elif learning_result == 'other':
+            if not learning_result_other:
+                self.add_error('learning_result_other', 'This field is required')
 
         if barriers_single == 'other':
             if not barriers_other:
@@ -7064,6 +7080,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             'basic_stationery',
             'pss_kit',
             'learning_result',
+            'learning_result_other',
             'phone_call_number',
             'house_visit_number',
             'family_visit_number',
@@ -7124,8 +7141,14 @@ class BLNAssessmentForm(forms.ModelForm):
             ('referred_to_tvet', _('Referred to TVET')),
             ('referred_to_ybln', _('Referred to YBLN')),
             ('dropout', _('Dropout, referral not possible')),
+            ('other', _('Other')),
+
         ),
         initial=''
+    )
+    learning_result_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
@@ -7441,7 +7464,7 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=REGISTRATION_LEVEL
     )
 
-    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    # clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
 
     def __init__(self, *args, **kwargs):
@@ -7451,7 +7474,7 @@ class BLNAssessmentForm(forms.ModelForm):
         post_test = ''
         post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['clm_type'].initial = 'BLN'
+        # self.fields['clm_type'].initial = 'BLN'
 
         display_assessment = ''
         form_action = reverse('clm:bln_post_assessment', kwargs={'pk': instance.id})
@@ -7484,6 +7507,7 @@ class BLNAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     Div('registration_level', css_class='col-md-3 d-none'),
+                    # Div('clm_type', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
@@ -7512,10 +7536,16 @@ class BLNAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">5.1</span>'),
+                    Div('learning_result_other', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('cp_referral', css_class='col-md-3'),
                     css_class='row',
                 ),
+
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
@@ -7695,6 +7725,7 @@ class BLNAssessmentForm(forms.ModelForm):
         social_emotional = cleaned_data.get("social_emotional")
 
         learning_result = cleaned_data.get("learning_result")
+        learning_result_other = cleaned_data.get("learning_result_other")
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
 
@@ -7708,6 +7739,9 @@ class BLNAssessmentForm(forms.ModelForm):
         if learning_result != 'no_absence':
             if not barriers_single:
                 self.add_error('barriers_single', 'This field is required')
+        elif learning_result == 'other':
+            if not learning_result_other:
+                self.add_error('learning_result_other', 'This field is required')
 
         if barriers_single == 'other':
             if not barriers_other:
@@ -7827,6 +7861,7 @@ class BLNAssessmentForm(forms.ModelForm):
             'basic_stationery',
             'pss_kit',
             'learning_result',
+            'learning_result_other',
             'phone_call_number',
             'house_visit_number',
             'family_visit_number',
@@ -7888,8 +7923,13 @@ class CBECEAssessmentForm(forms.ModelForm):
             # ('referred_to_tvet', _('Referred to TVET')),
             # ('referred_to_ycbece', _('Referred to YCBECE')),
             ('dropout', _('Dropout, referral not possible')),
+            ('other', _('Other')),
         ),
         initial=''
+    )
+    learning_result_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
@@ -8294,6 +8334,7 @@ class CBECEAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     Div('registration_level', css_class='col-md-3 d-none'),
+                    Div('clm_type', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
@@ -8322,6 +8363,11 @@ class CBECEAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">4.1</span>'),
+                    Div('learning_result_other', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('cp_referral', css_class='col-md-3'),
                     css_class='row',
@@ -8531,6 +8577,7 @@ class CBECEAssessmentForm(forms.ModelForm):
         artistic = cleaned_data.get("artistic")
 
         learning_result = cleaned_data.get("learning_result")
+        learning_result_other = cleaned_data.get("learning_result_other")
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
 
@@ -8544,6 +8591,9 @@ class CBECEAssessmentForm(forms.ModelForm):
         if learning_result != 'no_absence':
             if not barriers_single:
                 self.add_error('barriers_single', 'This field is required')
+        elif learning_result == 'other':
+            if not learning_result_other:
+                self.add_error('learning_result_other', 'This field is required')
 
         if barriers_single == 'other':
             if not barriers_other:
@@ -8679,6 +8729,7 @@ class CBECEAssessmentForm(forms.ModelForm):
             'basic_stationery',
             # 'pss_kit',
             'learning_result',
+            'learning_result_other',
             'phone_call_number',
             'house_visit_number',
             'family_visit_number',
@@ -8896,6 +8947,8 @@ class CBECEMidAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     Div('registration_level', css_class='col-md-3 d-none'),
+                    Div('clm_type', css_class='col-md-3 d-none'),
+
                     css_class='row',
                 ),
 
@@ -9651,6 +9704,7 @@ class RSAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     Div('grade_registration', css_class='col-md-3 d-none'),
+                    Div('clm_type', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(

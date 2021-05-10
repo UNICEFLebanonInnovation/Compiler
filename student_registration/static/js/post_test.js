@@ -20,8 +20,9 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
-    reorganizeForm_post_assessment();
+    learning_result_next_level();
 
+    reorganizeForm_post_assessment();
 
     $(document).on('change', 'select#id_participation,  select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
         'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
@@ -31,6 +32,7 @@ $(document).ready(function(){
         'select#id_covid_session_attended,  select#id_followup_session_attended ,  select#id_parent_attended_visits ', function(){
        reorganizeForm_post_assessment();
     });
+
 
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
@@ -80,6 +82,27 @@ function pageScripts() {
     });
 }
 
+function learning_result_next_level() {
+    var registration_level = $('select#id_registration_level').val();
+    var clm_type = $('#id_clm_type').val();
+    if(clm_type=='ABLN' && registration_level=='level_two')
+    {
+        $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
+    }
+    else if(clm_type=='BLN' && registration_level=='level_three')
+    {
+        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
+    }
+    else if(clm_type=='CBECE' && registration_level=='level_three')
+    {
+        $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
+    }
+    else if(clm_type=='RS' && registration_level=='level_three')
+    {
+        $("#id_learning_result option[value=" + 'graduated_to_rs_next_round_higher_level' + "]").hide();
+    }
+
+}
 function reorganizeForm_post_assessment()
 {
 
@@ -152,10 +175,6 @@ function reorganizeForm_post_assessment()
         $('#div_id_learning_result_other').removeClass('d-none');
         $('#span_learning_result_other').removeClass('d-none');
     }
-    // else
-    // {
-    //     $('#id_learning_result_other').val('');
-    // }
 
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');
@@ -168,9 +187,27 @@ function reorganizeForm_post_assessment()
     $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');
 
+
+    $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").show();
+    $("#id_learning_result option[value=" + 'referred_to_alp' + "]").show();
+    $("#id_learning_result option[value=" + 'referred_public_school' + "]").show();
+    $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").show();
+    $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").show();
+    $("#id_learning_result option[value=" + 'other' + "]").show();
+
+    learning_result_next_level();
+
     }
     else
     {
+        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_alp' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_public_school' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").hide();
+        $("#id_learning_result option[value=" + 'other' + "]").hide();
+
+
         $('select#id_round_complete').val("");
 
         // grades

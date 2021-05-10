@@ -1450,6 +1450,10 @@ class BLN(CLM):
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
     )
+    learning_result_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
     first_attendance_date = models.DateField(
         blank=True,
         null=True,
@@ -1694,6 +1698,10 @@ class ABLN(CLM):
         null=True,
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
+    )
+    learning_result_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
     )
     first_attendance_date = models.DateField(
         blank=True,
@@ -2569,6 +2577,10 @@ class CBECE(CLM):
         null=True,
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
+    )
+    learning_result_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
     )
     final_grade = models.DecimalField(
         max_digits=4,

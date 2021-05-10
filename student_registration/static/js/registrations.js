@@ -1600,7 +1600,6 @@ function dulplicate_search(search_by) {
 
                 if(response.result != "")
                 {
-                    alert("The child already exists with the partner  "+response.result);
                     $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
                     $(':input[type="submit"][name="save"]').prop('disabled', true);
                     // $('#').addClass('d-none');
@@ -1619,11 +1618,6 @@ function dulplicate_search(search_by) {
                 }
 
         });
-    // }
-    // else
-    // {
-    //
-    // }
 
 
 
