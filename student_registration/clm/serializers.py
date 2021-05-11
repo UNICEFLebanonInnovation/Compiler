@@ -309,6 +309,10 @@ class BLNSerializer(CLMSerializer):
             'child_received_books',
             'child_received_printout',
             'child_received_internet',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify'
         )
 
 
@@ -404,6 +408,10 @@ class ABLNSerializer(CLMSerializer):
             'child_received_books',
             'child_received_printout',
             'child_received_internet',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify'
         )
 
 
@@ -510,6 +518,10 @@ class RSSerializer(CLMSerializer):
             'child_received_books',
             'child_received_printout',
             'child_received_internet',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify'
         )
 
 
@@ -608,6 +620,10 @@ class CBECESerializer(CLMSerializer):
             'child_received_books',
             'child_received_printout',
             'child_received_internet',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify'
         )
 
 

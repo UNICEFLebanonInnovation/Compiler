@@ -1381,6 +1381,33 @@ class CLM(TimeStampedModel):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         verbose_name=_('child received internet')
     )
+    referal_wash = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('referal wash')
+    )
+    referal_health = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('referal health')
+    )
+    referal_other = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('referal other')
+    )
+    referal_other_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('referal other specify')
+    )
+
+    # referal_wash,referal_health,referal_other,referal_other_specify
 
     @property
     def student_fullname(self):
