@@ -18,7 +18,7 @@ from student_registration.students.models import (
 )
 
 from student_registration.locations.models import Location
-from .models import Disability, Inclusion
+from .models import Disability, Inclusion, CLMRound
 from .inclusion_serializers import InclusionSerializer
 
 
@@ -68,6 +68,12 @@ LEARNING_RESULT = (
 
 class InclusionForm(forms.ModelForm):
 
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.filter(current_round_inclusion=True), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
@@ -422,15 +428,20 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('governorate', css_class='col-md-3'),
+                    Div('round', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('cadaster', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('cadaster', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('location', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -914,6 +925,7 @@ class InclusionForm(forms.ModelForm):
     class Meta:
         model = Inclusion
         fields = (
+            'round',
             'first_attendance_date',
             'governorate',
             'district',

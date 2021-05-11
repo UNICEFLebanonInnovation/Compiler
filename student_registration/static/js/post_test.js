@@ -263,6 +263,9 @@ function reorganizeForm_post_assessment()
     {
         $('div.grd6').addClass('d-none');
         $('#grd6').addClass('hide');
+        $('#id_science').val('');
+        $('select#id_attended_science').val("no");
+        $('select#id_modality_science').val("");
     }
 
     if(grade_registration == '7' || grade_registration == '8' || grade_registration == '9'){
@@ -273,6 +276,17 @@ function reorganizeForm_post_assessment()
     {
         $('div.grd7').addClass('d-none');
         $('#grd7').addClass('hide');
+        $('#id_biology').val('');
+        $('select#id_attended_biology').val("no");
+        $('select#id_modality_biology').val("");
+
+        $('#id_chemistry').val('');
+        $('select#id_attended_chemistry').val("no");
+        $('select#id_modality_chemistry').val("");
+
+        $('#id_physics').val('');
+        $('select#id_attended_physics').val("no");
+        $('select#id_modality_physics').val("");
     }
 
 
@@ -325,8 +339,6 @@ function reorganizeForm_post_assessment()
     $('#span_artistic').addClass('d-none');
     $('div#div_id_modality_artistic').addClass('d-none');
     $('#span_modality_artistic').addClass('d-none');
-
-        // , , physics
 
     $('div#div_id_biology').addClass('d-none');
     $('#span_biology').addClass('d-none');

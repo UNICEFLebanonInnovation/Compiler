@@ -22,7 +22,7 @@ from student_registration.outreach.serializers import ChildSerializer
 from .tables import BootstrapTable
 from .inclusion_tables import InclusionTable
 from .inclusion_filters import InclusionFilter
-from .models import Inclusion
+from .models import Inclusion, CLMRound
 from .inclusion_forms import InclusionForm, InclusionReferralForm, InclusionAssessmentForm
 from .utils import is_allowed_create, is_allowed_edit
 from .inclusion_serializers import InclusionSerializer
@@ -185,9 +185,9 @@ class InclusionAssessmentView(LoginRequiredMixin,
 
 
 class InclusionExportViewSet(LoginRequiredMixin, ListView):
-
+    current_round = CLMRound.objects.filter(current_year=True)
     model = Inclusion
-    queryset = Inclusion.objects.all()
+    queryset = Inclusion.objects.filter(round__in=current_round)
 
     def get_queryset(self):
         if not self.request.user.is_staff:
@@ -200,6 +200,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'id': 'enropllment_id',
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
+            'round__name': 'CLM Round',
             'first_attendance_date': 'first attendance date',
             'governorate__name_en': 'Governorate',
             'cadaster__name_en': 'Cadaster',
@@ -294,6 +295,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'id',
             'partner__name',
             'source_of_identification',
+            'round__name',
             'first_attendance_date',
             'governorate__name_en',
             'district__name_en',
@@ -454,6 +456,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'other_number',
             'other_number_confirm',
             'source_of_identification',
+            'round__name',
             'main_caregiver',
             'main_caregiver_nationality__name',
             'other_caregiver_relationship',

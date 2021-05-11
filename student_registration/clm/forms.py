@@ -6864,6 +6864,8 @@ class ABLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -7663,6 +7665,7 @@ class BLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
 
     def __init__(self, *args, **kwargs):
@@ -8521,6 +8524,7 @@ class CBECEAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -9162,6 +9166,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=REGISTRATION_LEVEL
     )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -9955,6 +9960,7 @@ class RSAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
