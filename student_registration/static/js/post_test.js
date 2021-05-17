@@ -89,7 +89,7 @@ function pageScripts() {
 
 function learning_result_next_level() {
     var registration_level = $('select#id_registration_level').val();
-    var clm_type = $('#id_clm_type').val();
+    var clm_type = $('#id_clmtype').val();
     if(clm_type=='ABLN' && registration_level=='level_two')
     {
         $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
@@ -197,23 +197,24 @@ function reorganizeForm_post_assessment()
 
 
     $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").show();
+    $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").show();
+    $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").show();
     $("#id_learning_result option[value=" + 'referred_to_alp' + "]").show();
     $("#id_learning_result option[value=" + 'referred_public_school' + "]").show();
     $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").show();
     $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").show();
-    $("#id_learning_result option[value=" + 'other' + "]").show();
-
-    learning_result_next_level();
-
+    $("#id_learning_result option[value=" + 'referred_to_bln' + "]").show();
     }
     else
     {
         $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
+        $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
+        $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
         $("#id_learning_result option[value=" + 'referred_to_alp' + "]").hide();
         $("#id_learning_result option[value=" + 'referred_public_school' + "]").hide();
         $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").hide();
         $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").hide();
-        $("#id_learning_result option[value=" + 'other' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_bln' + "]").hide();
 
 
         $('select#id_round_complete').val("");
@@ -258,6 +259,8 @@ function reorganizeForm_post_assessment()
         $('#grades').addClass('hide');
     }
 
+    learning_result_next_level();
+
     // grade_registration
     $('div.grd6').addClass('d-none');
     $('#grd6').addClass('hide');
@@ -266,6 +269,17 @@ function reorganizeForm_post_assessment()
     if(grade_registration == '6'){
         $('#grd6').removeClass('hide');
         $('div.grd6').removeClass('d-none');
+        $('#id_biology').val('');
+        $('select#id_attended_biology').val("no");
+        $('select#id_modality_biology').val("");
+
+        $('#id_chemistry').val('');
+        $('select#id_attended_chemistry').val("no");
+        $('select#id_modality_chemistry').val("");
+
+        $('#id_physics').val('');
+        $('select#id_attended_physics').val("no");
+        $('select#id_modality_physics').val("");
     }
     else
     {
@@ -277,8 +291,12 @@ function reorganizeForm_post_assessment()
     }
 
     if(grade_registration == '7' || grade_registration == '8' || grade_registration == '9'){
+        alert('hi');
         $('#grd7').removeClass('hide');
         $('div.grd7').removeClass('d-none');
+        $('#id_science').val('');
+        $('select#id_attended_science').val("no");
+        $('select#id_modality_science').val("");
     }
     else
     {
