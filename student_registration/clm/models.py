@@ -3599,24 +3599,9 @@ class ABLN_FC(TimeStampedModel):
         null=True,
         verbose_name=_('Date of monitoring')
     )
-    date_start_online = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Date start online')
-    )
-    numbers_child_monitored = models.IntegerField(
-        blank=True,
-        null=True,
-        choices=((x, x) for x in range(0, 20)),
-        verbose_name=_('Number of times the child has been monitored to date')
-    )
     topic_covered = models.TextField(
         blank=True, null=True,
         verbose_name=_('Activities/ topic covered')
-    )
-    materials_needed = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Materials needed for the lesson (teaching/ learning)')
     )
     materials_needed_available = models.CharField(
         max_length=10,
@@ -3625,10 +3610,6 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Did the child have these learning materials available for the lesson?')
     )
-    materials_needed_reason_no = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Reason')
-    )
     remote_learning = models.CharField(
         max_length=10,
         blank=True,
@@ -3636,44 +3617,12 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Was the child involved in remote learning?')
     )
-    remote_learning_reason = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Reason')
-    )
-    share_expectations_caregiver = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Did you share the expectations with their caregiver for the weekly engagement in learning?')
-    )
-    share_expectations_no_reason = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Reason')
-    )
-
-    child_engaged_lesson = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Was the child engaged in the lesson and understood the content?')
-    )
-    child_engaged_lesson_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('How was this verified?')
-    )
-
     child_participate_others = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
         verbose_name=_('Did the child participate with others on time?')
-    )
-    child_participate_others_no_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please explain Why')
     )
 
     child_expected_work_independently = models.CharField(
@@ -3683,10 +3632,6 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Was the child expected to work independently?')
     )
-    child_expected_work_independently_verified = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('How was this verified?')
-    )
     homework_after_lesson = models.CharField(
         max_length=10,
         blank=True,
@@ -3694,164 +3639,12 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Was there any homework given after the lesson?')
     )
-    homework_after_lesson_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please explain')
-    )
-
-    homework_score = models.IntegerField(
-        blank=True,
-        null=True,
-        choices=((x, x) for x in range(0, 20)),
-        verbose_name=_('(if applicable) What score did the child receive on the homework?')
-    )
-
-    homework_score_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('How was the Grading and Feedback on the homework given?')
-    )
-
     parents_supporting_student = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
         verbose_name=_('Were parents supporting the student through this lesson?')
-    )
-    parents_supporting_student_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please explain')
-    )
-    child_complete_printed_package = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('(if applicable) Did the child complete the printed package for the week?')
-    )
-    number_child_participate_online = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=Choices(
-            ('1', _('1')),
-            ('2', _('2')),
-            ('3', _('3')),
-            ('4', _('4')),
-            ('5', _('5')),
-            ('6', _('6')),
-            ('7', _('7')),
-        ),
-        verbose_name=_('Programme Type')
-    )
-    how_make_sure_child_access_online = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('How did you make sure that the child was able to login/access the online lessons?')
-    )
-    followup_not_join_online = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('How do you follow up if the child does not join / engage in online learning?')
-    )
-    times_voice_contact_child_caregiver = models.IntegerField(
-        blank=True,
-        null=True,
-        choices=((x, x) for x in range(0, 20)),
-        verbose_name=_('How many times do you have voice contact with the child/caregiver per week?')
-    )
-    child_coping_home_learning = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Is the child coping with home-based learning? ')
-    )
-
-    child_caregiver_challenges = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('What challenges does this child face? child/caregiver?')
-    )
-    actions_before_next_class = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('What specific actions need to be taken with this child before the next class?')
-    )
-    actions_before_next_class_how = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('how')
-    )
-    girls_boys_participate_access_device = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_(
-            '(if applicable) Did both girls and boys in the same family participate in the class and have access to the phone/ device?')
-    )
-    girls_boys_participate_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please explain')
-    )
-
-    how_often_contact_caregivers = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=CONTACT_LEARNING_CLOSED,
-        verbose_name=_(
-            'How often do you keep in touch with parents /caregivers of this child since the learning center closed?')
-    )
-    how_contact_caregivers = ArrayField(
-        models.CharField(
-            choices=CONTACT_CAREGIVER,
-            max_length=100,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-        verbose_name=_('How do you keep in touch with parents / caregivers?')
-    )
-    how_keep_touch_caregivers_specify = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please Specify')
-    )
-
-    child_awareness_prevention_covid19 = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Has the child been reached with awareness messaging on Covid-19 and prevention measures?')
-    )
-    followup_done_messages = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Was any follow-up done with the child to ensure message(s) received and understood?')
-    )
-    followup_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please Specify')
-    )
-
-    child_practice_basic_handwashing = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Does this child practice basic handwashing? ')
-    )
-    child_practice_basic_handwashing_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please Specify')
-    )
-    child_have_pss_wellbeing = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Does the child have any PSS/ wellbeing needs?')
-    )
-    child_have_pss_wellbeing_explain = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Please Specify')
     )
     additional_notes = models.TextField(
         blank=True, null=True,
