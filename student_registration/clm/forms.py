@@ -11364,26 +11364,31 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('facilitator_name', css_class='col-md-3'),
+
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('subject_taught', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning  A_right_border'
-            ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<span>B</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Individual child details') + '</h4>')
-                ),
 
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('date_of_monitoring', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning  B_right_border'
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('materials_needed_available', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_parents_supporting_student">7</span>'),
+                    Div('parents_supporting_student', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7.1</span>'),
+                    HTML('<span class="badge badge-default">7.1.1</span>'),
+
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
             ),
             Fieldset(
                 None,
@@ -11394,18 +11399,16 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('topic_covered', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('materials_needed_available', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning  C_right_border'
+                css_class='bd-callout bd-callout-warning  B_right_border'
             ),
             Fieldset(
                 None,
                 Div(
                     HTML('<span>D</span>'), css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Content shared this week (subject)') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
                 ),
 
                 Div(
@@ -11413,16 +11416,6 @@ class ABLNFCForm(forms.ModelForm):
                     Div('remote_learning', css_class='col-md-3'),
 
                     css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning  D_right_border'
-            ),
-            Fieldset(
-
-                None,
-                Div(
-                    HTML('<span>F</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Weekly lesson') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
@@ -11437,11 +11430,6 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('homework_after_lesson', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_parents_supporting_student">6</span>'),
-                    Div('parents_supporting_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 id='weekly_lesson',
