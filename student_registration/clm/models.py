@@ -3673,7 +3673,7 @@ class ABLN_FC(TimeStampedModel):
         verbose_name=_('Did you share with the child caregiver the expectations for weekly engagement in learning? ')
     )
     share_expectations_no_reason = models.CharField(
-        max_length=10,
+        max_length=100,
         blank=True,
         null=True,
         choices=SHARE_EXPECTATIONS_REASON,
