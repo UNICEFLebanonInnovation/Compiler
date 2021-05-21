@@ -11319,6 +11319,31 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
         widget=forms.TextInput, required=True
     )
+    targeted_competencies = forms.CharField(
+        label=_('Targeted Competencies'),
+        widget=forms.TextInput, required=True
+    )
+
+    activities_reported = forms.MultipleChoiceField(
+        label=_('Activities Reported'),
+        choices=ABLN_FC.ACTIVITIES_REPORTED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    share_expectations = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
+    )
+    share_expectations_no_reason = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=ABLN_FC.SHARE_EXPECTATIONS_REASON ,
+        label=_('If no, why not?')
+    )
+    share_expectations_other_reason = forms.CharField(
+        label=_('If Other explain'),
+        widget=forms.TextInput, required=False
+    )
 
     enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
@@ -11374,17 +11399,21 @@ class ABLNFCForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-
+                    Div('targeted_competencies', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('materials_needed_available', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('activities_reported', css_class='col-md-3 multiple-checbkoxes'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_parents_supporting_student">7</span>'),
-                    Div('parents_supporting_student', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7.1</span>'),
-                    HTML('<span class="badge badge-default">7.1.1</span>'),
+                    # , ,
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('share_expectations', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_no_reason">7.1</span>'),
+                    Div('share_expectations_no_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_other_reason">7.1.1</span>'),
+                    Div('share_expectations_other_reason', css_class='col-md-3'),
 
                     css_class='row',
                 ),
@@ -11414,6 +11443,8 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('remote_learning', css_class='col-md-3'),
+
+                    # Div('parents_supporting_student', css_class='col-md-3'),
 
                     css_class='row',
                 ),
@@ -11518,6 +11549,11 @@ class ABLNFCForm(forms.ModelForm):
             'facilitator_name',
             'subject_taught',
             'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
             'topic_covered',
             'materials_needed_available',
             'remote_learning',

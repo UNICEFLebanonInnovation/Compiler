@@ -3553,18 +3553,21 @@ class ABLN_FC(TimeStampedModel):
         ('yes', _("Yes")),
         ('no', _("No")),
     )
-    CONTACT_LEARNING_CLOSED = Choices(
-        ('daily', _('Daily')),
-        ('two_three_per_week', _('2-3 times a week')),
-        ('weekly', _('Weekly')),
-        ('biweekly', _('Biweekly')),
-        ('monthly', _('Monthly')),
-        ('not_in_touch', _('Have not kept in touch with parents / caregivers.'))
+    ACTIVITIES_REPORTED= Choices(
+        ('reading', _('Reading')),
+        ('writing', _('Writing')),
+        ('oral_communication', _('Oral Communication')),
+        ('group_work', _('Group Work')),
+        ('individual_tasks', _('Individual tasks')),
+        ('other', _('Other'))
     )
-    CONTACT_CAREGIVER = Choices(
-        ('Phone_calls', _('Phone calls')),
-        ('WhatsApp', _('WhatsApp')),
-        ('text_whatsApp_messages', _('Text messages / WhatsApp messages ')),
+    SHARE_EXPECTATIONS_REASON = Choices(
+        ('lack_connectivity', _('Lack of internet connectivity')),
+        ('parents_not_interested', _('Parents are not interested in programme')),
+        ('phone_not_available', _('Phone is not available at home')),
+        ('parents_at_work', _('Parents at work')),
+        ('parents_not_vailable', _('Parents are not available')),
+        ('parents_low_literacy_level', _('Parents low literacy level')),
         ('other', _('Other'))
     )
     FC_TYPE = Choices(
@@ -3645,6 +3648,40 @@ class ABLN_FC(TimeStampedModel):
         null=True,
         choices=YES_NO,
         verbose_name=_('Were parents supporting the student through this lesson?')
+    )
+    targeted_competencies= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Targeted Competencies')
+    )
+
+    activities_reported = ArrayField(
+        models.CharField(
+            choices=ACTIVITIES_REPORTED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Activities Reported')
+    )
+    share_expectations = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you share with the child caregiver the expectations for weekly engagement in learning? ')
+    )
+    share_expectations_no_reason = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=SHARE_EXPECTATIONS_REASON,
+        verbose_name=_('If no, why not?')
+    )
+    share_expectations_other_reason= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('if Other explain')
     )
     additional_notes = models.TextField(
         blank=True, null=True,
