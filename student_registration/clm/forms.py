@@ -11374,7 +11374,25 @@ class ABLNFCForm(forms.ModelForm):
         label=_('If Other explain'),
         widget=forms.TextInput, required=False
     )
-
+    completed_tasks = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.OBJECTIVES_VERIFIED ,
+        label=_('Explain how was this verified?')
+    )
+    objectives_verified_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
 
@@ -11499,6 +11517,20 @@ class ABLNFCForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1.6</span>'),
                     Div('child_show_improvement', css_class='col-md-3'),
                     css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('completed_tasks', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('meet_objectives', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('meet_objectives_verified', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    Div('objectives_verified_specify', css_class='col-md-3'),
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -11631,12 +11663,9 @@ class ABLNFCForm(forms.ModelForm):
             'child_expected_work_independently',
             'homework_after_lesson',
             'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
             'additional_notes'
         )
-
-
-        # enrollment, fc_type, facilitator_name, subject_taught, date_of_monitoring, topic_covered, materials_needed_available,
-        # attend_lesson, child_interact_teacher, child_expected_work_independently, homework_after_lesson, additional_notes
-
-
-

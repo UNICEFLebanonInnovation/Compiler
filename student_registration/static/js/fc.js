@@ -30,6 +30,7 @@ $(document).ready(function(){
 
     $(document).on('change', 'select#id_attend_lesson, ' +
         'select#id_share_expectations, ' +
+        'select#id_meet_objectives_verified, ' +
         'select#id_share_expectations_no_reason ', function(){
                 reorganizeForm();
     });
@@ -89,6 +90,22 @@ function pageScripts() {
 
 function reorganizeForm()
 {
+
+
+    var meet_objectives_verified = $('select#id_meet_objectives_verified').val();
+
+    if(meet_objectives_verified == 'other'){
+        $('#div_id_objectives_verified_specify').removeClass('d-none');
+        $('#span_objectives_verified_specify').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_objectives_verified_specify').addClass('d-none');
+        $('#span_objectives_verified_specify').addClass('d-none');
+        $('#id_objectives_verified_specify').val('');
+
+    }
+
     var share_expectations = $('select#id_share_expectations').val();
     var share_expectations_no_reason = $('select#id_share_expectations_no_reason').val();
 

@@ -656,6 +656,10 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
             'child_expected_work_independently',
             'homework_after_lesson',
             'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
             'additional_notes'
         )
 

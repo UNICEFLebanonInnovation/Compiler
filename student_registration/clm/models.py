@@ -3571,6 +3571,13 @@ class ABLN_FC(TimeStampedModel):
         ('parents_low_literacy_level', _('Parents low literacy level')),
         ('other', _('Other'))
     )
+    OBJECTIVES_VERIFIED = Choices(
+        ('', '----------'),
+        ('Video_photos', _('Video, photos')),
+        ('followed_by_phone_calls', _('Followed by phone calls')),
+        ('voice_messages', _('Voice messages')),
+        ('other', _('Other')),
+    )
     FC_TYPE = Choices(
         ('pre1', _("Pre 1")),
         ('pre2', _("Pre 2")),
@@ -3709,7 +3716,7 @@ class ABLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did you share with the child caregiver the expectations for weekly engagement in learning? ')
+        verbose_name=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
     )
     share_expectations_no_reason = models.CharField(
         max_length=100,
@@ -3721,6 +3728,31 @@ class ABLN_FC(TimeStampedModel):
     share_expectations_other_reason= models.TextField(
         blank=True, null=True,
         verbose_name=_('if Other explain')
+    )
+    completed_tasks = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=OBJECTIVES_VERIFIED,
+        verbose_name=_('Explain how was this verified?')
+    )
+    objectives_verified_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
     )
     additional_notes = models.TextField(
         blank=True, null=True,
