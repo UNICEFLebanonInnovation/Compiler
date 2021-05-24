@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-21 16:40+0300\n"
+"POT-Creation-Date: 2021-05-24 15:02+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -862,7 +862,7 @@ msgstr "البيانات الأساسية"
 #: student_registration/clm/forms.py:11031
 #: student_registration/clm/forms.py:11136
 #: student_registration/clm/forms.py:11238
-#: student_registration/clm/forms.py:11488
+#: student_registration/clm/forms.py:11529
 #: student_registration/clm/inclusion_forms.py:709
 #: student_registration/clm/inclusion_forms.py:1070
 #: student_registration/clm/inclusion_forms.py:1186
@@ -923,7 +923,7 @@ msgstr ""
 #: student_registration/clm/forms.py:8895
 #: student_registration/clm/forms.py:9449
 #: student_registration/clm/forms.py:10412
-#: student_registration/clm/forms.py:11490
+#: student_registration/clm/forms.py:11531
 #: student_registration/clm/inclusion_forms.py:711
 #: student_registration/clm/inclusion_forms.py:1072
 #: student_registration/enrollments/forms.py:695
@@ -960,7 +960,7 @@ msgstr "هل متأكد انك تريد إلغاء هذا التسجيل؟"
 #: student_registration/clm/forms.py:11032
 #: student_registration/clm/forms.py:11137
 #: student_registration/clm/forms.py:11239
-#: student_registration/clm/forms.py:11490
+#: student_registration/clm/forms.py:11531
 #: student_registration/clm/inclusion_forms.py:711
 #: student_registration/clm/inclusion_forms.py:1072
 #: student_registration/clm/inclusion_forms.py:1187
@@ -997,8 +997,8 @@ msgstr "العودة الى القائمة"
 #: student_registration/clm/forms.py:11040
 #: student_registration/clm/forms.py:11145
 #: student_registration/clm/forms.py:11247
-#: student_registration/clm/forms.py:11523
-#: student_registration/clm/forms.py:11538
+#: student_registration/clm/forms.py:11570
+#: student_registration/clm/forms.py:11585
 #: student_registration/clm/inclusion_forms.py:907
 #: student_registration/clm/inclusion_forms.py:919
 #: student_registration/clm/inclusion_forms.py:1081
@@ -3476,9 +3476,7 @@ msgstr " هل حصل الطفل على القرطاسية الأساسية؟"
 
 #: student_registration/clm/forms.py:5765
 #: student_registration/clm/forms.py:6003
-#: student_registration/clm/forms.py:11294
 #: student_registration/clm/models.py:1257
-#: student_registration/clm/models.py:3621
 msgid "Was the child involved in remote learning?"
 msgstr "هل شارك الطفل في التعلم عن بعد؟"
 
@@ -4251,69 +4249,99 @@ msgstr "النّشاطات / المواضيع المُعطاة"
 msgid "Did the child have these learning materials available for the lesson?"
 msgstr "هل توفر لدى الطفل الوسائل التعليمية الضرورية لهذا الدرس؟"
 
+#: student_registration/clm/forms.py:11294
+#: student_registration/clm/models.py:3621
+msgid "Did the child attend the scheduled lesson?"
+msgstr "هل حضر الطفل الدرس في وقته المحدد؟"
+
 #: student_registration/clm/forms.py:11300
 #: student_registration/clm/models.py:3628
-msgid "Did the child participate with others on time?"
-msgstr "هل شارك الطّفل مع الآخرين في الوقت المحدّد؟"
+msgid "Did the child interact with the teacher during the session?"
+msgstr "هل تفاعل الطفل مع المعلم/ة خلال الحصة؟"
 
-#: student_registration/clm/forms.py:11306
-#: student_registration/clm/models.py:3636
-msgid "Was the child expected to work independently?"
-msgstr "هل كان متوقّعًا من الطّفل أن يعمل باستقلاليّة؟"
+#: student_registration/clm/forms.py:11305
+#: student_registration/clm/models.py:3635
+msgid "Did the child interact With peers?"
+msgstr "هل تفاعل الطفل مع المعلم/ة خلال الحصة؟"
 
-#: student_registration/clm/forms.py:11311
-#: student_registration/clm/models.py:3643
+#: student_registration/clm/forms.py:11310
+#: student_registration/clm/models.py:3642
+msgid "Did the child provide clear responses?"
+msgstr "هل تفاعل الطفل مع المعلم/ة خلال الحصة؟"
+
+#: student_registration/clm/forms.py:11315
+#: student_registration/clm/models.py:3649
+msgid "Did the child ask questions?"
+msgstr "هل تفاعل الطفل مع المعلم/ة خلال الحصة؟"
+
+#: student_registration/clm/forms.py:11320
+#: student_registration/clm/models.py:3656
+msgid "Did the child acquire the targeted competency?"
+msgstr "هل تفاعل الطفل مع المعلم/ة خلال الحصة؟"
+
+#: student_registration/clm/forms.py:11325
+#: student_registration/clm/models.py:3663
+msgid "Does the child show improvement in achieving the targeted competency?"
+msgstr "هل تفاعل الطفل مع المعلم/ة خلال الحصة؟"
+
+#: student_registration/clm/forms.py:11331
+#: student_registration/clm/models.py:3670
+msgid "Was the child expected to work independently during the lesson?"
+msgstr "هل كان متوقعًا أن يعمل الطفل باستقلالية خلال الدرس؟"
+
+#: student_registration/clm/forms.py:11336
+#: student_registration/clm/models.py:3677
 msgid "Was there any homework given after the lesson?"
-msgstr "هل تمّ إعطاء واجب منزليّ بعد الدّرس؟"
+msgstr "هل تم إعطاء وظيفة بعد الدرس؟"
 
-#: student_registration/clm/forms.py:11316
-#: student_registration/clm/models.py:3650
-msgid "Were parents supporting the student through this lesson?"
-msgstr "هل قام الأهل بدعم التّلميذ خلال هذا الدّرس؟"
+#: student_registration/clm/forms.py:11341
+#: student_registration/clm/models.py:3684
+msgid "Were parents supporting the student through this lesson? "
+msgstr "هل قام الأهل بدعم أطفالهم في هذا الدرس؟"
 
-#: student_registration/clm/forms.py:11319
-#: student_registration/clm/models.py:3688
+#: student_registration/clm/forms.py:11344
+#: student_registration/clm/models.py:3722
 msgid "Additional notes/ specific challenges/ follow up action/ referrals etc."
-msgstr "ملاحظات إضافيّة / تحدّيات معيّنة / عمليّة متابعة / الإحالة إلخ"
+msgstr "ملاحظات إضافية/ تحديات معينة/ المتابعة / الإحالات/إلخ"
 
-#: student_registration/clm/forms.py:11323
-#: student_registration/clm/models.py:3654
+#: student_registration/clm/forms.py:11348
+#: student_registration/clm/models.py:3688
 msgid "Targeted Competencies"
 msgstr "الكفاءات المستهدفة"
 
-#: student_registration/clm/forms.py:11328
-#: student_registration/clm/models.py:3666
+#: student_registration/clm/forms.py:11353
+#: student_registration/clm/models.py:3700
 msgid "Activities Reported"
 msgstr "النشاطات الواردة في الاستمارة (اختيار متعدد)"
 
-#: student_registration/clm/forms.py:11336
+#: student_registration/clm/forms.py:11361
 msgid ""
 "Did you share with the child caregiver the expectations for weekly "
 "engagement in learning?"
 msgstr "هل شاركت الأهل ما هو متوقع من مشاركة الطفل في التعلم أسبوعيًا؟"
 
-#: student_registration/clm/forms.py:11341
-#: student_registration/clm/models.py:3680
+#: student_registration/clm/forms.py:11366
+#: student_registration/clm/models.py:3714
 msgid "If no, why not?"
 msgstr " إذا لا، لماذا؟"
 
-#: student_registration/clm/forms.py:11344
+#: student_registration/clm/forms.py:11369
 msgid "If Other explain"
 msgstr " إذا لا، لماذا؟"
 
-#: student_registration/clm/forms.py:11382
+#: student_registration/clm/forms.py:11407
 msgid "FE Partner & Facilitator details"
 msgstr "لتحضير للدرس و تفاصيله (يقوم المعلم/ة بملئها)"
 
-#: student_registration/clm/forms.py:11426
+#: student_registration/clm/forms.py:11451
 msgid "Lesson details"
 msgstr "الدرس الحالي"
 
-#: student_registration/clm/forms.py:11440
+#: student_registration/clm/forms.py:11465
 msgid "Child wellbeing"
 msgstr "رفاهية الطفل"
 
-#: student_registration/clm/forms.py:11477
+#: student_registration/clm/forms.py:11518
 msgid "Covid-19 PSS/ Wellbeing"
 msgstr "الدّعم النّفسيّ الاجتماعي / الرّفاه المتعلّق بكوفيد 19"
 
@@ -5367,7 +5395,7 @@ msgstr ""
 msgid "FC Type"
 msgstr "نوع العمل"
 
-#: student_registration/clm/models.py:3673
+#: student_registration/clm/models.py:3707
 #, fuzzy
 #| msgid ""
 #| "Did you share the expectations with their caregiver for the weekly "
@@ -5379,7 +5407,7 @@ msgstr ""
 "هل تمّت مشاركة أهداف التّعلّم / ما هو متوقّع من الانخراط في التّعلّم لهذا الأسبوع "
 "مع الأهل؟"
 
-#: student_registration/clm/models.py:3684
+#: student_registration/clm/models.py:3718
 #, fuzzy
 #| msgid "Other reason"
 msgid "if Other explain"
@@ -8413,9 +8441,6 @@ msgstr ""
 #~ msgstr ""
 #~ "الموادّ المطلوبة للدّرس (التّعليم / التّعلّم): هل توفّرت هذه الموادّ للطّفل لحصول "
 #~ "التّعلّم؟"
-
-#~ msgid "Did the child meet the previous lesson objectives?"
-#~ msgstr "هل حقق الطفل أهداف الدرس السابقة؟"
 
 #, fuzzy
 #~| msgid "Are you sure you want to cancel this registration?"

@@ -3562,6 +3562,7 @@ class ABLN_FC(TimeStampedModel):
         ('other', _('Other'))
     )
     SHARE_EXPECTATIONS_REASON = Choices(
+        ('', '----------'),
         ('lack_connectivity', _('Lack of internet connectivity')),
         ('parents_not_interested', _('Parents are not interested in programme')),
         ('phone_not_available', _('Phone is not available at home')),
@@ -3613,27 +3614,61 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Did the child have these learning materials available for the lesson?')
     )
-    remote_learning = models.CharField(
+    attend_lesson = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Was the child involved in remote learning?')
+        verbose_name=_('Did the child attend the scheduled lesson?')
     )
-    child_participate_others = models.CharField(
+    child_interact_teacher = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the child participate with others on time?')
+        verbose_name=_('Did the child interact with the teacher during the session?')
     )
-
+    child_interact_friends = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child interact With peers?')
+    )
+    child_clear_responses = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child provide clear responses?')
+    )
+    child_ask_questions = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child ask questions?')
+    )
+    child_acquire_competency = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child acquire the targeted competency?')
+    )
+    child_show_improvement = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child show improvement in achieving the targeted competency?')
+    )
     child_expected_work_independently = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Was the child expected to work independently?')
+        verbose_name=_('Was the child expected to work independently during the lesson?')
     )
     homework_after_lesson = models.CharField(
         max_length=10,
@@ -3647,7 +3682,7 @@ class ABLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Were parents supporting the student through this lesson?')
+        verbose_name=_('Were parents supporting the student through this lesson? ')
     )
     targeted_competencies= models.TextField(
         blank=True, null=True,
@@ -3664,6 +3699,10 @@ class ABLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Activities Reported')
+    )
+    activities_reported_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
     )
     share_expectations = models.CharField(
         max_length=10,

@@ -26,29 +26,17 @@ $(document).ready(function(){
     }
 
     reorganizeForm();
+    activities_reported();
 
-    $(document).on('change', 'select#id_materials_needed_available, ' +
-        'select#id_remote_learning, ' +
-        'select#id_homework_after_lesson ', function(){
+    $(document).on('change', 'select#id_attend_lesson, ' +
+        'select#id_share_expectations, ' +
+        'select#id_share_expectations_no_reason ', function(){
                 reorganizeForm();
     });
 
-    // $(document).on('click', 'input[name=how_contact_caregivers]', function () {
-    //     var how_contact_caregivers = $('input[id=id_how_contact_caregivers_4]:checked').val();
-    //
-    //     if (how_contact_caregivers == 'other') {
-    //         $('div#div_id_how_keep_touch_caregivers_specify').removeClass('d-none');
-    //         $('#span_how_keep_touch_caregivers_specify').removeClass('d-none');
-    //     }
-    //     else
-    //     {
-    //         $('div#div_id_how_keep_touch_caregivers_specify').addClass('d-none');
-    //         $('#span_how_keep_touch_caregivers_specify').addClass('d-none');
-    //         $('#id_how_keep_touch_caregivers_specify').val('');
-    //
-    //     }
-    //
-    // });
+    $(document).on('click', 'input[name=activities_reported]', function () {
+        activities_reported();
+    });
 
 
     $(document).on('click', '.delete-button', function(){
@@ -101,41 +89,67 @@ function pageScripts() {
 
 function reorganizeForm()
 {
-    var remote_learning = $('select#id_remote_learning').val();
+    var share_expectations = $('select#id_share_expectations').val();
+    var share_expectations_no_reason = $('select#id_share_expectations_no_reason').val();
 
-    var materials_needed_available = $('select#id_materials_needed_available').val();
-    var homework_after_lesson = $('select#id_homework_after_lesson').val();
-    var child_awareness_prevention_covid19 = $('select#id_child_awareness_prevention_covid19').val();
 
-    $('#weekly_lesson').addClass('hide');
-    $('#feedback').addClass('hide');
-    $('#follow_up').addClass('hide');
-    $('#gender_considerations').addClass('hide');
-
-    if (remote_learning == 'yes') {
-        $('#weekly_lesson').removeClass('hide');
-        $('#feedback').removeClass('hide');
-        $('#follow_up').removeClass('hide');
-        $('#gender_considerations').removeClass('hide');
-
+    if (share_expectations == 'no') {
+        $('#div_id_share_expectations_no_reason').removeClass('d-none');
+        $('#span_share_expectations_no_reason').removeClass('d-none');
     }
     else {
-        $('#weekly_lesson').addClass('hide');
-        $('#feedback').addClass('hide');
-        $('#follow_up').addClass('hide');
-        $('#gender_considerations').addClass('hide');
+        $('select#id_share_expectations_no_reason').val('');
+        $('#id_share_expectations_other_reason').val('');
+        $('#div_id_share_expectations_other_reason').addClass('d-none');
+        $('#span_share_expectations_other_reason').addClass('d-none');
+        $('#div_id_share_expectations_no_reason').addClass('d-none');
+        $('#span_share_expectations_no_reason').addClass('d-none');
+
     }
 
-    $('div#div_id_parents_supporting_student').addClass('d-none');
-    $('#span_parents_supporting_student').addClass('d-none');
-
-    if(homework_after_lesson == 'yes'){
-        $('div#div_id_parents_supporting_student').removeClass('d-none');
-        $('#span_parents_supporting_student').removeClass('d-none');
+    if(share_expectations_no_reason == 'other'){
+        $('#div_id_share_expectations_other_reason').removeClass('d-none');
+        $('#span_share_expectations_other_reason').removeClass('d-none');
     }
-    else{
-        $('#id_parents_supporting_student').val('');
+    else
+    {
+        $('#div_id_share_expectations_other_reason').addClass('d-none');
+        $('#span_share_expectations_other_reason').addClass('d-none');
+        $('#id_share_expectations_other_reason').val('');
+
+    }
+    var attend_lesson = $('select#id_attend_lesson').val();
+
+    $('div.attend_lesson_questions').addClass('d-none');
+    $('#attend_lesson_questions').addClass('hide');
+
+    if (attend_lesson == 'yes') {
+    $('div.attend_lesson_questions').removeClass('d-none');
+    $('#attend_lesson_questions').removeClass('hide');
+    }
+    else {
+        $('select#child_interact_teacher').val("no");
+        $('select#child_interact_friends').val("no");
+        $('select#child_clear_responses').val("no");
+        $('select#child_ask_questions').val("no");
+        $('select#child_acquire_competency').val("no");
+        $('select#child_show_improvement').val("no");
     }
 
+}
 
+function activities_reported()
+{
+    var how_contact_caregivers = $('input[id=id_activities_reported_6]:checked').val();
+
+    if (how_contact_caregivers == 'other') {
+        $('div#div_id_activities_reported_other').removeClass('d-none');
+        $('#span_activities_reported_other').removeClass('d-none');
+    }
+    else
+    {
+        $('div#div_id_activities_reported_other').addClass('d-none');
+        $('#span_activities_reported_other').addClass('d-none');
+        $('#id_activities_reported_other').val('');
+    }
 }
