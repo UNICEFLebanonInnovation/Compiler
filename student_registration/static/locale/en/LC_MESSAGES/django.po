@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-24 19:09+0300\n"
+"POT-Creation-Date: 2021-05-25 15:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -243,6 +243,7 @@ msgstr ""
 #: student_registration/clm/models.py:2757
 #: student_registration/clm/models.py:2932
 #: student_registration/clm/models.py:3553
+#: student_registration/clm/models.py:3589
 #: student_registration/enrollments/forms.py:37
 #: student_registration/enrollments/forms.py:79
 #: student_registration/enrollments/forms.py:85
@@ -423,6 +424,7 @@ msgstr ""
 #: student_registration/clm/models.py:2933
 #: student_registration/clm/models.py:2958
 #: student_registration/clm/models.py:3554
+#: student_registration/clm/models.py:3590
 #: student_registration/enrollments/forms.py:37
 #: student_registration/enrollments/forms.py:79
 #: student_registration/enrollments/forms.py:85
@@ -860,7 +862,7 @@ msgstr ""
 #: student_registration/clm/forms.py:11031
 #: student_registration/clm/forms.py:11136
 #: student_registration/clm/forms.py:11238
-#: student_registration/clm/forms.py:11572
+#: student_registration/clm/forms.py:11622
 #: student_registration/clm/inclusion_forms.py:709
 #: student_registration/clm/inclusion_forms.py:1070
 #: student_registration/clm/inclusion_forms.py:1186
@@ -921,7 +923,7 @@ msgstr ""
 #: student_registration/clm/forms.py:8895
 #: student_registration/clm/forms.py:9449
 #: student_registration/clm/forms.py:10412
-#: student_registration/clm/forms.py:11574
+#: student_registration/clm/forms.py:11624
 #: student_registration/clm/inclusion_forms.py:711
 #: student_registration/clm/inclusion_forms.py:1072
 #: student_registration/enrollments/forms.py:695
@@ -958,7 +960,7 @@ msgstr ""
 #: student_registration/clm/forms.py:11032
 #: student_registration/clm/forms.py:11137
 #: student_registration/clm/forms.py:11239
-#: student_registration/clm/forms.py:11574
+#: student_registration/clm/forms.py:11624
 #: student_registration/clm/inclusion_forms.py:711
 #: student_registration/clm/inclusion_forms.py:1072
 #: student_registration/clm/inclusion_forms.py:1187
@@ -995,8 +997,8 @@ msgstr ""
 #: student_registration/clm/forms.py:11040
 #: student_registration/clm/forms.py:11145
 #: student_registration/clm/forms.py:11247
-#: student_registration/clm/forms.py:11619
-#: student_registration/clm/forms.py:11634
+#: student_registration/clm/forms.py:11669
+#: student_registration/clm/forms.py:11684
 #: student_registration/clm/inclusion_forms.py:907
 #: student_registration/clm/inclusion_forms.py:919
 #: student_registration/clm/inclusion_forms.py:1081
@@ -2900,8 +2902,8 @@ msgstr ""
 #: student_registration/clm/forms.py:10037
 #: student_registration/clm/forms.py:10068
 #: student_registration/clm/forms.py:10142
-#: student_registration/clm/forms.py:11359
-#: student_registration/clm/forms.py:11393
+#: student_registration/clm/forms.py:11398
+#: student_registration/clm/forms.py:11432
 #: student_registration/clm/models.py:443
 #: student_registration/clm/models.py:581
 #: student_registration/clm/models.py:621
@@ -2912,8 +2914,8 @@ msgstr ""
 #: student_registration/clm/models.py:1766
 #: student_registration/clm/models.py:2208
 #: student_registration/clm/models.py:2641
-#: student_registration/clm/models.py:3712
-#: student_registration/clm/models.py:3755
+#: student_registration/clm/models.py:3783
+#: student_registration/clm/models.py:3826
 msgid "Please specify"
 msgstr ""
 
@@ -3529,7 +3531,9 @@ msgstr ""
 #: student_registration/clm/forms.py:5796
 #: student_registration/clm/forms.py:6034
 #: student_registration/clm/forms.py:6285
+#: student_registration/clm/forms.py:11359
 #: student_registration/clm/models.py:1295
+#: student_registration/clm/models.py:3735
 msgid "Explain"
 msgstr ""
 
@@ -4217,140 +4221,172 @@ msgid "Follow-up Household visit"
 msgstr ""
 
 #: student_registration/clm/forms.py:11271
-#: student_registration/clm/models.py:3602
+#: student_registration/clm/models.py:3620
 msgid "Facilitator name"
 msgstr ""
 
 #: student_registration/clm/forms.py:11275
-#: student_registration/clm/models.py:3606
+#: student_registration/clm/models.py:3624
 msgid "Subject taught"
 msgstr ""
 
 #: student_registration/clm/forms.py:11279
-#: student_registration/clm/models.py:3611
+#: student_registration/clm/models.py:3629
 msgid "Date of monitoring"
 msgstr ""
 
-#: student_registration/clm/forms.py:11283
-#: student_registration/clm/models.py:3615
-msgid "Activities/ topic covered"
-msgstr ""
-
-#: student_registration/clm/forms.py:11289
-#: student_registration/clm/models.py:3622
+#: student_registration/clm/forms.py:11285
+#: student_registration/clm/models.py:3636
 msgid "Did the child have these learning materials available for the lesson?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11294
-#: student_registration/clm/models.py:3629
+#: student_registration/clm/forms.py:11290
+#: student_registration/clm/models.py:3643
 msgid "Did the child attend the scheduled lesson?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11300
-#: student_registration/clm/models.py:3636
+#: student_registration/clm/forms.py:11296
+#: student_registration/clm/models.py:3650
 msgid "Did the child interact with the teacher during the session?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11305
-#: student_registration/clm/models.py:3643
+#: student_registration/clm/forms.py:11301
+#: student_registration/clm/models.py:3657
 msgid "Did the child interact With peers?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11310
-#: student_registration/clm/models.py:3650
+#: student_registration/clm/forms.py:11306
+#: student_registration/clm/models.py:3664
 msgid "Did the child provide clear responses?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11315
-#: student_registration/clm/models.py:3657
+#: student_registration/clm/forms.py:11311
+#: student_registration/clm/models.py:3671
 msgid "Did the child ask questions?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11320
-#: student_registration/clm/models.py:3664
+#: student_registration/clm/forms.py:11316
+#: student_registration/clm/models.py:3678
 msgid "Did the child acquire the targeted competency?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11325
-#: student_registration/clm/models.py:3671
+#: student_registration/clm/forms.py:11321
+#: student_registration/clm/models.py:3685
 msgid "Does the child show improvement in achieving the targeted competency?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11331
-#: student_registration/clm/models.py:3678
+#: student_registration/clm/forms.py:11326
+#: student_registration/clm/models.py:3692
 msgid "Was the child expected to work independently during the lesson?"
 msgstr ""
 
+#: student_registration/clm/forms.py:11331
+msgid "How do you rate child performance for the current lesson?"
+msgstr ""
+
 #: student_registration/clm/forms.py:11336
-#: student_registration/clm/models.py:3685
-msgid "Was there any homework given after the lesson?"
+#: student_registration/clm/models.py:3706
+msgid "Did the child complete the printed package for the Week?"
 msgstr ""
 
 #: student_registration/clm/forms.py:11341
-#: student_registration/clm/models.py:3692
-msgid "Were parents supporting the student through this lesson? "
+#: student_registration/clm/models.py:3713
+msgid ""
+"How many session did this child participate in online classes this week?"
 msgstr ""
 
 #: student_registration/clm/forms.py:11344
-#: student_registration/clm/models.py:3759
+#: student_registration/clm/models.py:3717
+msgid "not participating reason"
+msgstr ""
+
+#: student_registration/clm/forms.py:11350
+#: student_registration/clm/models.py:3724
+msgid "Was the child provided with E-Recharge cards ?"
+msgstr ""
+
+#: student_registration/clm/forms.py:11356
+#: student_registration/clm/models.py:3731
+msgid ""
+"Any specific actions to be taken with this child before the next lesson for "
+"better participation"
+msgstr ""
+
+#: student_registration/clm/forms.py:11365
+#: student_registration/clm/models.py:3742
+msgid "Does the child have any PSS/ wellbeing needs?"
+msgstr ""
+
+#: student_registration/clm/forms.py:11370
+#: student_registration/clm/models.py:3749
+msgid ""
+"Did you notice that this child did not have access to the device or "
+"resources needed to complete the lesson requirements?"
+msgstr ""
+
+#: student_registration/clm/forms.py:11375
+#: student_registration/clm/models.py:3756
+msgid "Was there any homework given after the lesson?"
+msgstr ""
+
+#: student_registration/clm/forms.py:11380
+#: student_registration/clm/models.py:3763
+msgid "Were parents supporting the student through this lesson? "
+msgstr ""
+
+#: student_registration/clm/forms.py:11383
+#: student_registration/clm/models.py:3830
 msgid "Additional notes/ specific challenges/ follow up action/ referrals etc."
 msgstr ""
 
-#: student_registration/clm/forms.py:11348
-#: student_registration/clm/models.py:3696
+#: student_registration/clm/forms.py:11387
+#: student_registration/clm/models.py:3767
 msgid "Targeted Competencies"
 msgstr ""
 
-#: student_registration/clm/forms.py:11353
-#: student_registration/clm/models.py:3708
+#: student_registration/clm/forms.py:11392
+#: student_registration/clm/models.py:3779
 msgid "Activities Reported"
 msgstr ""
 
-#: student_registration/clm/forms.py:11366
-#: student_registration/clm/models.py:3719
+#: student_registration/clm/forms.py:11405
+#: student_registration/clm/models.py:3790
 msgid ""
 "Did you share with the child caregiver the expectations for weekly "
 "engagement in learning?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11371
-#: student_registration/clm/models.py:3726
+#: student_registration/clm/forms.py:11410
+#: student_registration/clm/models.py:3797
 msgid "If no, why not?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11374
+#: student_registration/clm/forms.py:11413
 msgid "If Other explain"
 msgstr ""
 
-#: student_registration/clm/forms.py:11380
-#: student_registration/clm/models.py:3737
+#: student_registration/clm/forms.py:11419
+#: student_registration/clm/models.py:3808
 msgid "Did the child complete the required tasks later?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11385
-#: student_registration/clm/models.py:3744
+#: student_registration/clm/forms.py:11424
+#: student_registration/clm/models.py:3815
 msgid "Did the child meet the current lesson objectives?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11390
-#: student_registration/clm/models.py:3751
+#: student_registration/clm/forms.py:11429
+#: student_registration/clm/models.py:3822
 msgid "Explain how was this verified?"
 msgstr ""
 
-#: student_registration/clm/forms.py:11430
+#: student_registration/clm/forms.py:11469
 msgid "FE Partner & Facilitator details"
 msgstr ""
 
-#: student_registration/clm/forms.py:11480
-msgid "Lesson details"
-msgstr ""
-
-#: student_registration/clm/forms.py:11494
+#: student_registration/clm/forms.py:11520
+#: student_registration/clm/forms.py:11605
 msgid "Child wellbeing"
-msgstr ""
-
-#: student_registration/clm/forms.py:11561
-msgid "Covid-19 PSS/ Wellbeing"
 msgstr ""
 
 #: student_registration/clm/inclusion_forms.py:375
@@ -5282,7 +5318,7 @@ msgid "Referred to YCBECE"
 msgstr ""
 
 #: student_registration/clm/models.py:2901
-#: student_registration/clm/models.py:3591
+#: student_registration/clm/models.py:3609
 #: student_registration/enrollments/models.py:932
 msgid "Enrollment"
 msgstr ""
@@ -5365,27 +5401,59 @@ msgstr ""
 msgid "Voice messages"
 msgstr ""
 
-#: student_registration/clm/models.py:3582
-msgid "Pre 1"
-msgstr ""
-
 #: student_registration/clm/models.py:3583
-msgid "Pre 2"
+msgid "Excellent"
 msgstr ""
 
 #: student_registration/clm/models.py:3584
-msgid "Post 1"
+msgid "Good"
 msgstr ""
 
 #: student_registration/clm/models.py:3585
+msgid "Needs support"
+msgstr ""
+
+#: student_registration/clm/models.py:3591
+msgid "Not required"
+msgstr ""
+
+#: student_registration/clm/models.py:3595
+msgid "Participating in all session"
+msgstr ""
+
+#: student_registration/clm/models.py:3596
+msgid "Participating in some session"
+msgstr ""
+
+#: student_registration/clm/models.py:3597
+msgid "Not participating at all"
+msgstr ""
+
+#: student_registration/clm/models.py:3600
+msgid "Pre 1"
+msgstr ""
+
+#: student_registration/clm/models.py:3601
+msgid "Pre 2"
+msgstr ""
+
+#: student_registration/clm/models.py:3602
+msgid "Post 1"
+msgstr ""
+
+#: student_registration/clm/models.py:3603
 msgid "Post 2"
 msgstr ""
 
-#: student_registration/clm/models.py:3598
+#: student_registration/clm/models.py:3616
 msgid "FC Type"
 msgstr ""
 
-#: student_registration/clm/models.py:3730
+#: student_registration/clm/models.py:3699
+msgid "How do you rate child performance for the current lesson:?"
+msgstr ""
+
+#: student_registration/clm/models.py:3801
 msgid "if Other explain"
 msgstr ""
 

@@ -3578,6 +3578,24 @@ class ABLN_FC(TimeStampedModel):
         ('voice_messages', _('Voice messages')),
         ('other', _('Other')),
     )
+    INDEPENDENTLY_EVALUATION = Choices(
+        ('', '----------'),
+        ('excellent', _('Excellent')),
+        ('good', _('Good')),
+        ('needs_support', _('Needs support')),
+    )
+    COMPLETE_PRINTED_PACKAGE = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+        ('not_required', _('Not required')),
+    )
+    SESSIONS_PARTICIPATED = Choices(
+        ('', '----------'),
+        ('participating_in_all_session', _("Participating in all session")),
+        ('participating_in_some_session', _("Participating in some session")),
+        ('not_participating_at_all', _('Not participating at all')),
+    )
     FC_TYPE = Choices(
         ('pre1', _("Pre 1")),
         ('pre2', _("Pre 2")),
@@ -3609,10 +3627,6 @@ class ABLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Date of monitoring')
-    )
-    topic_covered = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Activities/ topic covered')
     )
     materials_needed_available = models.CharField(
         max_length=10,
@@ -3676,6 +3690,63 @@ class ABLN_FC(TimeStampedModel):
         null=True,
         choices=YES_NO,
         verbose_name=_('Was the child expected to work independently during the lesson?')
+    )
+    work_independently_evaluation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=INDEPENDENTLY_EVALUATION,
+        verbose_name=_('How do you rate child performance for the current lesson:?')
+    )
+    complete_printed_package = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=COMPLETE_PRINTED_PACKAGE,
+        verbose_name=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SESSIONS_PARTICIPATED,
+        verbose_name=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('not participating reason')
+    )
+    e_recharge_card_provided = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child provided with E-Recharge cards ?')
+    )
+    action_to_taken = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Explain')
+    )
+    child_needs_pss = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
     )
     homework_after_lesson = models.CharField(
         max_length=10,

@@ -31,6 +31,8 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_attend_lesson, ' +
         'select#id_share_expectations, ' +
         'select#id_meet_objectives_verified, ' +
+        'select#id_action_to_taken, ' +
+        'select#id_sessions_participated, ' +
         'select#id_share_expectations_no_reason ', function(){
                 reorganizeForm();
     });
@@ -90,7 +92,31 @@ function pageScripts() {
 
 function reorganizeForm()
 {
+    var sessions_participated = $('select#id_sessions_participated').val();
+    if(sessions_participated == 'not_participating_at_all'){
+        $('#div_id_not_participating_reason').removeClass('d-none');
+        $('#span_not_participating_reason').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_not_participating_reason').addClass('d-none');
+        $('#span_not_participating_reason').addClass('d-none');
+        $('#id_not_participating_reason').val('');
+    }
 
+
+    var action_to_taken = $('select#id_action_to_taken').val();
+    if(action_to_taken == 'yes'){
+        $('#div_id_action_to_taken_specify').removeClass('d-none');
+        $('#span_action_to_taken_specify').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_action_to_taken_specify').addClass('d-none');
+        $('#span_action_to_taken_specify').addClass('d-none');
+        $('#id_action_to_taken_specify').val('');
+
+    }
 
     var meet_objectives_verified = $('select#id_meet_objectives_verified').val();
 

@@ -11279,10 +11279,6 @@ class ABLNFCForm(forms.ModelForm):
         label=_("Date of monitoring"),
         required=True
     )
-    topic_covered = forms.CharField(
-        label=_('Activities/ topic covered'),
-        widget=forms.TextInput, required=True
-    )
     materials_needed_available = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=ABLN_FC.YES_NO,
@@ -11324,25 +11320,68 @@ class ABLNFCForm(forms.ModelForm):
         choices=ABLN_FC.YES_NO ,
         label=_('Does the child show improvement in achieving the targeted competency?')
     )
-
     child_expected_work_independently = forms.ChoiceField(
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=ABLN_FC.YES_NO ,
         label=_('Was the child expected to work independently during the lesson?')
     )
+    work_independently_evaluation = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.INDEPENDENTLY_EVALUATION ,
+        label=_('How do you rate child performance for the current lesson?')
+    )
+    complete_printed_package = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.COMPLETE_PRINTED_PACKAGE ,
+        label=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.SESSIONS_PARTICIPATED ,
+        label=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = forms.CharField(
+        label=_('not participating reason'),
+        widget=forms.TextInput, required=False
+    )
+    e_recharge_card_provided = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Was the child provided with E-Recharge cards ?')
+    )
+
+    action_to_taken = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    child_needs_pss = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO ,
+        label=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=ABLN_FC.YES_NO,
+        label=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+    )
     homework_after_lesson = forms.ChoiceField(
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=ABLN_FC.YES_NO ,
         label=_('Was there any homework given after the lesson?')
     )
     parents_supporting_student = forms.ChoiceField(
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=ABLN_FC.YES_NO ,
         label=_('Were parents supporting the student through this lesson? ')
     )
     additional_notes = forms.CharField(
         label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
-        widget=forms.TextInput, required=True
+        widget=forms.Textarea, required=True
     )
     targeted_competencies = forms.CharField(
         label=_('Targeted Competencies'),
@@ -11475,21 +11514,8 @@ class ABLNFCForm(forms.ModelForm):
             ),
             Fieldset(
                 None,
-                Div(HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Lesson details') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('topic_covered', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning  B_right_border'
-            ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<span>D</span>'), css_class='block_tag'),
+                    HTML('<span>B</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
                 ),
@@ -11521,11 +11547,11 @@ class ABLNFCForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('meet_objectives', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('meet_objectives', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3.1</span>'),
                     Div('meet_objectives_verified', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
@@ -11533,22 +11559,40 @@ class ABLNFCForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('child_expected_work_independently', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('homework_after_lesson', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('parents_supporting_student', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('complete_printed_package', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('sessions_participated', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_not_participating_reason">9.1</span>'),
+                    Div('not_participating_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('e_recharge_card_provided', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('action_to_taken', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    Div('action_to_taken_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 id='weekly_lesson',
-                css_class='bd-callout bd-callout-warning A_right_border'
+                css_class='bd-callout bd-callout-warning B_right_border'
             ),
 
 
@@ -11556,17 +11600,23 @@ class ABLNFCForm(forms.ModelForm):
 
                 None,
                 Div(
-                    HTML('<span>J</span>'), css_class='block_tag'),
+                    HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Covid-19 PSS/ Wellbeing') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_additional_notes">7</span>'),
-                    Div('additional_notes', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_additional_notes">1</span>'),
+                    Div('child_needs_pss', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_additional_notes">2</span>'),
+                    Div('child_cant_access_resources', css_class='col-md-3'),
                     css_class='row',
                 ),
-                # ''
-                css_class='bd-callout bd-callout-warning E_right_border'
+                Div(
+                    HTML('<span class="badge badge-default" id="span_additional_notes">3</span>'),
+                    Div('additional_notes', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -11606,6 +11656,20 @@ class ABLNFCForm(forms.ModelForm):
         if activities_reported == 'other':
             if not activities_reported_other:
                 self.add_error('activities_reported_other', 'This field is required')
+
+        action_to_taken = cleaned_data.get("action_to_taken")
+        action_to_taken_specify = cleaned_data.get("action_to_taken_specify")
+
+        if action_to_taken == 'yes':
+            if not action_to_taken_specify:
+                self.add_error('action_to_taken_specify', 'This field is required')
+
+        sessions_participated = cleaned_data.get("sessions_participated")
+        not_participating_reason = cleaned_data.get("not_participating_reason")
+
+        if sessions_participated == 'not_participating_at_all':
+            if not not_participating_reason:
+                self.add_error('not_participating_reason', 'This field is required')
 
 
     def save(self, request=None, instance=None):
@@ -11651,7 +11715,6 @@ class ABLNFCForm(forms.ModelForm):
             'share_expectations',
             'share_expectations_no_reason',
             'share_expectations_other_reason',
-            'topic_covered',
             'materials_needed_available',
             'attend_lesson',
             'child_interact_teacher',
@@ -11661,6 +11724,15 @@ class ABLNFCForm(forms.ModelForm):
             'child_acquire_competency',
             'child_show_improvement',
             'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
             'homework_after_lesson',
             'parents_supporting_student',
             'completed_tasks',
