@@ -3814,11 +3814,15 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Did the child meet the current lesson objectives?')
     )
-    meet_objectives_verified = models.CharField(
-        max_length=100,
+    meet_objectives_verified = ArrayField(
+        models.CharField(
+            choices=OBJECTIVES_VERIFIED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices=OBJECTIVES_VERIFIED,
         verbose_name=_('Explain how was this verified?')
     )
     objectives_verified_specify = models.TextField(

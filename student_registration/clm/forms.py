@@ -11423,10 +11423,11 @@ class ABLNFCForm(forms.ModelForm):
         choices=ABLN_FC.YES_NO ,
         label=_('Did the child meet the current lesson objectives?')
     )
-    meet_objectives_verified = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=ABLN_FC.OBJECTIVES_VERIFIED ,
-        label=_('Explain how was this verified?')
+    meet_objectives_verified = forms.MultipleChoiceField(
+        label=_('Explain how was this verified?'),
+        choices=ABLN_FC.OBJECTIVES_VERIFIED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
     )
     objectives_verified_specify = forms.CharField(
         label=_('Please specify'),
@@ -11553,7 +11554,7 @@ class ABLNFCForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('meet_objectives', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3.1</span>'),
-                    Div('meet_objectives_verified', css_class='col-md-3'),
+                    Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
                     Div('objectives_verified_specify', css_class='col-md-3'),
                     css_class='row',

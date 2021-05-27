@@ -27,6 +27,7 @@ $(document).ready(function(){
 
     reorganizeForm();
     activities_reported();
+    meet_objectives_verified();
 
     $(document).on('change', 'select#id_attend_lesson, ' +
         'select#id_share_expectations, ' +
@@ -39,6 +40,9 @@ $(document).ready(function(){
 
     $(document).on('click', 'input[name=activities_reported]', function () {
         activities_reported();
+    });
+    $(document).on('click', 'input[name=meet_objectives_verified]', function () {
+        meet_objectives_verified();
     });
 
 
@@ -194,5 +198,22 @@ function activities_reported()
         $('div#div_id_activities_reported_other').addClass('d-none');
         $('#span_activities_reported_other').addClass('d-none');
         $('#id_activities_reported_other').val('');
+    }
+}
+
+
+function meet_objectives_verified()
+{
+    var meet_objectives_verified = $('input[id=id_meet_objectives_verified_5]:checked').val();
+
+    if (meet_objectives_verified == 'other') {
+        $('div#div_id_objectives_verified_specify').removeClass('d-none');
+        $('#span_objectives_verified_specify').removeClass('d-none');
+    }
+    else
+    {
+        $('div#div_id_objectives_verified_specify').addClass('d-none');
+        $('#span_objectives_verified_specify').addClass('d-none');
+        $('#id_objectives_verified_specify').val('');
     }
 }
