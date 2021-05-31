@@ -204,7 +204,8 @@ function activities_reported()
 
 function meet_objectives_verified()
 {
-    var meet_objectives_verified = $('input[id=id_meet_objectives_verified_5]:checked').val();
+    var meet_objectives_verified = $('input[id=id_meet_objectives_verified_4]:checked').val();
+
 
     if (meet_objectives_verified == 'other') {
         $('div#div_id_objectives_verified_specify').removeClass('d-none');

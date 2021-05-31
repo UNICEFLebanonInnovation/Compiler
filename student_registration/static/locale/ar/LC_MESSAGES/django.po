@@ -4316,7 +4316,7 @@ msgstr "ما هي أسباب عدم المشاركة ؟"
 #: student_registration/clm/forms.py:11350
 #: student_registration/clm/models.py:3724
 msgid "Was the child provided with E-Recharge cards ?"
-msgstr "هل تفاعل الطفل مع المعلم/ة خلال الحصة؟"
+msgstr "هل تم إعطاء بطاقات تشريج الإنترنت للطفل؟"
 
 #: student_registration/clm/forms.py:11356
 #: student_registration/clm/models.py:3731
@@ -4328,7 +4328,7 @@ msgstr "هل من إجراءات معينة يجب اتخاذها مع هذا ا
 #: student_registration/clm/forms.py:11365
 #: student_registration/clm/models.py:3742
 msgid "Does the child have any PSS/ wellbeing needs?"
-msgstr "هل من إجراءات معينة يجب اتخاذها مع هذا الطفل قبل الدرس القادم لضمان مشاركة أفضل؟"
+msgstr "هل يحتاج الطفل إلى دعم نفسي-اجتماعي/الرّفاه؟"
 
 #: student_registration/clm/forms.py:11370
 #: student_registration/clm/models.py:3749
@@ -5444,21 +5444,19 @@ msgstr "رسائل صوتية"
 
 #: student_registration/clm/models.py:3583
 msgid "Excellent"
-msgstr ""
+msgstr "ممتاز"
 
 #: student_registration/clm/models.py:3584
 msgid "Good"
-msgstr ""
+msgstr "جيّد"
 
 #: student_registration/clm/models.py:3585
 msgid "Needs support"
-msgstr ""
+msgstr "يحتاج إلى المساعدة"
 
 #: student_registration/clm/models.py:3591
-#, fuzzy
-#| msgid "Justified"
 msgid "Not required"
-msgstr "مبرر"
+msgstr "غير مطلوب"
 
 #: student_registration/clm/models.py:3595
 msgid "Participating in all session"

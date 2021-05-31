@@ -3572,7 +3572,6 @@ class ABLN_FC(TimeStampedModel):
         ('other', _('Other'))
     )
     OBJECTIVES_VERIFIED = Choices(
-        ('', '----------'),
         ('Video_photos', _('Video, photos')),
         ('followed_by_phone_calls', _('Followed by phone calls')),
         ('voice_messages', _('Voice messages')),

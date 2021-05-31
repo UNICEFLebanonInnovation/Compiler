@@ -11630,6 +11630,13 @@ class ABLNFCForm(forms.ModelForm):
     def clean(self):
 
         cleaned_data = super(ABLNFCForm, self).clean()
+
+        meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
+        objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
+        if ('other' in meet_objectives_verified ):
+            if not objectives_verified_specify:
+                self.add_error('objectives_verified_specify', 'This field is required')
+
         attend_lesson = cleaned_data.get("attend_lesson")
         child_interact_teacher = cleaned_data.get("child_interact_teacher")
         child_interact_friends = cleaned_data.get("child_interact_friends")
