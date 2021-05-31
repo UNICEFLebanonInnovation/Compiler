@@ -3837,3 +3837,873 @@ class ABLN_FC(TimeStampedModel):
         ordering = ['-id']
         verbose_name = "FC"
         verbose_name_plural = "FC"
+
+class BLN_FC(TimeStampedModel):
+    YES_NO = Choices(
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    ACTIVITIES_REPORTED= Choices(
+        ('reading', _('Reading')),
+        ('writing', _('Writing')),
+        ('oral_communication', _('Oral Communication')),
+        ('group_work', _('Group Work')),
+        ('individual_tasks', _('Individual tasks')),
+        ('other', _('Other'))
+    )
+    SHARE_EXPECTATIONS_REASON = Choices(
+        ('', '----------'),
+        ('lack_connectivity', _('Lack of internet connectivity')),
+        ('parents_not_interested', _('Parents are not interested in programme')),
+        ('phone_not_available', _('Phone is not available at home')),
+        ('parents_at_work', _('Parents at work')),
+        ('parents_not_vailable', _('Parents are not available')),
+        ('parents_low_literacy_level', _('Parents low literacy level')),
+        ('other', _('Other'))
+    )
+    OBJECTIVES_VERIFIED = Choices(
+        ('Video_photos', _('Video, photos')),
+        ('followed_by_phone_calls', _('Followed by phone calls')),
+        ('voice_messages', _('Voice messages')),
+        ('other', _('Other')),
+    )
+    INDEPENDENTLY_EVALUATION = Choices(
+        ('', '----------'),
+        ('excellent', _('Excellent')),
+        ('good', _('Good')),
+        ('needs_support', _('Needs support')),
+    )
+    COMPLETE_PRINTED_PACKAGE = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+        ('not_required', _('Not required')),
+    )
+    SESSIONS_PARTICIPATED = Choices(
+        ('', '----------'),
+        ('participating_in_all_session', _("Participating in all session")),
+        ('participating_in_some_session', _("Participating in some session")),
+        ('not_participating_at_all', _('Not participating at all')),
+    )
+    FC_TYPE = Choices(
+        ('pre1', _("Pre 1")),
+        ('pre2', _("Pre 2")),
+        ('post1', _("Post 1")),
+        ('post2', _("Post 2"))
+    )
+    enrollment = models.ForeignKey(
+        BLN,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Enrollment')
+    )
+    fc_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=FC_TYPE,
+        verbose_name=_('FC Type')
+    )
+    facilitator_name = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Facilitator name')
+    )
+    subject_taught = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Subject taught')
+    )
+    date_of_monitoring = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of monitoring')
+    )
+    materials_needed_available = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child have these learning materials available for the lesson?')
+    )
+    attend_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child attend the scheduled lesson?')
+    )
+    child_interact_teacher = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child interact with the teacher during the session?')
+    )
+    child_interact_friends = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child interact With peers?')
+    )
+    child_clear_responses = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child provide clear responses?')
+    )
+    child_ask_questions = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child ask questions?')
+    )
+    child_acquire_competency = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child acquire the targeted competency?')
+    )
+    child_show_improvement = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child show improvement in achieving the targeted competency?')
+    )
+    child_expected_work_independently = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child expected to work independently during the lesson?')
+    )
+    work_independently_evaluation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=INDEPENDENTLY_EVALUATION,
+        verbose_name=_('How do you rate child performance for the current lesson:?')
+    )
+    complete_printed_package = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=COMPLETE_PRINTED_PACKAGE,
+        verbose_name=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SESSIONS_PARTICIPATED,
+        verbose_name=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('not participating reason')
+    )
+    e_recharge_card_provided = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child provided with E-Recharge cards ?')
+    )
+    action_to_taken = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Explain')
+    )
+    child_needs_pss = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+    )
+    homework_after_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was there any homework given after the lesson?')
+    )
+    parents_supporting_student = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Were parents supporting the student through this lesson? ')
+    )
+    targeted_competencies= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Targeted Competencies')
+    )
+
+    activities_reported = ArrayField(
+        models.CharField(
+            choices=ACTIVITIES_REPORTED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Activities Reported')
+    )
+    activities_reported_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    share_expectations = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
+    )
+    share_expectations_no_reason = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SHARE_EXPECTATIONS_REASON,
+        verbose_name=_('If no, why not?')
+    )
+    share_expectations_other_reason= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('if Other explain')
+    )
+    completed_tasks = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = ArrayField(
+        models.CharField(
+            choices=OBJECTIVES_VERIFIED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Explain how was this verified?')
+    )
+    objectives_verified_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    additional_notes = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
+    )
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = "FC"
+        verbose_name_plural = "FC"
+
+class RS_FC(TimeStampedModel):
+    YES_NO = Choices(
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    ACTIVITIES_REPORTED= Choices(
+        ('reading', _('Reading')),
+        ('writing', _('Writing')),
+        ('oral_communication', _('Oral Communication')),
+        ('group_work', _('Group Work')),
+        ('individual_tasks', _('Individual tasks')),
+        ('other', _('Other'))
+    )
+    SHARE_EXPECTATIONS_REASON = Choices(
+        ('', '----------'),
+        ('lack_connectivity', _('Lack of internet connectivity')),
+        ('parents_not_interested', _('Parents are not interested in programme')),
+        ('phone_not_available', _('Phone is not available at home')),
+        ('parents_at_work', _('Parents at work')),
+        ('parents_not_vailable', _('Parents are not available')),
+        ('parents_low_literacy_level', _('Parents low literacy level')),
+        ('other', _('Other'))
+    )
+    OBJECTIVES_VERIFIED = Choices(
+        ('Video_photos', _('Video, photos')),
+        ('followed_by_phone_calls', _('Followed by phone calls')),
+        ('voice_messages', _('Voice messages')),
+        ('other', _('Other')),
+    )
+    INDEPENDENTLY_EVALUATION = Choices(
+        ('', '----------'),
+        ('excellent', _('Excellent')),
+        ('good', _('Good')),
+        ('needs_support', _('Needs support')),
+    )
+    COMPLETE_PRINTED_PACKAGE = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+        ('not_required', _('Not required')),
+    )
+    SESSIONS_PARTICIPATED = Choices(
+        ('', '----------'),
+        ('participating_in_all_session', _("Participating in all session")),
+        ('participating_in_some_session', _("Participating in some session")),
+        ('not_participating_at_all', _('Not participating at all')),
+    )
+    FC_TYPE = Choices(
+        ('pre1', _("Pre 1")),
+        ('pre2', _("Pre 2")),
+        ('post1', _("Post 1")),
+        ('post2', _("Post 2"))
+    )
+    enrollment = models.ForeignKey(
+        RS,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Enrollment')
+    )
+    fc_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=FC_TYPE,
+        verbose_name=_('FC Type')
+    )
+    facilitator_name = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Facilitator name')
+    )
+    subject_taught = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Subject taught')
+    )
+    date_of_monitoring = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of monitoring')
+    )
+    materials_needed_available = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child have these learning materials available for the lesson?')
+    )
+    attend_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child attend the scheduled lesson?')
+    )
+    child_interact_teacher = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child interact with the teacher during the session?')
+    )
+    child_interact_friends = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child interact With peers?')
+    )
+    child_clear_responses = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child provide clear responses?')
+    )
+    child_ask_questions = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child ask questions?')
+    )
+    child_acquire_competency = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child acquire the targeted competency?')
+    )
+    child_show_improvement = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child show improvement in achieving the targeted competency?')
+    )
+    child_expected_work_independently = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child expected to work independently during the lesson?')
+    )
+    work_independently_evaluation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=INDEPENDENTLY_EVALUATION,
+        verbose_name=_('How do you rate child performance for the current lesson:?')
+    )
+    complete_printed_package = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=COMPLETE_PRINTED_PACKAGE,
+        verbose_name=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SESSIONS_PARTICIPATED,
+        verbose_name=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('not participating reason')
+    )
+    e_recharge_card_provided = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child provided with E-Recharge cards ?')
+    )
+    action_to_taken = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Explain')
+    )
+    child_needs_pss = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+    )
+    homework_after_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was there any homework given after the lesson?')
+    )
+    parents_supporting_student = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Were parents supporting the student through this lesson? ')
+    )
+    targeted_competencies= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Targeted Competencies')
+    )
+
+    activities_reported = ArrayField(
+        models.CharField(
+            choices=ACTIVITIES_REPORTED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Activities Reported')
+    )
+    activities_reported_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    share_expectations = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
+    )
+    share_expectations_no_reason = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SHARE_EXPECTATIONS_REASON,
+        verbose_name=_('If no, why not?')
+    )
+    share_expectations_other_reason= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('if Other explain')
+    )
+    completed_tasks = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = ArrayField(
+        models.CharField(
+            choices=OBJECTIVES_VERIFIED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Explain how was this verified?')
+    )
+    objectives_verified_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    additional_notes = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
+    )
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = "FC"
+        verbose_name_plural = "FC"
+
+class CBECE_FC(TimeStampedModel):
+    YES_NO = Choices(
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    ACTIVITIES_REPORTED= Choices(
+        ('reading', _('Reading')),
+        ('writing', _('Writing')),
+        ('oral_communication', _('Oral Communication')),
+        ('group_work', _('Group Work')),
+        ('individual_tasks', _('Individual tasks')),
+        ('other', _('Other'))
+    )
+    SHARE_EXPECTATIONS_REASON = Choices(
+        ('', '----------'),
+        ('lack_connectivity', _('Lack of internet connectivity')),
+        ('parents_not_interested', _('Parents are not interested in programme')),
+        ('phone_not_available', _('Phone is not available at home')),
+        ('parents_at_work', _('Parents at work')),
+        ('parents_not_vailable', _('Parents are not available')),
+        ('parents_low_literacy_level', _('Parents low literacy level')),
+        ('other', _('Other'))
+    )
+    OBJECTIVES_VERIFIED = Choices(
+        ('Video_photos', _('Video, photos')),
+        ('followed_by_phone_calls', _('Followed by phone calls')),
+        ('voice_messages', _('Voice messages')),
+        ('other', _('Other')),
+    )
+    INDEPENDENTLY_EVALUATION = Choices(
+        ('', '----------'),
+        ('excellent', _('Excellent')),
+        ('good', _('Good')),
+        ('needs_support', _('Needs support')),
+    )
+    COMPLETE_PRINTED_PACKAGE = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+        ('not_required', _('Not required')),
+    )
+    SESSIONS_PARTICIPATED = Choices(
+        ('', '----------'),
+        ('participating_in_all_session', _("Participating in all session")),
+        ('participating_in_some_session', _("Participating in some session")),
+        ('not_participating_at_all', _('Not participating at all')),
+    )
+    FC_TYPE = Choices(
+        ('pre1', _("Pre 1")),
+        ('pre2', _("Pre 2")),
+        ('post1', _("Post 1")),
+        ('post2', _("Post 2"))
+    )
+    enrollment = models.ForeignKey(
+        CBECE,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Enrollment')
+    )
+    fc_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=FC_TYPE,
+        verbose_name=_('FC Type')
+    )
+    facilitator_name = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Facilitator name')
+    )
+    subject_taught = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Subject taught')
+    )
+    date_of_monitoring = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of monitoring')
+    )
+    materials_needed_available = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child have these learning materials available for the lesson?')
+    )
+    attend_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child attend the scheduled lesson?')
+    )
+    child_interact_teacher = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child interact with the teacher during the session?')
+    )
+    child_interact_friends = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child interact With peers?')
+    )
+    child_clear_responses = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child provide clear responses?')
+    )
+    child_ask_questions = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child ask questions?')
+    )
+    child_acquire_competency = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child acquire the targeted competency?')
+    )
+    child_show_improvement = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child show improvement in achieving the targeted competency?')
+    )
+    child_expected_work_independently = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child expected to work independently during the lesson?')
+    )
+    work_independently_evaluation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=INDEPENDENTLY_EVALUATION,
+        verbose_name=_('How do you rate child performance for the current lesson:?')
+    )
+    complete_printed_package = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=COMPLETE_PRINTED_PACKAGE,
+        verbose_name=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SESSIONS_PARTICIPATED,
+        verbose_name=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('not participating reason')
+    )
+    e_recharge_card_provided = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child provided with E-Recharge cards ?')
+    )
+    action_to_taken = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Explain')
+    )
+    child_needs_pss = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+    )
+    homework_after_lesson = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was there any homework given after the lesson?')
+    )
+    parents_supporting_student = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Were parents supporting the student through this lesson? ')
+    )
+    targeted_competencies= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Targeted Competencies')
+    )
+
+    activities_reported = ArrayField(
+        models.CharField(
+            choices=ACTIVITIES_REPORTED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Activities Reported')
+    )
+    activities_reported_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    share_expectations = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
+    )
+    share_expectations_no_reason = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SHARE_EXPECTATIONS_REASON,
+        verbose_name=_('If no, why not?')
+    )
+    share_expectations_other_reason= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('if Other explain')
+    )
+    completed_tasks = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = ArrayField(
+        models.CharField(
+            choices=OBJECTIVES_VERIFIED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Explain how was this verified?')
+    )
+    objectives_verified_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    additional_notes = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
+    )
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = "FC"
+        verbose_name_plural = "FC"

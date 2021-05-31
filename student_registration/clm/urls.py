@@ -164,6 +164,21 @@ urlpatterns = [
         name='abln_fc_add'
     ),
     url(
+        regex=r'^bln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+        view=views.BLNFCAddView.as_view(),
+        name='bln_fc_add'
+    ),
+    url(
+        regex=r'^rs-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+        view=views.RSFCAddView.as_view(),
+        name='rs_fc_add'
+    ),
+    url(
+        regex=r'^cbece-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+        view=views.CBECEFCAddView.as_view(),
+        name='cbece_fc_add'
+    ),
+    url(
         regex=r'^bln-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNPostAssessmentView.as_view(),
         name='bln_post_assessment'

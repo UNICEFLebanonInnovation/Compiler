@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades,  ABLN_FC
+from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades,  ABLN_FC, BLN_FC, RS_FC, CBECE_FC
 
 
 def create_instance(validated_data, model):
@@ -671,6 +671,137 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
             'additional_notes'
         )
 
+
+class BLN_FCSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BLN_FC
+        fields = (
+            'enrollment_id',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )
+
+class RS_FCSerializer(serializers.ModelSerializer):
+    # enrollment_id = serializers.IntegerField(source='enrollment.id')
+
+    class Meta:
+        model = RS_FC
+        fields = (
+            'enrollment_id',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )
+
+class CBECE_FCSerializer(serializers.ModelSerializer):
+    # enrollment_id = serializers.IntegerField(source='enrollment.id')
+
+    class Meta:
+        model = CBECE_FC
+        fields = (
+            'enrollment_id',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )
 
 class SelfPerceptionGradesSerializer(serializers.ModelSerializer):
 

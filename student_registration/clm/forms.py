@@ -38,9 +38,21 @@ from .models import (
     Assessment,
     CLMRound,
     ABLN_FC,
+    BLN_FC,
+    RS_FC,
+    CBECE_FC,
     Center
 )
-from .serializers import BLNSerializer, RSSerializer, CBECESerializer, ABLNSerializer, ABLN_FCSerializer
+from .serializers import (
+    BLNSerializer,
+    RSSerializer,
+    CBECESerializer,
+    ABLNSerializer,
+    ABLN_FCSerializer,
+    BLN_FCSerializer,
+    RS_FCSerializer,
+    CBECE_FCSerializer,
+)
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
@@ -11265,7 +11277,6 @@ class CBECEFollowupForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
-
 class ABLNFCForm(forms.ModelForm):
     facilitator_name = forms.CharField(
         label=_('Facilitator name'),
@@ -11711,6 +11722,1458 @@ class ABLNFCForm(forms.ModelForm):
 
     class Meta:
         model = ABLN_FC
+        fields = (
+            'enrollment_id',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )
+
+class BLNFCForm(forms.ModelForm):
+    facilitator_name = forms.CharField(
+        label=_('Facilitator name'),
+        widget=forms.TextInput, required=True
+    )
+    subject_taught = forms.CharField(
+        label=_('Subject taught'),
+        widget=forms.TextInput, required=True
+    )
+    date_of_monitoring = forms.DateField(
+        label=_("Date of monitoring"),
+        required=True
+    )
+    materials_needed_available = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO,
+        label=_('Did the child have these learning materials available for the lesson?')
+    )
+    attend_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child attend the scheduled lesson?')
+    )
+
+    child_interact_teacher = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child interact with the teacher during the session?')
+    )
+    child_interact_friends = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child interact With peers?')
+    )
+    child_clear_responses = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child provide clear responses?')
+    )
+    child_ask_questions = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child ask questions?')
+    )
+    child_acquire_competency = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child acquire the targeted competency?')
+    )
+    child_show_improvement = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.YES_NO ,
+        label=_('Does the child show improvement in achieving the targeted competency?')
+    )
+    child_expected_work_independently = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Was the child expected to work independently during the lesson?')
+    )
+    work_independently_evaluation = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.INDEPENDENTLY_EVALUATION ,
+        label=_('How do you rate child performance for the current lesson?')
+    )
+    complete_printed_package = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.COMPLETE_PRINTED_PACKAGE ,
+        label=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.SESSIONS_PARTICIPATED ,
+        label=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = forms.CharField(
+        label=_('not participating reason'),
+        widget=forms.TextInput, required=False
+    )
+    e_recharge_card_provided = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Was the child provided with E-Recharge cards ?')
+    )
+
+    action_to_taken = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    child_needs_pss = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO,
+        label=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+    )
+    homework_after_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Was there any homework given after the lesson?')
+    )
+    parents_supporting_student = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Were parents supporting the student through this lesson? ')
+    )
+    additional_notes = forms.CharField(
+        label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
+        widget=forms.Textarea, required=True
+    )
+    targeted_competencies = forms.CharField(
+        label=_('Targeted Competencies'),
+        widget=forms.TextInput, required=True
+    )
+
+    activities_reported = forms.MultipleChoiceField(
+        label=_('Activities Reported'),
+        choices=BLN_FC.ACTIVITIES_REPORTED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    activities_reported_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    share_expectations = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
+    )
+    share_expectations_no_reason = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.SHARE_EXPECTATIONS_REASON ,
+        label=_('If no, why not?')
+    )
+    share_expectations_other_reason = forms.CharField(
+        label=_('If Other explain'),
+        widget=forms.TextInput, required=False
+    )
+    completed_tasks = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=BLN_FC.YES_NO ,
+        label=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = forms.MultipleChoiceField(
+        label=_('Explain how was this verified?'),
+        choices=BLN_FC.OBJECTIVES_VERIFIED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    objectives_verified_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
+    fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(BLNFCForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else None
+
+
+        data = kwargs['initial'] if 'initial' in kwargs else ''
+
+        if data != '':
+
+            enrollment_id= data['enrollment_id']
+            fc_type= data['fc_type']
+            self.fields['enrollment_id'].initial = enrollment_id
+            self.fields['fc_type'].initial = fc_type
+            form_action = reverse('clm:bln_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
+
+        elif instance:
+            form_action = reverse('clm:bln_fc_add', kwargs = {'enrollment_id': instance.enrollment_id, 'fc_type': instance.fc_type})
+
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('FE Partner & Facilitator details') + '</h4>')
+                ),
+                Div(
+                    Div('enrollment_id', css_class='col-md-3 d-none'),
+                    Div('fc_type', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('facilitator_name', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('subject_taught', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('date_of_monitoring', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('targeted_competencies', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('materials_needed_available', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('activities_reported', css_class='col-md-3 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_activities_reported_other">6.1</span>'),
+                    Div('activities_reported_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                #
+                Div(
+                    # , ,
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('share_expectations', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_no_reason">7.1</span>'),
+                    Div('share_expectations_no_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_other_reason">7.1.1</span>'),
+                    Div('share_expectations_other_reason', css_class='col-md-3'),
+
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attend_lesson', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('child_interact_teacher', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.2</span>'),
+                    Div('child_interact_friends', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.3</span>'),
+                    Div('child_clear_responses', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1.4</span>'),
+                    Div('child_ask_questions', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.5</span>'),
+                    Div('child_acquire_competency', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.6</span>'),
+                    Div('child_show_improvement', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('completed_tasks', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('meet_objectives', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    Div('objectives_verified_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('homework_after_lesson', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('parents_supporting_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('complete_printed_package', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('sessions_participated', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_not_participating_reason">9.1</span>'),
+                    Div('not_participating_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('e_recharge_card_provided', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('action_to_taken', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    Div('action_to_taken_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                id='weekly_lesson',
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+
+
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>C</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_additional_notes">1</span>'),
+                    Div('child_needs_pss', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_additional_notes">2</span>'),
+                    Div('child_cant_access_resources', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_additional_notes">3</span>'),
+                    Div('additional_notes', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _(
+                    'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+
+        cleaned_data = super(BLNFCForm, self).clean()
+
+        meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
+        objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
+        if ('other' in meet_objectives_verified ):
+            if not objectives_verified_specify:
+                self.add_error('objectives_verified_specify', 'This field is required')
+
+        attend_lesson = cleaned_data.get("attend_lesson")
+        child_interact_teacher = cleaned_data.get("child_interact_teacher")
+        child_interact_friends = cleaned_data.get("child_interact_friends")
+        child_clear_responses = cleaned_data.get("child_clear_responses")
+        child_ask_questions = cleaned_data.get("child_ask_questions")
+        child_acquire_competency = cleaned_data.get("child_acquire_competency")
+        child_show_improvement= cleaned_data.get("child_show_improvement")
+
+        if attend_lesson == 'yes':
+            if not child_interact_teacher:
+                self.add_error('child_interact_teacher', 'This field is required')
+            if not child_interact_friends:
+                self.add_error('child_interact_friends', 'This field is required')
+            if not child_clear_responses:
+                self.add_error('child_clear_responses', 'This field is required')
+            if not child_ask_questions:
+                self.add_error('child_ask_questions', 'This field is required')
+            if not child_acquire_competency:
+                self.add_error('child_acquire_competency', 'This field is required')
+            if not child_show_improvement:
+                self.add_error('child_show_improvement', 'This field is required')
+
+        activities_reported = cleaned_data.get("activities_reported")
+        activities_reported_other = cleaned_data.get("activities_reported_other")
+        if activities_reported == 'other':
+            if not activities_reported_other:
+                self.add_error('activities_reported_other', 'This field is required')
+
+        action_to_taken = cleaned_data.get("action_to_taken")
+        action_to_taken_specify = cleaned_data.get("action_to_taken_specify")
+
+        if action_to_taken == 'yes':
+            if not action_to_taken_specify:
+                self.add_error('action_to_taken_specify', 'This field is required')
+
+        sessions_participated = cleaned_data.get("sessions_participated")
+        not_participating_reason = cleaned_data.get("not_participating_reason")
+
+        if sessions_participated == 'not_participating_at_all':
+            if not not_participating_reason:
+                self.add_error('not_participating_reason', 'This field is required')
+
+
+    def save(self, request=None, instance=None):
+        if instance:
+            serializer = BLN_FCSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+
+            serializer = BLN_FCSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.owner = request.user
+                instance.modified_by = request.user
+                instance.partner = request.user.partner
+                instance.enrollment_id = request.POST['enrollment_id']
+
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+        return instance
+
+    class Meta:
+        model = BLN_FC
+        fields = (
+            'enrollment_id',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )
+
+class RSFCForm(forms.ModelForm):
+    facilitator_name = forms.CharField(
+        label=_('Facilitator name'),
+        widget=forms.TextInput, required=True
+    )
+    subject_taught = forms.CharField(
+        label=_('Subject taught'),
+        widget=forms.TextInput, required=True
+    )
+    date_of_monitoring = forms.DateField(
+        label=_("Date of monitoring"),
+        required=True
+    )
+    materials_needed_available = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO,
+        label=_('Did the child have these learning materials available for the lesson?')
+    )
+    attend_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child attend the scheduled lesson?')
+    )
+
+    child_interact_teacher = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child interact with the teacher during the session?')
+    )
+    child_interact_friends = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child interact With peers?')
+    )
+    child_clear_responses = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child provide clear responses?')
+    )
+    child_ask_questions = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child ask questions?')
+    )
+    child_acquire_competency = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child acquire the targeted competency?')
+    )
+    child_show_improvement = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.YES_NO ,
+        label=_('Does the child show improvement in achieving the targeted competency?')
+    )
+    child_expected_work_independently = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Was the child expected to work independently during the lesson?')
+    )
+    work_independently_evaluation = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.INDEPENDENTLY_EVALUATION ,
+        label=_('How do you rate child performance for the current lesson?')
+    )
+    complete_printed_package = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.COMPLETE_PRINTED_PACKAGE ,
+        label=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.SESSIONS_PARTICIPATED ,
+        label=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = forms.CharField(
+        label=_('not participating reason'),
+        widget=forms.TextInput, required=False
+    )
+    e_recharge_card_provided = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Was the child provided with E-Recharge cards ?')
+    )
+
+    action_to_taken = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    child_needs_pss = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO,
+        label=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+    )
+    homework_after_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Was there any homework given after the lesson?')
+    )
+    parents_supporting_student = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Were parents supporting the student through this lesson? ')
+    )
+    additional_notes = forms.CharField(
+        label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
+        widget=forms.Textarea, required=True
+    )
+    targeted_competencies = forms.CharField(
+        label=_('Targeted Competencies'),
+        widget=forms.TextInput, required=True
+    )
+
+    activities_reported = forms.MultipleChoiceField(
+        label=_('Activities Reported'),
+        choices=RS_FC.ACTIVITIES_REPORTED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    activities_reported_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    share_expectations = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
+    )
+    share_expectations_no_reason = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.SHARE_EXPECTATIONS_REASON ,
+        label=_('If no, why not?')
+    )
+    share_expectations_other_reason = forms.CharField(
+        label=_('If Other explain'),
+        widget=forms.TextInput, required=False
+    )
+    completed_tasks = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=RS_FC.YES_NO ,
+        label=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = forms.MultipleChoiceField(
+        label=_('Explain how was this verified?'),
+        choices=RS_FC.OBJECTIVES_VERIFIED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    objectives_verified_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
+    fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(RSFCForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else None
+
+
+        data = kwargs['initial'] if 'initial' in kwargs else ''
+
+        if data != '':
+
+            enrollment_id= data['enrollment_id']
+            fc_type= data['fc_type']
+            self.fields['enrollment_id'].initial = enrollment_id
+            self.fields['fc_type'].initial = fc_type
+            form_action = reverse('clm:rs_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
+
+        elif instance:
+            form_action = reverse('clm:rs_fc_add', kwargs = {'enrollment_id': instance.enrollment_id, 'fc_type': instance.fc_type})
+
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('FE Partner & Facilitator details') + '</h4>')
+                ),
+                Div(
+                    Div('enrollment_id', css_class='col-md-3 d-none'),
+                    Div('fc_type', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('facilitator_name', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('subject_taught', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('date_of_monitoring', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('targeted_competencies', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('materials_needed_available', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('activities_reported', css_class='col-md-3 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_activities_reported_other">6.1</span>'),
+                    Div('activities_reported_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                #
+                Div(
+                    # , ,
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('share_expectations', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_no_reason">7.1</span>'),
+                    Div('share_expectations_no_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_other_reason">7.1.1</span>'),
+                    Div('share_expectations_other_reason', css_class='col-md-3'),
+
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attend_lesson', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('child_interact_teacher', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.2</span>'),
+                    Div('child_interact_friends', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.3</span>'),
+                    Div('child_clear_responses', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1.4</span>'),
+                    Div('child_ask_questions', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.5</span>'),
+                    Div('child_acquire_competency', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.6</span>'),
+                    Div('child_show_improvement', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('completed_tasks', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('meet_objectives', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    Div('objectives_verified_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('homework_after_lesson', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('parents_supporting_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('complete_printed_package', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('sessions_participated', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_not_participating_reason">9.1</span>'),
+                    Div('not_participating_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('e_recharge_card_provided', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('action_to_taken', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    Div('action_to_taken_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                id='weekly_lesson',
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+
+
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>C</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_additional_notes">1</span>'),
+                    Div('child_needs_pss', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_additional_notes">2</span>'),
+                    Div('child_cant_access_resources', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_additional_notes">3</span>'),
+                    Div('additional_notes', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _(
+                    'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+
+        cleaned_data = super(RSFCForm, self).clean()
+
+        meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
+        objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
+        if ('other' in meet_objectives_verified ):
+            if not objectives_verified_specify:
+                self.add_error('objectives_verified_specify', 'This field is required')
+
+        attend_lesson = cleaned_data.get("attend_lesson")
+        child_interact_teacher = cleaned_data.get("child_interact_teacher")
+        child_interact_friends = cleaned_data.get("child_interact_friends")
+        child_clear_responses = cleaned_data.get("child_clear_responses")
+        child_ask_questions = cleaned_data.get("child_ask_questions")
+        child_acquire_competency = cleaned_data.get("child_acquire_competency")
+        child_show_improvement= cleaned_data.get("child_show_improvement")
+
+        if attend_lesson == 'yes':
+            if not child_interact_teacher:
+                self.add_error('child_interact_teacher', 'This field is required')
+            if not child_interact_friends:
+                self.add_error('child_interact_friends', 'This field is required')
+            if not child_clear_responses:
+                self.add_error('child_clear_responses', 'This field is required')
+            if not child_ask_questions:
+                self.add_error('child_ask_questions', 'This field is required')
+            if not child_acquire_competency:
+                self.add_error('child_acquire_competency', 'This field is required')
+            if not child_show_improvement:
+                self.add_error('child_show_improvement', 'This field is required')
+
+        activities_reported = cleaned_data.get("activities_reported")
+        activities_reported_other = cleaned_data.get("activities_reported_other")
+        if activities_reported == 'other':
+            if not activities_reported_other:
+                self.add_error('activities_reported_other', 'This field is required')
+
+        action_to_taken = cleaned_data.get("action_to_taken")
+        action_to_taken_specify = cleaned_data.get("action_to_taken_specify")
+
+        if action_to_taken == 'yes':
+            if not action_to_taken_specify:
+                self.add_error('action_to_taken_specify', 'This field is required')
+
+        sessions_participated = cleaned_data.get("sessions_participated")
+        not_participating_reason = cleaned_data.get("not_participating_reason")
+
+        if sessions_participated == 'not_participating_at_all':
+            if not not_participating_reason:
+                self.add_error('not_participating_reason', 'This field is required')
+
+
+    def save(self, request=None, instance=None):
+        if instance:
+            serializer = RS_FCSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+
+            serializer = RS_FCSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.owner = request.user
+                instance.modified_by = request.user
+                instance.partner = request.user.partner
+                instance.enrollment_id = request.POST['enrollment_id']
+
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+        return instance
+
+    class Meta:
+        model = RS_FC
+        fields = (
+            'enrollment_id',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )
+
+class CBECEFCForm(forms.ModelForm):
+    facilitator_name = forms.CharField(
+        label=_('Facilitator name'),
+        widget=forms.TextInput, required=True
+    )
+    subject_taught = forms.CharField(
+        label=_('Subject taught'),
+        widget=forms.TextInput, required=True
+    )
+    date_of_monitoring = forms.DateField(
+        label=_("Date of monitoring"),
+        required=True
+    )
+    materials_needed_available = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO,
+        label=_('Did the child have these learning materials available for the lesson?')
+    )
+    attend_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child attend the scheduled lesson?')
+    )
+
+    child_interact_teacher = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child interact with the teacher during the session?')
+    )
+    child_interact_friends = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child interact With peers?')
+    )
+    child_clear_responses = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child provide clear responses?')
+    )
+    child_ask_questions = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child ask questions?')
+    )
+    child_acquire_competency = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child acquire the targeted competency?')
+    )
+    child_show_improvement = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Does the child show improvement in achieving the targeted competency?')
+    )
+    child_expected_work_independently = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Was the child expected to work independently during the lesson?')
+    )
+    work_independently_evaluation = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.INDEPENDENTLY_EVALUATION ,
+        label=_('How do you rate child performance for the current lesson?')
+    )
+    complete_printed_package = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.COMPLETE_PRINTED_PACKAGE ,
+        label=_('Did the child complete the printed package for the Week?')
+    )
+    sessions_participated = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.SESSIONS_PARTICIPATED ,
+        label=_('How many session did this child participate in online classes this week?')
+    )
+    not_participating_reason = forms.CharField(
+        label=_('not participating reason'),
+        widget=forms.TextInput, required=False
+    )
+    e_recharge_card_provided = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Was the child provided with E-Recharge cards ?')
+    )
+
+    action_to_taken = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Any specific actions to be taken with this child before the next lesson for better participation')
+    )
+    action_to_taken_specify = forms.CharField(
+        label=_('Explain'),
+        widget=forms.TextInput, required=False
+    )
+    child_needs_pss = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Does the child have any PSS/ wellbeing needs?')
+    )
+    child_cant_access_resources = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO,
+        label=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+    )
+    homework_after_lesson = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Was there any homework given after the lesson?')
+    )
+    parents_supporting_student = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Were parents supporting the student through this lesson? ')
+    )
+    additional_notes = forms.CharField(
+        label=_('Additional notes/ specific challenges/ follow up action/ referrals etc.'),
+        widget=forms.Textarea, required=True
+    )
+    targeted_competencies = forms.CharField(
+        label=_('Targeted Competencies'),
+        widget=forms.TextInput, required=True
+    )
+
+    activities_reported = forms.MultipleChoiceField(
+        label=_('Activities Reported'),
+        choices=CBECE_FC.ACTIVITIES_REPORTED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    activities_reported_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    share_expectations = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did you share with the child caregiver the expectations for weekly engagement in learning?')
+    )
+    share_expectations_no_reason = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.SHARE_EXPECTATIONS_REASON ,
+        label=_('If no, why not?')
+    )
+    share_expectations_other_reason = forms.CharField(
+        label=_('If Other explain'),
+        widget=forms.TextInput, required=False
+    )
+    completed_tasks = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child complete the required tasks later?')
+    )
+    meet_objectives = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE_FC.YES_NO ,
+        label=_('Did the child meet the current lesson objectives?')
+    )
+    meet_objectives_verified = forms.MultipleChoiceField(
+        label=_('Explain how was this verified?'),
+        choices=CBECE_FC.OBJECTIVES_VERIFIED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    objectives_verified_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
+    fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(CBECEFCForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else None
+
+
+        data = kwargs['initial'] if 'initial' in kwargs else ''
+
+        if data != '':
+
+            enrollment_id= data['enrollment_id']
+            fc_type= data['fc_type']
+            self.fields['enrollment_id'].initial = enrollment_id
+            self.fields['fc_type'].initial = fc_type
+            form_action = reverse('clm:cbece_fc_add', kwargs={'enrollment_id': enrollment_id, 'fc_type': fc_type})
+
+        elif instance:
+            form_action = reverse('clm:cbece_fc_add', kwargs = {'enrollment_id': instance.enrollment_id, 'fc_type': instance.fc_type})
+
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('FE Partner & Facilitator details') + '</h4>')
+                ),
+                Div(
+                    Div('enrollment_id', css_class='col-md-3 d-none'),
+                    Div('fc_type', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('facilitator_name', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('subject_taught', css_class='col-md-3'),
+
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('date_of_monitoring', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('targeted_competencies', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('materials_needed_available', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('activities_reported', css_class='col-md-3 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_activities_reported_other">6.1</span>'),
+                    Div('activities_reported_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                #
+                Div(
+                    # , ,
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('share_expectations', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_no_reason">7.1</span>'),
+                    Div('share_expectations_no_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_share_expectations_other_reason">7.1.1</span>'),
+                    Div('share_expectations_other_reason', css_class='col-md-3'),
+
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attend_lesson', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('child_interact_teacher', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.2</span>'),
+                    Div('child_interact_friends', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.3</span>'),
+                    Div('child_clear_responses', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1.4</span>'),
+                    Div('child_ask_questions', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.5</span>'),
+                    Div('child_acquire_competency', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.6</span>'),
+                    Div('child_show_improvement', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('completed_tasks', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('meet_objectives', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    Div('objectives_verified_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('homework_after_lesson', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('parents_supporting_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('complete_printed_package', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('sessions_participated', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_not_participating_reason">9.1</span>'),
+                    Div('not_participating_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('e_recharge_card_provided', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('action_to_taken', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    Div('action_to_taken_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                id='weekly_lesson',
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+
+
+            Fieldset(
+
+                None,
+                Div(
+                    HTML('<span>C</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child wellbeing') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_additional_notes">1</span>'),
+                    Div('child_needs_pss', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_additional_notes">2</span>'),
+                    Div('child_cant_access_resources', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_additional_notes">3</span>'),
+                    Div('additional_notes', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _(
+                    'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+
+        cleaned_data = super(CBECEFCForm, self).clean()
+
+        meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
+        objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
+        if ('other' in meet_objectives_verified ):
+            if not objectives_verified_specify:
+                self.add_error('objectives_verified_specify', 'This field is required')
+
+        attend_lesson = cleaned_data.get("attend_lesson")
+        child_interact_teacher = cleaned_data.get("child_interact_teacher")
+        child_interact_friends = cleaned_data.get("child_interact_friends")
+        child_clear_responses = cleaned_data.get("child_clear_responses")
+        child_ask_questions = cleaned_data.get("child_ask_questions")
+        child_acquire_competency = cleaned_data.get("child_acquire_competency")
+        child_show_improvement= cleaned_data.get("child_show_improvement")
+
+        if attend_lesson == 'yes':
+            if not child_interact_teacher:
+                self.add_error('child_interact_teacher', 'This field is required')
+            if not child_interact_friends:
+                self.add_error('child_interact_friends', 'This field is required')
+            if not child_clear_responses:
+                self.add_error('child_clear_responses', 'This field is required')
+            if not child_ask_questions:
+                self.add_error('child_ask_questions', 'This field is required')
+            if not child_acquire_competency:
+                self.add_error('child_acquire_competency', 'This field is required')
+            if not child_show_improvement:
+                self.add_error('child_show_improvement', 'This field is required')
+
+        activities_reported = cleaned_data.get("activities_reported")
+        activities_reported_other = cleaned_data.get("activities_reported_other")
+        if activities_reported == 'other':
+            if not activities_reported_other:
+                self.add_error('activities_reported_other', 'This field is required')
+
+        action_to_taken = cleaned_data.get("action_to_taken")
+        action_to_taken_specify = cleaned_data.get("action_to_taken_specify")
+
+        if action_to_taken == 'yes':
+            if not action_to_taken_specify:
+                self.add_error('action_to_taken_specify', 'This field is required')
+
+        sessions_participated = cleaned_data.get("sessions_participated")
+        not_participating_reason = cleaned_data.get("not_participating_reason")
+
+        if sessions_participated == 'not_participating_at_all':
+            if not not_participating_reason:
+                self.add_error('not_participating_reason', 'This field is required')
+
+
+    def save(self, request=None, instance=None):
+        if instance:
+            serializer = CBECE_FCSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+
+            serializer = CBECE_FCSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.owner = request.user
+                instance.modified_by = request.user
+                instance.partner = request.user.partner
+                instance.enrollment_id = request.POST['enrollment_id']
+
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+        return instance
+
+    class Meta:
+        model = CBECE_FC
         fields = (
             'enrollment_id',
             'fc_type',

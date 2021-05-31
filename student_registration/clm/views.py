@@ -31,7 +31,20 @@ from student_registration.locations.models import Location
 from student_registration.students.models import Person
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
-from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, ABLN_FC, Center
+from .models import (
+    BLN,
+    ABLN,
+    RS,
+    CBECE,
+    SelfPerceptionGrades,
+    Disability,
+    Assessment,
+    ABLN_FC,
+    BLN_FC,
+    CBECE_FC,
+    RS_FC,
+    Center,
+)
 from .forms import (
     BLNForm,
     ABLNForm,
@@ -51,9 +64,22 @@ from .forms import (
     CBECEMonitoringQuestionerForm,
     BLNMonitoringQuestionerForm,
     ABLNMonitoringQuestionerForm,
-    ABLNFCForm
+    ABLNFCForm,
+    BLNFCForm,
+    RSFCForm,
+    CBECEFCForm,
 )
-from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer, ABLN_FCSerializer
+from .serializers import (
+    BLNSerializer,
+    ABLNSerializer,
+    RSSerializer,
+    CBECESerializer,
+    SelfPerceptionGradesSerializer,
+    ABLN_FCSerializer,
+    BLN_FCSerializer,
+    CBECE_FCSerializer,
+    RS_FCSerializer
+)
 from .utils import is_allowed_create, is_allowed_edit
 
 
@@ -879,6 +905,186 @@ class ABLNFCAddView(LoginRequiredMixin,
 
         return super(ABLNFCAddView, self).form_valid(form)
 
+
+class BLNFCAddView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'clm/bln_fc_form.html'
+    form_class = BLNFCForm
+    success_url = '/clm/bln-list/'
+    group_required = [u"CLM_BLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(BLNFCAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(BLNFCAddView, self).get_initial()
+        data = {
+            'enrollment_id': self.kwargs['enrollment_id'],
+            'fc_type': self.kwargs['fc_type']
+        }
+
+        data['enrollment_id'] = self.kwargs['enrollment_id']
+        data['fc_type'] = self.kwargs['fc_type']
+        initial = data
+
+        return initial
+
+    def get_form(self, form_class=None):
+
+
+        instance = BLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+
+        if self.request.method == "POST":
+            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+
+            return BLNFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
+        else:
+            if instance:
+                data = BLN_FCSerializer(instance).data
+
+                return BLNFCForm(data, initial=data, instance=instance, request=self.request)
+
+            else:
+                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                return BLNFCForm(initial = data,request=self.request)
+
+
+    def form_valid(self, form):
+        instance = BLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
+
+
+        if instance:
+            form.save(request=self.request, instance=instance)
+        else:
+            form.save(self.request)
+
+        return super(BLNFCAddView, self).form_valid(form)
+
+
+
+class RSFCAddView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'clm/rs_fc_form.html'
+    form_class = RSFCForm
+    success_url = '/clm/rs-list/'
+    group_required = [u"CLM_RS"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(RSFCAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(RSFCAddView, self).get_initial()
+        data = {
+            'enrollment_id': self.kwargs['enrollment_id'],
+            'fc_type': self.kwargs['fc_type']
+        }
+
+        data['enrollment_id'] = self.kwargs['enrollment_id']
+        data['fc_type'] = self.kwargs['fc_type']
+        initial = data
+
+        return initial
+
+    def get_form(self, form_class=None):
+
+
+        instance = RS_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+
+        if self.request.method == "POST":
+            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+
+            return RSFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
+        else:
+            if instance:
+                data = RS_FCSerializer(instance).data
+
+                return RSFCForm(data, initial=data, instance=instance, request=self.request)
+
+            else:
+                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                return RSFCForm(initial = data,request=self.request)
+
+
+    def form_valid(self, form):
+        instance = RS_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
+
+
+        if instance:
+            form.save(request=self.request, instance=instance)
+        else:
+            form.save(self.request)
+
+        return super(RSFCAddView, self).form_valid(form)
+
+
+class CBECEFCAddView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'clm/cbece_fc_form.html'
+    form_class = CBECEFCForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEFCAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(CBECEFCAddView, self).get_initial()
+        data = {
+            'enrollment_id': self.kwargs['enrollment_id'],
+            'fc_type': self.kwargs['fc_type']
+        }
+
+        data['enrollment_id'] = self.kwargs['enrollment_id']
+        data['fc_type'] = self.kwargs['fc_type']
+        initial = data
+
+        return initial
+
+    def get_form(self, form_class=None):
+
+
+        instance = CBECE_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+
+        if self.request.method == "POST":
+            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+
+            return CBECEFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
+        else:
+            if instance:
+                data = CBECE_FCSerializer(instance).data
+
+                return CBECEFCForm(data, initial=data, instance=instance, request=self.request)
+
+            else:
+                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                return CBECEFCForm(initial = data,request=self.request)
+
+
+    def form_valid(self, form):
+        instance = CBECE_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
+
+
+        if instance:
+            form.save(request=self.request, instance=instance)
+        else:
+            form.save(self.request)
+
+        return super(CBECEFCAddView, self).form_valid(form)
 
 
 class BLNPostAssessmentView(LoginRequiredMixin,
