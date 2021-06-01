@@ -4241,7 +4241,7 @@ msgstr "اسم المعلّم/ةّ"
 #: student_registration/clm/forms.py:11275
 #: student_registration/clm/models.py:3624
 msgid "Subject taught"
-msgstr "المادّة المُعطاة عند هذه الملاحظة"
+msgstr "المادّة"
 
 #: student_registration/clm/forms.py:11279
 #: student_registration/clm/models.py:3629
@@ -4276,7 +4276,7 @@ msgstr "هل أعطى الطفل إجابات واضحة؟"
 #: student_registration/clm/forms.py:11311
 #: student_registration/clm/models.py:3671
 msgid "Did the child ask questions?"
-msgstr "هل أعطى الطفل إجابات واضحة؟"
+msgstr "هل طرح الطفل أسئلة؟"
 
 #: student_registration/clm/forms.py:11316
 #: student_registration/clm/models.py:3678
@@ -4286,7 +4286,7 @@ msgstr "هل اكتسب الطفل المهارة المستهدفة؟"
 #: student_registration/clm/forms.py:11321
 #: student_registration/clm/models.py:3685
 msgid "Does the child show improvement in achieving the targeted competency?"
-msgstr "هل اكتسب الطفل المهارة المستهدفة؟"
+msgstr "هل يظهر  الطفل تحسنًا في بلوغ الكفاية المستهدفة؟"
 
 #: student_registration/clm/forms.py:11326
 #: student_registration/clm/models.py:3692

@@ -169,10 +169,15 @@ function reorganizeForm()
 
     $('div.attend_lesson_questions').addClass('d-none');
     $('#attend_lesson_questions').addClass('hide');
+    $('div#div_id_completed_tasks').removeClass('d-none');
+    $('#span_completed_tasks').removeClass('d-none');
+
 
     if (attend_lesson == 'yes') {
-    $('div.attend_lesson_questions').removeClass('d-none');
-    $('#attend_lesson_questions').removeClass('hide');
+        $('div#div_id_completed_tasks').addClass('d-none');
+        $('#span_completed_tasks').addClass('d-none');
+        $('div.attend_lesson_questions').removeClass('d-none');
+        $('#attend_lesson_questions').removeClass('hide');
     }
     else {
         $('select#child_interact_teacher').val("no");

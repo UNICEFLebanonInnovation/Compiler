@@ -11425,7 +11425,7 @@ class ABLNFCForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     completed_tasks = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=ABLN_FC.YES_NO ,
         label=_('Did the child complete the required tasks later?')
     )
@@ -11557,7 +11557,7 @@ class ABLNFCForm(forms.ModelForm):
                     css_class='row attend_lesson_questions',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -11655,6 +11655,7 @@ class ABLNFCForm(forms.ModelForm):
         child_ask_questions = cleaned_data.get("child_ask_questions")
         child_acquire_competency = cleaned_data.get("child_acquire_competency")
         child_show_improvement= cleaned_data.get("child_show_improvement")
+        completed_tasks= cleaned_data.get("completed_tasks")
 
         if attend_lesson == 'yes':
             if not child_interact_teacher:
@@ -11669,6 +11670,8 @@ class ABLNFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+            if not completed_tasks:
+                self.add_error('completed_tasks', 'This field is required')
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
@@ -11909,7 +11912,7 @@ class BLNFCForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     completed_tasks = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=BLN_FC.YES_NO ,
         label=_('Did the child complete the required tasks later?')
     )
@@ -12041,7 +12044,7 @@ class BLNFCForm(forms.ModelForm):
                     css_class='row attend_lesson_questions',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -12139,6 +12142,7 @@ class BLNFCForm(forms.ModelForm):
         child_ask_questions = cleaned_data.get("child_ask_questions")
         child_acquire_competency = cleaned_data.get("child_acquire_competency")
         child_show_improvement= cleaned_data.get("child_show_improvement")
+        completed_tasks= cleaned_data.get("completed_tasks")
 
         if attend_lesson == 'yes':
             if not child_interact_teacher:
@@ -12153,6 +12157,8 @@ class BLNFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+            if not completed_tasks:
+                self.add_error('completed_tasks', 'This field is required')
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
@@ -12393,7 +12399,7 @@ class RSFCForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     completed_tasks = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=RS_FC.YES_NO ,
         label=_('Did the child complete the required tasks later?')
     )
@@ -12525,7 +12531,7 @@ class RSFCForm(forms.ModelForm):
                     css_class='row attend_lesson_questions',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -12623,6 +12629,7 @@ class RSFCForm(forms.ModelForm):
         child_ask_questions = cleaned_data.get("child_ask_questions")
         child_acquire_competency = cleaned_data.get("child_acquire_competency")
         child_show_improvement= cleaned_data.get("child_show_improvement")
+        completed_tasks= cleaned_data.get("completed_tasks")
 
         if attend_lesson == 'yes':
             if not child_interact_teacher:
@@ -12637,6 +12644,8 @@ class RSFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+            if not completed_tasks:
+                self.add_error('completed_tasks', 'This field is required')
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
@@ -12877,7 +12886,7 @@ class CBECEFCForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     completed_tasks = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=CBECE_FC.YES_NO ,
         label=_('Did the child complete the required tasks later?')
     )
@@ -13009,7 +13018,7 @@ class CBECEFCForm(forms.ModelForm):
                     css_class='row attend_lesson_questions',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -13107,6 +13116,7 @@ class CBECEFCForm(forms.ModelForm):
         child_ask_questions = cleaned_data.get("child_ask_questions")
         child_acquire_competency = cleaned_data.get("child_acquire_competency")
         child_show_improvement= cleaned_data.get("child_show_improvement")
+        completed_tasks= cleaned_data.get("completed_tasks")
 
         if attend_lesson == 'yes':
             if not child_interact_teacher:
@@ -13121,6 +13131,8 @@ class CBECEFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+            if not completed_tasks:
+                self.add_error('completed_tasks', 'This field is required')
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
