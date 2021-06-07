@@ -11,7 +11,8 @@ from .models import (
     RS,
     CBECE,
     Cycle,
-    Disability)
+    Disability,
+    GeneralQuestionnaire)
 
 
 class CommonFilter(FilterSet):
@@ -128,3 +129,13 @@ class CBECEFilter(CommonFilter):
             'owner__username': ['contains'],
             'disability': ['exact'],
         }
+
+class GeneralQuestionnaireFilter(CommonFilter):
+
+    class Meta:
+        model = GeneralQuestionnaire
+        fields = {
+            'facilitator_full_name': ['contains'],
+        }
+
+

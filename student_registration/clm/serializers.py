@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades,  ABLN_FC, BLN_FC, RS_FC, CBECE_FC
+from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades,  ABLN_FC, BLN_FC, RS_FC, CBECE_FC, GeneralQuestionnaire
 
 
 def create_instance(validated_data, model):
@@ -802,6 +802,17 @@ class CBECE_FCSerializer(serializers.ModelSerializer):
             'objectives_verified_specify',
             'additional_notes'
         )
+
+class GeneralQuestionnaireSerializer(serializers.ModelSerializer):
+    # enrollment_id = serializers.IntegerField(source='enrollment.id')
+
+    class Meta:
+        model = GeneralQuestionnaire
+        fields = (
+            # 'enrollment_id',
+            'facilitator_full_name',
+        )
+
 
 class SelfPerceptionGradesSerializer(serializers.ModelSerializer):
 

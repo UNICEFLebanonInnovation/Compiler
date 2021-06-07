@@ -37,7 +37,10 @@ def is_allowed_create(programme):
             current_round = current_round.get(current_round_rs=True)
             if current_round.start_date_rs < current < current_round.end_date_rs:
                 return True
-        return False
+            return False
+
+        if programme == 'GeneralQuestionnaire':
+            return True
 
     except Exception as ex:
         print(ex.message)
@@ -81,6 +84,8 @@ def is_allowed_edit(programme):
             if current_round.start_date_rs_edit < current < current_round.end_date_rs_edit:
                 return True
             return False
+        if programme == 'GeneralQuestionnaire':
+            return True
 
     except Exception as ex:
         print(ex.message)

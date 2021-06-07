@@ -4707,3 +4707,25 @@ class CBECE_FC(TimeStampedModel):
         ordering = ['-id']
         verbose_name = "FC"
         verbose_name_plural = "FC"
+
+class GeneralQuestionnaire(TimeStampedModel):
+    YES_NO = Choices(
+        (1, _("Yes")),
+        (0, _("No"))
+    )
+    facilitator_full_name= models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Facilitator Full Name')
+    )
+    def get_absolute_url(self):
+        return '/general_questionnaire/edit/%d/' % self.pk
+
+    # def __unicode__(self):
+    #     if self.student:
+    #         return self.student.__unicode__()
+    #     return str(self.id)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "General Questionnaire"
+        verbose_name_plural = "General Questionnaire"

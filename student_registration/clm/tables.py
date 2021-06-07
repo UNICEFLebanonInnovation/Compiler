@@ -2,7 +2,7 @@
 import django_tables2 as tables
 from django.utils.translation import ugettext as _
 
-from .models import CLM, BLN, ABLN, RS, CBECE
+from .models import CLM, BLN, ABLN, RS, CBECE, GeneralQuestionnaire
 
 
 class BootstrapTable(tables.Table):
@@ -485,4 +485,25 @@ class CBECETable(CommonTable):
             'created',
             'modified',
             'comments',
+        )
+
+class GeneralQuestionnaireTable(CommonTable):
+
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit Questionnaire'), orderable=False,
+                                        template_name='django_tables2/clm_edit_column.html',
+                                        attrs={'url': '/clm/general-questionnaire-edit/', 'programme': 'General_Questionnaire'})
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete Questionnaire'), orderable=False,
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/general-questionnaire/', 'programme': 'General_Questionnaire'})
+
+    class Meta:
+        model = GeneralQuestionnaire
+        fields = (
+            'edit_column',
+            'delete_column',
+            'facilitator_full_name',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )

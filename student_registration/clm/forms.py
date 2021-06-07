@@ -41,7 +41,8 @@ from .models import (
     BLN_FC,
     RS_FC,
     CBECE_FC,
-    Center
+    Center,
+    GeneralQuestionnaire
 )
 from .serializers import (
     BLNSerializer,
@@ -52,6 +53,7 @@ from .serializers import (
     BLN_FCSerializer,
     RS_FCSerializer,
     CBECE_FCSerializer,
+    GeneralQuestionnaireSerializer
 )
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
@@ -13224,3 +13226,106 @@ class CBECEFCForm(forms.ModelForm):
             'objectives_verified_specify',
             'additional_notes'
         )
+
+
+class GeneralQuestionnaireForm(forms.ModelForm):
+    facilitator_full_name = forms.CharField(
+        label=_("Facilitator Full Name'"),
+        widget=forms.TextInput, required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(GeneralQuestionnaireForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        form_action = reverse('clm:general_questionnaire_add')
+
+        if instance:
+            form_action = reverse('clm:general_questionnaire_edit', kwargs={'pk': instance.id})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                # Div(
+                #     'questionnaire_id',
+                # ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('facilitator_full_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>D</span>'), css_class='block_tag'),
+                Div(
+                    # HTML('<h4 id="alternatives-to-hidden-labels">' + _('Comments') + '</h4>')
+                ),
+                Div(
+                    # HTML('<span class="badge badge-default">1</span>'),
+                    # Div('additional_comments', css_class='col-md-12'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data E_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                Submit('save_add_another', _('Save and add another'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/general-questionnaire-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(GeneralQuestionnaireForm, self).clean()
+
+
+    def save(self, request=None, instance=None):
+        if instance:
+            serializer = GeneralQuestionnaireSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+            serializer = GeneralQuestionnaireSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.owner = request.user
+                instance.modified_by = request.user
+                # instance.partner = request.user.partner
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+        return instance
+
+    class Meta:
+        model = GeneralQuestionnaire
+        fields = (
+            'facilitator_full_name',
+        )
+
+    class Media:
+        js = ()
+

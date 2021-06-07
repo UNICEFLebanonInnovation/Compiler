@@ -117,7 +117,22 @@ urlpatterns = [
         view=views.CBECEListView.as_view(),
         name='cbece_list'
     ),
+    url(
+        regex=r'^general-questionnaire-list/$',
+        view=views.GeneralQuestionnaireListView.as_view(),
+        name='general_questionnaire_list'
+    ),
 
+    url(
+        regex=r'^general-questionnaire-add/$',
+        view=views.GeneralQuestionnaireAddView.as_view(),
+        name='general_questionnaire_add'
+    ),
+    url(
+        regex=r'^general-questionnaire-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.GeneralQuestionnaireEditView.as_view(),
+        name='general_questionnaire_edit'
+    ),
     url(
         regex=r'^abln-add/$',
         view=views.ABLNAddView.as_view(),

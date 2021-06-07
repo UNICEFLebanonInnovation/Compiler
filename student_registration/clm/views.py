@@ -29,8 +29,8 @@ from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from student_registration.students.models import Person
-from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
-from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
+from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter, GeneralQuestionnaireFilter
+from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable, GeneralQuestionnaireTable
 from .models import (
     BLN,
     ABLN,
@@ -43,6 +43,7 @@ from .models import (
     BLN_FC,
     CBECE_FC,
     RS_FC,
+    GeneralQuestionnaire ,
     Center,
 )
 from .forms import (
@@ -68,6 +69,7 @@ from .forms import (
     BLNFCForm,
     RSFCForm,
     CBECEFCForm,
+    GeneralQuestionnaireForm,
 )
 from .serializers import (
     BLNSerializer,
@@ -78,7 +80,8 @@ from .serializers import (
     ABLN_FCSerializer,
     BLN_FCSerializer,
     CBECE_FCSerializer,
-    RS_FCSerializer
+    RS_FCSerializer,
+    GeneralQuestionnaireSerializer,
 )
 from .utils import is_allowed_create, is_allowed_edit
 
@@ -2228,6 +2231,108 @@ class CBECEListView(LoginRequiredMixin,
         #                             round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
         # return CBECE.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
+
+class GeneralQuestionnaireListView(LoginRequiredMixin,
+                    GroupRequiredMixin,
+                    FilterView,
+                    ExportMixin,
+                    SingleTableView,
+                    RequestConfig):
+    table_class = GeneralQuestionnaireTable
+    model = GeneralQuestionnaire
+    template_name = 'clm/general_questionnaire_list.html'
+    table = BootstrapTable(GeneralQuestionnaire.objects.all(), order_by='id')
+    group_required = [u"CLM_General_Questionnaire"]
+
+    filterset_class = GeneralQuestionnaireFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        return GeneralQuestionnaire.objects.all().order_by('-id')
+
+class GeneralQuestionnaireAddView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'clm/general_questionnaire_create_form.html'
+    form_class = GeneralQuestionnaireForm
+    success_url = '/clm/general-questionnaire-list/'
+    group_required = [u"CLM_General_Questionnaire"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/general-questionnairen-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/general-questionnaire-edit/' + str(self.request.session.get('instance_id')) + '/'
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = is_allowed_create('GeneralQuestionnaire')
+        return super(GeneralQuestionnaireAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(GeneralQuestionnaireAddView, self).get_initial()
+        data = {
+            'new_questionnaire': self.request.GET.get('new_questionnaire', ''),
+        }
+        if self.request.GET.get('questionnaire_id'):
+            instance = GeneralQuestionnaire.objects.get(id=self.request.GET.get('questionnaire_id'))
+            data = GeneralQuestionnaireSerializer(instance).data
+        if data:
+            data['new_questionnaire'] = self.request.GET.get('new_questionnaire', 'yes')
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(GeneralQuestionnaireAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return GeneralQuestionnaireForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return GeneralQuestionnaireForm(None, instance=None, request=self.request, initial=self.get_initial())
+
+
+class GeneralQuestionnaireEditView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'clm/general_questionnaire_edit_form.html'
+    form_class = GeneralQuestionnaireForm
+    success_url = '/clm/general_questionnaire_list/'
+    group_required = [u"CLM_General_Questionnaire"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/general-questionnaire-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/general-questionnaire-edit/' + str(self.request.session.get('instance_id')) + '/'
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_edit'] = is_allowed_edit('GeneralQuestionnaire')
+        return super(GeneralQuestionnaireEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = GeneralQuestionnaire.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return GeneralQuestionnaireForm(self.request.POST, instance=instance, request=self.request)
+        else:
+            data = GeneralQuestionnaireSerializer(instance).data
+            return GeneralQuestionnaireForm(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = GeneralQuestionnaire.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(GeneralQuestionnaireEditView, self).form_valid(form)
 
 class CBECEReferralView(LoginRequiredMixin,
                         GroupRequiredMixin,
