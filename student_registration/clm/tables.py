@@ -61,8 +61,20 @@ class BLNTable(CommonTable):
     pre_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_pre_fc1_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
-    post_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+    post_fc1_column = tables.TemplateColumn(verbose_name=_('Post-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_post_fc1_column.html',
+                                                   attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
+    pre_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC2'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc2_column.html',
+                                                   attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
+    post_fc2_column = tables.TemplateColumn(verbose_name=_('Post-FC2'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc2_column.html',
+                                                   attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
+    pre_fc3_column = tables.TemplateColumn(verbose_name=_('Pre-FC3'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc3_column.html',
+                                                   attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
+    post_fc3_column = tables.TemplateColumn(verbose_name=_('Post-FC3'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc3_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
 
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
@@ -87,8 +99,12 @@ class BLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
-            # 'pre_fc1_column',
-            # 'post_fc1_column',
+            'pre_fc1_column',
+            'post_fc1_column',
+            'pre_fc2_column',
+            'post_fc2_column',
+            'pre_fc3_column',
+            'post_fc3_column',
             # 'monitoring_column',
             # 'referral_column',
             # 'followup_column',
@@ -152,13 +168,13 @@ class ABLNTable(CommonTable):
     pre_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_pre_fc1_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    post_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+    post_fc1_column = tables.TemplateColumn(verbose_name=_('Post-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_post_fc1_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    pre_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+    pre_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC2'), orderable=False,
                                                    template_name='django_tables2/clm_pre_fc2_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    post_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+    post_fc2_column = tables.TemplateColumn(verbose_name=_('Post-FC2'), orderable=False,
                                                    template_name='django_tables2/clm_post_fc2_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
 
@@ -248,8 +264,26 @@ class RSTable(CommonTable):
     pre_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_pre_fc1_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+    post_fc1_column = tables.TemplateColumn(verbose_name=_('Post-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_post_fc1_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    pre_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC2'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc2_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    post_fc2_column = tables.TemplateColumn(verbose_name=_('Post-FC2'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc2_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    pre_fc3_column = tables.TemplateColumn(verbose_name=_('Pre-FC3'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc3_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    post_fc3_column = tables.TemplateColumn(verbose_name=_('Post-FC3'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc3_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    pre_fc4_column = tables.TemplateColumn(verbose_name=_('Pre-FC4'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc4_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    post_fc4_column = tables.TemplateColumn(verbose_name=_('Post-FC4'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc4_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
 
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
@@ -281,8 +315,14 @@ class RSTable(CommonTable):
             # 'followup_column',
             'delete_column',
             'post_assessment_column',
-            # 'pre_fc1_column',
-            # 'post_fc1_column',
+            'pre_fc1_column',
+            'post_fc1_column',
+            'pre_fc2_column',
+            'post_fc2_column',
+            'pre_fc3_column',
+            'post_fc3_column',
+            'pre_fc4_column',
+            'post_fc4_column',
             # 'monitoring_column',
             'first_attendance_date',
             'round',
@@ -353,8 +393,22 @@ class CBECETable(CommonTable):
     pre_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_pre_fc1_column.html',
                                                    attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
-    post_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
+    post_fc1_column = tables.TemplateColumn(verbose_name=_('Post-FC1'), orderable=False,
                                                    template_name='django_tables2/clm_post_fc1_column.html',
+                                                   attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
+
+    pre_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC2'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc2_column.html',
+                                                   attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
+    post_fc2_column = tables.TemplateColumn(verbose_name=_('Post-FC2'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc2_column.html',
+                                                   attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
+
+    pre_fc3_column = tables.TemplateColumn(verbose_name=_('Pre-FC3'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc3_column.html',
+                                                   attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
+    post_fc3_column = tables.TemplateColumn(verbose_name=_('Post-FC3'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc3_column.html',
                                                    attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
 
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
@@ -387,8 +441,12 @@ class CBECETable(CommonTable):
             'delete_column',
             'post_assessment_column',
             'mid_assessment_column',
-            # 'pre_fc1_column',
-            # 'post_fc1_column',
+            'pre_fc1_column',
+            'post_fc1_column',
+            'pre_fc2_column',
+            'post_fc2_column',
+            'pre_fc3_column',
+            'post_fc3_column',
             # 'monitoring_column',
             'first_attendance_date',
             'round',
