@@ -4,6 +4,7 @@ from django.conf.urls import url
 
 from . import views
 from . import inclusion_views
+from . import outreach_views
 
 urlpatterns = [
 
@@ -132,6 +133,26 @@ urlpatterns = [
         regex=r'^general-questionnaire-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.GeneralQuestionnaireEditView.as_view(),
         name='general_questionnaire_edit'
+    ),
+    url(
+        regex=r'^outreach-list/$',
+        view=outreach_views.OutreachListView.as_view(),
+        name='outreach_list'
+    ),
+    url(
+        regex=r'^outreach-add/$',
+        view=outreach_views.OutreachAddView.as_view(),
+        name='outreach_add'
+    ),
+    url(
+        regex=r'^outreach-edit/(?P<pk>[\w.@+-]+)/$',
+        view=outreach_views.OutreachEditView.as_view(),
+        name='outreach_edit'
+    ),
+    url(
+        regex=r'^outreach-export/$',
+        view=outreach_views.OutreachExportViewSet.as_view(),
+        name='outreach_export'
     ),
     url(
         regex=r'^abln-add/$',
