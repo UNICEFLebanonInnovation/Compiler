@@ -11644,6 +11644,16 @@ class ABLNFCForm(forms.ModelForm):
 
         cleaned_data = super(ABLNFCForm, self).clean()
 
+        share_expectations = cleaned_data.get("share_expectations")
+        share_expectations_no_reason = cleaned_data.get("share_expectations_no_reason")
+        share_expectations_other_reason = cleaned_data.get("share_expectations_other_reason")
+        if share_expectations == 'no':
+            if not share_expectations_no_reason:
+                self.add_error('share_expectations_no_reason', 'This field is required')
+        if share_expectations_no_reason == 'other':
+            if not share_expectations_other_reason:
+                self.add_error('share_expectations_other_reason', 'This field is required')
+
         meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
         objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
         if ('other' in meet_objectives_verified ):
@@ -11677,7 +11687,7 @@ class ABLNFCForm(forms.ModelForm):
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
-        if activities_reported == 'other':
+        if ('other' in activities_reported ):
             if not activities_reported_other:
                 self.add_error('activities_reported_other', 'This field is required')
 
@@ -12131,6 +12141,16 @@ class BLNFCForm(forms.ModelForm):
 
         cleaned_data = super(BLNFCForm, self).clean()
 
+        share_expectations = cleaned_data.get("share_expectations")
+        share_expectations_no_reason = cleaned_data.get("share_expectations_no_reason")
+        share_expectations_other_reason = cleaned_data.get("share_expectations_other_reason")
+        if share_expectations == 'no':
+            if not share_expectations_no_reason:
+                self.add_error('share_expectations_no_reason', 'This field is required')
+        if share_expectations_no_reason == 'other':
+            if not share_expectations_other_reason:
+                self.add_error('share_expectations_other_reason', 'This field is required')
+
         meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
         objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
         if ('other' in meet_objectives_verified ):
@@ -12164,7 +12184,7 @@ class BLNFCForm(forms.ModelForm):
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
-        if activities_reported == 'other':
+        if ('other' in activities_reported ):
             if not activities_reported_other:
                 self.add_error('activities_reported_other', 'This field is required')
 
@@ -12618,6 +12638,16 @@ class RSFCForm(forms.ModelForm):
 
         cleaned_data = super(RSFCForm, self).clean()
 
+        share_expectations = cleaned_data.get("share_expectations")
+        share_expectations_no_reason = cleaned_data.get("share_expectations_no_reason")
+        share_expectations_other_reason = cleaned_data.get("share_expectations_other_reason")
+        if share_expectations == 'no':
+            if not share_expectations_no_reason:
+                self.add_error('share_expectations_no_reason', 'This field is required')
+        if share_expectations_no_reason == 'other':
+            if not share_expectations_other_reason:
+                self.add_error('share_expectations_other_reason', 'This field is required')
+
         meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
         objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
         if ('other' in meet_objectives_verified ):
@@ -12651,7 +12681,7 @@ class RSFCForm(forms.ModelForm):
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
-        if activities_reported == 'other':
+        if ('other' in activities_reported ):
             if not activities_reported_other:
                 self.add_error('activities_reported_other', 'This field is required')
 
@@ -13105,6 +13135,16 @@ class CBECEFCForm(forms.ModelForm):
 
         cleaned_data = super(CBECEFCForm, self).clean()
 
+        share_expectations = cleaned_data.get("share_expectations")
+        share_expectations_no_reason = cleaned_data.get("share_expectations_no_reason")
+        share_expectations_other_reason = cleaned_data.get("share_expectations_other_reason")
+        if share_expectations == 'no':
+            if not share_expectations_no_reason:
+                self.add_error('share_expectations_no_reason', 'This field is required')
+        if share_expectations_no_reason == 'other':
+            if not share_expectations_other_reason:
+                self.add_error('share_expectations_other_reason', 'This field is required')
+
         meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
         objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
         if ('other' in meet_objectives_verified ):
@@ -13138,7 +13178,7 @@ class CBECEFCForm(forms.ModelForm):
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
-        if activities_reported == 'other':
+        if ('other' in activities_reported ):
             if not activities_reported_other:
                 self.add_error('activities_reported_other', 'This field is required')
 

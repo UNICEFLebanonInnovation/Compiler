@@ -4376,7 +4376,7 @@ msgstr " إذا لا، لماذا؟"
 
 #: student_registration/clm/forms.py:11413
 msgid "If Other explain"
-msgstr " إذا لا، لماذا؟"
+msgstr " يرجى التحديد"
 
 #: student_registration/clm/forms.py:11419
 #: student_registration/clm/models.py:3808

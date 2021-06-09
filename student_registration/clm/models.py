@@ -4218,11 +4218,12 @@ class ABLN_FC(TimeStampedModel):
         ('not_participating_at_all', _('Not participating at all')),
     )
     FC_TYPE = Choices(
-        ('pre1', _("Pre 1")),
-        ('pre2', _("Pre 2")),
-        ('post1', _("Post 1")),
-        ('post2', _("Post 2"))
+        ('pre-arabic', 'Pre Arabic'),
+        ('pre-math', _("Pre Math")),
+        ('post-arabic', _("Post Arabic")),
+        ('post-math', _('Post Math')),
     )
+
     enrollment = models.ForeignKey(
         ABLN,
         blank=True, null=True,
@@ -4508,10 +4509,12 @@ class BLN_FC(TimeStampedModel):
         ('not_participating_at_all', _('Not participating at all')),
     )
     FC_TYPE = Choices(
-        ('pre1', _("Pre 1")),
-        ('pre2', _("Pre 2")),
-        ('post1', _("Post 1")),
-        ('post2', _("Post 2"))
+        ('pre-arabic', _("Pre Arabic")),
+        ('pre-math', _("Pre Math")),
+        ('pre-language', _("Pre Language")),
+        ('post-arabic', _("Post Arabic")),
+        ('post-math', _("Post Math")),
+        ('post-language', _("Post Language")),
     )
     enrollment = models.ForeignKey(
         BLN,
@@ -4798,10 +4801,20 @@ class RS_FC(TimeStampedModel):
         ('not_participating_at_all', _('Not participating at all')),
     )
     FC_TYPE = Choices(
-        ('pre1', _("Pre 1")),
-        ('pre2', _("Pre 2")),
-        ('post1', _("Post 1")),
-        ('post2', _("Post 2"))
+        ('pre-arabic', _("Pre Arabic")),
+        ('pre-math', _("Pre Math")),
+        ('pre-language', _("Pre Language")),
+        ('pre-science', _("Pre Science")),
+        ('pre-biology', _("Pre Biology")),
+        ('pre-chemistry', _("Pre Chemistry")),
+        ('pre-physics', _("Pre Physics")),
+        ('post-arabic', _("Post Arabic")),
+        ('post-math', _("Post Math")),
+        ('post-language', _("Post Language")),
+        ('post-science', _("Post Science")),
+        ('post-biology', _("Post Biology")),
+        ('post-chemistry', _("Post Chemistry")),
+        ('post-physics', _("Post Physics")),
     )
     enrollment = models.ForeignKey(
         RS,
@@ -5088,10 +5101,12 @@ class CBECE_FC(TimeStampedModel):
         ('not_participating_at_all', _('Not participating at all')),
     )
     FC_TYPE = Choices(
-        ('pre1', _("Pre 1")),
-        ('pre2', _("Pre 2")),
-        ('post1', _("Post 1")),
-        ('post2', _("Post 2"))
+        ('pre-arabic', _("Pre Arabic")),
+        ('pre-math', _("Pre Math")),
+        ('pre-language', _("Pre Language")),
+        ('post-arabic', _("Post Arabic")),
+        ('post-math', _("Post Math")),
+        ('post-language', _("Post Language")),
     )
     enrollment = models.ForeignKey(
         CBECE,

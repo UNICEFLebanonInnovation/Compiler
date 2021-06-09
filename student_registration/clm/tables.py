@@ -165,17 +165,17 @@ class ABLNTable(CommonTable):
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_assessment_column.html',
                                                    attrs={'url': '/clm/abln-post-assessment/', 'programme': 'ABLN'})
-    pre_fc1_column = tables.TemplateColumn(verbose_name=_('Pre-FC1'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc1_column.html',
+    pre_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_arabic_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    post_fc1_column = tables.TemplateColumn(verbose_name=_('Post-FC1'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc1_column.html',
+    post_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Post-Arabic'), orderable=False,
+                                                   template_name='django_tables2/clm_post_arabic_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    pre_fc2_column = tables.TemplateColumn(verbose_name=_('Pre-FC2'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc2_column.html',
+    pre_fc_math_column = tables.TemplateColumn(verbose_name=_('Pre-Math'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc_math_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    post_fc2_column = tables.TemplateColumn(verbose_name=_('Post-FC2'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc2_column.html',
+    post_fc_math_column = tables.TemplateColumn(verbose_name=_('Post-Math'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc_math_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
 
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
@@ -198,10 +198,10 @@ class ABLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
-            'pre_fc1_column',
-            'post_fc1_column',
-            'pre_fc2_column',
-            'post_fc2_column',
+            'pre_fc_arabic_column',
+            'post_fc_arabic_column',
+            'pre_fc_math_column',
+            'post_fc_math_column',
             'first_attendance_date',
             'round',
             # 'cycle',
