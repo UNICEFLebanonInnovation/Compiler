@@ -279,10 +279,44 @@ class RSTable(CommonTable):
                                                    template_name='django_tables2/clm_post_fc_language_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
 
+
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
                                           accessor='pre_test_score')
     post_assessment_result = tables.Column(verbose_name=_('Assessment Result - Post'), orderable=False,
                                            accessor='post_test_score')
+
+
+
+    pre_fc_science_column = tables.TemplateColumn(verbose_name=_('Pre-Science'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc_science_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    post_fc_science_column = tables.TemplateColumn(verbose_name=_('Post-Science'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc_science_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+
+
+    pre_fc_biology_column = tables.TemplateColumn(verbose_name=_('Pre-Biology'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc_biology_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    post_fc_biology_column = tables.TemplateColumn(verbose_name=_('Post-Biology'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc_biology_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+
+
+    pre_fc_chemistry_column = tables.TemplateColumn(verbose_name=_('Pre-Chemistry'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc_chemistry_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    post_fc_chemistry_column = tables.TemplateColumn(verbose_name=_('Post-Chemistry'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc_chemistry_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+
+
+    pre_fc_physics_column = tables.TemplateColumn(verbose_name=_('Pre-Physics'), orderable=False,
+                                                   template_name='django_tables2/clm_pre_fc_physics_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+    post_fc_physics_column = tables.TemplateColumn(verbose_name=_('Post-Physics'), orderable=False,
+                                                   template_name='django_tables2/clm_post_fc_physics_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
 
     # assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
     #                                        accessor='assessment_improvement')
@@ -314,6 +348,14 @@ class RSTable(CommonTable):
             'post_fc_math_column',
             'pre_fc_language_column',
             'post_fc_language_column',
+            'pre_fc_science_column' ,
+            'post_fc_science_column' ,
+            'pre_fc_biology_column',
+            'post_fc_biology_column',
+            'pre_fc_chemistry_column',
+            'post_fc_chemistry_column',
+            'pre_fc_physics_column',
+            'post_fc_physics_column'
             # 'monitoring_column',
             'first_attendance_date',
             'round',

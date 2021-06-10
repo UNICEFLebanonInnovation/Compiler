@@ -11687,9 +11687,10 @@ class ABLNFCForm(forms.ModelForm):
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
-        if ('other' in activities_reported ):
-            if not activities_reported_other:
-                self.add_error('activities_reported_other', 'This field is required')
+        if activities_reported:
+            if ('other' in activities_reported ):
+                if not activities_reported_other:
+                    self.add_error('activities_reported_other', 'This field is required')
 
         action_to_taken = cleaned_data.get("action_to_taken")
         action_to_taken_specify = cleaned_data.get("action_to_taken_specify")
@@ -12681,9 +12682,11 @@ class RSFCForm(forms.ModelForm):
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
-        if ('other' in activities_reported ):
-            if not activities_reported_other:
-                self.add_error('activities_reported_other', 'This field is required')
+
+        if activities_reported:
+            if ('other' in activities_reported ):
+                if not activities_reported_other:
+                    self.add_error('activities_reported_other', 'This field is required')
 
         action_to_taken = cleaned_data.get("action_to_taken")
         action_to_taken_specify = cleaned_data.get("action_to_taken_specify")
@@ -13178,9 +13181,10 @@ class CBECEFCForm(forms.ModelForm):
 
         activities_reported = cleaned_data.get("activities_reported")
         activities_reported_other = cleaned_data.get("activities_reported_other")
-        if ('other' in activities_reported ):
-            if not activities_reported_other:
-                self.add_error('activities_reported_other', 'This field is required')
+        if activities_reported:
+            if ('other' in activities_reported ):
+                if not activities_reported_other:
+                    self.add_error('activities_reported_other', 'This field is required')
 
         action_to_taken = cleaned_data.get("action_to_taken")
         action_to_taken_specify = cleaned_data.get("action_to_taken_specify")
