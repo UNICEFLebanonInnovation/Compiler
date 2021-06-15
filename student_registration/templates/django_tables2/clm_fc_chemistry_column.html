@@ -1,0 +1,20 @@
+
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% if record.grade_level %}
+    {% if record.grade_level == 'grade7' or record.grade_level == 'grade8' or record.grade_level == 'grade9' %}
+        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/pre-chemistry' }}" class="btn btn-info">
+            <i class="icon-synch-sign icon-white"></i>
+            {% trans "Pre-chemistry" %}
+        </a>
+        <br><br>
+        <a href="{{ column.attrs.url }}{{ record.id }}{{ '/post-chemistry' }}" class="btn btn-info">
+            <i class="icon-synch-sign icon-white"></i>
+            {% trans "Post-chemistry" %}
+        </a>
+    {% else %}
+        {% trans "--" %}
+    {% endif %}
+{% endif %}
+

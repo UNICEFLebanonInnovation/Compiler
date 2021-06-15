@@ -52,29 +52,20 @@ class BLNTable(CommonTable):
     # followup_column = tables.TemplateColumn(verbose_name=_('Follow-up'), orderable=False,
     #                                         template_name='django_tables2/clm_followup_column.html',
     #                                         attrs={'url': '/clm/bln-followup/', 'programme': 'BLN'})
-    re_enroll_column = tables.TemplateColumn(verbose_name=_('Re-enroll'), orderable=False,
-                                             template_name='django_tables2/clm_re_enroll_column.html',
-                                             attrs={'url': '/clm/bln-add/', 'programme': 'BLN'})
+    # re_enroll_column = tables.TemplateColumn(verbose_name=_('Re-enroll'), orderable=False,
+    #                                          template_name='django_tables2/clm_re_enroll_column.html',
+    #                                          attrs={'url': '/clm/bln-add/', 'programme': 'BLN'})
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_assessment_column.html',
                                                    attrs={'url': '/clm/bln-post-assessment/', 'programme': 'BLN'})
-    pre_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_arabic_column.html',
+    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_arabic_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
-    post_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Post-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_arabic_column.html',
+    fc_math_column = tables.TemplateColumn(verbose_name=_('Math'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_math_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
-    pre_fc_math_column = tables.TemplateColumn(verbose_name=_('Pre-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_math_column.html',
-                                                   attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
-    post_fc_math_column = tables.TemplateColumn(verbose_name=_('Post-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_math_column.html',
-                                                   attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
-    pre_fc_language_column = tables.TemplateColumn(verbose_name=_('Pre-Foreign Language'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_language_column.html',
-                                                   attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
-    post_fc_language_column = tables.TemplateColumn(verbose_name=_('Post-Foreign Language'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_language_column.html',
+    fc_language_column = tables.TemplateColumn(verbose_name=_('Pre-Foreign Language'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_language_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
 
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
@@ -99,16 +90,13 @@ class BLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
-            'pre_fc_arabic_column',
-            'post_fc_arabic_column',
-            'pre_fc_math_column',
-            'post_fc_math_column',
-            'pre_fc_language_column',
-            'post_fc_language_column',
+            'fc_arabic_column',
+            'fc_language_column',
+            'fc_math_column',
             # 'monitoring_column',
             # 'referral_column',
             # 'followup_column',
-            're_enroll_column',
+            # 're_enroll_column',
             'first_attendance_date',
             'round',
             # 'cycle',
@@ -165,19 +153,12 @@ class ABLNTable(CommonTable):
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_assessment_column.html',
                                                    attrs={'url': '/clm/abln-post-assessment/', 'programme': 'ABLN'})
-    pre_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_arabic_column.html',
+    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_arabic_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    post_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Post-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_arabic_column.html',
+    fc_math_column = tables.TemplateColumn(verbose_name=_('Math'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_math_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    pre_fc_math_column = tables.TemplateColumn(verbose_name=_('Pre-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_math_column.html',
-                                                   attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-    post_fc_math_column = tables.TemplateColumn(verbose_name=_('Post-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_math_column.html',
-                                                   attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
-
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
@@ -198,10 +179,8 @@ class ABLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
-            'pre_fc_arabic_column',
-            'post_fc_arabic_column',
-            'pre_fc_math_column',
-            'post_fc_math_column',
+            'fc_arabic_column',
+            'fc_math_column',
             'first_attendance_date',
             'round',
             # 'cycle',
@@ -260,24 +239,26 @@ class RSTable(CommonTable):
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_assessment_column.html',
                                                    attrs={'url': '/clm/rs-post-assessment/', 'programme': 'RS'})
-    pre_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_arabic_column.html',
+    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Arabic'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_arabic_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Post-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_arabic_column.html',
+    fc_math_column = tables.TemplateColumn(verbose_name=_('Math'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_math_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    pre_fc_math_column = tables.TemplateColumn(verbose_name=_('Pre-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_math_column.html',
+    fc_language_column = tables.TemplateColumn(verbose_name=_('Foreign Language'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_language_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc_math_column = tables.TemplateColumn(verbose_name=_('Post-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_math_column.html',
+    fc_science_column = tables.TemplateColumn(verbose_name=_('Science'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_science_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    pre_fc_language_column = tables.TemplateColumn(verbose_name=_('Pre-Foreign Language'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_language_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc_language_column = tables.TemplateColumn(verbose_name=_('Post-Foreign Language'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_language_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+
+    fc_chemistry_column = tables.TemplateColumn(verbose_name=_('Chemistry'), orderable=False,
+                                                  template_name='django_tables2/clm_fc_chemistry_column.html',
+                                                  attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+
+    fc_physics_column = tables.TemplateColumn(verbose_name=_('Physics'), orderable=False,
+                                                  template_name='django_tables2/clm_fc_physics_column.html',
+                                                  attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
 
 
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
@@ -287,36 +268,7 @@ class RSTable(CommonTable):
 
 
 
-    pre_fc_science_column = tables.TemplateColumn(verbose_name=_('Pre-Science'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_science_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc_science_column = tables.TemplateColumn(verbose_name=_('Post-Science'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_science_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
 
-
-    pre_fc_biology_column = tables.TemplateColumn(verbose_name=_('Pre-Biology'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_biology_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc_biology_column = tables.TemplateColumn(verbose_name=_('Post-Biology'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_biology_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-
-
-    pre_fc_chemistry_column = tables.TemplateColumn(verbose_name=_('Pre-Chemistry'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_chemistry_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc_chemistry_column = tables.TemplateColumn(verbose_name=_('Post-Chemistry'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_chemistry_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-
-
-    pre_fc_physics_column = tables.TemplateColumn(verbose_name=_('Pre-Physics'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_physics_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    post_fc_physics_column = tables.TemplateColumn(verbose_name=_('Post-Physics'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_physics_column.html',
-                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
 
     # assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
     #                                        accessor='assessment_improvement')
@@ -342,21 +294,12 @@ class RSTable(CommonTable):
             # 'followup_column',
             'delete_column',
             'post_assessment_column',
-            'pre_fc_arabic_column',
-            'post_fc_arabic_column',
-            'pre_fc_math_column',
-            'post_fc_math_column',
-            'pre_fc_language_column',
-            'post_fc_language_column',
-            'pre_fc_science_column' ,
-            'post_fc_science_column' ,
-            'pre_fc_biology_column',
-            'post_fc_biology_column',
-            'pre_fc_chemistry_column',
-            'post_fc_chemistry_column',
-            'pre_fc_physics_column',
-            'post_fc_physics_column'
-            # 'monitoring_column',
+            'fc_arabic_column',
+            'fc_language_column',
+            'fc_math_column',
+            'fc_science_column' ,
+            'fc_chemistry_column' ,
+            'fc_physics_column',
             'first_attendance_date',
             'round',
             'cycle',
@@ -423,25 +366,16 @@ class CBECETable(CommonTable):
                                                    template_name='django_tables2/clm_mid_assessment_column.html',
                                                    attrs={'url': '/clm/cbece-mid-assessment/', 'programme': 'CBECE'})
 
-    pre_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_arabic_column.html',
-                                                   attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
-    post_fc_arabic_column = tables.TemplateColumn(verbose_name=_('Post-Arabic'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_arabic_column.html',
+    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_arabic_column.html',
                                                    attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
 
-    pre_fc_math_column = tables.TemplateColumn(verbose_name=_('Pre-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_math_column.html',
-                                                   attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
-    post_fc_math_column = tables.TemplateColumn(verbose_name=_('Post-Math'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_math_column.html',
+    fc_math_column = tables.TemplateColumn(verbose_name=_('Math'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_math_column.html',
                                                    attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
 
-    pre_fc_language_column = tables.TemplateColumn(verbose_name=_('Pre-Foreign Language'), orderable=False,
-                                                   template_name='django_tables2/clm_pre_fc_language_column.html',
-                                                   attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
-    post_fc_language_column = tables.TemplateColumn(verbose_name=_('Post-Foreign Language'), orderable=False,
-                                                   template_name='django_tables2/clm_post_fc_language_column.html',
+    fc_language_column = tables.TemplateColumn(verbose_name=_('Foreign Language'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_language_column.html',
                                                    attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
 
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
@@ -474,12 +408,9 @@ class CBECETable(CommonTable):
             'delete_column',
             'post_assessment_column',
             'mid_assessment_column',
-            'pre_fc_arabic_column',
-            'post_fc_arabic_column',
-            'pre_fc_math_column',
-            'post_fc_math_column',
-            'pre_fc_language_column',
-            'post_fc_language_column',
+            'fc_arabic_column',
+            'fc_language_column',
+            'fc_math_column',
             # 'monitoring_column',
             'first_attendance_date',
             'round',
