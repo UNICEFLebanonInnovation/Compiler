@@ -18,16 +18,19 @@ $(window).load(function () {
 
 });
 
-$(document).ready(function(){
-    // # child_have_pss_wellbeing, child_have_pss_wellbeing_explain
+$(document).ready(function () {
+    //Name and type added to page title
+    var fc_type = $('#id_fc_type').val();
+    document.title = "CLM | FC" + '-' + fc_type.toUpperCase();
 
-    if($(document).find('#id_date_of_monitoring').length == 1) {
+    if ($(document).find('#id_date_of_monitoring').length == 1) {
         $('#id_date_of_monitoring').datepicker({dateFormat: "yy-mm-dd"});
     }
-
     reorganizeForm();
     activities_reported();
     meet_objectives_verified();
+
+
 
     $(document).on('change', 'select#id_attend_lesson, ' +
         'select#id_share_expectations, ' +
@@ -92,10 +95,12 @@ function pageScripts() {
             enabled: true
         }
     });
+
 }
 
 function reorganizeForm()
 {
+
     var sessions_participated = $('select#id_sessions_participated').val();
     if(sessions_participated == 'not_participating_at_all'){
         $('#div_id_not_participating_reason').removeClass('d-none');

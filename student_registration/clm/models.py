@@ -4172,6 +4172,7 @@ class Outreach(TimeStampedModel):
 
 class ABLN_FC(TimeStampedModel):
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
@@ -4463,6 +4464,7 @@ class ABLN_FC(TimeStampedModel):
 
 class BLN_FC(TimeStampedModel):
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
@@ -4755,6 +4757,7 @@ class BLN_FC(TimeStampedModel):
 
 class RS_FC(TimeStampedModel):
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
@@ -5055,6 +5058,7 @@ class RS_FC(TimeStampedModel):
 
 class CBECE_FC(TimeStampedModel):
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
