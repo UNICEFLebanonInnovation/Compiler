@@ -20,8 +20,10 @@ $(window).load(function () {
 
 $(document).ready(function () {
     //Name and type added to page title
+
     var fc_type = $('#id_fc_type').val();
     document.title = "CLM | FC" + '-' + fc_type.toUpperCase();
+
 
     if ($(document).find('#id_date_of_monitoring').length == 1) {
         $('#id_date_of_monitoring').datepicker({dateFormat: "yy-mm-dd"});

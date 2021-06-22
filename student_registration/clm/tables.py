@@ -58,13 +58,13 @@ class BLNTable(CommonTable):
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_assessment_column.html',
                                                    attrs={'url': '/clm/bln-post-assessment/', 'programme': 'BLN'})
-    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
+    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Arabic'), orderable=False,
                                                    template_name='django_tables2/clm_fc_arabic_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
     fc_math_column = tables.TemplateColumn(verbose_name=_('Math'), orderable=False,
                                                    template_name='django_tables2/clm_fc_math_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
-    fc_language_column = tables.TemplateColumn(verbose_name=_('Pre-Foreign Language'), orderable=False,
+    fc_language_column = tables.TemplateColumn(verbose_name=_('Foreign Language'), orderable=False,
                                                    template_name='django_tables2/clm_fc_language_column.html',
                                                    attrs={'url': '/clm/bln-fc-add/', 'programme': 'BLN'})
 
@@ -153,7 +153,7 @@ class ABLNTable(CommonTable):
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_assessment_column.html',
                                                    attrs={'url': '/clm/abln-post-assessment/', 'programme': 'ABLN'})
-    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
+    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Arabic'), orderable=False,
                                                    template_name='django_tables2/clm_fc_arabic_column.html',
                                                    attrs={'url': '/clm/abln-fc-add/', 'programme': 'ABLN'})
     fc_math_column = tables.TemplateColumn(verbose_name=_('Math'), orderable=False,
@@ -366,7 +366,7 @@ class CBECETable(CommonTable):
                                                    template_name='django_tables2/clm_mid_assessment_column.html',
                                                    attrs={'url': '/clm/cbece-mid-assessment/', 'programme': 'CBECE'})
 
-    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Pre-Arabic'), orderable=False,
+    fc_arabic_column = tables.TemplateColumn(verbose_name=_('Arabic'), orderable=False,
                                                    template_name='django_tables2/clm_fc_arabic_column.html',
                                                    attrs={'url': '/clm/cbece-fc-add/', 'programme': 'CBECE'})
 

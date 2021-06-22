@@ -894,6 +894,9 @@ class ABLNFCAddView(LoginRequiredMixin,
 
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                splittedFCType = self.kwargs['fc_type'].split('-')
+                if len(splittedFCType) > 1:
+                    data['subject_taught'] = splittedFCType[1]
                 return ABLNFCForm(initial = data,request=self.request)
 
 
@@ -944,16 +947,17 @@ class BLNFCAddView(LoginRequiredMixin,
 
         if self.request.method == "POST":
             data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
-
             return BLNFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
         else:
             if instance:
                 data = BLN_FCSerializer(instance).data
-
                 return BLNFCForm(data, initial=data, instance=instance, request=self.request)
 
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                splittedFCType = self.kwargs['fc_type'].split('-')
+                if len(splittedFCType) > 1:
+                    data['subject_taught'] =  splittedFCType[1]
                 return BLNFCForm(initial = data,request=self.request)
 
 
@@ -1015,6 +1019,9 @@ class RSFCAddView(LoginRequiredMixin,
 
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                splittedFCType = self.kwargs['fc_type'].split('-')
+                if len(splittedFCType) > 1:
+                    data['subject_taught'] = splittedFCType[1]
                 return RSFCForm(initial = data,request=self.request)
 
 
@@ -1075,6 +1082,9 @@ class CBECEFCAddView(LoginRequiredMixin,
 
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                splittedFCType = self.kwargs['fc_type'].split('-')
+                if len(splittedFCType) > 1:
+                    data['subject_taught'] = splittedFCType[1]
                 return CBECEFCForm(initial = data,request=self.request)
 
 
@@ -3159,6 +3169,13 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_parent_attended',
             'followup_parent_attended_other',
             'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
             'enrolled_at_school',
             'student_outreached',
             'have_barcode',
@@ -3603,6 +3620,13 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_parent_attended',
             'followup_parent_attended_other',
             'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
 
             'enrolled_at_school',
 
@@ -3818,6 +3842,13 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_parent_attended_other',
             'followup_parent_attended',
             'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
 
             'enrolled_at_school',
             'student_outreached',
@@ -4313,6 +4344,13 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'followup_parent_attended',
             'followup_parent_attended_other',
             'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
 
             'student_outreached',
             'have_barcode',
@@ -4555,6 +4593,13 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'followup_parent_attended',
             'followup_parent_attended_other',
             'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
 
             'enrolled_at_school',
             'student_outreached',
@@ -5108,6 +5153,13 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'followup_parent_attended',
             'followup_parent_attended_other',
             'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
 
             'student_outreached',
             'have_barcode',
@@ -5417,6 +5469,13 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'followup_parent_attended',
             'followup_parent_attended_other',
             'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
 
             'enrolled_at_school',
             'student_outreached',

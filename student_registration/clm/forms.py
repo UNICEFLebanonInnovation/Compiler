@@ -11682,6 +11682,7 @@ class ABLNFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+        else:
             if not completed_tasks:
                 self.add_error('completed_tasks', 'This field is required')
 
@@ -12180,6 +12181,7 @@ class BLNFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+        else:
             if not completed_tasks:
                 self.add_error('completed_tasks', 'This field is required')
 
@@ -12677,6 +12679,7 @@ class RSFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+        else:
             if not completed_tasks:
                 self.add_error('completed_tasks', 'This field is required')
 
@@ -13176,6 +13179,7 @@ class CBECEFCForm(forms.ModelForm):
                 self.add_error('child_acquire_competency', 'This field is required')
             if not child_show_improvement:
                 self.add_error('child_show_improvement', 'This field is required')
+        else:
             if not completed_tasks:
                 self.add_error('completed_tasks', 'This field is required')
 
