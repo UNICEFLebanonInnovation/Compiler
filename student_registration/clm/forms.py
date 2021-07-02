@@ -13278,7 +13278,7 @@ class CBECEFCForm(forms.ModelForm):
 
 class GeneralQuestionnaireForm(forms.ModelForm):
     facilitator_full_name = forms.CharField(
-        label=_("Facilitator Full Name'"),
+        label=_('Facilitator Full Name'),
         widget=forms.TextInput, required=True
     )
 

@@ -32,7 +32,6 @@ from student_registration.schools.models import (
 
 
 class Assessment(models.Model):
-
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     overview = models.TextField(blank=True, null=True)
@@ -49,7 +48,6 @@ class Assessment(models.Model):
 
 
 class Cycle(models.Model):
-
     name = models.CharField(max_length=100)
     current_cycle = models.BooleanField(blank=True, default=False)
 
@@ -63,7 +61,6 @@ class Cycle(models.Model):
 
 
 class RSCycle(models.Model):
-
     name = models.CharField(max_length=100)
     current_cycle = models.BooleanField(blank=True, default=False)
 
@@ -75,7 +72,6 @@ class RSCycle(models.Model):
 
 
 class Site(models.Model):
-
     name = models.CharField(max_length=100)
     current_cycle = models.BooleanField(blank=True, default=False)
 
@@ -89,7 +85,6 @@ class Site(models.Model):
 
 
 class Referral(models.Model):
-
     name = models.CharField(max_length=100)
 
     class Meta:
@@ -102,7 +97,6 @@ class Referral(models.Model):
 
 
 class Disability(models.Model):
-
     name = models.CharField(max_length=100)
     name_en = models.CharField(max_length=145, blank=True, null=True)
     active = models.BooleanField(default=True)
@@ -115,8 +109,8 @@ class Disability(models.Model):
     def __unicode__(self):
         return self.name
 
-class Center(models.Model):
 
+class Center(models.Model):
     name = models.CharField(max_length=100)
 
     partner = models.ForeignKey(
@@ -134,8 +128,8 @@ class Center(models.Model):
     def __unicode__(self):
         return self.name
 
-class CLM(TimeStampedModel):
 
+class CLM(TimeStampedModel):
     LANGUAGES = Choices(
         ('arabic', _('Arabic')),
         ('english_arabic', _('English/Arabic')),
@@ -161,7 +155,7 @@ class CLM(TimeStampedModel):
         ('caregiver', _('Caregiver')),
         ('child_and_caregiver', _('Child and caregiver'))
     )
-    HOW_OFTEN= Choices(
+    HOW_OFTEN = Choices(
         ('', '----------'),
         ('daily', _('Daily')),
         ('every_2_to_3_days', _('Every 2-3 days')),
@@ -179,7 +173,8 @@ class CLM(TimeStampedModel):
     REFERRAL = Choices(
         ('from_same_ngo', _('Referral from the same NGO')),
         ('from_other_ngo', _('Referral from an other NGO')),
-        ('form_official_reference', _('Referral from an official reference (Mukhtar, Municipality, School Director, etc.)')),
+        ('form_official_reference',
+         _('Referral from an official reference (Mukhtar, Municipality, School Director, etc.)')),
         ('from_host_community', _('Referral from the host community')),
         ('from_displaced_community', _('Referral from the displaced community')),
     )
@@ -235,6 +230,7 @@ class CLM(TimeStampedModel):
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
+        ('other', _('Other')),
         # ('dropout', _('Dropout from school'))
     )
     REGISTRATION_LEVEL = (
@@ -245,18 +241,18 @@ class CLM(TimeStampedModel):
     )
 
     MODALITY = Choices(
-            # ('', '----------'),
-            ('online', _("Online Forms")),
-            ('phone', _("Phone / Whatasapp")),
-            ('parents', _("Asking Parents")),
-            ('offline', _("Offline(F2F)"))
+        # ('', '----------'),
+        ('online', _("Online Forms")),
+        ('phone', _("Phone / Whatasapp")),
+        ('parents', _("Asking Parents")),
+        ('offline', _("Offline(F2F)"))
     )
 
     SESSION_MODALITY = Choices(
-            # ('', '----------'),
-            ('online', _("Online via Whatsapp")),
-            ('phone', _("Phone calls")),
-            ('offline', _("Offline(F2F)"))
+        # ('', '----------'),
+        ('online', _("Online via Whatsapp")),
+        ('phone', _("Phone calls")),
+        ('offline', _("Offline(F2F)"))
     )
 
     first_attendance_date = models.DateField(
@@ -368,7 +364,8 @@ class CLM(TimeStampedModel):
         max_length=100,
         blank=True,
         null=True,
-        verbose_name=_('Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')
+        verbose_name=_(
+            'Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')
     )
     labour_hours = models.IntegerField(
         blank=True,
@@ -808,7 +805,8 @@ class CLM(TimeStampedModel):
         null=True,
         choices=Choices(
             ('out of school', _('Out of school')),
-            ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
+            ('enrolled in formal education but did not continue',
+             _("Enrolled in formal education but did not continue")),
             ('enrolled in ABLN', _("Enrolled in ABLN")),
             ('enrolled in BLN', _("Enrolled in BLN")),
         ),
@@ -935,7 +933,7 @@ class CLM(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Please specify')
     )
-    rims_case_number  = models.CharField(
+    rims_case_number = models.CharField(
         max_length=50,
         blank=True,
         null=True,
@@ -953,8 +951,8 @@ class CLM(TimeStampedModel):
         verbose_name=_('Source of transportation of the child')
     )
 
-    no_child_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
-    no_parent_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
+    no_child_id_confirmation = models.CharField(max_length=50, blank=True, null=True, )
+    no_parent_id_confirmation = models.CharField(max_length=50, blank=True, null=True, )
 
     parent_id_type = models.CharField(
         max_length=100,
@@ -1288,7 +1286,8 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did both girls and boys in the same family participate in the class and have access to the phone/device?')
+        verbose_name=_(
+            'Did both girls and boys in the same family participate in the class and have access to the phone/device?')
     )
     gender_participate_explain = models.TextField(
         blank=True, null=True,
@@ -1313,14 +1312,16 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=PERCENT,
-        verbose_name=_('How do you rate the parents learning support provided to the child through this Remote learning phase?')
+        verbose_name=_(
+            'How do you rate the parents learning support provided to the child through this Remote learning phase?')
     )
     covid_message = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?')
+        verbose_name=_(
+            'Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?')
     )
     covid_message_how_often = models.CharField(
         max_length=50,
@@ -1335,9 +1336,10 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures? ')
+        verbose_name=_(
+            'Has the parents directly been reached with awareness messaging on Covid-19 and prevention measures? ')
     )
-    covid_parents_message_how_often =  models.CharField(
+    covid_parents_message_how_often = models.CharField(
         max_length=50,
         blank=True,
         null=True,
@@ -1442,7 +1444,7 @@ class CLM(TimeStampedModel):
 
     def score(self, keys, stage):
         assessment = getattr(self, stage, 'pre_test')
-        score = stage+'_score'
+        score = stage + '_score'
         marks = {key: float(assessment.get(key, 0)) for key in keys}
         total = sum(marks.values())
         setattr(self, score, total)
@@ -1473,6 +1475,7 @@ class BLN(CLM):
         ('referred_to_tvet', _('Referred to TVET')),
         ('referred_to_ybln', _('Referred to YBLN')),
         ('dropout', _('Dropout, referral not possible')),
+        ('other', _('Other')),
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -1622,6 +1625,7 @@ class BLN(CLM):
         ),
         verbose_name=_('Source of identification of the child')
     )
+
     def calculate_sore(self, stage):
         keys = [
             'BLN_ASSESSMENT/arabic',
@@ -1660,7 +1664,7 @@ class BLN(CLM):
     def get_assessment_value(self, key, stage):
         assessment = getattr(self, stage)
         if assessment:
-            key = 'BLN_ASSESSMENT/'+key
+            key = 'BLN_ASSESSMENT/' + key
             return assessment.get(key, 0)
         return 0
 
@@ -1722,7 +1726,7 @@ class ABLN(CLM):
         ('dropout', _('Dropout, referral not possible')),
         ('referred_public_school', _('Referred to public school')),
         ('referred_to_tvet', _('Referred to TVET')),
-
+        ('other', _('Other')),
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -2541,6 +2545,7 @@ class CBECE(CLM):
         ('referred_to_tvet', _('Referred to TVET')),
         ('referred_to_ycbece', _('Referred to YCBECE')),
         ('dropout', _('Dropout, referral not possible')),
+        ('other', _('Other')),
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -2978,6 +2983,7 @@ class Inclusion(TimeStampedModel):
         ('referred_to_ybln', _('Referred to YBLN')),
         # ('referred_to_alp', _('Referred to ALP')),
         ('referred_to_cbt', _('Referred to CBT')),
+        ('other', _('Other')),
     )
     MAIN_CAREGIVER = (
         ('', '----------'),
@@ -3007,7 +3013,7 @@ class Inclusion(TimeStampedModel):
         ),
         verbose_name=_('Source of identification of the child')
     )
-    rims_case_number  = models.CharField(
+    rims_case_number = models.CharField(
         max_length=50,
         blank=True,
         null=True,
@@ -3628,7 +3634,7 @@ class Outreach(TimeStampedModel):
         ),
         verbose_name=_('Source of identification of the child')
     )
-    rims_case_number  = models.CharField(
+    rims_case_number = models.CharField(
         max_length=50,
         blank=True,
         null=True,
@@ -4169,14 +4175,13 @@ class Outreach(TimeStampedModel):
         verbose_name_plural = "Outreach"
 
 
-
 class ABLN_FC(TimeStampedModel):
     YES_NO = Choices(
         ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
-    ACTIVITIES_REPORTED= Choices(
+    ACTIVITIES_REPORTED = Choices(
         ('reading', _('Reading')),
         ('writing', _('Writing')),
         ('oral_communication', _('Oral Communication')),
@@ -4351,7 +4356,8 @@ class ABLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+        verbose_name=_(
+            'Any specific actions to be taken with this child before the next lesson for better participation')
     )
     action_to_taken_specify = models.TextField(
         blank=True, null=True,
@@ -4369,7 +4375,8 @@ class ABLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+        verbose_name=_(
+            'Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
     )
     homework_after_lesson = models.CharField(
         max_length=10,
@@ -4385,7 +4392,7 @@ class ABLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Were parents supporting the student through this lesson? ')
     )
-    targeted_competencies= models.TextField(
+    targeted_competencies = models.TextField(
         blank=True, null=True,
         verbose_name=_('Targeted Competencies')
     )
@@ -4419,7 +4426,7 @@ class ABLN_FC(TimeStampedModel):
         choices=SHARE_EXPECTATIONS_REASON,
         verbose_name=_('If no, why not?')
     )
-    share_expectations_other_reason= models.TextField(
+    share_expectations_other_reason = models.TextField(
         blank=True, null=True,
         verbose_name=_('if Other explain')
     )
@@ -4462,13 +4469,14 @@ class ABLN_FC(TimeStampedModel):
         verbose_name = "FC"
         verbose_name_plural = "FC"
 
+
 class BLN_FC(TimeStampedModel):
     YES_NO = Choices(
         ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
-    ACTIVITIES_REPORTED= Choices(
+    ACTIVITIES_REPORTED = Choices(
         ('reading', _('Reading')),
         ('writing', _('Writing')),
         ('oral_communication', _('Oral Communication')),
@@ -4644,7 +4652,8 @@ class BLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+        verbose_name=_(
+            'Any specific actions to be taken with this child before the next lesson for better participation')
     )
     action_to_taken_specify = models.TextField(
         blank=True, null=True,
@@ -4662,7 +4671,8 @@ class BLN_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+        verbose_name=_(
+            'Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
     )
     homework_after_lesson = models.CharField(
         max_length=10,
@@ -4678,7 +4688,7 @@ class BLN_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Were parents supporting the student through this lesson? ')
     )
-    targeted_competencies= models.TextField(
+    targeted_competencies = models.TextField(
         blank=True, null=True,
         verbose_name=_('Targeted Competencies')
     )
@@ -4712,7 +4722,7 @@ class BLN_FC(TimeStampedModel):
         choices=SHARE_EXPECTATIONS_REASON,
         verbose_name=_('If no, why not?')
     )
-    share_expectations_other_reason= models.TextField(
+    share_expectations_other_reason = models.TextField(
         blank=True, null=True,
         verbose_name=_('if Other explain')
     )
@@ -4755,13 +4765,14 @@ class BLN_FC(TimeStampedModel):
         verbose_name = "FC"
         verbose_name_plural = "FC"
 
+
 class RS_FC(TimeStampedModel):
     YES_NO = Choices(
         ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
-    ACTIVITIES_REPORTED= Choices(
+    ACTIVITIES_REPORTED = Choices(
         ('reading', _('Reading')),
         ('writing', _('Writing')),
         ('oral_communication', _('Oral Communication')),
@@ -4945,7 +4956,8 @@ class RS_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+        verbose_name=_(
+            'Any specific actions to be taken with this child before the next lesson for better participation')
     )
     action_to_taken_specify = models.TextField(
         blank=True, null=True,
@@ -4963,7 +4975,8 @@ class RS_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+        verbose_name=_(
+            'Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
     )
     homework_after_lesson = models.CharField(
         max_length=10,
@@ -4979,7 +4992,7 @@ class RS_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Were parents supporting the student through this lesson? ')
     )
-    targeted_competencies= models.TextField(
+    targeted_competencies = models.TextField(
         blank=True, null=True,
         verbose_name=_('Targeted Competencies')
     )
@@ -5013,7 +5026,7 @@ class RS_FC(TimeStampedModel):
         choices=SHARE_EXPECTATIONS_REASON,
         verbose_name=_('If no, why not?')
     )
-    share_expectations_other_reason= models.TextField(
+    share_expectations_other_reason = models.TextField(
         blank=True, null=True,
         verbose_name=_('if Other explain')
     )
@@ -5056,13 +5069,14 @@ class RS_FC(TimeStampedModel):
         verbose_name = "FC"
         verbose_name_plural = "FC"
 
+
 class CBECE_FC(TimeStampedModel):
     YES_NO = Choices(
         ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
-    ACTIVITIES_REPORTED= Choices(
+    ACTIVITIES_REPORTED = Choices(
         ('reading', _('Reading')),
         ('writing', _('Writing')),
         ('oral_communication', _('Oral Communication')),
@@ -5238,7 +5252,8 @@ class CBECE_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Any specific actions to be taken with this child before the next lesson for better participation')
+        verbose_name=_(
+            'Any specific actions to be taken with this child before the next lesson for better participation')
     )
     action_to_taken_specify = models.TextField(
         blank=True, null=True,
@@ -5256,7 +5271,8 @@ class CBECE_FC(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
+        verbose_name=_(
+            'Did you notice that this child did not have access to the device or resources needed to complete the lesson requirements?')
     )
     homework_after_lesson = models.CharField(
         max_length=10,
@@ -5272,7 +5288,7 @@ class CBECE_FC(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Were parents supporting the student through this lesson? ')
     )
-    targeted_competencies= models.TextField(
+    targeted_competencies = models.TextField(
         blank=True, null=True,
         verbose_name=_('Targeted Competencies')
     )
@@ -5306,7 +5322,7 @@ class CBECE_FC(TimeStampedModel):
         choices=SHARE_EXPECTATIONS_REASON,
         verbose_name=_('If no, why not?')
     )
-    share_expectations_other_reason= models.TextField(
+    share_expectations_other_reason = models.TextField(
         blank=True, null=True,
         verbose_name=_('if Other explain')
     )
@@ -5349,24 +5365,300 @@ class CBECE_FC(TimeStampedModel):
         verbose_name = "FC"
         verbose_name_plural = "FC"
 
+
 class GeneralQuestionnaire(TimeStampedModel):
+    GENDER = Choices(
+        ('Male', _('Male')),
+        ('Female', _('Female')),
+    )
     YES_NO = Choices(
         (1, _("Yes")),
         (0, _("No"))
     )
-    facilitator_full_name= models.TextField(
+    PROGRAMME_LEVEL_GRADE = Choices(
+        ('CBECE Level 3', _("CBECE Level 3")),
+        ('BLN Level 1', _("BLN Level 1")),
+        ('BLN Level 2', _("BLN Level 2")),
+        ('BLN Level 3', _("BLN Level 3")),
+        ('ABLN Level 1', _("ABLN Level 1")),
+        ('ABLN Level 2', _("ABLN Level 2")),
+        ('RS grade (6,7,8,9)', _("RS grade (6,7,8,9)")),
+    )
+    RESOURCE_TYPE = Choices(
+        ('Hi-tech/online', _('Hi-tech/online')),
+        ('Low-tech/offline', _('Low-tech/offline')),
+        ('Hybrid Approach (combination of Both High and Low Tech)',
+         _('Hybrid Approach (combination of Both High and Low Tech)'))
+    )
+
+    SOURCE_OF_CONTENT = Choices(
+        ('Learning passport', _('Learning passport')),
+        ('Akelius Digital Lanaguage Course', _('Akelius Digital Lanaguage Course')),
+        ('Youtube Videos', _('Youtube Videos')),
+        ('Other', _('Other'))
+    )
+    ONLINE_PLATFORM_USED = Choices(
+        ('WhatsApp', _('WhatsApp')),
+        ('Zoom', _('Zoom')),
+        ('Skype', _('Skype')),
+        ('Teams', _('Teams')),
+        ('Other', _('Other'))
+    )
+    REMOTE_LEARNING_PER_WEEK = Choices(
+        ('One time per week', _('One time per week')),
+        ('2 times per week', _('2 times per week')),
+        ('3 times per week', _('3 times per week')),
+        ('4 times per week', _('4 times per week')),
+        ('5 times per week', _('5 times per week'))
+    )
+    REMOTE_LEARNING_DURATION = Choices(
+        ('Less than 15 minutes', _('Less than 15 minutes')),
+        ('15-30 minutes', _('15-30 minutes')),
+        ('30-45 minutes', _('30-45 minutes')),
+        ('45-60 minutes', _('45-60 minutes')),
+    )
+
+    OFFLINE_MATERIALS_USED = Choices(
+        ('Printed materials', _('Printed materials')),
+        ('Regulated textbooks', _('Regulated textbooks')),
+        ('Other', _('Other')),
+    )
+    ENGAGE_CHILD_HOW = Choices(
+        ('Phone calls', _('Phone calls')),
+        ('Home visits', _('Home visits')),
+        ('Other', _('Other')),
+    )
+    OFFLINE_ENGAGE_CHILD_FREQUENCY = Choices(
+        ('One time per week', _('One time per week')),
+        ('2 times per week', _('2 times per week')),
+        ('Other', _('Other'))
+    )
+    HOW_CHILD_ASSESSED = Choices(
+        ('In writing', _('In writing')),
+        ('Orally', _('Orally')),
+        ('Other', _('Other'))
+    )
+    CHILD_ASSESSED_WRITING = Choices(
+        ('Test shared by photo, whatsapp', _('Test shared by photo, whatsapp')),
+        ('Worksheet filled at home and collected for correction', _('Worksheet filled at home and collected for correction')),
+        ('Online Short test google forms, etc', _('Online Short test google forms, etc'))
+    )
+    CHILD_ASSESSED_ORALLY = Choices(
+        ('Response via whatsapp voice messages', _('Response via whatsapp voice messages')),
+        ('Answering teacher questions', _('Answering teachers questions')),
+        ('Video recorded and shared', _('Video recorded and shared')),
+        ('Parents responses over the phone', _('Parents responses over the phone'))
+    )
+
+    facilitator_full_name = models.TextField(
         blank=True, null=True,
         verbose_name=_('Facilitator Full Name')
     )
-    def get_absolute_url(self):
-        return '/general_questionnaire/edit/%d/' % self.pk
+    subject = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Subject')
+    )
+    activities_reported_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Activities Reported Date')
+    )
+    gender = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=GENDER,
+        verbose_name=_('Gender')
+    )
+    Organization = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Organization')
+    )
+    programme_level_grade = ArrayField(
+        models.CharField(
+            choices=PROGRAMME_LEVEL_GRADE,
+            max_length=50,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Programme Level/Grade')
+    )
 
-    # def __unicode__(self):
-    #     if self.student:
-    #         return self.student.__unicode__()
-    #     return str(self.id)
+    lessons_follow_blended = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Do your lessons follow a blended approach, using online and offline learning?')
+    )
+    lessons_follow_blended_explain = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Explain')
+    )
+    girls_attending = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of Girls attendeding this Group/Class?')
+    )
+    boys_attending = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of Boys attendeding this Group/Class?')
+    )
+    engage_parents_caregivers = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did you engage with parents/caregivers to prepare them for their role during this round?')
+    )
+    resource_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=RESOURCE_TYPE,
+        verbose_name=_('Type of Resources used')
+    )
+    content_source_used = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SOURCE_OF_CONTENT,
+        verbose_name=_('What source of content do you use ?')
+    )
+    content_source_other_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify')
+    )
 
-    class Meta:
-        ordering = ['id']
-        verbose_name = "General Questionnaire"
-        verbose_name_plural = "General Questionnaire"
+    online_platform_use = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Do you use online platforms to implement remote learning')
+    )
+    online_platform_used = ArrayField(
+        models.CharField(
+            choices=ONLINE_PLATFORM_USED,
+            max_length=50,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('what online platforms do you use to implement remote learning')
+    )
+    online_platform_other_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify')
+    )
+    remote_learning_per_week = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REMOTE_LEARNING_PER_WEEK,
+        verbose_name=_('Number of times per week')
+    )
+    remote_learning_duration = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REMOTE_LEARNING_DURATION,
+        verbose_name=_('How long are the remote learning sessions generally?')
+    )
+    children_provided_guidlines = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Were the children provided with the neccassary guidelines and login information?')
+    )
+    offline_materials_used = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=OFFLINE_MATERIALS_USED,
+        verbose_name=_(' what materials were used? ')
+    )
+    offline_materials_other_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify')
+    )
+    engage_child_how = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=ENGAGE_CHILD_HOW,
+        verbose_name=_('How do you engage with the child')
+    )
+    engage_child_other_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify')
+    )
+    offline_engage_child_frequency = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=OFFLINE_ENGAGE_CHILD_FREQUENCY,
+        verbose_name=_('Number of times per week')
+    )
+    offline_engage_child_frequency_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify')
+    )
+
+    how_child_assessed = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=HOW_CHILD_ASSESSED,
+        verbose_name=_('How was the child assessed on achieving the targeted competency/ies?')
+    )
+    child_assessed_writing = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CHILD_ASSESSED_WRITING,
+        verbose_name=_('In writing')
+    )
+    child_assessed_orally = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CHILD_ASSESSED_ORALLY,
+        verbose_name=_('Orally')
+    )
+    how_child_assessed_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify')
+    )
+
+
+def get_absolute_url(self):
+    return '/general_questionnaire/edit/%d/' % self.pk
+
+
+# def __unicode__(self):
+#     if self.student:
+#         return self.student.__unicode__()
+#     return str(self.id)
+
+class Meta:
+    ordering = ['id']
+    verbose_name = "General Questionnaire"
+    verbose_name_plural = "General Questionnaire"

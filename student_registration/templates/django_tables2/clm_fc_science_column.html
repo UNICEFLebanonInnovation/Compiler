@@ -2,7 +2,7 @@
 {% load util_tags %}
 
 {% if record.grade_level %}
-    {% if record.grade_level == 'grade6' %}
+    {% if record.grade_registration == '6' %}
         <a href="{{ column.attrs.url }}{{ record.id }}{{ '/pre-science' }}" class="btn btn-primary">
             <i class="icon-synch-sign icon-white"></i>
             {% trans "Pre-science" %}
@@ -12,7 +12,7 @@
             <i class="icon-synch-sign icon-white"></i>
             {% trans "Post-science" %}
         </a>
-    {% elif record.grade_level == 'grade7' or record.grade_level == 'grade8' or record.grade_level == 'grade9' %}
+    {% elif record.grade_registration == '7' or record.grade_registration == '8' or record.grade_registration == '9' %}
         <a href="{{ column.attrs.url }}{{ record.id }}{{ '/pre-biology' }}" class="btn btn-primary">
             <i class="icon-synch-sign icon-white"></i>
             {%  trans "Pre-biology" %}

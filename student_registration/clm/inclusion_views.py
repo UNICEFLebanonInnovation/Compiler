@@ -185,9 +185,11 @@ class InclusionAssessmentView(LoginRequiredMixin,
 
 
 class InclusionExportViewSet(LoginRequiredMixin, ListView):
-    current_round = CLMRound.objects.filter(current_year=True)
+    # current_round = CLMRound.objects.filter(current_year=True)
     model = Inclusion
-    queryset = Inclusion.objects.filter(round__in=current_round)
+    # queryset = Inclusion.objects.filter(round__in=current_round)
+    queryset = Inclusion.objects.all()
+
 
     def get_queryset(self):
         if not self.request.user.is_staff:
@@ -479,7 +481,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'confirmation_date_3',
             'additional_comments',
         )
-
+        print(qs.query)
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
 

@@ -29,12 +29,15 @@ $(document).ready(function(){
         'select#id_pss_parent_attended,  select#id_covid_parent_attended ,  select#id_followup_parent_attended ,' +
         'select#id_attended_biology,  select#id_attended_chemistry ,  select#id_attended_physics ,' +
         'select#id_barriers_single,  select#id_test_done ,  select#id_pss_session_attended , select#id_learning_result , ' +
-        'select#id_covid_session_attended,  select#id_followup_session_attended ,  select#id_parent_attended_visits ' +
+        'select#id_covid_session_attended,  select#id_followup_session_attended  ' +
         'select#id_referal_other', function(){
        reorganizeForm_post_assessment();
     });
 
      $(document).on('change', 'select#id_referal_other', function(){
+       reorganizeForm_post_assessment();
+     });
+     $(document).on('change', 'select#id_parent_attended_visits', function(){
        reorganizeForm_post_assessment();
     });
 
@@ -266,9 +269,13 @@ function reorganizeForm_post_assessment()
     $('#grd6').addClass('hide');
     $('div.grd7').addClass('d-none');
     $('#grd7').addClass('hide');
-    if(grade_registration == '6'){
+
+
+    if (grade_registration == '6') {
         $('#grd6').removeClass('hide');
         $('div.grd6').removeClass('d-none');
+        $('#grd7').addClass('hide');
+        $('div.grd7').addClass('d-none');
         $('#id_biology').val('');
         $('select#id_attended_biology').val("no");
         $('select#id_modality_biology').val("");
@@ -281,54 +288,20 @@ function reorganizeForm_post_assessment()
         $('select#id_attended_physics').val("no");
         $('select#id_modality_physics').val("");
     }
-    else
-    {
+    else if (grade_registration == '7' || grade_registration == '8' || grade_registration == '9') {
         $('div.grd6').addClass('d-none');
         $('#grd6').addClass('hide');
-        $('#id_science').val('');
-        $('select#id_attended_science').val("no");
-        $('select#id_modality_science').val("");
-    }
-
-    if(grade_registration == '7' || grade_registration == '8' || grade_registration == '9'){
-        alert('hi');
-        $('#grd7').removeClass('hide');
         $('div.grd7').removeClass('d-none');
+        $('#grd7').removeClass('hide');
         $('#id_science').val('');
         $('select#id_attended_science').val("no");
         $('select#id_modality_science').val("");
     }
-    else
-    {
-        $('div.grd7').addClass('d-none');
-        $('#grd7').addClass('hide');
-        $('#id_biology').val('');
-        $('select#id_attended_biology').val("no");
-        $('select#id_modality_biology').val("");
-
-        $('#id_chemistry').val('');
-        $('select#id_attended_chemistry').val("no");
-        $('select#id_modality_chemistry').val("");
-
-        $('#id_physics').val('');
-        $('select#id_attended_physics').val("no");
-        $('select#id_modality_physics').val("");
+    else {
+        $('#grd6').removeClass('hide');
+        $('div.grd6').removeClass('d-none');
     }
 
-
-    // // follow_up_type
-    // $('div#div_phone_call_number').addClass('d-none');
-    // $('div#div_house_visit_number').addClass('d-none');
-    // $('div#div_family_visit_number').addClass('d-none');
-    // if(follow_up_type == 'Phone'){
-    //     $('div#div_phone_call_number').removeClass('d-none');
-    //
-    // }else if(follow_up_type == 'House visit'){
-    //     $('div#div_house_visit_number').removeClass('d-none');
-    //
-    // }else if(follow_up_type == 'Family Visit') {
-    //     $('div#div_family_visit_number').removeClass('d-none');
-    // }
 
     $('div#div_id_arabic').addClass('d-none');
     $('#span_arabic').addClass('d-none');
@@ -653,30 +626,6 @@ function reorganizeForm_post_assessment()
         $('div.parent_visits').addClass('d-none');
         $('#parent_visits').addClass('hide');
     }
-     if(parent_attended_visits == 'yes'){
-    $('#parent_visits').removeClass('hide');
-    $('div.parent_visits').removeClass('d-none');
-
-    }
-    else
-    {
-        $('#id_followup_session_number').val('');
-        $('select#div_id_followup_session_modality').val("");
-        $('#span_followup_parent_attended_other').val('');
-        $('select#div_id_followup_parent_attended').val("");
-        $('#id_covid_session_number').val('');
-        $('select#div_id_covid_session_modality').val("");
-        $('#span_covid_parent_attended_other').val('');
-        $('select#div_id_covid_parent_attended').val("");
-        $('#id_pss_session_number').val('');
-        $('select#div_id_pss_session_modality').val("");
-        $('#span_pss_parent_attended_other').val('');
-        $('select#div_id_pss_parent_attended').val("");
-        $('div.parent_visits').addClass('d-none');
-        $('#parent_visits').addClass('hide');
-    }
-
-
     $('div#div_id_referal_other_specify').addClass('d-none');
     $('#span_referal_other_specify').addClass('d-none');
 
