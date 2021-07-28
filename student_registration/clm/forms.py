@@ -7243,8 +7243,8 @@ class ABLNAssessmentForm(forms.ModelForm):
                     self.add_error('arabic', 'This value is greater that 44')
                 # if english > 36:
                 #     self.add_error('english', 'This value is greater that 36')
-                if math > 18:
-                    self.add_error('math', 'This value is greater that 18')
+                if math > 20:
+                    self.add_error('math', 'This value is greater that 20')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
                 if artistic > 8:

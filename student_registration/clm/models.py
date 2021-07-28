@@ -5449,7 +5449,11 @@ class GeneralQuestionnaire(TimeStampedModel):
         ('Video recorded and shared', _('Video recorded and shared')),
         ('Parents responses over the phone', _('Parents responses over the phone'))
     )
-
+    RESOURCES_USED_REASONS = Choices(
+        ('not available', _('not available')),
+        ('Not culturally appropriate', _('Not culturally appropriate')),
+        ('Other', _('Other'))
+    )
     facilitator_full_name = models.TextField(
         blank=True, null=True,
         verbose_name=_('Facilitator Full Name')
@@ -5646,6 +5650,53 @@ class GeneralQuestionnaire(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Please specify')
+    )
+    # -----------------------------------------------------------------------------
+    resources_used_represent_participants = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Do the stories, resources, videos, examples and other resources used represent both men/boys and women/girls as active participants? ')
+    )
+    resources_used_reasons = ArrayField(
+            models.CharField(
+                choices=RESOURCES_USED_REASONS,
+                max_length=50,
+                blank=True,
+                null=True,
+            ),
+            blank=True,
+            null=True,
+            verbose_name=_('Reasons')
+    )
+    resources_used_other_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify')
+    )
+
+    children_provided_guidlines = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the teacher ensure equal participation of girls and boys?')
+    )
+    children_provided_guidlines = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Are women included as role models, leaders and historical figures in learning materials?')
+    )
+    children_provided_guidlines = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did both girls and boys in the same family participate in the class and have access to the phone/ device/resources? ')
     )
 
 
