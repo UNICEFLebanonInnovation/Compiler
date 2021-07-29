@@ -5454,6 +5454,18 @@ class GeneralQuestionnaire(TimeStampedModel):
         ('Not culturally appropriate', _('Not culturally appropriate')),
         ('Other', _('Other'))
     )
+    RECEIVED_COVID_INFO_HOW = Choices(
+        ('WhatsApp group', _('WhatsApp group')),
+        ('Hard copy', _('Hard copy')),
+        ('Discussion', _('Discussion'))
+    )
+    RECEIVED_COVID_INFO_HOW_OFTEN = Choices(
+        ('once per week', _('once per week')),
+        ('twice per week', _('Hard copy')),
+        ('once per month', _('once per month')),
+        ('twice per month', _('twice per month')),
+        ('other', _('other'))
+    )
     facilitator_full_name = models.TextField(
         blank=True, null=True,
         verbose_name=_('Facilitator Full Name')
@@ -5651,7 +5663,6 @@ class GeneralQuestionnaire(TimeStampedModel):
         null=True,
         verbose_name=_('Please specify')
     )
-    # -----------------------------------------------------------------------------
     resources_used_represent_participants = models.CharField(
         max_length=10,
         blank=True,
@@ -5677,28 +5688,104 @@ class GeneralQuestionnaire(TimeStampedModel):
         verbose_name=_('Please specify')
     )
 
-    children_provided_guidlines = models.CharField(
+    teacher_equal_participation = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
         verbose_name=_('Does the teacher ensure equal participation of girls and boys?')
     )
-    children_provided_guidlines = models.CharField(
+    women_included_learning_materials = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
         verbose_name=_('Are women included as role models, leaders and historical figures in learning materials?')
     )
-    children_provided_guidlines = models.CharField(
+    boys_girls_family_paticipate = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
         verbose_name=_('Did both girls and boys in the same family participate in the class and have access to the phone/ device/resources? ')
     )
-
+    child_receive_covid_information = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child receive any information on COVID-19 awareness and preventive measures (including vaccine)')
+    )
+    child_receive_covid_information_how = ArrayField(
+            models.CharField(
+                choices=RECEIVED_COVID_INFO_HOW,
+                max_length=50,
+                blank=True,
+                null=True,
+            ),
+            blank=True,
+            null=True,
+            verbose_name=_('How was it received')
+    )
+    child_receive_covid_information_how_often = ArrayField(
+            models.CharField(
+                choices=RECEIVED_COVID_INFO_HOW_OFTEN,
+                max_length=50,
+                blank=True,
+                null=True,
+            ),
+            blank=True,
+            null=True,
+            verbose_name=_('How often')
+    )
+    child_receive_covid_information_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Be more specific about what was discussed')
+    )
+    parents_receive_covid_information = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child receive any information on COVID-19 awareness and preventive measures (including vaccine)')
+    )
+    parents_receive_covid_information_how = ArrayField(
+            models.CharField(
+                choices=RECEIVED_COVID_INFO_HOW,
+                max_length=50,
+                blank=True,
+                null=True,
+            ),
+            blank=True,
+            null=True,
+            verbose_name=_('How was it received')
+    )
+    parents_receive_covid_information_how_often = ArrayField(
+            models.CharField(
+                choices=RECEIVED_COVID_INFO_HOW_OFTEN,
+                max_length=50,
+                blank=True,
+                null=True,
+            ),
+            blank=True,
+            null=True,
+            verbose_name=_('How often')
+    )
+    child_family_covid_challenges = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Do you think that the child and/or his/her family have any issues/challenges related to COVID-19')
+    )
+    child_family_covid_challenges_specify = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Please explain')
+    )
 
 def get_absolute_url(self):
     return '/general_questionnaire/edit/%d/' % self.pk
