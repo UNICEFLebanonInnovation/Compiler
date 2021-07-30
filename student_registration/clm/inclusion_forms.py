@@ -384,9 +384,9 @@ class InclusionForm(forms.ModelForm):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
-            ('abln', _('ABLN')),
-            ('bln', _('BLN')),
-            ('cbece', _('CBECE')),
+            ('from abln', _('FROM ABLN')),
+            ('from bln', _('FROM BLN')),
+            ('from cbece', _('FROM CBECE')),
             ('ocha', _('OCHA')),
             ('non unicef', _('Non - UNICEF')),
             ('RIMS', _('RIMS'))
