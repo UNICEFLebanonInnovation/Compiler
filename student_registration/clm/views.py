@@ -6,6 +6,7 @@ import json
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
@@ -83,7 +84,7 @@ from .serializers import (
     RS_FCSerializer,
     GeneralQuestionnaireSerializer,
 )
-from .utils import is_allowed_create, is_allowed_edit
+from .utils import is_allowed_create, is_allowed_edit, build_xls_extraction
 
 
 class CLMView(LoginRequiredMixin,
@@ -3250,6 +3251,19 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         )
         # print(qs.query)
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
+
+def BLNExportViewSetback(request):
+
+    current_round = CLMRound.objects.filter(current_year=True)
+    model = BLN
+    queryset = BLN.objects.filter(round__in=current_round)
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(partner=self.request.user.partner)
+        return self.queryset
+
+    return build_xls_extraction(queryset, request, 'all_staff_list', 'all_data')
+
 
 
 class ABLNExportViewSet(LoginRequiredMixin, ListView):
