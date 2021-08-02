@@ -99,7 +99,7 @@ def is_allowed_edit(programme):
 
 
 
-def build_xls_extraction(queryset, request, filename, report_type='all_data'):
+def build_xls_extraction(queryset):
     buffer = io.BytesIO()
 
     # Personnel
@@ -207,7 +207,7 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
         'Please specify',
         'cp_referral',
         'referal_wash',
-        'referal_health'
+        'referal_health',
         'referal_other',
         'referal_other_specify',
         'child_received_books',
@@ -366,7 +366,7 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
         'student__address',
         'registration_level',
         'first_attendance_date',
-        'student__id_number'
+        'student__id_number',
         'student__number',
         'student__first_name',
         'student__father_name',
@@ -378,7 +378,7 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
         'student__birthday_day',
         'student__birthday_month',
         'student__birthday_year',
-        'student__p_code'
+        'student__p_code',
         'disability__name_en',
         'education_status',
         'miss_school_date',
@@ -444,10 +444,10 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
         'basic_stationery',
         'pss_kit',
         'learning_result',
-        'learning_result_other'
+        'learning_result_other',
         'cp_referral',
         'referal_wash',
-        'referal_health'
+        'referal_health',
         'referal_other',
         'referal_other_specify',
         'child_received_books',
@@ -534,10 +534,35 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
         'created',
         'modified',
     )
+
     for row in rows:
         row_num_student += 1
+
+        dateFieldIndex_created = columns.index('created')
+        dateFieldIndex_modified = columns.index('modified')
+
+
+        print row[dateFieldIndex_created]
+        print type(row[dateFieldIndex_created])
+
+
         for col_num in range(len(row)):
-            ws.write(row_num_student, col_num, row[col_num], font_style)
+
+            if col_num == dateFieldIndex_created:
+                createdDate =  row[dateFieldIndex_created].replace(tzinfo=None)
+                date_format = xlwt.XFStyle()
+                date_format.num_format_str = 'dd/mm/yyyy'
+                ws.write(row_num_student, col_num, createdDate, date_format)
+            elif col_num == dateFieldIndex_modified:
+                modifiedDate = row[dateFieldIndex_modified].replace(tzinfo=None)
+                date_format = xlwt.XFStyle()
+                date_format.num_format_str = 'dd/mm/yyyy'
+                ws.write(row_num_student, col_num, modifiedDate, date_format)
+            else:
+                ws.write(row_num_student, col_num, row[col_num], font_style)
+
+
+
 
     ids = rows.values_list('id')
 
@@ -549,6 +574,9 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
     font_style.font.bold = True
     columns_fc = [
         'enrollment id',
+        'Student first name',
+        'Student father name',
+        'Student last name',
         'fc type',
         'facilitator name',
         'subject taught',
@@ -587,12 +615,16 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
     ]
 
     for col_num in range(len(columns_fc)):
+
         wsFC.write(row_num_fc, col_num, columns_fc[col_num], font_style)
 
     font_style = xlwt.XFStyle()
 
     rows_fc = BLN_FC.objects.filter(enrollment__in=ids).order_by('enrollment').values_list(
         'enrollment_id',
+        'enrollment__student__first_name',
+        'enrollment__student__father_name',
+        'enrollment__student__last_name',
         'fc_type',
         'facilitator_name',
         'subject_taught',
@@ -631,8 +663,11 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
     )
 
     for row in rows_fc:
+
         row_num_fc += 1
+
         for col_num in range(len(row)):
+
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
     wbStudent.save(buffer)
@@ -640,14 +675,9 @@ def build_xls_extraction(queryset, request, filename, report_type='all_data'):
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
     buffer.seek(0)
-    # print('----------------------------------------------------------------------------------------------------------------------------------------')
-    # print(qs.query)
-    # print('----------------------------------------------------------------------------------------------------------------------------------------')
+    response = FileResponse(buffer, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="BLN.xls"'
 
-    print(rows_fc.query)
-    print('----------------------------------------------------------------------------------------------------------------------------------------')
-    #
+    return response
 
-
-    return FileResponse(buffer, as_attachment=True, filename="{}.xls".format(filename))
 

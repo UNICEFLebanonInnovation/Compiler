@@ -49,14 +49,9 @@ urlpatterns = [
     ),
     url(
         regex=r'^bln-export/$',
-        view=views.BLNExportViewSet.as_view(),
+        view=views.BLNExportViewSet,
         name='bln_export'
     ),
-    # url(
-    #     regex=r'^bln-export/$',
-    #     view=views.BLNExportViewSet,
-    #     name='bln_export'
-    # ),
 
     url(
         regex=r'^assessment-submission/$',
