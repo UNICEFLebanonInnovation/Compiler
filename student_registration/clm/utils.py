@@ -568,15 +568,25 @@ def build_xls_extraction(queryset):
 
     # FC
     wsFC = wbStudent.add_sheet('FC')
+    row_num_header_fc = 0
     row_num_fc = 0
 
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-    columns_fc = [
+
+    columns_fc_student = [
         'enrollment id',
         'Student first name',
         'Student father name',
         'Student last name',
+    ]
+    for col_num in range(len(columns_fc_student)):
+
+        wsFC.write(row_num_header_fc, col_num, columns_fc_student[col_num], font_style)
+
+    font_style = xlwt.XFStyle()
+
+    columns_fc = [
         'fc type',
         'facilitator name',
         'subject taught',
@@ -614,13 +624,24 @@ def build_xls_extraction(queryset):
         'additional notes'
     ]
 
-    for col_num in range(len(columns_fc)):
+    fc_type = [
+        'pre-arabic',
+        'post-arabic',
+        'pre-math',
+        'post-math',
+        'pre-language',
+        'post-language'
+    ]
 
-        wsFC.write(row_num_fc, col_num, columns_fc[col_num], font_style)
+    for subject_type in range(len(fc_type)):
+        for col_num in range(len(columns_fc)):
+            wsFC.write(row_num_header_fc,col_num  + len(columns_fc_student)+ (len(columns_fc) * (subject_type))
+                           ,columns_fc[col_num], font_style)
 
     font_style = xlwt.XFStyle()
 
-    rows_fc = BLN_FC.objects.filter(enrollment__in=ids).order_by('enrollment').values_list(
+
+    rows_fc = BLN_FC.objects.filter(enrollment__in=ids).values_list(
         'enrollment_id',
         'enrollment__student__first_name',
         'enrollment__student__father_name',
@@ -660,15 +681,26 @@ def build_xls_extraction(queryset):
         'meet_objectives_verified',
         'objectives_verified_specify',
         'additional_notes'
-    )
+    ).order_by('enrollment', 'fc_type')
 
+    enrollment_id = 0
     for row in rows_fc:
+        row_num_fc +=0
+        enrol_id = row[0]
 
-        row_num_fc += 1
+        if enrollment_id<>enrol_id:
+            row_num_fc += 1
+            enrollment_id = enrol_id
+            for col_num in range(len(columns_fc_student)):
+                wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-        for col_num in range(len(row)):
+        subject_type_index = fc_type.index(row[4])
+        for col_num in range(len(columns_fc)):
+            wsFC.write(row_num_fc, col_num + len(columns_fc_student) + (len(columns_fc) * (subject_type_index))
+                       , row[col_num +len(columns_fc_student)], font_style)
 
-            wsFC.write(row_num_fc, col_num, row[col_num], font_style)
+        # for col_num in range(len(row)):
+        #     wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
     wbStudent.save(buffer)
 
