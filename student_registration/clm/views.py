@@ -2548,7 +2548,7 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
                 ).distinct()
             return qs
 
-class BLNExportViewSet(LoginRequiredMixin, ListView):
+class BLNOldExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     model = BLN
     queryset = BLN.objects.filter(round__in=current_round)
@@ -3252,7 +3252,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
 
-class BLNExportViewSetBAK(LoginRequiredMixin, ListView):
+class BLNExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     qs_students = BLN.objects.filter(round__in=current_round)
     qs_fc = BLN_FC.objects.filter(enrollment__round__in=current_round)
@@ -3268,8 +3268,6 @@ class BLNExportViewSetBAK(LoginRequiredMixin, ListView):
         return self.qs_fc.order_by('enrollment', 'fc_type')
 
     def get(self, request, *args, **kwargs):
-        rr=self.get_queryset_fc()
-        print rr.query
         return build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
 
 
