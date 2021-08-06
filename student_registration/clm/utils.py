@@ -57,7 +57,6 @@ def is_allowed_create(programme):
         print(ex.message)
         return False
 
-
 def is_allowed_edit(programme):
 
     from student_registration.schools.models import CLMRound
@@ -102,9 +101,7 @@ def is_allowed_edit(programme):
         print(ex.message)
         return False
 
-
-
-def build_xls_extraction_vertical(queryset_students, queryset_fc ):
+def build_xls_extraction(queryset_students, queryset_fc ):
     buffer = io.BytesIO()
 
     # Personnel
@@ -138,7 +135,7 @@ def build_xls_extraction_vertical(queryset_students, queryset_fc ):
         'Father name',
         'Last name',
         'Mother fullname',
-        'Sex',
+        'Gender',
         'Student Nationality',
         'Student Nationality Specify',
         'Birthday - day',
@@ -277,24 +274,6 @@ def build_xls_extraction_vertical(queryset_students, queryset_fc ):
         'post test attended social',
         'post test modality social',
         'post test social emotional',
-        'Was the child involved in remote learning?',
-        'what other reasons for this child not being engaged?',
-        'reasons not engaged other',
-        'Does the family have reliable internet service in their area during remote learning?',
-        'Did both girls and boys in the same family participate in the class and have access to the phone/',
-        'Explain',
-        'Frequency of Child Engagement in remote learning?',
-        'How well did the child meet the learning outcomes?',
-        'How do you rate the parents learning support provided to the child through this Remote',
-        'Has the child directly been reached with awareness messaging on Covid-19 and prevention measures?',
-        'How often?',
-        'Has the parents directly been reached with awareness messaging on Covid-19 and prevention',
-        'How often?',
-        'Was any follow-up done to ensure messages were well received, understood and adopted?',
-        'With who child and/or caregiver?',
-        'Reason why not doing the Pre-test',
-        'Reason why not doing the Post-test',
-        'Student outreached?',
         'owner',
         'modified_by',
     ]
@@ -515,24 +494,6 @@ def build_xls_extraction_vertical(queryset_students, queryset_fc ):
         'post_test_attended_social',
         'post_test_modality_social',
         'post_test_social_emotional',
-        'remote_learning',
-        'remote_learning_reasons_not_engaged',
-        'reasons_not_engaged_other',
-        'reliable_internet',
-        'gender_participate',
-        'gender_participate_explain',
-        'remote_learning_engagement',
-        'meet_learning_outcomes',
-        'parent_learning_support_rate',
-        'covid_message',
-        'covid_message_how_often',
-        'covid_parents_message',
-        'covid_parents_message_how_often',
-        'follow_up_done',
-        'follow_up_done_with_who',
-        'unsuccessful_pretest_reason',
-        'unsuccessful_posttest_reason',
-        'student_outreached',
         'owner__username',
         'modified_by__username',
     )
@@ -549,9 +510,18 @@ def build_xls_extraction_vertical(queryset_students, queryset_fc ):
 
     column_header_fc = [
         'enrollment id',
+        'Partner',
+        'CLM Round',
+        'First time registered?',
+        'Registration level',
         'Student first name',
         'Student father name',
         'Student last name',
+        'unique number',
+        'Gender',
+        'Student Nationality',
+        'Does the child participate in work?',
+        'Does the child have any disability or special need?',
         'fc type',
         'facilitator name',
         'subject taught',
@@ -596,9 +566,18 @@ def build_xls_extraction_vertical(queryset_students, queryset_fc ):
     rows_fc = queryset_fc.values_list(
 
         'enrollment_id',
+        'enrollment__partner__name',
+        'enrollment__round__name',
+        'enrollment__new_registry',
+        'enrollment__registration_level',
         'enrollment__student__first_name',
         'enrollment__student__father_name',
         'enrollment__student__last_name',
+        'enrollment__student__number',
+        'enrollment__student__sex',
+        'enrollment__student__nationality__name',
+        'enrollment__disability__name_en',
+        'enrollment__have_labour_single_selection',
         'fc_type',
         'facilitator_name',
         'subject_taught',
@@ -655,7 +634,7 @@ def build_xls_extraction_vertical(queryset_students, queryset_fc ):
     return response
 
 
-def build_xls_extraction(queryset_students, queryset_fc ):
+def build_xls_extraction_horizental(queryset_students, queryset_fc ):
     buffer = io.BytesIO()
 
     # Personnel
