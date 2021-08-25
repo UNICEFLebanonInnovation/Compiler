@@ -84,7 +84,7 @@ from .serializers import (
     RS_FCSerializer,
     GeneralQuestionnaireSerializer,
 )
-from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction , cbece_build_xls_extraction
+from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction , cbece_build_xls_extraction, rs_build_xls_extraction
 
 
 class CLMView(LoginRequiredMixin,
@@ -3307,6 +3307,24 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         return cbece_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
 
 class RSExportViewSet(LoginRequiredMixin, ListView):
+    current_round = CLMRound.objects.filter(current_year=True)
+    qs_students = RS.objects.filter(round__in=current_round)
+    qs_fc = RS_FC.objects.filter(enrollment__round__in=current_round)
+
+    def get_queryset_students(self):
+        if not self.request.user.is_staff:
+            return self.qs_students.filter(partner=self.request.user.partner)
+        return self.qs_students
+
+    def get_queryset_fc(self):
+        if not self.request.user.is_staff:
+            return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
+        return self.qs_fc.order_by('enrollment', 'fc_type')
+
+    def get(self, request, *args, **kwargs):
+        return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+
+class RSExportViewSet1(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     model = RS
     queryset = RS.objects.filter(round__in=current_round)
