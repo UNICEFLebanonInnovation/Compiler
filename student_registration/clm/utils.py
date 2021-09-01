@@ -2109,133 +2109,137 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
                 cellTextValue = listToString(cellValue)
             currentCell = ws_student.cell(row=row_num_student + 1, column=col_num + 1, value=cellTextValue)
             currentCell.font = font_style
-    ws_fc = wb.create_sheet('FC')
-
-
-    # Sheet header, first row
-    row_num_fc = 0
-    columns_fc = [
-            'enrollment id',
-            'Partner',
-            'CLM Round',
-            'First time registered?',
-            'Registration level',
-            'Student first name',
-            'Student father name',
-            'Student last name',
-            'unique number',
-            'Gender',
-            'Student Nationality',
-            'Does the child participate in work?',
-            'Does the child have any disability or special need?',
-            'fc type',
-            'facilitator name',
-            'subject taught',
-            'date of monitoring',
-            'targeted competencies',
-            'activities reported',
-            'activities reported other',
-            'share expectations',
-            'share expectations no reason',
-            'share expectations other reason',
-            'materials needed available',
-            'attend lesson',
-            'child interact teacher',
-            'child interact friends',
-            'child clear responses',
-            'child ask questions',
-            'child acquire competency',
-            'child show improvement',
-            'child expected work independently',
-            'work independently evaluation',
-            'complete printed package',
-            'sessions participated',
-            'not participating reason',
-            'E recharge card provided',
-            'action to taken',
-            'action to taken specify',
-            'child needs pss',
-            'child cant access resources',
-            'homework after lesson',
-            'parents supporting student',
-            'completed tasks',
-            'meet objectives',
-            'meet objectives verified',
-            'objectives verified specify',
-            'additional notes'
-        ]
-
-    for col_num in range(len(columns_fc)):
-        currentCell = ws_fc.cell(row=row_num_fc + 1, column=col_num + 1, value=columns_fc[col_num])
-        currentCell.font = font_style
-
-    rows_fc = queryset_fc.values_list(
-
-        'enrollment_id',
-        'enrollment__partner__name',
-        'enrollment__round__name',
-        'enrollment__new_registry',
-        'enrollment__registration_level',
-        'enrollment__student__first_name',
-        'enrollment__student__father_name',
-        'enrollment__student__last_name',
-        'enrollment__student__number',
-        'enrollment__student__sex',
-        'enrollment__student__nationality__name',
-        'enrollment__disability__name_en',
-        'enrollment__have_labour_single_selection',
-        'fc_type',
-        'facilitator_name',
-        'subject_taught',
-        'date_of_monitoring',
-        'targeted_competencies',
-        'activities_reported',
-        'activities_reported_other',
-        'share_expectations',
-        'share_expectations_no_reason',
-        'share_expectations_other_reason',
-        'materials_needed_available',
-        'attend_lesson',
-        'child_interact_teacher',
-        'child_interact_friends',
-        'child_clear_responses',
-        'child_ask_questions',
-        'child_acquire_competency',
-        'child_show_improvement',
-        'child_expected_work_independently',
-        'work_independently_evaluation',
-        'complete_printed_package',
-        'sessions_participated',
-        'not_participating_reason',
-        'e_recharge_card_provided',
-        'action_to_taken',
-        'action_to_taken_specify',
-        'child_needs_pss',
-        'child_cant_access_resources',
-        'homework_after_lesson',
-        'parents_supporting_student',
-        'completed_tasks',
-        'meet_objectives',
-        'meet_objectives_verified',
-        'objectives_verified_specify',
-        'additional_notes'
+    #get fc_type
+    rows_fc_type = queryset_fc.distinct('fc_type').order_by('fc_type').values_list(
+        'fc_type'
     )
-    # [:10]
-    for row in rows_fc:
-        row_num_fc += 1
-        for col_num in range(len(row)):
-            cellValue = row[col_num]
-            cellTextValue = cellValue
-            if isinstance(cellValue, str):
-                cellTextValue = cellValue.encode("utf8")
-            if type(cellValue) in [int]:
-                cellTextValue = str(cellValue).encode("utf8")
-            if type(cellValue) in [unicode, date]:
-                cellTextValue = cellValue
-            if type(cellValue) in [list]:
-                cellTextValue = listToString(cellValue)
-            currentCell = ws_fc.cell(row=row_num_fc + 1, column=col_num + 1, value=cellTextValue)
+    for fc in rows_fc_type:
+        fc_type = fc[0]
+
+        ws_fc = wb.create_sheet(fc_type )
+        # Sheet header, first row
+        row_num_fc = 0
+        columns_fc = [
+                'enrollment id',
+                'Partner',
+                'CLM Round',
+                'First time registered?',
+                'Registration level',
+                'Student first name',
+                'Student father name',
+                'Student last name',
+                'unique number',
+                'Gender',
+                'Student Nationality',
+                'Does the child participate in work?',
+                'Does the child have any disability or special need?',
+                'fc type',
+                'facilitator name',
+                'subject taught',
+                'date of monitoring',
+                'targeted competencies',
+                'activities reported',
+                'activities reported other',
+                'share expectations',
+                'share expectations no reason',
+                'share expectations other reason',
+                'materials needed available',
+                'attend lesson',
+                'child interact teacher',
+                'child interact friends',
+                'child clear responses',
+                'child ask questions',
+                'child acquire competency',
+                'child show improvement',
+                'child expected work independently',
+                'work independently evaluation',
+                'complete printed package',
+                'sessions participated',
+                'not participating reason',
+                'E recharge card provided',
+                'action to taken',
+                'action to taken specify',
+                'child needs pss',
+                'child cant access resources',
+                'homework after lesson',
+                'parents supporting student',
+                'completed tasks',
+                'meet objectives',
+                'meet objectives verified',
+                'objectives verified specify',
+                'additional notes'
+            ]
+
+        for col_num in range(len(columns_fc)):
+            currentCell = ws_fc.cell(row=row_num_fc + 1, column=col_num + 1, value=columns_fc[col_num])
             currentCell.font = font_style
+
+        rows_fc = queryset_fc.filter(fc_type=fc_type).values_list(
+            'enrollment_id',
+            'enrollment__partner__name',
+            'enrollment__round__name',
+            'enrollment__new_registry',
+            'enrollment__registration_level',
+            'enrollment__student__first_name',
+            'enrollment__student__father_name',
+            'enrollment__student__last_name',
+            'enrollment__student__number',
+            'enrollment__student__sex',
+            'enrollment__student__nationality__name',
+            'enrollment__disability__name_en',
+            'enrollment__have_labour_single_selection',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )[:50]
+
+        for row in rows_fc:
+            row_num_fc += 1
+            for col_num in range(len(row)):
+                cellValue = row[col_num]
+                cellTextValue = cellValue
+                if isinstance(cellValue, str):
+                    cellTextValue = cellValue.encode("utf8")
+                if type(cellValue) in [int]:
+                    cellTextValue = str(cellValue).encode("utf8")
+                if type(cellValue) in [unicode, date]:
+                    cellTextValue = cellValue
+                if type(cellValue) in [list]:
+                    cellTextValue = listToString(cellValue)
+                currentCell = ws_fc.cell(row=row_num_fc + 1, column=col_num + 1, value=cellTextValue)
+                currentCell.font = font_style
 
 
     # Save the file
@@ -2248,35 +2252,18 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
     response['Content-Disposition'] = 'attachment; filename="RS.xlsx"'
 
     return response
-
-
-def listToString(s):
-    # initialize an empty string
-    str1 = ""
-
-    # traverse in the string
-    for ele in s:
-        if str1 == "":
-            str1 += ele
-        else:
-            str1 += ","+ele
-
-        # return string
-    return str1
-
-def rs_build_xls_extraction_old(queryset_students, queryset_fc ):
+def rs_build_xls_extractionOLD(queryset_students, queryset_fc ):
     buffer = io.BytesIO()
 
-    # Personnel
-    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    wb = Workbook()
 
-    ws = wbStudent.add_sheet('Student')
+    ws_student = wb['Sheet']
+    ws_student.title = 'Student'
 
     # Sheet header, first row
     row_num_student = 0
 
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
+    font_style = Font(bold=True)
 
     columns = [
         'enrollment_id',
@@ -2427,27 +2414,28 @@ def rs_build_xls_extraction_old(queryset_students, queryset_fc ):
         'post test attended english',
         'post test modality english',
         'post test english',
-        'post test attended psychomotor',
-        'post test modality psychomotor',
-        'post test psychomotor',
-        'post test attended artistic',
-        'post test modality artistic',
-        'post test artistic',
         'post test attended math',
         'post test modality math',
         'post test math',
-        'post test attended social',
-        'post test modality social',
-        'post test social emotional',
+        'post test attended science',
+        'post test modality science',
+        'post test science',
+        'post test attended biology',
+        'post test modality biology',
+        'post test biology',
+        'post test attended physics',
+        'post test modality physics',
+        'post test physics',
+        'post test attended chemistry',
+        'post test modality chemistry',
+        'post test chemistry',
         'owner',
         'modified_by',
     ]
 
     for col_num in range(len(columns)):
-        ws.write(row_num_student, col_num, columns[col_num], font_style)
-
-    # Sheet body, remaining rows
-    font_style = xlwt.XFStyle()
+        currentCell = ws_student.cell(row=row_num_student+1, column=col_num+1, value=columns[col_num])
+        currentCell.font = font_style
 
     qs = queryset_students.extra(select={
 
@@ -2508,8 +2496,6 @@ def rs_build_xls_extraction_old(queryset_students, queryset_fc ):
         'post_test_chemistry': "post_test->>'RS_ASSESSMENT/chemistry'",
 
     })
-
-
 
     rows = qs.order_by('id').values_list(
         'id',
@@ -2678,132 +2664,162 @@ def rs_build_xls_extraction_old(queryset_students, queryset_fc ):
         'owner__username',
         'modified_by__username',
     )
+    # [:10]
+
     for row in rows:
         row_num_student += 1
         for col_num in range(len(row)):
-            ws.write(row_num_student, col_num, row[col_num], font_style)
-    # FC
-    wsFC = wbStudent.add_sheet('FC')
-    row_num_fc = 0
-
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-
-    column_header_fc = [
-        'enrollment id',
-        'Partner',
-        'CLM Round',
-        'First time registered?',
-        'Registration level',
-        'Student first name',
-        'Student father name',
-        'Student last name',
-        'unique number',
-        'Gender',
-        'Student Nationality',
-        'Does the child participate in work?',
-        'Does the child have any disability or special need?',
-        'fc type',
-        'facilitator name',
-        'subject taught',
-        'date of monitoring',
-        'targeted competencies',
-        'activities reported',
-        'activities reported other',
-        'share expectations',
-        'share expectations no reason',
-        'share expectations other reason',
-        'materials needed available',
-        'attend lesson',
-        'child interact teacher',
-        'child interact friends',
-        'child clear responses',
-        'child ask questions',
-        'child acquire competency',
-        'child show improvement',
-        'child expected work independently',
-        'work independently evaluation',
-        'complete printed package',
-        'sessions participated',
-        'not participating reason',
-        'E recharge card provided',
-        'action to taken',
-        'action to taken specify',
-        'child needs pss',
-        'child cant access resources',
-        'homework after lesson',
-        'parents supporting student',
-        'completed tasks',
-        'meet objectives',
-        'meet objectives verified',
-        'objectives verified specify',
-        'additional notes'
-    ]
-
-    for col_num in range(len(column_header_fc)):
-        wsFC.write(row_num_fc, col_num, column_header_fc[col_num], font_style)
-    font_style = xlwt.XFStyle()
-
-    rows_fc = queryset_fc.values_list(
-
-        'enrollment_id',
-        'enrollment__partner__name',
-        'enrollment__round__name',
-        'enrollment__new_registry',
-        'enrollment__registration_level',
-        'enrollment__student__first_name',
-        'enrollment__student__father_name',
-        'enrollment__student__last_name',
-        'enrollment__student__number',
-        'enrollment__student__sex',
-        'enrollment__student__nationality__name',
-        'enrollment__disability__name_en',
-        'enrollment__have_labour_single_selection',
-        'fc_type',
-        'facilitator_name',
-        'subject_taught',
-        'date_of_monitoring',
-        'targeted_competencies',
-        'activities_reported',
-        'activities_reported_other',
-        'share_expectations',
-        'share_expectations_no_reason',
-        'share_expectations_other_reason',
-        'materials_needed_available',
-        'attend_lesson',
-        'child_interact_teacher',
-        'child_interact_friends',
-        'child_clear_responses',
-        'child_ask_questions',
-        'child_acquire_competency',
-        'child_show_improvement',
-        'child_expected_work_independently',
-        'work_independently_evaluation',
-        'complete_printed_package',
-        'sessions_participated',
-        'not_participating_reason',
-        'e_recharge_card_provided',
-        'action_to_taken',
-        'action_to_taken_specify',
-        'child_needs_pss',
-        'child_cant_access_resources',
-        'homework_after_lesson',
-        'parents_supporting_student',
-        'completed_tasks',
-        'meet_objectives',
-        'meet_objectives_verified',
-        'objectives_verified_specify',
-        'additional_notes'
-
+            cellValue = row[col_num]
+            cellTextValue = cellValue
+            if isinstance(cellValue, str):
+                cellTextValue = cellValue.encode("utf8")
+            if type(cellValue) in [int]:
+                cellTextValue = str(cellValue).encode("utf8")
+            if type(cellValue) in [unicode, date]:
+                cellTextValue = cellValue
+            if type(cellValue) in [list]:
+                cellTextValue = listToString(cellValue)
+            currentCell = ws_student.cell(row=row_num_student + 1, column=col_num + 1, value=cellTextValue)
+            currentCell.font = font_style
+    #get partners
+    rows_partners = qs.distinct('partner_id').order_by('partner_id').values_list(
+        'partner__id',
+        'partner__name',
     )
+    for partner in rows_partners:
+        partner_id = partner[0]
+        partner_name = str(partner[1]).encode("utf8")
+        # print(partner_id)
+        # print(partner_name)
 
-    for row in rows_fc:
-        row_num_fc += 1
-        for col_num in range(len(row)):
-            wsFC.write(row_num_fc, col_num, row[col_num], font_style)
+        ws_fc = wb.create_sheet('FC - '+ partner_name )
+        # Sheet header, first row
+        row_num_fc = 0
+        columns_fc = [
+                'enrollment id',
+                'Partner',
+                'CLM Round',
+                'First time registered?',
+                'Registration level',
+                'Student first name',
+                'Student father name',
+                'Student last name',
+                'unique number',
+                'Gender',
+                'Student Nationality',
+                'Does the child participate in work?',
+                'Does the child have any disability or special need?',
+                'fc type',
+                'facilitator name',
+                'subject taught',
+                'date of monitoring',
+                'targeted competencies',
+                'activities reported',
+                'activities reported other',
+                'share expectations',
+                'share expectations no reason',
+                'share expectations other reason',
+                'materials needed available',
+                'attend lesson',
+                'child interact teacher',
+                'child interact friends',
+                'child clear responses',
+                'child ask questions',
+                'child acquire competency',
+                'child show improvement',
+                'child expected work independently',
+                'work independently evaluation',
+                'complete printed package',
+                'sessions participated',
+                'not participating reason',
+                'E recharge card provided',
+                'action to taken',
+                'action to taken specify',
+                'child needs pss',
+                'child cant access resources',
+                'homework after lesson',
+                'parents supporting student',
+                'completed tasks',
+                'meet objectives',
+                'meet objectives verified',
+                'objectives verified specify',
+                'additional notes'
+            ]
+
+        for col_num in range(len(columns_fc)):
+            currentCell = ws_fc.cell(row=row_num_fc + 1, column=col_num + 1, value=columns_fc[col_num])
+            currentCell.font = font_style
+
+        rows_fc = queryset_fc.filter(enrollment__partner=partner_id).values_list(
+            'enrollment_id',
+            'enrollment__partner__name',
+            'enrollment__round__name',
+            'enrollment__new_registry',
+            'enrollment__registration_level',
+            'enrollment__student__first_name',
+            'enrollment__student__father_name',
+            'enrollment__student__last_name',
+            'enrollment__student__number',
+            'enrollment__student__sex',
+            'enrollment__student__nationality__name',
+            'enrollment__disability__name_en',
+            'enrollment__have_labour_single_selection',
+            'fc_type',
+            'facilitator_name',
+            'subject_taught',
+            'date_of_monitoring',
+            'targeted_competencies',
+            'activities_reported',
+            'activities_reported_other',
+            'share_expectations',
+            'share_expectations_no_reason',
+            'share_expectations_other_reason',
+            'materials_needed_available',
+            'attend_lesson',
+            'child_interact_teacher',
+            'child_interact_friends',
+            'child_clear_responses',
+            'child_ask_questions',
+            'child_acquire_competency',
+            'child_show_improvement',
+            'child_expected_work_independently',
+            'work_independently_evaluation',
+            'complete_printed_package',
+            'sessions_participated',
+            'not_participating_reason',
+            'e_recharge_card_provided',
+            'action_to_taken',
+            'action_to_taken_specify',
+            'child_needs_pss',
+            'child_cant_access_resources',
+            'homework_after_lesson',
+            'parents_supporting_student',
+            'completed_tasks',
+            'meet_objectives',
+            'meet_objectives_verified',
+            'objectives_verified_specify',
+            'additional_notes'
+        )[:200]
+
+        for row in rows_fc:
+            row_num_fc += 1
+            for col_num in range(len(row)):
+                cellValue = row[col_num]
+                cellTextValue = cellValue
+                if isinstance(cellValue, str):
+                    cellTextValue = cellValue.encode("utf8")
+                if type(cellValue) in [int]:
+                    cellTextValue = str(cellValue).encode("utf8")
+                if type(cellValue) in [unicode, date]:
+                    cellTextValue = cellValue
+                if type(cellValue) in [list]:
+                    cellTextValue = listToString(cellValue)
+                currentCell = ws_fc.cell(row=row_num_fc + 1, column=col_num + 1, value=cellTextValue)
+                currentCell.font = font_style
 
 
-    wbStudent.save(buffer)
+    # Save the file
+    wb.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
@@ -2812,6 +2828,21 @@ def rs_build_xls_extraction_old(queryset_students, queryset_fc ):
     response['Content-Disposition'] = 'attachment; filename="RS.xlsx"'
 
     return response
+
+
+def listToString(s):
+    # initialize an empty string
+    str1 = ""
+
+    # traverse in the string
+    for ele in s:
+        if str1 == "":
+            str1 += ele
+        else:
+            str1 += ","+ele
+
+        # return string
+    return str1
 
 def build_xls_extraction_horizental(queryset_students, queryset_fc ):
     buffer = io.BytesIO()
