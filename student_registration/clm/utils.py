@@ -1680,7 +1680,7 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc ):
 
     return response
 
-def rs_build_xls_extraction(queryset_students, queryset_fc ):
+def rs_build_xls_extraction1(queryset_students, queryset_fc ):
     buffer = io.BytesIO()
 
     wb = Workbook()
@@ -2252,7 +2252,8 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
     response['Content-Disposition'] = 'attachment; filename="RS.xlsx"'
 
     return response
-def rs_build_xls_extractionOLD(queryset_students, queryset_fc ):
+
+def rs_build_xls_extraction(queryset_students, queryset_fc ):
     buffer = io.BytesIO()
 
     wb = Workbook()
@@ -2663,8 +2664,7 @@ def rs_build_xls_extractionOLD(queryset_students, queryset_fc ):
         'post_test_chemistry',
         'owner__username',
         'modified_by__username',
-    )
-    # [:10]
+    )[:5000]
 
     for row in rows:
         row_num_student += 1
@@ -2799,7 +2799,7 @@ def rs_build_xls_extractionOLD(queryset_students, queryset_fc ):
             'meet_objectives_verified',
             'objectives_verified_specify',
             'additional_notes'
-        )[:200]
+        )[:5000]
 
         for row in rows_fc:
             row_num_fc += 1

@@ -12,7 +12,8 @@ from .models import (
     CBECE,
     Cycle,
     Disability,
-    GeneralQuestionnaire)
+    GeneralQuestionnaire,
+    Outreach)
 
 
 class CommonFilter(FilterSet):
@@ -136,6 +137,29 @@ class GeneralQuestionnaireFilter(CommonFilter):
         model = GeneralQuestionnaire
         fields = {
             'facilitator_full_name': ['contains'],
+        }
+
+
+class OutreachFilter(CommonFilter):
+
+    class Meta:
+        model = Outreach
+        fields = {
+            'round': ['exact'],
+            'student__id_number': ['contains'],
+            'student__number': ['contains'],
+            'internal_number': ['contains'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
+            'student__nationality': ['exact'],
+            'governorate': ['exact'],
+            'district': ['exact'],
+            # 'participation': ['exact'],
+            'learning_result': ['exact'],
+            'owner__username': ['contains'],
+            'disability': ['exact'],
         }
 
 

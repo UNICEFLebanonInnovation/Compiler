@@ -2,7 +2,20 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades,  ABLN_FC, BLN_FC, RS_FC, CBECE_FC, GeneralQuestionnaire
+from .models import (
+    CLM,
+    BLN,
+    ABLN,
+    RS,
+    CBECE,
+    SelfPerceptionGrades,
+    ABLN_FC,
+    BLN_FC,
+    RS_FC,
+    CBECE_FC,
+    GeneralQuestionnaire,
+    Outreach
+)
 
 
 def create_instance(validated_data, model):
@@ -626,6 +639,104 @@ class CBECESerializer(CLMSerializer):
             'referal_other_specify'
         )
 
+class OutreachSerializer(CLMSerializer):
+
+    def create(self, validated_data):
+        return create_instance(validated_data=validated_data, model=self.Meta.model)
+
+    def update(self, instance, validated_data):
+        return update_instance(instance=instance, validated_data=validated_data)
+
+    class Meta:
+        model = Outreach
+        fields = CLMSerializer.Meta.fields + (
+            # 'cycle',
+            # 'referral',
+            'have_labour',
+            'labours',
+            'labour_hours',
+            'have_labour_single_selection',
+            'labours_single_selection',
+            'labour_weekly_income',
+            'student_family_status',
+            'student_have_children',
+            'phone_number',
+            'phone_number_confirm',
+            'second_phone_number',
+            'second_phone_number_confirm',
+            'phone_owner',
+            'second_phone_owner',
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'parent_individual_case_number',
+            'parent_individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'national_number',
+            'national_number_confirm',
+            'syrian_national_number',
+            'syrian_national_number_confirm',
+            'sop_national_number',
+            'sop_national_number_confirm',
+            'parent_national_number',
+            'parent_national_number_confirm',
+            'parent_syrian_national_number',
+            'parent_syrian_national_number_confirm',
+            'parent_sop_national_number',
+            'parent_sop_national_number_confirm',
+            'parent_other_number',
+            'parent_other_number_confirm',
+            'other_number',
+            'other_number_confirm',
+            'no_child_id_confirmation',
+            'source_of_identification',
+            'rims_case_number',
+            'source_of_identification_specify',
+            'other_nationality',
+            'education_status',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
+            'round_start_date',
+            'registration_level',
+            'cadaster',
+            'miss_school_date',
+            'source_of_transportation',
+            'main_caregiver',
+            'main_caregiver_nationality',
+            'main_caregiver_nationality_other',
+            'other_caregiver_relationship',
+            'student_number_children',
+            'basic_stationery',
+            'pss_kit',
+            'remote_learning',
+            'remote_learning_reasons_not_engaged',
+            'reasons_not_engaged_other',
+            'reliable_internet',
+            'gender_participate',
+            'gender_participate_explain',
+            'remote_learning_engagement',
+            'meet_learning_outcomes',
+            'parent_learning_support_rate',
+            'covid_message',
+            'covid_message_how_often',
+            'covid_parents_message',
+            'covid_parents_message_how_often',
+            'follow_up_done',
+            'follow_up_done_with_who',
+            'labours_other_specify',
+            'child_received_books',
+            'child_received_printout',
+            'child_received_internet',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify'
+        )
 
 class ABLN_FCSerializer(serializers.ModelSerializer):
     # enrollment_id = serializers.IntegerField(source='enrollment.id')

@@ -30,8 +30,8 @@ from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from student_registration.students.models import Person
-from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter, GeneralQuestionnaireFilter
-from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable, GeneralQuestionnaireTable
+from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter, GeneralQuestionnaireFilter, OutreachFilter
+from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable, GeneralQuestionnaireTable , OutreachTable
 from .models import (
     BLN,
     ABLN,
@@ -46,6 +46,7 @@ from .models import (
     RS_FC,
     GeneralQuestionnaire ,
     Center,
+    Outreach
 )
 from .forms import (
     BLNForm,
@@ -71,6 +72,7 @@ from .forms import (
     RSFCForm,
     CBECEFCForm,
     GeneralQuestionnaireForm,
+    OutreachForm
 )
 from .serializers import (
     BLNSerializer,
@@ -83,6 +85,7 @@ from .serializers import (
     CBECE_FCSerializer,
     RS_FCSerializer,
     GeneralQuestionnaireSerializer,
+    OutreachSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction , cbece_build_xls_extraction, rs_build_xls_extraction
 
@@ -4335,3 +4338,204 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
                  'student__birthday_year', 'round__name', 'internal_number').distinct()
     return qs
+
+
+class OutreachAddView(LoginRequiredMixin,
+                 GroupRequiredMixin,
+                 FormView):
+    template_name = 'clm/outreach_create_form.html'
+    form_class = OutreachForm
+    success_url = '/clm/Outreach-list/'
+    group_required = [u"CLM_Outreach"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/Outreach-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/Outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='Outreach',
+                assessment_slug='outreach_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:outreach_edit',
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = is_allowed_create('Outreach')
+        return super(OutreachAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(OutreachAddView, self).get_initial()
+        data = {
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
+        }
+        if self.request.GET.get('enrollment_id'):
+            instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
+            data = OutreachSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+            data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(OutreachAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return OutreachForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return OutreachForm(None, instance=None, request=self.request,initial=self.get_initial())
+
+class OutreachEditView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'clm/outreach_edit_form.html'
+    form_class = OutreachForm
+    success_url = '/clm/Outreach-list/'
+    group_required = [u"CLM_Outreach"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/Outreach-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/Outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='Outreach',
+                assessment_slug='outreach_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:outreach_edit',
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_edit'] = is_allowed_edit('Outreach')
+        return super(OutreachEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return OutreachForm(self.request.POST, instance=instance, request=self.request)
+        else:
+            data = OutreachSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            if 'pre_test' in data:
+                p_test = data['pre_test']
+                if p_test:
+                    if "Outreach_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["Outreach_ASSESSMENT/attended_arabic"]
+
+                    if "Outreach_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["Outreach_ASSESSMENT/modality_arabic"]
+
+                    if "Outreach_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["Outreach_ASSESSMENT/arabic"]
+
+                    if "Outreach_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["Outreach_ASSESSMENT/attended_english"]
+
+                    if "Outreach_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["Outreach_ASSESSMENT/modality_english"]
+
+                    if "Outreach_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["Outreach_ASSESSMENT/english"]
+
+                    if "Outreach_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["Outreach_ASSESSMENT/attended_math"]
+
+                    if "Outreach_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["Outreach_ASSESSMENT/modality_math"]
+
+                    if "Outreach_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["Outreach_ASSESSMENT/math"]
+
+                    if "Outreach_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["Outreach_ASSESSMENT/attended_social"]
+
+                    if "Outreach_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["Outreach_ASSESSMENT/modality_social"]
+
+                    if "Outreach_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["Outreach_ASSESSMENT/social_emotional"]
+
+                    if "Outreach_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["Outreach_ASSESSMENT/attended_artistic"]
+                    elif "Outreach_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_artistic'] = p_test["Outreach_ASSESSMENT/attended_psychomotor"]
+
+                    if "Outreach_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["Outreach_ASSESSMENT/modality_artistic"]
+                    elif "Outreach_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_artistic'] = p_test["Outreach_ASSESSMENT/modality_psychomotor"]
+
+                    if "Outreach_ASSESSMENT/modality_artistic" in p_test:
+                        data['artistic'] = p_test["Outreach_ASSESSMENT/artistic"]
+                    elif "Outreach_ASSESSMENT/psychomotor" in p_test:
+                        data['artistic'] = p_test["Outreach_ASSESSMENT/psychomotor"]
+
+            return OutreachForm(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(OutreachEditView, self).form_valid(form)
+
+
+class OutreachListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+    table_class = OutreachTable
+    model = Outreach
+    template_name = 'clm/outreach_list.html'
+    table = BootstrapTable(Outreach.objects.all(), order_by='id')
+    group_required = [u"CLM_outreach"]
+
+    filterset_class = OutreachFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+
+        return Outreach.objects.filter(partner=self.request.user.partner_id,
+                                    round__current_year=True).order_by('-id')
+
+
+class OutreachExportViewSet(LoginRequiredMixin, ListView):
+    # current_round = CLMRound.objects.filter(current_year=True)
+    qs_students = Outreach.objects.all()
+
+    def get_queryset_students(self):
+        if not self.request.user.is_staff:
+            return self.qs_students.filter(partner=self.request.user.partner)
+        return self.qs_students
+
+    def get(self, request, *args, **kwargs):
+        return bln_build_xls_extraction(self.get_queryset_students())
