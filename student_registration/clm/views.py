@@ -4343,16 +4343,16 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
 class OutreachAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
-    template_name = 'clm/outreach_create_form.html'
+    template_name = 'clm/outreach_add_form.html'
     form_class = OutreachForm
     success_url = '/clm/Outreach-list/'
-    group_required = [u"CLM_Outreach"]
+    group_required = [u"CLM_outreach"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
-            return '/clm/Outreach-add/'
+            return '/clm/outreach-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/Outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
@@ -4416,9 +4416,9 @@ class OutreachEditView(LoginRequiredMixin,
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
-            return '/clm/Outreach-add/'
+            return '/clm/outreach-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/Outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
