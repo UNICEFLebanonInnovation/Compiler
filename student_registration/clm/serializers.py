@@ -782,7 +782,6 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
             'additional_notes'
         )
 
-
 class BLN_FCSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -923,7 +922,6 @@ class GeneralQuestionnaireSerializer(serializers.ModelSerializer):
             # 'enrollment_id',
             'facilitator_full_name',
         )
-
 
 class SelfPerceptionGradesSerializer(serializers.ModelSerializer):
 

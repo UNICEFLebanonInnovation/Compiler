@@ -374,7 +374,7 @@ class BLNForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 7)))
+    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 7)))
     YEARS_BLN.insert(0, ('', '---------'))
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
@@ -1660,7 +1660,7 @@ class ABLNForm(CommonForm):
         ('level_two', _('Level two')),
         # ('level_three', _('Level three'))
     )
-    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 7)))
+    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 9)))
     YEARS_ABLN.insert(0, ('', '---------'))
 
     first_attendance_date = forms.DateField(
@@ -4371,11 +4371,11 @@ class RSForm(CommonForm):
 class CBECEForm(CommonForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
-        ('level_two', _('Level two')),
+        # ('level_two', _('Level two')),
         ('level_three', _('Level three'))
     )
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 2)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 6, Person.CURRENT_YEAR - 3)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -6264,13 +6264,13 @@ class OutreachForm(CommonForm):
                 #     Div('cadaster', css_class='col-md-3'),
                 #     css_class='row',
                 # ),
-                # Div(
-                #     HTML('<span class="badge badge-default">6</span>'),
-                #     Div('center', css_class='col-md-3'),
-                #     HTML('<span class="badge badge-default">7</span>'),
-                #     Div('language', css_class='col-md-3'),
-                #     css_class='row',
-                # ),
+                Div(
+                    # HTML('<span class="badge badge-default">6</span>'),
+                    # Div('center', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">7</span>'),
+                    # Div('language', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 # Div(
                 #     HTML('<span class="badge badge-default">8</span>'),
                 #     Div('student_address', css_class='col-md-3'),
@@ -6654,19 +6654,19 @@ class OutreachForm(CommonForm):
 
             queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
 
-        self.fields['center'] = forms.ModelChoiceField(
-            queryset=queryset, widget=forms.Select,
-            label=_('Site / Center'),
-            empty_label='-------',
-            required=True, to_field_name='id',
-        )
+        # self.fields['center'] = forms.ModelChoiceField(
+        #     queryset=queryset, widget=forms.Select,
+        #     label=_('Site / Center'),
+        #     empty_label='-------',
+        #     required=True, to_field_name='id',
+        # )
 
 
     def clean(self):
         cleaned_data = super(OutreachForm, self).clean()
 
-        phone_number = cleaned_data.get("phone_number")
-        phone_number_confirm = cleaned_data.get("phone_number_confirm")
+        # phone_number = cleaned_data.get("phone_number")
+        # phone_number_confirm = cleaned_data.get("phone_number_confirm")
         # second_phone_number = cleaned_data.get("second_phone_number")
         # second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
         # id_type = cleaned_data.get("id_type")
@@ -7869,7 +7869,7 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
     pss_kit = forms.ChoiceField(
             label=_("Did the child benefit from the PSS kit?"),
-            widget=forms.Select, required=True,
+            widget=forms.Select, required=False,
             choices=CLM.YES_NO
         )
     attended_arabic = forms.ChoiceField(
@@ -8251,48 +8251,49 @@ class ABLNAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('basic_stationery', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default d-none">4</span>'),
+                    Div('pss_kit', css_class='col-md-3 d-none'),
+
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('pss_kit', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('learning_result', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_learning_result_other">5.1</span>'),
-                    Div('learning_result_other', css_class='col-md-4'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">6</span>'),
                     Div('cp_referral', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('referal_wash', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('referal_health', css_class='col-md-2 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('referal_wash', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('referal_health', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >9</span>'),
+                    HTML('<span class="badge badge-default" >7</span>'),
                     Div('referal_other', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_referal_other_specify">9.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_referal_other_specify">7.1</span>'),
                     Div('referal_other_specify', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('child_received_books', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('child_received_printout', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >12</span>'),
+                    HTML('<span class="badge badge-default" >10</span>'),
                     Div('child_received_internet', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">11.1</span>'),
+                    Div('learning_result_other', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">11.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">12.1</span>'),
                     Div('modality_arabic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">11.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">12.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
@@ -8306,31 +8307,31 @@ class ABLNAssessmentForm(forms.ModelForm):
                 #     css_class='row grades',
                 # ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">13.1</span>'),
                     Div('modality_math', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">12.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">13.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">14.1</span>'),
                     Div('modality_social', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">13.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">14.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">14.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">15.1</span>'),
                     Div('modality_artistic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_artistic">14.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_artistic">15.2</span>'),
                     Div('artistic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
@@ -8707,7 +8708,7 @@ class BLNAssessmentForm(forms.ModelForm):
     )
     pss_kit = forms.ChoiceField(
             label=_("Did the child benefit from the PSS kit?"),
-            widget=forms.Select, required=True,
+            widget=forms.Select, required=False,
             choices=CLM.YES_NO
         )
     attended_arabic = forms.ChoiceField(
@@ -9092,86 +9093,87 @@ class BLNAssessmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('basic_stationery', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default d-none">4</span>'),
+                    Div('pss_kit', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('pss_kit', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('learning_result', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_learning_result_other">5.1</span>'),
-                    Div('learning_result_other', css_class='col-md-4'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">6</span>'),
                     Div('cp_referral', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('referal_wash', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('referal_health', css_class='col-md-2 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('referal_wash', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('referal_health', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >9</span>'),
+                    HTML('<span class="badge badge-default" >7</span>'),
                     Div('referal_other', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_referal_other_specify">9.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_referal_other_specify">7.1</span>'),
                     Div('referal_other_specify', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('child_received_books', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('child_received_printout', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >12</span>'),
+                    HTML('<span class="badge badge-default" >10</span>'),
                     Div('child_received_internet', css_class='col-md-2'),
                     css_class='row',
                 ),
+
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">11.1</span>'),
+                    Div('learning_result_other', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">12.1</span>'),
                     Div('modality_arabic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">13.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">12.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">14.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">13.1</span>'),
                     Div('modality_english', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">14.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_english">13.2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">15.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">14.1</span>'),
                     Div('modality_math', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">15.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">14.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">16.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">15.1</span>'),
                     Div('modality_social', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">16.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">15.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">17</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">17.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">16.1</span>'),
                     Div('modality_artistic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_artistic">17.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_artistic">16.2</span>'),
                     Div('artistic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
@@ -9997,34 +9999,34 @@ class CBECEAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('learning_result', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_learning_result_other">4.1</span>'),
-                    Div('learning_result_other', css_class='col-md-4'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
                     Div('cp_referral', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('referal_wash', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('referal_health', css_class='col-md-2 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('referal_wash', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('referal_health', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >8</span>'),
+                    HTML('<span class="badge badge-default" >7</span>'),
                     Div('referal_other', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_referal_other_specify">8.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_referal_other_specify">7.1</span>'),
                     Div('referal_other_specify', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('child_received_books', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('child_received_printout', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >11</span>'),
+                    HTML('<span class="badge badge-default" >10</span>'),
                     Div('child_received_internet', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">11.1</span>'),
+                    Div('learning_result_other', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(

@@ -97,10 +97,10 @@ function learning_result_next_level() {
     {
         $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
     }
-    else if(clm_type=='BLN' && registration_level=='level_three')
-    {
-        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
-    }
+    // else if(clm_type=='BLN' && registration_level=='level_three')
+    // {
+    //     $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
+    // }
     else if(clm_type=='CBECE' && registration_level=='level_three')
     {
         $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
