@@ -4875,6 +4875,10 @@ class CBECEForm(CommonForm):
         label=_('How many children does this child have?'),
         widget=forms.TextInput, required=False
     )
+    main_caregiver_nationality_other =  forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -5083,35 +5087,40 @@ class CBECEForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">5.1</span>'),
-                    # Div('main_caregiver_nationality', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.1</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
-                # Div(
-                #     HTML('<span class="badge badge-default">6</span>'),
-                #     Div('caretaker_first_name', css_class='col-md-3'),
-                #     HTML('<span class="badge badge-default">7</span>'),
-                #     Div('caretaker_middle_name', css_class='col-md-3'),
-                #     css_class='row',
-                # ),
-                # Div(
-                #     HTML('<span class="badge badge-default">8</span>'),
-                #     Div('caretaker_last_name', css_class='col-md-3'),
-                #     HTML('<span class="badge badge-default">9</span>'),
-                #     Div('caretaker_mother_name', css_class='col-md-3'),
-                #     css_class='row',
-                # ),
-                # Div(
-                #     HTML('<span class="badge badge-default">10</span>'),
-                #     Div('id_type', css_class='col-md-3'),
-                #     css_class='row',
-                # ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('main_caregiver_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_main_caregiver_nationality_other">6.1</span>'),
+                    Div('main_caregiver_nationality_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('caretaker_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('caretaker_middle_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('caretaker_last_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('caretaker_mother_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('case_number', css_class='col-md-4'),
+                    Div('id_type', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -5119,9 +5128,9 @@ class CBECEForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -5393,6 +5402,8 @@ class CBECEForm(CommonForm):
         student_nationality = cleaned_data.get("student_nationality")
         other_nationality = cleaned_data.get("other_nationality")
         main_caregiver = cleaned_data.get("main_caregiver")
+        main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
+        main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
         other_caregiver_relationship = cleaned_data.get("other_caregiver_relationship")
         have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
         labours_single_selection = cleaned_data.get("labours_single_selection")
@@ -5502,6 +5513,9 @@ class CBECEForm(CommonForm):
         if main_caregiver == 'other':
             if not other_caregiver_relationship:
                 self.add_error('other_caregiver_relationship', 'This field is required')
+        if main_caregiver_nationality.id == 6:
+            if not main_caregiver_nationality_other:
+                self.add_error('main_caregiver_nationality_other', 'This field is required')
         if student_have_children:
             if not student_number_children:
                 self.add_error('student_number_children', 'This field is required')
@@ -5742,16 +5756,16 @@ class CBECEForm(CommonForm):
             'source_of_identification_specify',
             'other_nationality',
             'education_status',
-            # 'caretaker_first_name',
-            # 'caretaker_middle_name',
-            # 'caretaker_last_name',
-            # 'caretaker_mother_name',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
             'miss_school_date',
             'round_start_date',
             'cadaster',
             'registration_level',
             'main_caregiver',
-            # 'main_caregiver_nationality',
+            'main_caregiver_nationality',
             'other_caregiver_relationship',
             'labour_weekly_income',
             'source_of_transportation',

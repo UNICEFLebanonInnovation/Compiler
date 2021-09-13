@@ -3013,6 +3013,13 @@ class CBECE(CLM):
     )
     mid_test = JSONField(blank=True, null=True)
 
+    main_caregiver_nationality_other = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('specify')
+    )
+
     # def calculate_sore(self, stage):
     #     keys = [
     #         'CBECE_ASSESSMENT/LanguageArtDomain',

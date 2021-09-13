@@ -610,6 +610,7 @@ class CBECESerializer(CLMSerializer):
             'source_of_transportation',
             'main_caregiver',
             'main_caregiver_nationality',
+            'main_caregiver_nationality_other',
             'other_caregiver_relationship',
             'basic_stationery',
             'remote_learning',
