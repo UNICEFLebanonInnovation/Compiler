@@ -6074,29 +6074,33 @@ class OutreachForm(CommonForm):
     # no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
     # no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
     #
-    # source_of_identification = forms.ChoiceField(
-    #     label=_("Source of identification of the child to Outreach"),
-    #     widget=forms.Select,
-    #     required=True,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('Referred by CP partner', _('Referred by CP partner')),
-    #         ('Referred by youth partner', _('Referred by youth partner')),
-    #         ('Family walked in to NGO', _('Family walked in to NGO')),
-    #         ('Referral from another NGO', _('Referral from another NGO')),
-    #         ('Referral from another Municipality', _('Referral from Municipality')),
-    #         ('Direct outreach', _('Direct outreach')),
-    #         ('List database', _('List database')),
-    #         ('aOutreach', _('AOutreach')),
-    #         ('RIMS', _('RIMS')),
-    #         ('Other Sources', _('Other Sources')),
-    #     ),
-    #     initial=''
-    # )
-    # source_of_identification_specify = forms.CharField(
-    #     label=_('Please specify'),
-    #     widget=forms.TextInput, required=False
-    # )
+    source_of_identification = forms.ChoiceField(
+        label=_("Source of identification of the child to Outreach"),
+        widget=forms.Select,
+        required=True,
+        choices=(
+            ('', '----------'),
+            ('Referred CP partner', _('Referred CP partner')),
+            ('Formal Education', _('Formal Education')),
+            ('Referred YBLN', _('Referred YBLN')),
+            ('Referred TEVET', _('Referred TEVET')),
+            ('Other BLN (Unicef partner)', _('Other BLN (Unicef partner)')),
+            ('Other ABLN (Unicef partner)', _('Other ABLN (Unicef partner)')),
+            ('Other CBECE (Unicef partner)', _('Other CBECE (Unicef partner)')),
+            ('Other BLN (Non-Unicef partner)', _('Other BLN (Non-Unicef partner)')),
+            ('Other ABLN (Non-Unicef partner)', _('Other ABLN (Non-Unicef partner)')),
+            ('Other CBECE (Non-Unicef partner)', _('Other CBECE (Non-Unicef partner)')),
+            ('Referral to ALP', _('Referral to ALP')),
+            ('Referral to Speciailized services (Unicef partner)', _('Referral to Speciailized services (Unicef partner)')),
+            ('Referral to Speciailized services (Non-Unicef partner)', _('Referral to Speciailized services (Non-Unicef partner)')),
+        ),
+        initial=''
+    )
+
+    source_of_identification_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     # rims_case_number = forms.CharField(
     #     required=False,
     #     label=_('RIMS Case Number')
@@ -6354,24 +6358,24 @@ class OutreachForm(CommonForm):
                     Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">13</span>'),
-            #         Div('internal_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">14</span>'),
-            #         Div('source_of_identification', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('internal_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('source_of_identification', css_class='col-md-3'),
+                    css_class='row',
+                ),
             #     Div(
             #         HTML('<span class="badge badge-default" id="span_rims_case_number">14.1</span>'),
             #         Div('rims_case_number', css_class='col-md-3'),
             #         css_class='row',
             #     ),
             #
-            #     Div(
-            #         HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
-            #         Div('source_of_identification_specify', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_source_of_identification_specify">14.1</span>'),
+                    Div('source_of_identification_specify', css_class='col-md-3'),
+                    css_class='row',
+                ),
             #     Div(
             #         HTML('<span class="badge badge-default">16</span>'),
             #         Div('source_of_transportation', css_class='col-md-3'),
@@ -6747,17 +6751,13 @@ class OutreachForm(CommonForm):
         # social_emotional = cleaned_data.get("social_emotional")
         #
         #
-        # source_of_identification = cleaned_data.get("source_of_identification")
-        # source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
-        # rims_case_number = cleaned_data.get("rims_case_number")
-        #
-        # if source_of_identification == 'Other Sources':
-        #     if not source_of_identification_specify:
-        #         self.add_error('source_of_identification_specify', 'This field is required')
-        # if source_of_identification == 'RIMS':
-        #     if not rims_case_number:
-        #         self.add_error('rims_case_number', 'This field is required')
-        #
+        source_of_identification = cleaned_data.get("source_of_identification")
+        source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
+        rims_case_number = cleaned_data.get("rims_case_number")
+
+        if source_of_identification == 'Other Sources':
+            if not source_of_identification_specify:
+                self.add_error('source_of_identification_specify', 'This field is required')
         #
         #
         # if attended_arabic == 'yes':
@@ -7037,9 +7037,8 @@ class OutreachForm(CommonForm):
             # 'other_number',
             # 'other_number_confirm',
             # 'no_child_id_confirmation',
-            # 'source_of_identification',
-            # 'rims_case_number',
-            # 'source_of_identification_specify',
+            'source_of_identification',
+            'source_of_identification_specify',
             'other_nationality',
             'education_status',
             # 'caretaker_first_name',

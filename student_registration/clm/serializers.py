@@ -694,7 +694,6 @@ class OutreachSerializer(CLMSerializer):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
-            'rims_case_number',
             'source_of_identification_specify',
             'other_nationality',
             'education_status',
