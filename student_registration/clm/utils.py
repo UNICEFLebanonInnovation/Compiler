@@ -54,6 +54,9 @@ def is_allowed_create(programme):
                 return True
             return False
 
+        if programme == 'Outreach':
+            return True
+
         if programme == 'GeneralQuestionnaire':
             return True
 
@@ -98,6 +101,10 @@ def is_allowed_edit(programme):
             if current_round.start_date_rs_edit < current < current_round.end_date_rs_edit:
                 return True
             return False
+
+        if programme == 'Outreach':
+            return True
+
         if programme == 'GeneralQuestionnaire':
             return True
 

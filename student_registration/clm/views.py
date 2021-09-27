@@ -2890,7 +2890,7 @@ class OutreachAddView(LoginRequiredMixin,
                  FormView):
     template_name = 'clm/outreach_add_form.html'
     form_class = OutreachForm
-    success_url = '/clm/Outreach-list/'
+    success_url = '/clm/outreach-list/'
     group_required = [u"CLM_outreach"]
 
     def get_success_url(self):
@@ -2956,7 +2956,7 @@ class OutreachEditView(LoginRequiredMixin,
                   FormView):
     template_name = 'clm/outreach_edit_form.html'
     form_class = OutreachForm
-    success_url = '/clm/Outreach-list/'
+    success_url = '/clm/outreach-list/'
     group_required = [u"CLM_Outreach"]
 
     def get_success_url(self):
@@ -2964,15 +2964,6 @@ class OutreachEditView(LoginRequiredMixin,
             return '/clm/outreach-add/'
         if self.request.POST.get('save_and_continue', None):
             return '/clm/outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
-            return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='Outreach',
-                assessment_slug='outreach_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:outreach_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -2981,6 +2972,7 @@ class OutreachEditView(LoginRequiredMixin,
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         kwargs['is_allowed_edit'] = is_allowed_edit('Outreach')
+
         return super(OutreachEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -2990,60 +2982,6 @@ class OutreachEditView(LoginRequiredMixin,
         else:
             data = OutreachSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
-            if 'pre_test' in data:
-                p_test = data['pre_test']
-                if p_test:
-                    if "Outreach_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["Outreach_ASSESSMENT/attended_arabic"]
-
-                    if "Outreach_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["Outreach_ASSESSMENT/modality_arabic"]
-
-                    if "Outreach_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["Outreach_ASSESSMENT/arabic"]
-
-                    if "Outreach_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["Outreach_ASSESSMENT/attended_english"]
-
-                    if "Outreach_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["Outreach_ASSESSMENT/modality_english"]
-
-                    if "Outreach_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["Outreach_ASSESSMENT/english"]
-
-                    if "Outreach_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["Outreach_ASSESSMENT/attended_math"]
-
-                    if "Outreach_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["Outreach_ASSESSMENT/modality_math"]
-
-                    if "Outreach_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["Outreach_ASSESSMENT/math"]
-
-                    if "Outreach_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["Outreach_ASSESSMENT/attended_social"]
-
-                    if "Outreach_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["Outreach_ASSESSMENT/modality_social"]
-
-                    if "Outreach_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["Outreach_ASSESSMENT/social_emotional"]
-
-                    if "Outreach_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["Outreach_ASSESSMENT/attended_artistic"]
-                    elif "Outreach_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_artistic'] = p_test["Outreach_ASSESSMENT/attended_psychomotor"]
-
-                    if "Outreach_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["Outreach_ASSESSMENT/modality_artistic"]
-                    elif "Outreach_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_artistic'] = p_test["Outreach_ASSESSMENT/modality_psychomotor"]
-
-                    if "Outreach_ASSESSMENT/modality_artistic" in p_test:
-                        data['artistic'] = p_test["Outreach_ASSESSMENT/artistic"]
-                    elif "Outreach_ASSESSMENT/psychomotor" in p_test:
-                        data['artistic'] = p_test["Outreach_ASSESSMENT/psychomotor"]
-
             return OutreachForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
@@ -3069,12 +3007,10 @@ class OutreachListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
 
-        return Outreach.objects.filter(partner=self.request.user.partner_id,
-                                    round__current_year=True).order_by('-id')
+        return Outreach.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class OutreachExportViewSet(LoginRequiredMixin, ListView):
-    # current_round = CLMRound.objects.filter(current_year=True)
     qs_students = Outreach.objects.all()
 
     def get_queryset_students(self):
