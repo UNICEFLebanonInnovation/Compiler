@@ -6114,7 +6114,7 @@ class OutreachForm(CommonForm):
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:outreach_add')
-        # self.fields['clm_type'].initial = 'Outreach'
+        self.fields['clm_type'].initial = 'Outreach'
         # self.fields['new_registry'].initial = 'yes'
         if instance:
             display_registry = ' d-none'
