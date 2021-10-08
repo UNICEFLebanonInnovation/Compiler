@@ -6149,7 +6149,7 @@ class OutreachForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+                css_id='search_options', css_class='bd-callout bd-callout-warning child_data E_right_border d-none' + display_registry
             ),
             Fieldset(
                 None,
@@ -6199,11 +6199,11 @@ class OutreachForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     css_class='row d-none',
                 ),
-                css_class='bd-callout bd-callout-warning child_data A_right_border'
+                css_class='bd-callout bd-callout-warning child_data A_right_border d-none'
             ),
             Fieldset(
                 None,
-                Div(HTML('<span>B</span>'), css_class='block_tag'),
+                Div(HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
@@ -6268,7 +6268,7 @@ class OutreachForm(CommonForm):
             ),
             Fieldset(
                 None,
-                Div(HTML('<span>C</span>'), css_class='block_tag'),
+                Div(HTML('<span>B</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
                 ),
