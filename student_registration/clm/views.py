@@ -2476,7 +2476,11 @@ class RSViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        from datetime import datetime
         qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2499,7 +2503,11 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        from datetime import datetime
         qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -3036,7 +3044,7 @@ class OutreachEditView(LoginRequiredMixin,
     template_name = 'clm/outreach_edit_form.html'
     form_class = OutreachForm
     success_url = '/clm/outreach-list/'
-    group_required = [u"CLM_Outreach"]
+    group_required = [u"CLM_outreach"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):

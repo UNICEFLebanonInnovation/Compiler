@@ -1542,7 +1542,6 @@ function reorganize_pre_assessment()
 
 }
 
-
 function duplicate_search_student_name()
 {
     var student_first_name= $('#id_student_first_name').val();
