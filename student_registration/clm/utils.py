@@ -6,7 +6,6 @@ from django.http import HttpResponse, FileResponse
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color
 
-from .models import ABLN_FC, BLN_FC, CBECE_FC, RS_FC
 
 import copy
 
@@ -23,7 +22,6 @@ def is_allowed_create(programme):
     try:
         current = date.today()
         current_round = CLMRound.objects.all()
-
         if programme == 'BLN':
             current_round = current_round.get(current_round_bln=True)
             if current_round.start_date_bln < current < current_round.end_date_bln:
@@ -55,7 +53,10 @@ def is_allowed_create(programme):
             return False
 
         if programme == 'Outreach':
-            return True
+            current_round = current_round.get(current_round_outreach=True)
+            if current_round.start_date_outreach < current < current_round.end_date_outreach:
+                return True
+            return False
 
         if programme == 'GeneralQuestionnaire':
             return True
@@ -65,7 +66,8 @@ def is_allowed_create(programme):
         return False
 
 def is_allowed_edit(programme):
-
+    print'###################################1111111###########################################'
+    print programme
     from student_registration.schools.models import CLMRound
 
     try:
@@ -103,7 +105,16 @@ def is_allowed_edit(programme):
             return False
 
         if programme == 'Outreach':
-            return True
+            current_round = current_round.get(current_round_outreach=True)
+
+            print'##############################################################################'
+            print current_round.start_date_outreach_edit
+            print current_round.end_date_outreach_edit
+            print'##############################################################################'
+
+            if current_round.start_date_outreach_edit < current < current_round.end_date_outreach_edit:
+                return True
+            return False
 
         if programme == 'GeneralQuestionnaire':
             return True

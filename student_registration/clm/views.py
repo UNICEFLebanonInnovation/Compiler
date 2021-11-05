@@ -1826,7 +1826,6 @@ class RSAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        # kwargs['is_allowed_create'] = True
         kwargs['is_allowed_create'] = is_allowed_create('RS')
         return super(RSAddView, self).get_context_data(**kwargs)
 
@@ -2975,7 +2974,7 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
 class OutreachAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
-    template_name = 'clm/outreach_add_form.html'
+    template_name = 'clm/outreach_create_form.html'
     form_class = OutreachForm
     success_url = '/clm/outreach-list/'
     group_required = [u"CLM_outreach"]
@@ -2997,10 +2996,16 @@ class OutreachAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
+
+        print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+
         force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+        print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+        print is_allowed_create('Outreach')
+        print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         kwargs['is_allowed_create'] = is_allowed_create('Outreach')
         return super(OutreachAddView, self).get_context_data(**kwargs)
 

@@ -47,11 +47,12 @@
                   {% trans "Export data" %}
               </a>
 
+              {% if 'Outreach'|is_allowed_create %}
               <a href="{% url 'clm:outreach_add' %}" class="btn btn-success">
                   <i class="icon-plus-sign icon-white"></i>
                   {% trans "Add new Child" %}
               </a>
-
+              {% endif %}
             </div>
         </form>
     </div>
@@ -70,11 +71,10 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
 {% endblock %}
-
-

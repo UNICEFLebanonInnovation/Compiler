@@ -1877,6 +1877,19 @@ class Outreach(CLM):
         ),
         verbose_name=_('Source of identification of the child')
     )
+    education_status = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('out of school', _('Out of school')),
+            ('enrolled in formal education but did not continue', ("Enrolled in formal education but did not continue")),
+            ('enrolled in non formal education but did not continue', ("Enrolled in non formal education but did not continue"))
+
+        ),
+        verbose_name=_('Education status')
+    )
 
     def calculate_sore(self, stage):
         keys = [
