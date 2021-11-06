@@ -66,8 +66,6 @@ def is_allowed_create(programme):
         return False
 
 def is_allowed_edit(programme):
-    print'###################################1111111###########################################'
-    print programme
     from student_registration.schools.models import CLMRound
 
     try:
@@ -106,12 +104,6 @@ def is_allowed_edit(programme):
 
         if programme == 'Outreach':
             current_round = current_round.get(current_round_outreach=True)
-
-            print'##############################################################################'
-            print current_round.start_date_outreach_edit
-            print current_round.end_date_outreach_edit
-            print'##############################################################################'
-
             if current_round.start_date_outreach_edit < current < current_round.end_date_outreach_edit:
                 return True
             return False
@@ -2109,8 +2101,7 @@ def rs_build_xls_extraction1(queryset_students, queryset_fc ):
         'post_test_chemistry',
         'owner__username',
         'modified_by__username',
-    )
-    # [:10]
+    )[:5000]
 
     for row in rows:
         row_num_student += 1
@@ -2127,14 +2118,18 @@ def rs_build_xls_extraction1(queryset_students, queryset_fc ):
                 cellTextValue = listToString(cellValue)
             currentCell = ws_student.cell(row=row_num_student + 1, column=col_num + 1, value=cellTextValue)
             currentCell.font = font_style
-    #get fc_type
-    rows_fc_type = queryset_fc.distinct('fc_type').order_by('fc_type').values_list(
-        'fc_type'
+    #get partners
+    rows_partners = qs.distinct('partner_id').order_by('partner_id').values_list(
+        'partner__id',
+        'partner__name',
     )
-    for fc in rows_fc_type:
-        fc_type = fc[0]
+    for partner in rows_partners:
+        partner_id = partner[0]
+        partner_name = str(partner[1]).encode("utf8")
+        # print(partner_id)
+        # print(partner_name)
 
-        ws_fc = wb.create_sheet(fc_type )
+        ws_fc = wb.create_sheet('FC - '+ partner_name )
         # Sheet header, first row
         row_num_fc = 0
         columns_fc = [
@@ -2192,7 +2187,7 @@ def rs_build_xls_extraction1(queryset_students, queryset_fc ):
             currentCell = ws_fc.cell(row=row_num_fc + 1, column=col_num + 1, value=columns_fc[col_num])
             currentCell.font = font_style
 
-        rows_fc = queryset_fc.filter(fc_type=fc_type).values_list(
+        rows_fc = queryset_fc.filter(enrollment__partner=partner_id).values_list(
             'enrollment_id',
             'enrollment__partner__name',
             'enrollment__round__name',
@@ -2241,7 +2236,7 @@ def rs_build_xls_extraction1(queryset_students, queryset_fc ):
             'meet_objectives_verified',
             'objectives_verified_specify',
             'additional_notes'
-        )[:50]
+        )[:5000]
 
         for row in rows_fc:
             row_num_fc += 1
@@ -2530,8 +2525,6 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
         'student__address',
         'registration_level',
         'first_attendance_date',
-        'student__id_number',
-        'student__number',
         'student__first_name',
         'student__father_name',
         'student__last_name',
@@ -2547,10 +2540,8 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
         'education_status',
         'miss_school_date',
         'internal_number',
-        'rims_case_number',
         'source_of_identification',
         'source_of_identification_specify',
-        'source_of_transportation',
         'hh_educational_level__name',
         'father_educational_level__name',
         'phone_number',
@@ -2591,95 +2582,6 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
         'parent_other_number_confirm',
         'other_number',
         'other_number_confirm',
-        'student__family_status',
-        'student__have_children',
-        'student_number_children',
-        'have_labour_single_selection',
-        'labours_single_selection',
-        'labours_other_specify',
-        'labour_hours',
-        'labour_weekly_income',
-        'participation',
-        'barriers_single',
-        'barriers_other',
-        'test_done',
-        'round_complete',
-        'basic_stationery',
-        'pss_kit',
-        'learning_result',
-        'learning_result_other',
-        'cp_referral',
-        'referal_wash',
-        'referal_health',
-        'referal_other',
-        'referal_other_specify',
-        'child_received_books',
-        'child_received_printout',
-        'child_received_internet',
-        'phone_call_number',
-        'phone_call_follow_up_result',
-        'house_visit_number',
-        'house_visit_follow_up_result',
-        'family_visit_number',
-        'family_visit_follow_up_result',
-        'parent_attended_visits',
-        'pss_session_attended',
-        'pss_session_number',
-        'pss_session_modality',
-        'pss_parent_attended',
-        'pss_parent_attended_other',
-        'covid_session_attended',
-        'covid_session_number',
-        'covid_session_modality',
-        'covid_parent_attended',
-        'covid_parent_attended_other',
-        'followup_session_attended',
-        'followup_session_number',
-        'followup_session_modality',
-        'followup_parent_attended',
-        'followup_parent_attended_other',
-        'pre_test_attended_arabic',
-        'pre_test_modality_arabic',
-        'pre_test_arabic',
-        'pre_test_attended_english',
-        'pre_test_modality_english',
-        'pre_test_english',
-        'pre_test_attended_math',
-        'pre_test_modality_math',
-        'pre_test_math',
-        'pre_test_attended_science',
-        'pre_test_modality_science',
-        'pre_test_science',
-        'pre_test_attended_biology',
-        'pre_test_modality_biology',
-        'pre_test_biology',
-        'pre_test_attended_physics',
-        'pre_test_modality_physics',
-        'pre_test_physics',
-        'pre_test_attended_chemistry',
-        'pre_test_modality_chemistry',
-        'pre_test_chemistry',
-        'post_test_attended_arabic',
-        'post_test_modality_arabic',
-        'post_test_arabic',
-        'post_test_attended_english',
-        'post_test_modality_english',
-        'post_test_english',
-        'post_test_attended_math',
-        'post_test_modality_math',
-        'post_test_math',
-        'post_test_attended_science',
-        'post_test_modality_science',
-        'post_test_science',
-        'post_test_attended_biology',
-        'post_test_modality_biology',
-        'post_test_biology',
-        'post_test_attended_physics',
-        'post_test_modality_physics',
-        'post_test_physics',
-        'post_test_attended_chemistry',
-        'post_test_modality_chemistry',
-        'post_test_chemistry',
         'owner__username',
         'modified_by__username',
     )[:5000]
@@ -2817,7 +2719,8 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
             'meet_objectives_verified',
             'objectives_verified_specify',
             'additional_notes'
-        )[:5000]
+        )
+        # [:5000]
 
         for row in rows_fc:
             row_num_fc += 1
@@ -2847,6 +2750,189 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
 
     return response
 
+def outreach_build_xls_extraction(queryset_students ):
+    buffer = io.BytesIO()
+
+    # Personnel
+    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+
+    ws = wbStudent.add_sheet('Student')
+
+    # Sheet header, first row
+    row_num_student = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = [
+        'enrollment_id',
+        'Partner',
+        'CLM Round',
+        'Governorate',
+        'District',
+        'Cadaster',
+        'Location',
+        'Center',
+        'The language supported in the program',
+        'Student Address',
+        'Registration level',
+        'first attendance date',
+        'First name',
+        'Father name',
+        'Last name',
+        'Mother fullname',
+        'Gender',
+        'Student Nationality',
+        'Student Nationality Specify',
+        'Birthday - day',
+        'Birthday - month',
+        'Birthday - year',
+        'P-Code If a child lives in a tent / Brax in a random camp',
+        'Does the child have any disability or special need?',
+        'Education status',
+        'Miss school date',
+        'Internal number',
+        'Source of Identification',
+        'Source of Identification Specify',
+        'What is the educational level of the mother?',
+        'What is the educational level of the father?',
+        'Phone number',
+        'Phone number confirm',
+        'phone owner',
+        'Second Phone number',
+        'Second Phone number confirm',
+        'Second phone owner',
+        'Main Caregiver',
+        'main caregiver nationality',
+        'other caregiver relationship',
+        'main caregiver nationality Other ',
+        'Caretaker first name',
+        'Caretaker middle name',
+        'Caretaker last name',
+        'Caretaker mother name',
+        'ID Type',
+        'UNHCR case number',
+        'UNHCR case number confirm',
+        'Parent individual ID',
+        'Parent individual ID confirm',
+        'Child individual ID',
+        'Child individual ID confirm',
+        'UNHCR recorded barcode',
+        'UNHCR recorded barcode confirm',
+        'Parent Lebanese ID number',
+        'Parent Lebanese ID number confirm',
+        'Child Lebanese ID number',
+        'Child Lebanese ID number confirm',
+        'Parent Syrian ID number',
+        'Parent Syrian ID number confirm',
+        'Child Syrian ID number',
+        'Child Syrian ID number confirm',
+        'Parent Palestinian ID number',
+        'Parent Palestinian ID number confirm',
+        'Child Palestinian ID number',
+        'Child Palestinian ID number confirm',
+        'ID number of the Caretaker',
+        'ID number of the Caretaker confirm',
+        'ID number of the child',
+        'ID number of the child confirm',
+        'owner',
+        'modified_by',
+    ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num_student, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = queryset_students.order_by('id').values_list(
+        'id',
+        'partner__name',
+        'round__name',
+        'governorate__name_en',
+        'district__name_en',
+        'cadaster__name_en',
+        'location',
+        'center__name',
+        'language',
+        'student__address',
+        'registration_level',
+        'first_attendance_date',
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+        'student__sex',
+        'student__nationality__name',
+        'other_nationality',
+        'student__birthday_day',
+        'student__birthday_month',
+        'student__birthday_year',
+        'student__p_code',
+        'disability__name_en',
+        'education_status',
+        'miss_school_date',
+        'internal_number',
+        'source_of_identification',
+        'source_of_identification_specify',
+        'hh_educational_level__name',
+        'father_educational_level__name',
+        'phone_number',
+        'phone_number_confirm',
+        'phone_owner',
+        'second_phone_number',
+        'second_phone_number_confirm',
+        'second_phone_owner',
+        'main_caregiver',
+        'main_caregiver_nationality__name',
+        'other_caregiver_relationship',
+        'main_caregiver_nationality_other',
+        'caretaker_first_name',
+        'caretaker_middle_name',
+        'caretaker_last_name',
+        'caretaker_mother_name',
+        'id_type',
+        'case_number',
+        'case_number_confirm',
+        'parent_individual_case_number',
+        'parent_individual_case_number_confirm',
+        'individual_case_number',
+        'individual_case_number_confirm',
+        'recorded_number',
+        'recorded_number_confirm',
+        'parent_national_number',
+        'parent_national_number_confirm',
+        'national_number',
+        'national_number_confirm',
+        'parent_syrian_national_number',
+        'parent_syrian_national_number_confirm',
+        'syrian_national_number',
+        'syrian_national_number_confirm',
+        'parent_sop_national_number',
+        'parent_sop_national_number_confirm',
+        'sop_national_number',
+        'sop_national_number_confirm',
+        'parent_other_number',
+        'parent_other_number_confirm',
+        'other_number',
+        'other_number_confirm',
+        'owner__username',
+        'modified_by__username',
+    )
+    for row in rows:
+        row_num_student += 1
+        for col_num in range(len(row)):
+            ws.write(row_num_student, col_num, row[col_num], font_style)
+
+    wbStudent.save(buffer)
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    response = FileResponse(buffer, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Outreach.xls"'
+
+    return response
 
 def listToString(s):
     # initialize an empty string

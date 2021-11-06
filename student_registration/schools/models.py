@@ -402,6 +402,7 @@ class ClassRoom(models.Model):
 
 
 class CLMRound(models.Model):
+    
     name = models.CharField(max_length=45, unique=True)
     current_year = models.BooleanField(blank=True, default=False)
 

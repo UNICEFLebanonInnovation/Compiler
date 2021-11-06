@@ -87,7 +87,7 @@ from .serializers import (
     GeneralQuestionnaireSerializer,
     OutreachSerializer
 )
-from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction , cbece_build_xls_extraction, rs_build_xls_extraction
+from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction , cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction
 
 
 class CLMView(LoginRequiredMixin,
@@ -2996,16 +2996,10 @@ class OutreachAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
-        print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-
         force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-        print is_allowed_create('Outreach')
-        print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         kwargs['is_allowed_create'] = is_allowed_create('Outreach')
         return super(OutreachAddView, self).get_context_data(**kwargs)
 
@@ -3103,12 +3097,14 @@ class OutreachListView(LoginRequiredMixin,
 
 
 class OutreachExportViewSet(LoginRequiredMixin, ListView):
-    qs_students = Outreach.objects.all()
+    current_round = CLMRound.objects.filter(current_year=True)
+    qs_students = Outreach.objects.filter(round__in=current_round)
 
     def get_queryset_students(self):
         if not self.request.user.is_staff:
             return self.qs_students.filter(partner=self.request.user.partner)
         return self.qs_students
 
-    # def get(self, request, *args, **kwargs):
-    #     return bln_build_xls_extraction(self.get_queryset_students())
+    def get(self, request, *args, **kwargs):
+        return outreach_build_xls_extraction(self.get_queryset_students())
+

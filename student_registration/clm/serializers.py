@@ -651,10 +651,6 @@ class OutreachSerializer(CLMSerializer):
     class Meta:
         model = Outreach
         fields = CLMSerializer.Meta.fields + (
-            # 'cycle',
-            # 'referral',
-
-
             'have_labour',
             'labours',
             'labour_weekly_income',

@@ -609,13 +609,13 @@ class BLNForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Lebanese ID number of the caretaker')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Confirm Lebanese ID number of the caretaker')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
@@ -1458,11 +1458,11 @@ class BLNForm(CommonForm):
                 self.add_error('syrian_national_number_confirm', msg)
 
         if id_type == 'Lebanese national ID':
-            if not parent_national_number:
-                self.add_error('parent_national_number', 'This field is required')
-
-            if not parent_national_number_confirm:
-                self.add_error('parent_national_number_confirm', 'This field is required')
+            # if not parent_national_number:
+            #     self.add_error('parent_national_number', 'This field is required')
+            #
+            # if not parent_national_number_confirm:
+            #     self.add_error('parent_national_number_confirm', 'This field is required')
 
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
@@ -1894,19 +1894,19 @@ class ABLNForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Lebanese ID number of the caretaker')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Confirm Lebanese ID number of the caretaker')
     )
     parent_national_number = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Lebanese ID number of the caretaker')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
@@ -2747,11 +2747,11 @@ class ABLNForm(CommonForm):
                 self.add_error('syrian_national_number_confirm', msg)
 
         if id_type == 'Lebanese national ID':
-            if not parent_national_number:
-                self.add_error('parent_national_number', 'This field is required')
-
-            if not parent_national_number_confirm:
-                self.add_error('parent_national_number_confirm', 'This field is required')
+            # if not parent_national_number:
+            #     self.add_error('parent_national_number', 'This field is required')
+            #
+            # if not parent_national_number_confirm:
+            #     self.add_error('parent_national_number_confirm', 'This field is required')
 
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
@@ -3221,13 +3221,13 @@ class RSForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Lebanese ID number of the caretaker')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Confirm Lebanese ID number of the caretaker')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
@@ -4177,11 +4177,11 @@ class RSForm(CommonForm):
                 self.add_error('syrian_national_number_confirm', msg)
 
         if id_type == 'Lebanese national ID':
-            if not parent_national_number:
-                self.add_error('parent_national_number', 'This field is required')
-
-            if not parent_national_number_confirm:
-                self.add_error('parent_national_number_confirm', 'This field is required')
+            # if not parent_national_number:
+            #     self.add_error('parent_national_number', 'This field is required')
+            #
+            # if not parent_national_number_confirm:
+            #     self.add_error('parent_national_number_confirm', 'This field is required')
 
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
@@ -4650,13 +4650,13 @@ class CBECEForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Lebanese ID number of the caretaker')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Confirm Lebanese ID number of the caretaker')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
@@ -5582,11 +5582,11 @@ class CBECEForm(CommonForm):
                 self.add_error('syrian_national_number_confirm', msg)
 
         if id_type == 'Lebanese national ID':
-            if not parent_national_number:
-                self.add_error('parent_national_number', 'This field is required')
-
-            if not parent_national_number_confirm:
-                self.add_error('parent_national_number_confirm', 'This field is required')
+            # if not parent_national_number:
+            #     self.add_error('parent_national_number', 'This field is required')
+            #
+            # if not parent_national_number_confirm:
+            #     self.add_error('parent_national_number_confirm', 'This field is required')
 
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
@@ -5807,12 +5807,12 @@ class OutreachForm(CommonForm):
     # )
     #
     round = forms.ModelChoiceField(
-        queryset=CLMRound.objects.all(), widget=forms.Select,
+        queryset=CLMRound.objects.filter(current_round_outreach=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=False, to_field_name='id',
     )
-    #
+
     # round_start_date = forms.DateField(
     #     label=_("Round start date"),
     #     required=False
@@ -5997,13 +5997,13 @@ class OutreachForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Lebanese ID number of the caretaker')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
+        label=_('Confirm Lebanese ID number of the caretaker')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
@@ -6159,16 +6159,6 @@ class OutreachForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
-
-                    # HTML('<span class="badge badge-default">1</span>'),
-                    # Div('new_registry', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">2</span>'),
-                    Div('round', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    # Div('round_start_date', css_class='col-md-3 d-none'),
-                    css_class='row d-none',
-                ),
-                Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
@@ -6208,36 +6198,47 @@ class OutreachForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
                 Div(
+
+                    # HTML('<span class="badge badge-default">1</span>'),
+                    # Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_first_name', css_class='col-md-3'),
+                    Div('round', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">3</span>'),
+                    # Div('round_start_date', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('student_father_name', css_class='col-md-3'),
+                    Div('student_first_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('student_last_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('student_mother_fullname', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('student_sex', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_other_nationality">6.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_nationality">7.1</span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('student_birthday_year', css_class='col-md-2'),
                     HTML('<span class="badge badge-default">8</span>'),
-                    Div('student_birthday_month', css_class='col-md-2'),
+                    Div('student_birthday_year', css_class='col-md-2'),
                     HTML('<span class="badge badge-default">9</span>'),
+                    Div('student_birthday_month', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('student_birthday_day', css_class='col-md-2'),
                     css_class='row',
+
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
@@ -6577,11 +6578,11 @@ class OutreachForm(CommonForm):
                 self.add_error('syrian_national_number_confirm', msg)
 
         if id_type == 'Lebanese national ID':
-            if not parent_national_number:
-                self.add_error('parent_national_number', 'This field is required')
-
-            if not parent_national_number_confirm:
-                self.add_error('parent_national_number_confirm', 'This field is required')
+            # if not parent_national_number:
+            #     self.add_error('parent_national_number', 'This field is required')
+            #
+            # if not parent_national_number_confirm:
+            #     self.add_error('parent_national_number_confirm', 'This field is required')
 
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
