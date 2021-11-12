@@ -3599,7 +3599,7 @@ msgstr "كان مسجلًّا في برنامج تعليم غير نظامي و�
 
 #: student_registration/clm/forms.py:6078
 msgid "Source of identification of the child to Outreach"
-msgstr "احالة الطفل  إلى برنامج Outreach"
+msgstr "احالة الطفل  إلى برنامج"
 
 #: student_registration/clm/forms.py:6083
 #: student_registration/clm/models.py:1864

@@ -85,7 +85,8 @@ from .serializers import (
     CBECE_FCSerializer,
     RS_FCSerializer,
     GeneralQuestionnaireSerializer,
-    OutreachSerializer
+    OutreachSerializer,
+    CBECEExportSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction , cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction
 
@@ -2497,20 +2498,106 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
                    mixins.UpdateModelMixin,
                    viewsets.GenericViewSet):
     model = CBECE
-    queryset = CBECE.objects.all()
-    serializer_class = CBECESerializer
+    current_round = CLMRound.objects.filter(current_year=True)
+    queryset = CBECE.objects.filter(round__in=current_round)
+
+    serializer_class = CBECEExportSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         from datetime import datetime
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
-            return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
-        if self.request.GET.get('school', None):
-            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+            print('hiiiii')
+            qs = self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('-id')
 
-        return qs
+        if self.request.GET.get('school', None):
+            qs = self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        rows = qs.order_by('id').values_list(
+            'id',
+            'new_registry',
+            'partner',
+            # 'round__name',
+            # 'governorate__name_en',
+            # 'district__name_en',
+            # 'cadaster__name_en',
+            'location',
+            # 'center__name',
+            'language',
+            # 'student__address',
+            'registration_level',
+            'first_attendance_date',
+            # 'student__id_number',
+            # 'student__number',
+            # 'student_first_name',
+            # 'student_father_name',
+            # 'student_last_name',
+            # 'student_mother_fullname',
+            # 'student_sex',
+            # 'student__nationality__name',
+            'other_nationality',
+            # 'student__birthday_day',
+            # 'student__birthday_month',
+            # 'student__birthday_year',
+            # 'student__p_code',
+            # 'disability__name_en',
+            'education_status',
+            'miss_school_date',
+            'internal_number',
+            'rims_case_number',
+            'source_of_identification',
+            'source_of_identification_specify',
+            'source_of_transportation',
+            # 'hh_educational_level__name',
+            # 'father_educational_level__name',
+            'phone_number',
+            'phone_owner',
+            'second_phone_number',
+            'second_phone_owner',
+            'main_caregiver',
+            # 'main_caregiver_nationality__name',
+            'other_caregiver_relationship',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
+            'id_type',
+            'case_number',
+            'parent_individual_case_number',
+            'individual_case_number',
+            'recorded_number',
+            'parent_national_number',
+            'national_number',
+            'parent_syrian_national_number',
+            'syrian_national_number',
+            'parent_sop_national_number',
+            'sop_national_number',
+            'parent_other_number',
+            'other_number',
+            # 'student__family_status',
+            # 'student__have_children',
+            'student_number_children',
+            'have_labour_single_selection',
+            'labours_single_selection',
+            'labours_other_specify',
+            'labour_hours',
+            'labour_weekly_income',
+            'participation',
+            'barriers_single',
+            'barriers_other',
+            'round_complete',
+            'basic_stationery',
+            'pss_kit',
+            'learning_result',
+            'learning_result_other',
+            'parent_attended_visits',
+            # 'owner__username',
+            # 'modified_by__username',
+        )[:100]
+
+        return rows
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
