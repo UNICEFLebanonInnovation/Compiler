@@ -93,14 +93,16 @@ function pageScripts() {
 function learning_result_next_level() {
     var registration_level = $('select#id_registration_level').val();
     var clm_type = $('#id_clmtype').val();
+    alert( 'test');
     if(clm_type=='ABLN' && registration_level=='level_two')
     {
         $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
     }
-    // else if(clm_type=='BLN' && registration_level=='level_three')
-    // {
-    //     $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
-    // }
+    else if(clm_type=='BLN' && registration_level=='level_three')
+    {
+        alert('BLN');
+        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
+    }
     else if(clm_type=='CBECE' && registration_level=='level_three')
     {
         $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
@@ -109,7 +111,6 @@ function learning_result_next_level() {
     {
         $("#id_learning_result option[value=" + 'graduated_to_rs_next_round_higher_level' + "]").hide();
     }
-
 }
 function reorganizeForm_post_assessment()
 {

@@ -5660,8 +5660,8 @@ class CBECEForm(CommonForm):
             if artistic > 12:
                 self.add_error('artistic', 'This value is greater that 12')
         else:
-            if arabic > 60:
-                self.add_error('arabic', 'This value is greater that 60')
+            if arabic > 74:
+                self.add_error('arabic', 'This value is greater that 74')
             if english > 74:
                 self.add_error('english', 'This value is greater that 74')
             if math > 50:
@@ -8173,27 +8173,27 @@ class ABLNAssessmentForm(forms.ModelForm):
             registration_level = cleaned_data.get("registration_level")
 
             if registration_level == 'level_one':
-                if arabic > 44:
-                    self.add_error('arabic', 'This value is greater that 44')
+                if arabic > 46:
+                    self.add_error('arabic', 'This value is greater that 46')
                 # if english > 36:
                 #     self.add_error('english', 'This value is greater that 36')
                 if math > 20:
                     self.add_error('math', 'This value is greater that 20')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 8:
-                    self.add_error('artistic', 'This value is greater that 8')
+                if artistic > 10:
+                    self.add_error('artistic', 'This value is greater that 10')
             else:
-                if arabic > 52:
-                    self.add_error('arabic', 'This value is greater that 52')
+                if arabic > 56:
+                    self.add_error('arabic', 'This value is greater that 56')
                 # if english > 56:
                 #     self.add_error('english', 'This value is greater that 56')
                 if math > 34:
                     self.add_error('math', 'This value is greater that 34')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 8:
-                    self.add_error('artistic', 'This value is greater that 8')
+                if artistic > 10:
+                    self.add_error('artistic', 'This value is greater that 10')
 
 
     def save(self, instance=None, request=None):
@@ -9015,38 +9015,38 @@ class BLNAssessmentForm(forms.ModelForm):
             registration_level = cleaned_data.get("registration_level")
 
             if registration_level == 'level_one':
-                if arabic > 44:
-                    self.add_error('arabic', 'This value is greater that 44')
-                if english > 36:
-                    self.add_error('english', 'This value is greater that 36')
+                if arabic > 48:
+                    self.add_error('arabic', 'This value is greater that 48')
+                if english > 40:
+                    self.add_error('english', 'This value is greater that 40')
                 if math > 18:
                     self.add_error('math', 'This value is greater that 18')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 8:
-                    self.add_error('artistic', 'This value is greater that 8')
+                if artistic > 10:
+                    self.add_error('artistic', 'This value is greater that 10')
             elif registration_level == 'level_two':
-                if arabic > 52:
-                    self.add_error('arabic', 'This value is greater that 52')
-                if english > 56:
-                    self.add_error('english', 'This value is greater that 56')
+                if arabic > 56:
+                    self.add_error('arabic', 'This value is greater that 56')
+                if english > 58:
+                    self.add_error('english', 'This value is greater that 58')
                 if math > 30:
                     self.add_error('math', 'This value is greater that 30')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 8:
-                    self.add_error('artistic', 'This value is greater that 8')
+                if artistic > 10:
+                    self.add_error('artistic', 'This value is greater that 10')
             else:
-                if arabic > 58:
-                    self.add_error('arabic', 'This value is greater that 58')
-                if english > 60:
-                    self.add_error('english', 'This value is greater that 60')
+                if arabic > 60:
+                    self.add_error('arabic', 'This value is greater that 60')
+                if english > 62:
+                    self.add_error('english', 'This value is greater that 62')
                 if math > 32:
                     self.add_error('math', 'This value is greater that 32')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 8:
-                    self.add_error('artistic', 'This value is greater that 8')
+                if artistic > 10:
+                    self.add_error('artistic', 'This value is greater that 10')
 
 
     def save(self, instance=None, request=None):
@@ -9967,20 +9967,20 @@ class CBECEAssessmentForm(forms.ModelForm):
                 if artistic > 12:
                     self.add_error('artistic', 'This value is greater that 12')
             else:
-                if arabic > 60:
-                    self.add_error('arabic', 'This value is greater that 60')
-                if english > 60:
-                    self.add_error('english', 'This value is greater that 60')
-                if math > 46:
-                    self.add_error('math', 'This value is greater that 46')
+                if arabic > 74:
+                    self.add_error('arabic', 'This value is greater that 74')
+                if english > 74:
+                    self.add_error('english', 'This value is greater that 74')
+                if math > 50:
+                    self.add_error('math', 'This value is greater that 50')
                 if social_emotional > 40:
                     self.add_error('social_emotional', 'This value is greater that 40')
-                if psychomotor > 36:
-                    self.add_error('psychomotor', 'This value is greater that 36')
-                if science > 36:
-                    self.add_error('science', 'This value is greater that 36')
-                if artistic > 12:
-                    self.add_error('artistic', 'This value is greater that 12')
+                if psychomotor > 42:
+                    self.add_error('psychomotor', 'This value is greater that 42')
+                if science > 38:
+                    self.add_error('science', 'This value is greater that 38')
+                if artistic > 16:
+                    self.add_error('artistic', 'This value is greater that 16')
 
     def save(self, instance=None, request=None):
         instance = super(CBECEAssessmentForm, self).save()
