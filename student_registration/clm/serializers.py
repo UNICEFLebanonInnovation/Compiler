@@ -226,6 +226,9 @@ class CLMSerializer(serializers.ModelSerializer):
             'modified',
             'cycle_completed',
             'enrolled_at_school',
+            'caretaker_birthday_year',
+            'caretaker_birthday_month',
+            'caretaker_birthday_day'
         )
 
 

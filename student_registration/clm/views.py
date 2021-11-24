@@ -2742,6 +2742,8 @@ def search_clm_child(request):
         model = ABLN
     elif clm_type == 'CBECE':
         model = CBECE
+    elif clm_type == 'Outreach':
+        model = Outreach
     # qs = model.objects.filter(partner=request.user.partner_id)
     qs = {}
 

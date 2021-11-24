@@ -1,4 +1,6 @@
 from __future__ import unicode_literals, absolute_import, division
+import datetime
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -130,6 +132,22 @@ class Center(models.Model):
 
 
 class CLM(TimeStampedModel):
+    CURRENT_YEAR = datetime.datetime.now().year
+
+    MONTHS = Choices(
+        ('1', _('January')),
+        ('2', _('February')),
+        ('3', _('March')),
+        ('4', _('April')),
+        ('5', _('May')),
+        ('6', _('June')),
+        ('7', _('July')),
+        ('8', _('August')),
+        ('9', _('September')),
+        ('10', _('October')),
+        ('11', _('November')),
+        ('12', _('December')),
+    )
     LANGUAGES = Choices(
         ('arabic', _('Arabic')),
         ('english_arabic', _('English/Arabic')),
@@ -1229,6 +1247,31 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Caretaker Mother Name')
     )
+    caretaker_birthday_year = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=0,
+        choices=((str(x), x) for x in range(1940, CURRENT_YEAR - 18)),
+        verbose_name=_('Caretaker birthday year')
+    )
+    caretaker_birthday_month = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        default=0,
+        choices=MONTHS,
+        verbose_name=_('Caretaker birthday month')
+    )
+    caretaker_birthday_day = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        default=0,
+        choices=((str(x), x) for x in range(1, 32)),
+        verbose_name=_('Caretaker birthday day')
+    )
+
     cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
     enrolled_at_school = models.BooleanField(blank=True, default=False, verbose_name=_('Enrolled at School'))
 

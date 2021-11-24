@@ -119,6 +119,8 @@ REGISTRATION_LEVEL = (
 
 
 class CommonForm(forms.ModelForm):
+    YEARS_CT = list(((str(x), x) for x in range(1940, Person.CURRENT_YEAR - 18)))
+    YEARS_CT.insert(0, ('', '---------'))
 
     search_clm_student = forms.CharField(
         label=_("Search a student"),
@@ -248,6 +250,22 @@ class CommonForm(forms.ModelForm):
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    caretaker_birthday_year = forms.ChoiceField(
+        label=_("Caretaker birthday year"),
+        widget=forms.Select, required=True,
+        choices = YEARS_CT,
+    )
+    caretaker_birthday_month = forms.ChoiceField(
+        label=_("Caretaker birthday month"),
+        widget=forms.Select, required=True,
+        choices=MONTHS
+    )
+    caretaker_birthday_day = forms.ChoiceField(
+        label=_("Caretaker birthday day"),
+        widget=forms.Select, required=True,
+        choices=DAYS
+    )
+
     # participation = forms.ChoiceField(
     #     label=_('How was the level of child participation in the program?'),
     #     widget=forms.Select, required=False,
@@ -348,10 +366,13 @@ class CommonForm(forms.ModelForm):
             # 'learning_result',
             'student_id',
             'enrollment_id',
-            'partner_name'
+            'partner_name',
             # 'comments',
             # 'unsuccessful_pretest_reason',
             # 'unsuccessful_posttest_reason',
+            'caretaker_birthday_year',
+            'caretaker_birthday_month',
+            'caretaker_birthday_day'
         )
         initial_fields = fields
         widgets = {}
@@ -1024,13 +1045,22 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
+                    Div('caretaker_birthday_year', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('caretaker_birthday_month', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('caretaker_birthday_day', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -1038,9 +1068,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">18</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -1048,9 +1078,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">19</span>'),
                     Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">20</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -2316,13 +2346,22 @@ class ABLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
+                    Div('caretaker_birthday_year', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('caretaker_birthday_month', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('caretaker_birthday_day', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a  class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -2330,9 +2369,9 @@ class ABLNForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">18</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -2340,9 +2379,9 @@ class ABLNForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">19</span>'),
                     Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">20</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a  class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -3517,7 +3556,28 @@ class RSForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options',
+                css_id='search_options_clm',
+                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A.1</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search Outreach student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('search_outreach_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<p>' + _(
+                        'Search by the following keywords: child first name, father name, last name, or '
+                        'child number') + '</p>'),
+                ),
+                css_id='search_options_outreach',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
@@ -3707,14 +3767,23 @@ class RSForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('caretaker_birthday_year', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('caretaker_birthday_month', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('caretaker_birthday_day', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -3722,9 +3791,9 @@ class RSForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">18</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -3732,9 +3801,9 @@ class RSForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">19</span>'),
                     Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">20</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -5113,13 +5182,22 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
+                    Div('caretaker_birthday_year', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('caretaker_birthday_month', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('caretaker_birthday_day', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -5127,9 +5205,9 @@ class CBECEForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">18</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -5137,9 +5215,9 @@ class CBECEForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">19</span>'),
                     Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">20</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -6328,13 +6406,22 @@ class OutreachForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
+                    Div('caretaker_birthday_year', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('caretaker_birthday_month', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('caretaker_birthday_day', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -6342,9 +6429,9 @@ class OutreachForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">18</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -6352,9 +6439,9 @@ class OutreachForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">19</span>'),
                     Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">20</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +

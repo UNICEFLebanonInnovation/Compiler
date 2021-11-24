@@ -137,8 +137,6 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-
-
     if($(document).find('#id_search_clm_student').length == 1) {
 
         $("#id_search_clm_student").autocomplete({
@@ -201,6 +199,70 @@ $(document).ready(function() {
                 .appendTo(ul);
         };
     }
+
+    // serach outreach students
+    if($(document).find('#id_search_outreach_student').length == 1) {
+
+    $("#id_search_outreach_student").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '/clm/search-clm-child/?clm_type=Outreach',
+                dataType: "json",
+                data: {
+                    term: request.term
+                },
+                success: function (data) {
+                   var result = JSON.parse(data.result);
+                   if(!result.length){
+                        var result = [{ error: 'No matches found',  value: response.term }];
+                        response(result);
+                     }else{
+                        response(result);
+                    }
+                }
+            });
+        },
+        minLength: 3,
+        select: function (event, ui) {
+            if(ui.item.error) {
+                return false;
+            }
+            var params = {
+                enrollment_id: ui.item.id,
+                new_registry: $('select#id_new_registry').val(),
+                student_outreached: $('select#id_student_outreached').val(),
+                have_barcode: $('select#id_have_barcode').val()
+            };
+            var str = '?'+jQuery.param( params );
+
+            window_location($(document).find('form').attr('action')+str);
+//                window.location = $(document).find('form').attr('action')+str;
+            return false;
+        }
+    }).autocomplete("instance")._renderMenu = function (ul, items) {
+        var that = this;
+        $.each(items, function (index, item) {
+            that._renderItemData(ul, item);
+        });
+        $(ul).find("li:odd").addClass("odd");
+    };
+
+    $("#id_search_outreach_student").autocomplete("instance")._renderItem = function (ul, item) {
+        if(item.error) {
+            return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+        }
+        var full_name = item.student__first_name+" "+item.student__father_name+" "+item.student__last_name;
+        var student_birthday = item.student__birthday_day+"/"+item.student__birthday_month+"/"+item.student__birthday_year;
+        return $("<li>")
+            .append("<div style='border: 1px solid;'>"
+                + "<b>Base Data:</b> " + full_name + " - " + item.student__mother_fullname
+                + "<br/> <b>Gender - Birthday:</b> " + item.student__sex + " - " + student_birthday
+                 + "<br/> <b>Internal number:</b> " + item.internal_number
+                 + "<br/> <b>Round:</b> " + item.round__name
+                + "</div>")
+            .appendTo(ul);
+    };
+}
 
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
@@ -905,8 +967,6 @@ function reorganizeForm()
 {
 
     var new_registry = $('select#id_new_registry').val();
-    var outreached = $('select#id_student_outreached').val();
-    var have_barcode = $('select#id_have_barcode').val();
     var program_site = $('select#id_site').val();
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
     var id_cycle = $('select#id_cycle').val();
@@ -1122,86 +1182,26 @@ function reorganizeForm()
         $('select#id_student_id_type').val(1);
     }
 
-    if(have_barcode == 'no'){
-        $('#block_id_outreach_barcode').addClass('d-none');
-        $('#block_id_outreach_barcode').prev().addClass('d-none');
-    }else{
-        $('#block_id_outreach_barcode').removeClass('d-none');
-        $('#block_id_outreach_barcode').prev().removeClass('d-none');
-    }
 
-    $('#search_options').addClass('d-none');
+    $('#search_options_clm').addClass('d-none');
+    // $('#search_options_outreach').addClass('d-none');
+
     if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
         $('#registry_block').addClass('d-none');
-        $('#register_by_barcode').addClass('d-none');
-        // $('#search_options').addClass('d-none');
-        return true;
-    }
-
-    if(outreached == 'no'){
-        $('#have_barcode_option').addClass('d-none');
-        $('#have_barcode_option').prev().addClass('d-none');
-        $('select#id_have_barcode').val('no');
-    }else{
-        $('#have_barcode_option').removeClass('d-none');
-        $('#have_barcode_option').prev().removeClass('d-none');
-        // $('select#id_have_barcode').val('yes');
-    }
-
-    if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'yes'){
-        $('#block_id_outreach_barcode').removeClass('d-none');
-        $('#block_id_outreach_barcode').prev().removeClass('d-none');
-
-        $('#register_by_barcode').removeClass('d-none');
-        // $('#search_options').addClass('d-none');
-        $('.child_data').addClass('d-none');
-        return true;
-    }
-
-    if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'no'){
-        $('#register_by_barcode').addClass('d-none');
-        // $('#search_options').addClass('d-none');
-        $('.child_data').removeClass('d-none');
-        return true;
-    }
-
-    if(new_registry == 'yes' && outreached == 'no'){
-
-        $('#register_by_barcode').addClass('d-none');
-        // $('#search_options').addClass('d-none');
-        $('.child_data').removeClass('d-none');
-
-        return true;
-    }
-
-    if(new_registry == 'no' && outreached == 'no'){
-
-        $('#register_by_barcode').addClass('d-none');
-        // $('#search_options').removeClass('d-none');
-        $('.child_data').addClass('d-none');
-        return true;
-    }
-
-    if(new_registry == 'no' && outreached == 'yes' && have_barcode == 'yes'){
-
-        $('#register_by_barcode').addClass('d-none');
-        // $('#search_options').removeClass('d-none');
-        $('.child_data').addClass('d-none');
-        return true;
-    }
-    if(new_registry == 'no' && outreached == 'yes' && have_barcode == 'no'){
-
-        $('#register_by_barcode').addClass('d-none');
-        // $('#search_options').removeClass('d-none');
-        $('.child_data').addClass('d-none');
         return true;
     }
 
     if(new_registry == 'no')
      // search_options
      {
-        $('#search_options').removeClass('d-none');
+         // alert('old student')
+        $('#search_options_clm').removeClass('d-none');
      }
+    //  else
+    // {
+    //     alert('outreach new student')
+    //     $('#search_options_outreach').removeClass('d-none');
+    // }
 
     reorganize_pre_assessment();
 
