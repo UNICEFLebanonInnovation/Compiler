@@ -11,9 +11,7 @@ from django.views import defaults as default_views
 from rest_framework_nested import routers
 from rest_framework_swagger.views import get_swagger_view
 
-from student_registration.alp.views import (
-    OutreachViewSet,
-)
+
 from student_registration.attendances.views import (
     AttendanceViewSet,
     AbsenteeViewSet,
@@ -34,8 +32,10 @@ from student_registration.clm.views import (
     ABLNViewSet,
     RSViewSet,
     CBECEViewSet,
+    OutreachViewSet,
     CLMStudentViewSet,
-    SelfPerceptionGradesViewSet
+    SelfPerceptionGradesViewSet,
+    GeneralQuestionnaireViewSet
 )
 
 from student_registration.clm.inclusion_views import (
@@ -90,6 +90,9 @@ api.register(r'^clm-cbece/(?P<id>\d+)/$', CBECEViewSet, base_name='clm-cbece-par
 api.register(r'clm-inclusion', InclusionViewSet, base_name='clm-inclusion')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')
 api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, base_name='self-perception-grads')
+
+# api.register(r'general-questionnaire', GeneralQuestionnaireViewSet, base_name='general-questionnaire')
+api.register(r'clm-outreach', OutreachViewSet, base_name='clm-outreach')
 # api.register(r'notifications', NotificationViewSet, base_name='notifications')
 # api.register(r'backend-exporter', ExporterViewSet, base_name='backend-exporter')
 api.register(r'locations', LocationViewSet, base_name='locations')

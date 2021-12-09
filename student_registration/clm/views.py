@@ -2464,6 +2464,61 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
+class OutreachViewSet(mixins.RetrieveModelMixin,
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.UpdateModelMixin,
+                 viewsets.GenericViewSet):
+    model = Outreach
+    queryset = Outreach.objects.all()
+    serializer_class = OutreachSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        from datetime import datetime
+
+        qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+        # if self.request.GET.get('school', None):
+        #     return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        print('-----------------------------------------------------------------------------------------------')
+        print('I am here')
+        print('-----------------------------------------------------------------------------------------------')
+
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
+class GeneralQuestionnaireViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+    model = GeneralQuestionnaire
+    queryset = GeneralQuestionnaire.objects.all()
+    serializer_class = GeneralQuestionnaireSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        from datetime import datetime
+
+        qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+
 
 class RSViewSet(mixins.RetrieveModelMixin,
                 mixins.ListModelMixin,
