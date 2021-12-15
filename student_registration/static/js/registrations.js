@@ -137,7 +137,9 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    if($(document).find('#id_search_clm_student').length == 1) {
+    if( $(document).find('#id_search_clm_student').length == 1) {
+
+        alert('CLM Studemt');
 
         $("#id_search_clm_student").autocomplete({
             source: function (request, response) {
@@ -160,6 +162,7 @@ $(document).ready(function() {
             },
             minLength: 3,
             select: function (event, ui) {
+            alert('select normal');
                 if(ui.item.error) {
                     return false;
                 }
@@ -184,6 +187,8 @@ $(document).ready(function() {
         };
 
         $("#id_search_clm_student").autocomplete("instance")._renderItem = function (ul, item) {
+
+
             if(item.error) {
                 return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
             }
@@ -200,30 +205,31 @@ $(document).ready(function() {
         };
     }
 
-    // serach outreach students
+    // search outreach students
     if($(document).find('#id_search_outreach_student').length == 1) {
-
-    $("#id_search_outreach_student").autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: '/clm/search-clm-child/?clm_type=Outreach',
-                dataType: "json",
-                data: {
-                    term: request.term
-                },
-                success: function (data) {
-                   var result = JSON.parse(data.result);
-                   if(!result.length){
-                        var result = [{ error: 'No matches found',  value: response.term }];
-                        response(result);
-                     }else{
-                        response(result);
+        alert('hi')
+        $("#id_search_outreach_student").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/clm/search-clm-child/?clm_type=Outreach',
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                       var result = JSON.parse(data.result);
+                       if(!result.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(result);
+                        }
                     }
-                }
-            });
-        },
+                });
+            },
         minLength: 3,
         select: function (event, ui) {
+            alert('select OR');
             if(ui.item.error) {
                 return false;
             }
@@ -239,7 +245,9 @@ $(document).ready(function() {
 //                window.location = $(document).find('form').attr('action')+str;
             return false;
         }
-    }).autocomplete("instance")._renderMenu = function (ul, items) {
+    })
+    .autocomplete("instance")._renderMenu = function (ul, items) {
+
         var that = this;
         $.each(items, function (index, item) {
             that._renderItemData(ul, item);
@@ -248,6 +256,7 @@ $(document).ready(function() {
     };
 
     $("#id_search_outreach_student").autocomplete("instance")._renderItem = function (ul, item) {
+
         if(item.error) {
             return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
         }
@@ -262,6 +271,8 @@ $(document).ready(function() {
                 + "</div>")
             .appendTo(ul);
     };
+
+    alert('AC configured');
 }
 
     $(document).on('change', '#id_id_type', function(){
@@ -743,7 +754,7 @@ $(document).ready(function() {
         };
     }
 
-    if($(document).find('#id_search_barcode').length == 1) {
+    if(false && $(document).find('#id_search_barcode').length == 1) {
 
         $("#id_search_barcode").autocomplete({
             source: function (request, response) {
@@ -801,7 +812,7 @@ $(document).ready(function() {
         };
     }
 
-    if($(document).find('#id_outreach_barcode').length == 1) {
+    if(false && $(document).find('#id_outreach_barcode').length == 1) {
 
         $("#id_outreach_barcode").autocomplete({
             source: function (request, response) {
@@ -850,7 +861,7 @@ $(document).ready(function() {
         };
     }
 
-    if($(document).find('#search_moved_student').length == 1) {
+    if(false && $(document).find('#search_moved_student').length == 1) {
 
         $("#search_moved_student").autocomplete({
             source: function (request, response) {
@@ -961,7 +972,7 @@ function check_duplicate_registration()
 function isAddPage()
 {
     var url_loc = window.location.toString();
-    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add|outreach-add(\/*)(\?.*)?$/i)>=0);
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add|outreach-add(\*)(\?.*)?$/i)>=0);
 }
 function reorganizeForm()
 {
@@ -1184,28 +1195,27 @@ function reorganizeForm()
 
 
     $('#search_options_clm').addClass('d-none');
-    // $('#search_options_outreach').addClass('d-none');
+    $('#search_options_outreach').addClass('d-none');
 
     if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
         $('#registry_block').addClass('d-none');
         return true;
     }
 
+
     if(new_registry == 'no')
      // search_options
      {
-         // alert('old student')
+        $('#search_options_outreach').addClass('d-none');
         $('#search_options_clm').removeClass('d-none');
      }
-    //  else
-    // {
-    //     alert('outreach new student')
-    //     $('#search_options_outreach').removeClass('d-none');
-    // }
-
+      else if(new_registry == 'yes')
+     // search_options
+     {
+        $('#search_options_clm').addClass('d-none');
+        $('#search_options_outreach').removeClass('d-none');
+     }
     reorganize_pre_assessment();
-
-
 }
 
 function family_status_single()

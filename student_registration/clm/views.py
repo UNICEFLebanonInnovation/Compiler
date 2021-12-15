@@ -2831,6 +2831,8 @@ def search_clm_child(request):
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
                      'student__birthday_year', 'round__name', 'internal_number').distinct()
 
+    print json.dumps(list(qs))
+
     return JsonResponse({'result': json.dumps(list(qs))})
 
 

@@ -127,6 +127,11 @@ class CommonForm(forms.ModelForm):
         widget=forms.TextInput,
         required=False
     )
+    search_outreach_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
+    )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
@@ -856,7 +861,29 @@ class BLNForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+                css_id='search_options_clm',
+                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A.1</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search Outreach student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('search_outreach_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<p>' + _(
+                        'Search by the following keywords: child first name, father name, last name, or '
+                        'child number') + '</p>'),
+                ),
+                css_id='search_options_outreach',
+                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
                 None,
@@ -2157,7 +2184,29 @@ class ABLNForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+                css_id='search_options_clm',
+                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A.1</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search Outreach student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('search_outreach_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<p>' + _(
+                        'Search by the following keywords: child first name, father name, last name, or '
+                        'child number') + '</p>'),
+                ),
+                css_id='search_options_outreach',
+                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
                 None,
@@ -3556,7 +3605,7 @@ class RSForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options_clm',
+                css_id='search_options',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
@@ -3577,7 +3626,7 @@ class RSForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, or '
                         'child number') + '</p>'),
                 ),
-                css_id='search_options_outreach',
+                css_id='search_options',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
@@ -4991,7 +5040,28 @@ class CBECEForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options',
+                css_id='search_options_clm',
+                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A.1</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search Outreach student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('search_outreach_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<p>' + _(
+                        'Search by the following keywords: child first name, father name, last name, or '
+                        'child number') + '</p>'),
+                ),
+                css_id='search_options_outreach',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
