@@ -27,8 +27,12 @@ $(window).load(function () {
 });
 
 $(document).ready(function() {
+    new_registry = $('#id_new_registry').val();
 
-    check_duplicate_registration();
+    if(new_registry == 'no')
+    {
+        check_duplicate_registration();
+    }
 
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
@@ -95,19 +99,23 @@ $(document).ready(function() {
         new_registry = $('#id_new_registry').val();
         if (new_registry == 'no') {
             duplicate_search('student id');
+            alert('1');
             duplicate_search_student_name();
         }
     });
 
     $(document).on('change', 'input#id_student_first_name', function () {
+        alert('2');
         duplicate_search_student_name();
     });
 
     $(document).on('change', 'input#id_student_father_name', function () {
+        alert('3');
         duplicate_search_student_name();
     });
 
     $(document).on('change', 'input#id_student_last_name', function () {
+        alert('4');
         duplicate_search_student_name();
     });
 
@@ -117,7 +125,7 @@ $(document).ready(function() {
         'input#id_parent_sop_national_number, ' +
         'input#id_parent_national_number, ' +
         'input#id_parent_other_number', function () {
-
+        alert('5');
         duplicate_search('id');
 
     });
@@ -129,6 +137,7 @@ $(document).ready(function() {
 
         if (student_first_name!='' && phone_number!='' )
         {
+            alert('6');
             duplicate_search('phone');
 
         }
@@ -167,7 +176,6 @@ $(document).ready(function() {
                     return false;
                 }
                 var params = {
-                    enrollment_id: ui.item.id,
                     new_registry: $('select#id_new_registry').val(),
                     student_outreached: $('select#id_student_outreached').val(),
                     have_barcode: $('select#id_have_barcode').val()
@@ -234,7 +242,8 @@ $(document).ready(function() {
                 return false;
             }
             var params = {
-                enrollment_id: ui.item.id,
+                outreach_id: ui.item.id,
+//                enrollment_id: ui.item.id,
                 new_registry: $('select#id_new_registry').val(),
                 student_outreached: $('select#id_student_outreached').val(),
                 have_barcode: $('select#id_have_barcode').val()
@@ -655,7 +664,7 @@ $(document).ready(function() {
         }
     });
 
-    if($(document).find('#id_search_student').length == 1) {
+    if(false && $(document).find('#id_search_student').length == 1) {
 
         $("#id_search_student").autocomplete({
             source: function (request, response) {
@@ -1194,9 +1203,6 @@ function reorganizeForm()
     }
 
 
-    $('#search_options_clm').addClass('d-none');
-    $('#search_options_outreach').addClass('d-none');
-
     if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
         $('#registry_block').addClass('d-none');
         return true;
@@ -1560,6 +1566,7 @@ function duplicate_search_student_name()
 
     if (student_first_name!='' && student_father_name!='' && student_last_name!='' )
     {
+        alert('7');
         duplicate_search('student name');
 
     }
@@ -1569,7 +1576,8 @@ function duplicate_search_student_name()
 
 function duplicate_search(search_by) {
 
-    if (isAddPage()) {
+    if (isAddPage() ) {
+        alert('8');
 
         var search_by = search_by
         var round = $('select#id_round').val();
@@ -1610,88 +1618,6 @@ function duplicate_search(search_by) {
 
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
-
-        $.ajax({
-            type: "POST",
-            url: '/clm/search-clm-duplicate-registration/',
-            data: JSON.stringify(data),
-            cache: false,
-            async: false,
-            headers: requestHeaders,
-            dataType: 'json',
-            success: function (response) {
-                // alert(response.result);
-
-                if (response.result != "") {
-                    alert("The child already exists with the partner  " + response.result);
-                    $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
-                    $(':input[type="submit"][name="save"]').prop('disabled', true);
-                    // $('#').addClass('d-none');
-
-                }
-                else {
-                    $(':input[type="submit"][name="save_add_another"]').prop('disabled', false);
-                    $(':input[type="submit"][name="save"]').prop('disabled', false);
-                }
-
-                console.log(response);
-            },
-            error: function (response) {
-                console.log(response);
-            }
-
-        });
-
-
-    }
-
-}
-
-
-function duplicate_search_bak(search_by) {
-
-    if (isAddPage()) {
-
-        var search_by = search_by
-        var round = $('select#id_round').val();
-        var new_registry = $('select#id_new_registry').val();
-        var clm_type = $('#id_clm_type').val();
-        var student_id = $('#id_student_id').val();
-        var student_first_name = $('#id_student_first_name').val();
-        var student_father_name = $('#id_student_father_name').val();
-        var student_last_name = $('#id_student_last_name').val();
-        var phone_number = $('#id_phone_number').val();
-        var id_type = $('#id_id_type').val();
-        var case_number = $('#id_case_number').val();
-        var recorded_number = $('#id_recorded_number').val();
-        var parent_syrian_national_number = $('#id_parent_syrian_national_number').val();
-        var parent_sop_national_number = $('#id_parent_sop_national_number').val();
-        var parent_national_number = $('#id_parent_national_number').val();
-        var parent_other_number = $('#id_parent_other_number').val();
-
-
-        var data = {
-            search_by: search_by,
-            round_id: round,
-            new_registry: new_registry,
-            clm_type: clm_type,
-            student_id: student_id,
-            student_first_name: student_first_name,
-            student_father_name: student_father_name,
-            student_last_name: student_last_name,
-            phone_number: phone_number,
-            id_type: id_type,
-            case_number: case_number,
-            recorded_number: recorded_number,
-            parent_syrian_national_number: parent_syrian_national_number,
-            parent_sop_national_number: parent_sop_national_number,
-            parent_national_number: parent_national_number,
-            parent_other_number: parent_other_number,
-        };
-
-        requestHeaders = getHeader();
-        requestHeaders["content-type"] = 'application/json';
-
 
         $.ajax({
             type: "POST",

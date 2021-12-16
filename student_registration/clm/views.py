@@ -165,6 +165,13 @@ class BLNAddView(LoginRequiredMixin,
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+
+        if self.request.GET.get('outreach_id'):
+            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+            data = BLNSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
         if data:
             data['new_registry'] = self.request.GET.get('new_registry', 'yes')
             data['student_outreached'] = self.request.GET.get('student_outreached', '')
