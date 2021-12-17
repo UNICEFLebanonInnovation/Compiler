@@ -34,6 +34,7 @@ $(document).ready(function() {
         check_duplicate_registration();
     }
 
+
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -99,23 +100,19 @@ $(document).ready(function() {
         new_registry = $('#id_new_registry').val();
         if (new_registry == 'no') {
             duplicate_search('student id');
-            alert('1');
             duplicate_search_student_name();
         }
     });
 
     $(document).on('change', 'input#id_student_first_name', function () {
-        alert('2');
         duplicate_search_student_name();
     });
 
     $(document).on('change', 'input#id_student_father_name', function () {
-        alert('3');
         duplicate_search_student_name();
     });
 
     $(document).on('change', 'input#id_student_last_name', function () {
-        alert('4');
         duplicate_search_student_name();
     });
 
@@ -125,7 +122,6 @@ $(document).ready(function() {
         'input#id_parent_sop_national_number, ' +
         'input#id_parent_national_number, ' +
         'input#id_parent_other_number', function () {
-        alert('5');
         duplicate_search('id');
 
     });
@@ -137,9 +133,7 @@ $(document).ready(function() {
 
         if (student_first_name!='' && phone_number!='' )
         {
-            alert('6');
             duplicate_search('phone');
-
         }
     });
     $(document).on('change', 'select#id_new_registry', function(){
@@ -147,9 +141,6 @@ $(document).ready(function() {
     });
 
     if( $(document).find('#id_search_clm_student').length == 1) {
-
-        alert('CLM Studemt');
-
         $("#id_search_clm_student").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -171,7 +162,6 @@ $(document).ready(function() {
             },
             minLength: 3,
             select: function (event, ui) {
-            alert('select normal');
                 if(ui.item.error) {
                     return false;
                 }
@@ -215,7 +205,6 @@ $(document).ready(function() {
 
     // search outreach students
     if($(document).find('#id_search_outreach_student').length == 1) {
-        alert('hi')
         $("#id_search_outreach_student").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -237,7 +226,6 @@ $(document).ready(function() {
             },
         minLength: 3,
         select: function (event, ui) {
-            alert('select OR');
             if(ui.item.error) {
                 return false;
             }
@@ -280,8 +268,6 @@ $(document).ready(function() {
                 + "</div>")
             .appendTo(ul);
     };
-
-    alert('AC configured');
 }
 
     $(document).on('change', '#id_id_type', function(){
@@ -1566,9 +1552,7 @@ function duplicate_search_student_name()
 
     if (student_first_name!='' && student_father_name!='' && student_last_name!='' )
     {
-        alert('7');
         duplicate_search('student name');
-
     }
 
 }
@@ -1577,7 +1561,6 @@ function duplicate_search_student_name()
 function duplicate_search(search_by) {
 
     if (isAddPage() ) {
-        alert('8');
 
         var search_by = search_by
         var round = $('select#id_round').val();
@@ -1628,7 +1611,6 @@ function duplicate_search(search_by) {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
-                // alert(response.result);
 
                 if (response.result != "") {
                     alert("The child already exists with the partner  " + response.result);
