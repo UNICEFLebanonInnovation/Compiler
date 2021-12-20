@@ -3611,27 +3611,6 @@ class RSForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<span>A.1</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search Outreach student') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default"></span>'),
-                    Div('search_outreach_student', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<p>' + _(
-                        'Search by the following keywords: child first name, father name, last name, or '
-                        'child number') + '</p>'),
-                ),
-                css_id='search_options',
-                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
-            ),
-            Fieldset(
-                None,
-                Div(
                     HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')

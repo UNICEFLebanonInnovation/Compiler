@@ -580,6 +580,12 @@ class ABLNAddView(LoginRequiredMixin,
             data['student_nationality'] = data['student_nationality_id']
             data['learning_result'] = ''
 
+        if self.request.GET.get('outreach_id'):
+            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+            data = BLNSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
@@ -2061,7 +2067,11 @@ class CBECEAddView(LoginRequiredMixin,
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
-
+            data['learning_result'] = ''
+        if self.request.GET.get('outreach_id'):
+            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+            data = BLNSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
             data['learning_result'] = ''
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
@@ -2837,8 +2847,6 @@ def search_clm_child(request):
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
                      'student__birthday_year', 'round__name', 'internal_number').distinct()
-
-    print json.dumps(list(qs))
 
     return JsonResponse({'result': json.dumps(list(qs))})
 

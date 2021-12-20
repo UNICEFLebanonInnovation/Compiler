@@ -166,14 +166,13 @@ $(document).ready(function() {
                     return false;
                 }
                 var params = {
+                    enrollment_id: ui.item.id,
                     new_registry: $('select#id_new_registry').val(),
                     student_outreached: $('select#id_student_outreached').val(),
                     have_barcode: $('select#id_have_barcode').val()
                 };
                 var str = '?'+jQuery.param( params );
-
                 window_location($(document).find('form').attr('action')+str);
-//                window.location = $(document).find('form').attr('action')+str;
                 return false;
             }
         }).autocomplete("instance")._renderMenu = function (ul, items) {
@@ -185,8 +184,6 @@ $(document).ready(function() {
         };
 
         $("#id_search_clm_student").autocomplete("instance")._renderItem = function (ul, item) {
-
-
             if(item.error) {
                 return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
             }
@@ -231,7 +228,7 @@ $(document).ready(function() {
             }
             var params = {
                 outreach_id: ui.item.id,
-//                enrollment_id: ui.item.id,
+//              enrollment_id: ui.item.id,
                 new_registry: $('select#id_new_registry').val(),
                 student_outreached: $('select#id_student_outreached').val(),
                 have_barcode: $('select#id_have_barcode').val()
@@ -1629,6 +1626,7 @@ function duplicate_search(search_by) {
             error: function (response) {
                 console.log(response);
             }
+
 
         });
 

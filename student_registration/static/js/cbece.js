@@ -28,9 +28,12 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
+    new_registry = $('#id_new_registry').val();
 
-    check_duplicate_registration();
-
+    if(new_registry == 'no')
+    {
+        check_duplicate_registration();
+    }
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -139,9 +142,7 @@ $(document).ready(function(){
     });
 
 
-
-    if($(document).find('#id_search_clm_student').length == 1) {
-
+    if( $(document).find('#id_search_clm_student').length == 1) {
         $("#id_search_clm_student").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -202,6 +203,73 @@ $(document).ready(function(){
                 .appendTo(ul);
         };
     }
+
+    // search outreach students
+    if($(document).find('#id_search_outreach_student').length == 1) {
+        $("#id_search_outreach_student").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/clm/search-clm-child/?clm_type=Outreach',
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                       var result = JSON.parse(data.result);
+                       if(!result.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(result);
+                        }
+                    }
+                });
+            },
+        minLength: 3,
+        select: function (event, ui) {
+            if(ui.item.error) {
+                return false;
+            }
+            var params = {
+                outreach_id: ui.item.id,
+//                enrollment_id: ui.item.id,
+                new_registry: $('select#id_new_registry').val(),
+                student_outreached: $('select#id_student_outreached').val(),
+                have_barcode: $('select#id_have_barcode').val()
+            };
+            var str = '?'+jQuery.param( params );
+
+            window_location($(document).find('form').attr('action')+str);
+//                window.location = $(document).find('form').attr('action')+str;
+            return false;
+        }
+    })
+    .autocomplete("instance")._renderMenu = function (ul, items) {
+
+        var that = this;
+        $.each(items, function (index, item) {
+            that._renderItemData(ul, item);
+        });
+        $(ul).find("li:odd").addClass("odd");
+    };
+
+    $("#id_search_outreach_student").autocomplete("instance")._renderItem = function (ul, item) {
+
+        if(item.error) {
+            return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+        }
+        var full_name = item.student__first_name+" "+item.student__father_name+" "+item.student__last_name;
+        var student_birthday = item.student__birthday_day+"/"+item.student__birthday_month+"/"+item.student__birthday_year;
+        return $("<li>")
+            .append("<div style='border: 1px solid;'>"
+                + "<b>Base Data:</b> " + full_name + " - " + item.student__mother_fullname
+                + "<br/> <b>Gender - Birthday:</b> " + item.student__sex + " - " + student_birthday
+                 + "<br/> <b>Internal number:</b> " + item.internal_number
+                 + "<br/> <b>Round:</b> " + item.round__name
+                + "</div>")
+            .appendTo(ul);
+    };
+}
 
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
@@ -902,7 +970,7 @@ function isAddPage()
 
     var url_loc = window.location.toString();
 
-    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add(\/*)(\?.*)?$/i)>=0);
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add(\*)(\?.*)?$/i)>=0);
 
 }
 
@@ -1204,7 +1272,14 @@ function reorganizeForm()
     if(new_registry == 'no')
      // search_options
      {
-        $('#search_options').removeClass('d-none');
+        $('#search_options_outreach').addClass('d-none');
+        $('#search_options_clm').removeClass('d-none');
+     }
+      else if(new_registry == 'yes')
+     // search_options
+     {
+        $('#search_options_clm').addClass('d-none');
+        $('#search_options_outreach').removeClass('d-none');
      }
 
     reorganize_pre_assessment();
@@ -1909,4 +1984,3 @@ function load_cadasters(url)
     })
 }
 
-f
