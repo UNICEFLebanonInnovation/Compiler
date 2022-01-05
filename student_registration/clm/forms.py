@@ -1709,6 +1709,7 @@ class BLNForm(CommonForm):
             # 'js/registrations.js',
         )
 
+
 class ABLNForm(CommonForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -4173,14 +4174,7 @@ class RSForm(CommonForm):
             if math is None:
                 self.add_error('math', 'This field is required')
 
-        if grade_registration == '4' or grade_registration == '5' or  grade_registration == '6':
-            if attended_science == 'yes':
-                if not modality_science:
-                    self.add_error('modality_science', 'This field is required')
-                if science is None:
-                    self.add_error('science', 'This field is required')
-
-        elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
+        if grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
             if attended_biology == 'yes':
                 if not modality_biology:
                     self.add_error('modality_biology', 'This field is required')
@@ -4196,6 +4190,12 @@ class RSForm(CommonForm):
                     self.add_error('modality_physics', 'This field is required')
                 if physics is None:
                     self.add_error('physics', 'This field is required')
+        else :
+            if attended_science == 'yes':
+                if not modality_science:
+                    self.add_error('modality_science', 'This field is required')
+                if science is None:
+                    self.add_error('science', 'This field is required')
 
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:

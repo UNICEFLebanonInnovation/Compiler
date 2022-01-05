@@ -1371,19 +1371,16 @@ function reorganize_pre_assessment()
     $('div.grd6').addClass('d-none');
     $('div.grd7').addClass('d-none');
 
-    if(grade_registration == '4'){
-        $('div.grd6').removeClass('d-none');
-    }if(grade_registration == '5'){
-        $('div.grd6').removeClass('d-none');
-    }if(grade_registration == '6'){
-        $('div.grd6').removeClass('d-none');
-    }else if(grade_registration == '7'){
+    if(grade_registration == '7'){
         $('div.grd7').removeClass('d-none');
     }else if(grade_registration == '8'){
         $('div.grd7').removeClass('d-none');
     }else if(grade_registration == '9'){
         $('div.grd7').removeClass('d-none');
     }
+    else{
+        $('div.grd6').removeClass('d-none');
+        }
 
 
     var pss_session_attended = $('select#id_pss_session_attended').val();
