@@ -900,7 +900,7 @@ function check_duplicate_registration()
 function isAddPage()
 {
     var url_loc = window.location.toString();
-    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add(\*)(\?.*)?$/i)>=0);
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add|outreach-add(\*)(\?.*)?$/i)>=0);
 }
 
 function reorganizeForm()
@@ -1371,6 +1371,10 @@ function reorganize_pre_assessment()
     $('div.grd6').addClass('d-none');
     $('div.grd7').addClass('d-none');
 
+    if(grade_registration == '4'){
+        $('div.grd6').removeClass('d-none');
+    if(grade_registration == '5'){
+        $('div.grd6').removeClass('d-none');
     if(grade_registration == '6'){
         $('div.grd6').removeClass('d-none');
     }else if(grade_registration == '7'){

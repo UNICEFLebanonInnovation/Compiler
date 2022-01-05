@@ -1716,7 +1716,7 @@ class ABLNForm(CommonForm):
         ('level_two', _('Level two')),
         # ('level_three', _('Level three'))
     )
-    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 9)))
+    YEARS_ABLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 8)))
     YEARS_ABLN.insert(0, ('', '---------'))
 
     first_attendance_date = forms.DateField(
@@ -4173,7 +4173,7 @@ class RSForm(CommonForm):
             if math is None:
                 self.add_error('math', 'This field is required')
 
-        if grade_registration == '6':
+        if grade_registration == '4' or grade_registration == '5' or  grade_registration == '6':
             if attended_science == 'yes':
                 if not modality_science:
                     self.add_error('modality_science', 'This field is required')
@@ -4327,7 +4327,7 @@ class RSForm(CommonForm):
                 self.add_error('other_number_confirm', msg)
 
         #grades Max Value validation
-        if grade_registration == '6':
+        if  grade_registration == '4' or grade_registration == '5' or grade_registration == '6':
             if arabic > 20:
                 self.add_error('arabic', 'This value is greater that 20')
             if english > 20:
