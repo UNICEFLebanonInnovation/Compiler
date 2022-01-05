@@ -1373,9 +1373,9 @@ function reorganize_pre_assessment()
 
     if(grade_registration == '4'){
         $('div.grd6').removeClass('d-none');
-    if(grade_registration == '5'){
+    }if(grade_registration == '5'){
         $('div.grd6').removeClass('d-none');
-    if(grade_registration == '6'){
+    }if(grade_registration == '6'){
         $('div.grd6').removeClass('d-none');
     }else if(grade_registration == '7'){
         $('div.grd7').removeClass('d-none');
@@ -1383,7 +1383,6 @@ function reorganize_pre_assessment()
         $('div.grd7').removeClass('d-none');
     }else if(grade_registration == '9'){
         $('div.grd7').removeClass('d-none');
-
     }
 
 
