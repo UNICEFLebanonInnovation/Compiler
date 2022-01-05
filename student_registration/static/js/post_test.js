@@ -270,7 +270,16 @@ function reorganizeForm_post_assessment()
     $('#grd7').addClass('hide');
 
 
-    if (grade_registration == '6') {
+     if (grade_registration == '7' || grade_registration == '8' || grade_registration == '9') {
+        $('div.grd6').addClass('d-none');
+        $('#grd6').addClass('hide');
+        $('div.grd7').removeClass('d-none');
+        $('#grd7').removeClass('hide');
+        $('#id_science').val('');
+        $('select#id_attended_science').val("no");
+        $('select#id_modality_science').val("");
+    }
+    else {
         $('#grd6').removeClass('hide');
         $('div.grd6').removeClass('d-none');
         $('#grd7').addClass('hide');
@@ -286,19 +295,6 @@ function reorganizeForm_post_assessment()
         $('#id_physics').val('');
         $('select#id_attended_physics').val("no");
         $('select#id_modality_physics').val("");
-    }
-    else if (grade_registration == '7' || grade_registration == '8' || grade_registration == '9') {
-        $('div.grd6').addClass('d-none');
-        $('#grd6').addClass('hide');
-        $('div.grd7').removeClass('d-none');
-        $('#grd7').removeClass('hide');
-        $('#id_science').val('');
-        $('select#id_attended_science').val("no");
-        $('select#id_modality_science').val("");
-    }
-    else {
-        $('#grd6').removeClass('hide');
-        $('div.grd6').removeClass('d-none');
     }
 
 
