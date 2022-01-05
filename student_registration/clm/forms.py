@@ -4326,18 +4326,8 @@ class RSForm(CommonForm):
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
 
-        #grades Max Value validation
-        if  grade_registration == '4' or grade_registration == '5' or grade_registration == '6':
-            if arabic > 20:
-                self.add_error('arabic', 'This value is greater that 20')
-            if english > 20:
-                self.add_error('english', 'This value is greater that 20')
-            if math > 20:
-                self.add_error('math', 'This value is greater that 20')
-            if science > 20:
-                self.add_error('science', 'This value is greater that 20')
-
-        elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
+        # grades Max Value validation
+        if grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
             if arabic > 60:
                 self.add_error('arabic', 'This value is greater that 60')
             if english > 40:
@@ -4350,7 +4340,15 @@ class RSForm(CommonForm):
                 self.add_error('chemistry', 'This value is greater that 20')
             if physics > 20:
                 self.add_error('physics', 'This value is greater that 20')
-
+        else:
+            if arabic > 20:
+                self.add_error('arabic', 'This value is greater that 20')
+            if english > 20:
+                self.add_error('english', 'This value is greater that 20')
+            if math > 20:
+                self.add_error('math', 'This value is greater that 20')
+            if science > 20:
+                self.add_error('science', 'This value is greater that 20')
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(RSForm, self).save(request=request, instance=instance, serializer=RSSerializer)
@@ -11592,14 +11590,7 @@ class RSAssessmentForm(forms.ModelForm):
                 if math is None:
                     self.add_error('math', 'This field is required')
 
-            if grade_registration == '6' :
-                if attended_science == 'yes':
-                    if not modality_science:
-                        self.add_error('modality_science', 'This field is required')
-                    if science is None:
-                        self.add_error('science', 'This field is required')
-            elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
-
+            if grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
                 if attended_biology == 'yes':
                     if not modality_biology:
                         self.add_error('modality_biology', 'This field is required')
@@ -11617,18 +11608,15 @@ class RSAssessmentForm(forms.ModelForm):
                         self.add_error('modality_physics', 'This field is required')
                     if physics is None:
                         self.add_error('physics', 'This field is required')
+            else:
+                if attended_science == 'yes':
+                    if not modality_science:
+                        self.add_error('modality_science', 'This field is required')
+                    if science is None:
+                        self.add_error('science', 'This field is required')
 
             # grades Max Value validation
-            if grade_registration == '6':
-                if arabic > 20:
-                    self.add_error('arabic', 'This value is greater that 20')
-                if english > 20:
-                    self.add_error('english', 'This value is greater that 20')
-                if math > 20:
-                    self.add_error('math', 'This value is greater that 20')
-                if science > 20:
-                    self.add_error('science', 'This value is greater that 20')
-            elif grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
+            if grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
 
                 if arabic > 60:
                     self.add_error('arabic', 'This value is greater that 60')
@@ -11642,7 +11630,15 @@ class RSAssessmentForm(forms.ModelForm):
                     self.add_error('chemistry', 'This value is greater that 20')
                 if physics > 20:
                     self.add_error('physics', 'This value is greater that 20')
-
+            else:
+                if arabic > 20:
+                    self.add_error('arabic', 'This value is greater that 20')
+                if english > 20:
+                    self.add_error('english', 'This value is greater that 20')
+                if math > 20:
+                    self.add_error('math', 'This value is greater that 20')
+                if science > 20:
+                    self.add_error('science', 'This value is greater that 20')
 
     def save(self, instance=None, request=None):
         instance = super(RSAssessmentForm, self).save()
