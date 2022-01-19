@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 from datetime import datetime
 
-def is_allowed_create(programme):
 
+def is_allowed_create(programme):
     from student_registration.schools.models import CLMRound
 
     try:
@@ -65,8 +65,8 @@ def is_allowed_create(programme):
         print(ex.message)
         return False
 
-def is_allowed_edit(programme):
 
+def is_allowed_edit(programme):
     from student_registration.schools.models import CLMRound
 
     try:
@@ -116,7 +116,8 @@ def is_allowed_edit(programme):
         print(ex.message)
         return False
 
-def bln_build_xls_extraction(queryset_students, queryset_fc ):
+
+def bln_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
@@ -181,6 +182,9 @@ def bln_build_xls_extraction(queryset_students, queryset_fc ):
         'Caretaker middle name',
         'Caretaker last name',
         'Caretaker mother name',
+        'caretaker birthday year',
+        'caretaker birthday month',
+        'caretaker birthday day',
         'ID Type',
         'UNHCR case number',
         'UNHCR case number confirm',
@@ -401,6 +405,9 @@ def bln_build_xls_extraction(queryset_students, queryset_fc ):
         'caretaker_middle_name',
         'caretaker_last_name',
         'caretaker_mother_name',
+        'caretaker_birthday_year',
+        'caretaker_birthday_month',
+        'caretaker_birthday_day',
         'id_type',
         'case_number',
         'case_number_confirm',
@@ -636,8 +643,6 @@ def bln_build_xls_extraction(queryset_students, queryset_fc ):
         for col_num in range(len(row)):
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-
-
     wbStudent.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
@@ -648,7 +653,8 @@ def bln_build_xls_extraction(queryset_students, queryset_fc ):
 
     return response
 
-def abln_build_xls_extraction(queryset_students, queryset_fc ):
+
+def abln_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
@@ -713,6 +719,9 @@ def abln_build_xls_extraction(queryset_students, queryset_fc ):
         'Caretaker middle name',
         'Caretaker last name',
         'Caretaker mother name',
+        'caretaker birthday year',
+        'caretaker birthday month',
+        'caretaker birthday day',
         'ID Type',
         'UNHCR case number',
         'UNHCR case number confirm',
@@ -825,7 +834,6 @@ def abln_build_xls_extraction(queryset_students, queryset_fc ):
         'pre_test_modality_arabic': "pre_test->>'ABLN_ASSESSMENT/modality_arabic'",
         'pre_test_arabic': "pre_test->>'ABLN_ASSESSMENT/arabic'",
 
-
         'pre_test_attended_artistic': "pre_test->>'ABLN_ASSESSMENT/attended_artistic'",
         'pre_test_modality_artistic': "pre_test->>'ABLN_ASSESSMENT/modality_artistic'",
         'pre_test_artistic': "pre_test->>'ABLN_ASSESSMENT/artistic'",
@@ -841,7 +849,6 @@ def abln_build_xls_extraction(queryset_students, queryset_fc ):
         'post_test_attended_arabic': "post_test->>'ABLN_ASSESSMENT/attended_arabic'",
         'post_test_modality_arabic': "post_test->>'ABLN_ASSESSMENT/modality_arabic'",
         'post_test_arabic': "post_test->>'ABLN_ASSESSMENT/arabic'",
-
 
         'post_test_attended_artistic': "post_test->>'ABLN_ASSESSMENT/attended_artistic'",
         'post_test_modality_artistic': "post_test->>'ABLN_ASSESSMENT/modality_artistic'",
@@ -907,6 +914,9 @@ def abln_build_xls_extraction(queryset_students, queryset_fc ):
         'caretaker_middle_name',
         'caretaker_last_name',
         'caretaker_mother_name',
+        'caretaker_birthday_year',
+        'caretaker_birthday_month',
+        'caretaker_birthday_day',
         'id_type',
         'case_number',
         'case_number_confirm',
@@ -1130,8 +1140,6 @@ def abln_build_xls_extraction(queryset_students, queryset_fc ):
         for col_num in range(len(row)):
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-
-
     wbStudent.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
@@ -1142,7 +1150,8 @@ def abln_build_xls_extraction(queryset_students, queryset_fc ):
 
     return response
 
-def cbece_build_xls_extraction(queryset_students, queryset_fc ):
+
+def cbece_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
@@ -1206,6 +1215,9 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc ):
         'Caretaker middle name',
         'Caretaker last name',
         'Caretaker mother name',
+        'caretaker birthday year',
+        'caretaker birthday month',
+        'caretaker birthday day',
         'ID Type',
         'UNHCR case number',
         'UNHCR case number confirm',
@@ -1438,6 +1450,9 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc ):
         'caretaker_middle_name',
         'caretaker_last_name',
         'caretaker_mother_name',
+        'caretaker_birthday_year',
+        'caretaker_birthday_month',
+        'caretaker_birthday_day',
         'id_type',
         'case_number',
         'case_number_confirm',
@@ -1679,8 +1694,6 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc ):
         for col_num in range(len(row)):
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-
-
     wbStudent.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
@@ -1691,7 +1704,8 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc ):
 
     return response
 
-def rs_build_xls_extraction(queryset_students, queryset_fc ):
+
+def rs_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     wb = Workbook()
@@ -1754,6 +1768,9 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
         'Caretaker middle name',
         'Caretaker last name',
         'Caretaker mother name',
+        'caretaker birthday year',
+        'caretaker birthday month',
+        'caretaker birthday day',
         'ID Type',
         'UNHCR case number',
         'UNHCR case number confirm',
@@ -1873,7 +1890,7 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
     ]
 
     for col_num in range(len(columns)):
-        currentCell = ws_student.cell(row=row_num_student+1, column=col_num+1, value=columns[col_num])
+        currentCell = ws_student.cell(row=row_num_student + 1, column=col_num + 1, value=columns[col_num])
         currentCell.font = font_style
 
     qs = queryset_students.extra(select={
@@ -1986,6 +2003,9 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
         'caretaker_middle_name',
         'caretaker_last_name',
         'caretaker_mother_name',
+        'caretaker_birthday_year',
+        'caretaker_birthday_month',
+        'caretaker_birthday_day',
         'id_type',
         'case_number',
         'case_number_confirm',
@@ -2268,7 +2288,8 @@ def rs_build_xls_extraction(queryset_students, queryset_fc ):
 
     return response
 
-def outreach_build_xls_extraction(queryset_students ):
+
+def outreach_build_xls_extraction(queryset_students):
     buffer = io.BytesIO()
 
     # Personnel
@@ -2329,6 +2350,9 @@ def outreach_build_xls_extraction(queryset_students ):
         'Caretaker middle name',
         'Caretaker last name',
         'Caretaker mother name',
+        'caretaker birthday year',
+        'caretaker birthday month',
+        'caretaker birthday day',
         'ID Type',
         'UNHCR case number',
         'UNHCR case number confirm',
@@ -2411,6 +2435,9 @@ def outreach_build_xls_extraction(queryset_students ):
         'caretaker_middle_name',
         'caretaker_last_name',
         'caretaker_mother_name',
+        'caretaker_birthday_year',
+        'caretaker_birthday_month',
+        'caretaker_birthday_day',
         'id_type',
         'case_number',
         'case_number_confirm',
@@ -2454,6 +2481,7 @@ def outreach_build_xls_extraction(queryset_students ):
 
     return response
 
+
 def listToString(s):
     # initialize an empty string
     str1 = ""
@@ -2463,12 +2491,13 @@ def listToString(s):
         if str1 == "":
             str1 += ele
         else:
-            str1 += ","+ele
+            str1 += "," + ele
 
         # return string
     return str1
 
-def build_xls_extraction_horizental(queryset_students, queryset_fc ):
+
+def build_xls_extraction_horizental(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
@@ -2533,6 +2562,9 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc ):
         'Caretaker middle name',
         'Caretaker last name',
         'Caretaker mother name',
+        'caretaker birthday year',
+        'caretaker birthday month',
+        'caretaker birthday day',
         'ID Type',
         'UNHCR case number',
         'UNHCR case number confirm',
@@ -2771,6 +2803,9 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc ):
         'caretaker_middle_name',
         'caretaker_last_name',
         'caretaker_mother_name',
+        'caretaker_birthday_year',
+        'caretaker_birthday_month',
+        'caretaker_birthday_day',
         'id_type',
         'case_number',
         'case_number_confirm',
@@ -2907,7 +2942,6 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc ):
         for col_num in range(len(row)):
             ws.write(row_num_student, col_num, row[col_num], font_style)
 
-
     # FC
     wsFC = wbStudent.add_sheet('FC')
     row_num_fc = 0
@@ -2974,8 +3008,8 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc ):
     ]
     for subject_type in range(len(fc_type)):
         for col_num in range(len(columns_fc)):
-            wsFC.write(row_num_header_fc,col_num  + len(columns_fc_student)+ (len(columns_fc) * (subject_type))
-                           ,columns_fc[col_num], font_style)
+            wsFC.write(row_num_header_fc, col_num + len(columns_fc_student) + (len(columns_fc) * (subject_type))
+                       , columns_fc[col_num], font_style)
 
     font_style = xlwt.XFStyle()
 
@@ -3021,15 +3055,13 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc ):
         'additional_notes'
 
     )
-
-
     enrollment_id = 0
 
     for row in rows_fc:
         row_num_fc += 0
         enrol_id = row[0]
 
-        if enrollment_id <> enrol_id:
+        if enrollment_id != enrol_id:
             row_num_fc += 1
             enrollment_id = enrol_id
             for col_num in range(len(columns_fc_student)):
@@ -3052,20 +3084,21 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc ):
 
     return response
 
+
 class MemorySavingQuerysetIterator(object):
 
-    def __init__(self,queryset,max_obj_num=1000):
+    def __init__(self, queryset, max_obj_num=1000):
         self._base_queryset = queryset
         self._generator = self._setup()
         self.max_obj_num = max_obj_num
 
     def _setup(self):
-        for i in xrange(0,self._base_queryset.count(),self.max_obj_num):
+        for i in xrange(0, self._base_queryset.count(), self.max_obj_num):
             # By making a copy of of the queryset and using that to actually access
             # the objects we ensure that there are only `max_obj_num` objects in
             # memory at any given time
-            smaller_queryset = copy.deepcopy(self._base_queryset)[i:i+self.max_obj_num]
-            #logger.debug('Grabbing next %s objects from DB' % self.max_obj_num)
+            smaller_queryset = copy.deepcopy(self._base_queryset)[i:i + self.max_obj_num]
+            # logger.debug('Grabbing next %s objects from DB' % self.max_obj_num)
             for obj in smaller_queryset.iterator():
                 yield obj
 

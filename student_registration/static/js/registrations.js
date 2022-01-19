@@ -371,6 +371,10 @@ $(document).ready(function() {
          reorganizeForm();
     });
 
+    $(document).on('change', 'select#id_child_dropout', function(){
+         reorganizeForm();
+    });
+
     $(document).on('change', 'select#id_covid_parents_message', function(){
          reorganizeForm();
     });
@@ -988,6 +992,10 @@ function reorganizeForm()
     var gender_participate = $('select#id_gender_participate').val();
     var follow_up_done = $('select#id_follow_up_done').val();
 
+    var child_dropout = $('select#id_child_dropout').val();
+
+
+
     var remote_learning = $('select#id_remote_learning').val();
     var remote_learning_reasons_not_engaged = $('select#id_remote_learning_reasons_not_engaged').val();
 
@@ -1062,6 +1070,14 @@ function reorganizeForm()
     if(follow_up_done == 'yes'){
         $('div#div_id_follow_up_done_with_who').removeClass('d-none');
         $('#span_follow_up_done_with_who').removeClass('d-none');
+    }
+
+    //child_dropout
+    $('div#div_id_child_dropout_specify').addClass('d-none');
+    $('#span_child_dropout_specify').addClass('d-none');
+    if(child_dropout == 'yes'){
+        $('div#div_id_child_dropout_specify').removeClass('d-none');
+        $('#span_child_dropout_specify').removeClass('d-none');
     }
 
     // remote_learning

@@ -224,14 +224,12 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'disability__name_en': 'Does the child have any disability or special need?',
             'internal_number': 'Internal number',
             'comments': 'Comments',
-
             'phone_number': 'Phone number',
             'phone_number_confirm': 'Phone number confirm',
             'phone_owner': 'phone owner',
             'second_phone_number': 'Second Phone number',
             'second_phone_number_confirm': 'Second Phone number confirm',
             'second_phone_owner': 'Second phone owner',
-
             'id_type': 'ID Type',
             'case_number': 'UNHCR case number',
             'case_number_confirm': 'UNHCR case number confirm',
@@ -264,7 +262,9 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'caretaker_middle_name': 'Caretaker middle name',
             'caretaker_last_name': 'Caretaker last name',
             'caretaker_mother_name': 'Caretaker mother name',
-
+            'caretaker_birthday_year': 'Caretaker birthday year',
+            'caretaker_birthday_month': 'Caretaker birthday month',
+            'caretaker_birthday_day': 'Caretaker birthday day',
             'have_labour': 'Does the child participate in work?',
             'labour_type': 'What is the type of work?',
 
@@ -291,6 +291,9 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'referral_date_3': 'Referral date 3',
             'confirmation_date_3': 'Referral confirmation date 3',
             'additional_comments': 'Comments',
+            'child_dropout': 'Child dropout',
+            'child_dropout_specify': 'Child dropout specify',
+            'caregiver_trained_parental_engagement': 'Caregiver Trained Parental Engagement',
         }
 
         field_list = (
@@ -319,7 +322,6 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'disability__name_en',
             'internal_number',
             'comments',
-
             'phone_number',
             'phone_number_confirm',
             'phone_owner',
@@ -359,7 +361,9 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
-
+            'caretaker_birthday_year',
+            'caretaker_birthday_month',
+            'caretaker_birthday_day',
             'have_labour',
             'labour_type',
 
@@ -387,6 +391,9 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'created',
             'modified',
             'additional_comments',
+            'child_dropout',
+            'child_dropout_specify',
+            'caregiver_trained_parental_engagement'
         )
 
         qs = self.get_queryset().values(
@@ -466,6 +473,9 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
+            'caretaker_birthday_year',
+            'caretaker_birthday_month',
+            'caretaker_birthday_day',
 
             'referral_programme_type_1',
             'referral_partner_1',
@@ -480,6 +490,9 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'referral_date_3',
             'confirmation_date_3',
             'additional_comments',
+            'child_dropout',
+            'child_dropout_specify',
+            'caregiver_trained_parental_engagement'
         )
         print(qs.query)
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)

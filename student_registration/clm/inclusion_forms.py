@@ -67,6 +67,8 @@ LEARNING_RESULT = (
 
 
 class InclusionForm(forms.ModelForm):
+    YEARS_CT = list(((str(x), x) for x in range(1940, Person.CURRENT_YEAR - 18)))
+    YEARS_CT.insert(0, ('', '---------'))
 
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.filter(current_round_inclusion=True), widget=forms.Select,
@@ -398,6 +400,47 @@ class InclusionForm(forms.ModelForm):
         label=_('RIMS Case Number')
     )
 
+    caretaker_birthday_year = forms.ChoiceField(
+        label=_("Caretaker birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_CT,
+    )
+    caretaker_birthday_month = forms.ChoiceField(
+        label=_("Caretaker birthday month"),
+        widget=forms.Select, required=True,
+        choices=MONTHS
+    )
+    caretaker_birthday_day = forms.ChoiceField(
+        label=_("Caretaker birthday day"),
+        widget=forms.Select, required=True,
+        choices=DAYS
+    )
+
+    child_dropout = forms.ChoiceField(
+        label=_("Has the child dropped out of the program?"),
+        widget=forms.Select, required=True,
+        choices=Inclusion.YES_NO,
+        initial='no'
+    )
+    child_dropout_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    caregiver_trained_parental_engagement = forms.ChoiceField(
+        label=_('Have the Caregivers been trained on the Parental Engagement Curriculum? '),
+        widget=forms.Select, required=True,
+        choices=(
+            ('Mother Only', _('Mother Only')),
+            ('Father Only', _('Father Only')),
+            ('Both Mother and Father', _('Both Mother and Father')),
+            ('None', _('None')),
+            ('Other', _('Other')),
+            ('Not begun yet', _('Not begun yet')),
+        ),
+        initial=''
+    )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(InclusionForm, self).__init__(*args, **kwargs)
@@ -553,6 +596,15 @@ class InclusionForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('caretaker_birthday_year', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('caretaker_birthday_month', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('caretaker_birthday_day', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">10</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
@@ -703,8 +755,28 @@ class InclusionForm(forms.ModelForm):
                     Div('additional_comments', css_class='col-md-12'),
                     css_class='row',
                 ),
+                css_class='bd-callout bd-callout-warning child_data D_right_border'
+            ),
+
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>E</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Comments') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_dropout', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_dropout_specify">1.1</span>'),
+                    Div('child_dropout_specify', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('caregiver_trained_parental_engagement', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning child_data E_right_border'
             ),
+
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
@@ -757,11 +829,10 @@ class InclusionForm(forms.ModelForm):
         # labour_weekly_income = cleaned_data.get("labour_weekly_income")
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
-
-
-
         source_of_identification = cleaned_data.get("source_of_identification")
         rims_case_number = cleaned_data.get("rims_case_number")
+        child_dropout = cleaned_data.get("child_dropout")
+        child_dropout_specify = cleaned_data.get("child_dropout_specify")
 
         if source_of_identification == 'RIMS':
             if not rims_case_number:
@@ -787,6 +858,9 @@ class InclusionForm(forms.ModelForm):
         #         self.add_error('labour_hours', 'This field is required')
         #     if not labour_weekly_income:
         #         self.add_error('labour_weekly_income', 'This field is required')
+        if child_dropout == 'yes':
+            if not child_dropout_specify:
+                self.add_error('child_dropout_specify', 'This field is required')
 
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
@@ -989,7 +1063,13 @@ class InclusionForm(forms.ModelForm):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
-            'additional_comments'
+            'additional_comments',
+            'caretaker_birthday_year',
+            'caretaker_birthday_month',
+            'caretaker_birthday_day',
+            'child_dropout',
+            'child_dropout_specify',
+            'caregiver_trained_parental_engagement'
         )
 
     class Media:

@@ -2651,6 +2651,11 @@ class RS(CLM):
         null=True,
         choices=Choices(
             ('', '----------'),
+            ('1', _('1')),
+            ('2', _('2')),
+            ('3', _('3')),
+            ('4', _('4')),
+            ('5', _('5')),
             ('6', _('6')),
             ('7', _('7')),
             ('8', _('8')),
@@ -2658,6 +2663,7 @@ class RS(CLM):
         ),
         verbose_name=_('Grade of registeration')
     )
+
 
     class Meta:
         ordering = ['-id']
@@ -3248,9 +3254,26 @@ class SelfPerceptionGrades(models.Model):
 
 
 class Inclusion(TimeStampedModel):
+    CURRENT_YEAR = datetime.datetime.now().year
+
+    MONTHS = Choices(
+        ('1', _('January')),
+        ('2', _('February')),
+        ('3', _('March')),
+        ('4', _('April')),
+        ('5', _('May')),
+        ('6', _('June')),
+        ('7', _('July')),
+        ('8', _('August')),
+        ('9', _('September')),
+        ('10', _('October')),
+        ('11', _('November')),
+        ('12', _('December')),
+    )
     YES_NO = Choices(
-        (1, _("Yes")),
-        (0, _("No"))
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
     )
     PARTICIPATION = Choices(
         ('', '----------'),
@@ -3745,6 +3768,30 @@ class Inclusion(TimeStampedModel):
         null=True,
         verbose_name=_('Caretaker Mother Name')
     )
+    caretaker_birthday_year = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=0,
+        choices=((str(x), x) for x in range(1940, CURRENT_YEAR - 18)),
+        verbose_name=_('Caretaker birthday year')
+    )
+    caretaker_birthday_month = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        default=0,
+        choices=MONTHS,
+        verbose_name=_('Caretaker birthday month')
+    )
+    caretaker_birthday_day = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        default=0,
+        choices=((str(x), x) for x in range(1, 32)),
+        verbose_name=_('Caretaker birthday day')
+    )
 
     referral_programme_type_1 = models.CharField(
         max_length=100,
@@ -3842,7 +3889,34 @@ class Inclusion(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Comments')
     )
+    child_dropout = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Has the child dropped out of the program?')
+    )
 
+    child_dropout_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
+    caregiver_trained_parental_engagement = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Mother Only', _('Mother Only')),
+            ('Father Only', _('Father Only')),
+            ('Both Mother and Father', _('Both Mother and Father')),
+            ('None', _('None')),
+            ('Other', _('Other')),
+            ('Not begun yet', _('Not begun yet')),
+        ),
+        verbose_name=_('Have the Caregivers been trained on the Parental Engagement Curriculum? ')
+    )
     @property
     def student_fullname(self):
         if self.student:

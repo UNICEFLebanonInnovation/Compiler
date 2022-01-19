@@ -119,6 +119,7 @@ REGISTRATION_LEVEL = (
 
 
 class CommonForm(forms.ModelForm):
+    
     YEARS_CT = list(((str(x), x) for x in range(1940, Person.CURRENT_YEAR - 18)))
     YEARS_CT.insert(0, ('', '---------'))
 
@@ -3020,7 +3021,7 @@ class ABLNForm(CommonForm):
 
 class RSForm(CommonForm):
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 8)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 6)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -3554,13 +3555,17 @@ class RSForm(CommonForm):
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
+            ('1', _('1')),
+            ('2', _('2')),
+            ('3', _('3')),
+            ('4', _('4')),
+            ('5', _('5')),
             ('6', _('6')),
             ('7', _('7')),
             ('8', _('8')),
             ('9', _('9')),
         )
     )
-
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -4469,7 +4474,7 @@ class CBECEForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 6, Person.CURRENT_YEAR - 3)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 3)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
