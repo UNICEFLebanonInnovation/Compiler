@@ -119,7 +119,7 @@ REGISTRATION_LEVEL = (
 
 
 class CommonForm(forms.ModelForm):
-    
+
     YEARS_CT = list(((str(x), x) for x in range(1940, Person.CURRENT_YEAR - 18)))
     YEARS_CT.insert(0, ('', '---------'))
 
@@ -6175,6 +6175,7 @@ class OutreachForm(CommonForm):
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
     no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
 
+
     source_of_identification = forms.ChoiceField(
         label=_("Source of identification of the child to Outreach"),
         widget=forms.Select,
@@ -6194,6 +6195,7 @@ class OutreachForm(CommonForm):
             ('Referral to ALP', _('Referral to ALP')),
             ('Referral to Speciailized services (Unicef partner)', _('Referral to Speciailized services (Unicef partner)')),
             ('Referral to Speciailized services (Non-Unicef partner)', _('Referral to Speciailized services (Non-Unicef partner)')),
+            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
         ),
         initial=''
     )

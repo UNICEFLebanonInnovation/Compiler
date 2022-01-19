@@ -1917,6 +1917,7 @@ class Outreach(CLM):
             ('Referral to ALP', _('Referral to ALP')),
             ('Referral to Speciailized services (Unicef partner)', _('Referral to Speciailized services (Unicef partner)')),
             ('Referral to Speciailized services (Non-Unicef partner)', _('Referral to Speciailized services (Non-Unicef partner)')),
+            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
         ),
         verbose_name=_('Source of identification of the child')
     )
