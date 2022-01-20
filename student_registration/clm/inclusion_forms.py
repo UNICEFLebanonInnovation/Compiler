@@ -431,6 +431,7 @@ class InclusionForm(forms.ModelForm):
         label=_('Have the Caregivers been trained on the Parental Engagement Curriculum? '),
         widget=forms.Select, required=True,
         choices=(
+            ('', '----------'),
             ('Mother Only', _('Mother Only')),
             ('Father Only', _('Father Only')),
             ('Both Mother and Father', _('Both Mother and Father')),
