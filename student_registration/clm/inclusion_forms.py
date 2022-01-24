@@ -416,31 +416,7 @@ class InclusionForm(forms.ModelForm):
         choices=DAYS
     )
 
-    child_dropout = forms.ChoiceField(
-        label=_("Has the child dropped out of the program?"),
-        widget=forms.Select, required=True,
-        choices=Inclusion.YES_NO,
-        initial='no'
-    )
-    child_dropout_specify = forms.CharField(
-        label=_('Please specify'),
-        widget=forms.TextInput, required=False
-    )
 
-    caregiver_trained_parental_engagement = forms.ChoiceField(
-        label=_('Have the Caregivers been trained on the Parental Engagement Curriculum? '),
-        widget=forms.Select, required=True,
-        choices=(
-            ('', '----------'),
-            ('Mother Only', _('Mother Only')),
-            ('Father Only', _('Father Only')),
-            ('Both Mother and Father', _('Both Mother and Father')),
-            ('None', _('None')),
-            ('Other', _('Other')),
-            ('Not begun yet', _('Not begun yet')),
-        ),
-        initial=''
-    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -766,15 +742,6 @@ class InclusionForm(forms.ModelForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Comments') + '</h4>')
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('child_dropout', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_child_dropout_specify">1.1</span>'),
-                    Div('child_dropout_specify', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('caregiver_trained_parental_engagement', css_class='col-md-3'),
-                    css_class='row',
-                ),
                 css_class='bd-callout bd-callout-warning child_data E_right_border'
             ),
 
@@ -832,8 +799,6 @@ class InclusionForm(forms.ModelForm):
         student_number_children = cleaned_data.get("student_number_children")
         source_of_identification = cleaned_data.get("source_of_identification")
         rims_case_number = cleaned_data.get("rims_case_number")
-        child_dropout = cleaned_data.get("child_dropout")
-        child_dropout_specify = cleaned_data.get("child_dropout_specify")
 
         if source_of_identification == 'RIMS':
             if not rims_case_number:
@@ -859,9 +824,7 @@ class InclusionForm(forms.ModelForm):
         #         self.add_error('labour_hours', 'This field is required')
         #     if not labour_weekly_income:
         #         self.add_error('labour_weekly_income', 'This field is required')
-        if child_dropout == 'yes':
-            if not child_dropout_specify:
-                self.add_error('child_dropout_specify', 'This field is required')
+
 
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
@@ -1068,13 +1031,121 @@ class InclusionForm(forms.ModelForm):
             'caretaker_birthday_year',
             'caretaker_birthday_month',
             'caretaker_birthday_day',
-            'child_dropout',
-            'child_dropout_specify',
-            'caregiver_trained_parental_engagement'
         )
 
     class Media:
         js = ()
+
+
+class InclusionFollowupForm(forms.ModelForm):
+    child_dropout = forms.ChoiceField(
+        label=_("Has the child dropped out of the program?"),
+        widget=forms.Select, required=True,
+        choices=Inclusion.YES_NO,
+        initial='no'
+    )
+    child_dropout_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    caregiver_trained_parental_engagement = forms.ChoiceField(
+        label=_('Have the Caregivers been trained on the Parental Engagement Curriculum? '),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('Mother Only', _('Mother Only')),
+            ('Father Only', _('Father Only')),
+            ('Both Mother and Father', _('Both Mother and Father')),
+            ('None', _('None')),
+            ('Other', _('Other')),
+            ('Not begun yet', _('Not begun yet')),
+        ),
+        initial=''
+    )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(InclusionFollowupForm, self).__init__(*args, **kwargs)
+        # post_test = ''
+        # post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'Inclusion'
+        display_assessment = ''
+        form_action = reverse('clm:inclusion_followup', kwargs={'pk': instance.id})
+        # if instance.post_test:
+        #     post_test_button = ' btn-outline-success '
+        #     post_test = instance.assessment_form(
+        #         stage='followup',
+        #         assessment_slug='inclusion_followup',
+        #         callback=self.request.build_absolute_uri(
+        #             reverse('clm:inclusion_followup', kwargs={'pk': instance.id}))
+        #     )
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    Div('clm_type', css_class='col-md-3 d-none'),
+
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('child_dropout', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_child_dropout_specify">1.1</span>'),
+                    Div('child_dropout_specify', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('caregiver_trained_parental_engagement', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(InclusionFollowupForm, self).clean()
+        child_dropout = cleaned_data.get("child_dropout")
+        child_dropout_specify = cleaned_data.get("child_dropout_specify")
+        if child_dropout == 'yes':
+            if not child_dropout_specify:
+                self.add_error('child_dropout_specify', 'This field is required')
+
+
+
+    def save(self, instance=None, request=None):
+        instance = super(InclusionFollowupForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = Inclusion
+        fields = (
+            'child_dropout',
+            'child_dropout_specify',
+            'caregiver_trained_parental_engagement'
+        )
 
 
 class InclusionAssessmentForm(forms.ModelForm):

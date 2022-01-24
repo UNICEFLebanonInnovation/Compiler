@@ -1705,7 +1705,8 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc):
     return response
 
 
-def rs_build_xls_extraction(queryset_students, queryset_fc):
+def rs_build_xls_extraction(queryset_students):
+    # def rs_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     wb = Workbook()

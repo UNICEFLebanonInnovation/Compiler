@@ -271,10 +271,15 @@ urlpatterns = [
         name='inclusion_list'
     ),
     url(
-        regex=r'^inclusion-referral/(?P<pk>[\w.@+-]+)/$',
-        view=inclusion_views.InclusionReferralView.as_view(),
-        name='inclusion_referral'
+        regex=r'^inclusion-followup/(?P<pk>[\w.@+-]+)/$',
+        view=inclusion_views.InclusionFollowupView.as_view(),
+        name='inclusion_followup'
     ),
+    # url(
+    #     regex=r'^inclusion-referral/(?P<pk>[\w.@+-]+)/$',
+    #     view=inclusion_views.InclusionReferralView.as_view(),
+    #     name='inclusion_referral'
+    # ),
     url(
         regex=r'^inclusion-assessment/(?P<pk>[\w.@+-]+)/$',
         view=inclusion_views.InclusionAssessmentView.as_view(),

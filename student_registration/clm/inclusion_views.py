@@ -23,7 +23,7 @@ from .tables import BootstrapTable
 from .inclusion_tables import InclusionTable
 from .inclusion_filters import InclusionFilter
 from .models import Inclusion, CLMRound
-from .inclusion_forms import InclusionForm, InclusionReferralForm, InclusionAssessmentForm
+from .inclusion_forms import InclusionForm, InclusionReferralForm, InclusionAssessmentForm, InclusionFollowupForm
 from .utils import is_allowed_create, is_allowed_edit
 from .inclusion_serializers import InclusionSerializer
 
@@ -124,12 +124,12 @@ class InclusionListView(LoginRequiredMixin,
         # return Inclusion.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
-class InclusionReferralView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
+class InclusionAssessmentView(LoginRequiredMixin,
+                              GroupRequiredMixin,
+                              FormView):
 
-    template_name = 'clm/inclusion_referral.html'
-    form_class = InclusionReferralForm
+    template_name = 'clm/inclusion_assessment.html'
+    form_class = InclusionAssessmentForm
     success_url = '/clm/inclusion-list/'
     group_required = [u"CLM_Inclusion"]
 
@@ -138,7 +138,37 @@ class InclusionReferralView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(InclusionReferralView, self).get_context_data(**kwargs)
+        return super(InclusionAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = Inclusion.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+        else:
+            return form_class(instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Inclusion.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(InclusionAssessmentView, self).form_valid(form)
+
+
+class InclusionFollowupView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+
+    template_name = 'clm/inclusion_followup.html'
+    form_class = InclusionFollowupForm
+    success_url = '/clm/inclusion-list/'
+    group_required = [u"CLM_Inclusion"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(InclusionFollowupView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
@@ -151,7 +181,7 @@ class InclusionReferralView(LoginRequiredMixin,
     def form_valid(self, form):
         instance = Inclusion.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
-        return super(InclusionReferralView, self).form_valid(form)
+        return super(InclusionFollowupView, self).form_valid(form)
 
 
 class InclusionAssessmentView(LoginRequiredMixin,

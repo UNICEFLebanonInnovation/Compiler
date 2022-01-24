@@ -2781,13 +2781,14 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             return self.qs_students.filter(partner=self.request.user.partner)
         return self.qs_students
 
-    def get_queryset_fc(self):
-        if not self.request.user.is_staff:
-            return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
-        return self.qs_fc.order_by('enrollment', 'fc_type')
+    # def get_queryset_fc(self):
+    #     if not self.request.user.is_staff:
+    #         return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
+    #     return self.qs_fc.order_by('enrollment', 'fc_type')
 
     def get(self, request, *args, **kwargs):
-        return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+        return rs_build_xls_extraction(self.get_queryset_students())
+        # return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
 
 def load_districts(request):
     id_governorate = request.GET.get('id_governorate')

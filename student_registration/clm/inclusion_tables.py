@@ -6,19 +6,22 @@ from .models import Inclusion
 
 
 class InclusionTable(tables.Table):
-
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/clm_edit_column.html',
                                         attrs={'url': '/clm/inclusion-edit/', 'programme': 'Inclusion'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-inclusion/', 'programme': 'Inclusion'})
+    followup_column = tables.TemplateColumn(verbose_name=_('followup'), orderable=False,
+                                            template_name='django_tables2/clm_followup_column.html',
+                                            attrs={'url': '/clm/inclusion-followup/', 'programme': 'Inclusion'})
+
     # referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
     #                                         template_name='django_tables2/clm_referral_column.html',
     #                                         attrs={'url': '/clm/inclusion-referral/', 'programme': 'Inclusion'})
     # assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
     #                                                template_name='django_tables2/clm_assessment_column.html',
-    #                                                attrs={'url': '/clm/inclusion-assessment/', 'programme': 'Inclusion'})
+    #                                        attrs={'url': '/clm/inclusion-assessment/', 'programme': 'Inclusion'})
 
     class Meta:
         model = Inclusion
@@ -26,6 +29,7 @@ class InclusionTable(tables.Table):
             'edit_column',
             # 'assessment_column',
             'delete_column',
+            'followup_column',
             # 'referral_column',
             'first_attendance_date',
             'governorate',
