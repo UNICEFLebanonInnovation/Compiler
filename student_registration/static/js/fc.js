@@ -20,10 +20,12 @@ $(window).load(function () {
 
 $(document).ready(function () {
     //Name and type added to page title
-
     var fc_type = $('#id_fc_type').val();
     document.title = "CLM | FC" + '-' + fc_type.toUpperCase();
-
+//
+//    if (isAddPage() ) {
+//        $('#id_subject_taught').val(fc_type);
+//    }
 
     if ($(document).find('#id_date_of_monitoring').length == 1) {
         $('#id_date_of_monitoring').datepicker({dateFormat: "yy-mm-dd"});
@@ -31,8 +33,6 @@ $(document).ready(function () {
     reorganizeForm();
     activities_reported();
     meet_objectives_verified();
-
-
 
     $(document).on('change', 'select#id_attend_lesson, ' +
         'select#id_share_expectations, ' +
@@ -88,6 +88,12 @@ $(document).ready(function () {
             }, 1);
         });
 });
+
+function isAddPage()
+{
+    var url_loc = window.location.toString();
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-fc-add|abln-fc-add|cbece-fc-add|rs-fc-add(\*)(\?.*)?$/i)>=0);
+}
 
 function pageScripts() {
     /* Magnific Popup */

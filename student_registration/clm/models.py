@@ -943,6 +943,7 @@ class CLM(TimeStampedModel):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
             ('RIMS', _('RIMS')),
+            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
@@ -1664,6 +1665,7 @@ class BLN(CLM):
             ('List database', _('List database')),
             ('abln', _('ABLN')),
             ('RIMS', _('RIMS')),
+            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
@@ -2178,6 +2180,7 @@ class ABLN(CLM):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('RIMS', _('RIMS')),
+            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
             # ('bln', _('BLN'))
         ),
@@ -3066,6 +3069,7 @@ class CBECE(CLM):
             ('From hosted community', _('From hosted community')),
             ('From displaced community', _('From displaced community')),
             ('RIMS', _('RIMS')),
+            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
@@ -3997,6 +4001,8 @@ class ABLN_FC(TimeStampedModel):
         ('pre-math', _("Pre Math")),
         ('post-arabic', _("Post Arabic")),
         ('post-math', _('Post Math')),
+        ('arabic', _("Arabic")),
+        ('math', _('Math')),
     )
 
     enrollment = models.ForeignKey(
@@ -4294,6 +4300,9 @@ class BLN_FC(TimeStampedModel):
         ('post-arabic', _("Post Arabic")),
         ('post-math', _("Post Math")),
         ('post-language', _("Post Language")),
+        ('arabic', _("Arabic")),
+        ('language', _("Language")),
+        ('math', _("Math")),
     )
     enrollment = models.ForeignKey(
         BLN,
@@ -4598,6 +4607,9 @@ class RS_FC(TimeStampedModel):
         ('post-biology', _("Post Biology")),
         ('post-chemistry', _("Post Chemistry")),
         ('post-physics', _("Post Physics")),
+        ('arabic', _("Arabic")),
+        ('language', _("Language")),
+        ('math', _("Math")),
     )
     enrollment = models.ForeignKey(
         RS,
@@ -4894,6 +4906,9 @@ class CBECE_FC(TimeStampedModel):
         ('post-arabic', _("Post Arabic")),
         ('post-math', _("Post Math")),
         ('post-language', _("Post Language")),
+        ('arabic', _("Arabic")),
+        ('language', _("Language")),
+        ('math', _("Math")),
     )
     enrollment = models.ForeignKey(
         CBECE,

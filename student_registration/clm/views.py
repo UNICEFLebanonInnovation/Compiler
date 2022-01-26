@@ -911,11 +911,11 @@ class ABLNFCAddView(LoginRequiredMixin,
                 return ABLNFCForm(data, initial=data, instance=instance, request=self.request)
 
             else:
-                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
-                splittedFCType = self.kwargs['fc_type'].split('-')
-                if len(splittedFCType) > 1:
-                    data['subject_taught'] = splittedFCType[1]
-                return ABLNFCForm(initial = data,request=self.request)
+                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
+                fc_type = self.kwargs['fc_type'].split('-')
+                if len(fc_type) >= 1:
+                    data['subject_taught'] = fc_type[0]
+                return ABLNFCForm(initial=data, request=self.request)
 
 
     def form_valid(self, form):
@@ -974,8 +974,8 @@ class BLNFCAddView(LoginRequiredMixin,
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
                 splittedFCType = self.kwargs['fc_type'].split('-')
-                if len(splittedFCType) > 1:
-                    data['subject_taught'] =  splittedFCType[1]
+                if len(splittedFCType) >= 1:
+                    data['subject_taught'] = splittedFCType[0]
                 return BLNFCForm(initial = data,request=self.request)
 
 
@@ -1038,8 +1038,8 @@ class RSFCAddView(LoginRequiredMixin,
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
                 splittedFCType = self.kwargs['fc_type'].split('-')
-                if len(splittedFCType) > 1:
-                    data['subject_taught'] = splittedFCType[1]
+                if len(splittedFCType) >= 1:
+                    data['subject_taught'] = splittedFCType[0]
                 return RSFCForm(initial = data,request=self.request)
 
 
@@ -1101,8 +1101,8 @@ class CBECEFCAddView(LoginRequiredMixin,
             else:
                 data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
                 splittedFCType = self.kwargs['fc_type'].split('-')
-                if len(splittedFCType) > 1:
-                    data['subject_taught'] = splittedFCType[1]
+                if len(splittedFCType) >= 1:
+                    data['subject_taught'] = splittedFCType[0]
                 return CBECEFCForm(initial = data,request=self.request)
 
 
