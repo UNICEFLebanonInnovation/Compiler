@@ -249,6 +249,7 @@ class CLM(TimeStampedModel):
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
         ('other', _('Other')),
+        ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
         # ('dropout', _('Dropout from school'))
     )
     REGISTRATION_LEVEL = (
@@ -1519,6 +1520,7 @@ class BLN(CLM):
         ('referred_to_tvet', _('Referred to TVET')),
         ('referred_to_ybln', _('Referred to YBLN')),
         ('dropout', _('Dropout, referral not possible')),
+        ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
         ('other', _('Other')),
     )
     REGISTRATION_LEVEL = (
@@ -1665,7 +1667,6 @@ class BLN(CLM):
             ('List database', _('List database')),
             ('abln', _('ABLN')),
             ('RIMS', _('RIMS')),
-            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
@@ -2037,6 +2038,7 @@ class ABLN(CLM):
         ('dropout', _('Dropout, referral not possible')),
         ('referred_public_school', _('Referred to public school')),
         ('referred_to_tvet', _('Referred to TVET')),
+        ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
         ('other', _('Other')),
     )
     REGISTRATION_LEVEL = (
@@ -2180,7 +2182,6 @@ class ABLN(CLM):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('RIMS', _('RIMS')),
-            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
             # ('bln', _('BLN'))
         ),
@@ -2863,6 +2864,7 @@ class CBECE(CLM):
         ('referred_to_tvet', _('Referred to TVET')),
         ('referred_to_ycbece', _('Referred to YCBECE')),
         ('dropout', _('Dropout, referral not possible')),
+        ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
         ('other', _('Other')),
     )
     REGISTRATION_LEVEL = (
@@ -3069,7 +3071,6 @@ class CBECE(CLM):
             ('From hosted community', _('From hosted community')),
             ('From displaced community', _('From displaced community')),
             ('RIMS', _('RIMS')),
-            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')

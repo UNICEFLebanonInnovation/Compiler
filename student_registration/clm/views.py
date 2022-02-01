@@ -2432,7 +2432,8 @@ class BLNViewSet(mixins.RetrieveModelMixin,
                  mixins.UpdateModelMixin,
                  viewsets.GenericViewSet):
     model = BLN
-    queryset = BLN.objects.all()
+    current_round = CLMRound.objects.filter(current_year=True)
+    queryset = BLN.objects.filter(round__in=current_round)
     serializer_class = BLNSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2460,7 +2461,8 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   viewsets.GenericViewSet):
     model = ABLN
-    queryset = ABLN.objects.all()
+    current_round = CLMRound.objects.filter(current_year=True)
+    queryset = ABLN.objects.filter(round__in=current_round)
     serializer_class = ABLNSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2504,10 +2506,6 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return qs
 
     def delete(self, request, *args, **kwargs):
-        print('-----------------------------------------------------------------------------------------------')
-        print('I am here')
-        print('-----------------------------------------------------------------------------------------------')
-
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
@@ -2543,7 +2541,8 @@ class RSViewSet(mixins.RetrieveModelMixin,
                 mixins.UpdateModelMixin,
                 viewsets.GenericViewSet):
     model = RS
-    queryset = RS.objects.all()
+    current_round = CLMRound.objects.filter(current_year=True)
+    queryset = RS.objects.filter(round__in=current_round)
     serializer_class = RSSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2572,102 +2571,103 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
     model = CBECE
     current_round = CLMRound.objects.filter(current_year=True)
     queryset = CBECE.objects.filter(round__in=current_round)
-
-    serializer_class = CBECEExportSerializer
+    serializer_class = CBECESerializer
+    # serializer_class = CBECEExportSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         from datetime import datetime
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
-            print('hiiiii')
-            qs = self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('-id')
-
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))\
+                # .order_by('-id')
         if self.request.GET.get('school', None):
-            qs = self.queryset.filter(school_id=self.request.GET.get('school', None))
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
-        rows = qs.order_by('id').values_list(
-            'id',
-            'new_registry',
-            'partner',
-            # 'round__name',
-            # 'governorate__name_en',
-            # 'district__name_en',
-            # 'cadaster__name_en',
-            'location',
-            # 'center__name',
-            'language',
-            # 'student__address',
-            'registration_level',
-            'first_attendance_date',
-            # 'student__id_number',
-            # 'student__number',
-            # 'student_first_name',
-            # 'student_father_name',
-            # 'student_last_name',
-            # 'student_mother_fullname',
-            # 'student_sex',
-            # 'student__nationality__name',
-            'other_nationality',
-            # 'student__birthday_day',
-            # 'student__birthday_month',
-            # 'student__birthday_year',
-            # 'student__p_code',
-            # 'disability__name_en',
-            'education_status',
-            'miss_school_date',
-            'internal_number',
-            'rims_case_number',
-            'source_of_identification',
-            'source_of_identification_specify',
-            'source_of_transportation',
-            # 'hh_educational_level__name',
-            # 'father_educational_level__name',
-            'phone_number',
-            'phone_owner',
-            'second_phone_number',
-            'second_phone_owner',
-            'main_caregiver',
-            # 'main_caregiver_nationality__name',
-            'other_caregiver_relationship',
-            'caretaker_first_name',
-            'caretaker_middle_name',
-            'caretaker_last_name',
-            'caretaker_mother_name',
-            'id_type',
-            'case_number',
-            'parent_individual_case_number',
-            'individual_case_number',
-            'recorded_number',
-            'parent_national_number',
-            'national_number',
-            'parent_syrian_national_number',
-            'syrian_national_number',
-            'parent_sop_national_number',
-            'sop_national_number',
-            'parent_other_number',
-            'other_number',
-            # 'student__family_status',
-            # 'student__have_children',
-            'student_number_children',
-            'have_labour_single_selection',
-            'labours_single_selection',
-            'labours_other_specify',
-            'labour_hours',
-            'labour_weekly_income',
-            'participation',
-            'barriers_single',
-            'barriers_other',
-            'round_complete',
-            'basic_stationery',
-            'pss_kit',
-            'learning_result',
-            'learning_result_other',
-            'parent_attended_visits',
-            # 'owner__username',
-            # 'modified_by__username',
-        )[:100]
+        return qs
+
+        # rows = qs.order_by('id').values_list(
+        #     'id',
+        #     'new_registry',
+        #     'partner',
+        #     # 'round__name',
+        #     # 'governorate__name_en',
+        #     # 'district__name_en',
+        #     # 'cadaster__name_en',
+        #     'location',
+        #     # 'center__name',
+        #     'language',
+        #     # 'student__address',
+        #     'registration_level',
+        #     'first_attendance_date',
+        #     # 'student__id_number',
+        #     # 'student__number',
+        #     # 'student_first_name',
+        #     # 'student_father_name',
+        #     # 'student_last_name',
+        #     # 'student_mother_fullname',
+        #     # 'student_sex',
+        #     # 'student__nationality__name',
+        #     'other_nationality',
+        #     # 'student__birthday_day',
+        #     # 'student__birthday_month',
+        #     # 'student__birthday_year',
+        #     # 'student__p_code',
+        #     # 'disability__name_en',
+        #     'education_status',
+        #     'miss_school_date',
+        #     'internal_number',
+        #     'rims_case_number',
+        #     'source_of_identification',
+        #     'source_of_identification_specify',
+        #     'source_of_transportation',
+        #     # 'hh_educational_level__name',
+        #     # 'father_educational_level__name',
+        #     'phone_number',
+        #     'phone_owner',
+        #     'second_phone_number',
+        #     'second_phone_owner',
+        #     'main_caregiver',
+        #     # 'main_caregiver_nationality__name',
+        #     'other_caregiver_relationship',
+        #     'caretaker_first_name',
+        #     'caretaker_middle_name',
+        #     'caretaker_last_name',
+        #     'caretaker_mother_name',
+        #     'id_type',
+        #     'case_number',
+        #     'parent_individual_case_number',
+        #     'individual_case_number',
+        #     'recorded_number',
+        #     'parent_national_number',
+        #     'national_number',
+        #     'parent_syrian_national_number',
+        #     'syrian_national_number',
+        #     'parent_sop_national_number',
+        #     'sop_national_number',
+        #     'parent_other_number',
+        #     'other_number',
+        #     # 'student__family_status',
+        #     # 'student__have_children',
+        #     'student_number_children',
+        #     'have_labour_single_selection',
+        #     'labours_single_selection',
+        #     'labours_other_specify',
+        #     'labour_hours',
+        #     'labour_weekly_income',
+        #     'participation',
+        #     'barriers_single',
+        #     'barriers_other',
+        #     'round_complete',
+        #     'basic_stationery',
+        #     'pss_kit',
+        #     'learning_result',
+        #     'learning_result_other',
+        #     'parent_attended_visits',
+        #     # 'owner__username',
+        #     # 'modified_by__username',
+        # )[:100]
 
         return rows
 

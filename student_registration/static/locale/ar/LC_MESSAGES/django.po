@@ -3494,6 +3494,14 @@ msgstr "كان مسجلاً في مدرسة غير نظامية ولم يكمل"
 msgid "Source of identification of the child to ABLN"
 msgstr "مصدر احالة الطفل  إلى برنامج ABLN"
 
+#: student_registration/clm/inclusion_forms.py:1042
+msgid "Has the child dropped out of the program?"
+msgstr "هل تسرب الطفل من الدورة؟"
+
+#: student_registration/clm/inclusion_forms.py:1053
+msgid "Have the Caregivers been trained on the Parental Engagement Curriculum? "
+msgstr "هل تم تدريب الاهل على منهج المشاركة الوالدين؟  "
+
 #: student_registration/clm/forms.py:2114
 #: student_registration/clm/models.py:1599
 #: student_registration/clm/models.py:1848
@@ -3506,6 +3514,36 @@ msgstr "يرجى التحديد"
 #: student_registration/clm/forms.py:4433
 msgid "In which cycle is this child registered?"
 msgstr "في أي مستوى هذا الطفل مسجل؟"
+
+#: student_registration/clm/forms.py:7615
+#: student_registration/clm/forms.py:8454
+#: student_registration/clm/forms.py:9308
+msgid "Referral to School Bridging Programme"
+msgstr "School Bridging Programme إحالة الى"
+
+#: student_registration/clm/forms.py:6198
+msgid "Referral to School Briding Programme"
+msgstr "School Bridging Programme إحالة الى"
+
+#: student_registration/clm/inclusion_forms.py:1057
+msgid "Mother Only"
+msgstr "الام فقط"
+
+#: student_registration/clm/inclusion_forms.py:1058
+msgid "Father Only"
+msgstr "الاب فقط"
+
+#: student_registration/clm/inclusion_forms.py:1059
+msgid "Both Mother and Father"
+msgstr "الام و الاب"
+
+#: student_registration/clm/inclusion_forms.py:1060
+msgid "None"
+msgstr "لا احد"
+
+#: student_registration/clm/inclusion_forms.py:1061
+msgid "Not begun yet"
+msgstr "لم يبدأ بعد"
 
 #: student_registration/clm/forms.py:2995
 #: student_registration/clm/forms.py:4456

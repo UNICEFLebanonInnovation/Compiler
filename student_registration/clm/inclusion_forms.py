@@ -1058,7 +1058,6 @@ class InclusionFollowupForm(forms.ModelForm):
             ('Father Only', _('Father Only')),
             ('Both Mother and Father', _('Both Mother and Father')),
             ('None', _('None')),
-            ('Other', _('Other')),
             ('Not begun yet', _('Not begun yet')),
         ),
         initial=''

@@ -700,7 +700,6 @@ class BLNForm(CommonForm):
             ('List database', _('List database')),
             ('abln', _('ABLN')),
             ('RIMS', _('RIMS')),
-            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
         ),
         initial=''
@@ -2023,7 +2022,6 @@ class ABLNForm(CommonForm):
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
             ('RIMS', _('RIMS')),
-            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
             # ('bln', _('BLN'))
         ),
@@ -4815,7 +4813,6 @@ class CBECEForm(CommonForm):
             ('From hosted community', _('From hosted community')),
             ('From displaced community', _('From displaced community')),
             ('RIMS', _('RIMS')),
-            ('Referral to School Briding Programme', _('Referral to School Briding Programme')),
             ('Other Sources', _('Other Sources')),
         ),
         initial=''
@@ -7615,6 +7612,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             ('referred_to_ybln', _('Referred to YBLN')),
             ('dropout', _('Dropout, referral not possible')),
             ('referred_to_bln', _('Referred to BLN')),
+            ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
             ('other', _('Other')),
         ),
         initial=''
@@ -8440,6 +8438,7 @@ class BLNAssessmentForm(forms.ModelForm):
             ),
         initial=''
     )
+
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=True,
@@ -8453,8 +8452,8 @@ class BLNAssessmentForm(forms.ModelForm):
             ('referred_to_tvet', _('Referred to TVET')),
             ('referred_to_ybln', _('Referred to YBLN')),
             ('dropout', _('Dropout, referral not possible')),
+            ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
             ('other', _('Other')),
-
         ),
         initial=''
     )
@@ -9306,6 +9305,7 @@ class CBECEAssessmentForm(forms.ModelForm):
             # ('referred_to_tvet', _('Referred to TVET')),
             # ('referred_to_ycbece', _('Referred to YCBECE')),
             ('dropout', _('Dropout, referral not possible')),
+            ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
             ('other', _('Other')),
         ),
         initial=''
