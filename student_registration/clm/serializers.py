@@ -328,7 +328,8 @@ class BLNSerializer(CLMSerializer):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
         )
 
 
@@ -427,7 +428,8 @@ class ABLNSerializer(CLMSerializer):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
         )
 
 
@@ -537,7 +539,8 @@ class RSSerializer(CLMSerializer):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
         )
 
 
@@ -640,7 +643,8 @@ class CBECESerializer(CLMSerializer):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
         )
 
 class OutreachSerializer(CLMSerializer):

@@ -273,7 +273,11 @@ class CLM(TimeStampedModel):
         ('phone', _("Phone calls")),
         ('offline', _("Offline(F2F)"))
     )
-
+    AKELIUS = Choices(
+        ('child using Akelius in Center', _("child using Akelius in Center")),
+        ('child using Akelius at Home', _("child using Akelius at Home")),
+        ('Child is not using Akelius at all', _("Child is not using Akelius at all"))
+    )
     first_attendance_date = models.DateField(
         blank=True,
         null=True,
@@ -1454,7 +1458,17 @@ class CLM(TimeStampedModel):
         verbose_name=_('referal other specify')
     )
 
-    # referal_wash,referal_health,referal_other,referal_other_specify
+    akelius_program = ArrayField(
+        models.CharField(
+            choices=AKELIUS,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Did the child use Akelius program')
+    )
 
     @property
     def student_fullname(self):

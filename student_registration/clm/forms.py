@@ -272,6 +272,7 @@ class CommonForm(forms.ModelForm):
         choices=DAYS
     )
 
+
     # participation = forms.ChoiceField(
     #     label=_('How was the level of child participation in the program?'),
     #     widget=forms.Select, required=False,
@@ -7968,6 +7969,12 @@ class ABLNAssessmentForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
 
+    akelius_program = forms.MultipleChoiceField(
+        label=_('Did the child use Akelius program'),
+        choices=CLM.AKELIUS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
 
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -8074,48 +8081,44 @@ class ABLNAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('akelius_program', css_class='col-md-2 multiple-checbkoxes'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">13.1</span>'),
                     Div('modality_arabic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">12.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">13.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
-                # Div(
-                #     HTML('<span class="badge badge-default">7</span>'),
-                #     Div('attended_english', css_class='col-md-2'),
-                #     HTML('<span class="badge badge-default" id="span_modality_english">7.1</span>'),
-                #     Div('modality_english', css_class='col-md-2  multiple-checbkoxes'),
-                #     HTML('<span class="badge badge-default" id="span_english">7.2</span>'),
-                #     Div('english', css_class='col-md-2'),
-                #     css_class='row grades',
-                # ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">14.1</span>'),
                     Div('modality_math', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">13.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">14.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">14.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">15.1</span>'),
                     Div('modality_social', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">14.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">15.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">15.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">16.1</span>'),
                     Div('modality_artistic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_artistic">15.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_artistic">16.2</span>'),
                     Div('artistic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
@@ -8412,7 +8415,8 @@ class ABLNAssessmentForm(forms.ModelForm):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
 
         )
 
@@ -8814,6 +8818,13 @@ class BLNAssessmentForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+
+    akelius_program = forms.MultipleChoiceField(
+        label=_('Did the child use Akelius program'),
+        choices=CLM.AKELIUS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
 
@@ -8917,48 +8928,53 @@ class BLNAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('akelius_program', css_class='col-md-2 multiple-checbkoxes'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">13.1</span>'),
                     Div('modality_arabic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">12.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">13.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">14.1</span>'),
                     Div('modality_english', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">13.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_english">14.2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">14.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">15.1</span>'),
                     Div('modality_math', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">14.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">15.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">15.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">16.1</span>'),
                     Div('modality_social', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">15.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">16.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">16.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_artistic">17.1</span>'),
                     Div('modality_artistic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_artistic">16.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_artistic">17.2</span>'),
                     Div('artistic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
@@ -9266,7 +9282,8 @@ class BLNAssessmentForm(forms.ModelForm):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
             # 'child_health_examed',
             # 'child_health_concern',
         )
@@ -9716,6 +9733,13 @@ class CBECEAssessmentForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+
+    akelius_program = forms.MultipleChoiceField(
+        label=_('Did the child use Akelius program'),
+        choices=CLM.AKELIUS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -9817,47 +9841,52 @@ class CBECEAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('akelius_program', css_class='col-md-2 multiple-checbkoxes'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">13.1</span>'),
                     Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">12.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">13.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">14.1</span>'),
                     Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">13.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_english">14.2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">14.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">15.1</span>'),
                     Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">14.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">15.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('attended_science', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_science">15.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_science">16.1</span>'),
                     Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_science">15.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_science">16.2</span>'),
                     Div('science', css_class='col-md-2'),
                     css_class='row grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">16.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_social">17.1</span>'),
                     Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">16.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">17.2</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row grades',
                 ),
@@ -10208,7 +10237,8 @@ class CBECEAssessmentForm(forms.ModelForm):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
             # 'child_health_examed',
             # 'child_health_concern',
         )
@@ -11248,6 +11278,12 @@ class RSAssessmentForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+    akelius_program = forms.MultipleChoiceField(
+        label=_('Did the child use Akelius program'),
+        choices=CLM.AKELIUS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -11349,56 +11385,61 @@ class RSAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('akelius_program', css_class='col-md-2 multiple-checbkoxes'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_arabic">13.1</span>'),
                     Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">12.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">13.2</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_english">14.1</span>'),
                     Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">13.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_english">14.2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">14.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_math">15.1</span>'),
                     Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">14.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">15.2</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('attended_science', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_science">15.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_science">16.1</span>'),
                     Div('modality_science', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_science">15.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_science">16.2</span>'),
                     Div('science', css_class='col-md-2'),
                     css_class='row grd6 grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('attended_biology', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_biology">15.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_biology">16.1</span>'),
                     Div('modality_biology', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_biology">15.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_biology">16.2</span>'),
                     Div('biology', css_class='col-md-2'),
                     css_class='row grd7 grades',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('attended_chemistry', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_chemistry">16.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_modality_chemistry">17.1</span>'),
                     Div('modality_chemistry', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_chemistry">16.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_chemistry">17.2</span>'),
                     Div('chemistry', css_class='col-md-2'),
                     css_class='row grd7 grades',
                 ),
@@ -11734,7 +11775,8 @@ class RSAssessmentForm(forms.ModelForm):
             'referal_wash',
             'referal_health',
             'referal_other',
-            'referal_other_specify'
+            'referal_other_specify',
+            'akelius_program'
             # 'child_health_examed',
             # 'child_health_concern',
         )

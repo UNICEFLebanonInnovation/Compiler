@@ -3521,6 +3521,27 @@ msgstr "في أي مستوى هذا الطفل مسجل؟"
 msgid "Referral to School Bridging Programme"
 msgstr "School Bridging Programme إحالة الى"
 
+#: student_registration/clm/forms.py:11282
+#: student_registration/clm/forms.py:7873
+#: student_registration/clm/forms.py:8823
+#: student_registration/clm/forms.py:9738
+msgid "Did the child use Akelius program"
+msgstr "Akelius هل استعمل الطفل برنامج"
+
+
+#: student_registration/clm/models.py:278
+msgid "child using Akelius in Center"
+msgstr "نعم استعمل في المركز"
+
+#: student_registration/clm/models.py:279
+msgid "child using Akelius at Home"
+msgstr "نعم استعمل في البيت"
+
+#: student_registration/clm/models.py:279
+msgid "Child is not using Akelius at all"
+msgstr "كلا لم يستعمله ابدا"
+
+
 #: student_registration/clm/forms.py:6198
 msgid "Referral to School Briding Programme"
 msgstr "School Bridging Programme إحالة الى"
