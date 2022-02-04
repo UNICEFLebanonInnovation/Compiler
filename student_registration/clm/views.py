@@ -31,7 +31,7 @@ from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from student_registration.students.models import Person
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter, GeneralQuestionnaireFilter, OutreachFilter
-from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable, GeneralQuestionnaireTable , OutreachTable
+from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable, GeneralQuestionnaireTable, OutreachTable
 from .models import (
     BLN,
     ABLN,
@@ -44,7 +44,7 @@ from .models import (
     BLN_FC,
     CBECE_FC,
     RS_FC,
-    GeneralQuestionnaire ,
+    GeneralQuestionnaire,
     Center,
     Outreach
 )
@@ -88,7 +88,8 @@ from .serializers import (
     OutreachSerializer,
     CBECEExportSerializer
 )
-from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction , cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction
+from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
+    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction
 
 
 class CLMView(LoginRequiredMixin,
@@ -188,7 +189,8 @@ class BLNAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return BLNForm(self.request.POST, instance=None, request=self.request)
         else:
-            return BLNForm(None, instance=None, request=self.request,initial=self.get_initial())
+            return BLNForm(None, instance=None, request=self.request, initial=self.get_initial())
+
 
 class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
@@ -328,8 +330,8 @@ class AssessmentSubmission(SingleObjectMixin, View):
     def post(self, request, *args, **kwargs):
 
         if 'status' not in request.body and \
-                'enrollment_id' not in request.body and \
-                'enrollment_model' not in request.body:
+            'enrollment_id' not in request.body and \
+            'enrollment_model' not in request.body:
             return HttpResponseBadRequest()
 
         payload = json.loads(request.body.decode('utf-8'))
@@ -375,7 +377,7 @@ class BLNListView(LoginRequiredMixin,
         force_default_language(self.request)
 
         return BLN.objects.filter(partner=self.request.user.partner_id,
-                                    round__current_year=True).order_by('-id')
+                                  round__current_year=True).order_by('-id')
         # return BLN.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
         # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
@@ -609,8 +611,8 @@ class ABLNAddView(LoginRequiredMixin,
 
 
 class ABLNEditView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
+                   GroupRequiredMixin,
+                   FormView):
     template_name = 'clm/abln_edit_form.html'
     form_class = ABLNForm
     success_url = '/clm/abln-list/'
@@ -702,6 +704,7 @@ class ABLNEditView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(ABLNEditView, self).form_valid(form)
 
+
 class ABLNMonitoringQuestionerView(LoginRequiredMixin,
                                    GroupRequiredMixin,
                                    FormView):
@@ -749,7 +752,7 @@ class ABLNListView(LoginRequiredMixin,
         force_default_language(self.request)
 
         return ABLN.objects.filter(partner=self.request.user.partner_id,
-                                  round__current_year=True).order_by('-id')
+                                   round__current_year=True).order_by('-id')
 
         # return ABLN.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
@@ -787,8 +790,8 @@ class ABLNReferralView(LoginRequiredMixin,
 
 
 class ABLNPostAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
+                             GroupRequiredMixin,
+                             FormView):
     template_name = 'clm/abln_post_assessment.html'
     form_class = ABLNAssessmentForm
     success_url = '/clm/abln-list/'
@@ -849,7 +852,6 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
                     if "ABLN_ASSESSMENT/social_emotional" in p_test:
                         data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
 
-
                     if "ABLN_ASSESSMENT/attended_artistic" in p_test:
                         data['attended_artistic'] = p_test["ABLN_ASSESSMENT/attended_artistic"]
 
@@ -868,8 +870,8 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
 
 
 class ABLNFCAddView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
+                    GroupRequiredMixin,
+                    FormView):
     template_name = 'clm/abln_fc_form.html'
     form_class = ABLNFCForm
     success_url = '/clm/abln-list/'
@@ -897,13 +899,13 @@ class ABLNFCAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
 
-
-        instance = ABLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+        instance = ABLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
+                                          fc_type=self.kwargs['fc_type']).first()
 
         if self.request.method == "POST":
-            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
 
-            return ABLNFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
+            return ABLNFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
         else:
             if instance:
                 data = ABLN_FCSerializer(instance).data
@@ -917,10 +919,9 @@ class ABLNFCAddView(LoginRequiredMixin,
                     data['subject_taught'] = fc_type[0]
                 return ABLNFCForm(initial=data, request=self.request)
 
-
     def form_valid(self, form):
-        instance = ABLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
-
+        instance = ABLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
+                                          fc_type=self.kwargs['fc_type']).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -931,8 +932,8 @@ class ABLNFCAddView(LoginRequiredMixin,
 
 
 class BLNFCAddView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
+                   GroupRequiredMixin,
+                   FormView):
     template_name = 'clm/bln_fc_form.html'
     form_class = BLNFCForm
     success_url = '/clm/bln-list/'
@@ -960,28 +961,27 @@ class BLNFCAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
 
-
-        instance = BLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+        instance = BLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
+                                         fc_type=self.kwargs['fc_type']).first()
 
         if self.request.method == "POST":
-            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
-            return BLNFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
+            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
+            return BLNFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
         else:
             if instance:
                 data = BLN_FCSerializer(instance).data
                 return BLNFCForm(data, initial=data, instance=instance, request=self.request)
 
             else:
-                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
                 splittedFCType = self.kwargs['fc_type'].split('-')
                 if len(splittedFCType) >= 1:
                     data['subject_taught'] = splittedFCType[0]
-                return BLNFCForm(initial = data,request=self.request)
-
+                return BLNFCForm(initial=data, request=self.request)
 
     def form_valid(self, form):
-        instance = BLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
-
+        instance = BLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
+                                         fc_type=self.kwargs['fc_type']).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -989,7 +989,6 @@ class BLNFCAddView(LoginRequiredMixin,
             form.save(self.request)
 
         return super(BLNFCAddView, self).form_valid(form)
-
 
 
 class RSFCAddView(LoginRequiredMixin,
@@ -1022,13 +1021,13 @@ class RSFCAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
 
-
-        instance = RS_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+        instance = RS_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
+                                        fc_type=self.kwargs['fc_type']).first()
 
         if self.request.method == "POST":
-            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
 
-            return RSFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
+            return RSFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
         else:
             if instance:
                 data = RS_FCSerializer(instance).data
@@ -1036,16 +1035,15 @@ class RSFCAddView(LoginRequiredMixin,
                 return RSFCForm(data, initial=data, instance=instance, request=self.request)
 
             else:
-                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
                 splittedFCType = self.kwargs['fc_type'].split('-')
                 if len(splittedFCType) >= 1:
                     data['subject_taught'] = splittedFCType[0]
-                return RSFCForm(initial = data,request=self.request)
-
+                return RSFCForm(initial=data, request=self.request)
 
     def form_valid(self, form):
-        instance = RS_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
-
+        instance = RS_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
+                                        fc_type=self.kwargs['fc_type']).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -1056,8 +1054,8 @@ class RSFCAddView(LoginRequiredMixin,
 
 
 class CBECEFCAddView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
+                     GroupRequiredMixin,
+                     FormView):
     template_name = 'clm/cbece_fc_form.html'
     form_class = CBECEFCForm
     success_url = '/clm/cbece-list/'
@@ -1085,13 +1083,13 @@ class CBECEFCAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
 
-
-        instance = CBECE_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'], fc_type=self.kwargs['fc_type']).first()
+        instance = CBECE_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
+                                           fc_type=self.kwargs['fc_type']).first()
 
         if self.request.method == "POST":
-            data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
 
-            return CBECEFCForm(self.request.POST, initial = data,instance=instance, request=self.request)
+            return CBECEFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
         else:
             if instance:
                 data = CBECE_FCSerializer(instance).data
@@ -1099,16 +1097,15 @@ class CBECEFCAddView(LoginRequiredMixin,
                 return CBECEFCForm(data, initial=data, instance=instance, request=self.request)
 
             else:
-                data={'enrollment_id':self.kwargs['enrollment_id'],'fc_type':self.kwargs['fc_type']}
+                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
                 splittedFCType = self.kwargs['fc_type'].split('-')
                 if len(splittedFCType) >= 1:
                     data['subject_taught'] = splittedFCType[0]
-                return CBECEFCForm(initial = data,request=self.request)
-
+                return CBECEFCForm(initial=data, request=self.request)
 
     def form_valid(self, form):
-        instance = CBECE_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']), fc_type=self.kwargs['fc_type']).first()
-
+        instance = CBECE_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
+                                           fc_type=self.kwargs['fc_type']).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -1205,8 +1202,8 @@ class BLNPostAssessmentView(LoginRequiredMixin,
 
 
 class CBECEPostAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
+                              GroupRequiredMixin,
+                              FormView):
     template_name = 'clm/cbece_post_assessment.html'
     form_class = CBECEAssessmentForm
     success_url = '/clm/cbece-list/'
@@ -1301,9 +1298,10 @@ class CBECEPostAssessmentView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(CBECEPostAssessmentView, self).form_valid(form)
 
+
 class CBECEMidAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
+                             GroupRequiredMixin,
+                             FormView):
     template_name = 'clm/cbece_mid_assessment.html'
     form_class = CBECEMidAssessmentForm
     success_url = '/clm/cbece-list/'
@@ -1400,8 +1398,8 @@ class CBECEMidAssessmentView(LoginRequiredMixin,
 
 
 class RSPostAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
+                           GroupRequiredMixin,
+                           FormView):
     template_name = 'clm/rs_post_assessment.html'
     form_class = RSAssessmentForm
     success_url = '/clm/rs-list/'
@@ -1426,7 +1424,6 @@ class RSPostAssessmentView(LoginRequiredMixin,
             if 'post_test' in data:
                 p_test = data['post_test']
                 if p_test:
-
 
                     if "RS_ASSESSMENT/attended_arabic" in p_test:
                         data['attended_arabic'] = p_test["RS_ASSESSMENT/attended_arabic"]
@@ -1482,8 +1479,6 @@ class RSPostAssessmentView(LoginRequiredMixin,
                     if "RS_ASSESSMENT/chemistry" in p_test:
                         data['chemistry'] = p_test["RS_ASSESSMENT/chemistry"]
 
-
-
                     if "RS_ASSESSMENT/attended_physics" in p_test:
                         data['attended_physics'] = p_test["RS_ASSESSMENT/attended_physics"]
 
@@ -1499,6 +1494,7 @@ class RSPostAssessmentView(LoginRequiredMixin,
         instance = RS.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(RSPostAssessmentView, self).form_valid(form)
+
 
 class ABLNFollowupView(LoginRequiredMixin,
                        GroupRequiredMixin,
@@ -1812,8 +1808,8 @@ class CBECEDashboardView(LoginRequiredMixin,
 
 
 class RSAddView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   FormView):
+                GroupRequiredMixin,
+                FormView):
     template_name = 'clm/rs_create_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
@@ -1879,8 +1875,8 @@ class RSAddView(LoginRequiredMixin,
 
 
 class RSEditView(LoginRequiredMixin,
-                    GroupRequiredMixin,
-                    FormView):
+                 GroupRequiredMixin,
+                 FormView):
     template_name = 'clm/rs_edit_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
@@ -1930,7 +1926,6 @@ class RSEditView(LoginRequiredMixin,
                     if "RS_ASSESSMENT/arabic" in p_test:
                         data['arabic'] = p_test["RS_ASSESSMENT/arabic"]
 
-
                     if "RS_ASSESSMENT/attended_english" in p_test:
                         data['attended_english'] = p_test["RS_ASSESSMENT/attended_english"]
 
@@ -1939,7 +1934,6 @@ class RSEditView(LoginRequiredMixin,
 
                     if "RS_ASSESSMENT/english" in p_test:
                         data['english'] = p_test["RS_ASSESSMENT/english"]
-
 
                     if "RS_ASSESSMENT/attended_math" in p_test:
                         data['attended_math'] = p_test["RS_ASSESSMENT/attended_math"]
@@ -1950,7 +1944,6 @@ class RSEditView(LoginRequiredMixin,
                     if "RS_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["RS_ASSESSMENT/math"]
 
-
                     if "RS_ASSESSMENT/attended_science" in p_test:
                         data['attended_science'] = p_test["RS_ASSESSMENT/attended_science"]
 
@@ -1959,7 +1952,6 @@ class RSEditView(LoginRequiredMixin,
 
                     if "RS_ASSESSMENT/science" in p_test:
                         data['science'] = p_test["RS_ASSESSMENT/science"]
-
 
                     if "RS_ASSESSMENT/attended_biology" in p_test:
                         data['attended_biology'] = p_test["RS_ASSESSMENT/attended_biology"]
@@ -1970,7 +1962,6 @@ class RSEditView(LoginRequiredMixin,
                     if "RS_ASSESSMENT/biology" in p_test:
                         data['biology'] = p_test["RS_ASSESSMENT/biology"]
 
-
                     if "RS_ASSESSMENT/attended_chemistry" in p_test:
                         data['attended_chemistry'] = p_test["RS_ASSESSMENT/attended_chemistry"]
 
@@ -1979,7 +1970,6 @@ class RSEditView(LoginRequiredMixin,
 
                     if "RS_ASSESSMENT/chemistry" in p_test:
                         data['chemistry'] = p_test["RS_ASSESSMENT/chemistry"]
-
 
                     if "RS_ASSESSMENT/attended_physics" in p_test:
                         data['attended_physics'] = p_test["RS_ASSESSMENT/attended_physics"]
@@ -1998,14 +1988,12 @@ class RSEditView(LoginRequiredMixin,
         return super(RSEditView, self).form_valid(form)
 
 
-
-
 class RSListView(LoginRequiredMixin,
-                    GroupRequiredMixin,
-                    FilterView,
-                    ExportMixin,
-                    SingleTableView,
-                    RequestConfig):
+                 GroupRequiredMixin,
+                 FilterView,
+                 ExportMixin,
+                 SingleTableView,
+                 RequestConfig):
     table_class = RSTable
     model = RS
     template_name = 'clm/rs_list.html'
@@ -2018,7 +2006,7 @@ class RSListView(LoginRequiredMixin,
         force_default_language(self.request)
 
         return RS.objects.filter(partner=self.request.user.partner_id,
-                                  round__current_year=True).order_by('-id')
+                                 round__current_year=True).order_by('-id')
         # return RS.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
         # return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
@@ -2092,7 +2080,7 @@ class CBECEAddView(LoginRequiredMixin,
 
         if self.request.method == "POST":
             return CBECEForm(self.request.POST, instance=None, request=self.request)
-        else :
+        else:
             return CBECEForm(None, instance=None, request=self.request, initial=self.get_initial())
 
 
@@ -2256,7 +2244,7 @@ class CBECEListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return CBECE.objects.filter(partner=self.request.user.partner_id,
-                                  round__current_year=True).order_by('-id')
+                                    round__current_year=True).order_by('-id')
 
         # return CBECE.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
@@ -2264,11 +2252,11 @@ class CBECEListView(LoginRequiredMixin,
 
 
 class GeneralQuestionnaireListView(LoginRequiredMixin,
-                    GroupRequiredMixin,
-                    FilterView,
-                    ExportMixin,
-                    SingleTableView,
-                    RequestConfig):
+                                   GroupRequiredMixin,
+                                   FilterView,
+                                   ExportMixin,
+                                   SingleTableView,
+                                   RequestConfig):
     table_class = GeneralQuestionnaireTable
     model = GeneralQuestionnaire
     template_name = 'clm/general_questionnaire_list.html'
@@ -2281,9 +2269,10 @@ class GeneralQuestionnaireListView(LoginRequiredMixin,
         force_default_language(self.request)
         return GeneralQuestionnaire.objects.all().order_by('-id')
 
+
 class GeneralQuestionnaireAddView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
+                                  GroupRequiredMixin,
+                                  FormView):
     template_name = 'clm/general_questionnaire_create_form.html'
     form_class = GeneralQuestionnaireForm
     success_url = '/clm/general-questionnaire-list/'
@@ -2330,8 +2319,8 @@ class GeneralQuestionnaireAddView(LoginRequiredMixin,
 
 
 class GeneralQuestionnaireEditView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
+                                   GroupRequiredMixin,
+                                   FormView):
     template_name = 'clm/general_questionnaire_edit_form.html'
     form_class = GeneralQuestionnaireForm
     success_url = '/clm/general_questionnaire_list/'
@@ -2364,6 +2353,7 @@ class GeneralQuestionnaireEditView(LoginRequiredMixin,
         instance = GeneralQuestionnaire.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(GeneralQuestionnaireEditView, self).form_valid(form)
+
 
 class CBECEReferralView(LoginRequiredMixin,
                         GroupRequiredMixin,
@@ -2432,8 +2422,9 @@ class BLNViewSet(mixins.RetrieveModelMixin,
                  mixins.UpdateModelMixin,
                  viewsets.GenericViewSet):
     model = BLN
-    current_round = CLMRound.objects.filter(current_year=True)
-    queryset = BLN.objects.filter(round__in=current_round)
+    # current_round = CLMRound.objects.filter(current_year=True)
+    # queryset = BLN.objects.filter(round__in=current_round)
+    queryset = BLN.objects.all()
     serializer_class = BLNSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2443,7 +2434,8 @@ class BLNViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2461,8 +2453,9 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   viewsets.GenericViewSet):
     model = ABLN
-    current_round = CLMRound.objects.filter(current_year=True)
-    queryset = ABLN.objects.filter(round__in=current_round)
+    # current_round = CLMRound.objects.filter(current_year=True)
+    queryset = ABLN.objects.all()
+        # .filter(round__in=current_round)
     serializer_class = ABLNSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2472,7 +2465,7 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2483,11 +2476,12 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
+
 class OutreachViewSet(mixins.RetrieveModelMixin,
-                 mixins.ListModelMixin,
-                 mixins.CreateModelMixin,
-                 mixins.UpdateModelMixin,
-                 viewsets.GenericViewSet):
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
     model = Outreach
     queryset = Outreach.objects.all()
     serializer_class = OutreachSerializer
@@ -2499,7 +2493,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
         # if self.request.GET.get('school', None):
         #     return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2512,10 +2506,10 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
 
 
 class GeneralQuestionnaireViewSet(mixins.RetrieveModelMixin,
-                      mixins.ListModelMixin,
-                      mixins.CreateModelMixin,
-                      mixins.UpdateModelMixin,
-                      viewsets.GenericViewSet):
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
     model = GeneralQuestionnaire
     queryset = GeneralQuestionnaire.objects.all()
     serializer_class = GeneralQuestionnaireSerializer
@@ -2527,7 +2521,7 @@ class GeneralQuestionnaireViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
         return qs
 
     def delete(self, request, *args, **kwargs):
@@ -2541,8 +2535,9 @@ class RSViewSet(mixins.RetrieveModelMixin,
                 mixins.UpdateModelMixin,
                 viewsets.GenericViewSet):
     model = RS
-    current_round = CLMRound.objects.filter(current_year=True)
-    queryset = RS.objects.filter(round__in=current_round)
+    # current_round = CLMRound.objects.filter(current_year=True)
+    queryset = RS.objects.all()
+        # .filter(round__in=current_round)
     serializer_class = RSSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2551,7 +2546,7 @@ class RSViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2569,8 +2564,9 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
                    mixins.UpdateModelMixin,
                    viewsets.GenericViewSet):
     model = CBECE
-    current_round = CLMRound.objects.filter(current_year=True)
-    queryset = CBECE.objects.filter(round__in=current_round)
+    # current_round = CLMRound.objects.filter(current_year=True)
+    queryset = CBECE.objects.all()
+    # .filter(round__in=current_round)
     serializer_class = CBECESerializer
     # serializer_class = CBECEExportSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -2580,8 +2576,8 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))\
-                # .order_by('-id')
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+            # .order_by('-id')
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2717,6 +2713,7 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
                 ).distinct()
             return qs
 
+
 class BLNExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     qs_students = BLN.objects.filter(round__in=current_round)
@@ -2734,6 +2731,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         return bln_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+
 
 class ABLNExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
@@ -2753,6 +2751,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         return abln_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
 
+
 class CBECEExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     qs_students = CBECE.objects.filter(round__in=current_round)
@@ -2770,6 +2769,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         return cbece_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+
 
 class RSExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
@@ -2790,6 +2790,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         return rs_build_xls_extraction(self.get_queryset_students())
         # return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
 
+
 def load_districts(request):
     id_governorate = request.GET.get('id_governorate')
     cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
@@ -2800,6 +2801,7 @@ def load_cadasters(request):
     id_district = request.GET.get('id_district')
     cities = Location.objects.filter(parent_id=id_district).order_by('name')
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
+
 
 def search_clm_child(request):
     from django.db.models.functions import Concat
@@ -2836,7 +2838,7 @@ def search_clm_child(request):
         else:
             # for term in terms:
             # .filter(partner=request.user.partner_id)
-            qs = model.objects\
+            qs = model.objects \
                 .filter(
                 Q(student__first_name__contains=term) |
                 Q(student__father_name__contains=term) |
@@ -2917,10 +2919,9 @@ def search_clm_duplicate_registration(request):
         qsjson = json.dumps(list(qs))
         student = json.loads(qsjson)[0]
         partner_name = (student["partner__name"])
-        str_partner_name= str(partner_name)
+        str_partner_name = str(partner_name)
 
-
-    if str_partner_name!='':
+    if str_partner_name != '':
         return JsonResponse({'result': str(partner_name)})
     elif clm_type == 'BLN':
         model = ABLN
@@ -2941,13 +2942,12 @@ def search_clm_duplicate_registration(request):
                                    parent_national_number,
                                    parent_other_number)
 
-
     str_partner_name = ''
     if qs:
         qsjson = json.dumps(list(qs))
         student = json.loads(qsjson)[0]
         partner_name = (student["partner__name"])
-        str_partner_name= str(partner_name)
+        str_partner_name = str(partner_name)
 
     return JsonResponse({'result': str_partner_name})
 
@@ -3134,8 +3134,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
 
 
 class OutreachAddView(LoginRequiredMixin,
-                 GroupRequiredMixin,
-                 FormView):
+                      GroupRequiredMixin,
+                      FormView):
     template_name = 'clm/outreach_create_form.html'
     form_class = OutreachForm
     success_url = '/clm/outreach-list/'
@@ -3197,11 +3197,12 @@ class OutreachAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return OutreachForm(self.request.POST, instance=None, request=self.request)
         else:
-            return OutreachForm(None, instance=None, request=self.request,initial=self.get_initial())
+            return OutreachForm(None, instance=None, request=self.request, initial=self.get_initial())
+
 
 class OutreachEditView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
+                       GroupRequiredMixin,
+                       FormView):
     template_name = 'clm/outreach_edit_form.html'
     form_class = OutreachForm
     success_url = '/clm/outreach-list/'
@@ -3239,11 +3240,11 @@ class OutreachEditView(LoginRequiredMixin,
 
 
 class OutreachListView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FilterView,
-                  ExportMixin,
-                  SingleTableView,
-                  RequestConfig):
+                       GroupRequiredMixin,
+                       FilterView,
+                       ExportMixin,
+                       SingleTableView,
+                       RequestConfig):
     table_class = OutreachTable
     model = Outreach
     template_name = 'clm/outreach_list.html'
@@ -3269,4 +3270,3 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         return outreach_build_xls_extraction(self.get_queryset_students())
-
