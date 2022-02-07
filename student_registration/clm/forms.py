@@ -3551,7 +3551,7 @@ class RSForm(CommonForm):
         widget=forms.Select, required=True,
         choices=RS.SCHOOL_SHIFTS
     )
-    grade_registration =  forms.ChoiceField(
+    grade_registration = forms.ChoiceField(
         label=_("Grade of registeration"),
         widget=forms.Select, required=True,
         choices=(
@@ -11227,9 +11227,14 @@ class RSAssessmentForm(forms.ModelForm):
 
     grade_registration =  forms.ChoiceField(
         label=_("Grade of registeration"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
+            ('1', _('1')),
+            ('2', _('2')),
+            ('3', _('3')),
+            ('4', _('4')),
+            ('5', _('5')),
             ('6', _('6')),
             ('7', _('7')),
             ('8', _('8')),
