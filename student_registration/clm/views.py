@@ -30,8 +30,25 @@ from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from student_registration.students.models import Person
-from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter, GeneralQuestionnaireFilter, OutreachFilter
-from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable, GeneralQuestionnaireTable, OutreachTable
+from .filters import (
+    BLNFilter,
+    ABLNFilter,
+    RSFilter,
+    CBECEFilter,
+    GeneralQuestionnaireFilter,
+    OutreachFilter,
+    BridgingFilter
+)
+from .tables import (
+    BootstrapTable,
+    BLNTable,
+    ABLNTable,
+    RSTable,
+    CBECETable,
+    GeneralQuestionnaireTable,
+    OutreachTable,
+    BridgingTable
+)
 from .models import (
     BLN,
     ABLN,
@@ -46,7 +63,8 @@ from .models import (
     RS_FC,
     GeneralQuestionnaire,
     Center,
-    Outreach
+    Outreach,
+    Bridging
 )
 from .forms import (
     BLNForm,
@@ -72,7 +90,8 @@ from .forms import (
     RSFCForm,
     CBECEFCForm,
     GeneralQuestionnaireForm,
-    OutreachForm
+    OutreachForm,
+    BridgingForm
 )
 from .serializers import (
     BLNSerializer,
@@ -86,10 +105,11 @@ from .serializers import (
     RS_FCSerializer,
     GeneralQuestionnaireSerializer,
     OutreachSerializer,
-    CBECEExportSerializer
+    CBECEExportSerializer,
+    BridgingSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
-    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction
+    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, bridging_build_xls_extraction
 
 
 class CLMView(LoginRequiredMixin,
@@ -3270,3 +3290,221 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         return outreach_build_xls_extraction(self.get_queryset_students())
+
+
+class BridgingAddView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      FormView):
+    template_name = 'clm/bridging_create_form.html'
+    form_class = BridgingForm
+    success_url = '/clm/Bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/Bridging-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/Bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='Bridging',
+                assessment_slug='Bridging_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:Bridging_edit',
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = is_allowed_create('Bridging')
+        return super(BridgingAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(BridgingAddView, self).get_initial()
+        data = {
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
+        }
+        if self.request.GET.get('enrollment_id'):
+            instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
+            data = BridgingSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+            data = ChildSerializer(instance).data
+
+        if self.request.GET.get('outreach_id'):
+            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+            data = BridgingSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(BridgingAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return BridgingForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return BridgingForm(None, instance=None, request=self.request, initial=self.get_initial())
+
+
+class BridgingEditView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+    template_name = 'clm/bridging_edit_form.html'
+    form_class = BridgingForm
+    success_url = '/clm/Bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/Bridging-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/Bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='Bridging',
+                assessment_slug='Bridging_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:Bridging_edit',
+                                                                 kwargs={
+                                                                     'pk': self.request.session.get('instance_id')})))
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_edit'] = is_allowed_edit('Bridging')
+        return super(BridgingEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return BridgingForm(self.request.POST, instance=instance, request=self.request)
+        else:
+            data = BridgingSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            if 'pre_test' in data:
+                p_test = data['pre_test']
+                if p_test:
+                    if "Bridging_ASSESSMENT/attended_arabic" in p_test:
+                        data['attended_arabic'] = p_test["Bridging_ASSESSMENT/attended_arabic"]
+
+                    if "Bridging_ASSESSMENT/modality_arabic" in p_test:
+                        data['modality_arabic'] = p_test["Bridging_ASSESSMENT/modality_arabic"]
+
+                    if "Bridging_ASSESSMENT/arabic" in p_test:
+                        data['arabic'] = p_test["Bridging_ASSESSMENT/arabic"]
+
+                    if "Bridging_ASSESSMENT/attended_english" in p_test:
+                        data['attended_english'] = p_test["Bridging_ASSESSMENT/attended_english"]
+
+                    if "Bridging_ASSESSMENT/modality_english" in p_test:
+                        data['modality_english'] = p_test["Bridging_ASSESSMENT/modality_english"]
+
+                    if "Bridging_ASSESSMENT/english" in p_test:
+                        data['english'] = p_test["Bridging_ASSESSMENT/english"]
+
+                    if "Bridging_ASSESSMENT/attended_math" in p_test:
+                        data['attended_math'] = p_test["Bridging_ASSESSMENT/attended_math"]
+
+                    if "Bridging_ASSESSMENT/modality_math" in p_test:
+                        data['modality_math'] = p_test["Bridging_ASSESSMENT/modality_math"]
+
+                    if "Bridging_ASSESSMENT/math" in p_test:
+                        data['math'] = p_test["Bridging_ASSESSMENT/math"]
+
+                    if "Bridging_ASSESSMENT/attended_social" in p_test:
+                        data['attended_social'] = p_test["Bridging_ASSESSMENT/attended_social"]
+
+                    if "Bridging_ASSESSMENT/modality_social" in p_test:
+                        data['modality_social'] = p_test["Bridging_ASSESSMENT/modality_social"]
+
+                    if "Bridging_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["Bridging_ASSESSMENT/social_emotional"]
+
+                    if "Bridging_ASSESSMENT/attended_artistic" in p_test:
+                        data['attended_artistic'] = p_test["Bridging_ASSESSMENT/attended_artistic"]
+                    elif "Bridging_ASSESSMENT/attended_psychomotor" in p_test:
+                        data['attended_artistic'] = p_test["Bridging_ASSESSMENT/attended_psychomotor"]
+
+                    if "Bridging_ASSESSMENT/modality_artistic" in p_test:
+                        data['modality_artistic'] = p_test["Bridging_ASSESSMENT/modality_artistic"]
+                    elif "Bridging_ASSESSMENT/modality_psychomotor" in p_test:
+                        data['modality_artistic'] = p_test["Bridging_ASSESSMENT/modality_psychomotor"]
+
+                    if "Bridging_ASSESSMENT/modality_artistic" in p_test:
+                        data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
+                    elif "Bridging_ASSESSMENT/psychomotor" in p_test:
+                        data['artistic'] = p_test["Bridging_ASSESSMENT/psychomotor"]
+
+            return BridgingForm(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(BridgingEditView, self).form_valid(form)
+
+
+class BridgingListView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FilterView,
+                       ExportMixin,
+                       SingleTableView,
+                       RequestConfig):
+    table_class = BridgingTable
+    model = Bridging
+    template_name = 'clm/bridging_list.html'
+    table = BootstrapTable(Bridging.objects.all(), order_by='id')
+    group_required = [u"CLM_Bridging"]
+
+    filterset_class = BridgingFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+
+        return Bridging.objects.filter(partner=self.request.user.partner_id,
+                                       round__current_year=True).order_by('-id')
+        # return Bridging.objects.filter(partner=self.request.user.partner_id,
+        #                             round__end_date_Bridging__year=Person.CURRENT_YEAR).order_by('-id')
+        # return Bridging.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
+
+
+class BridgingExportViewSet(LoginRequiredMixin, ListView):
+    current_round = CLMRound.objects.filter(current_year=True)
+    qs_students = BLN.objects.filter(round__in=current_round)
+    qs_fc = BLN_FC.objects.filter(enrollment__round__in=current_round)
+
+    def get_queryset_students(self):
+        if not self.request.user.is_staff:
+            return self.qs_students.filter(partner=self.request.user.partner)
+        return self.qs_students
+
+    def get_queryset_fc(self):
+        if not self.request.user.is_staff:
+            return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
+        return self.qs_fc.order_by('enrollment', 'fc_type')
+
+    def get(self, request, *args, **kwargs):
+        return bridging_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())

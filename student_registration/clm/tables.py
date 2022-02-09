@@ -2,7 +2,7 @@
 import django_tables2 as tables
 from django.utils.translation import ugettext as _
 
-from .models import CLM, BLN, ABLN, RS, CBECE, GeneralQuestionnaire, Outreach
+from .models import CLM, BLN, ABLN, RS, CBECE, GeneralQuestionnaire, Outreach, Bridging
 
 
 class BootstrapTable(tables.Table):
@@ -498,6 +498,52 @@ class OutreachTable(CommonTable):
             'student_birthday',
             'student.nationality',
             'student.mother_fullname',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+            'comments',
+        )
+
+
+class BridgingTable(CommonTable):
+
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
+                                        template_name='django_tables2/clm_edit_column.html',
+                                        attrs={'url': '/clm/bridging-edit/', 'programme': 'bridging'})
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/clm-bridging/', 'programme': 'bridging'})
+    class Meta:
+        model = Bridging
+        fields = (
+            'edit_column',
+            'delete_column',
+            'first_attendance_date',
+            'round',
+            'governorate',
+            'district',
+            'internal_number',
+            'student.number',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'student.mother_fullname',
+            'arabic_improvement',
+            'foreign_language_improvement',
+            'math_improvement',
+            'social_emotional_improvement',
+            'psychomotor_improvement',
+            'artistic_improvement',
+            'assessment_improvement',
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
+            'participation',
+            'learning_result',
             'owner',
             'modified_by',
             'created',

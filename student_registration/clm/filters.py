@@ -13,7 +13,8 @@ from .models import (
     Cycle,
     Disability,
     GeneralQuestionnaire,
-    Outreach)
+    Outreach,
+    Bridging)
 
 
 class CommonFilter(FilterSet):
@@ -163,3 +164,24 @@ class OutreachFilter(CommonFilter):
         }
 
 
+class BridgingFilter(CommonFilter):
+
+    class Meta:
+        model = Bridging
+        fields = {
+            'round': ['exact'],
+            'student__id_number': ['contains'],
+            'student__number': ['contains'],
+            'internal_number': ['contains'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
+            'student__nationality': ['exact'],
+            'governorate': ['exact'],
+            'district': ['exact'],
+            # 'participation': ['exact'],
+            'learning_result': ['exact'],
+            'owner__username': ['contains'],
+            'disability': ['exact'],
+        }

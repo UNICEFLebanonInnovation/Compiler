@@ -307,4 +307,25 @@ urlpatterns = [
         name='outreach_list'
     ),
 
+    url(
+        regex=r'^bridging-add/$',
+        view=views.BridgingAddView.as_view(),
+        name='bridging_add'
+    ),
+    url(
+        regex=r'^bridging-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.BridgingEditView.as_view(),
+        name='bridging_edit'
+    ),
+    url(
+        regex=r'^bridging-export/$',
+        view=views.BridgingExportViewSet.as_view(),
+        name='bridging_export'
+    ),
+    url(
+        regex=r'^bridging-list/$',
+        view=views.BridgingListView.as_view(),
+        name='bridging_list'
+    ),
+
 ]
