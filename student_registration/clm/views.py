@@ -3297,21 +3297,21 @@ class BridgingAddView(LoginRequiredMixin,
                       FormView):
     template_name = 'clm/bridging_create_form.html'
     form_class = BridgingForm
-    success_url = '/clm/Bridging-list/'
+    success_url = '/clm/bridging-list/'
     group_required = [u"CLM_Bridging"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
-            return '/clm/Bridging-add/'
+            return '/clm/bridging-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/Bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
                 stage='pre_test',
                 enrollment_model='Bridging',
-                assessment_slug='Bridging_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:Bridging_edit',
+                assessment_slug='bridging_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
                                                                  kwargs={
                                                                      'pk': self.request.session.get('instance_id')})))
         return self.success_url
@@ -3371,21 +3371,21 @@ class BridgingEditView(LoginRequiredMixin,
                        FormView):
     template_name = 'clm/bridging_edit_form.html'
     form_class = BridgingForm
-    success_url = '/clm/Bridging-list/'
+    success_url = '/clm/bridging-list/'
     group_required = [u"CLM_Bridging"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
-            return '/clm/Bridging-add/'
+            return '/clm/bridging-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/Bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
         if self.request.POST.get('save_and_pretest', None):
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
                 stage='pre_test',
                 enrollment_model='Bridging',
-                assessment_slug='Bridging_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:Bridging_edit',
+                assessment_slug='bridging_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
                                                                  kwargs={
                                                                      'pk': self.request.session.get('instance_id')})))
         return self.success_url

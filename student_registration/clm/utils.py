@@ -17,7 +17,6 @@ from datetime import datetime
 
 def is_allowed_create(programme):
     from student_registration.schools.models import CLMRound
-
     try:
         current = date.today()
         current_round = CLMRound.objects.all()
@@ -60,6 +59,13 @@ def is_allowed_create(programme):
 
         if programme == 'GeneralQuestionnaire':
             return True
+
+        if programme == 'Bridging':
+            current_round = current_round.get(current_round_bridging=True)
+            if current_round.start_date_bridging < current < current_round.end_date_bridging:
+                return True
+            return False
+
 
     except Exception as ex:
         print(ex.message)
@@ -112,6 +118,12 @@ def is_allowed_edit(programme):
         if programme == 'GeneralQuestionnaire':
             return True
 
+        if programme == 'bridging':
+            current_round = current_round.get(current_round_bridging=True)
+            if current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit:
+                return True
+            return False
+
     except Exception as ex:
         print(ex.message)
         return False
@@ -121,9 +133,9 @@ def bln_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
-    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
 
-    ws = wbStudent.add_sheet('Student')
+    ws = wb_student.add_sheet('Student')
 
     # Sheet header, first row
     row_num_student = 0
@@ -526,7 +538,7 @@ def bln_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             ws.write(row_num_student, col_num, row[col_num], font_style)
     # FC
-    wsFC = wbStudent.add_sheet('FC')
+    wsFC = wb_student.add_sheet('FC')
     row_num_fc = 0
 
     font_style = xlwt.XFStyle()
@@ -645,7 +657,7 @@ def bln_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-    wbStudent.save(buffer)
+    wb_student.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
@@ -660,9 +672,9 @@ def abln_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
-    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
 
-    ws = wbStudent.add_sheet('Student')
+    ws = wb_student.add_sheet('Student')
 
     # Sheet header, first row
     row_num_student = 0
@@ -1025,7 +1037,7 @@ def abln_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             ws.write(row_num_student, col_num, row[col_num], font_style)
     # FC
-    wsFC = wbStudent.add_sheet('FC')
+    wsFC = wb_student.add_sheet('FC')
     row_num_fc = 0
 
     font_style = xlwt.XFStyle()
@@ -1144,7 +1156,7 @@ def abln_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-    wbStudent.save(buffer)
+    wb_student.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
@@ -1159,9 +1171,9 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
-    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
 
-    ws = wbStudent.add_sheet('Student')
+    ws = wb_student.add_sheet('Student')
 
     # Sheet header, first row
     row_num_student = 0
@@ -1581,7 +1593,7 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             ws.write(row_num_student, col_num, row[col_num], font_style)
     # FC
-    wsFC = wbStudent.add_sheet('FC')
+    wsFC = wb_student.add_sheet('FC')
     row_num_fc = 0
 
     font_style = xlwt.XFStyle()
@@ -1700,7 +1712,7 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-    wbStudent.save(buffer)
+    wb_student.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
@@ -2314,9 +2326,9 @@ def outreach_build_xls_extraction(queryset_students):
     buffer = io.BytesIO()
 
     # Personnel
-    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
 
-    ws = wbStudent.add_sheet('Student')
+    ws = wb_student.add_sheet('Student')
 
     # Sheet header, first row
     row_num_student = 0
@@ -2493,7 +2505,7 @@ def outreach_build_xls_extraction(queryset_students):
         for col_num in range(len(row)):
             ws.write(row_num_student, col_num, row[col_num], font_style)
 
-    wbStudent.save(buffer)
+    wb_student.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
@@ -2508,9 +2520,9 @@ def bridging_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
-    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
 
-    ws = wbStudent.add_sheet('Student')
+    ws = wb_student.add_sheet('Student')
 
     # Sheet header, first row
     row_num_student = 0
@@ -2913,7 +2925,7 @@ def bridging_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             ws.write(row_num_student, col_num, row[col_num], font_style)
     # FC
-    wsFC = wbStudent.add_sheet('FC')
+    wsFC = wb_student.add_sheet('FC')
     row_num_fc = 0
 
     font_style = xlwt.XFStyle()
@@ -3032,7 +3044,7 @@ def bridging_build_xls_extraction(queryset_students, queryset_fc):
         for col_num in range(len(row)):
             wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
-    wbStudent.save(buffer)
+    wb_student.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
@@ -3062,9 +3074,9 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
     # Personnel
-    wbStudent = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
 
-    ws = wbStudent.add_sheet('Student')
+    ws = wb_student.add_sheet('Student')
 
     # Sheet header, first row
     row_num_student = 0
@@ -3506,7 +3518,7 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc):
             ws.write(row_num_student, col_num, row[col_num], font_style)
 
     # FC
-    wsFC = wbStudent.add_sheet('FC')
+    wsFC = wb_student.add_sheet('FC')
     row_num_fc = 0
     row_num_header_fc = 0
 
@@ -3637,7 +3649,7 @@ def build_xls_extraction_horizental(queryset_students, queryset_fc):
                 wsFC.write(row_num_fc, col_num + len(columns_fc_student) + (len(columns_fc) * (subject_type_index))
                            , row[col_num + len(columns_fc_student)], font_style)
 
-    wbStudent.save(buffer)
+    wb_student.save(buffer)
 
     # FileResponse sets the Content-Disposition header so that browsers
     # present the option to save the file.
@@ -3657,7 +3669,7 @@ class MemorySavingQuerysetIterator(object):
 
     def _setup(self):
         for i in xrange(0, self._base_queryset.count(), self.max_obj_num):
-            # By making a copy of of the queryset and using that to actually access
+            # By making a copy of the queryset and using that to actually access
             # the objects we ensure that there are only `max_obj_num` objects in
             # memory at any given time
             smaller_queryset = copy.deepcopy(self._base_queryset)[i:i + self.max_obj_num]
