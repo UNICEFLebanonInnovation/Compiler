@@ -4755,7 +4755,7 @@ msgstr "هل أنهى الطفل المادة المطبوعة لهذا الأس
 #: student_registration/clm/models.py:4931
 msgid ""
 "How many session did this child participate in online classes this week?"
-msgstr "كم يومًا شارك الطّفل في صفوف التّعلّم عن بُعد لهذا الأسبوع؟"
+msgstr "كم مرة شارك الطفل في الحصص عبر الإنترنت لهذا الاسبوع؟"
 
 #: student_registration/clm/forms.py:12343
 #: student_registration/clm/forms.py:12842
@@ -4791,8 +4791,8 @@ msgid ""
 "Any specific actions to be taken with this child before the next lesson for "
 "better participation"
 msgstr ""
-"هل من إجراءات معينة يجب اتخاذها مع هذا الطفل قبل الدرس القادم لضمان مشاركة "
-"أفضل؟"
+"هل من إجراءات معينة يجب اتخاذها مع هذا الطفل قبل الانتقال الى الدرس القادم لضمان مشاركة أفضل؟"
+
 
 #: student_registration/clm/forms.py:12364
 #: student_registration/clm/forms.py:12863
@@ -4817,8 +4817,7 @@ msgid ""
 "Did you notice that this child did not have access to the device or "
 "resources needed to complete the lesson requirements?"
 msgstr ""
-"هل لاحظت أن الطفل لا يستطيع الحصول على الهاتف أو الوسائل الضرورية لإكمال "
-"متطلبات الدرس؟"
+"هل لاحظت أن الطفل لا يستطيع الحصول على الهاتف أو الوسائل الضرورية لإكمال متطلبات الدرس ان كان حضوريا او عن بعد؟"
 
 #: student_registration/clm/forms.py:12374
 #: student_registration/clm/forms.py:12873
@@ -4862,7 +4861,7 @@ msgstr "ملاحظات إضافية/ تحديات معينة/ المتابعة /
 #: student_registration/clm/models.py:4691
 #: student_registration/clm/models.py:4987
 msgid "Targeted Competencies"
-msgstr "الكفاءات المستهدفة"
+msgstr "الكفايات المستهدفة"
 
 #: student_registration/clm/forms.py:12391
 #: student_registration/clm/forms.py:12890
@@ -4886,7 +4885,7 @@ msgstr "النشاطات الواردة في الاستمارة (اختيار م
 msgid ""
 "Did you share with the child caregiver the expectations for weekly "
 "engagement in learning?"
-msgstr "هل شاركت الأهل ما هو متوقع من مشاركة الطفل في التعلم أسبوعيًا؟"
+msgstr "هل تم اعلام الأهل ما هو متوقع من مشاركة الطفل في التعلم أسبوعيًا ؟"
 
 #: student_registration/clm/forms.py:12409
 #: student_registration/clm/forms.py:12908
