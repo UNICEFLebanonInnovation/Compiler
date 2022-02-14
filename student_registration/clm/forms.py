@@ -403,7 +403,7 @@ class BLNForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 6)))
+    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 6)))
     YEARS_BLN.insert(0, ('', '---------'))
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
@@ -4477,7 +4477,7 @@ class CBECEForm(CommonForm):
         ('level_three', _('Level three'))
     )
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 3)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 8, Person.CURRENT_YEAR - 3)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
