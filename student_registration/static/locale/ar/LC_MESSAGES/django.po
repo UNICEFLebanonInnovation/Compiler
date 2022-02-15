@@ -4754,8 +4754,8 @@ msgstr "هل أنهى الطفل المادة المطبوعة لهذا الأس
 #: student_registration/clm/models.py:4635
 #: student_registration/clm/models.py:4931
 msgid ""
-"How many session did this child participate in online classes this week?"
-msgstr "كم مرة شارك الطفل في الحصص عبر الإنترنت لهذا الاسبوع؟"
+"How many session did this child participate in classes this week?"
+msgstr "كم مرة شارك الطفل في التعليم لهذا الاسبوع؟"
 
 #: student_registration/clm/forms.py:12343
 #: student_registration/clm/forms.py:12842
@@ -4955,6 +4955,14 @@ msgstr "لتحضير للدرس و تفاصيله (يقوم المعلم/ة بم
 #: student_registration/clm/forms.py:14102
 msgid "Child wellbeing"
 msgstr "رفاهية الطفل"
+
+#: student_registration/clm/forms.py:13973
+#: student_registration/clm/forms.py:14472
+#: student_registration/clm/forms.py:14970
+#: student_registration/clm/forms.py:15470
+msgid "Current Lesson"
+msgstr "الدرس الحالي"
+
 
 #: student_registration/clm/forms.py:14267
 #: student_registration/clm/models.py:5165
