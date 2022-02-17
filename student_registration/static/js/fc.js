@@ -36,6 +36,7 @@ $(document).ready(function () {
 
     $(document).on('change', 'select#id_attend_lesson, ' +
         'select#id_share_expectations, ' +
+        'select#id_steps_acquire_competency, ' +
         'select#id_meet_objectives_verified, ' +
         'select#id_action_to_taken, ' +
         'select#id_sessions_participated, ' +
@@ -179,7 +180,6 @@ function reorganizeForm()
 
     }
     var attend_lesson = $('select#id_attend_lesson').val();
-
     $('div.attend_lesson_questions').addClass('d-none');
     $('#attend_lesson_questions').addClass('hide');
     $('div#div_id_completed_tasks').removeClass('d-none');
@@ -191,6 +191,8 @@ function reorganizeForm()
         $('#span_completed_tasks').addClass('d-none');
         $('div.attend_lesson_questions').removeClass('d-none');
         $('#attend_lesson_questions').removeClass('hide');
+        $('div.steps_acquire_competency_questions').addClass('d-none');
+        $('#steps_acquire_competency_questions').addClass('hide');
     }
     else {
         $('select#child_interact_teacher').val("no");
@@ -199,6 +201,20 @@ function reorganizeForm()
         $('select#child_ask_questions').val("no");
         $('select#child_acquire_competency').val("no");
         $('select#child_show_improvement').val("no");
+        $('div.steps_acquire_competency_questions').removeClass('d-none');
+        $('#steps_acquire_competency_questions').removeClass('hide');
+    }
+
+    var steps_acquire_competency= $('select#id_attend_lesson').val();
+    if(steps_acquire_competency == 'other'){
+        $('#div_id_steps_acquire_competency_other').removeClass('d-none');
+        $('#span_steps_acquire_competency_other').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_steps_acquire_competency_other').addClass('d-none');
+        $('#span_steps_acquire_competency_other').addClass('d-none');
+        $('#id_steps_acquire_competency_other').val('');
     }
 
 }

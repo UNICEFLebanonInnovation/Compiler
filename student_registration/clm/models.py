@@ -4269,7 +4269,18 @@ class ABLN_FC(TimeStampedModel):
         ('arabic', _("Arabic")),
         ('math', _('Math')),
     )
-
+    LESSON_MODALITY = Choices(
+        ('', '----------'),
+        ('Online', _('Online')),
+        ('Present', _('Present')),
+        ('Blended', _('Blended')),
+    )
+    STEPS_ACQUIRE_COMPETENCY = Choices(
+        ('', '----------'),
+        ('Re-explain', _("Re-explain")),
+        ('Extra Howmework', _("Extra Howmework")),
+        ('other', _('Other')),
+    )
     enrollment = models.ForeignKey(
         ABLN,
         blank=True, null=True,
@@ -4503,6 +4514,26 @@ class ABLN_FC(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
     )
+    lesson_modality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LESSON_MODALITY,
+        verbose_name=_('Lesson Modality')
+    )
+    steps_acquire_competency = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=STEPS_ACQUIRE_COMPETENCY,
+        verbose_name=_('Steps to help the child acquire the targeted competency')
+    )
+
+    steps_acquire_competency_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
 
     class Meta:
         ordering = ['-id']
@@ -4568,6 +4599,18 @@ class BLN_FC(TimeStampedModel):
         ('arabic', _("Arabic")),
         ('language', _("Language")),
         ('math', _("Math")),
+    )
+    LESSON_MODALITY = Choices(
+        ('', '----------'),
+        ('Online', _('Online')),
+        ('Present', _('Present')),
+        ('Blended', _('Blended')),
+    )
+    STEPS_ACQUIRE_COMPETENCY = Choices(
+        ('', '----------'),
+        ('Re-explain', _("Re-explain")),
+        ('Extra Howmework', _("Extra Howmework")),
+        ('other', _('Other')),
     )
     enrollment = models.ForeignKey(
         BLN,
@@ -4802,7 +4845,24 @@ class BLN_FC(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
     )
-
+    lesson_modality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LESSON_MODALITY,
+        verbose_name=_('Lesson Modality')
+    )
+    steps_acquire_competency = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=STEPS_ACQUIRE_COMPETENCY,
+        verbose_name=_('Steps to help the child acquire the targeted competency')
+    )
+    steps_acquire_competency_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
     class Meta:
         ordering = ['-id']
         verbose_name = "FC"
@@ -4875,6 +4935,18 @@ class RS_FC(TimeStampedModel):
         ('arabic', _("Arabic")),
         ('language', _("Language")),
         ('math', _("Math")),
+    )
+    LESSON_MODALITY = Choices(
+        ('', '----------'),
+        ('Online', _('Online')),
+        ('Present', _('Present')),
+        ('Blended', _('Blended')),
+    )
+    STEPS_ACQUIRE_COMPETENCY = Choices(
+        ('', '----------'),
+        ('Re-explain', _("Re-explain")),
+        ('Extra Howmework', _("Extra Howmework")),
+        ('other', _('Other')),
     )
     enrollment = models.ForeignKey(
         RS,
@@ -5109,7 +5181,25 @@ class RS_FC(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
     )
+    lesson_modality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LESSON_MODALITY,
+        verbose_name=_('Lesson Modality')
+    )
+    steps_acquire_competency = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=STEPS_ACQUIRE_COMPETENCY,
+        verbose_name=_('Steps to help the child acquire the targeted competency')
+    )
 
+    steps_acquire_competency_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
     class Meta:
         ordering = ['-id']
         verbose_name = "FC"
@@ -5174,6 +5264,18 @@ class CBECE_FC(TimeStampedModel):
         ('arabic', _("Arabic")),
         ('language', _("Language")),
         ('math', _("Math")),
+    )
+    LESSON_MODALITY = Choices(
+        ('', '----------'),
+        ('Online', _('Online')),
+        ('Present', _('Present')),
+        ('Blended', _('Blended')),
+    )
+    STEPS_ACQUIRE_COMPETENCY = Choices(
+        ('', '----------'),
+        ('Re-explain', _("Re-explain")),
+        ('Extra Howmework', _("Extra Howmework")),
+        ('other', _('Other')),
     )
     enrollment = models.ForeignKey(
         CBECE,
@@ -5408,7 +5510,25 @@ class CBECE_FC(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Additional notes/ specific challenges/ follow up action/ referrals etc.')
     )
+    lesson_modality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LESSON_MODALITY,
+        verbose_name=_('Lesson Modality')
+    )
+    steps_acquire_competency = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=STEPS_ACQUIRE_COMPETENCY,
+        verbose_name=_('Steps to help the child acquire the targeted competency')
+    )
 
+    steps_acquire_competency_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
     class Meta:
         ordering = ['-id']
         verbose_name = "FC"

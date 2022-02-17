@@ -13718,6 +13718,7 @@ class CBECEFollowupForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
+
 class ABLNFCForm(forms.ModelForm):
     facilitator_name = forms.CharField(
         label=_('Facilitator name'),
@@ -13885,9 +13886,22 @@ class ABLNFCForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+    lesson_modality = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=ABLN_FC.LESSON_MODALITY,
+        label=_('Lesson Modality')
+    )
+    steps_acquire_competency = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=ABLN_FC.STEPS_ACQUIRE_COMPETENCY,
+        label=_('Steps to help the child acquire the targeted competency')
+    )
+    steps_acquire_competency_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
-
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -13908,7 +13922,6 @@ class ABLNFCForm(forms.ModelForm):
 
         elif instance:
             form_action = reverse('clm:abln_fc_add', kwargs = {'enrollment_id': instance.enrollment_id, 'fc_type': instance.fc_type})
-
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -13973,10 +13986,37 @@ class ABLNFCForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current Lesson') + '</h4>')
                 ),
                 Div(
+
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('attend_lesson', css_class='col-md-3'),
+                    Div('lesson_modality', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('attend_lesson', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('child_interact_teacher', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.2</span>'),
+                    Div('child_interact_friends', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.3</span>'),
+                    Div('child_clear_responses', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.4</span>'),
+                    Div('child_ask_questions', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.5</span>'),
+                    Div('child_acquire_competency', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2.6</span>'),
+                    # Div('child_show_improvement', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('steps_acquire_competency', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_steps_acquire_competency_other" >2.1.1</span>'),
+                    Div('steps_acquire_competency_other', css_class='col-md-3'),
+                    css_class='row steps_acquire_competency_questions',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -13985,68 +14025,48 @@ class ABLNFCForm(forms.ModelForm):
                     Div('not_participating_reason', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('child_interact_teacher', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.2</span>'),
-                    Div('child_interact_friends', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.3</span>'),
-                    Div('child_clear_responses', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.4</span>'),
-                    Div('child_ask_questions', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.5</span>'),
-                    Div('child_acquire_competency', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">1.6</span>'),
-                    # Div('child_show_improvement', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">4</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('meet_objectives', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge badge-default">5.1</span>'),
                     Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">5.1.1</span>'),
                     Div('objectives_verified_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('homework_after_lesson', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('parents_supporting_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('child_expected_work_independently', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('work_independently_evaluation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('complete_printed_package', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     # HTML('<span class="badge badge-default">11</span>'),
                     # Div('e_recharge_card_provided', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('action_to_taken', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">11.1</span>'),
                     Div('action_to_taken_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 id='weekly_lesson',
                 css_class='bd-callout bd-callout-warning B_right_border'
             ),
-
 
             Fieldset(
 
@@ -14094,9 +14114,16 @@ class ABLNFCForm(forms.ModelForm):
 
         meet_objectives_verified = cleaned_data.get("meet_objectives_verified")
         objectives_verified_specify = cleaned_data.get("objectives_verified_specify")
-        if ('other' in meet_objectives_verified ):
+        if 'other' in meet_objectives_verified:
             if not objectives_verified_specify:
                 self.add_error('objectives_verified_specify', 'This field is required')
+
+        steps_acquire_competency = cleaned_data.get("steps_acquire_competency")
+        steps_acquire_competency_other = cleaned_data.get("steps_acquire_competency_other")
+
+        if steps_acquire_competency == 'other':
+            if not steps_acquire_competency_other:
+                self.add_error('steps_acquire_competency_other', 'This field is required')
 
         attend_lesson = cleaned_data.get("attend_lesson")
         child_interact_teacher = cleaned_data.get("child_interact_teacher")
@@ -14213,8 +14240,12 @@ class ABLNFCForm(forms.ModelForm):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
+
 
 class BLNFCForm(forms.ModelForm):
     facilitator_name = forms.CharField(
@@ -14383,6 +14414,20 @@ class BLNFCForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+    lesson_modality = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.LESSON_MODALITY,
+        label=_('Lesson Modality')
+    )
+    steps_acquire_competency = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=BLN_FC.STEPS_ACQUIRE_COMPETENCY,
+        label=_('Steps to help the child acquire the targeted competency')
+    )
+    steps_acquire_competency_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
 
@@ -14471,10 +14516,37 @@ class BLNFCForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current Lesson') + '</h4>')
                 ),
                 Div(
+
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('attend_lesson', css_class='col-md-3'),
+                    Div('lesson_modality', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('attend_lesson', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('child_interact_teacher', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.2</span>'),
+                    Div('child_interact_friends', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.3</span>'),
+                    Div('child_clear_responses', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.4</span>'),
+                    Div('child_ask_questions', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.5</span>'),
+                    Div('child_acquire_competency', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2.6</span>'),
+                    # Div('child_show_improvement', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('steps_acquire_competency', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_steps_acquire_competency_other" >2.1.1</span>'),
+                    Div('steps_acquire_competency_other', css_class='col-md-3'),
+                    css_class='row steps_acquire_competency_questions',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -14483,61 +14555,42 @@ class BLNFCForm(forms.ModelForm):
                     Div('not_participating_reason', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('child_interact_teacher', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.2</span>'),
-                    Div('child_interact_friends', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.3</span>'),
-                    Div('child_clear_responses', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.4</span>'),
-                    Div('child_ask_questions', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.5</span>'),
-                    Div('child_acquire_competency', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">1.6</span>'),
-                    # Div('child_show_improvement', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">4</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('meet_objectives', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge badge-default">5.1</span>'),
                     Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">5.1.1</span>'),
                     Div('objectives_verified_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('homework_after_lesson', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('parents_supporting_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('child_expected_work_independently', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('work_independently_evaluation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('complete_printed_package', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     # HTML('<span class="badge badge-default">11</span>'),
                     # Div('e_recharge_card_provided', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('action_to_taken', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">11.1</span>'),
                     Div('action_to_taken_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -14595,6 +14648,13 @@ class BLNFCForm(forms.ModelForm):
         if ('other' in meet_objectives_verified ):
             if not objectives_verified_specify:
                 self.add_error('objectives_verified_specify', 'This field is required')
+
+        steps_acquire_competency = cleaned_data.get("steps_acquire_competency")
+        steps_acquire_competency_other = cleaned_data.get("steps_acquire_competency_other")
+
+        if steps_acquire_competency == 'other':
+            if not steps_acquire_competency_other:
+                self.add_error('steps_acquire_competency_other', 'This field is required')
 
         attend_lesson = cleaned_data.get("attend_lesson")
         child_interact_teacher = cleaned_data.get("child_interact_teacher")
@@ -14710,7 +14770,10 @@ class BLNFCForm(forms.ModelForm):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
 
 class RSFCForm(forms.ModelForm):
@@ -14880,17 +14943,28 @@ class RSFCForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+    lesson_modality = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.LESSON_MODALITY,
+        label=_('Lesson Modality')
+    )
+    steps_acquire_competency = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=RS_FC.STEPS_ACQUIRE_COMPETENCY,
+        label=_('Steps to help the child acquire the targeted competency')
+    )
+    steps_acquire_competency_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
-
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(RSFCForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else None
-
-
         data = kwargs['initial'] if 'initial' in kwargs else ''
 
         if data != '':
@@ -14903,8 +14977,6 @@ class RSFCForm(forms.ModelForm):
 
         elif instance:
             form_action = reverse('clm:rs_fc_add', kwargs = {'enrollment_id': instance.enrollment_id, 'fc_type': instance.fc_type})
-
-
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -14967,12 +15039,38 @@ class RSFCForm(forms.ModelForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current Lesson') + '</h4>')
                 ),
-
                 Div(
+
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('attend_lesson', css_class='col-md-3'),
+                    Div('lesson_modality', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('attend_lesson', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('child_interact_teacher', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.2</span>'),
+                    Div('child_interact_friends', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.3</span>'),
+                    Div('child_clear_responses', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.4</span>'),
+                    Div('child_ask_questions', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.5</span>'),
+                    Div('child_acquire_competency', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2.6</span>'),
+                    # Div('child_show_improvement', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('steps_acquire_competency', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_steps_acquire_competency_other" >2.1.1</span>'),
+                    Div('steps_acquire_competency_other', css_class='col-md-3'),
+                    css_class='row steps_acquire_competency_questions',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -14981,68 +15079,48 @@ class RSFCForm(forms.ModelForm):
                     Div('not_participating_reason', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('child_interact_teacher', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.2</span>'),
-                    Div('child_interact_friends', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.3</span>'),
-                    Div('child_clear_responses', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.4</span>'),
-                    Div('child_ask_questions', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.5</span>'),
-                    Div('child_acquire_competency', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">1.6</span>'),
-                    # Div('child_show_improvement', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">4</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('meet_objectives', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge badge-default">5.1</span>'),
                     Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">5.1.1</span>'),
                     Div('objectives_verified_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('homework_after_lesson', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('parents_supporting_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('child_expected_work_independently', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('work_independently_evaluation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('complete_printed_package', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     # HTML('<span class="badge badge-default">11</span>'),
                     # Div('e_recharge_card_provided', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('action_to_taken', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">11.1</span>'),
                     Div('action_to_taken_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 id='weekly_lesson',
                 css_class='bd-callout bd-callout-warning B_right_border'
             ),
-
 
             Fieldset(
 
@@ -15093,6 +15171,12 @@ class RSFCForm(forms.ModelForm):
         if ('other' in meet_objectives_verified ):
             if not objectives_verified_specify:
                 self.add_error('objectives_verified_specify', 'This field is required')
+        steps_acquire_competency = cleaned_data.get("steps_acquire_competency")
+        steps_acquire_competency_other = cleaned_data.get("steps_acquire_competency_other")
+
+        if steps_acquire_competency == 'other':
+            if not steps_acquire_competency_other:
+                self.add_error('steps_acquire_competency_other', 'This field is required')
 
         attend_lesson = cleaned_data.get("attend_lesson")
         child_interact_teacher = cleaned_data.get("child_interact_teacher")
@@ -15210,7 +15294,10 @@ class RSFCForm(forms.ModelForm):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
 
 class CBECEFCForm(forms.ModelForm):
@@ -15380,6 +15467,20 @@ class CBECEFCForm(forms.ModelForm):
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
+    lesson_modality = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.LESSON_MODALITY,
+        label=_('Lesson Modality')
+    )
+    steps_acquire_competency = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=CBECE_FC.STEPS_ACQUIRE_COMPETENCY,
+        label=_('Steps to help the child acquire the targeted competency')
+    )
+    steps_acquire_competency_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
     enrollment_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     fc_type = forms.CharField(widget=forms.HiddenInput, required=True)
 
@@ -15468,10 +15569,37 @@ class CBECEFCForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current Lesson') + '</h4>')
                 ),
                 Div(
+
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('attend_lesson', css_class='col-md-3'),
+                    Div('lesson_modality', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('attend_lesson', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('child_interact_teacher', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.2</span>'),
+                    Div('child_interact_friends', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.3</span>'),
+                    Div('child_clear_responses', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.4</span>'),
+                    Div('child_ask_questions', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.5</span>'),
+                    Div('child_acquire_competency', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2.6</span>'),
+                    # Div('child_show_improvement', css_class='col-md-3'),
+                    css_class='row attend_lesson_questions',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('steps_acquire_competency', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_steps_acquire_competency_other" >2.1.1</span>'),
+                    Div('steps_acquire_competency_other', css_class='col-md-3'),
+                    css_class='row steps_acquire_competency_questions',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -15480,68 +15608,48 @@ class CBECEFCForm(forms.ModelForm):
                     Div('not_participating_reason', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
-                    HTML('<span class="badge badge-default">1.1</span>'),
-                    Div('child_interact_teacher', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.2</span>'),
-                    Div('child_interact_friends', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.3</span>'),
-                    Div('child_clear_responses', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1.4</span>'),
-                    Div('child_ask_questions', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.5</span>'),
-                    Div('child_acquire_competency', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">1.6</span>'),
-                    # Div('child_show_improvement', css_class='col-md-3'),
-                    css_class='row attend_lesson_questions',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_completed_tasks">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_completed_tasks">4</span>'),
                     Div('completed_tasks', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('meet_objectives', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge badge-default">5.1</span>'),
                     Div('meet_objectives_verified', css_class='col-md-3 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">3.1.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_objectives_verified_specify">5.1.1</span>'),
                     Div('objectives_verified_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('homework_after_lesson', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('parents_supporting_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('child_expected_work_independently', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('work_independently_evaluation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
+                    Div('child_expected_work_independently', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('work_independently_evaluation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('complete_printed_package', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     # HTML('<span class="badge badge-default">11</span>'),
                     # Div('e_recharge_card_provided', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('action_to_taken', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_action_to_taken_specify">11.1</span>'),
                     Div('action_to_taken_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 id='weekly_lesson',
                 css_class='bd-callout bd-callout-warning B_right_border'
             ),
-
 
             Fieldset(
 
@@ -15592,6 +15700,13 @@ class CBECEFCForm(forms.ModelForm):
         if ('other' in meet_objectives_verified ):
             if not objectives_verified_specify:
                 self.add_error('objectives_verified_specify', 'This field is required')
+
+        steps_acquire_competency = cleaned_data.get("steps_acquire_competency")
+        steps_acquire_competency_other = cleaned_data.get("steps_acquire_competency_other")
+
+        if steps_acquire_competency == 'other':
+            if not steps_acquire_competency_other:
+                self.add_error('steps_acquire_competency_other', 'This field is required')
 
         attend_lesson = cleaned_data.get("attend_lesson")
         child_interact_teacher = cleaned_data.get("child_interact_teacher")
@@ -15708,7 +15823,10 @@ class CBECEFCForm(forms.ModelForm):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
 
 

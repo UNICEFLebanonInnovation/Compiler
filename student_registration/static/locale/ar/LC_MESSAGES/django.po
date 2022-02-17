@@ -4963,6 +4963,21 @@ msgstr "رفاهية الطفل"
 msgid "Current Lesson"
 msgstr "الدرس الحالي"
 
+#: student_registration/clm/forms.py:13892
+#: student_registration/clm/forms.py:14413
+#: student_registration/clm/forms.py:14935
+#: student_registration/clm/forms.py:15453
+msgid "Lesson Modality"
+msgstr "الدرس الحالي"
+
+
+#: student_registration/clm/forms.py:13897
+#: student_registration/clm/forms.py:14418
+#: student_registration/clm/forms.py:14940
+#: student_registration/clm/forms.py:15458
+msgid "Steps to help the child acquire the targeted competency"
+msgstr "ما هي الخطوات التالية لمساعدة الطفل على اكتساب الكفاية المستهدفة"
+
 
 #: student_registration/clm/forms.py:14267
 #: student_registration/clm/models.py:5165

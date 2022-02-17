@@ -882,7 +882,10 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
 
 
@@ -926,7 +929,10 @@ class BLN_FCSerializer(serializers.ModelSerializer):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
 
 
@@ -971,7 +977,10 @@ class RS_FCSerializer(serializers.ModelSerializer):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
 
 
@@ -1016,7 +1025,10 @@ class CBECE_FCSerializer(serializers.ModelSerializer):
             'meet_objectives',
             'meet_objectives_verified',
             'objectives_verified_specify',
-            'additional_notes'
+            'additional_notes',
+            'lesson_modality',
+            'steps_acquire_competency',
+            'steps_acquire_competency_other',
         )
 
 
