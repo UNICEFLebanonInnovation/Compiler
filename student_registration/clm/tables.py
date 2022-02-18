@@ -248,27 +248,22 @@ class RSTable(CommonTable):
     fc_language_column = tables.TemplateColumn(verbose_name=_('Foreign Language'), orderable=False,
                                                    template_name='django_tables2/clm_fc_language_column.html',
                                                    attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    # fc_science_column = tables.TemplateColumn(verbose_name=_('Science'), orderable=False,
-    #                                                template_name='django_tables2/clm_fc_science_column.html',
-    #                                                attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    #
-    # fc_chemistry_column = tables.TemplateColumn(verbose_name=_('Chemistry'), orderable=False,
-    #                                               template_name='django_tables2/clm_fc_chemistry_column.html',
-    #                                               attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    #
-    # fc_physics_column = tables.TemplateColumn(verbose_name=_('Physics'), orderable=False,
-    #                                               template_name='django_tables2/clm_fc_physics_column.html',
-    #                                               attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
-    #
+    fc_science_column = tables.TemplateColumn(verbose_name=_('Science'), orderable=False,
+                                                   template_name='django_tables2/clm_fc_science_column.html',
+                                                   attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+
+    fc_chemistry_column = tables.TemplateColumn(verbose_name=_('Chemistry'), orderable=False,
+                                                  template_name='django_tables2/clm_fc_chemistry_column.html',
+                                                  attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
+
+    fc_physics_column = tables.TemplateColumn(verbose_name=_('Physics'), orderable=False,
+                                                  template_name='django_tables2/clm_fc_physics_column.html',
+                                                  attrs={'url': '/clm/rs-fc-add/', 'programme': 'RS'})
 
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
                                           accessor='pre_test_score')
     post_assessment_result = tables.Column(verbose_name=_('Assessment Result - Post'), orderable=False,
                                            accessor='post_test_score')
-
-
-
-
 
     # assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
     #                                        accessor='assessment_improvement')
@@ -297,9 +292,9 @@ class RSTable(CommonTable):
             'fc_arabic_column',
             'fc_language_column',
             'fc_math_column',
-            # 'fc_science_column' ,
-            # 'fc_chemistry_column' ,
-            # 'fc_physics_column',
+            'fc_science_column' ,
+            'fc_chemistry_column' ,
+            'fc_physics_column',
             'first_attendance_date',
             'round',
             'cycle',

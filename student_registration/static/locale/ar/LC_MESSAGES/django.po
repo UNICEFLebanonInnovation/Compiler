@@ -5234,6 +5234,19 @@ msgstr " عن طريق الأتصال الهاتفي/ الأتصال عبر ل W
 msgid "Asking Parents"
 msgstr " عن طريق مسائلة الأهل"
 
+
+msgid "Online"
+msgstr " عن بعد (اونلاين)"
+
+msgid "Blended"
+msgstr "مدمج"
+
+msgid "Re-explain"
+msgstr "اعادة الشرح"
+
+msgid "Extra Howmework"
+msgstr "انشطة اضافية"
+
 #: student_registration/clm/models.py:266
 #: student_registration/clm/models.py:273
 msgid "Offline(F2F)"
@@ -6710,15 +6723,6 @@ msgstr ""
 #: student_registration/clm/tables.py:386
 msgid "Assessment Result - Improvement"
 msgstr ""
-
-#: student_registration/clm/tables.py:259
-#: student_registration/schools/forms.py:2239
-#: student_registration/schools/forms.py:2538
-#: student_registration/schools/forms.py:2841
-#, fuzzy
-#| msgid "Physic"
-msgid "Physics"
-msgstr "فيزياء"
 
 #: student_registration/clm/tables.py:264
 #: student_registration/clm/tables.py:381
@@ -8828,7 +8832,7 @@ msgstr "هل تريد بالتأكيد حفظ الحضور لهذا الصف؟"
 #: student_registration/templates/attendances/level_section.html:120
 #: student_registration/templates/attendances/level_section.html:122
 msgid "Present"
-msgstr "حاضر"
+msgstr "حضوري"
 
 #: student_registration/templates/attendances/level_section.html:120
 #: student_registration/templates/attendances/level_section.html:122
@@ -9238,62 +9242,12 @@ msgid "--"
 msgstr ""
 
 #: student_registration/templates/django_tables2/clm_fc_language_column.html:6
-#, fuzzy
-#| msgid "English/Arabic"
-msgid "Pre-English/French"
+msgid "English/French"
 msgstr "الانكليزية/العربية"
-
-#: student_registration/templates/django_tables2/clm_fc_language_column.html:11
-#, fuzzy
-#| msgid "English/Arabic"
-msgid "Post-English/French"
-msgstr "الانكليزية/العربية"
-
-#: student_registration/templates/django_tables2/clm_fc_math_column.html:6
-msgid "Pre-math"
-msgstr ""
-
-#: student_registration/templates/django_tables2/clm_fc_math_column.html:11
-#, fuzzy
-#| msgid "Post-test"
-msgid "Post-math"
-msgstr "مجموع علامات ال Post-test"
 
 #: student_registration/templates/django_tables2/clm_fc_physics_column.html:8
-#, fuzzy
-#| msgid "Physic"
-msgid "Pre-physics"
+msgid "Physics"
 msgstr "فيزياء"
-
-#: student_registration/templates/django_tables2/clm_fc_physics_column.html:13
-#, fuzzy
-#| msgid "Physic"
-msgid "Post-physics"
-msgstr "فيزياء"
-
-#: student_registration/templates/django_tables2/clm_fc_science_column.html:8
-#, fuzzy
-#| msgid "Science"
-msgid "Pre-science"
-msgstr "العلوم"
-
-#: student_registration/templates/django_tables2/clm_fc_science_column.html:13
-#, fuzzy
-#| msgid "Science"
-msgid "Post-science"
-msgstr "العلوم"
-
-#: student_registration/templates/django_tables2/clm_fc_science_column.html:18
-#, fuzzy
-#| msgid "Biology"
-msgid "Pre-biology"
-msgstr "علوم الحياة"
-
-#: student_registration/templates/django_tables2/clm_fc_science_column.html:23
-#, fuzzy
-#| msgid "Biology"
-msgid "Post-biology"
-msgstr "علوم الحياة"
 
 #: student_registration/templates/django_tables2/clm_followup_column.html:6
 msgid "Follow-up"

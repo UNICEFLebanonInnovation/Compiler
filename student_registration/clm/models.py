@@ -4935,6 +4935,10 @@ class RS_FC(TimeStampedModel):
         ('arabic', _("Arabic")),
         ('language', _("Language")),
         ('math', _("Math")),
+        ('science', _("Science")),
+        ('biology', _("Biology")),
+        ('chemistry', _("Chemistry")),
+        ('physics', _("Physics")),
     )
     LESSON_MODALITY = Choices(
         ('', '----------'),
