@@ -2794,7 +2794,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 class RSExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     qs_students = RS.objects.filter(round__in=current_round)
-    qs_fc = RS_FC.objects.filter(enrollment__round__in=current_round)
+    # qs_fc = RS_FC.objects.filter(enrollment__round__in=current_round)
 
     def get_queryset_students(self):
         if not self.request.user.is_staff:

@@ -257,6 +257,7 @@ class CLM(TimeStampedModel):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
+        ('level_four', _('Level four'))
     )
 
     MODALITY = Choices(
@@ -1791,7 +1792,8 @@ class Bridging(CLM):
         ('', '----------'),
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
-        ('level_three', _('Level three'))
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four'))
     )
     MAIN_CAREGIVER = (
         ('', '----------'),

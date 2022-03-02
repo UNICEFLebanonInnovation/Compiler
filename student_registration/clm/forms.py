@@ -6847,7 +6847,8 @@ class BridgingForm(CommonForm):
         ('', '----------'),
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
-        ('level_three', _('Level three'))
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four'))
     )
 
     YEARS_Bridging = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 6)))
@@ -6887,7 +6888,7 @@ class BridgingForm(CommonForm):
     )
     center = forms.ModelChoiceField(
         queryset=Center.objects.all(), widget=forms.Select,
-        label=_('Site / Center'),
+        label=_('School name'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
@@ -7266,10 +7267,33 @@ class BridgingForm(CommonForm):
         widget=forms.TextInput, required=False
     )
 
-    # student_p_code = forms.CharField(
-    #     label=_('P-Code If a child lives in a tent / Brax in a random camp'),
-    #     widget=forms.TextInput, required=False
-    # )
+    student_p_code = forms.CharField(
+        label=_('School P-Code Number'),
+        widget=forms.TextInput, required=False
+    )
+
+    governorate = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
+        label=_('School Governorate'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    district = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        label=_('School District'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        # initial=0
+    )
+    cadaster = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        label=_('School Cadaster'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        # initial=0
+    )
+
+
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -7356,30 +7380,28 @@ class BridgingForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('governorate', css_class='col-md-3'),
+                    Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('district', css_class='col-md-3'),
+                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('cadaster', css_class='col-md-3'),
+                    Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('center', css_class='col-md-3'),
+                    Div('cadaster', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('center', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    css_class='row',
-                ),
-
-                Div(
                     HTML('<span class="badge badge-default">9</span>'),
-                    Div('registration_level', css_class='col-md-3'),
+                    Div('student_address', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">10</span>'),
+                    Div('registration_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('first_attendance_date', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -7424,8 +7446,6 @@ class BridgingForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
-                    Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',

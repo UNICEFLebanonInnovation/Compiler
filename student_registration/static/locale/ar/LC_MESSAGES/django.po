@@ -1639,6 +1639,24 @@ msgstr "المركز: القضاء"
 msgid "Governorate"
 msgstr "المركز: المحافظة"
 
+msgid "School Governorate"
+msgstr "المدرسة: المحافظة"
+
+msgid "School District"
+msgstr "المدرسة: القضاء"
+
+msgid "School Cadaster"
+msgstr "المدرسة: القضاء"
+
+msgid "School P-Code Number"
+msgstr "P-Code Number :المدرسة"
+
+msgid "First time registered Bridging?"
+msgstr "يتم تسجيل الطفل لأول مرة في برنامج الجمعية؟"
+
+msgid "School Name"
+msgstr "إسم المدرسة"
+
 #: student_registration/attendances/admin.py:264
 msgid "Open"
 msgstr ""
@@ -2415,6 +2433,9 @@ msgstr "تاريخ الولادة - اليوم"
 #: student_registration/clm/models.py:2861
 msgid "Level three"
 msgstr "المستوى الثالث"
+
+msgid "Level four"
+msgstr "المستوى الرابع"
 
 #: student_registration/clm/forms.py:400 student_registration/clm/forms.py:1696
 #: student_registration/clm/forms.py:3041
