@@ -1033,7 +1033,7 @@ function reorganizeForm()
     // id_education_status
     $('div#div_id_miss_school_date').addClass('d-none');
     $('#span_miss_school_date').addClass('d-none');
-    if(education_status == 'enrolled in formal education but did not continue' || education_status == 'enrolled in non formal education but did not continue'|| education_status == 'enrolled in BLN' || education_status == 'enrolled in ABLN' || education_status == 'enrolled in CBECE'){
+    if(education_status == 'enrolled in formal education but did not continue' || education_status == 'enrolled in non formal education but did not continue'|| education_status == 'enrolled in BLN' || education_status == 'enrolled in ABLN' || education_status == 'enrolled in CBECE' || education_status == 'No Registered in any school before' || education_status == 'Was registered in BLN program' || education_status == 'Was registered in formal school and didnt continue' || education_status == 'Was registered in CBECE program' || education_status == 'Was registered in ALP program and didnt continue'){
         $('#div_id_miss_school_date').removeClass('d-none');
         $('#span_miss_school_date').removeClass('d-none');
     }

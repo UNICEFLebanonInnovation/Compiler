@@ -1917,26 +1917,41 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Second Phone number confirm')
     )
-
     source_of_identification = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=Choices(
             ('', '----------'),
-            ('Referred by CP partner', _('Referred by CP partner')),
-            ('Referred by youth partner', _('Referred by youth partner')),
-            ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _('Referral from another NGO')),
-            ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database')),
-            ('aBridging', _('ABridging')),
-            ('RIMS', _('RIMS')),
-            ('Other Sources', _('Other Sources')),
+            ('CP partner referral', _('CP partner referral')),
+            ('Awarness Session', _('Awarness Session')),
+            ('Child parents', _('Child parents')),
+            ('From Profiling Database', _('From Profiling Database')),
+            ('Referred by the municipality / Other formal sources', _('Referred by the municipality / Other formal sources')),
+            ('From Displaced Community', _('From Displaced Community')),
+            ('From Hosted Community', _('From Hosted Community')),
+            ('From Other NGO', _('From Other NGO')),
+            ('School Director', _('School Director')),
+            ('RIMS', _('RIMS'))
         ),
         verbose_name=_('Source of identification of the child')
     )
+    education_status = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('No Registered in any school before', _('No Registered in any school before')),
+            ('Was registered in BLN program', _('Was registered in BLN program')),
+            ('Was registered in formal school and didnt continue',
+             _('Was registered in formal school and didnt continue')),
+            ('Was registered in CBECE program', _('Was registered in CBECE program')),
+            ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue'))
+        ),
+        verbose_name=_('Education status')
+    )
+
 
     def calculate_sore(self, stage):
         keys = [

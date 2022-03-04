@@ -1579,12 +1579,6 @@ msgstr " مجموع امتحان اخر الدورة Post-test"
 msgid "CERD"
 msgstr "رقم المدرسة"
 
-#: student_registration/alp/views.py:564
-#: student_registration/enrollments/views.py:684
-#: student_registration/enrollments/views.py:730
-#: student_registration/schools/models.py:39
-msgid "School name"
-msgstr " اسم المدرسة "
 
 #: student_registration/alp/views.py:565
 #: student_registration/enrollments/views.py:685
@@ -1646,16 +1640,59 @@ msgid "School District"
 msgstr "المدرسة: القضاء"
 
 msgid "School Cadaster"
-msgstr "المدرسة: القضاء"
-
-msgid "School P-Code Number"
-msgstr "P-Code Number :المدرسة"
+msgstr "المدرسة: منطقة عقارية"
 
 msgid "First time registered Bridging?"
 msgstr "يتم تسجيل الطفل لأول مرة في برنامج الجمعية؟"
 
 msgid "School Name"
 msgstr "إسم المدرسة"
+
+msgid "No Registered in any school before"
+msgstr "لم يسجل ابدا في المدرسة من قبل"
+
+msgid "Was registered in BLN program"
+msgstr "كان مسجل في برنامج BLN"
+
+msgid "Was registered in formal school and didnt continue"
+msgstr "كان مسجل في المدرسة نظامية ولم يكمل"
+
+msgid "Was registered in CBECE program"
+msgstr "كان مسجل في برنامج CBECE"
+
+msgid "Was registered in ALP program and didnt continue"
+msgstr "ALP كان مسجل في برنامج "
+
+msgid "Source of identification of the child to Bridging"
+msgstr "مصدر احالة الطفل إلى برنامج SBP"
+
+msgid "CP partner referral"
+msgstr "احالة من قبل شركاء حماية الطفل CP partner"
+
+msgid "Awarness Session"
+msgstr "احالة من قبل حملات التوعية الجمعية"
+
+msgid "Child parents"
+msgstr "من قبل اهل الطفل مباشرة"
+
+msgid "From Profiling Database"
+msgstr "إحالة عن طريق Profiling Database"
+
+msgid "Referred by the municipality / Other formal sources"
+msgstr "احالة من قبل البلدية/مرجع رسمي"
+
+msgid "From Displaced Community"
+msgstr "إحالة من قبل مجتمع النازحين"
+
+msgid "From Hosted Community"
+msgstr "إحالة من قبل المجتمع المضيف"
+
+msgid "From Other NGO"
+msgstr "إحالة من جمعية أخرى"
+
+msgid "School Director"
+msgstr "مدير المدرسة"
+
 
 #: student_registration/attendances/admin.py:264
 msgid "Open"

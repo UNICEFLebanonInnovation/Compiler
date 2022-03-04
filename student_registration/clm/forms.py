@@ -394,6 +394,7 @@ class CommonForm(forms.ModelForm):
             # 'js/registrations.js',
         )
 
+
 class BLNForm(CommonForm):
 
     REGISTRATION_LEVEL = (
@@ -3022,6 +3023,7 @@ class ABLNForm(CommonForm):
             # 'js/registrations.js',
         )
 
+
 class RSForm(CommonForm):
 
     YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 6)))
@@ -4470,6 +4472,7 @@ class RSForm(CommonForm):
             # 'js/registrations.js',
         )
 
+
 class CBECEForm(CommonForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -5911,6 +5914,7 @@ class CBECEForm(CommonForm):
             # 'js/registrations.js',
         )
 
+
 class OutreachForm(CommonForm):
 
     REGISTRATION_LEVEL = (
@@ -6888,7 +6892,7 @@ class BridgingForm(CommonForm):
     )
     center = forms.ModelChoiceField(
         queryset=Center.objects.all(), widget=forms.Select,
-        label=_('School name'),
+        label=_('School Name'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
@@ -6948,10 +6952,13 @@ class BridgingForm(CommonForm):
         label=_('Education status'),
         widget=forms.Select, required=True,
         choices=(
-            ('', '----------'),
-            ('out of school', _('Out of school')),
-            ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
-            ('enrolled in Bridging', _("Enrolled in Bridging")),
+            ('No Registered in any school before', _('No Registered in any school before')),
+            ('Was registered in BLN program', _('Was registered in BLN program')),
+            ('Was registered in formal school and didnt continue',
+             _('Was registered in formal school and didnt continue')),
+            ('Was registered in CBECE program', _('Was registered in CBECE program')),
+            ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue'))
+
         ),
         initial=''
     )
@@ -7137,22 +7144,33 @@ class BridgingForm(CommonForm):
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
     no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    main_caregiver = forms.ChoiceField(
+        label=_("Main Caregiver"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+
     source_of_identification = forms.ChoiceField(
         label=_("Source of identification of the child to Bridging"),
         widget=forms.Select,
         required=True,
         choices=(
             ('', '----------'),
-            ('Referred by CP partner', _('Referred by CP partner')),
-            ('Referred by youth partner', _('Referred by youth partner')),
-            ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _('Referral from another NGO')),
-            ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database')),
-            ('Bridging', _('Bridging')),
-            ('RIMS', _('RIMS')),
-            ('Other Sources', _('Other Sources')),
+            ('CP partner referral', _('CP partner referral')),
+            ('Awarness Session', _('Awarness Session')),
+            ('Child parents', _('Child parents')),
+            ('From Profiling Database', _('From Profiling Database')),
+            ('Referred by the municipality / Other formal sources', _('Referred by the municipality / Other formal sources')),
+            ('From Displaced Community', _('From Displaced Community')),
+            ('From Hosted Community', _('From Hosted Community')),
+            ('From Other NGO', _('From Other NGO')),
+            ('School Director', _('School Director')),
+            ('RIMS', _('RIMS'))
         ),
         initial=''
     )
@@ -7268,7 +7286,7 @@ class BridgingForm(CommonForm):
     )
 
     student_p_code = forms.CharField(
-        label=_('School P-Code Number'),
+        label=_('P-Code If a child lives in a tent / Brax in a random camp'),
         widget=forms.TextInput, required=False
     )
 
@@ -7379,8 +7397,6 @@ class BridgingForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
@@ -7446,6 +7462,8 @@ class BridgingForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
@@ -7784,7 +7802,7 @@ class BridgingForm(CommonForm):
 
         self.fields['center'] = forms.ModelChoiceField(
             queryset=queryset, widget=forms.Select,
-            label=_('Site / Center'),
+            label=_('School Name'),
             empty_label='-------',
             required=True, to_field_name='id',
         )
@@ -7908,7 +7926,7 @@ class BridgingForm(CommonForm):
             if not labours_other_specify:
                 self.add_error('labours_other_specify', 'This field is required')
 
-        if education_status != 'out of school':
+        if education_status != 'No Registered in any school before':
             if not miss_school_date:
                 self.add_error('miss_school_date', 'This field is required')
         if student_nationality.id == 6:
