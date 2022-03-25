@@ -109,11 +109,12 @@ $(document).ready(function() {
     });
 
     $(document).on('change', 'input#id_student_father_name', function () {
-        duplicate_search_student_name();
+       duplicate_search_student_name();
     });
 
     $(document).on('change', 'input#id_student_last_name', function () {
         duplicate_search_student_name();
+
     });
 
     $(document).on('change', 'input#id_case_number, ' +
@@ -194,7 +195,7 @@ $(document).ready(function() {
                     + "<b>Base Data:</b> " + full_name + " - " + item.student__mother_fullname
                     + "<br/> <b>Gender - Birthday:</b> " + item.student__sex + " - " + student_birthday
                      + "<br/> <b>Internal number:</b> " + item.internal_number
-                     + "<br/> <b>Round:</b> " + item.round__name
+                     + "<br/> <b>Round:</b> " + item.search_model + " - " + item.round__name
                     + "</div>")
                 .appendTo(ul);
         };
@@ -968,7 +969,7 @@ function check_duplicate_registration()
 function isAddPage()
 {
     var url_loc = window.location.toString();
-    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add|outreach-add(\*)(\?.*)?$/i)>=0);
+    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add|bridging-add|outreach-add(\*)(\?.*)?$/i)>=0);
 }
 function reorganizeForm()
 {
@@ -1574,8 +1575,7 @@ function duplicate_search_student_name()
 function duplicate_search(search_by) {
 
     if (isAddPage() ) {
-
-        var search_by = search_by
+        var search_by = search_by;
         var round = $('select#id_round').val();
         // var new_registry = $('select#id_new_registry').val();
         var clm_type = $('#id_clm_type').val();

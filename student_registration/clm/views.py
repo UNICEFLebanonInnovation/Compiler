@@ -2454,7 +2454,8 @@ class BLNViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')[:5000]
 
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
@@ -2475,7 +2476,7 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
     model = ABLN
     # current_round = CLMRound.objects.filter(current_year=True)
     queryset = ABLN.objects.all()
-        # .filter(round__in=current_round)
+    # .filter(round__in=current_round)
     serializer_class = ABLNSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2485,7 +2486,8 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')[:5000]
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2513,7 +2515,8 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')[:5000]
         # if self.request.GET.get('school', None):
         #     return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2541,7 +2544,8 @@ class GeneralQuestionnaireViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')[:5000]
         return qs
 
     def delete(self, request, *args, **kwargs):
@@ -2557,7 +2561,7 @@ class RSViewSet(mixins.RetrieveModelMixin,
     model = RS
     # current_round = CLMRound.objects.filter(current_year=True)
     queryset = RS.objects.all()
-        # .filter(round__in=current_round)
+    # .filter(round__in=current_round)
     serializer_class = RSSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -2566,7 +2570,8 @@ class RSViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')[:5000]
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -2596,7 +2601,8 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
         qs = self.queryset
         if self.request.GET.get('creation_date', None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by('created')[:5000]
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')[:5000]
             # .order_by('-id')
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
@@ -2794,21 +2800,21 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 class RSExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     qs_students = RS.objects.filter(round__in=current_round)
-    # qs_fc = RS_FC.objects.filter(enrollment__round__in=current_round)
+    qs_fc = RS_FC.objects.filter(enrollment__round__in=current_round)
 
     def get_queryset_students(self):
         if not self.request.user.is_staff:
             return self.qs_students.filter(partner=self.request.user.partner)
         return self.qs_students
 
-    # def get_queryset_fc(self):
-    #     if not self.request.user.is_staff:
-    #         return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
-    #     return self.qs_fc.order_by('enrollment', 'fc_type')
+    def get_queryset_fc(self):
+        if not self.request.user.is_staff:
+            return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
+        return self.qs_fc.order_by('enrollment', 'fc_type')
 
     def get(self, request, *args, **kwargs):
-        return rs_build_xls_extraction(self.get_queryset_students())
-        # return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+        # return rs_build_xls_extraction(self.get_queryset_students())
+        return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
 
 
 def load_districts(request):
@@ -2824,8 +2830,8 @@ def load_cadasters(request):
 
 
 def search_clm_child(request):
-    from django.db.models.functions import Concat
-    from django.db.models import Value
+    # from django.db.models.functions import Concat
+    # from django.db.models import Value
 
     clm_type = request.GET.get('clm_type', 'BLN')
     term = request.GET.get('term', 0)
@@ -2839,9 +2845,42 @@ def search_clm_child(request):
         model = CBECE
     elif clm_type == 'Outreach':
         model = Outreach
-    # qs = model.objects.filter(partner=request.user.partner_id)
-    qs = {}
+    elif clm_type == 'bridging':
+        model = Bridging
 
+    search_model = clm_type
+
+    qs = {}
+    qs = clm_child_list(model, term, terms, search_model)
+
+    if clm_type == 'bridging' and len(qs) == 0:
+        model = BLN
+        search_model= 'BLN'
+        qs = clm_child_list(model, term, terms, search_model)
+        if len(list(qs)) == 0:
+            model = ABLN
+            search_model = 'ABLN'
+            qs = clm_child_list(model, term, terms, search_model)
+            if len(qs) == 0:
+                model = CBECE
+                search_model = 'CBECE'
+                qs = clm_child_list(model, term, terms, search_model)
+
+    print('-----------------------------------------------------------')
+    print('-----------------------------------------------------------')
+    print(json.dumps(list(qs)))
+    print('-----------------------------------------------------------')
+    print('-----------------------------------------------------------')
+
+
+    return JsonResponse({'result': json.dumps(list(qs))})
+
+
+def clm_child_list(model, term, terms, search_model):
+    from django.db.models.functions import Concat
+    from django.db.models import Value
+    from django.db.models import CharField
+    qs = {}
     if terms:
         if len(terms.split()) > 1:
 
@@ -2854,7 +2893,8 @@ def search_clm_child(request):
                 .values('id', 'student__first_name', 'student__father_name',
                         'student__last_name', 'student__mother_fullname',
                         'student__sex', 'student__birthday_day', 'student__birthday_month',
-                        'student__birthday_year', 'round__name', 'internal_number').distinct()
+                        'student__birthday_year', 'round__name', 'internal_number').distinct().annotate(search_model=Value(search_model, output_field=CharField()))
+
         else:
             # for term in terms:
             # .filter(partner=request.user.partner_id)
@@ -2869,9 +2909,9 @@ def search_clm_child(request):
             ).values('id', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
-                     'student__birthday_year', 'round__name', 'internal_number').distinct()
+                     'student__birthday_year', 'round__name', 'internal_number').distinct().annotate(search_model=Value(search_model, output_field=CharField()))
 
-    return JsonResponse({'result': json.dumps(list(qs))})
+    return qs
 
 
 class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
@@ -2909,6 +2949,8 @@ def search_clm_duplicate_registration(request):
     parent_national_number = body['parent_national_number']
     parent_other_number = body['parent_other_number']
 
+    print(clm_type)
+
     model = BLN
     if clm_type == 'BLN':
         model = BLN
@@ -2920,9 +2962,94 @@ def search_clm_duplicate_registration(request):
         model = CBECE
     elif clm_type == 'Outreach':
         model = Outreach
+    elif clm_type == 'bridging':
+        model = Bridging
 
+    str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                      student_father_name,
+                                      student_last_name, phone_number, case_number, recorded_number,
+                                      parent_syrian_national_number, parent_sop_national_number, parent_national_number,
+                                      parent_other_number)
+
+    if str_partner_name != '':
+        return JsonResponse({'result': str_partner_name})
+    elif clm_type == 'BLN':
+        model = ABLN
+        str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                          student_father_name,
+                                          student_last_name, phone_number, case_number, recorded_number,
+                                          parent_syrian_national_number, parent_sop_national_number,
+                                          parent_national_number,
+                                          parent_other_number)
+
+        if str_partner_name != '':
+            return JsonResponse({'result': str_partner_name})
+    elif clm_type == 'ABLN':
+        model = BLN
+        str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                          student_father_name,
+                                          student_last_name, phone_number, case_number, recorded_number,
+                                          parent_syrian_national_number, parent_sop_national_number,
+                                          parent_national_number,
+                                          parent_other_number)
+
+        if str_partner_name != '':
+            return JsonResponse({'result': str_partner_name})
+
+    elif clm_type == 'bridging':
+        model = Outreach
+        str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                          student_father_name,
+                                          student_last_name, phone_number, case_number, recorded_number,
+                                          parent_syrian_national_number, parent_sop_national_number,
+                                          parent_national_number,
+                                          parent_other_number)
+
+        if str_partner_name != '':
+            return JsonResponse({'result': str_partner_name})
+        else:
+            model = BLN
+            str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                              student_father_name,
+                                              student_last_name, phone_number, case_number, recorded_number,
+                                              parent_syrian_national_number, parent_sop_national_number,
+                                              parent_national_number,
+                                              parent_other_number)
+            if str_partner_name != '':
+                return JsonResponse({'result': str_partner_name})
+            else:
+                model = ABLN
+                str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                                  student_father_name,
+                                                  student_last_name, phone_number, case_number, recorded_number,
+                                                  parent_syrian_national_number, parent_sop_national_number,
+                                                  parent_national_number,
+                                                  parent_other_number)
+                if str_partner_name != '':
+                    return JsonResponse({'result': str_partner_name})
+                else:
+                    model = CBECE
+                    str_partner_name = search_student(model, search_by, round_id, id_type, student_id,
+                                                      student_first_name,
+                                                      student_father_name,
+                                                      student_last_name, phone_number, case_number, recorded_number,
+                                                      parent_syrian_national_number, parent_sop_national_number,
+                                                      parent_national_number,
+                                                      parent_other_number)
+                    if str_partner_name != '':
+                        return JsonResponse({'result': str_partner_name})
+
+
+def search_student(model, search_by, round_id, id_type, student_id, student_first_name, student_father_name,
+                   student_last_name,
+                   phone_number, case_number, recorded_number, parent_syrian_national_number,
+                   parent_sop_national_number, parent_national_number, parent_other_number):
+    from django.db.models.functions import Concat
+    from django.db.models import Value
+
+    model = model
+    print(model)
     qs = {}
-
     if search_by == 'student id':
         qs = search_duplicate_student_id(model, round_id, student_id)
     elif search_by == 'student name':
@@ -2933,7 +3060,6 @@ def search_clm_duplicate_registration(request):
         qs = search_duplicate_case(model, round_id, id_type, student_first_name, case_number, recorded_number,
                                    parent_syrian_national_number, parent_sop_national_number, parent_national_number,
                                    parent_other_number)
-
     str_partner_name = ''
     if qs:
         qsjson = json.dumps(list(qs))
@@ -2941,35 +3067,7 @@ def search_clm_duplicate_registration(request):
         partner_name = (student["partner__name"])
         str_partner_name = str(partner_name)
 
-    if str_partner_name != '':
-        return JsonResponse({'result': str(partner_name)})
-    elif clm_type == 'BLN':
-        model = ABLN
-    elif clm_type == 'ABLN':
-        model = BLN
-
-    qs = {}
-    if search_by == 'student id':
-        qs = search_duplicate_student_id(model, round_id, student_id)
-    elif search_by == 'student name':
-        qs = search_duplicate_student_name(model, round_id, student_first_name, student_father_name,
-                                           student_last_name)
-    elif search_by == 'phone':
-        qs = search_duplicate_phone(model, round_id, student_first_name, phone_number)
-    elif search_by == 'id':
-        qs = search_duplicate_case(model, round_id, id_type, student_first_name, case_number, recorded_number,
-                                   parent_syrian_national_number, parent_sop_national_number,
-                                   parent_national_number,
-                                   parent_other_number)
-
-    str_partner_name = ''
-    if qs:
-        qsjson = json.dumps(list(qs))
-        student = json.loads(qsjson)[0]
-        partner_name = (student["partner__name"])
-        str_partner_name = str(partner_name)
-
-    return JsonResponse({'result': str_partner_name})
+    return str_partner_name
 
 
 def search_duplicate_student_id(model, round_id, student_id):
@@ -2995,6 +3093,7 @@ def search_duplicate_student_id(model, round_id, student_id):
 
 def search_duplicate_student_name(model, round_id, student_first_name, student_father_name, student_last_name):
     model = model
+
     qs = {}
     if round_id:
         qs = model.objects.filter(
@@ -3015,6 +3114,7 @@ def search_duplicate_student_name(model, round_id, student_first_name, student_f
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
                  'student__birthday_year', 'round__name', 'internal_number').distinct()
+
     return qs
 
 
@@ -3434,30 +3534,6 @@ class BridgingEditView(LoginRequiredMixin,
 
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
-
-                    if "Bridging_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["Bridging_ASSESSMENT/attended_social"]
-
-                    if "Bridging_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["Bridging_ASSESSMENT/modality_social"]
-
-                    if "Bridging_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["Bridging_ASSESSMENT/social_emotional"]
-
-                    if "Bridging_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["Bridging_ASSESSMENT/attended_artistic"]
-                    elif "Bridging_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_artistic'] = p_test["Bridging_ASSESSMENT/attended_psychomotor"]
-
-                    if "Bridging_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["Bridging_ASSESSMENT/modality_artistic"]
-                    elif "Bridging_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_artistic'] = p_test["Bridging_ASSESSMENT/modality_psychomotor"]
-
-                    if "Bridging_ASSESSMENT/modality_artistic" in p_test:
-                        data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
-                    elif "Bridging_ASSESSMENT/psychomotor" in p_test:
-                        data['artistic'] = p_test["Bridging_ASSESSMENT/psychomotor"]
 
             return BridgingForm(data, instance=instance, request=self.request)
 

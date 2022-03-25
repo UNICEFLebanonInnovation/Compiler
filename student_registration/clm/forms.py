@@ -6874,8 +6874,7 @@ class BridgingForm(CommonForm):
     )
 
     round = forms.ModelChoiceField(
-        # queryset=CLMRound.objects.filter(current_round_bridging=True), widget=forms.Select,
-        queryset=CLMRound.objects.all(), widget=forms.Select,
+        queryset=CLMRound.objects.filter(current_round_bridging=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -7230,41 +7229,6 @@ class BridgingForm(CommonForm):
         required=False
     )
     math = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_social = forms.ChoiceField(
-        label=_("Attended Social test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_social  = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-
-    social_emotional = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_artistic = forms.ChoiceField(
-        label=_("Attended Artistic test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_artistic = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    artistic = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -7763,26 +7727,6 @@ class BridgingForm(CommonForm):
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
-
-                Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
-                    Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
-                    Div('social_emotional', css_class='col-md-2'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">5.1</span>'),
-                    Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_artistic">5.2</span>'),
-                    Div('artistic', css_class='col-md-2'),
-                    css_class='row',
-                ),
                 css_class='bd-callout bd-callout-warning E_right_border'
             ),
             FormActions(
@@ -7865,17 +7809,9 @@ class BridgingForm(CommonForm):
         modality_english = cleaned_data.get("modality_english")
         english = cleaned_data.get("english")
 
-        attended_artistic = cleaned_data.get("attended_artistic")
-        modality_artistic = cleaned_data.get("modality_artistic")
-        artistic = cleaned_data.get("artistic")
-
         attended_math = cleaned_data.get("attended_math")
         modality_math = cleaned_data.get("modality_math")
         math = cleaned_data.get("math")
-
-        attended_social = cleaned_data.get("attended_social")
-        modality_social = cleaned_data.get("modality_social")
-        social_emotional = cleaned_data.get("social_emotional")
 
 
         source_of_identification = cleaned_data.get("source_of_identification")
@@ -7902,25 +7838,11 @@ class BridgingForm(CommonForm):
                 self.add_error('modality_english', 'This field is required')
             if english is None:
                 self.add_error('english', 'This field is required')
-
-        if attended_artistic == 'yes':
-            if not modality_artistic:
-                self.add_error('modality_artistic', 'This field is required')
-            if artistic is None:
-                self.add_error('artistic', 'This field is required')
-
         if attended_math == 'yes':
             if not modality_math:
                 self.add_error('modality_math', 'This field is required')
             if math is None:
                 self.add_error('math', 'This field is required')
-
-        if attended_social == 'yes':
-            if not modality_social:
-                self.add_error('modality_social', 'This field is required')
-            if social_emotional is None:
-                self.add_error('social_emotional', 'This field is required')
-
 
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:
@@ -8102,6 +8024,20 @@ class BridgingForm(CommonForm):
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
+        instance.save()
+        instance.pre_test = {
+            "Bridging_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "Bridging_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
+            "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
+
+            "Bridging_ASSESSMENT/attended_english": request.POST.get('attended_english'),
+            "Bridging_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
+            "Bridging_ASSESSMENT/english": request.POST.get('english'),
+
+            "Bridging_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "Bridging_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
+            "Bridging_ASSESSMENT/math": request.POST.get('math'),
+        }
         instance.save()
 
     class Meta:
