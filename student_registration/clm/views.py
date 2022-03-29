@@ -2855,7 +2855,7 @@ def search_clm_child(request):
 
     if clm_type == 'bridging' and len(qs) == 0:
         model = BLN
-        search_model= 'BLN'
+        search_model = 'BLN'
         qs = clm_child_list(model, term, terms, search_model)
         if len(list(qs)) == 0:
             model = ABLN
@@ -2865,13 +2865,6 @@ def search_clm_child(request):
                 model = CBECE
                 search_model = 'CBECE'
                 qs = clm_child_list(model, term, terms, search_model)
-
-    print('-----------------------------------------------------------')
-    print('-----------------------------------------------------------')
-    print(json.dumps(list(qs)))
-    print('-----------------------------------------------------------')
-    print('-----------------------------------------------------------')
-
 
     return JsonResponse({'result': json.dumps(list(qs))})
 
@@ -2949,7 +2942,6 @@ def search_clm_duplicate_registration(request):
     parent_national_number = body['parent_national_number']
     parent_other_number = body['parent_other_number']
 
-    print(clm_type)
 
     model = BLN
     if clm_type == 'BLN':
@@ -3048,7 +3040,6 @@ def search_student(model, search_by, round_id, id_type, student_id, student_firs
     from django.db.models import Value
 
     model = model
-    print(model)
     qs = {}
     if search_by == 'student id':
         qs = search_duplicate_student_id(model, round_id, student_id)
@@ -3431,21 +3422,40 @@ class BridgingAddView(LoginRequiredMixin,
             'student_outreached': self.request.GET.get('student_outreached', ''),
             'have_barcode': self.request.GET.get('have_barcode', '')
         }
-        if self.request.GET.get('enrollment_id'):
-            instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
-            data = BridgingSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
 
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
-            data = ChildSerializer(instance).data
+        if self.request.GET.get('search_model') and self.request.GET.get('enrollment_id'):
+            search_model = self.request.GET.get('search_model')
+            if search_model == 'BLN':
+                instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = BLNSerializer(instance).data
+                data['student_nationality'] = data['student_nationality_id']
+                data['learning_result'] = ''
+            elif search_model == 'ABLN':
+                instance = ABLN.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = ABLNSerializer(instance).data
+                data['student_nationality'] = data['student_nationality_id']
+                data['learning_result'] = ''
+            elif search_model == 'CBECE':
+                instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = CBECESerializer(instance).data
+                data['student_nationality'] = data['student_nationality_id']
+                data['learning_result'] = ''
+        else:
+            if self.request.GET.get('enrollment_id'):
+                instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = BridgingSerializer(instance).data
+                data['student_nationality'] = data['student_nationality_id']
+                data['learning_result'] = ''
 
-        if self.request.GET.get('outreach_id'):
-            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
-            data = BridgingSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
+            if self.request.GET.get('child_id'):
+                instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+                data = ChildSerializer(instance).data
+
+            if self.request.GET.get('outreach_id'):
+                instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+                data = BridgingSerializer(instance).data
+                data['student_nationality'] = data['student_nationality_id']
+                data['learning_result'] = ''
 
         if data:
             data['new_registry'] = self.request.GET.get('new_registry', 'yes')

@@ -168,6 +168,7 @@ $(document).ready(function() {
                 }
                 var params = {
                     enrollment_id: ui.item.id,
+                    search_model: ui.item.search_model,
                     new_registry: $('select#id_new_registry').val(),
                     student_outreached: $('select#id_student_outreached').val(),
                     have_barcode: $('select#id_have_barcode').val()
