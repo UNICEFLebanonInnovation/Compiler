@@ -2517,7 +2517,7 @@ def outreach_build_xls_extraction(queryset_students):
     return response
 
 
-def bridging_build_xls_extraction(queryset_students, queryset_fc):
+def bridging_build_xls_extraction(queryset_students):
     buffer = io.BytesIO()
 
     # Personnel
@@ -2925,125 +2925,6 @@ def bridging_build_xls_extraction(queryset_students, queryset_fc):
         row_num_student += 1
         for col_num in range(len(row)):
             ws.write(row_num_student, col_num, row[col_num], font_style)
-    # FC
-    wsFC = wb_student.add_sheet('FC')
-    row_num_fc = 0
-
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-
-    column_header_fc = [
-        'enrollment id',
-        'Partner',
-        'CLM Round',
-        'First time registered?',
-        'Registration level',
-        'Student first name',
-        'Student father name',
-        'Student last name',
-        'unique number',
-        'Gender',
-        'Student Nationality',
-        'Does the child participate in work?',
-        'Does the child have any disability or special need?',
-        'fc type',
-        'facilitator name',
-        'subject taught',
-        'date of monitoring',
-        'targeted competencies',
-        'activities reported',
-        'activities reported other',
-        'share expectations',
-        'share expectations no reason',
-        'share expectations other reason',
-        'materials needed available',
-        'attend lesson',
-        'child interact teacher',
-        'child interact friends',
-        'child clear responses',
-        'child ask questions',
-        'child acquire competency',
-        'child show improvement',
-        'child expected work independently',
-        'work independently evaluation',
-        'complete printed package',
-        'sessions participated',
-        'not participating reason',
-        'E recharge card provided',
-        'action to taken',
-        'action to taken specify',
-        'child needs pss',
-        'child cant access resources',
-        'homework after lesson',
-        'parents supporting student',
-        'completed tasks',
-        'meet objectives',
-        'meet objectives verified',
-        'objectives verified specify',
-        'additional notes'
-    ]
-
-    for col_num in range(len(column_header_fc)):
-        wsFC.write(row_num_fc, col_num, column_header_fc[col_num], font_style)
-    font_style = xlwt.XFStyle()
-
-    rows_fc = queryset_fc.values_list(
-
-        'enrollment_id',
-        'enrollment__partner__name',
-        'enrollment__round__name',
-        'enrollment__new_registry',
-        'enrollment__registration_level',
-        'enrollment__student__first_name',
-        'enrollment__student__father_name',
-        'enrollment__student__last_name',
-        'enrollment__student__number',
-        'enrollment__student__sex',
-        'enrollment__student__nationality__name',
-        'enrollment__disability__name_en',
-        'enrollment__have_labour_single_selection',
-        'fc_type',
-        'facilitator_name',
-        'subject_taught',
-        'date_of_monitoring',
-        'targeted_competencies',
-        'activities_reported',
-        'activities_reported_other',
-        'share_expectations',
-        'share_expectations_no_reason',
-        'share_expectations_other_reason',
-        'materials_needed_available',
-        'attend_lesson',
-        'child_interact_teacher',
-        'child_interact_friends',
-        'child_clear_responses',
-        'child_ask_questions',
-        'child_acquire_competency',
-        'child_show_improvement',
-        'child_expected_work_independently',
-        'work_independently_evaluation',
-        'complete_printed_package',
-        'sessions_participated',
-        'not_participating_reason',
-        'e_recharge_card_provided',
-        'action_to_taken',
-        'action_to_taken_specify',
-        'child_needs_pss',
-        'child_cant_access_resources',
-        'homework_after_lesson',
-        'parents_supporting_student',
-        'completed_tasks',
-        'meet_objectives',
-        'meet_objectives_verified',
-        'objectives_verified_specify',
-        'additional_notes'
-
-    )
-
-    for row in rows_fc:
-        row_num_fc += 1
-        for col_num in range(len(row)):
-            wsFC.write(row_num_fc, col_num, row[col_num], font_style)
 
     wb_student.save(buffer)
 
@@ -3051,7 +2932,7 @@ def bridging_build_xls_extraction(queryset_students, queryset_fc):
     # present the option to save the file.
     buffer.seek(0)
     response = FileResponse(buffer, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="BLN.xls"'
+    response['Content-Disposition'] = 'attachment; filename="Bridging.xls"'
 
     return response
 

@@ -7181,57 +7181,57 @@ class BridgingForm(CommonForm):
         required=False,
         label=_('RIMS Case Number')
     )
-    attended_arabic = forms.ChoiceField(
-        label=_("Attended Arabic test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-
-    modality_arabic = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+    # attended_arabic = forms.ChoiceField(
+    #     label=_("Attended Arabic test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    #
+    # modality_arabic = forms.MultipleChoiceField(
+    #     label=_('Please indicate modality'),
+    #     choices=CLM.MODALITY,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=False
+    # )
     arabic = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
+        min_value=0, required=True
     )
-    attended_english = forms.ChoiceField(
-        label=_("Attended English test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_english  = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+    # attended_english = forms.ChoiceField(
+    #     label=_("Attended English test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    # modality_english  = forms.MultipleChoiceField(
+    #     label=_('Please indicate modality'),
+    #     choices=CLM.MODALITY,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=False
+    # )
     english = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
+        min_value=0, required=True
     )
-    attended_math = forms.ChoiceField(
-        label=_("Attended Math test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_math = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+    # attended_math = forms.ChoiceField(
+    #     label=_("Attended Math test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    # modality_math = forms.MultipleChoiceField(
+    #     label=_('Please indicate modality'),
+    #     choices=CLM.MODALITY,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=False
+    # )
     math = forms.FloatField(
         label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
+        min_value=0, required=True
     )
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
@@ -7701,29 +7701,29 @@ class BridgingForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
-                    Div('modality_arabic',css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
+                    # HTML('<span class="badge badge-default">1</span>'),
+                    # Div('attended_arabic', css_class='col-md-2'),
+                    # HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
+                    # Div('modality_arabic',css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_arabic">1</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
+                    # HTML('<span class="badge badge-default">2</span>'),
+                    # Div('attended_english', css_class='col-md-2'),
+                    # HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
+                    # Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_english">2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
-                    Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
+                    # HTML('<span class="badge badge-default">3</span>'),
+                    # Div('attended_math', css_class='col-md-2'),
+                    # HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
+                    # Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_math">3</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
@@ -7801,17 +7801,17 @@ class BridgingForm(CommonForm):
         student_number_children = cleaned_data.get("student_number_children")
         labours_other_specify = cleaned_data.get("labours_other_specify")
 
-        attended_arabic = cleaned_data.get("attended_arabic")
-        modality_arabic = cleaned_data.get("modality_arabic")
-        arabic = cleaned_data.get("arabic")
+        # attended_arabic = cleaned_data.get("attended_arabic")
+        # modality_arabic = cleaned_data.get("modality_arabic")
+        # arabic = cleaned_data.get("arabic")
 
-        attended_english = cleaned_data.get("attended_english")
-        modality_english = cleaned_data.get("modality_english")
-        english = cleaned_data.get("english")
+        # attended_english = cleaned_data.get("attended_english")
+        # modality_english = cleaned_data.get("modality_english")
+        # english = cleaned_data.get("english")
 
-        attended_math = cleaned_data.get("attended_math")
-        modality_math = cleaned_data.get("modality_math")
-        math = cleaned_data.get("math")
+        # attended_math = cleaned_data.get("attended_math")
+        # modality_math = cleaned_data.get("modality_math")
+        # math = cleaned_data.get("math")
 
 
         source_of_identification = cleaned_data.get("source_of_identification")
@@ -7826,23 +7826,22 @@ class BridgingForm(CommonForm):
                 self.add_error('rims_case_number', 'This field is required')
 
 
-
-        if attended_arabic == 'yes':
-            if not modality_arabic:
-                self.add_error('modality_arabic', 'This field is required')
-            if arabic is None:
-                self.add_error('arabic', 'This field is required')
-
-        if attended_english == 'yes':
-            if not modality_english:
-                self.add_error('modality_english', 'This field is required')
-            if english is None:
-                self.add_error('english', 'This field is required')
-        if attended_math == 'yes':
-            if not modality_math:
-                self.add_error('modality_math', 'This field is required')
-            if math is None:
-                self.add_error('math', 'This field is required')
+        # if attended_arabic == 'yes':
+        #     if not modality_arabic:
+        #         self.add_error('modality_arabic', 'This field is required')
+        #     if arabic is None:
+        #         self.add_error('arabic', 'This field is required')
+        #
+        # if attended_english == 'yes':
+        #     if not modality_english:
+        #         self.add_error('modality_english', 'This field is required')
+        #     if english is None:
+        #         self.add_error('english', 'This field is required')
+        # if attended_math == 'yes':
+        #     if not modality_math:
+        #         self.add_error('modality_math', 'This field is required')
+        #     if math is None:
+        #         self.add_error('math', 'This field is required')
 
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:
@@ -7984,8 +7983,6 @@ class BridgingForm(CommonForm):
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
         math = cleaned_data.get("math")
-        social_emotional = cleaned_data.get("social_emotional")
-        artistic = cleaned_data.get("artistic")
 
         if registration_level == 'level_one':
             if arabic > 48:
@@ -7994,10 +7991,6 @@ class BridgingForm(CommonForm):
                 self.add_error('english', 'This value is greater that 40')
             if math > 18:
                 self.add_error('math', 'This value is greater that 18')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
         elif registration_level == 'level_two':
             if arabic > 56:
                 self.add_error('arabic', 'This value is greater that 56')
@@ -8005,10 +7998,6 @@ class BridgingForm(CommonForm):
                 self.add_error('english', 'This value is greater that 58')
             if math > 30:
                 self.add_error('math', 'This value is greater that 30')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
         else:
             if arabic > 60:
                 self.add_error('arabic', 'This value is greater that 60')
@@ -8016,26 +8005,22 @@ class BridgingForm(CommonForm):
                 self.add_error('english', 'This value is greater that 62')
             if math > 32:
                 self.add_error('math', 'This value is greater that 32')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
 
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
         instance.save()
         instance.pre_test = {
-            "Bridging_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-            "Bridging_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
+            # "Bridging_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            # "Bridging_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
             "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
 
-            "Bridging_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            "Bridging_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
+            # "Bridging_ASSESSMENT/attended_english": request.POST.get('attended_english'),
+            # "Bridging_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             "Bridging_ASSESSMENT/english": request.POST.get('english'),
 
-            "Bridging_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-            "Bridging_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
+            # "Bridging_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            # "Bridging_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
             "Bridging_ASSESSMENT/math": request.POST.get('math'),
         }
         instance.save()

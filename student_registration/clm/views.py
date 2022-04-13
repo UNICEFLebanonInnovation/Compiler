@@ -2988,49 +2988,49 @@ def search_clm_duplicate_registration(request):
         if str_partner_name != '':
             return JsonResponse({'result': str_partner_name})
 
-    elif clm_type == 'bridging':
-        model = Outreach
-        str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                          student_father_name,
-                                          student_last_name, phone_number, case_number, recorded_number,
-                                          parent_syrian_national_number, parent_sop_national_number,
-                                          parent_national_number,
-                                          parent_other_number)
-
-        if str_partner_name != '':
-            return JsonResponse({'result': str_partner_name})
-        else:
-            model = BLN
-            str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                              student_father_name,
-                                              student_last_name, phone_number, case_number, recorded_number,
-                                              parent_syrian_national_number, parent_sop_national_number,
-                                              parent_national_number,
-                                              parent_other_number)
-            if str_partner_name != '':
-                return JsonResponse({'result': str_partner_name})
-            else:
-                model = ABLN
-                str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                                  student_father_name,
-                                                  student_last_name, phone_number, case_number, recorded_number,
-                                                  parent_syrian_national_number, parent_sop_national_number,
-                                                  parent_national_number,
-                                                  parent_other_number)
-                if str_partner_name != '':
-                    return JsonResponse({'result': str_partner_name})
-                else:
-                    model = CBECE
-                    str_partner_name = search_student(model, search_by, round_id, id_type, student_id,
-                                                      student_first_name,
-                                                      student_father_name,
-                                                      student_last_name, phone_number, case_number, recorded_number,
-                                                      parent_syrian_national_number, parent_sop_national_number,
-                                                      parent_national_number,
-                                                      parent_other_number)
-                    if str_partner_name != '':
-                        return JsonResponse({'result': str_partner_name})
-
+    # elif clm_type == 'bridging':
+    #     model = Outreach
+    #     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+    #                                       student_father_name,
+    #                                       student_last_name, phone_number, case_number, recorded_number,
+    #                                       parent_syrian_national_number, parent_sop_national_number,
+    #                                       parent_national_number,
+    #                                       parent_other_number)
+    #
+    #     if str_partner_name != '':
+    #         return JsonResponse({'result': str_partner_name})
+    #     else:
+    #         model = BLN
+    #         str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+    #                                           student_father_name,
+    #                                           student_last_name, phone_number, case_number, recorded_number,
+    #                                           parent_syrian_national_number, parent_sop_national_number,
+    #                                           parent_national_number,
+    #                                           parent_other_number)
+    #         if str_partner_name != '':
+    #             return JsonResponse({'result': str_partner_name})
+    #         else:
+    #             model = ABLN
+    #             str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+    #                                               student_father_name,
+    #                                               student_last_name, phone_number, case_number, recorded_number,
+    #                                               parent_syrian_national_number, parent_sop_national_number,
+    #                                               parent_national_number,
+    #                                               parent_other_number)
+    #             if str_partner_name != '':
+    #                 return JsonResponse({'result': str_partner_name})
+    #             else:
+    #                 model = CBECE
+    #                 str_partner_name = search_student(model, search_by, round_id, id_type, student_id,
+    #                                                   student_first_name,
+    #                                                   student_father_name,
+    #                                                   student_last_name, phone_number, case_number, recorded_number,
+    #                                                   parent_syrian_national_number, parent_sop_national_number,
+    #                                                   parent_national_number,
+    #                                                   parent_other_number)
+    #                 if str_partner_name != '':
+    #                     return JsonResponse({'result': str_partner_name})
+    #
 
 def search_student(model, search_by, round_id, id_type, student_id, student_first_name, student_father_name,
                    student_last_name,
@@ -3579,18 +3579,12 @@ class BridgingListView(LoginRequiredMixin,
 
 class BridgingExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
-    qs_students = BLN.objects.filter(round__in=current_round)
-    qs_fc = BLN_FC.objects.filter(enrollment__round__in=current_round)
+    qs_students = Bridging.objects.filter(round__in=current_round)
 
     def get_queryset_students(self):
         if not self.request.user.is_staff:
             return self.qs_students.filter(partner=self.request.user.partner)
         return self.qs_students
 
-    def get_queryset_fc(self):
-        if not self.request.user.is_staff:
-            return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
-        return self.qs_fc.order_by('enrollment', 'fc_type')
-
     def get(self, request, *args, **kwargs):
-        return bridging_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+        return bridging_build_xls_extraction(self.get_queryset_students())
