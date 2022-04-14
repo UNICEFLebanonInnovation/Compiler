@@ -431,7 +431,13 @@ class BridgingSerializer(CLMSerializer):
             'referal_health',
             'referal_other',
             'referal_other_specify',
-            'akelius_program'
+            'akelius_program',
+            'community_Liaison_follow_up',
+            'community_liaison_specify',
+            'child_complete_year',
+            'receiving_social_assistance',
+            'receiving_transportation_support',
+            'using_digital_platform',
         )
 
 

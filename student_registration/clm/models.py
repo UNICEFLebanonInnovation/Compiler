@@ -1770,6 +1770,11 @@ class BLN(CLM):
 
 
 class Bridging(CLM):
+    YES_NO = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
     miss_school_date = models.DateField(
         blank=True,
         null=True,
@@ -1952,6 +1957,50 @@ class Bridging(CLM):
         verbose_name=_('Education status')
     )
 
+    community_Liaison_follow_up = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the community Liaison at school level involved in follow up on child absence or drop out?')
+    )
+    community_liaison_specify = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('specify')
+    )
+    child_complete_year = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child fully complete the school year?')
+    )
+    receiving_social_assistance = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child receiving social assistance?')
+    )
+    receiving_transportation_support = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the Child Receiving Transportation Support?')
+    )
+    using_digital_platform = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(
+            ('yes_akelius)', _("Yes (Akelius)")),
+            ('yes_learning_passport)', _("Yes (Learning Passport)")),
+            ('no', _("No"))),
+        verbose_name=_('Is the Child Using a digital platform (Akelius or  Learning Passport)')
+    )
 
     def calculate_sore(self, stage):
         keys = [

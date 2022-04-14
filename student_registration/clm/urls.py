@@ -318,6 +318,11 @@ urlpatterns = [
         name='bridging_edit'
     ),
     url(
+        regex=r'^bridging-post-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=views.BridgingPostAssessmentView.as_view(),
+        name='bridging_post_assessment'
+    ),
+    url(
         regex=r'^bridging-export/$',
         view=views.BridgingExportViewSet.as_view(),
         name='bridging_export'

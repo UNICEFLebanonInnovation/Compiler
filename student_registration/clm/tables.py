@@ -509,11 +509,16 @@ class BridgingTable(CommonTable):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-bridging/', 'programme': 'bridging'})
+
+    post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
+                                                   template_name='django_tables2/clm_assessment_column.html',
+                                                   attrs={'url': '/clm/bridging-post-assessment/', 'programme': 'bridging'})
     class Meta:
         model = Bridging
         fields = (
             'edit_column',
             'delete_column',
+            'post_assessment_column',
             'first_attendance_date',
             'round',
             'governorate',

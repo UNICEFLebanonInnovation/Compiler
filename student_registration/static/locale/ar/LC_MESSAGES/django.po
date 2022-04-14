@@ -3170,6 +3170,7 @@ msgstr "رقم ملف RIMS"
 msgid "Attended Arabic test"
 msgstr "هل خضع التلميذ إلى تقييم في تطوير اللغة العربية"
 
+
 #: student_registration/clm/forms.py:717 student_registration/clm/forms.py:734
 #: student_registration/clm/forms.py:751 student_registration/clm/forms.py:768
 #: student_registration/clm/forms.py:786 student_registration/clm/forms.py:2017
@@ -3290,6 +3291,15 @@ msgstr " يرجى تحديد الألية المتبعة"
 #: student_registration/clm/models.py:1218
 msgid "Results"
 msgstr "النتيجة"
+
+msgid "Arabic Results"
+msgstr "اللغة العربية (النتيجة)"
+
+msgid "English Results"
+msgstr "(النتيجة) اللغة الأجنية - اللغة الثانية"
+
+msgid "Math Results"
+msgstr "التّطوّر الإدراكي- الرّياضيات (النتيجة)"
 
 #: student_registration/clm/forms.py:728 student_registration/clm/forms.py:3345
 #: student_registration/clm/forms.py:4800
@@ -3585,6 +3595,22 @@ msgstr "School Bridging Programme إحالة الى"
 #: student_registration/clm/forms.py:9738
 msgid "Did the child use Akelius program"
 msgstr "Akelius هل استعمل الطفل برنامج"
+
+msgid "Is the Child Using a digital platform (Akelius or  Learning Passport)"
+msgstr "(Learning passport, Akelius) هل يستخدم الطفل منصة رقمية"
+
+msgid "Was the community Liaison at school level involved in follow up on child absence or drop out?"
+msgstr "هل شارك الاتصال المجتمعي على مستوى المدرسة في متابعة غياب الطفل أو تسربه"
+
+msgid "Did the child fully complete the school year?"
+msgstr "هل اتم الطفل السنة الدراسية بنجاح?"
+
+msgid "Is the child receiving social assistance?"
+msgstr "هل يتلقى الطفل مساعدة اجتماعية؟"
+
+msgid "Is the Child Receiving Transportation Support?"
+msgstr "هل يتلقى الطفل بدل المواصلات؟"
+
 
 
 #: student_registration/clm/models.py:278
@@ -3887,7 +3913,7 @@ msgstr "إحالة إلى الخدمات المتخصصة (غير شريك لل�
 #: student_registration/clm/forms.py:10770
 #: student_registration/clm/models.py:1283
 msgid "Did the child receive basic stationery?"
-msgstr " هل حصل الطفل على القرطاسية الأساسية؟"
+msgstr " هل حصل الطفل على جميع المواد والموارد التي يحتاجها (قرطاسية ، كتب ، حزمة تعليمية)؟"
 
 #: student_registration/clm/forms.py:6763
 #: student_registration/clm/forms.py:7001
