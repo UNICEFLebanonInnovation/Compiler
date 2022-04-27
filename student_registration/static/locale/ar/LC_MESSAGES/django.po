@@ -2474,6 +2474,12 @@ msgstr "المستوى الثالث"
 msgid "Level four"
 msgstr "المستوى الرابع"
 
+msgid "Level five"
+msgstr "المستوى الخامس"
+
+msgid "Level six"
+msgstr "المستوى السادس"
+
 #: student_registration/clm/forms.py:400 student_registration/clm/forms.py:1696
 #: student_registration/clm/forms.py:3041
 #: student_registration/clm/forms.py:4506
