@@ -8385,6 +8385,7 @@ class CBECEMonitoringQuestionerForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
+
 class BLNMonitoringQuestionerForm(forms.ModelForm):
     basic_stationery = forms.ChoiceField(
         label=_("Did the child receive basic stationery?"),
@@ -8636,6 +8637,7 @@ class BLNMonitoringQuestionerForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
+
 class ABLNMonitoringQuestionerForm(forms.ModelForm):
     basic_stationery = forms.ChoiceField(
         label=_("Did the child receive basic stationery?"),
@@ -8885,6 +8887,7 @@ class ABLNMonitoringQuestionerForm(forms.ModelForm):
         js = (
             # 'js/validator.js',
         )
+
 
 class ABLNAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
@@ -9728,6 +9731,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             'akelius_program'
 
         )
+
 
 class BLNAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
@@ -11483,6 +11487,358 @@ class BridgingAssessmentForm(forms.ModelForm):
             # 'child_health_examed',
             # 'child_health_concern',
         )
+
+
+class BridgingFollowupForm(forms.ModelForm):
+
+    phone_call_number = forms.IntegerField(
+        label=_('Please enter the number phone calls'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    house_visit_number = forms.IntegerField(
+        label=_('Please enter the number of house visits'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    family_visit_number = forms.IntegerField(
+        label=_('Please enter the number parent visits'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    phone_call_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    house_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    family_visit_follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('child back', _('Child returned to Round')),
+            ('child transfer to difficulty center', _('Child referred to specialized services')),
+            ('child transfer to protection', _('Child referred to protection')),
+            ('child transfer to medical', _('Child referred to Health programme')),
+            ('Intensive followup', _('Follow-up with parents')),
+            ('dropout', _('Dropout/No Interest')),
+        ),
+        initial=''
+    )
+    parent_attended_visits = forms.ChoiceField(
+        label=_("Parents attended parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    pss_session_attended = forms.ChoiceField(
+        label=_("Attended PSS Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    pss_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    pss_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    pss_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    pss_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    covid_session_attended = forms.ChoiceField(
+        label=_("Attended covid Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    covid_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    covid_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    covid_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    covid_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    followup_session_attended = forms.ChoiceField(
+        label=_("Attended followup Session"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    followup_session_number = forms.IntegerField(
+        label=_('Please enter the number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+
+    followup_session_modality = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=CLM.SESSION_MODALITY,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    followup_parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    followup_parent_attended_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    school_contacted_caretaker = forms.ChoiceField(
+        label=_("Have the child caretakers been contacted by the School Community Laison"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    discussion_topic = forms.CharField(
+        label=_('Please specify what has been discussed'),
+        widget=forms.TextInput, required=False
+    )
+
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(BridgingFollowupForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'bridging'
+
+        display_followup = ''
+        form_action = reverse('clm:bridging_followup', kwargs={'pk': instance.id})
+
+        if instance.post_test:
+            followup_button = ' btn-outline-success '
+            followup = instance.assessment_form(
+                stage='followup',
+                assessment_slug='bridging_followup',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bridging_followup', kwargs={'pk': instance.id}))
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    # HTML('<h4 id="alternatives-to-hidden-labels">' + _('Followup data') + '</h4>'),
+                ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('phone_call_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('phone_call_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('house_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2.1</span>'),
+                    Div('house_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('family_visit_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('family_visit_follow_up_result', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                id='follow_up',
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parents Meeting and Health Exam') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('parent_attended_visits', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">2</span>'),
+                    # Div('visits_number', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('pss_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_session_modality">2.1</span>'),
+                    Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
+                    Div('pss_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended">2.3</span>'),
+                    Div('pss_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">2.4</span>'),
+                    Div('pss_parent_attended_other', css_class='col-md-2'),
+                    css_class='row parent_visits',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('covid_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_session_modality">3.1</span>'),
+                    Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
+                    Div('covid_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended">3.3</span>'),
+                    Div('covid_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">3.4</span>'),
+                    Div('covid_parent_attended_other', css_class='col-md-2'),
+                    css_class='row parent_visits',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('followup_session_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_modality">4.1</span>'),
+                    Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
+                    Div('followup_session_number', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">4.3</span>'),
+                    Div('followup_parent_attended', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">4.4</span>'),
+                    Div('followup_parent_attended_other', css_class='col-md-2'),
+                    css_class='row parent_visits',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('school_contacted_caretaker', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id= "span_discussion_topic">5</span>'),
+                    Div('discussion_topic', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">4</span>'),
+                #     Div('child_health_examed', css_class='col-md-4'),
+                #     HTML('<span class="badge badge-default">5</span>'),
+                #     Div('child_health_concern', css_class='col-md-4'),
+                #     css_class='row',
+                # ),
+                id= 'visits',
+                css_class='bd-callout bd-callout-warning C_right_border'+ display_followup,
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/Bridging-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(BridgingFollowupForm, self).clean()
+
+    def save(self, instance=None, request=None):
+        instance = super(BridgingFollowupForm, self).save()
+        # instance = super(BridgingFollowupForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
+
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = Bridging
+        fields = (
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'phone_call_follow_up_result' ,
+            'house_visit_follow_up_result' ,
+            'family_visit_follow_up_result' ,
+            'parent_attended_visits',
+            'pss_session_attended',
+            'pss_session_number',
+            'pss_session_modality',
+            'pss_parent_attended',
+            'pss_parent_attended_other',
+            'covid_session_attended',
+            'covid_session_number',
+            'covid_session_modality',
+            'covid_parent_attended',
+            'covid_parent_attended_other',
+            'followup_session_attended',
+            'followup_session_number',
+            'followup_session_modality',
+            'followup_parent_attended_other',
+            'followup_parent_attended',
+            'school_contacted_caretaker',
+            'discussion_topic',
+            # 'child_health_examed',
+            # 'child_health_concern',
+        )
+
 
 class CBECEAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (

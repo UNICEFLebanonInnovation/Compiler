@@ -2003,6 +2003,19 @@ class Bridging(CLM):
             ('no', _("No"))),
         verbose_name=_('Is the Child Using a digital platform (Akelius or  Learning Passport)')
     )
+    school_contacted_caretaker = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Have the child caretakers been contacted by the School Community Laison')
+    )
+    discussion_topic = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Please specify what has been discussed')
+    )
 
     def calculate_sore(self, stage):
         keys = [

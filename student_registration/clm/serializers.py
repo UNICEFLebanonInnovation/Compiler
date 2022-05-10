@@ -438,6 +438,8 @@ class BridgingSerializer(CLMSerializer):
             'receiving_social_assistance',
             'receiving_transportation_support',
             'using_digital_platform',
+            'school_contacted_caretaker',
+            'discussion_topic'
         )
 
 
