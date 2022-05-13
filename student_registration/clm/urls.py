@@ -235,6 +235,11 @@ urlpatterns = [
         name='load_cadasters'
     ),
     url(
+        'load-schools/$',
+        views.load_schools,
+        name='load_schools'
+    ),
+    url(
         'search-clm-child/$',
         views.search_clm_child,
         name='search_clm_child'
@@ -337,5 +342,9 @@ urlpatterns = [
         view=views.BridgingListView.as_view(),
         name='bridging_list'
     ),
-
+    url(
+        regex=r'^bridging-page/$',
+        view=views.BridgingPage.as_view(),
+        name='bridging_page'
+    )
 ]

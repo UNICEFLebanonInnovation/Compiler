@@ -6859,6 +6859,12 @@ class BridgingForm(CommonForm):
 
     YEARS_Bridging = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 6)))
     YEARS_Bridging.insert(0, ('', '---------'))
+    language = forms.ChoiceField(
+        label=_("The language supported in the program"),
+        widget=forms.Select, required=True,
+        choices=Bridging.LANGUAGES,
+        initial='yes'
+    )
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         required=True
@@ -6891,13 +6897,13 @@ class BridgingForm(CommonForm):
         widget=forms.Select, required=True,
         choices=REGISTRATION_LEVEL
     )
-    center = forms.ModelChoiceField(
-        queryset=Center.objects.all(), widget=forms.Select,
+    school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
         label=_('School Name'),
         empty_label='-------',
-        required=True, to_field_name='id',
+        required=False, to_field_name='id',
+        initial=0
     )
-
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -7183,53 +7189,16 @@ class BridgingForm(CommonForm):
         required=False,
         label=_('RIMS Case Number')
     )
-    # attended_arabic = forms.ChoiceField(
-    #     label=_("Attended Arabic test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # modality_arabic = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
     arabic = forms.FloatField(
         label=_('Arabic Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
-    # attended_english = forms.ChoiceField(
-    #     label=_("Attended English test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # modality_english  = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
     english = forms.FloatField(
         label=_('English Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
-    # attended_math = forms.ChoiceField(
-    #     label=_("Attended Math test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # modality_math = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
     math = forms.FloatField(
         label=_('Math Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -7276,8 +7245,6 @@ class BridgingForm(CommonForm):
         required=False, to_field_name='id',
         # initial=0
     )
-
-
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -7373,7 +7340,7 @@ class BridgingForm(CommonForm):
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
-                    Div('center', css_class='col-md-3'),
+                    Div('school', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
@@ -7703,28 +7670,16 @@ class BridgingForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default">1</span>'),
-                    # Div('attended_arabic', css_class='col-md-2'),
-                    # HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
-                    # Div('modality_arabic',css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_arabic">1</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default">2</span>'),
-                    # Div('attended_english', css_class='col-md-2'),
-                    # HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    # Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_english">2</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default">3</span>'),
-                    # Div('attended_math', css_class='col-md-2'),
-                    # HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
-                    # Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
                     HTML('<span class="badge badge-default" id="span_math">3</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
@@ -7738,21 +7693,6 @@ class BridgingForm(CommonForm):
                 css_class='button-group'
             )
         )
-
-        if instance:
-
-            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
-        else:
-
-            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
-
-        self.fields['center'] = forms.ModelChoiceField(
-            queryset=queryset, widget=forms.Select,
-            label=_('School Name'),
-            empty_label='-------',
-            required=True, to_field_name='id',
-        )
-
 
     def clean(self):
         cleaned_data = super(BridgingForm, self).clean()
@@ -7802,20 +7742,6 @@ class BridgingForm(CommonForm):
         student_have_children = cleaned_data.get("student_have_children")
         student_number_children = cleaned_data.get("student_number_children")
         labours_other_specify = cleaned_data.get("labours_other_specify")
-
-        # attended_arabic = cleaned_data.get("attended_arabic")
-        # modality_arabic = cleaned_data.get("modality_arabic")
-        # arabic = cleaned_data.get("arabic")
-
-        # attended_english = cleaned_data.get("attended_english")
-        # modality_english = cleaned_data.get("modality_english")
-        # english = cleaned_data.get("english")
-
-        # attended_math = cleaned_data.get("attended_math")
-        # modality_math = cleaned_data.get("modality_math")
-        # math = cleaned_data.get("math")
-
-
         source_of_identification = cleaned_data.get("source_of_identification")
         source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
         rims_case_number = cleaned_data.get("rims_case_number")
@@ -7826,25 +7752,6 @@ class BridgingForm(CommonForm):
         if source_of_identification == 'RIMS':
             if not rims_case_number:
                 self.add_error('rims_case_number', 'This field is required')
-
-
-        # if attended_arabic == 'yes':
-        #     if not modality_arabic:
-        #         self.add_error('modality_arabic', 'This field is required')
-        #     if arabic is None:
-        #         self.add_error('arabic', 'This field is required')
-        #
-        # if attended_english == 'yes':
-        #     if not modality_english:
-        #         self.add_error('modality_english', 'This field is required')
-        #     if english is None:
-        #         self.add_error('english', 'This field is required')
-        # if attended_math == 'yes':
-        #     if not modality_math:
-        #         self.add_error('modality_math', 'This field is required')
-        #     if math is None:
-        #         self.add_error('math', 'This field is required')
-
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:
                 self.add_error('labours_other_specify', 'This field is required')
@@ -7928,12 +7835,6 @@ class BridgingForm(CommonForm):
                 self.add_error('syrian_national_number_confirm', msg)
 
         if id_type == 'Lebanese national ID':
-            # if not parent_national_number:
-            #     self.add_error('parent_national_number', 'This field is required')
-            #
-            # if not parent_national_number_confirm:
-            #     self.add_error('parent_national_number_confirm', 'This field is required')
-
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
                 self.add_error('parent_national_number', msg)
@@ -8059,16 +7960,8 @@ class BridgingForm(CommonForm):
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
         instance.save()
         instance.pre_test = {
-            # "Bridging_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-            # "Bridging_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
             "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
-
-            # "Bridging_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-            # "Bridging_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
             "Bridging_ASSESSMENT/english": request.POST.get('english'),
-
-            # "Bridging_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-            # "Bridging_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
             "Bridging_ASSESSMENT/math": request.POST.get('math'),
         }
         instance.save()
@@ -8129,6 +8022,7 @@ class BridgingForm(CommonForm):
             'student_number_children',
             'round_start_date',
             'cadaster',
+            'school',
             'registration_level',
             'main_caregiver',
             'main_caregiver_nationality',
@@ -10685,53 +10579,16 @@ class BridgingAssessmentForm(forms.ModelForm):
             widget=forms.Select, required=False,
             choices=CLM.YES_NO
         )
-    # attended_arabic = forms.ChoiceField(
-    #     label=_("Attended Arabic test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # modality_arabic = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
     arabic = forms.FloatField(
         label=_('Arabic Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    # attended_english = forms.ChoiceField(
-    #     label=_("Attended English test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # modality_english = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
     english = forms.FloatField(
         label=_('English Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    # attended_math = forms.ChoiceField(
-    #     label=_("Attended Math test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # modality_math = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
     math = forms.FloatField(
         label=_('Math Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -10748,165 +10605,6 @@ class BridgingAssessmentForm(forms.ModelForm):
         ),
         initial=''
     )
-    # phone_call_number = forms.IntegerField(
-    #     label=_('Please enter the number phone calls'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # house_visit_number = forms.IntegerField(
-    #     label=_('Please enter the number of house visits'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # family_visit_number = forms.IntegerField(
-    #     label=_('Please enter the number parent visits'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # phone_call_follow_up_result = forms.ChoiceField(
-    #     label=_('Result of follow up'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('child back', _('Child returned to Round')),
-    #         ('child transfer to difficulty center', _('Child referred to specialized services')),
-    #         ('child transfer to protection', _('Child referred to protection')),
-    #         ('child transfer to medical', _('Child referred to Health programme')),
-    #         ('Intensive followup', _('Follow-up with parents')),
-    #         ('dropout', _('Dropout/No Interest')),
-    #     ),
-    #     initial=''
-    # )
-    # house_visit_follow_up_result = forms.ChoiceField(
-    #     label=_('Result of follow up'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('child back', _('Child returned to Round')),
-    #         ('child transfer to difficulty center', _('Child referred to specialized services')),
-    #         ('child transfer to protection', _('Child referred to protection')),
-    #         ('child transfer to medical', _('Child referred to Health programme')),
-    #         ('Intensive followup', _('Follow-up with parents')),
-    #         ('dropout', _('Dropout/No Interest')),
-    #     ),
-    #     initial=''
-    # )
-    # family_visit_follow_up_result = forms.ChoiceField(
-    #     label=_('Result of follow up'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('child back', _('Child returned to Round')),
-    #         ('child transfer to difficulty center', _('Child referred to specialized services')),
-    #         ('child transfer to protection', _('Child referred to protection')),
-    #         ('child transfer to medical', _('Child referred to Health programme')),
-    #         ('Intensive followup', _('Follow-up with parents')),
-    #         ('dropout', _('Dropout/No Interest')),
-    #     ),
-    #     initial=''
-    # )
-    # parent_attended_visits = forms.ChoiceField(
-    #     label=_("Parents attended parents meeting"),
-    #     widget=forms.Select, required=False,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # cp_referral = forms.ChoiceField(
-    #     label=_("CP Followup"),
-    #     widget=forms.Select, required=True,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('yes', _("Yes")),
-    #         ('no', _("No")))
-    # )
-    # pss_session_attended = forms.ChoiceField(
-    #     label=_("Attended PSS Session"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No")))
-    # )
-    # pss_session_number = forms.IntegerField(
-    #     label=_('Please enter the number of sessions'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # pss_session_modality = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.SESSION_MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
-    # pss_parent_attended = forms.ChoiceField(
-    #     label=_("Parent who attended the parents meeting"),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('mother', _('Mother')),
-    #         ('father', _('Father')),
-    #         ('other', _('Other')),
-    #     )
-    # )
-    # pss_parent_attended_other = forms.CharField(
-    #     label=_('Please specify'),
-    #     widget=forms.TextInput, required=False
-    # )
-    # covid_session_attended = forms.ChoiceField(
-    #     label=_("Attended covid Session"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No")))
-    # )
-    # covid_session_number = forms.IntegerField(
-    #     label=_('Please enter the number of sessions'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # covid_session_modality = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.SESSION_MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
-    # covid_parent_attended = forms.ChoiceField(
-    #     label=_("Parent who attended the parents meeting"),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('mother', _('Mother')),
-    #         ('father', _('Father')),
-    #         ('other', _('Other')),
-    #     )
-    # )
-    # covid_parent_attended_other = forms.CharField(
-    #     label=_('Please specify'),
-    #     widget=forms.TextInput, required=False
-    # )
-    # followup_session_attended = forms.ChoiceField(
-    #     label=_("Attended followup Session"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No")))
-    # )
-    # followup_session_number = forms.IntegerField(
-    #     label=_('Please enter the number of sessions'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    #
-    # followup_session_modality = forms.MultipleChoiceField(
-    #     label=_('Please indicate modality'),
-    #     choices=CLM.SESSION_MODALITY,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
-    # followup_parent_attended = forms.ChoiceField(
-    #     label=_("Parent who attended the parents meeting"),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('mother', _('Mother')),
-    #         ('father', _('Father')),
-    #         ('other', _('Other')),
-    #     )
-    # )
-    # followup_parent_attended_other = forms.CharField(
-    #     label=_('Please specify'),
-    #     widget=forms.TextInput, required=False
-    # )
     child_health_examed = forms.ChoiceField(
         label=_("Did the child receive health exam"),
         widget=forms.Select, required=False,
@@ -10970,13 +10668,6 @@ class BridgingAssessmentForm(forms.ModelForm):
     referal_other_specify = forms.CharField(
         label=_('Please specify'),
         widget=forms.TextInput, required=False
-    )
-
-    akelius_program = forms.MultipleChoiceField(
-        label=_('Did the child use Akelius program'),
-        choices=CLM.AKELIUS,
-        widget=forms.CheckboxSelectMultiple,
-        required=True
     )
     community_Liaison_follow_up = forms.ChoiceField(
         label=_("Was the community Liaison at school level involved in follow up on child absence or drop out?"),
@@ -11137,136 +10828,22 @@ class BridgingAssessmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">18</span>'),
-                    Div('akelius_program', css_class='col-md-2 multiple-checbkoxes'),
-                    css_class='row',
-                ),
-                Div(
-                    # HTML('<span class="badge badge-default">13</span>'),
-                    # Div('attended_arabic', css_class='col-md-2'),
-                    # HTML('<span class="badge badge-default" id="span_modality_arabic">13.1</span>'),
-                    # Div('modality_arabic', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">19</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">18</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default">14</span>'),
-                    # Div('attended_english', css_class='col-md-2'),
-                    # HTML('<span class="badge badge-default" id="span_modality_english">14.1</span>'),
-                    # Div('modality_english', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">20</span>'),
+                    HTML('<span class="badge badge-default" id="span_english">19</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default">15</span>'),
-                    # Div('attended_math', css_class='col-md-2'),
-                    # HTML('<span class="badge badge-default" id="span_modality_math">15.1</span>'),
-                    # Div('modality_math', css_class='col-md-2  multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">21</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">20</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
-            # Fieldset(
-            #     None,
-            #     Div(
-            #         HTML('<span>B</span>'), css_class='block_tag'),
-            #     Div(
-            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up') + '</h4>')
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">1</span>'),
-            #         Div('phone_call_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">1.1</span>'),
-            #         Div('phone_call_follow_up_result', css_class='col-md-3'),
-            #         css_class='row'
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">2</span>'),
-            #         Div('house_visit_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">2.1</span>'),
-            #         Div('house_visit_follow_up_result', css_class='col-md-3'),
-            #         css_class='row'
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">3</span>'),
-            #         Div('family_visit_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">3.1</span>'),
-            #         Div('family_visit_follow_up_result', css_class='col-md-3'),
-            #         css_class='row'
-            #     ),
-            #     id='follow_up',
-            #     css_class='bd-callout bd-callout-warning B_right_border'
-            # ),
-
-            # Fieldset(
-            #     None,
-            #     Div(
-            #         HTML('<span>C</span>'), css_class='block_tag'),
-            #     None,
-            #     Div(
-            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parents Meeting and Health Exam') + '</h4>')
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">1</span>'),
-            #         Div('parent_attended_visits', css_class='col-md-3'),
-            #         # HTML('<span class="badge badge-default">2</span>'),
-            #         # Div('visits_number', css_class='col-md-4'),
-            #         css_class='row',
-            #     ),
-            #
-            #     Div(
-            #         HTML('<span class="badge badge-default">2</span>'),
-            #         Div('pss_session_attended', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_pss_session_modality">2.1</span>'),
-            #         Div('pss_session_modality', css_class='col-md-2 multiple-checbkoxes'),
-            #         HTML('<span class="badge badge-default" id="span_pss_session_number">2.2</span>'),
-            #         Div('pss_session_number', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_pss_parent_attended">2.3</span>'),
-            #         Div('pss_parent_attended', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_pss_parent_attended_other">2.4</span>'),
-            #         Div('pss_parent_attended_other', css_class='col-md-2'),
-            #         css_class='row parent_visits',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">3</span>'),
-            #         Div('covid_session_attended', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_covid_session_modality">3.1</span>'),
-            #         Div('covid_session_modality', css_class='col-md-2 multiple-checbkoxes'),
-            #         HTML('<span class="badge badge-default" id="span_covid_session_number">3.2</span>'),
-            #         Div('covid_session_number', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_covid_parent_attended">3.3</span>'),
-            #         Div('covid_parent_attended', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">3.4</span>'),
-            #         Div('covid_parent_attended_other', css_class='col-md-2'),
-            #         css_class='row parent_visits',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">4</span>'),
-            #         Div('followup_session_attended', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_followup_session_modality">4.1</span>'),
-            #         Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
-            #         HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
-            #         Div('followup_session_number', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_followup_parent_attended">4.3</span>'),
-            #         Div('followup_parent_attended', css_class='col-md-2'),
-            #         HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">4.4</span>'),
-            #         Div('followup_parent_attended_other', css_class='col-md-2'),
-            #         css_class='row parent_visits',
-            #     ),
-            #     # Div(
-            #     #     HTML('<span class="badge badge-default">4</span>'),
-            #     #     Div('child_health_examed', css_class='col-md-4'),
-            #     #     HTML('<span class="badge badge-default">5</span>'),
-            #     #     Div('child_health_concern', css_class='col-md-4'),
-            #     #     css_class='row',
-            #     # ),
-            #     id= 'visits',
-            #     css_class='bd-callout bd-callout-warning C_right_border'+ display_assessment,
-            # ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/Bridging-list/" translation="' +
@@ -11276,17 +10853,8 @@ class BridgingAssessmentForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(BridgingAssessmentForm, self).clean()
-
-        # attended_arabic = cleaned_data.get("attended_arabic")
-        # modality_arabic = cleaned_data.get("modality_arabic")
         arabic = cleaned_data.get("arabic")
-
-        # attended_english = cleaned_data.get("attended_english")
-        # modality_english = cleaned_data.get("modality_english")
         english = cleaned_data.get("english")
-
-        # attended_math = cleaned_data.get("attended_math")
-        # modality_math = cleaned_data.get("modality_math")
         math = cleaned_data.get("math")
 
         learning_result = cleaned_data.get("learning_result")
@@ -11306,9 +10874,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             if not round_complete:
                 self.add_error('round_complete', 'This field is required')
 
-        # if learning_result != 'no_absence':
-        #     if not barriers_single:
-        #         self.add_error('barriers_single', 'This field is required')
 
         if learning_result == 'other':
             if not learning_result_other:
@@ -11319,21 +10884,10 @@ class BridgingAssessmentForm(forms.ModelForm):
                 self.add_error('barriers_other', 'This field is required')
 
         if test_done == 'yes':
-            # if attended_arabic == 'yes':
-            #     if not modality_arabic:
-            #         self.add_error('modality_arabic', 'This field is required')
             if arabic is None:
                 self.add_error('arabic', 'This field is required')
-
-            # if attended_english == 'yes':
-            #     if not modality_english:
-            #         self.add_error('modality_english', 'This field is required')
             if english is None:
                 self.add_error('english', 'This field is required')
-
-            # if attended_math == 'yes':
-            #     if not modality_math:
-            #         self.add_error('modality_math', 'This field is required')
             if math is None:
                 self.add_error('math', 'This field is required')
 
@@ -11414,21 +10968,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         # instance = super(BridgingAssessmentForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
 
         instance.modified_by = request.user
-        # instance.pss_session_modality = request.POST.getlist('pss_session_modality')
-        # instance.covid_session_modality = request.POST.getlist('covid_session_modality')
-        # instance.followup_session_modality = request.POST.getlist('followup_session_modality')
 
         instance.post_test = {
-                # "Bridging_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-                # "Bridging_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
                 "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
-
-                # "Bridging_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-                # "Bridging_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
                 "Bridging_ASSESSMENT/english": request.POST.get('english'),
-
-                # "Bridging_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-                # "Bridging_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
                 "Bridging_ASSESSMENT/math": request.POST.get('math'),
             }
 
@@ -11447,28 +10990,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             'pss_kit',
             'learning_result',
             'learning_result_other',
-            # 'phone_call_number',
-            # 'house_visit_number',
-            # 'family_visit_number',
-            # 'phone_call_follow_up_result' ,
-            # 'house_visit_follow_up_result' ,
-            # 'family_visit_follow_up_result' ,
-            # 'parent_attended_visits',
-            # 'pss_session_attended',
-            # 'pss_session_number',
-            # 'pss_session_modality',
-            # 'pss_parent_attended',
-            # 'pss_parent_attended_other',
-            # 'covid_session_attended',
-            # 'covid_session_number',
-            # 'covid_session_modality',
-            # 'covid_parent_attended',
-            # 'covid_parent_attended_other',
-            # 'followup_session_attended',
-            # 'followup_session_number',
-            # 'followup_session_modality',
-            # 'followup_parent_attended_other',
-            # 'followup_parent_attended',
             'cp_referral',
             'child_received_books',
             'child_received_printout',
@@ -11477,15 +10998,12 @@ class BridgingAssessmentForm(forms.ModelForm):
             'referal_health',
             'referal_other',
             'referal_other_specify',
-            'akelius_program',
             'community_Liaison_follow_up',
             'community_liaison_specify',
             'child_complete_year',
             'receiving_social_assistance',
             'receiving_transportation_support',
             'using_digital_platform',
-            # 'child_health_examed',
-            # 'child_health_concern',
         )
 
 

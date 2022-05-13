@@ -1808,6 +1808,23 @@ class Bridging(CLM):
         ('father', _('Father')),
         ('other', _('Other')),
     )
+    LANGUAGES = Choices(
+        ('english_arabic', _('English/Arabic')),
+        ('french_arabic', _('French/Arabic'))
+    )
+    language = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LANGUAGES,
+        verbose_name=_('The language supported in the program')
+    )
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('School Namel')
+    )
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,

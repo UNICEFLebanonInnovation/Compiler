@@ -64,7 +64,15 @@ from .models import (
     GeneralQuestionnaire,
     Center,
     Outreach,
-    Bridging
+    Bridging,
+)
+from student_registration.schools.models import (
+    School,
+    Section,
+    ClassRoom,
+    CLMRound,
+    EducationalLevel,
+    PartnerOrganization,
 )
 from .forms import (
     BLNForm,
@@ -2905,6 +2913,12 @@ def load_cadasters(request):
     cities = Location.objects.filter(parent_id=id_district).order_by('name')
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
 
+def load_schools(request):
+    id_cadaster = request.GET.get('id_cadaster')
+    schools = School.objects.filter(location_id=id_cadaster).order_by('name')
+    return render(request, 'clm/school_dropdown_list_options.html', {'schools': schools})
+
+
 
 def search_clm_child(request):
     # from django.db.models.functions import Concat
@@ -3665,3 +3679,7 @@ class BridgingExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         return bridging_build_xls_extraction(self.get_queryset_students())
+
+class BridgingPage(LoginRequiredMixin,
+                       TemplateView):
+        template_name = 'clm/bridging.html'

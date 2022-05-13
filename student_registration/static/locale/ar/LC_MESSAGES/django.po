@@ -3606,7 +3606,7 @@ msgid "Is the Child Using a digital platform (Akelius or  Learning Passport)"
 msgstr "(Learning passport, Akelius) هل يستخدم الطفل منصة رقمية"
 
 msgid "Was the community Liaison at school level involved in follow up on child absence or drop out?"
-msgstr "هل شارك الاتصال المجتمعي على مستوى المدرسة في متابعة غياب الطفل أو تسربه"
+msgstr "هل قام موظف التواصل  بالإتصال و متابعة غياب الطفل او تسربه من المدرسة"
 
 msgid "Did the child fully complete the school year?"
 msgstr "هل اتم الطفل السنة الدراسية بنجاح?"

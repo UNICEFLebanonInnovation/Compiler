@@ -1928,4 +1928,17 @@ function load_cadasters(url)
         }
     })
 }
+function load_schools(url)
+{
+    var value = $("#id_cadaster").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_cadaster': value
+        },
+        success: function (data) {
+            $("#id_school").html(data);
+        }
+    })
+}
 
