@@ -112,7 +112,11 @@ class School(models.Model):
         verbose_name=_('coordinator'),
         related_name='+',
     )
-
+    is_first_shift = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('School is 1st shift?')
+    )
     is_2nd_shift = models.BooleanField(
         blank=True,
         default=False,
@@ -324,11 +328,14 @@ class School(models.Model):
             return False
         return True
 
+    # def __unicode__(self):
+    #     return u'{} - {}'.format(
+    #         self.name,
+    #         self.number
+    #     )
+
     def __unicode__(self):
-        return u'{} - {}'.format(
-            self.name,
-            self.number
-        )
+        return self.name
 
 
 class EducationLevel(models.Model):

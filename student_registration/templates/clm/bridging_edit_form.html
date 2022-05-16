@@ -44,7 +44,7 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/bridging.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/bridging.js' %}?v=4"></script>
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
 
     <script>
@@ -53,16 +53,12 @@
       var url_schools = "{% url 'clm:load_schools' %}";
 
       $("#id_governorate").change(function () {
+          load_schools(url_schools);
           load_districts(url);
           load_cadasters(url_cadasters);
-          load_schools(url_schools);
       });
       $("#id_district").change(function () {
           load_cadasters(url_cadasters);
-          load_schools(url_schools);
-      });
-      $("#id_school").change(function () {
-          load_schools(url_schools);
       });
     </script>
 {% endblock %}

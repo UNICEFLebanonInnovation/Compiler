@@ -1823,7 +1823,7 @@ class Bridging(CLM):
         School,
         blank=False, null=True,
         related_name='+',
-        verbose_name=_('School Namel')
+        verbose_name=_('School Name')
     )
     cycle = models.ForeignKey(
         Cycle,

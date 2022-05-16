@@ -6880,14 +6880,12 @@ class BridgingForm(CommonForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.filter(current_round_bridging=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
-
     round_start_date = forms.DateField(
         label=_("Round start date"),
         required=False
@@ -6898,7 +6896,7 @@ class BridgingForm(CommonForm):
         choices=REGISTRATION_LEVEL
     )
     school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
+        queryset=School.objects.filter(is_first_shift=True), widget=forms.Select,
         label=_('School Name'),
         empty_label='-------',
         required=False, to_field_name='id',

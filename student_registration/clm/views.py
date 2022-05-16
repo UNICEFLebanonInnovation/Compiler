@@ -2914,8 +2914,13 @@ def load_cadasters(request):
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
 
 def load_schools(request):
-    id_cadaster = request.GET.get('id_cadaster')
-    schools = School.objects.filter(location_id=id_cadaster).order_by('name')
+    id_governorate = request.GET.get('id_governorate')
+    print('---------------------------------------------')
+    print(id_governorate)
+    schools = School.objects.filter(location_id=id_governorate).order_by('name')
+    print(schools)
+    print('---------------------------------------------')
+
     return render(request, 'clm/school_dropdown_list_options.html', {'schools': schools})
 
 
