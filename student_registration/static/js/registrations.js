@@ -356,11 +356,6 @@ $(document).ready(function() {
          }
     });
 
-    /* Using Combobox select elements */
-    $(document).find('select#id_school, select#id_registered_in_school, select#id_search_school, select#id_last_school')
-                .combobox()
-                .end();
-
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
     });
@@ -1930,11 +1925,11 @@ function load_cadasters(url)
 }
 function load_schools(url)
 {
-    var value = $("#id_cadaster").val();
+    var value = $("#id_governorate").val();
     $.ajax({
         url: url,
         data: {
-            'id_cadaster': value
+            'id_governorate': value
         },
         success: function (data) {
             $("#id_school").html(data);
