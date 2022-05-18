@@ -3680,6 +3680,7 @@ class BridgingExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         return bridging_build_xls_extraction(self.get_queryset_students())
 
+
 class BridgingPage(LoginRequiredMixin,
                        TemplateView):
         template_name = 'clm/bridging.html'

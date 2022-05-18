@@ -11303,8 +11303,8 @@ class BridgingFollowupForm(forms.ModelForm):
                 #     Div('child_health_concern', css_class='col-md-4'),
                 #     css_class='row',
                 # ),
-                id= 'visits',
-                css_class='bd-callout bd-callout-warning C_right_border'+ display_followup,
+                id='visits',
+                css_class='bd-callout bd-callout-warning C_right_border' + display_followup,
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
