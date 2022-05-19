@@ -120,7 +120,7 @@ class InclusionListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return Inclusion.objects.filter(partner=self.request.user.partner_id,
-                                  round__current_year=True).order_by('-id')
+                                  round__current_round_inclusion=True).order_by('-id')
         # return Inclusion.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
@@ -215,10 +215,10 @@ class InclusionAssessmentView(LoginRequiredMixin,
 
 
 class InclusionExportViewSet(LoginRequiredMixin, ListView):
-    # current_round = CLMRound.objects.filter(current_year=True)
+    current_round = CLMRound.objects.filter(current_round_inclusion=True)
     model = Inclusion
-    # queryset = Inclusion.objects.filter(round__in=current_round)
-    queryset = Inclusion.objects.all()
+    queryset = Inclusion.objects.filter(round__in=current_round)
+    # queryset = Inclusion.objects.all()
 
 
     def get_queryset(self):
@@ -524,7 +524,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'child_dropout_specify',
             'caregiver_trained_parental_engagement'
         )
-        print(qs.query)
+        # print(qs.query)
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
 
