@@ -1643,7 +1643,7 @@ msgid "School Cadaster"
 msgstr "المدرسة: منطقة عقارية"
 
 msgid "First time registered Bridging?"
-msgstr "يتم تسجيل الطفل لأول مرة في برنامج الجمعية؟"
+msgstr "يتم تسجيل الطفل لأول مرة في البرنامج؟"
 
 msgid "School Name"
 msgstr "إسم المدرسة"
@@ -4117,6 +4117,10 @@ msgstr "استنادا إلى الدرجة الكلية، ما هو المسار
 msgid "Graduated to the next round, same level"
 msgstr "إكمال في نفس المستوى في الدورة القادمة"
 
+
+msgid "Graduated to the next round, same level SBP"
+msgstr "إكمال في نفس المستوى في الدورة القادمة (SBP)"
+
 #: student_registration/clm/forms.py:7519
 #: student_registration/clm/forms.py:8358
 #: student_registration/clm/inclusion_forms.py:1021
@@ -4195,6 +4199,9 @@ msgstr "هل خضع التلميذ الى التقييم النهائي (Post-te
 #: student_registration/clm/models.py:473
 msgid "Round complete"
 msgstr "هل اتم الطفل الدورة بنجاح؟"
+
+msgid "Briding Round complete"
+msgstr "هل اتم الطفل السنة الدراسية بنجاح؟"
 
 #: student_registration/clm/forms.py:7642
 #: student_registration/clm/forms.py:7661
@@ -5303,6 +5310,9 @@ msgstr " نتيجة التعلم"
 #: student_registration/clm/models.py:2848
 msgid "Graduated to the next level"
 msgstr "رفع إلى المستوى التالي"
+
+msgid "Graduated to the next level SBP"
+msgstr "يرفع إالى المستوى الأعلى في السنة القادمة (SBP)"
 
 #: student_registration/clm/models.py:248
 msgid "Graduated to formal education - KG"

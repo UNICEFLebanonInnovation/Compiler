@@ -1782,15 +1782,10 @@ class Bridging(CLM):
     )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('graduated_to_Bridging_next_level', _('Graduated to the next level')),
-        ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level')),
-        ('graduated_to_Bridging_next_round_higher_level', _('Graduated to the next round, higher level')),
-        ('referred_to_alp', _('referred to ALP')),
+        ('graduated_to_Bridging_next_level', _('Graduated to the next level SBP')),
+        ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level SBP')),
         ('referred_public_school', _('Referred to public school')),
-        ('referred_to_tvet', _('Referred to TVET')),
-        ('referred_to_ynln', _('Referred to Ybln')),
         ('dropout', _('Dropout, referral not possible')),
-        ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
         ('other', _('Other')),
     )
     REGISTRATION_LEVEL = (
@@ -1988,13 +1983,6 @@ class Bridging(CLM):
         blank=True,
         null=True,
         verbose_name=_('specify')
-    )
-    child_complete_year = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Did the child fully complete the school year?')
     )
     receiving_social_assistance = models.CharField(
         max_length=10,

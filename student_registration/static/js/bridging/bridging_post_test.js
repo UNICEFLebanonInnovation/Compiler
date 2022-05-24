@@ -24,7 +24,7 @@ $(document).ready(function(){
 
     reorganizeForm_post_assessment();
 
-    $(document).on('change', 'select#id_participation,  select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
+    $(document).on('change', 'select#id_participation,  select#id_community_Liaison_follow_up, select#id_attended_arabic, select#id_attended_english,  select#id_attended_math,  ' +
         'select#id_attended_social,  select#id_attended_psychomotor ,  select#id_attended_science ,  select#id_attended_artistic , select#id_parent_attended ,' +
         'select#id_pss_parent_attended,  select#id_covid_parent_attended ,  select#id_followup_parent_attended ,' +
         'select#id_attended_biology,  select#id_attended_chemistry ,  select#id_attended_physics ,' +
@@ -116,8 +116,8 @@ function reorganizeForm_post_assessment()
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
     var test_done = $('select#id_test_done').val();
-    // var follow_up_type = $('select#id_follow_up_type').val();
-
+    var community_Liaison_follow_up = $('select#id_community_Liaison_follow_up').val();
+//    var follow_up_type = $('select#id_follow_up_type').val();
 //    var attended_arabic = $('select#id_attended_arabic').val();
 //    var attended_english = $('select#id_attended_english').val();
 //    var attended_math = $('select#id_attended_math').val();
@@ -137,37 +137,28 @@ function reorganizeForm_post_assessment()
     var learning_result = $('select#id_learning_result').val();
     var referal_other = $('select#id_referal_other').val();
 
-
-
-
     // id_participation
     $('div#div_id_barriers_single').addClass('d-none');
     $('#span_barriers_single').addClass('d-none');
     $('div#div_id_barriers_other').addClass('d-none');
     $('#span_barriers_other').addClass('d-none');
-    // $('#follow_up').addClass('hide');
-    // $('#visits').addClass('hide');
-
-
+    $('#community_Liaison').removeClass('hide');
+    $('div.community_Liaison').removeClass('d-none');
 
     if(participation != 'no_absence'){
         $('#div_id_barriers_single').removeClass('d-none');
         $('#span_barriers_single').removeClass('d-none');
-        // $('#follow_up').removeClass('hide');
-        // $('#visits').removeClass('hide');
-        // $('input[name=follow_up_type]').val('none').checked(true);
-        // $('#id_phone_call_number').val('');
-        // $('#id_house_visit_number').val('');
-        // $('#id_family_visit_number').val('');
+    }
+    else{
+        $('div.community_Liaison').addClass('d-none');
+        $('#community_Liaison').addClass('hide');
     }
 
-    if(barriers_single == 'other'){
-        $('#div_id_barriers_other').removeClass('d-none');
-        $('#span_barriers_other').removeClass('d-none');
-    }
-    else
-    {
-        $('#id_barriers_other').val('');
+    $('#span_community_liaison_specify').addClass('d-none');
+    $('div#div_id_community_liaison_specify').addClass('d-none');
+    if(community_Liaison_follow_up == 'yes'){
+        $('#div_id_community_liaison_specify').removeClass('d-none');
+        $('#span_community_liaison_specify').removeClass('d-none');
     }
 
     // learning_result
@@ -177,6 +168,8 @@ function reorganizeForm_post_assessment()
         $('#div_id_learning_result_other').removeClass('d-none');
         $('#span_learning_result_other').removeClass('d-none');
     }
+
+
 
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');

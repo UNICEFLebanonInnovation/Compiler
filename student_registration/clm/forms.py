@@ -10525,15 +10525,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
-            # ('graduated_to_Bridging_next_level', _('Graduated to the next level')),
-            ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level')),
-            ('graduated_to_Bridging_next_round_higher_level', _('Graduated to the next round, higher level')),
-            ('referred_to_alp', _('referred to ALP')),
+            ('graduated_to_Bridging_next_level', _('Graduated to the next level SBP')),
+            ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level SBP')),
             ('referred_public_school', _('Referred to public school')),
-            ('referred_to_tvet', _('Referred to TVET')),
-            ('referred_to_yBridging', _('Referred to YBridging')),
             ('dropout', _('Dropout, referral not possible')),
-            ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
             ('other', _('Other')),
         ),
         initial=''
@@ -10561,7 +10556,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
 
     round_complete = forms.ChoiceField(
-        label=_("Round complete"),
+        label=_("Briding Round complete"),
         widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
@@ -10669,17 +10664,13 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
     community_Liaison_follow_up = forms.ChoiceField(
         label=_("Was the community Liaison at school level involved in follow up on child absence or drop out?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO
+        widget=forms.Select, required=False,
+        choices=CLM.YES_NO,
+        initial='yes'
     )
     community_liaison_specify = forms.CharField(
         label=_('specify'),
         widget=forms.TextInput, required=False
-    )
-    child_complete_year = forms.ChoiceField(
-        label=_("Did the child fully complete the school year?"),
-        widget=forms.Select, required=True,
-        choices=CLM.YES_NO
     )
     receiving_social_assistance = forms.ChoiceField(
         label=_("Is the child receiving social assistance?"),
@@ -10762,7 +10753,7 @@ class BridgingAssessmentForm(forms.ModelForm):
                     Div('community_Liaison_follow_up', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id="span_community_liaison_specify">2.1</span>'),
                     Div('community_liaison_specify', css_class='col-md-4'),
-                    css_class='row',
+                    css_class='row community_Liaison',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
@@ -10773,70 +10764,65 @@ class BridgingAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('child_complete_year', css_class='col-md-4'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
                     Div('receiving_social_assistance', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('receiving_transportation_support', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('using_digital_platform', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('basic_stationery', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default d-none">9</span>'),
+                    HTML('<span class="badge badge-default d-none">8</span>'),
                     Div('pss_kit', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('cp_referral', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('referal_wash', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('referal_health', css_class='col-md-2 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" >13</span>'),
+                    HTML('<span class="badge badge-default" >12</span>'),
                     Div('referal_other', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_referal_other_specify">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_referal_other_specify">12.1</span>'),
                     Div('referal_other_specify', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('child_received_books', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('child_received_printout', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >16</span>'),
+                    HTML('<span class="badge badge-default" >15</span>'),
                     Div('child_received_internet', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">17</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('learning_result', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_learning_result_other">17.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">16.1</span>'),
                     Div('learning_result_other', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_arabic">18</span>'),
+                    HTML('<span class="badge badge-default" id="span_arabic">17</span>'),
                     Div('arabic', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_english">19</span>'),
+                    HTML('<span class="badge badge-default" id="span_english">18</span>'),
                     Div('english', css_class='col-md-2'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_math">20</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">19</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row grades',
                 ),
@@ -10864,6 +10850,21 @@ class BridgingAssessmentForm(forms.ModelForm):
         round_complete = cleaned_data.get("round_complete")
         referal_other = cleaned_data.get("referal_other")
         referal_other_specify = cleaned_data.get("referal_other_specify")
+
+        participation = cleaned_data.get("participation")
+        community_Liaison_follow_up = cleaned_data.get("community_Liaison_follow_up")
+        community_liaison_specify = cleaned_data.get("community_liaison_specify")
+
+        if referal_other != 'no_absence':
+            if not community_Liaison_follow_up:
+                self.add_error('community_Liaison_follow_up', 'This field is required')
+
+        if community_Liaison_follow_up == 'yes':
+            if not community_liaison_specify:
+                self.add_error('community_liaison_specify', 'This field is required')
+
+
+
         if referal_other == 'yes':
             if not referal_other_specify:
                 self.add_error('referal_other_specify', 'This field is required')
@@ -10998,7 +10999,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             'referal_other_specify',
             'community_Liaison_follow_up',
             'community_liaison_specify',
-            'child_complete_year',
             'receiving_social_assistance',
             'receiving_transportation_support',
             'using_digital_platform',

@@ -435,7 +435,6 @@ class BridgingSerializer(CLMSerializer):
             'akelius_program',
             'community_Liaison_follow_up',
             'community_liaison_specify',
-            'child_complete_year',
             'receiving_social_assistance',
             'receiving_transportation_support',
             'using_digital_platform',
