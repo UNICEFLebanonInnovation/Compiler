@@ -169,8 +169,6 @@ function reorganizeForm_post_assessment()
         $('#span_learning_result_other').removeClass('d-none');
     }
 
-
-
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');
     $('div.grades').addClass('d-none');

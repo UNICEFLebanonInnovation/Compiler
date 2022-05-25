@@ -4190,7 +4190,7 @@ msgstr "السبب الرئيسي للغياب"
 #: student_registration/clm/forms.py:9251
 #: student_registration/clm/forms.py:10756
 msgid "Post test has been done"
-msgstr "هل خضع التلميذ الى التقييم النهائي (Post-test)؟"
+msgstr "هل خضع التلميذ الى التقييم النهائي (Post-test)"
 
 #: student_registration/clm/forms.py:7553
 #: student_registration/clm/forms.py:8392

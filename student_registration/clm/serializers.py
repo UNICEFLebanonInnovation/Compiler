@@ -425,8 +425,6 @@ class BridgingSerializer(CLMSerializer):
             'follow_up_done',
             'follow_up_done_with_who',
             'labours_other_specify',
-            'child_received_books',
-            'child_received_printout',
             'child_received_internet',
             'referal_wash',
             'referal_health',

@@ -7886,72 +7886,79 @@ class BridgingForm(CommonForm):
         english = cleaned_data.get("english")
         math = cleaned_data.get("math")
 
-        if registration_level == 'level_one':
-            if arabic > 25:
-                self.add_error('arabic', 'This value is greater that 25')
-            if language == 'english_arabic':
-                if english > 60:
-                    self.add_error('english', 'This value is greater that 60')
-            elif language == 'french_arabic':
-                if english > 100:
-                    self.add_error('english', 'This value is greater that 100')
-            if math > 100:
-                self.add_error('math', 'This value is greater that 100')
-        elif registration_level == 'level_two':
-            if arabic > 23:
-                self.add_error('arabic', 'This value is greater that 23')
-            if language == 'english_arabic':
-                if english > 60:
-                    self.add_error('english', 'This value is greater that 60')
-            elif language == 'french_arabic':
-                if english > 100:
-                    self.add_error('english', 'This value is greater that 100')
-            if math > 100:
-                self.add_error('math', 'This value is greater that 100')
-        elif registration_level == 'level_three':
-            if arabic > 23:
-                self.add_error('arabic', 'This value is greater that 23')
-            if language == 'english_arabic':
-                if english > 60:
-                    self.add_error('english', 'This value is greater that 60')
-            elif language == 'french_arabic':
-                if english > 100:
-                    self.add_error('english', 'This value is greater that 100')
-            if math > 100:
-                self.add_error('math', 'This value is greater that 100')
-        elif registration_level == 'level_four':
-            if arabic > 11:
-                self.add_error('arabic', 'This value is greater that 11')
-            if language == 'english_arabic':
-                if english > 60:
-                    self.add_error('english', 'This value is greater that 60')
-            elif language == 'french_arabic':
-                if english > 100:
-                    self.add_error('english', 'This value is greater that 100')
-            if math > 100:
-                self.add_error('math', 'This value is greater that 100')
-        elif registration_level == 'level_five':
-            if arabic > 12:
-                self.add_error('arabic', 'This value is greater that 12')
-            if language == 'english_arabic':
-                if english > 15:
-                    self.add_error('english', 'This value is greater that 15')
-            elif language == 'french_arabic':
-                if english > 100:
-                    self.add_error('english', 'This value is greater that 100')
-            if math > 100:
-                self.add_error('math', 'This value is greater that 100')
-        elif registration_level == 'level_six':
-            if arabic > 13:
-                self.add_error('arabic', 'This value is greater that 13')
-            if language == 'english_arabic':
-                if english > 15:
-                    self.add_error('english', 'This value is greater that 15')
-            elif language == 'french_arabic':
-                if english > 100:
-                    self.add_error('english', 'This value is greater that 100')
-            if math > 100:
-                self.add_error('math', 'This value is greater that 100')
+        if arabic > 100:
+            self.add_error('arabic', 'This value is greater that 100')
+        if english > 100:
+            self.add_error('english', 'This value is greater that 100')
+        if math > 100:
+            self.add_error('math', 'This value is greater that 100')
+
+        # if registration_level == 'level_one':
+        #     if arabic > 25:
+        #         self.add_error('arabic', 'This value is greater that 25')
+        #     if language == 'english_arabic':
+        #         if english > 60:
+        #             self.add_error('english', 'This value is greater that 60')
+        #     elif language == 'french_arabic':
+        #         if english > 100:
+        #             self.add_error('english', 'This value is greater that 100')
+        #     if math > 100:
+        #         self.add_error('math', 'This value is greater that 100')
+        # elif registration_level == 'level_two':
+        #     if arabic > 23:
+        #         self.add_error('arabic', 'This value is greater that 23')
+        #     if language == 'english_arabic':
+        #         if english > 60:
+        #             self.add_error('english', 'This value is greater that 60')
+        #     elif language == 'french_arabic':
+        #         if english > 100:
+        #             self.add_error('english', 'This value is greater that 100')
+        #     if math > 100:
+        #         self.add_error('math', 'This value is greater that 100')
+        # elif registration_level == 'level_three':
+        #     if arabic > 23:
+        #         self.add_error('arabic', 'This value is greater that 23')
+        #     if language == 'english_arabic':
+        #         if english > 60:
+        #             self.add_error('english', 'This value is greater that 60')
+        #     elif language == 'french_arabic':
+        #         if english > 100:
+        #             self.add_error('english', 'This value is greater that 100')
+        #     if math > 100:
+        #         self.add_error('math', 'This value is greater that 100')
+        # elif registration_level == 'level_four':
+        #     if arabic > 11:
+        #         self.add_error('arabic', 'This value is greater that 11')
+        #     if language == 'english_arabic':
+        #         if english > 60:
+        #             self.add_error('english', 'This value is greater that 60')
+        #     elif language == 'french_arabic':
+        #         if english > 100:
+        #             self.add_error('english', 'This value is greater that 100')
+        #     if math > 100:
+        #         self.add_error('math', 'This value is greater that 100')
+        # elif registration_level == 'level_five':
+        #     if arabic > 12:
+        #         self.add_error('arabic', 'This value is greater that 12')
+        #     if language == 'english_arabic':
+        #         if english > 15:
+        #             self.add_error('english', 'This value is greater that 15')
+        #     elif language == 'french_arabic':
+        #         if english > 100:
+        #             self.add_error('english', 'This value is greater that 100')
+        #     if math > 100:
+        #         self.add_error('math', 'This value is greater that 100')
+        # elif registration_level == 'level_six':
+        #     if arabic > 13:
+        #         self.add_error('arabic', 'This value is greater that 13')
+        #     if language == 'english_arabic':
+        #         if english > 15:
+        #             self.add_error('english', 'This value is greater that 15')
+        #     elif language == 'french_arabic':
+        #         if english > 100:
+        #             self.add_error('english', 'This value is greater that 100')
+        #     if math > 100:
+        #         self.add_error('math', 'This value is greater that 100')
 
 
     def save(self, request=None, instance=None, serializer=None):
@@ -10622,18 +10629,6 @@ class BridgingAssessmentForm(forms.ModelForm):
         choices=CLM.LANGUAGES, required=False,
         initial='english_arabic'
     )
-    child_received_books = forms.ChoiceField(
-        label=_("child received books"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    child_received_printout = forms.ChoiceField(
-        label=_("child received printout"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
     child_received_internet = forms.ChoiceField(
         label=_("child received internet"),
         widget=forms.Select, required=True,
@@ -10741,7 +10736,7 @@ class BridgingAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-2'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_barriers_single">1.1</span>'),
                     Div('barriers_single', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_barriers_other">1.2</span>'),
@@ -10768,62 +10763,58 @@ class BridgingAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('receiving_transportation_support', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('using_digital_platform', css_class='col-md-3'),
+                    Div('using_digital_platform', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">7</span>'),
-                    Div('basic_stationery', css_class='col-md-3'),
+                    Div('basic_stationery', css_class='col-md-4'),
                     HTML('<span class="badge badge-default d-none">8</span>'),
                     Div('pss_kit', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('cp_referral', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">9</span>'),
-                    Div('cp_referral', css_class='col-md-3'),
+                    Div('referal_wash', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">10</span>'),
-                    Div('referal_wash', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">11</span>'),
-                    Div('referal_health', css_class='col-md-2 '),
+                    Div('referal_health', css_class='col-md-3 '),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" >12</span>'),
-                    Div('referal_other', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_referal_other_specify">12.1</span>'),
+                    HTML('<span class="badge badge-default" >11</span>'),
+                    Div('referal_other', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_referal_other_specify">11.1</span>'),
                     Div('referal_other_specify', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
-                    Div('child_received_books', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">14</span>'),
-                    Div('child_received_printout', css_class='col-md-2 '),
-                    HTML('<span class="badge badge-default" >15</span>'),
-                    Div('child_received_internet', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" >12</span>'),
+                    Div('child_received_internet', css_class='col-md-3'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('learning_result', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id="span_learning_result_other">16.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">13.1</span>'),
                     Div('learning_result_other', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_arabic">17</span>'),
-                    Div('arabic', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_arabic">14</span>'),
+                    Div('arabic', css_class='col-md-3'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_english">18</span>'),
-                    Div('english', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_english">15</span>'),
+                    Div('english', css_class='col-md-3'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_math">19</span>'),
-                    Div('math', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default" id="span_math">16</span>'),
+                    Div('math', css_class='col-md-3'),
                     css_class='row grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
@@ -10894,72 +10885,79 @@ class BridgingAssessmentForm(forms.ModelForm):
             registration_level = cleaned_data.get("registration_level")
             language = cleaned_data.get("language")
 
-            if registration_level == 'level_one':
-                if arabic > 25:
-                    self.add_error('arabic', 'This value is greater that 25')
-                if language == 'english_arabic':
-                    if english > 60:
-                        self.add_error('english', 'This value is greater that 60')
-                elif language == 'french_arabic':
-                    if english > 100:
-                        self.add_error('english', 'This value is greater that 100')
-                if math > 100:
-                    self.add_error('math', 'This value is greater that 100')
-            elif registration_level == 'level_two':
-                if arabic > 23:
-                    self.add_error('arabic', 'This value is greater that 23')
-                if language == 'english_arabic':
-                    if english > 60:
-                        self.add_error('english', 'This value is greater that 60')
-                elif language == 'french_arabic':
-                    if english > 100:
-                        self.add_error('english', 'This value is greater that 100')
-                if math > 100:
-                    self.add_error('math', 'This value is greater that 100')
-            elif registration_level == 'level_three':
-                if arabic > 23:
-                    self.add_error('arabic', 'This value is greater that 23')
-                if language == 'english_arabic':
-                    if english > 60:
-                        self.add_error('english', 'This value is greater that 60')
-                elif language == 'french_arabic':
-                    if english > 100:
-                        self.add_error('english', 'This value is greater that 100')
-                if math > 100:
-                    self.add_error('math', 'This value is greater that 100')
-            elif registration_level == 'level_four':
-                if arabic > 11:
-                    self.add_error('arabic', 'This value is greater that 11')
-                if language == 'english_arabic':
-                    if english > 60:
-                        self.add_error('english', 'This value is greater that 60')
-                elif language == 'french_arabic':
-                    if english > 100:
-                        self.add_error('english', 'This value is greater that 100')
-                if math > 100:
-                    self.add_error('math', 'This value is greater that 100')
-            elif registration_level == 'level_five':
-                if arabic > 12:
-                    self.add_error('arabic', 'This value is greater that 12')
-                if language == 'english_arabic':
-                    if english > 15:
-                        self.add_error('english', 'This value is greater that 15')
-                elif language == 'french_arabic':
-                    if english > 100:
-                        self.add_error('english', 'This value is greater that 100')
-                if math > 100:
-                    self.add_error('math', 'This value is greater that 100')
-            elif registration_level == 'level_six':
-                if arabic > 13:
-                    self.add_error('arabic', 'This value is greater that 13')
-                if language == 'english_arabic':
-                    if english > 15:
-                        self.add_error('english', 'This value is greater that 15')
-                elif language == 'french_arabic':
-                    if english > 100:
-                        self.add_error('english', 'This value is greater that 100')
-                if math > 100:
-                    self.add_error('math', 'This value is greater that 100')
+            if arabic > 100:
+                self.add_error('arabic', 'This value is greater that 100')
+            if english > 100:
+                self.add_error('english', 'This value is greater that 100')
+            if math > 100:
+                self.add_error('math', 'This value is greater that 100')
+
+            # if registration_level == 'level_one':
+            #     if arabic > 100:
+            #         self.add_error('arabic', 'This value is greater that 25')
+            #     if language == 'english_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 60')
+            #     elif language == 'french_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 100')
+            #     if math > 100:
+            #         self.add_error('math', 'This value is greater that 100')
+            # elif registration_level == 'level_two':
+            #     if arabic > 100:
+            #         self.add_error('arabic', 'This value is greater that 23')
+            #     if language == 'english_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 60')
+            #     elif language == 'french_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 100')
+            #     if math > 100:
+            #         self.add_error('math', 'This value is greater that 100')
+            # elif registration_level == 'level_three':
+            #     if arabic > 100:
+            #         self.add_error('arabic', 'This value is greater that 23')
+            #     if language == 'english_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 60')
+            #     elif language == 'french_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 100')
+            #     if math > 100:
+            #         self.add_error('math', 'This value is greater that 100')
+            # elif registration_level == 'level_four':
+            #     if arabic > 100:
+            #         self.add_error('arabic', 'This value is greater that 11')
+            #     if language == 'english_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 60')
+            #     elif language == 'french_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 100')
+            #     if math > 100:
+            #         self.add_error('math', 'This value is greater that 100')
+            # elif registration_level == 'level_five':
+            #     if arabic > 100:
+            #         self.add_error('arabic', 'This value is greater that 12')
+            #     if language == 'english_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 15')
+            #     elif language == 'french_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 100')
+            #     if math > 100:
+            #         self.add_error('math', 'This value is greater that 100')
+            # elif registration_level == 'level_six':
+            #     if arabic > 100:
+            #         self.add_error('arabic', 'This value is greater that 13')
+            #     if language == 'english_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 15')
+            #     elif language == 'french_arabic':
+            #         if english > 100:
+            #             self.add_error('english', 'This value is greater that 100')
+            #     if math > 100:
+            #         self.add_error('math', 'This value is greater that 100')
 
 
     def save(self, instance=None, request=None):
@@ -10990,8 +10988,6 @@ class BridgingAssessmentForm(forms.ModelForm):
             'learning_result',
             'learning_result_other',
             'cp_referral',
-            'child_received_books',
-            'child_received_printout',
             'child_received_internet',
             'referal_wash',
             'referal_health',
