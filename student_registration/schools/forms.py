@@ -11,7 +11,7 @@ from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, Inline
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder
 
 from .models import School, PartnerOrganization, EducationYear, Evaluation
-
+from .serializers import SchoolSerializer
 
 class ProfileForm(forms.ModelForm):
 
@@ -3177,3 +3177,198 @@ class Classroom_Form_cprep(forms.ModelForm):
 
         class Media:
             js = ()
+
+
+class SchoolForm(forms.ModelForm):
+    email = forms.EmailField(
+        label=_('School email'),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: school@email.com'})
+    )
+    land_phone_number = forms.RegexField(
+        label=_('School land phone number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    )
+    fax_number = forms.RegexField(
+        label=_('School fax number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    )
+    director_phone_number = forms.RegexField(
+        label=_('School director cell phone'),
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    )
+    it_phone_number = forms.RegexField(
+        label=_('School IT phone number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    )
+    academic_year_start = forms.DateField(
+        label=_('School year start date'),
+        widget=forms.TextInput,
+        required=True
+    )
+    # school_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(SchoolForm, self).__init__(*args, **kwargs)
+        display_registry = ''
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        form_action = reverse('schools:school_add')
+        if instance:
+            display_registry = ' d-none'
+            form_action = reverse('schools:school_edit', kwargs={'pk': instance.id})
+
+        current_education_year = EducationYear.objects.get(current_year=True)
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('director_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('land_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('fax_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('director_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('email', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('certified_foreign_language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('comments', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('weekend', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('it_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('it_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('coordinator', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('is_2nd_shift', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('is_alp', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('number_students_2nd_shift', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('number_students_alp', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' +
+                         _('Bank Accounts Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('iban_base1', css_class='col-md-5'),
+
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('bank_Base1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('branch_base1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('iban_base2', css_class='col-md-5'),
+
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('bank_Base2', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('branch_base2', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' +
+                         _('Current academic year') + ' ' + current_education_year.name + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('academic_year_start', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('academic_year_end', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('academic_year_exam_end', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
+                    'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(SchoolForm, self).clean()
+
+    def save(self, instance=None, request=None):
+        instance = super(SchoolForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = School
+        fields = (
+            'academic_year_start',
+            'academic_year_end',
+            'academic_year_exam_end',
+            'director_name',
+            'land_phone_number',
+            'director_phone_number',
+            'it_name',
+            'it_phone_number',
+            # 'field_coordinator_name',
+            'coordinator',
+            'fax_number',
+            'email',
+            'certified_foreign_language',
+            'comments',
+            'weekend',
+            'is_2nd_shift',
+            'is_alp',
+            'number_students_2nd_shift',
+            'number_students_alp',
+            'bank_Base1',
+            'branch_base1',
+            'iban_base1',
+            'bank_Base2',
+            'branch_base2',
+            'iban_base2',
+        )

@@ -8,6 +8,9 @@ from django.urls import reverse_lazy
 from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin
+from django_filters.views import FilterView
+from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
+from django_tables2.export.views import ExportMixin
 from django.contrib import admin
 from student_registration.backends.models import Notification
 from student_registration.users.utils import force_default_language
@@ -26,9 +29,18 @@ from .serializers import (
     ClassRoomSerializer,
     SectionSerializer,
 )
-from .forms import ProfileForm, PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
+from .tables import (
+    BootstrapTable,
+    SchoolTable
+)
+from .filters import (
+    SchoolFilter
+)
+from .forms import ProfileForm,SchoolForm,  PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
     Classroom_Form_c4, Classroom_Form_c5, Classroom_Form_c6, Classroom_Form_c7, Classroom_Form_c8, \
     Classroom_Form_c9, Classroom_Form_cprep
+from .utils import is_allowed_create, is_allowed_edit
+
 from django.forms import modelformset_factory, formset_factory, inlineformset_factory, forms
 from django.shortcuts import render, redirect
 from django.db import transaction
@@ -461,3 +473,127 @@ class Update_Class_cprep(UpdateView):
             return Classroom_Form_cprep(self.request.POST, instance=instance)
         else:
             return Classroom_Form_cprep(instance=instance)
+
+def load_districts(request):
+    id_governorate = request.GET.get('id_governorate')
+    cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
+    return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
+
+
+def load_cadasters(request):
+    id_district = request.GET.get('id_district')
+    cities = Location.objects.filter(parent_id=id_district).order_by('name')
+    return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
+
+
+def load_schools(request):
+    id_governorate = request.GET.get('id_governorate')
+    schools = School.objects.filter(location_id=id_governorate).order_by('name')
+    return render(request, 'clm/school_dropdown_list_options.html', {'schools': schools})
+
+
+class SchoolListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+    table_class = SchoolTable
+    model = School
+    template_name = 'schools/school_list.html'
+    table = BootstrapTable(School.objects.all(), order_by='id')
+    group_required = [u"CLM_Bridging"]
+    filterset_class = SchoolFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+
+        return School.objects.filter(is_first_shift=True).order_by('-id')
+
+
+class SchoolAddView(LoginRequiredMixin,
+                 GroupRequiredMixin,
+                 FormView):
+    template_name = 'schools/school_create_form.html'
+    form_class = SchoolForm
+    success_url = '/schools/school-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/school-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/school-edit/' + str(self.request.session.get('instance_id')) + '/'
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = is_allowed_create('Bridging')
+        return super(SchoolAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(SchoolAddView, self).get_initial()
+        data = {
+            'new_school': self.request.GET.get('new_school', ''),
+        }
+        if self.request.GET.get('school_id'):
+            instance = School.objects.get(id=self.request.GET.get('school_id'))
+            data = SchoolSerializer(instance).data
+
+        if data:
+            data['new_school'] = self.request.GET.get('new_school', 'yes')
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(SchoolAddView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        if self.request.method == "POST":
+            return SchoolForm(self.request.POST, instance=None, request=self.request)
+        else:
+            return SchoolForm(None, instance=None, request=self.request, initial=self.get_initial())
+
+
+class SchoolEditView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+    template_name = 'schools/school_edit_form.html'
+    form_class = SchoolForm
+    success_url = '/schools/school-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/school-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/school-edit/' + str(self.request.session.get('instance_id')) + '/'
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+
+        kwargs['is_allowed_edit'] = is_allowed_edit('Bridging')
+        return super(SchoolEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = School.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return SchoolForm(self.request.POST, instance=instance, request=self.request)
+        else:
+            data = SchoolSerializer(instance).data
+            return SchoolForm(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = School.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(SchoolEditView, self).form_valid(form)
+

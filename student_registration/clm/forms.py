@@ -44,7 +44,8 @@ from .models import (
     Center,
     GeneralQuestionnaire,
     Outreach,
-    Bridging
+    Bridging,
+    RegistrationLevel
 )
 from .serializers import (
     BLNSerializer,
@@ -6847,15 +6848,15 @@ class OutreachForm(CommonForm):
 
 class BridgingForm(CommonForm):
 
-    REGISTRATION_LEVEL = (
-        ('', '----------'),
-        ('level_one', _('Level one')),
-        ('level_two', _('Level two')),
-        ('level_three', _('Level three')),
-        ('level_four', _('Level four')),
-        ('level_five', _('Level five')),
-        ('level_six', _('Level six'))
-    )
+    # REGISTRATION_LEVEL = (
+    #     ('', '----------'),
+    #     ('level_one', _('Level one')),
+    #     ('level_two', _('Level two')),
+    #     ('level_three', _('Level three')),
+    #     ('level_four', _('Level four')),
+    #     ('level_five', _('Level five')),
+    #     ('level_six', _('Level six'))
+    # )
 
     YEARS_Bridging = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 6)))
     YEARS_Bridging.insert(0, ('', '---------'))
@@ -6890,10 +6891,12 @@ class BridgingForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-    registration_level = forms.ChoiceField(
-        label=_("Registration level"),
-        widget=forms.Select, required=True,
-        choices=REGISTRATION_LEVEL
+    registration_level = forms.ModelChoiceField(
+        queryset=RegistrationLevel.objects.all(), widget=forms.Select,
+        label=_('Registration level'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
     )
     school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_first_shift=True), widget=forms.Select,

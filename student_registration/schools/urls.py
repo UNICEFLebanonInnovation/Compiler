@@ -81,4 +81,35 @@ urlpatterns = [
         view=views.Update_Class_cprep.as_view(),
         name='update_classroom_cprep'
     ),
+
+    url(
+        regex=r'^school-list/$',
+        view=views.SchoolListView.as_view(),
+        name='school_list'
+    ),
+    url(
+        regex=r'^school-add/$',
+        view=views.SchoolAddView.as_view(),
+        name='school_add'
+    ),
+    url(
+        regex=r'^school-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.SchoolEditView.as_view(),
+        name='school_edit'
+    ),
+    url(
+        'load-districts/$',
+        views.load_districts,
+        name='load_districts'
+    ),
+    url(
+        'load-cadasters/$',
+        views.load_cadasters,
+        name='load_cadasters'
+    ),
+    url(
+        'load-schools/$',
+        views.load_schools,
+        name='load_schools'
+    ),
 ]

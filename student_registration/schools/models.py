@@ -266,6 +266,11 @@ class School(models.Model):
         ).count()
 
     @property
+    def total_registered_bridging(self):
+        from student_registration.clm.models import Bridging
+        return Bridging.objects.all().count()
+
+    @property
     def total_registered_2ndshift(self):
         from student_registration.enrollments.models import Enrollment
         return Enrollment.objects.filter(
