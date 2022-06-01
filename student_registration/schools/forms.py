@@ -3336,9 +3336,6 @@ class SchoolForm(forms.ModelForm):
             )
         )
 
-    def clean(self):
-        cleaned_data = super(SchoolForm, self).clean()
-
     def save(self, instance=None, request=None):
         instance = super(SchoolForm, self).save()
         messages.success(request, _('Your data has been sent successfully to the server'))

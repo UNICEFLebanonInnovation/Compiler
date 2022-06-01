@@ -511,6 +511,7 @@ class SchoolListView(LoginRequiredMixin,
         return School.objects.filter(is_first_shift=True).order_by('-id')
 
 
+
 class SchoolAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
