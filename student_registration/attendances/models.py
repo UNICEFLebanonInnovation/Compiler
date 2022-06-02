@@ -287,3 +287,114 @@ class AttendanceSyncLog(models.Model):
 
     class Meta:
         ordering = ['processed_date']
+
+#
+# class CLMAttendance(TimeStampedModel):
+#     YES_NO = Choices(
+#         ('yes', _("Yes")),
+#         ('no', _("No")),
+#     )
+#     REGISTRATION_LEVEL = (
+#         ('', '----------'),
+#         ('level_one', _('Level one')),
+#         ('level_two', _('Level two')),
+#         ('level_three', _('Level three')),
+#         ('level_four', _('Level four')),
+#         ('level_five', _('Level five')),
+#         ('level_six', _('Level six'))
+#     )
+#     CLOSE_REASON = Choices(
+#         ('public_holiday', _('Public Holiday')),
+#         ('school_holiday', _('School Holiday')),
+#         ('strike', _('Strike')),
+#         ('weekly_holiday', _('Weekly Holiday')),
+#     )
+#     school = models.ForeignKey(
+#         School,
+#         blank=False, null=True,
+#         related_name='attendances',
+#     )
+#     registration_level = models.CharField(
+#         max_length=100,
+#         blank=True,
+#         null=True,
+#         choices=REGISTRATION_LEVEL,
+#         verbose_name=_('Registration level')
+#     )
+#     attendance_date = models.DateField(blank=True, null=True)
+#
+#     day_off = models.CharField(
+#         max_length=10,
+#         blank=True,
+#         null=True,
+#         choices=YES_NO,
+#         verbose_name=_('Day off ?')
+#     )
+#     close_reason = models.CharField(
+#         max_length=50,
+#         blank=True,
+#         null=True,
+#         choices=CLOSE_REASON,
+#         verbose_name=_('Day off reason')
+#     )
+#
+#     class Meta:
+#         ordering = ['attendance_date']
+#         verbose_name = "Attendances by School by Day"
+#
+#     def __unicode__(self):
+#         return self.school.__unicode__()
+#
+#
+# class CLMAttendanceStudent(TimeStampedModel):
+#
+#     ABSENCE_REASON = Choices(
+#         ('sick', _('Sick')),
+#         ('no_transport', _('No transport')),
+#         ('other', _('Other reason')),
+#     )
+#
+#     YES_NO = Choices(
+#         ('yes', _("Yes")),
+#         ('no', _("No")),
+#     )
+#     attendance_day = models.ForeignKey(
+#         CLMAttendance,
+#         blank=True, null=True,
+#         related_name='Attendance day',
+#     )
+#     student = models.ForeignKey(
+#         Student,
+#         blank=True, null=True,
+#         related_name='student',
+#     )
+#     attended = models.CharField(
+#         max_length=10,
+#         blank=True,
+#         null=True,
+#         choices=YES_NO,
+#         verbose_name=_('Student Attended?')
+#     )
+#     absence_reason = models.CharField(
+#         max_length=50,
+#         blank=True,
+#         null=True,
+#         choices=ABSENCE_REASON
+#     )
+#
+#     class Meta:
+#         ordering = ['id']
+#         verbose_name = "Student Attendance"
+#
+#     @property
+#     def student_fullname(self):
+#         if self.student:
+#             return self.student.full_name
+#         return ''
+#
+#     @property
+#     def student_gender(self):
+#         return self.student.sex
+#
+#     def __unicode__(self):
+#         return self.school.__unicode__()
