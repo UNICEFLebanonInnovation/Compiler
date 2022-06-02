@@ -3,8 +3,8 @@ from django.conf import settings
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-
 from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import ArrayField
 # from django.contrib.gis.db import models
 from student_registration.locations.models import Location
 from student_registration.staffs.models import Bank
@@ -33,27 +33,149 @@ class PublicHolidays(models.Model):
 
 
 class School(models.Model):
-
-    name = models.CharField(
-        max_length=255,
-        verbose_name=_('School name')
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four')),
+        ('level_five', _('Level five')),
+        ('level_six', _('Level six'))
+    )
+    YES_NO = Choices(
+        ('yes', _("Yes")),
+        ('no', _("No")),
     )
     number = models.CharField(
         max_length=45,
         unique=True,
-        verbose_name=_('CERD')
+        verbose_name=_('School CERD Number')
+    )
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_('School name')
     )
     director_name = models.CharField(
         max_length=100,
         blank=True, null=True,
         verbose_name=_('School director name')
     )
-    director_phone_number = models.CharField(
+    land_phone_number = models.CharField(
         max_length=100,
         blank=True, null=True,
-        verbose_name=_('School director cell phone')
+        verbose_name=_('School land phone number')
     )
-    land_phone_number = models.CharField(
+    email = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School email')
+    )
+    governorate = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Governorate')
+    )
+    district = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('District')
+    )
+    cadaster = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cadaster')
+    )
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    grade_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
+        verbose_name=_('Grade level')
+    )
+    school_capacity = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('School capacity')
+    )
+    empty_building = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Available empty building/closed campus')
+    )
+    CWD_accessible = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the school accessible for CWD?')
+    )
+    number_children = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (excluding SBP)')
+    )
+    number_children_male = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (male)')
+    )
+    number_children_female = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (female)')
+    )
+    number_children_lebanese = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (Lebanese)')
+    )
+    number_children_non_lebanese = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (non Lebanese)')
+    )
+    number_children_sbp = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (SBP only)')
+    )
+    number_children_male_sbp = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (male, SBP only)')
+    )
+    number_children_female_sbp = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (female, SBP only)')
+    )
+    number_children_lebanese_sbp = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (Lebanese, SBP only)')
+    )
+    number_children_non_lebanese_sbp = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total Number of children enrolled (non Lebanese, SBP only)')
+    )
+    CWD_accessible = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the school accessible for CWD?')
+    )
+    internet_available = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Availability of Internet')
+    )
+    school_digital_capacity = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('School Digital Capacity')
+    )
+    is_first_shift = models.BooleanField(
+        blank=True,
+        default=True,
+        verbose_name=_('School is 1st shift?')
+    )
+    director_phone_number = models.CharField(
         max_length=100,
         blank=True, null=True,
         verbose_name=_('School land phone number')
@@ -62,11 +184,6 @@ class School(models.Model):
         max_length=100,
         blank=True, null=True,
         verbose_name=_('School fax number')
-    )
-    email = models.CharField(
-        max_length=100,
-        blank=True, null=True,
-        verbose_name=_('School email')
     )
     certified_foreign_language = models.CharField(
         max_length=100,
@@ -101,21 +218,11 @@ class School(models.Model):
         blank=True, null=True,
         verbose_name=_('School IT phone number')
     )
-    #field_coordinator_name = models.CharField(
-     #   max_length=100,
-      #  blank=True, null=True,
-       # verbose_name=_('Field coordinator name')
-       #)
     coordinator = models.ForeignKey(
         Coordinator,
         blank=True, null=True,
         verbose_name=_('coordinator'),
         related_name='+',
-    )
-    is_first_shift = models.BooleanField(
-        blank=True,
-        default=False,
-        verbose_name=_('School is 1st shift?')
     )
     is_2nd_shift = models.BooleanField(
         blank=True,

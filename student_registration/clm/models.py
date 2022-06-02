@@ -18,9 +18,8 @@ from student_registration.schools.models import (
     ClassRoom,
     CLMRound,
     EducationalLevel,
-    PartnerOrganization,
+    PartnerOrganization
 )
-
 
 # class CLMRound(models.Model):
 #     name = models.CharField(max_length=45, unique=True)
@@ -130,16 +129,6 @@ class Center(models.Model):
     def __unicode__(self):
         return self.name
 
-
-class RegistrationLevel(models.Model):
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "'Learning result"
-
-    def __unicode__(self):
-        return self.name
 
 
 class CLM(TimeStampedModel):
@@ -1799,15 +1788,15 @@ class Bridging(CLM):
         ('dropout', _('Dropout, referral not possible')),
         ('other', _('Other')),
     )
-    # REGISTRATION_LEVEL = (
-    #     ('', '----------'),
-    #     ('level_one', _('Level one')),
-    #     ('level_two', _('Level two')),
-    #     ('level_three', _('Level three')),
-    #     ('level_four', _('Level four')),
-    #     ('level_five', _('Level five')),
-    #     ('level_six', _('Level six'))
-    # )
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four')),
+        ('level_five', _('Level five')),
+        ('level_six', _('Level six'))
+    )
     MAIN_CAREGIVER = (
         ('', '----------'),
         ('mother', _('Mother')),
@@ -1870,10 +1859,11 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Round start date')
     )
-    registration_level = models.ForeignKey(
-        RegistrationLevel,
-        blank=True, null=True,
-        related_name='+',
+    registration_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
         verbose_name=_('Registration level')
     )
     main_caregiver = models.CharField(
