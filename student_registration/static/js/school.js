@@ -16,9 +16,14 @@ $(window).load(function () {
 });
 
 $(document).ready(function() {
-    if($(document).find('#id_start_date').length == 1) {
-        $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+
+    if($(document).find('#id_academic_year_start').length == 1) {
+        $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"});
     }
+     if($(document).find('#id_academic_year_end').length == 1) {
+        $('#id_academic_year_end').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
     $(document).on('click', '.justify-button', function(){
         var item = $(this);
         var itemscope = item.attr('itemscope');

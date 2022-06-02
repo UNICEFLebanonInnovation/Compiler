@@ -88,8 +88,16 @@ class School(models.Model):
         related_name='+',
         verbose_name=_('Cadaster')
     )
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name=_('School GPS (longitude)')
+    )
+    latitude = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name=_('School GPS (latitude)')
+    )
     grade_level = models.CharField(
         max_length=100,
         blank=True,
@@ -101,16 +109,12 @@ class School(models.Model):
         blank=True, null=True,
         verbose_name=_('School capacity')
     )
-    empty_building = models.IntegerField(
-        blank=True, null=True,
-        verbose_name=_('Available empty building/closed campus')
-    )
-    CWD_accessible = models.CharField(
+    empty_building = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Is the school accessible for CWD?')
+        verbose_name=_('Available empty building/closed campus')
     )
     number_children = models.IntegerField(
         blank=True, null=True,
@@ -170,10 +174,36 @@ class School(models.Model):
         blank=True, null=True,
         verbose_name=_('School Digital Capacity')
     )
-    is_first_shift = models.BooleanField(
+    is_first_shift = models.CharField(
+        max_length=10,
         blank=True,
-        default=True,
+        null=True,
+        choices=YES_NO,
         verbose_name=_('School is 1st shift?')
+    )
+    weekend = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=Choices(
+            ('Friday', _('Friday')),
+            ('Saturday', _('Saturday')),
+        ),
+        verbose_name=_('School weekends')
+    )
+    academic_year_start = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('School year start date')
+    )
+    academic_year_end = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('School year end date')
+    )
+    academic_year_exam_end = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Exam end date')
     )
     director_phone_number = models.CharField(
         max_length=100,
@@ -198,15 +228,6 @@ class School(models.Model):
     comments = models.TextField(
         blank=True, null=True,
         verbose_name=_('Comments')
-    )
-    weekend = models.CharField(
-        max_length=100,
-        blank=True, null=True,
-        choices=Choices(
-            ('Friday', _('Friday')),
-            ('Saturday', _('Saturday')),
-        ),
-        verbose_name=_('School weekends')
     )
     it_name = models.CharField(
         max_length=100,
@@ -250,21 +271,6 @@ class School(models.Model):
         blank=True,
         default=False,
         verbose_name=_('Start attendance from the beginning')
-    )
-    academic_year_start = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('School year start date')
-    )
-    academic_year_end = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('School year end date')
-    )
-    academic_year_exam_end = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Exam end date')
     )
     location = models.ForeignKey(
         Location,

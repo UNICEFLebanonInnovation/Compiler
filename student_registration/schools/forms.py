@@ -10,7 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder
 
-from .models import School, PartnerOrganization, EducationYear, Evaluation
+from .models import School, PartnerOrganization, EducationYear, Evaluation, Location
 from .serializers import SchoolSerializer
 
 class ProfileForm(forms.ModelForm):
@@ -3180,48 +3180,162 @@ class Classroom_Form_cprep(forms.ModelForm):
 
 
 class SchoolForm(forms.ModelForm):
-    email = forms.EmailField(
-        label=_('School email'),
-        widget=forms.TextInput(attrs={'placeholder': 'Format: school@email.com'})
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four')),
+        ('level_five', _('Level five')),
+        ('level_six', _('Level six'))
+    )
+    number = forms.IntegerField(
+        label=_('School CERD Number'),
+        widget=forms.TextInput, required=False
+    )
+    name = forms.CharField(
+        label=_("School name"),
+        widget=forms.TextInput, required=True
+    )
+    director_name = forms.CharField(
+        label=_("School director name"),
+        widget=forms.TextInput, required=True
     )
     land_phone_number = forms.RegexField(
         label=_('School land phone number'),
         regex=r'^[0-9]{2}-[0-9]{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
     )
-    fax_number = forms.RegexField(
-        label=_('School fax number'),
-        regex=r'^[0-9]{2}-[0-9]{6}$',
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    email = forms.EmailField(
+        label=_('School email'),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: school@email.com'})
     )
-    director_phone_number = forms.RegexField(
-        label=_('School director cell phone'),
-        regex=r'^[0-9]{2}-[0-9]{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    governorate = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
+        label=_('Governorate'),
+        empty_label='-------',
+        required=False, to_field_name='id',
     )
-    it_phone_number = forms.RegexField(
-        label=_('School IT phone number'),
-        regex=r'^[0-9]{2}-[0-9]{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    district = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        label=_('District'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        # initial=0
+    )
+    cadaster = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        label=_('Cadaster'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        # initial=0
+    )
+    longitude = forms.FloatField(
+        label=_('School GPS (longitude)'),
+        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        min_value=0, required=True
+    )
+    latitude = forms.FloatField(
+        label=_('School GPS (latitude)'),
+        widget=forms.NumberInput(attrs=({'maxlength': 12})),
+        min_value=0, required=True
+    )
+    grade_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
+    school_capacity = forms.IntegerField(
+        label=_('School capacity'),
+        widget=forms.TextInput, required=False
+    )
+    empty_building = forms.ChoiceField(
+        label=_("Available empty building/closed campus"),
+        widget=forms.Select, required=True,
+        choices=School.YES_NO
+    )
+    number_children = forms.IntegerField(
+        label=_('Total Number of children enrolled (excluding SBP)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_male = forms.IntegerField(
+        label=_('Total Number of children enrolled (male)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_female = forms.IntegerField(
+        label=_('Total Number of children enrolled (female)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_lebanese = forms.IntegerField(
+        label=_('Total Number of children enrolled (Lebanese)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_non_lebanese = forms.IntegerField(
+        label=_('Total Number of children enrolled (non Lebanese)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_sbp = forms.IntegerField(
+        label=_('Total Number of children enrolled (SBP only)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_male_sbp = forms.IntegerField(
+        label=_('Total Number of children enrolled (male, SBP only)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_female_sbp = forms.IntegerField(
+        label=_('Total Number of children enrolled (female, SBP only)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_lebanese_sbp = forms.IntegerField(
+        label=_('Total Number of children enrolled (Lebanese, SBP only)'),
+        widget=forms.TextInput, required=False
+    )
+    number_children_non_lebanese_sbp = forms.IntegerField(
+        label=_('Total Number of children enrolled (non Lebanese, SBP only)'),
+        widget=forms.TextInput, required=False
+    )
+    CWD_accessible = forms.ChoiceField(
+        label=_("Is the school accessible for CWD?"),
+        widget=forms.Select, required=True,
+        choices=School.YES_NO
+    )
+    internet_available = forms.ChoiceField(
+        label=_("Availability of Internet"),
+        widget=forms.Select, required=True,
+        choices=School.YES_NO
+    )
+    school_digital_capacity = forms.IntegerField(
+        label=_('School Digital Capacity'),
+        widget=forms.TextInput, required=False
+    )
+    is_first_shift = forms.ChoiceField(
+        label=_("School is 1st shift?"),
+        widget=forms.Select, required=True,
+        choices=School.YES_NO
+    )
+    weekend = forms.ChoiceField(
+        label=_("School weekends"),
+        widget=forms.Select, required=True,
+        choices=(('Friday', _("Friday")), ('Saturday', _("Saturday"))),
+        initial='no'
     )
     academic_year_start = forms.DateField(
-        label=_('School year start date'),
-        widget=forms.TextInput,
+        label=_("School year start date"),
         required=True
     )
-    # school_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
+    academic_year_end = forms.DateField(
+        label=_("School year end date"),
+        required=True
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(SchoolForm, self).__init__(*args, **kwargs)
-        display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('schools:school_add')
-        if instance:
-            display_registry = ' d-none'
-            form_action = reverse('schools:school_edit', kwargs={'pk': instance.id})
 
+        if instance:
+            form_action = reverse('schools:school_edit', kwargs={'pk': instance.id})
         current_education_year = EducationYear.objects.get(current_year=True)
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -3235,81 +3349,95 @@ class SchoolForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('director_name', css_class='col-md-3'),
+                    Div('number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('land_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('fax_number', css_class='col-md-3'),
+                    Div('name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('director_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('director_phone_number', css_class='col-md-3'),
+                    Div('land_phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('email', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('certified_foreign_language', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
-                    Div('comments', css_class='col-md-3'),
+                    Div('district', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
-                    Div('weekend', css_class='col-md-3'),
+                    Div('cadaster', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">9</span>'),
-                    Div('it_name', css_class='col-md-3'),
+                    Div('longitude', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">10</span>'),
-                    Div('it_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
-                    Div('coordinator', css_class='col-md-3'),
+                    Div('latitude', css_class='col-md-3'),
                     css_class='row',
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">12</span>'),
-                    Div('is_2nd_shift', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
-                    Div('is_alp', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">14</span>'),
-                    Div('number_students_2nd_shift', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">15</span>'),
-                    Div('number_students_alp', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning A_right_border'
             ),
             Fieldset(
                 None,
+                Div(HTML('<span>B</span>'), css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' +
-                         _('Bank Accounts Information') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Emrollement Information') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('iban_base1', css_class='col-md-5'),
-
+                    Div('grade_level', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('bank_Base1', css_class='col-md-3'),
+                    Div('school_capacity', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('branch_base1', css_class='col-md-3'),
+                    Div('empty_building', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('iban_base2', css_class='col-md-5'),
-
+                    Div('number_children', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('bank_Base2', css_class='col-md-3'),
+                    Div('number_children_male', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('branch_base2', css_class='col-md-3'),
+                    Div('number_children_female', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('number_children_lebanese', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('number_children_non_lebanese', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('number_children_sbp', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('number_children_male_sbp', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('number_children_female_sbp', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('number_children_lebanese_sbp', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('number_children_non_lebanese_sbp', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('CWD_accessible', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('internet_available', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">16</span>'),
+                    Div('school_digital_capacity', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning B_right_border'
             ),
             Fieldset(
                 None,
@@ -3319,53 +3447,90 @@ class SchoolForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('academic_year_start', css_class='col-md-3'),
+                    Div('is_first_shift', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('academic_year_end', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('academic_year_exam_end', css_class='col-md-3'),
+                    Div('weekend', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('academic_year_start', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('academic_year_end', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
 
-    def save(self, instance=None, request=None):
-        instance = super(SchoolForm, self).save()
-        messages.success(request, _('Your data has been sent successfully to the server'))
+    # def save(self, instance=None, request=None):
+    #     instance = super(SchoolForm, self).save()
+    #     messages.success(request, _('Your data has been sent successfully to the server'))
+
+    def save(self, request=None, instance=None):
+        if instance:
+            instance = super(SchoolForm, self).save()
+            serializer = SchoolSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                # instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+            serializer = SchoolSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                # instance.owner = request.user
+                # instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+        return instance
 
     class Meta:
         model = School
         fields = (
-            'academic_year_start',
-            'academic_year_end',
-            'academic_year_exam_end',
+            'id',
+            'number',
+            'name',
             'director_name',
             'land_phone_number',
-            'director_phone_number',
-            'it_name',
-            'it_phone_number',
-            # 'field_coordinator_name',
-            'coordinator',
-            'fax_number',
             'email',
-            'certified_foreign_language',
-            'comments',
+            'governorate',
+            'district',
+            'cadaster',
+            'longitude',
+            'latitude',
+            'grade_level',
+            'school_capacity',
+            'empty_building',
+            'number_children',
+            'number_children_male',
+            'number_children_female',
+            'number_children_lebanese',
+            'number_children_non_lebanese',
+            'number_children_sbp',
+            'number_children_male_sbp',
+            'number_children_female_sbp',
+            'number_children_lebanese_sbp',
+            'number_children_non_lebanese_sbp',
+            'CWD_accessible',
+            'internet_available',
+            'school_digital_capacity',
+            'is_first_shift',
             'weekend',
-            'is_2nd_shift',
-            'is_alp',
-            'number_students_2nd_shift',
-            'number_students_alp',
-            'bank_Base1',
-            'branch_base1',
-            'iban_base1',
-            'bank_Base2',
-            'branch_base2',
-            'iban_base2',
+            'academic_year_start',
+            'academic_year_end',
         )

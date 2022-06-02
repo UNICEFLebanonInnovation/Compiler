@@ -22,6 +22,7 @@ from .models import (
     PublicDocument,
     PartnerOrganization,
     Evaluation,
+    Location
 )
 
 from .serializers import (
@@ -474,6 +475,7 @@ class Update_Class_cprep(UpdateView):
         else:
             return Classroom_Form_cprep(instance=instance)
 
+
 def load_districts(request):
     id_governorate = request.GET.get('id_governorate')
     cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
@@ -508,8 +510,7 @@ class SchoolListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
 
-        return School.objects.filter(is_first_shift=True).order_by('-id')
-
+        return School.objects.filter(is_first_shift='yes').order_by('-id')
 
 
 class SchoolAddView(LoginRequiredMixin,
@@ -581,7 +582,6 @@ class SchoolEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-
         kwargs['is_allowed_edit'] = is_allowed_edit('Bridging')
         return super(SchoolEditView, self).get_context_data(**kwargs)
 
@@ -597,4 +597,3 @@ class SchoolEditView(LoginRequiredMixin,
         instance = School.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(SchoolEditView, self).form_valid(form)
-

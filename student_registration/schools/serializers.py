@@ -11,7 +11,39 @@ class SchoolSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = School
-        fields = '__all__'
+        fields = (
+            'id',
+            'number',
+            'name',
+            'director_name',
+            'land_phone_number',
+            'email',
+            'governorate',
+            'district',
+            'cadaster',
+            'longitude',
+            'latitude',
+            'grade_level',
+            'school_capacity',
+            'empty_building',
+            'number_children',
+            'number_children_male',
+            'number_children_female',
+            'number_children_lebanese',
+            'number_children_non_lebanese',
+            'number_children_sbp',
+            'number_children_male_sbp',
+            'number_children_female_sbp',
+            'number_children_lebanese_sbp',
+            'number_children_non_lebanese_sbp',
+            'CWD_accessible',
+            'internet_available',
+            'school_digital_capacity',
+            'is_first_shift',
+            'weekend',
+            'academic_year_start',
+            'academic_year_end',
+        )
 
 
 class ClassRoomSerializer(serializers.ModelSerializer):
