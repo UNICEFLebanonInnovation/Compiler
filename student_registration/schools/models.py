@@ -32,7 +32,7 @@ class PublicHolidays(models.Model):
         return self.holiday.strftime("%m/%d/%Y")
 
 
-class School(models.Model):
+class School(TimeStampedModel):
     REGISTRATION_LEVEL = (
         ('', '----------'),
         ('level_one', _('Level one')),
@@ -319,6 +319,19 @@ class School(models.Model):
         null=True,
         verbose_name=_('IBAN $')
     )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
+
     class Meta:
         ordering = ['number']
 

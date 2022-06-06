@@ -43,6 +43,10 @@ class SchoolSerializer(serializers.ModelSerializer):
             'weekend',
             'academic_year_start',
             'academic_year_end',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )
 
 

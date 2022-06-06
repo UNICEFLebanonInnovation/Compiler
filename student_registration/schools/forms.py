@@ -3441,9 +3441,12 @@ class SchoolForm(forms.ModelForm):
             ),
             Fieldset(
                 None,
+                # Div(
+                #     HTML('<h4 id="alternatives-to-hidden-labels">' +
+                #          _('Current academic year') + ' ' + current_education_year.name + '</h4>')
+                # ),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' +
-                         _('Current academic year') + ' ' + current_education_year.name + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -3479,7 +3482,7 @@ class SchoolForm(forms.ModelForm):
             serializer = SchoolSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
-                # instance.modified_by = request.user
+                instance.modified_by = request.user
                 instance.save()
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
@@ -3489,8 +3492,8 @@ class SchoolForm(forms.ModelForm):
             serializer = SchoolSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-                # instance.owner = request.user
-                # instance.modified_by = request.user
+                instance.owner = request.user
+                instance.modified_by = request.user
                 instance.save()
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
