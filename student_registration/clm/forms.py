@@ -1307,20 +1307,21 @@ class BLNForm(CommonForm):
                 css_class='button-group'
             )
         )
-
+        partner_id = 0
         if instance:
-
-            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+            if instance.owner.partner:
+                partner_id = instance.owner.partner.id
         else:
-
-            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
-
-        self.fields['center'] = forms.ModelChoiceField(
-            queryset=queryset, widget=forms.Select,
-            label=_('Site / Center'),
-            empty_label='-------',
-            required=True, to_field_name='id',
-        )
+            if self.request.user.partner:
+                partner_id = self.request.user.partner.id
+        if partner_id > 0:
+            queryset = Center.objects.filter(partner_id=partner_id)
+            self.fields['center'] = forms.ModelChoiceField(
+                queryset=queryset, widget=forms.Select,
+                label=_('Site / Center'),
+                empty_label='-------',
+                required=True, to_field_name='id',
+            )
 
 
     def clean(self):
@@ -2633,19 +2634,21 @@ class ABLNForm(CommonForm):
             )
         )
 
+        partner_id = 0
         if instance:
-
-            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+            if instance.owner.partner:
+                partner_id = instance.owner.partner.id
         else:
-
-            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
-
-        self.fields['center'] = forms.ModelChoiceField(
-            queryset=queryset, widget=forms.Select,
-            label=_('Site / Center'),
-            empty_label='-------',
-            required=True, to_field_name='id',
-        )
+            if self.request.user.partner:
+                partner_id = self.request.user.partner.id
+        if partner_id > 0:
+            queryset = Center.objects.filter(partner_id=partner_id)
+            self.fields['center'] = forms.ModelChoiceField(
+                queryset=queryset, widget=forms.Select,
+                label=_('Site / Center'),
+                empty_label='-------',
+                required=True, to_field_name='id',
+            )
 
     def clean(self):
         cleaned_data = super(ABLNForm, self).clean()
@@ -4060,19 +4063,21 @@ class RSForm(CommonForm):
             )
         )
 
+        partner_id = 0
         if instance:
-
-            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+            if instance.owner.partner:
+                partner_id = instance.owner.partner.id
         else:
-
-            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
-
-        self.fields['center'] = forms.ModelChoiceField(
-            queryset=queryset, widget=forms.Select,
-            label=_('Site / Center'),
-            empty_label='-------',
-            required=True, to_field_name='id',
-        )
+            if self.request.user.partner:
+                partner_id = self.request.user.partner.id
+        if partner_id > 0:
+            queryset = Center.objects.filter(partner_id=partner_id)
+            self.fields['center'] = forms.ModelChoiceField(
+                queryset=queryset, widget=forms.Select,
+                label=_('Site / Center'),
+                empty_label='-------',
+                required=True, to_field_name='id',
+            )
 
     def clean(self):
         cleaned_data = super(RSForm, self).clean()
@@ -5483,20 +5488,21 @@ class CBECEForm(CommonForm):
                 css_class='button-group'
             )
         )
-
+        partner_id = 0
         if instance:
-
-            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+            if instance.owner.partner:
+                partner_id = instance.owner.partner.id
         else:
-
-            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
-
-        self.fields['center'] = forms.ModelChoiceField(
-            queryset=queryset, widget=forms.Select,
-            label=_('Site / Center'),
-            empty_label='-------',
-            required=True, to_field_name='id',
-        )
+            if self.request.user.partner:
+                partner_id = self.request.user.partner.id
+        if partner_id > 0:
+            queryset = Center.objects.filter(partner_id=partner_id)
+            self.fields['center'] = forms.ModelChoiceField(
+                queryset=queryset, widget=forms.Select,
+                label=_('Site / Center'),
+                empty_label='-------',
+                required=True, to_field_name='id',
+            )
 
     def clean(self):
         cleaned_data = super(CBECEForm, self).clean()
@@ -6601,13 +6607,21 @@ class OutreachForm(CommonForm):
                 css_class='button-group'
             )
         )
-
+        partner_id = 0
         if instance:
-
-            queryset = Center.objects.filter(partner_id=instance.owner.partner.id)
+            if instance.owner.partner:
+                partner_id = instance.owner.partner.id
         else:
-
-            queryset = Center.objects.filter(partner_id=self.request.user.partner.id)
+            if self.request.user.partner:
+                partner_id = self.request.user.partner.id
+        # if partner_id > 0:
+        #     queryset = Center.objects.filter(partner_id=partner_id)
+        #     self.fields['center'] = forms.ModelChoiceField(
+        #         queryset=queryset, widget=forms.Select,
+        #         label=_('Site / Center'),
+        #         empty_label='-------',
+        #         required=True, to_field_name='id',
+        #     )
 
 
     def clean(self):

@@ -324,7 +324,7 @@ class School(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-    
+
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
