@@ -185,3 +185,11 @@ class BridgingFilter(CommonFilter):
             'owner__username': ['contains'],
             'disability': ['exact'],
         }
+
+
+class AttendanceFilter(CommonFilter):
+
+    class Meta:
+        model = Bridging
+        fields = {
+        }

@@ -7,6 +7,9 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
+from django_filters.views import FilterView
+from django_tables2.export.views import ExportMixin
+from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from rest_framework import viewsets, mixins, permissions
@@ -27,10 +30,14 @@ from student_registration.enrollments.models import (
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.backends.tasks import export_attendance
 from student_registration.users.utils import force_default_language
-from .utils import find_attendances, fill_attendancedt #calculate_absentees
-from .models import Attendance, Absentee
+from .utils import find_attendances, fill_attendancedt
+#calculate_absentees
+from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent
+from student_registration.clm.models import Bridging
 from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer
+from .tables import CLMAttendanceStudentTable , BootstrapTable
 
+from .filters import CLMAttendanceStudentFilter
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
                         mixins.ListModelMixin,
@@ -541,3 +548,33 @@ class ExportView(LoginRequiredMixin, ListView):
         )
         response['Content-Disposition'] = 'attachment; filename=attendance_'+selected_date+'.xlsx'
         return response
+
+
+class AttendanceListView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FilterView,
+                       # ExportMixin,
+                       SingleTableView,
+                       RequestConfig):
+    table_class = CLMAttendanceStudentTable
+    model = Bridging
+    template_name = 'attendances/attendance_list.html'
+    table = BootstrapTable(Bridging.objects.all(), order_by='id')
+    group_required = [u"CLM_Bridging"]
+
+    filterset_class = CLMAttendanceStudentFilter
+
+    def get_queryset(self):
+
+        force_default_language(self.request)
+
+        result = Bridging.objects.none()
+
+        if (self.request.GET.has_key('school')) or (self.request.GET.has_key('registration_level')):
+
+            if (self.request.GET['school'] != '') or (self.request.GET['registration_level'] != ''):
+
+                result = Bridging.objects.filter(partner=self.request.user.partner_id,
+                                                 round__current_year=True).order_by('-id')
+
+        return result
