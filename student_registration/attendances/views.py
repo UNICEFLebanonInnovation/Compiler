@@ -3,7 +3,8 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import json
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView,CreateView
+from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
@@ -38,6 +39,7 @@ from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExp
 from .tables import CLMAttendanceStudentTable , BootstrapTable
 
 from .filters import CLMAttendanceStudentFilter
+from .forms import AttendanceForm, MainAttendanceForm, AttendanceStudentForm
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
                         mixins.ListModelMixin,
@@ -578,3 +580,84 @@ class AttendanceListView(LoginRequiredMixin,
                                                  round__current_year=True).order_by('-id')
 
         return result
+
+    def get_context_data(self, **kwargs):
+        context = super(AttendanceListView, self).get_context_data(**kwargs)
+        context['form'] = AttendanceForm()
+        return context
+
+
+class MainAttendanceCreateView(CreateView):
+    form_class = MainAttendanceForm
+    template_name = 'attendances/main_attendance_form.html'
+
+    def get_initial_student_formset(self,initial_records):
+        AttendanceStudentInlineFormset = inlineformset_factory(
+            CLMAttendance,
+            CLMAttendanceStudent,
+            form=AttendanceStudentForm,
+            extra=len(initial_records),
+            fk_name='attendance_day',
+            fields=('attended', 'absence_reason','student_id'),
+            can_delete=False
+        )
+        return AttendanceStudentInlineFormset(initial=initial_records)
+    def get_student_formset(self,parameters):
+        AttendanceStudentInlineFormset = inlineformset_factory(
+            CLMAttendance,
+            CLMAttendanceStudent,
+            form=AttendanceStudentForm,
+            fk_name='attendance_day',
+            fields=('attended', 'absence_reason','student_id'),
+            can_delete=False
+        )
+        return AttendanceStudentInlineFormset(parameters)
+
+    def get_context_data(self, **kwargs):
+        context = super(MainAttendanceCreateView, self).get_context_data(**kwargs)
+
+        context['attendance_student_formset'] = self.get_initial_student_formset([
+            {'attended': 'yes',
+             'absence_reason': 'sick',
+             'student_id': 1655716,
+             'student_name': 'test'},{'attended': 'yes',
+             'absence_reason': 'sick',
+             'student_id': 1655716,
+             'student_name': 'test'},{'attended': 'yes',
+             'absence_reason': 'sick',
+             'student_id': 1655716,
+             'student_name': 'test'}])
+
+        return context
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        attendance_student_formset = self.get_student_formset(self.request.POST)
+        if form.is_valid() and attendance_student_formset.is_valid():
+            return self.form_valid(form, attendance_student_formset)
+        else:
+            return self.form_invalid(form, attendance_student_formset)
+
+    def form_valid(self, form, attendance_student_formset):
+        self.object = form.save(commit=False)
+        self.object.save()
+        # saving ProductMeta Instances
+
+        for student_form in attendance_student_formset:
+
+            print((student_form.cleaned_data['student_id']))
+            student_form.instance.student_id = student_form.cleaned_data['student_id']
+
+        attendance_students = attendance_student_formset.save(commit=False)
+        for attendance_student in attendance_students:
+            attendance_student.attendance_day = self.object
+            #attendance_student.student_id = attendance_student.student_id
+            attendance_student.save()
+        return HttpResponse("The form was saved.")
+    def form_invalid(self, form, attendance_student_formset):
+        return self.render_to_response(
+            self.get_context_data(form=form,
+                                  attendance_student_formset=attendance_student_formset
+                                  )
+        )

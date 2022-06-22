@@ -30,4 +30,9 @@ urlpatterns = [
         view=views.AttendanceListView.as_view(),
         name='attendance_list'
     ),
+    url(
+        regex=r'^main-attendance/$',
+        view=views.MainAttendanceCreateView.as_view(),
+        name='main_attendance'
+    ),
 ]

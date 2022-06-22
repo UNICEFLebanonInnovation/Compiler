@@ -304,10 +304,12 @@ class CLMAttendance(TimeStampedModel):
         ('level_six', _('Level six'))
     )
     CLOSE_REASON = Choices(
+        ('', '----------'),
         ('public_holiday', _('Public Holiday')),
         ('school_holiday', _('School Holiday')),
         ('strike', _('Strike')),
         ('weekly_holiday', _('Weekly Holiday')),
+        ('roads_closed', _('Roads Closed')),
     )
     school = models.ForeignKey(
         School,
@@ -347,6 +349,17 @@ class CLMAttendance(TimeStampedModel):
 
 
 class CLMAttendanceStudent(TimeStampedModel):
+    readonly_fields = ('student_name',)
+
+    @property
+    def student_name(self):
+
+        result = ''
+
+        if self.student:
+            result = self.student.full_name
+
+        return result
 
     ABSENCE_REASON = Choices(
         ('sick', _('Sick')),
