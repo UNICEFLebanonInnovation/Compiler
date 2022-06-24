@@ -35,4 +35,5 @@ urlpatterns = [
         view=views.MainAttendanceCreateView.as_view(),
         name='main_attendance'
     ),
+
 ]

@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import json
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView,CreateView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, CreateView
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
@@ -32,21 +32,21 @@ from student_registration.alp.models import Outreach, ALPRound
 from student_registration.backends.tasks import export_attendance
 from student_registration.users.utils import force_default_language
 from .utils import find_attendances, fill_attendancedt
-#calculate_absentees
+# calculate_absentees
 from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent
 from student_registration.clm.models import Bridging
 from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer
-from .tables import CLMAttendanceStudentTable , BootstrapTable
+from .tables import CLMAttendanceStudentTable, BootstrapTable
 
 from .filters import CLMAttendanceStudentFilter
 from .forms import AttendanceForm, MainAttendanceForm, AttendanceStudentForm
+
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
                         mixins.ListModelMixin,
                         mixins.CreateModelMixin,
                         mixins.UpdateModelMixin,
                         viewsets.GenericViewSet):
-
     model = Attendance
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
@@ -117,7 +117,6 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
 
 class AbsenteeViewSet(mixins.ListModelMixin,
                       viewsets.GenericViewSet):
-
     model = Absentee
     queryset = Absentee.objects.all()
     serializer_class = AbsenteeSerializer
@@ -139,7 +138,6 @@ class AbsenteeViewSet(mixins.ListModelMixin,
 class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      ListView):
-
     model = Attendance
     template_name = 'attendances/school_day.html'
     group_required = [u"ATTENDANCE"]
@@ -248,7 +246,7 @@ class AttendanceView(LoginRequiredMixin,
             }
 
             if level and section and level.id == registry['classroom_id'] \
-                     and section.id == registry['section_id']:
+                and section.id == registry['section_id']:
                 current_level_section = level_by_section
                 if exam_day or not_attending or (attendance and attendance.validation_date) or school_closed:
                     disable_attendance = True
@@ -291,7 +289,8 @@ class AttendanceView(LoginRequiredMixin,
             })
 
         if selected_date not in allowed_dates:
-            messages.warning(self.request, _('This dates is blocked you are not allowed to take attendance for this date.'))
+            messages.warning(self.request,
+                             _('This dates is blocked you are not allowed to take attendance for this date.'))
             self.template_name = 'error.html'
             return {
             }
@@ -330,7 +329,6 @@ class AbsenteeView(ListAPIView):
 class AttendanceALPView(LoginRequiredMixin,
                         GroupRequiredMixin,
                         ListView):
-
     model = Attendance
     template_name = 'attendances/school_day.html'
     group_required = [u"ATTENDANCE"]
@@ -353,7 +351,8 @@ class AttendanceALPView(LoginRequiredMixin,
             school = self.request.user.school
 
         if not school.academic_year_start:
-            messages.warning(self.request, _('Please go to the school profile and enter the academic start date in order to take attendance.'))
+            messages.warning(self.request,
+                             _('Please go to the school profile and enter the academic start date in order to take attendance.'))
             self.template_name = 'error.html'
             return {
             }
@@ -401,8 +400,8 @@ class AttendanceALPView(LoginRequiredMixin,
             attendance_taken = False
             level_section = '{}-{}'.format(registry['registered_in_level_id'], registry['section_id'])
             attendances = attendance.students[level_section] if attendance \
-                                                             and attendance.students \
-                                                             and level_section in attendance.students else ''
+                                                                and attendance.students \
+                                                                and level_section in attendance.students else ''
             total = queryset.filter(registered_in_level_id=registry['registered_in_level_id'],
                                     section_id=registry['section_id']).count()
 
@@ -432,7 +431,8 @@ class AttendanceALPView(LoginRequiredMixin,
                 'school_closed': school_closed
             }
 
-            if level and section and level.id == registry['registered_in_level_id'] and section.id == registry['section_id']:
+            if level and section and level.id == registry['registered_in_level_id'] and section.id == registry[
+                'section_id']:
                 current_level_section = level_by_section
                 if exam_day or not_attending or (attendance and attendance.validation_date) or school_closed:
                     disable_attendance = True
@@ -473,7 +473,8 @@ class AttendanceALPView(LoginRequiredMixin,
             })
 
         if selected_date not in allowed_dates:
-            messages.warning(self.request, _('This dates is blocked you are not allowed to take attendance for this date.'))
+            messages.warning(self.request,
+                             _('This dates is blocked you are not allowed to take attendance for this date.'))
             self.template_name = 'error.html'
             return {
             }
@@ -529,35 +530,34 @@ class AttendancesExportViewSet(mixins.ListModelMixin,
 
 
 class ExportView(LoginRequiredMixin, ListView):
-
     model = Attendance
     queryset = Attendance.objects.all()
 
     def get(self, request, *args, **kwargs):
-
         date_format = '%Y-%m-%d'
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
         school_type = self.request.GET.get('school_type', '2nd-shift')
 
         school = self.request.user.school_id
-        data = export_attendance({'date': selected_date, 'school': school, 'school_type': school_type}, return_data=True)
+        data = export_attendance({'date': selected_date, 'school': school, 'school_type': school_type},
+                                 return_data=True)
         # data = export_attendance({'from_date': '2017-10-01', 'to_date': '2017-12-15', 'school_type': '2nd-shift', 'gov': 4}, return_data=True)
 
         response = HttpResponse(
             data,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-        response['Content-Disposition'] = 'attachment; filename=attendance_'+selected_date+'.xlsx'
+        response['Content-Disposition'] = 'attachment; filename=attendance_' + selected_date + '.xlsx'
         return response
 
 
 class AttendanceListView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FilterView,
-                       # ExportMixin,
-                       SingleTableView,
-                       RequestConfig):
+                         GroupRequiredMixin,
+                         FilterView,
+                         # ExportMixin,
+                         SingleTableView,
+                         RequestConfig):
     table_class = CLMAttendanceStudentTable
     model = Bridging
     template_name = 'attendances/attendance_list.html'
@@ -575,7 +575,6 @@ class AttendanceListView(LoginRequiredMixin,
         if (self.request.GET.has_key('school')) or (self.request.GET.has_key('registration_level')):
 
             if (self.request.GET['school'] != '') or (self.request.GET['registration_level'] != ''):
-
                 result = Bridging.objects.filter(partner=self.request.user.partner_id,
                                                  round__current_year=True).order_by('-id')
 
@@ -591,44 +590,57 @@ class MainAttendanceCreateView(CreateView):
     form_class = MainAttendanceForm
     template_name = 'attendances/main_attendance_form.html'
 
-    def get_initial_student_formset(self,initial_records):
+    def get_initial_student_formset(self, initial_records):
         AttendanceStudentInlineFormset = inlineformset_factory(
             CLMAttendance,
             CLMAttendanceStudent,
             form=AttendanceStudentForm,
             extra=len(initial_records),
             fk_name='attendance_day',
-            fields=('attended', 'absence_reason','student_id'),
+            fields=('attended', 'absence_reason', 'student_id'),
             can_delete=False
         )
         return AttendanceStudentInlineFormset(initial=initial_records)
-    def get_student_formset(self,parameters):
+
+    def get_student_formset(self, parameters):
         AttendanceStudentInlineFormset = inlineformset_factory(
             CLMAttendance,
             CLMAttendanceStudent,
             form=AttendanceStudentForm,
             fk_name='attendance_day',
-            fields=('attended', 'absence_reason','student_id'),
+            fields=('attended', 'absence_reason', 'student_id'),
             can_delete=False
         )
         return AttendanceStudentInlineFormset(parameters)
 
     def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        queryset = Bridging.objects.none()
+        school = 0
+        if self.request.GET.get('school', None):
+            school = int(self.request.GET.get('school', 0))
+            if self.request.GET.get('registration_level', None):
+                registration_level = self.request.GET.get('registration_level', '')
+        if school > 0:
+            queryset = Bridging.objects.filter(partner=self.request.user.partner_id,
+                                               round__current_year=True, school=school)
+            if registration_level != '':
+                queryset = queryset.filter(registration_level=registration_level)
+            queryset = queryset.order_by('-id')
+
+        data = []
+        for line in queryset:
+            student = {
+                'attended': 'yes',
+                'absence_reason': 'sick',
+                'student_id': line.student.id,
+                'student_name': line.student.full_name
+            }
+            data.append(student)
         context = super(MainAttendanceCreateView, self).get_context_data(**kwargs)
-
-        context['attendance_student_formset'] = self.get_initial_student_formset([
-            {'attended': 'yes',
-             'absence_reason': 'sick',
-             'student_id': 1655716,
-             'student_name': 'test'},{'attended': 'yes',
-             'absence_reason': 'sick',
-             'student_id': 1655716,
-             'student_name': 'test'},{'attended': 'yes',
-             'absence_reason': 'sick',
-             'student_id': 1655716,
-             'student_name': 'test'}])
-
+        context['attendance_student_formset'] = self.get_initial_student_formset(data)
         return context
+
     def post(self, request, *args, **kwargs):
         self.object = None
         form_class = self.get_form_class()
@@ -643,21 +655,28 @@ class MainAttendanceCreateView(CreateView):
         self.object = form.save(commit=False)
         self.object.save()
         # saving ProductMeta Instances
-
         for student_form in attendance_student_formset:
-
             print((student_form.cleaned_data['student_id']))
             student_form.instance.student_id = student_form.cleaned_data['student_id']
 
         attendance_students = attendance_student_formset.save(commit=False)
         for attendance_student in attendance_students:
             attendance_student.attendance_day = self.object
-            #attendance_student.student_id = attendance_student.student_id
+            # attendance_student.student_id = attendance_student.student_id
             attendance_student.save()
         return HttpResponse("The form was saved.")
+
     def form_invalid(self, form, attendance_student_formset):
         return self.render_to_response(
             self.get_context_data(form=form,
                                   attendance_student_formset=attendance_student_formset
                                   )
         )
+
+    def get_initial(self):
+        initial_values = {}
+        if self.request.GET.get('school', None):
+            initial_values['school'] = int(self.request.GET.get('school', 0))
+            if self.request.GET.get('registration_level', None):
+                initial_values['registration_level'] = self.request.GET.get('registration_level', '')
+        return initial_values

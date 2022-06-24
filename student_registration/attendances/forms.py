@@ -4,6 +4,15 @@ import datetime
 from .widgets import DatePickerInput
 from django.utils.translation import ugettext as _
 from django.forms import inlineformset_factory,HiddenInput
+from django.core.urlresolvers import reverse
+from django.contrib import messages
+from crispy_forms.helper import FormHelper
+from crispy_forms.bootstrap import (
+    FormActions,
+    InlineCheckboxes
+)
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from dal import autocomplete
 from .models import CLMAttendance,CLMAttendanceStudent
 from student_registration.clm.models import Bridging
 from student_registration.schools.models import (
@@ -49,6 +58,59 @@ class MainAttendanceForm(forms.ModelForm):
         required=False, to_field_name='id',
         initial=0
     )
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(MainAttendanceForm, self).__init__(*args, **kwargs)
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        form_action = reverse('attendances:main_attendance')
+        if instance:
+            form_action = reverse('attendances:bridging_edit', kwargs={'pk': instance.id})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Search') + '</h4>')
+                ),
+                Div(
+
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('registration_level', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('day_off', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('close_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                Submit('LoadStudentsButton', _('Load'), css_class='col-md-2 child_data col-md-2'),
+                # HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                # css_class='button-group'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(MainAttendanceForm, self).clean()
+        if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') != '':
+            self.add_error('close_reason', "The reason should be specified.")
+
+        # cd = self.cleaned_data
+        # if cd.get('day_off') == 'yes' and cd.get('close_reason') != '':
+        #     self.add_error('close_reason', "The reason should be specified.")
+        # return cd
     class Meta:
         model = CLMAttendance
         fields = (
@@ -56,7 +118,6 @@ class MainAttendanceForm(forms.ModelForm):
             'registration_level',
             'day_off',
             'close_reason')
-
 
 class AttendanceStudentForm(forms.ModelForm):
 
@@ -73,6 +134,7 @@ class AttendanceStudentForm(forms.ModelForm):
         super(AttendanceStudentForm, self).__init__(*args, **kwargs)
 
         self.fields['student_name'].widget.attrs['readonly'] = True
+
 
 
 
