@@ -3299,13 +3299,19 @@ msgid "Results"
 msgstr "النتيجة"
 
 msgid "Arabic Results"
-msgstr "اللغة العربية (النتيجة)"
+msgstr "اللغة العربية - النتيجة"
 
 msgid "English Results"
-msgstr "(النتيجة) اللغة الأجنية - اللغة الثانية"
+msgstr "اللغة الأجنية - اللغة الثانية- النتيجة"
 
 msgid "Math Results"
-msgstr "التّطوّر الإدراكي- الرّياضيات (النتيجة)"
+msgstr "التّطوّر الإدراكي- الرّياضيات - النتيجة"
+
+msgid "Artistic Results"
+msgstr "التّطوّر الفنّي - النتيجة"
+
+msgid "Social Emotional Results"
+msgstr "التّطوّر الاجتماعيّ العاطفي - النتيجة"
 
 #: student_registration/clm/forms.py:728 student_registration/clm/forms.py:3345
 #: student_registration/clm/forms.py:4800

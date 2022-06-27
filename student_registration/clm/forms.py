@@ -7217,12 +7217,12 @@ class BridgingForm(CommonForm):
         min_value=0, required=True
     )
     social_emotional = forms.FloatField(
-        label=_('Results'),
+        label=_('Social Emotional Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
     artistic = forms.FloatField(
-        label=_('Results'),
+        label=_('Artistic Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
         )
@@ -7700,21 +7700,21 @@ class BridgingForm(CommonForm):
                     Div('english', css_class='col-md-2'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_math">3</span>'),
+                    Div('math', css_class='col-md-2'),
+                    css_class='row',
+                ),
 
                 Div(
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_social_emotional">4</span>'),
                     Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default" id="span_artistic">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_artistic">5</span>'),
                     Div('artistic', css_class='col-md-2'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_math">3</span>'),
-                    Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning E_right_border'
@@ -7920,6 +7920,8 @@ class BridgingForm(CommonForm):
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
         math = cleaned_data.get("math")
+        social_emotional = cleaned_data.get("social_emotional")
+        artistic = cleaned_data.get("artistic")
 
         if registration_level == 'level_one':
             if arabic > 46:
@@ -10581,15 +10583,15 @@ class BridgingAssessmentForm(forms.ModelForm):
         min_value=0, required=False
     )
     social_emotional = forms.FloatField(
-        label=_('Results'),
+        label=_('Social Emotional Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
     artistic = forms.FloatField(
-        label=_('Results'),
+        label=_('Artistic Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
-    )
+        )
     follow_up_type = forms.ChoiceField(
         label=_('Type of follow up'),
         widget=forms.Select, required=False,
