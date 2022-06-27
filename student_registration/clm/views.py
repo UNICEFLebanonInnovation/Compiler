@@ -1258,13 +1258,16 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
             if 'post_test' in data:
                 p_test = data['post_test']
                 if p_test:
-
                     if "Bridging_ASSESSMENT/arabic" in p_test:
                         data['arabic'] = p_test["Bridging_ASSESSMENT/arabic"]
                     if "Bridging_ASSESSMENT/english" in p_test:
                         data['english'] = p_test["Bridging_ASSESSMENT/english"]
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
+                    if "Bridging_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
+                    if "Bridging_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["Bridging_ASSESSMENT/social_emotional"]
 
             return form_class(data, instance=instance, request=self.request)
 
@@ -3609,32 +3612,16 @@ class BridgingEditView(LoginRequiredMixin,
             if 'pre_test' in data:
                 p_test = data['pre_test']
                 if p_test:
-                    if "Bridging_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["Bridging_ASSESSMENT/attended_arabic"]
-
-                    if "Bridging_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["Bridging_ASSESSMENT/modality_arabic"]
-
                     if "Bridging_ASSESSMENT/arabic" in p_test:
                         data['arabic'] = p_test["Bridging_ASSESSMENT/arabic"]
-
-                    if "Bridging_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["Bridging_ASSESSMENT/attended_english"]
-
-                    if "Bridging_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["Bridging_ASSESSMENT/modality_english"]
-
                     if "Bridging_ASSESSMENT/english" in p_test:
                         data['english'] = p_test["Bridging_ASSESSMENT/english"]
-
-                    if "Bridging_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["Bridging_ASSESSMENT/attended_math"]
-
-                    if "Bridging_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["Bridging_ASSESSMENT/modality_math"]
-
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
+                    if "Bridging_ASSESSMENT/artistic" in p_test:
+                        data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
+                    if "Bridging_ASSESSMENT/social_emotional" in p_test:
+                        data['social_emotional'] = p_test["Bridging_ASSESSMENT/social_emotional"]
 
             return BridgingForm(data, instance=instance, request=self.request)
 
