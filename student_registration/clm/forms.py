@@ -7939,8 +7939,8 @@ class BridgingForm(CommonForm):
                 self.add_error('arabic', 'This value is greater that 56')
             if english > 56:
                 self.add_error('english', 'This value is greater that 56')
-            if math > 34:
-                self.add_error('math', 'This value is greater that 34')
+            if math > 30:
+                self.add_error('math', 'This value is greater that 30')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
             if artistic > 10:
@@ -10911,8 +10911,8 @@ class BridgingAssessmentForm(forms.ModelForm):
                     self.add_error('arabic', 'This value is greater that 56')
                 if english > 56:
                     self.add_error('english', 'This value is greater that 56')
-                if math > 34:
-                    self.add_error('math', 'This value is greater that 34')
+                if math > 30:
+                    self.add_error('math', 'This value is greater that 30')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
                 if artistic > 10:
