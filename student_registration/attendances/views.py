@@ -631,7 +631,7 @@ class MainAttendanceCreateView(CreateView):
         data = []
         for line in queryset:
             student = {
-                'attended': 'yes',
+                'attended': 'no',
                 'absence_reason': 'sick',
                 'student_id': line.student.id,
                 'student_name': line.student.full_name
@@ -656,9 +656,7 @@ class MainAttendanceCreateView(CreateView):
         self.object.save()
         # saving ProductMeta Instances
         for student_form in attendance_student_formset:
-            print((student_form.cleaned_data['student_id']))
             student_form.instance.student_id = student_form.cleaned_data['student_id']
-
         attendance_students = attendance_student_formset.save(commit=False)
         for attendance_student in attendance_students:
             attendance_student.attendance_day = self.object
@@ -679,4 +677,8 @@ class MainAttendanceCreateView(CreateView):
             initial_values['school'] = int(self.request.GET.get('school', 0))
             if self.request.GET.get('registration_level', None):
                 initial_values['registration_level'] = self.request.GET.get('registration_level', '')
+            if self.request.GET.get('day_off', None):
+                initial_values['day_off'] = self.request.GET.get('day_off', '')
+            if self.request.GET.get('close_reason', None):
+                initial_values['close_reason'] = self.request.GET.get('close_reason', '')
         return initial_values

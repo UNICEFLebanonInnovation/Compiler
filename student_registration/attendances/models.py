@@ -291,6 +291,7 @@ class AttendanceSyncLog(models.Model):
 
 class CLMAttendance(TimeStampedModel):
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
@@ -323,7 +324,11 @@ class CLMAttendance(TimeStampedModel):
         choices=REGISTRATION_LEVEL,
         verbose_name=_('Registration level')
     )
-    attendance_date = models.DateField(blank=True, null=True)
+    attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Attendance date')
+    )
 
     day_off = models.CharField(
         max_length=10,
@@ -349,7 +354,8 @@ class CLMAttendance(TimeStampedModel):
 
 
 class CLMAttendanceStudent(TimeStampedModel):
-    readonly_fields = ('student_name',)
+    readonly_fields = ('student_name',
+                       'student_gender')
 
     @property
     def student_name(self):
@@ -360,6 +366,18 @@ class CLMAttendanceStudent(TimeStampedModel):
             result = self.student.full_name
 
         return result
+
+    @property
+    def student_gender(self):
+
+        result = ''
+
+        if self.student:
+            result = self.student.student_gender
+
+        return result
+
+
 
     ABSENCE_REASON = Choices(
         ('sick', _('Sick')),

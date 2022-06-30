@@ -55,17 +55,37 @@ class MainAttendanceForm(forms.ModelForm):
         queryset=School.objects.filter(is_first_shift='yes'), widget=forms.Select,
         label=_('School Name'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         initial=0
     )
+    attendance_date = forms.DateField(
+        initial=datetime.date.today,
+        widget=DatePickerInput,
+        label=_('Attendance date')
+    )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=CLMAttendance.REGISTRATION_LEVEL
+    )
+    day_off = forms.ChoiceField(
+        label=_("Day off ?"),
+        widget=forms.Select, required=True,
+        choices=CLMAttendance.YES_NO
+    )
+    close_reason = forms.ChoiceField(
+        label=_("Day off reason"),
+        widget=forms.Select, required=False,
+        choices=CLMAttendance.CLOSE_REASON
+    )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(MainAttendanceForm, self).__init__(*args, **kwargs)
-        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        # instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('attendances:main_attendance')
-        if instance:
-            form_action = reverse('attendances:bridging_edit', kwargs={'pk': instance.id})
-
+        # if instance:
+        #     form_action = reverse('attendances:main_attendance', kwargs={'pk': instance.id})
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -73,67 +93,61 @@ class MainAttendanceForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<span>A</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Search') + '</h4>')
-                ),
-                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Attendance') + '</h4>')
 
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('registration_level', css_class='col-md-3'),
+                ),
+                Div(
+                    Div('attendance_date', css_class='col-md-3 form-group'),
+                    Div('school', css_class='col-md-3 form-group'),
+                    Div('registration_level', css_class='col-md-3 form-group'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('day_off', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('close_reason', css_class='col-md-3'),
+                    Div('day_off', css_class='col-md-3 form-group'),
+                    Div('close_reason', css_class='col-md-3 form-group'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data A_right_border'
+                css_class='bd-callout bd-callout-warning'
             ),
             FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                Submit('LoadStudentsButton', _('Load'), css_class='col-md-2 child_data col-md-2'),
-                # HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
-                # css_class='button-group'
-            )
+                        Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info'),
+                        Submit('save', _('Save'), css_class='col-md-2'),
+                        css_class='button-group'
+                    )
         )
 
     def clean(self):
         cleaned_data = super(MainAttendanceForm, self).clean()
         if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') != '':
             self.add_error('close_reason', "The reason should be specified.")
-
-        # cd = self.cleaned_data
-        # if cd.get('day_off') == 'yes' and cd.get('close_reason') != '':
-        #     self.add_error('close_reason', "The reason should be specified.")
-        # return cd
     class Meta:
         model = CLMAttendance
         fields = (
+            'attendance_date',
             'school',
             'registration_level',
             'day_off',
             'close_reason')
 
+
 class AttendanceStudentForm(forms.ModelForm):
 
     student_id = forms.IntegerField(widget=HiddenInput(), required=False)
     student_name = forms.CharField()
+    student_gender = forms.CharField()
 
     class Meta:
         model = CLMAttendanceStudent
 
-        fields = ('attended', 'absence_reason','student_id')
+        fields = ('attended', 'absence_reason', 'student_id')
         widgets = {'tag': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         super(AttendanceStudentForm, self).__init__(*args, **kwargs)
 
         self.fields['student_name'].widget.attrs['readonly'] = True
+        self.fields['student_gender'].widget.attrs['readonly'] = True
+
 
 
 

@@ -2171,11 +2171,6 @@ msgstr "نوع المدرسة"
 msgid "Education year/ALP round"
 msgstr "دورة ALP /السنة الدراسية"
 
-#: student_registration/backends/tasks.py:537
-#: student_registration/dashboard/views.py:361
-msgid "Attendance date"
-msgstr " تاريخ الحضور"
-
 #: student_registration/backends/tasks.py:538
 msgid "Validation status"
 msgstr "حلة التحقق من الحضور"
@@ -2519,6 +2514,19 @@ msgstr "يتم تسجيل الطفل لأول مرة في برنامج BLN"
 #: student_registration/clm/models.py:2982
 msgid "Registration level"
 msgstr "مستوى التسجيل"
+
+msgid "Day off ?"
+msgstr "يوم عطلة؟"
+
+msgid "Day off reason"
+msgstr "سبب العطلة"
+
+msgid "Attendance date"
+msgstr "تاريخ الحضور"
+
+msgid "Attendance"
+msgstr "الحضور"
+
 
 #: student_registration/clm/forms.py:433 student_registration/clm/forms.py:1288
 #: student_registration/clm/forms.py:1729

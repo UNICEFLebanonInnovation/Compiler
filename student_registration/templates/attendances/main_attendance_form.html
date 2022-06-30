@@ -11,44 +11,35 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
     <link href="{% static 'css/bridging/attendance-list.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
+{% endblock %}
+
+{% block main_content %}
+
 {% endblock %}
 
 {% block content-full-page %}
 
-<section>
 
-    <section id="page-title" class="inline-form inner-section ui-menu-color02">
+    <div id="resume" class="inner-content">
+      <section id="page-title" class="inline-form inner-section ui-menu-color02">
         <div class="container-fluid nopadding">
-            <h3 class="font-accident-two-light color01 uppercase"
-                data-animation-origin="right"
-                data-animation-duration="400"
-                data-animation-delay="100"
-                horizental-algin="middle"
-                data-animation-distance="50px">{% trans "SCHOOL BRIDGING PORGRAMME-ATTENDANCE" %}
-            </h3>
+          <h3 class="font-accident-two-light color01 uppercase"
+              data-animation-origin="right"
+              data-animation-duration="400"
+              data-animation-delay="100"
+              data-animation-distance="50px">{% trans "School bridging Porgramme" %}
+          </h3>
         </div>
     </section>
 
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
-      <li class="breadcrumb-item active">{{ request.user.partner }}</li>
-      <li class="breadcrumb-item active">{{ request.user }}</li>
-    </ol>
-<div class="container mt-4">
-    <form method="post">
-        {% csrf_token %}
-        <div class="card">
-            <div class="card-header">
-                <h4>Create Attendance</h4>
+        <section class="inline-form inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+                {{ form.errors }}
+                {% crispy form %}
             </div>
-            <div class="card-body">
-                {{ form.non_form_errors }}
-                {{ form.as_p }}
+        </section>
 
-
-                <div class="mt-3 mb-5">
-                    <button id="LoadStudentsButton" type="button" class="px-5 btn btn-info">Load Students</button>
-                </div>
                 <h5 class="text-info">Add Attendance Students</h5>
 
                 {{ attendance_student_formset.non_form_errors }}
@@ -80,26 +71,20 @@
                 {% endfor %}
                 </table>
             </div>
-        </div>
-        <div class="mt-3 mb-5">
-            <button type="submit" class="px-5 btn btn-info">Submit</button>
-        </div>
-    </form>
-</div>
-
-</section>
+    </div>
 
 {% endblock %}
 
 {% block extra_js %}
     {% get_user_token request.user.id as user_token %}
+
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
-<!--    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>-->
-    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/main-attendance.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/main-attendance.js' %}?v=6"></script>
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+
     <script>
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
