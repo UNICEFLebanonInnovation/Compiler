@@ -621,18 +621,16 @@ class MainAttendanceCreateView(CreateView):
             school = int(self.request.GET.get('school', 0))
             if self.request.GET.get('registration_level', None):
                 registration_level = self.request.GET.get('registration_level', '')
-        if school > 0:
+        if school > 0 and registration_level != '':
             queryset = Bridging.objects.filter(partner=self.request.user.partner_id,
-                                               round__current_year=True, school=school)
-            if registration_level != '':
-                queryset = queryset.filter(registration_level=registration_level)
+                                               round__current_year=True,
+                                               school=school,
+                                               registration_level=registration_level)
             queryset = queryset.order_by('-id')
 
         data = []
         for line in queryset:
             student = {
-                'attended': 'no',
-                'absence_reason': 'sick',
                 'student_id': line.student.id,
                 'student_name': line.student.full_name
             }
@@ -660,7 +658,6 @@ class MainAttendanceCreateView(CreateView):
         attendance_students = attendance_student_formset.save(commit=False)
         for attendance_student in attendance_students:
             attendance_student.attendance_day = self.object
-            # attendance_student.student_id = attendance_student.student_id
             attendance_student.save()
         return HttpResponse("The form was saved.")
 
@@ -679,6 +676,6 @@ class MainAttendanceCreateView(CreateView):
                 initial_values['registration_level'] = self.request.GET.get('registration_level', '')
             if self.request.GET.get('day_off', None):
                 initial_values['day_off'] = self.request.GET.get('day_off', '')
-            if self.request.GET.get('close_reason', None):
-                initial_values['close_reason'] = self.request.GET.get('close_reason', '')
+            # if self.request.GET.get('close_reason', None):
+            #     initial_values['close_reason'] = self.request.GET.get('close_reason', '')
         return initial_values

@@ -1892,6 +1892,15 @@ msgstr "رقم البطاقة الخاصة بالتلميذ"
 msgid "Student nationality"
 msgstr "جنسية التلميذ"
 
+msgid "Student name"
+msgstr "اسم الطالب"
+
+msgid "Student Attended?"
+msgstr "هل حضر الطالب"
+
+msgid "Absence reason"
+msgstr "سبب الغياب"
+
 #: student_registration/backends/tasks.py:58
 #: student_registration/backends/tasks.py:376
 msgid "Student living address"
@@ -2207,9 +2216,6 @@ msgstr "إسم التلميذ الثلاثي"
 msgid "Attendance status"
 msgstr " الحضور ام غائب؟"
 
-#: student_registration/backends/tasks.py:551
-msgid "Absence reason"
-msgstr "سبب الغياب"
 
 #: student_registration/backends/tasks.py:552
 #: student_registration/clm/models.py:513
@@ -2526,7 +2532,6 @@ msgstr "تاريخ الحضور"
 
 msgid "Attendance"
 msgstr "الحضور"
-
 
 #: student_registration/clm/forms.py:433 student_registration/clm/forms.py:1288
 #: student_registration/clm/forms.py:1729
@@ -9575,9 +9580,6 @@ msgstr "جمع البيانات ALP"
 msgid "ALP Registrations"
 msgstr "معلومات خاصة بالتلامذة ALP"
 
-#: student_registration/templates/helpdesk/navigation.html:53
-msgid "Attendance"
-msgstr "الحضور"
 
 #: student_registration/templates/helpdesk/navigation.html:68
 msgid "School Profile"

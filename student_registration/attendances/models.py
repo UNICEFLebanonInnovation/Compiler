@@ -354,38 +354,17 @@ class CLMAttendance(TimeStampedModel):
 
 
 class CLMAttendanceStudent(TimeStampedModel):
-    readonly_fields = ('student_name',
-                       'student_gender')
-
-    @property
-    def student_name(self):
-
-        result = ''
-
-        if self.student:
-            result = self.student.full_name
-
-        return result
-
-    @property
-    def student_gender(self):
-
-        result = ''
-
-        if self.student:
-            result = self.student.student_gender
-
-        return result
-
-
+    readonly_fields = ('student_name')
 
     ABSENCE_REASON = Choices(
+        ('', '----------'),
         ('sick', _('Sick')),
         ('no_transport', _('No transport')),
         ('other', _('Other reason')),
     )
 
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
@@ -419,14 +398,22 @@ class CLMAttendanceStudent(TimeStampedModel):
         verbose_name = "Student Attendance"
 
     @property
+    def student_name(self):
+        result = ''
+        if self.student:
+            result = self.student.full_name
+        return result
+
+    @property
+    def student_gender(self):
+        result = ''
+        if self.student:
+            result = self.student.student_gender
+        return result
+
+    @property
     def student_fullname(self):
         if self.student:
             return self.student.full_name
         return ''
 
-    @property
-    def student_gender(self):
-        return self.student.sex
-
-    def __unicode__(self):
-        return self.school.__unicode__()

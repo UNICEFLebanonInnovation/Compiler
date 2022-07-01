@@ -19,6 +19,9 @@ from student_registration.schools.models import (
     School,
 )
 
+from collections import OrderedDict
+
+
 class AttendanceDtdAdminForm(forms.ModelForm):
     class Meta:
         model = AttendanceDt
@@ -133,21 +136,60 @@ class MainAttendanceForm(forms.ModelForm):
 class AttendanceStudentForm(forms.ModelForm):
 
     student_id = forms.IntegerField(widget=HiddenInput(), required=False)
-    student_name = forms.CharField()
-    student_gender = forms.CharField()
-
-    class Meta:
-        model = CLMAttendanceStudent
-
-        fields = ('attended', 'absence_reason', 'student_id')
-        widgets = {'tag': forms.HiddenInput()}
+    student_name = forms.CharField(label=_('Student name'))
+    attended = forms.ChoiceField(
+        label=_("Student Attended?"),
+        widget=forms.Select, required=True,
+        choices=CLMAttendanceStudent.YES_NO,
+        initial=0
+    )
+    absence_reason = forms.ChoiceField(
+        label=_("Absence reason"),
+        widget=forms.Select, required=False,
+        choices=CLMAttendanceStudent.ABSENCE_REASON,
+        initial=0
+    )
 
     def __init__(self, *args, **kwargs):
         super(AttendanceStudentForm, self).__init__(*args, **kwargs)
-
         self.fields['student_name'].widget.attrs['readonly'] = True
-        self.fields['student_gender'].widget.attrs['readonly'] = True
 
+        # self.helper = FormHelper()
+        # self.helper.form_show_labels = True
+        # self.helper.form_action = form_action
+        # self.helper.layout = Layout(
+        #     Fieldset(
+        #         None,
+        #         Div(
+        #             HTML('<h4 id="alternatives-to-hidden-labels">' + _('Attendance') + '</h4>')
+        #
+        #         ),
+        #         Div(
+        #             Div('student_name', css_class='col-md-3 form-group'),
+        #             Div('attended', css_class='col-md-3 form-group'),
+        #             Div('absence_reason', css_class='col-md-3 form-group'),
+        #             Div('student_id', css_class='col-md-3 form-group'),
+        #             css_class='row',
+        #         ),
+        #         css_class='bd-callout bd-callout-warning'
+        #     ),
+        # )
+
+        fields_keyorder = ['student_name', 'attended', 'absence_reason', 'student_id']
+        if self.fields.has_key('keyOrder'):
+            self.fields.keyOrder = fields_keyorder
+        else:
+            self.fields = OrderedDict((k, self.fields[k]) for k in fields_keyorder)
+
+    def clean(self):
+        cleaned_data = super(AttendanceStudentForm, self).clean()
+        if cleaned_data.get('attended') == 'no' and cleaned_data.get('absence_reason') == '':
+            self.add_error('absence_reason', "The reason should be specified.")
+
+    class Meta:
+        model = CLMAttendanceStudent
+        fields = ('absence_reason', 'attended', 'student_id')
+        widgets = {'tag': forms.HiddenInput()}
 
 
 
