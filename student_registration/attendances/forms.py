@@ -20,7 +20,7 @@ from student_registration.schools.models import (
 )
 
 from collections import OrderedDict
-
+from django.template.loader import render_to_string
 
 class AttendanceDtdAdminForm(forms.ModelForm):
     class Meta:
@@ -82,13 +82,21 @@ class MainAttendanceForm(forms.ModelForm):
         choices=CLMAttendance.CLOSE_REASON
     )
 
-    def __init__(self, *args, **kwargs):
+    def render_attendance_students(self, request, context):
+        template_name = "/Users/yosr/Documents/GitHub/Compiler/student_registration/templates/attendances/attendance_students.html"
+        # template_name = "templates/attendances/attendance_students.html"
+        return render_to_string(template_name, context)
+
+    def __init__(self, attendance_student_formset, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+
+        attendance_students_context = {}
+        if attendance_student_formset:
+            attendance_students_context['attendance_student_formset'] = attendance_student_formset
+            # print(len(attendance_student_formset))
+
         super(MainAttendanceForm, self).__init__(*args, **kwargs)
-        # instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('attendances:main_attendance')
-        # if instance:
-        #     form_action = reverse('attendances:main_attendance', kwargs={'pk': instance.id})
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -112,6 +120,7 @@ class MainAttendanceForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
+            HTML(self.render_attendance_students(self.request, attendance_students_context)),
             FormActions(
                         Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info'),
                         Submit('save', _('Save'), css_class='col-md-2'),
@@ -153,28 +162,6 @@ class AttendanceStudentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AttendanceStudentForm, self).__init__(*args, **kwargs)
         self.fields['student_name'].widget.attrs['readonly'] = True
-
-        # self.helper = FormHelper()
-        # self.helper.form_show_labels = True
-        # self.helper.form_action = form_action
-        # self.helper.layout = Layout(
-        #     Fieldset(
-        #         None,
-        #         Div(
-        #             HTML('<h4 id="alternatives-to-hidden-labels">' + _('Attendance') + '</h4>')
-        #
-        #         ),
-        #         Div(
-        #             Div('student_name', css_class='col-md-3 form-group'),
-        #             Div('attended', css_class='col-md-3 form-group'),
-        #             Div('absence_reason', css_class='col-md-3 form-group'),
-        #             Div('student_id', css_class='col-md-3 form-group'),
-        #             css_class='row',
-        #         ),
-        #         css_class='bd-callout bd-callout-warning'
-        #     ),
-        # )
-
         fields_keyorder = ['student_name', 'attended', 'absence_reason', 'student_id']
         if self.fields.has_key('keyOrder'):
             self.fields.keyOrder = fields_keyorder

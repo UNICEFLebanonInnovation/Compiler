@@ -613,7 +613,8 @@ class MainAttendanceCreateView(CreateView):
         )
         return AttendanceStudentInlineFormset(parameters)
 
-    def get_context_data(self, **kwargs):
+    def get_form_kwargs(self):
+        kwargs = super(MainAttendanceCreateView, self).get_form_kwargs()
         # force_default_language(self.request)
         queryset = Bridging.objects.none()
         school = 0
@@ -635,9 +636,8 @@ class MainAttendanceCreateView(CreateView):
                 'student_name': line.student.full_name
             }
             data.append(student)
-        context = super(MainAttendanceCreateView, self).get_context_data(**kwargs)
-        context['attendance_student_formset'] = self.get_initial_student_formset(data)
-        return context
+        kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
+        return kwargs
 
     def post(self, request, *args, **kwargs):
         self.object = None

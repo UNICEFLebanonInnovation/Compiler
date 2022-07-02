@@ -40,11 +40,8 @@
             </div>
         </section>
 
-                <h5 class="text-info">Add Attendance Students</h5>
-
                 {{ attendance_student_formset.non_form_errors }}
                 {{ attendance_student_formset.management_form }}
-
                 <table class="table">
                 {% for form in attendance_student_formset.forms %}
 
