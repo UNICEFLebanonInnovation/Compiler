@@ -400,15 +400,6 @@ $(document).ready(function() {
         reorganizeForm();
 
     });
-    $(document).on('click', '.delete-button', function(){
-        var item = $(this);
-        if(confirm($(this).attr('translation'))) {
-            var callback = function(){
-                item.parents('tr').remove();
-            };
-            delete_student(item, callback());
-        }
-    });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
         var main_caregiver = $('select#id_main_caregiver').val();
