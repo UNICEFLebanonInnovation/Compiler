@@ -8,6 +8,12 @@
 
 <h4 class="text-info">Students Attendance </h4>
 
+{% for dict in attendance_student_formset.errors %}
+    {% for error in dict.values %}
+        {{ error }}
+    {% endfor %}
+{% endfor %}
+
 {{ attendance_student_formset.non_form_errors }}
 {{ attendance_student_formset.management_form }}
 <table class="table">

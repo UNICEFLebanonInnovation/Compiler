@@ -46,7 +46,8 @@ $(document).ready(
                     else
                     {
                         window.location = window.location.origin + "/attendances/main-attendance/?school="+schoolID.toString()
-                        +"&registration_level="+registrationLevel.toString();
+                        +"&registration_level="+registrationLevel.toString()
+                        +"&day_off="+day_off.toString();
                     }
                 }
                 else

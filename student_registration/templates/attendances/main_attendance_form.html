@@ -31,43 +31,15 @@
               data-animation-distance="50px">{% trans "School bridging Porgramme" %}
           </h3>
         </div>
-    </section>
+      </section>
 
-        <section class="inline-form inner-section light bg-color01">
-            <div class="container-fluid nopadding">
-                {{ form.errors }}
-                {% crispy form %}
-            </div>
-        </section>
+      <section class="inline-form inner-section light bg-color01">
+          <div class="container-fluid nopadding">
+              {{ form.errors }}
+              {% crispy form %}
+          </div>
+      </section>
 
-                {{ attendance_student_formset.non_form_errors }}
-                {{ attendance_student_formset.management_form }}
-                <table class="table">
-                {% for form in attendance_student_formset.forms %}
-
-                     {% if forloop.first %}
-                        <thead>
-                        <tr>
-                            {% for field in form.visible_fields %}
-                                <th>{{ field.label|capfirst }}</th>
-                            {% endfor %}
-                        </tr>
-                        </thead>
-                    {% endif %}
-                    <tr class="{% cycle row1 row2 %} formset_row">
-
-                        {% for field in form.visible_fields %}
-                            <td>
-                                {{ field }}
-                            </td>
-                        {% endfor %}
-                      {% for hidden in form.hidden_fields %}
-                      {{ hidden }}
-                      {% endfor %}
-                    </tr>
-                {% endfor %}
-                </table>
-            </div>
     </div>
 
 {% endblock %}
@@ -79,7 +51,7 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/main-attendance.js' %}?v=6"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/main-attendance.js' %}?v=7"></script>
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
 
     <script>
