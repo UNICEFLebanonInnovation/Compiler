@@ -615,28 +615,28 @@ class MainAttendanceCreateView(CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(MainAttendanceCreateView, self).get_form_kwargs()
-        # force_default_language(self.request)
-        queryset = Bridging.objects.none()
-        school = 0
-        if self.request.GET.get('school', None):
-            school = int(self.request.GET.get('school', 0))
-            if self.request.GET.get('registration_level', None):
+        if self.request.method == 'POST':
+            kwargs['attendance_student_formset'] = self.get_student_formset(self.request.POST)
+        else:
+            queryset = Bridging.objects.none()
+            school = self.request.GET.get('school',None)
+            if school is not None:
+                school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
-        if school > 0 and registration_level != '':
-            queryset = Bridging.objects.filter(partner=self.request.user.partner_id,
-                                               round__current_year=True,
-                                               school=school,
-                                               registration_level=registration_level)
-            queryset = queryset.order_by('-id')
-
-        data = []
-        for line in queryset:
-            student = {
-                'student_id': line.student.id,
-                'student_name': line.student.full_name
-            }
-            data.append(student)
-        kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
+            if school > 0 and registration_level != '':
+                queryset = Bridging.objects.filter(partner=self.request.user.partner_id,
+                                                   round__current_year=True,
+                                                   school=school,
+                                                   registration_level=registration_level)
+                queryset = queryset.order_by('-id')
+            data = []
+            for line in queryset:
+                student = {
+                    'student_id': line.student.id,
+                    'student_name': line.student.full_name
+                }
+                data.append(student)
+            kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
         return kwargs
 
     def post(self, request, *args, **kwargs):
