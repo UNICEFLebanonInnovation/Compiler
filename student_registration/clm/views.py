@@ -2786,6 +2786,35 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
+class BridgingViewSet(mixins.RetrieveModelMixin,
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.UpdateModelMixin,
+                 viewsets.GenericViewSet):
+    model = Bridging
+    queryset = Bridging.objects.all()
+    serializer_class = BridgingSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        from datetime import datetime
+
+        qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(
+                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
+                'created')
+
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
 
 class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
@@ -2939,7 +2968,7 @@ def search_clm_child(request):
         model = CBECE
     elif clm_type == 'Outreach':
         model = Outreach
-    elif clm_type == 'bridging':
+    elif clm_type == 'Bridging':
         model = Bridging
 
     search_model = clm_type
@@ -2947,7 +2976,7 @@ def search_clm_child(request):
     qs = {}
     qs = clm_child_list(model, term, terms, search_model)
 
-    if clm_type == 'bridging' and len(qs) == 0:
+    if clm_type == 'Bridging' and len(qs) == 0:
         model = BLN
         search_model = 'BLN'
         qs = clm_child_list(model, term, terms, search_model)
@@ -3048,7 +3077,7 @@ def search_clm_duplicate_registration(request):
         model = CBECE
     elif clm_type == 'Outreach':
         model = Outreach
-    elif clm_type == 'bridging':
+    elif clm_type == 'Bridging':
         model = Bridging
 
     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
@@ -3082,7 +3111,7 @@ def search_clm_duplicate_registration(request):
         if str_partner_name != '':
             return JsonResponse({'result': str_partner_name})
 
-    # elif clm_type == 'bridging':
+    # elif clm_type == 'Bridging':
     #     model = Outreach
     #     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
     #                                       student_father_name,
@@ -3650,10 +3679,6 @@ class BridgingListView(LoginRequiredMixin,
 
         return Bridging.objects.filter(partner=self.request.user.partner_id,
                                        round__current_year=True).order_by('-id')
-        # return Bridging.objects.filter(partner=self.request.user.partner_id,
-        #                             round__end_date_Bridging__year=Person.CURRENT_YEAR).order_by('-id')
-        # return Bridging.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
-
 
 class BridgingExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)

@@ -505,18 +505,18 @@ class BridgingTable(CommonTable):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/clm_edit_column.html',
-                                        attrs={'url': '/clm/bridging-edit/', 'programme': 'bridging'})
+                                        attrs={'url': '/clm/bridging-edit/', 'programme': 'Bridging'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
-                                          attrs={'url': '/api/clm-bridging/', 'programme': 'bridging'})
+                                          attrs={'url': '/api/clm-bridging/', 'programme': 'Bridging'})
 
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_assessment_column.html',
-                                                   attrs={'url': '/clm/bridging-post-assessment/', 'programme': 'bridging'})
+                                                   attrs={'url': '/clm/bridging-post-assessment/', 'programme': 'Bridging'})
 
     followup_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
                                                    template_name='django_tables2/clm_followup_column.html',
-                                                   attrs={'url': '/clm/bridging-followup/', 'programme': 'bridging'})
+                                                   attrs={'url': '/clm/bridging-followup/', 'programme': 'Bridging'})
     class Meta:
         model = Bridging
         fields = (

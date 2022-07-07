@@ -637,6 +637,15 @@ class MainAttendanceCreateView(CreateView):
                 }
                 data.append(student)
             kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
+
+        if ('school' in self.request.GET) and ('registration_level' in self.request.GET)\
+           or\
+           self.request.method == 'POST':
+            kwargs['saveStage'] = True
+        else:
+            kwargs['saveStage'] = False
+
+
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -679,3 +688,4 @@ class MainAttendanceCreateView(CreateView):
             # if self.request.GET.get('close_reason', None):
             #     initial_values['close_reason'] = self.request.GET.get('close_reason', '')
         return initial_values
+

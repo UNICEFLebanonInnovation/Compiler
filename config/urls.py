@@ -33,6 +33,7 @@ from student_registration.clm.views import (
     RSViewSet,
     CBECEViewSet,
     OutreachViewSet,
+    BridgingViewSet,
     CLMStudentViewSet,
     SelfPerceptionGradesViewSet,
     GeneralQuestionnaireViewSet
@@ -86,6 +87,7 @@ api.register(r'clm-abln', ABLNViewSet, base_name='clm-abln')
 api.register(r'^clm-abln/(?P<id>\d+)/$', ABLNViewSet, base_name='clm-abln-partial')
 api.register(r'clm-rs', RSViewSet, base_name='clm-rs')
 api.register(r'clm-cbece', CBECEViewSet, base_name='clm-cbece')
+api.register(r'clm-bridging', BridgingViewSet, base_name='clm-bridging')
 api.register(r'^clm-cbece/(?P<id>\d+)/$', CBECEViewSet, base_name='clm-cbece-partial')
 api.register(r'clm-inclusion', InclusionViewSet, base_name='clm-inclusion')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')

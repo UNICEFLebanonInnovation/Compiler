@@ -118,7 +118,7 @@ def is_allowed_edit(programme):
         if programme == 'GeneralQuestionnaire':
             return True
 
-        if programme == 'bridging':
+        if programme == 'Bridging':
             current_round = current_round.get(current_round_bridging=True)
             if current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit:
                 return True

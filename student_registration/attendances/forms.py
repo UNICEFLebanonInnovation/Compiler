@@ -83,17 +83,25 @@ class MainAttendanceForm(forms.ModelForm):
     )
 
     def render_attendance_students(self, request, context):
-        template_name = "/Users/yosr/Documents/GitHub/Compiler/student_registration/templates/attendances/attendance_students.html"
-        # template_name = "templates/attendances/attendance_students.html"
+        template_name = "attendances/attendance_students.html"
         return render_to_string(template_name, context)
 
-    def __init__(self, attendance_student_formset, *args, **kwargs):
+    def __init__(self, attendance_student_formset, saveStage, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+
+        if saveStage:
+
+            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info ', disabled=True)
+            submit_button = Submit('save', _('Save'), css_class='col-md-2')
+
+        else:
+
+            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info ')
+            submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
 
         attendance_students_context = {}
         if attendance_student_formset:
             attendance_students_context['attendance_student_formset'] = attendance_student_formset
-            # print(len(attendance_student_formset))
 
         super(MainAttendanceForm, self).__init__(*args, **kwargs)
         form_action = reverse('attendances:main_attendance')
@@ -122,8 +130,8 @@ class MainAttendanceForm(forms.ModelForm):
             ),
             HTML(self.render_attendance_students(self.request, attendance_students_context)),
             FormActions(
-                        Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info'),
-                        Submit('save', _('Save'), css_class='col-md-2'),
+                        load_students_button,
+                        submit_button,
                         css_class='button-group'
                     )
         )
@@ -132,6 +140,15 @@ class MainAttendanceForm(forms.ModelForm):
         cleaned_data = super(MainAttendanceForm, self).clean()
         if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') != '':
             self.add_error('close_reason', "The reason should be specified.")
+        # Make sure filters are provided
+        if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and cleaned_data.get('attendance_date') != '' and cleaned_data.get('day_off') != '':
+            num_results = CLMAttendance.objects.filter(school=cleaned_data['school'],
+                                                       registration_level=cleaned_data['registration_level'],
+                                                       attendance_date=cleaned_data['attendance_date'],
+                                                       ).count()
+            if num_results > 0:
+                self.add_error('attendance_date', "There is already an attendance record for this date." )
+
     class Meta:
         model = CLMAttendance
         fields = (
@@ -171,7 +188,7 @@ class AttendanceStudentForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(AttendanceStudentForm, self).clean()
         if cleaned_data.get('attended') == 'no' and cleaned_data.get('absence_reason') == '':
-            self.add_error('absence_reason', "The reason should be specified.")
+            self.add_error('absence_reason', "The reason should be specified for " + cleaned_data.get('student_name'))
 
     class Meta:
         model = CLMAttendanceStudent

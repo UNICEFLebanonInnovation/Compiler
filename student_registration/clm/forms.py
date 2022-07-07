@@ -7274,7 +7274,7 @@ class BridgingForm(CommonForm):
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:bridging_add')
-        self.fields['clm_type'].initial = 'bridging'
+        self.fields['clm_type'].initial = 'Bridging'
         self.fields['new_registry'].initial = 'yes'
         if instance:
             display_registry = ' d-none'
@@ -10696,7 +10696,7 @@ class BridgingAssessmentForm(forms.ModelForm):
         post_test = ''
         post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['clm_type'].initial = 'bridging'
+        self.fields['clm_type'].initial = 'Bridging'
 
         display_assessment = ''
         form_action = reverse('clm:bridging_post_assessment', kwargs={'pk': instance.id})
@@ -11134,7 +11134,7 @@ class BridgingFollowupForm(forms.ModelForm):
         post_test = ''
         post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['clm_type'].initial = 'bridging'
+        self.fields['clm_type'].initial = 'Bridging'
 
         display_followup = ''
         form_action = reverse('clm:bridging_followup', kwargs={'pk': instance.id})
