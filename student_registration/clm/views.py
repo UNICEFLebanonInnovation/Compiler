@@ -3109,7 +3109,10 @@ def search_clm_duplicate_registration(request):
                                           parent_other_number)
 
         if str_partner_name != '':
+
             return JsonResponse({'result': str_partner_name})
+        
+    return JsonResponse({'result': ''})
 
     # elif clm_type == 'Bridging':
     #     model = Outreach
@@ -3180,7 +3183,6 @@ def search_student(model, search_by, round_id, id_type, student_id, student_firs
         student = json.loads(qsjson)[0]
         partner_name = (student["partner__name"])
         str_partner_name = str(partner_name)
-
     return str_partner_name
 
 

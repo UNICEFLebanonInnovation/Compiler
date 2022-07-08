@@ -30,7 +30,10 @@ $(document).ready(function() {
     {
         check_duplicate_registration();
     }
-
+    else
+    {
+            duplicate_search_student_name();
+    }
 
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
@@ -94,11 +97,11 @@ $(document).ready(function() {
     });
 
     $(document).on('change', 'select#id_round', function () {
-        new_registry = $('#id_new_registry').val();
-        if (new_registry == 'no') {
+//        new_registry = $('#id_new_registry').val();
+//        if (new_registry == 'no') {
             duplicate_search('student id');
             duplicate_search_student_name();
-        }
+//        }
     });
 
     $(document).on('change', 'input#id_student_first_name', function () {
@@ -903,7 +906,6 @@ function check_duplicate_registration()
     enrollment_id = $('#id_enrollment_id').val();
     partner_name = $('#id_partner_name').val();
     id_round = $('#id_round').val();
-
     if (enrollment_id > 0 && id_round > 0)
     {
         if (isAddPage() && ($('.errorlist').length == 0))
@@ -1365,7 +1367,7 @@ function duplicate_search(search_by) {
     if (isAddPage() ) {
         var search_by = search_by;
         var round = $('select#id_round').val();
-        // var new_registry = $('select#id_new_registry').val();
+//        var new_registry = $('select#id_new_registry').val();
         var clm_type = $('#id_clm_type').val();
         var student_id = $('#id_student_id').val();
         var student_first_name = $('#id_student_first_name').val();
@@ -1379,7 +1381,6 @@ function duplicate_search(search_by) {
         var parent_sop_national_number = $('#id_parent_sop_national_number').val();
         var parent_national_number = $('#id_parent_national_number').val();
         var parent_other_number = $('#id_parent_other_number').val();
-
 
         var data = {
             search_by: search_by,
@@ -1627,6 +1628,7 @@ function verify_age_level()
         display_alert(dob, 14, 20, min_date);
     }
 }
+
 
 function display_alert_restriction(dob, min_value, max_value, min_date)
 {

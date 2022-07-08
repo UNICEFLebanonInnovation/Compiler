@@ -146,7 +146,7 @@ function getHeader()
         'Authorization': 'Token '+user_token,
 //        'HTTP_REFERER': $(location).attr('href'),
         'HTTP_REFERER': href_full_path,
-        'Cookie': 'token=Token '+user_token,
+        //'Cookie': 'token=Token '+user_token,
         'X-CSRFToken': csrfHeader
     };
     return header;
