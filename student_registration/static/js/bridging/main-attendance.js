@@ -12,9 +12,13 @@ $(document).ready(
         day_off = $("#id_day_off").val();
             if (day_off == 'yes') {
                 $('div#div_id_close_reason').removeClass('d-none');
+                $('#submit-id-save').attr('disabled', false);
             }
             else {
                 $('div#div_id_close_reason').addClass('d-none');
+                loadButtonDisabled = $('#button-id-loadstudentsbutton').attr('disabled');
+                $('#submit-id-save').attr('disabled', (!loadButtonDisabled));
+
             }
         });
 

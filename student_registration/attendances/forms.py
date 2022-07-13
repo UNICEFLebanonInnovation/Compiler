@@ -138,7 +138,7 @@ class MainAttendanceForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(MainAttendanceForm, self).clean()
-        if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') != '':
+        if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') == '':
             self.add_error('close_reason', "The reason should be specified.")
         # Make sure filters are provided
         if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and cleaned_data.get('attendance_date') != '' and cleaned_data.get('day_off') != '':

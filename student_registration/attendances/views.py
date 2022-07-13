@@ -644,8 +644,6 @@ class MainAttendanceCreateView(CreateView):
             kwargs['saveStage'] = True
         else:
             kwargs['saveStage'] = False
-
-
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -653,6 +651,10 @@ class MainAttendanceCreateView(CreateView):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         attendance_student_formset = self.get_student_formset(self.request.POST)
+        student_count = len(attendance_student_formset)
+        if self.request.POST['day_off'] == 'yes' and student_count>0:
+            form.add_error('day_off', 'Day is off')
+
         if form.is_valid() and attendance_student_formset.is_valid():
             return self.form_valid(form, attendance_student_formset)
         else:
@@ -685,7 +687,5 @@ class MainAttendanceCreateView(CreateView):
                 initial_values['registration_level'] = self.request.GET.get('registration_level', '')
             if self.request.GET.get('day_off', None):
                 initial_values['day_off'] = self.request.GET.get('day_off', '')
-            # if self.request.GET.get('close_reason', None):
-            #     initial_values['close_reason'] = self.request.GET.get('close_reason', '')
         return initial_values
 
