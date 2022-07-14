@@ -769,7 +769,12 @@ class OutreachSerializer(CLMSerializer):
         fields = CLMSerializer.Meta.fields + (
             'have_labour',
             'labours',
+            'labour_hours',
+            'have_labour_single_selection',
+            'labours_single_selection',
             'labour_weekly_income',
+            'student_family_status',
+            'student_have_children',
             'phone_number',
             'phone_number_confirm',
             'second_phone_number',

@@ -5968,20 +5968,20 @@ class OutreachForm(CommonForm):
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     district = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
         label=_('District'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         # initial=0
     )
     cadaster = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
         label=_('Cadaster'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         # initial=0
     )
 
@@ -6250,6 +6250,51 @@ class OutreachForm(CommonForm):
         label=_('What is the educational level of the father?'),
         required=False, to_field_name='id',
     )
+    student_family_status = forms.ChoiceField(
+        label=_('What is the family status of the child?'),
+        widget=forms.Select, required=True,
+        choices=Student.FAMILY_STATUS,
+        initial='single'
+    )
+    student_have_children = forms.TypedChoiceField(
+        label=_("Does the child have children?"),
+        choices=YES_NO_CHOICE,
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=True,
+    )
+    student_number_children = forms.IntegerField(
+        label=_('How many children does this child have?'),
+        widget=forms.TextInput, required=False
+    )
+
+    have_labour_single_selection = forms.ChoiceField(
+        label=_('Does the child participate in work?'),
+        widget=forms.Select, required=True,
+        choices=CLM.HAVE_LABOUR,
+        initial='no'
+    )
+    labours_single_selection = forms.ChoiceField(
+        label=_('What is the type of work ?'),
+        widget=forms.Select, required=False,
+        choices=CLM.LABOURS
+    )
+    labours_other_specify = forms.CharField(
+        label=_('Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)'),
+        widget=forms.TextInput, required=False
+    )
+
+    labour_hours = forms.CharField(
+        label=_('How many hours does this child work in a day?'),
+        widget=forms.TextInput, required=False
+    )
+    labour_weekly_income = forms.ChoiceField(
+        label=_('What is the income of the child per week?'),
+        widget=forms.Select,
+        choices=Student.STUDENT_INCOME,
+        initial='single',
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -6303,15 +6348,6 @@ class OutreachForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('district', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('cadaster', css_class='col-md-3'),
-                    css_class='row d-none',
-                ),
-                Div(
                     # HTML('<span class="badge badge-default">6</span>'),
                     # Div('center', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
@@ -6349,6 +6385,15 @@ class OutreachForm(CommonForm):
                     Div('round', css_class='col-md-3'),
                     # HTML('<span class="badge badge-default">3</span>'),
                     # Div('round_start_date', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('cadaster', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -6600,6 +6645,44 @@ class OutreachForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data C_right_border'
              ),
+            Fieldset(
+                None,
+                Div(HTML('<span>C</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_family_status', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id=span_student_have_children">1.1</span>'),
+                    Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
+                    HTML('<span class="badge badge-default" id="span_student_number_children">1.2</span>'),
+                    Div('student_number_children', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('have_labour_single_selection', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3.1</span>'),
+                    Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default" id="span_labours_other_specify">3.1.1</span>'),
+                    Div('labours_other_specify', css_class='col-md-3'),
+                    css_class='row',
+                    id='labour_details_1'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3.2</span>'),
+                    Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
+                    HTML('<span class="badge badge-default">3.3</span>'),
+                    Div('labour_weekly_income', css_class='col-md-3'),
+                    css_class='row',
+                    id='labour_details_2'
+                ),
+                css_class='bd-callout bd-callout-warning child_data D_right_border'
+            ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
@@ -6790,6 +6873,25 @@ class OutreachForm(CommonForm):
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
 
+        have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
+        labours_single_selection = cleaned_data.get("labours_single_selection")
+        labour_hours = cleaned_data.get("labour_hours")
+        labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        student_have_children = cleaned_data.get("student_have_children")
+        student_number_children = cleaned_data.get("student_number_children")
+        labours_other_specify = cleaned_data.get("labours_other_specify")
+
+        if student_have_children:
+            if not student_number_children:
+                self.add_error('student_number_children', 'This field is required')
+        if have_labour_single_selection != 'no':
+            if not labours_single_selection:
+                self.add_error('labours_single_selection', 'This field is required')
+            if not labour_hours:
+                self.add_error('labour_hours', 'This field is required')
+            if not labour_weekly_income:
+                self.add_error('labour_weekly_income', 'This field is required')
+
     def save(self, request=None, instance=None, serializer=None):
         instance = super(OutreachForm, self).save(request=request, instance=instance, serializer=OutreachSerializer)
         instance.save()
@@ -6840,14 +6942,18 @@ class OutreachForm(CommonForm):
             'caretaker_last_name',
             'caretaker_mother_name',
             'miss_school_date',
-            'governorate',
-            'district',
-            'cadaster',
             'registration_level',
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
-            'student_p_code'
+            'student_p_code',
+            'student_have_children',
+            'student_family_status',
+            'student_number_children',
+            'have_labour_single_selection',
+            'labours_single_selection',
+            'labours_other_specify',
+            'labour_hours',
         )
 
     class Media:
@@ -7250,20 +7356,20 @@ class BridgingForm(CommonForm):
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('School Governorate'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     district = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
         label=_('School District'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         # initial=0
     )
     cadaster = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
         label=_('School Cadaster'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         # initial=0
     )
 
