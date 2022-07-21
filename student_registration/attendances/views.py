@@ -11,6 +11,9 @@ from django.contrib import messages
 from django_filters.views import FilterView
 from django_tables2.export.views import ExportMixin
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse
+
 
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from rest_framework import viewsets, mixins, permissions
@@ -619,7 +622,7 @@ class MainAttendanceCreateView(CreateView):
             kwargs['attendance_student_formset'] = self.get_student_formset(self.request.POST)
         else:
             queryset = Bridging.objects.none()
-            school = self.request.GET.get('school',None)
+            school = self.request.GET.get('school', None)
             if school is not None:
                 school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
@@ -652,7 +655,7 @@ class MainAttendanceCreateView(CreateView):
         form = self.get_form(form_class)
         attendance_student_formset = self.get_student_formset(self.request.POST)
         student_count = len(attendance_student_formset)
-        if self.request.POST['day_off'] == 'yes' and student_count>0:
+        if self.request.POST['day_off'] == 'yes' and student_count > 0:
             form.add_error('day_off', 'Day is off')
 
         if form.is_valid() and attendance_student_formset.is_valid():
@@ -670,7 +673,8 @@ class MainAttendanceCreateView(CreateView):
         for attendance_student in attendance_students:
             attendance_student.attendance_day = self.object
             attendance_student.save()
-        return HttpResponse("The form was saved.")
+        messages.success(self.request, 'The attendance information was saved')
+        return super(MainAttendanceCreateView, self).form_valid(form)
 
     def form_invalid(self, form, attendance_student_formset):
         return self.render_to_response(
@@ -687,5 +691,13 @@ class MainAttendanceCreateView(CreateView):
                 initial_values['registration_level'] = self.request.GET.get('registration_level', '')
             if self.request.GET.get('day_off', None):
                 initial_values['day_off'] = self.request.GET.get('day_off', '')
+            if self.request.GET.get('attendance_date', None):
+                initial_values['attendance_date'] = self.request.GET.get('attendance_date', '')
         return initial_values
+
+    def get_success_message(self, cleaned_data):
+        return "The attendance information was saved"
+
+    def get_success_url(self):
+        return reverse('attendances:main_attendance')
 

@@ -32,7 +32,12 @@
 
       {% for field in form.visible_fields %}
           <td>
-              {{ field }}
+              {% if field.name == 'student_name' %}
+                  {{field.value}}
+                  <span style="display:none">{{field}}</span>
+              {% else %}
+                  {{field}}
+              {% endif %}
           </td>
       {% endfor %}
     {% for hidden in form.hidden_fields %}
