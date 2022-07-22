@@ -26,14 +26,14 @@ urlpatterns = [
         name='absents'
     ),
     url(
-        regex=r'^attendance-list/$',
-        view=views.AttendanceListView.as_view(),
-        name='attendance_list'
-    ),
-    url(
         regex=r'^main-attendance/$',
         view=views.MainAttendanceCreateView.as_view(),
         name='main_attendance'
+    ),
+    url(
+        regex=r'^main-attendance-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.MainAttendanceUpdateView.as_view(),
+        name='main_attendance_edit'
     ),
 
 ]

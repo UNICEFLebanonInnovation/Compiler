@@ -86,8 +86,14 @@ class MainAttendanceForm(forms.ModelForm):
         template_name = "attendances/attendance_students.html"
         return render_to_string(template_name, context)
 
-    def __init__(self, attendance_student_formset, saveStage, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+
+        attendance_student_formset = kwargs.pop('attendance_student_formset', None)
+        saveStage = kwargs.pop('saveStage', None)
+
+        # if attendance_student_formset:
+        #     print('loaded....')
 
         if saveStage:
 
@@ -141,13 +147,15 @@ class MainAttendanceForm(forms.ModelForm):
         if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') == '':
             self.add_error('close_reason', "The reason should be specified.")
         # Make sure filters are provided
-        if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and cleaned_data.get('attendance_date') != '' and cleaned_data.get('day_off') != '':
-            num_results = CLMAttendance.objects.filter(school=cleaned_data['school'],
-                                                       registration_level=cleaned_data['registration_level'],
-                                                       attendance_date=cleaned_data['attendance_date'],
-                                                       ).count()
-            if num_results > 0:
-                self.add_error('attendance_date', "There is already an attendance record for this date." )
+
+        if self.instance is None:
+            if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and cleaned_data.get('attendance_date') != '' and cleaned_data.get('day_off') != '':
+                num_results = CLMAttendance.objects.filter(school=cleaned_data['school'],
+                                                           registration_level=cleaned_data['registration_level'],
+                                                           attendance_date=cleaned_data['attendance_date'],
+                                                           ).count()
+                if num_results > 0:
+                    self.add_error('attendance_date', "There is already an attendance record for this date." )
 
     class Meta:
         model = CLMAttendance
@@ -161,6 +169,7 @@ class MainAttendanceForm(forms.ModelForm):
 
 class AttendanceStudentForm(forms.ModelForm):
 
+    id = forms.IntegerField(widget=HiddenInput(), required=False)
     student_id = forms.IntegerField(widget=HiddenInput(), required=False)
     student_name = forms.CharField(label=_('Student name'))
     attended = forms.ChoiceField(
@@ -179,7 +188,7 @@ class AttendanceStudentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AttendanceStudentForm, self).__init__(*args, **kwargs)
         self.fields['student_name'].widget.attrs['readonly'] = True
-        fields_keyorder = ['student_name', 'attended', 'absence_reason', 'student_id']
+        fields_keyorder = ['id','student_name', 'attended', 'absence_reason', 'student_id']
         if self.fields.has_key('keyOrder'):
             self.fields.keyOrder = fields_keyorder
         else:
@@ -192,7 +201,7 @@ class AttendanceStudentForm(forms.ModelForm):
 
     class Meta:
         model = CLMAttendanceStudent
-        fields = ('absence_reason', 'attended', 'student_id')
+        fields = ('id','absence_reason', 'attended', 'student_id')
         widgets = {'tag': forms.HiddenInput()}
 
 

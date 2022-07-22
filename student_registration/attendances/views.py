@@ -555,46 +555,12 @@ class ExportView(LoginRequiredMixin, ListView):
         return response
 
 
-class AttendanceListView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         FilterView,
-                         # ExportMixin,
-                         SingleTableView,
-                         RequestConfig):
-    table_class = CLMAttendanceStudentTable
-    model = Bridging
-    template_name = 'attendances/attendance_list.html'
-    table = BootstrapTable(Bridging.objects.all(), order_by='id')
-    group_required = [u"CLM_Bridging"]
-
-    filterset_class = CLMAttendanceStudentFilter
-
-    def get_queryset(self):
-
-        force_default_language(self.request)
-
-        result = Bridging.objects.none()
-
-        if (self.request.GET.has_key('school')) or (self.request.GET.has_key('registration_level')):
-
-            if (self.request.GET['school'] != '') or (self.request.GET['registration_level'] != ''):
-                result = Bridging.objects.filter(partner=self.request.user.partner_id,
-                                                 round__current_year=True).order_by('-id')
-
-        return result
-
-    def get_context_data(self, **kwargs):
-        context = super(AttendanceListView, self).get_context_data(**kwargs)
-        context['form'] = AttendanceForm()
-        return context
-
-
 class MainAttendanceCreateView(CreateView):
     form_class = MainAttendanceForm
     template_name = 'attendances/main_attendance_form.html'
 
     def get_initial_student_formset(self, initial_records):
-        AttendanceStudentInlineFormset = inlineformset_factory(
+        attendance_student_inline_formset = inlineformset_factory(
             CLMAttendance,
             CLMAttendanceStudent,
             form=AttendanceStudentForm,
@@ -603,10 +569,10 @@ class MainAttendanceCreateView(CreateView):
             fields=('attended', 'absence_reason', 'student_id'),
             can_delete=False
         )
-        return AttendanceStudentInlineFormset(initial=initial_records)
+        return attendance_student_inline_formset(initial=initial_records)
 
     def get_student_formset(self, parameters):
-        AttendanceStudentInlineFormset = inlineformset_factory(
+        attendance_student_inline_formset = inlineformset_factory(
             CLMAttendance,
             CLMAttendanceStudent,
             form=AttendanceStudentForm,
@@ -614,7 +580,7 @@ class MainAttendanceCreateView(CreateView):
             fields=('attended', 'absence_reason', 'student_id'),
             can_delete=False
         )
-        return AttendanceStudentInlineFormset(parameters)
+        return attendance_student_inline_formset(parameters)
 
     def get_form_kwargs(self):
         kwargs = super(MainAttendanceCreateView, self).get_form_kwargs()
@@ -695,9 +661,117 @@ class MainAttendanceCreateView(CreateView):
                 initial_values['attendance_date'] = self.request.GET.get('attendance_date', '')
         return initial_values
 
-    def get_success_message(self, cleaned_data):
+    def get_success_message(self):
         return "The attendance information was saved"
 
     def get_success_url(self):
         return reverse('attendances:main_attendance')
 
+
+class MainAttendanceUpdateView(UpdateView):
+    model = CLMAttendance
+    form_class = MainAttendanceForm
+
+    template_name = 'attendances/main_attendance_form.html'
+
+    def get_success_url(self):
+        return reverse('attendances:main_attendance_edit', args=[self.kwargs['pk']])
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(MainAttendanceUpdateView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        attendance_id = self.kwargs['pk']
+        instance = CLMAttendance.objects.get(id=attendance_id)
+        if self.request.method == "POST":
+            instance.save()
+            form = MainAttendanceForm(self.request.POST, instance=instance,
+                                      attendance_student_formset=self.get_student_formset(self.request.POST)
+                                      , saveStage=True)
+        else:
+            form = MainAttendanceForm(instance=instance,
+                                      attendance_student_formset=self.get_formset(attendance_id),
+                                      saveStage=True)
+
+        form.helper.form_action = reverse('attendances:main_attendance_edit', args=[attendance_id])
+
+        return form
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        attendance_student_formset = self.get_student_formset(self.request.POST)
+        student_count = len(attendance_student_formset)
+        if self.request.POST['day_off'] == 'yes' and student_count > 0:
+            form.add_error('day_off', 'Day is off')
+
+        if form.is_valid() and attendance_student_formset.is_valid():
+            return self.form_valid(form, attendance_student_formset)
+        else:
+            return self.form_invalid(form, attendance_student_formset)
+
+    def form_valid(self, form, attendance_student_formset):
+        self.object = form.save(commit=False)
+        self.object.save()
+
+        for student_form in attendance_student_formset:
+            student_form.instance.id = student_form.cleaned_data['id'].id
+            student_form.instance.student_id = student_form.cleaned_data['student_id']
+
+        attendance_students = attendance_student_formset.save(commit=False)
+        for attendance_student in attendance_students:
+            attendance_student.attendance_day = self.object
+            attendance_student.save()
+        messages.success(self.request, 'The attendance information was saved')
+        return super(MainAttendanceUpdateView, self).form_valid(form)
+
+    def form_invalid(self, form, attendance_student_formset):
+        return self.render_to_response(
+            self.get_context_data(form=form,
+                                  attendance_student_formset=attendance_student_formset
+                                  )
+        )
+
+    def get_formset(self, attendance_id):
+        queryset = CLMAttendanceStudent.objects.filter(attendance_day__id=attendance_id)
+        queryset = queryset.order_by('-id')
+
+        data = []
+        for line in queryset:
+            student = {
+                'id': line.id,
+                'student_id': line.student.id,
+                'student_name': line.student.full_name,
+                'attended': line.attended,
+                'absence_reason': line.absence_reason
+            }
+            data.append(student)
+        return self.get_initial_student_formset(data)
+
+    def get_initial_student_formset(self, initial_records):
+        attendance_student_inline_formset = inlineformset_factory(
+            CLMAttendance,
+            CLMAttendanceStudent,
+            form=AttendanceStudentForm,
+            extra=len(initial_records),
+            fk_name='attendance_day',
+            fields=('id','attended', 'absence_reason', 'student_id'),
+            can_delete=False
+        )
+        return attendance_student_inline_formset(initial=initial_records)
+
+    def get_student_formset(self, parameters):
+        attendance_student_inline_formset = inlineformset_factory(
+            CLMAttendance,
+            CLMAttendanceStudent,
+            form=AttendanceStudentForm,
+            fk_name='attendance_day',
+            fields=('id','attended', 'absence_reason', 'student_id'),
+            can_delete=False
+        )
+        return attendance_student_inline_formset(parameters)

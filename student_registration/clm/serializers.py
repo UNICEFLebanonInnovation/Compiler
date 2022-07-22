@@ -775,6 +775,7 @@ class OutreachSerializer(CLMSerializer):
             'labour_weekly_income',
             'student_family_status',
             'student_have_children',
+            'student_number_children',
             'phone_number',
             'phone_number_confirm',
             'second_phone_number',

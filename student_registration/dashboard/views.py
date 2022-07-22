@@ -857,7 +857,6 @@ def degenerate_list_justification(request):
 
 
 class List_of_Attendance(TemplateView):
-    template_name = 'dashboard/attendance_list.html'
 
     def handle_no_permission(self, request):
         return HttpResponseForbidden()
@@ -930,7 +929,7 @@ def export_summary_of_Attendance(request):
                    and attendances_attendancedt.attendance_date between %s and %s""",
                 'tel': """ concat(phone_prefix,phone) """,
                 'first_attend': """ select min(attendance_date)  attendance_date from attendances_attendancedt
-                    where attendances_attendancedt.student_id = enrollments_enrollment.student_id 
+                    where attendances_attendancedt.student_id = enrollments_enrollment.student_id
                     and is_present=True and attendances_attendancedt.school_id =enrollments_enrollment.school_id """,
             }, select_params=[from_date, to_date, from_date, to_date]).order_by('school_id', 'classroom_id',
                                                                                 'section_id', 'student__first_name',
@@ -949,7 +948,7 @@ def export_summary_of_Attendance(request):
                         and attendances_attendancedt.attendance_date between %s and %s""",
                 'tel': """ concat(phone_prefix,phone) """,
                 'first_attend': """ select min(attendance_date)  attendance_date from attendances_attendancedt
-                            where attendances_attendancedt.student_id = enrollments_enrollment.student_id 
+                            where attendances_attendancedt.student_id = enrollments_enrollment.student_id
                             and is_present=True and attendances_attendancedt.school_id =enrollments_enrollment.school_id """,
             }, select_params=[from_date, to_date, from_date, to_date]).order_by('school_id', 'classroom_id',
                                                                                 'section_id', 'student__first_name',
