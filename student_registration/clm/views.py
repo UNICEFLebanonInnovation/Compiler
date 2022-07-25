@@ -3056,6 +3056,7 @@ def search_clm_duplicate_registration(request):
     student_first_name = body['student_first_name']
     student_father_name = body['student_father_name']
     student_last_name = body['student_last_name']
+    student_mother_fullname = body['student_mother_fullname']
     phone_number = body['phone_number']
     id_type = body['id_type']
     case_number = body['case_number']
@@ -3081,8 +3082,8 @@ def search_clm_duplicate_registration(request):
         model = Bridging
 
     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                      student_father_name,
-                                      student_last_name, phone_number, case_number, recorded_number,
+                                      student_father_name,student_last_name,student_mother_fullname
+                                      , phone_number, case_number, recorded_number,
                                       parent_syrian_national_number, parent_sop_national_number, parent_national_number,
                                       parent_other_number)
 
@@ -3091,8 +3092,8 @@ def search_clm_duplicate_registration(request):
     elif clm_type == 'BLN':
         model = ABLN
         str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                          student_father_name,
-                                          student_last_name, phone_number, case_number, recorded_number,
+                                          student_father_name,student_last_name,student_mother_fullname,
+                                           phone_number, case_number, recorded_number,
                                           parent_syrian_national_number, parent_sop_national_number,
                                           parent_national_number,
                                           parent_other_number)
@@ -3102,8 +3103,8 @@ def search_clm_duplicate_registration(request):
     elif clm_type == 'ABLN':
         model = BLN
         str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                          student_father_name,
-                                          student_last_name, phone_number, case_number, recorded_number,
+                                          student_father_name,student_last_name,student_mother_fullname,
+                                           phone_number, case_number, recorded_number,
                                           parent_syrian_national_number, parent_sop_national_number,
                                           parent_national_number,
                                           parent_other_number)
@@ -3111,55 +3112,12 @@ def search_clm_duplicate_registration(request):
         if str_partner_name != '':
 
             return JsonResponse({'result': str_partner_name})
-        
+
     return JsonResponse({'result': ''})
 
-    # elif clm_type == 'Bridging':
-    #     model = Outreach
-    #     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-    #                                       student_father_name,
-    #                                       student_last_name, phone_number, case_number, recorded_number,
-    #                                       parent_syrian_national_number, parent_sop_national_number,
-    #                                       parent_national_number,
-    #                                       parent_other_number)
-    #
-    #     if str_partner_name != '':
-    #         return JsonResponse({'result': str_partner_name})
-    #     else:
-    #         model = BLN
-    #         str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-    #                                           student_father_name,
-    #                                           student_last_name, phone_number, case_number, recorded_number,
-    #                                           parent_syrian_national_number, parent_sop_national_number,
-    #                                           parent_national_number,
-    #                                           parent_other_number)
-    #         if str_partner_name != '':
-    #             return JsonResponse({'result': str_partner_name})
-    #         else:
-    #             model = ABLN
-    #             str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-    #                                               student_father_name,
-    #                                               student_last_name, phone_number, case_number, recorded_number,
-    #                                               parent_syrian_national_number, parent_sop_national_number,
-    #                                               parent_national_number,
-    #                                               parent_other_number)
-    #             if str_partner_name != '':
-    #                 return JsonResponse({'result': str_partner_name})
-    #             else:
-    #                 model = CBECE
-    #                 str_partner_name = search_student(model, search_by, round_id, id_type, student_id,
-    #                                                   student_first_name,
-    #                                                   student_father_name,
-    #                                                   student_last_name, phone_number, case_number, recorded_number,
-    #                                                   parent_syrian_national_number, parent_sop_national_number,
-    #                                                   parent_national_number,
-    #                                                   parent_other_number)
-    #                 if str_partner_name != '':
-    #                     return JsonResponse({'result': str_partner_name})
-    #
 
 def search_student(model, search_by, round_id, id_type, student_id, student_first_name, student_father_name,
-                   student_last_name,
+                   student_last_name,student_mother_fullname ,
                    phone_number, case_number, recorded_number, parent_syrian_national_number,
                    parent_sop_national_number, parent_national_number, parent_other_number):
     from django.db.models.functions import Concat
@@ -3170,7 +3128,7 @@ def search_student(model, search_by, round_id, id_type, student_id, student_firs
     if search_by == 'student id':
         qs = search_duplicate_student_id(model, round_id, student_id)
     elif search_by == 'student name':
-        qs = search_duplicate_student_name(model, round_id, student_first_name, student_father_name, student_last_name)
+        qs = search_duplicate_student_name(model, round_id, student_first_name, student_father_name, student_last_name, student_mother_fullname)
     elif search_by == 'phone':
         qs = search_duplicate_phone(model, round_id, student_first_name, phone_number)
     elif search_by == 'id':
@@ -3178,11 +3136,13 @@ def search_student(model, search_by, round_id, id_type, student_id, student_firs
                                    parent_syrian_national_number, parent_sop_national_number, parent_national_number,
                                    parent_other_number)
     str_partner_name = ''
+
     if qs:
         qsjson = json.dumps(list(qs))
         student = json.loads(qsjson)[0]
         partner_name = (student["partner__name"])
         str_partner_name = str(partner_name)
+
     return str_partner_name
 
 
@@ -3207,7 +3167,7 @@ def search_duplicate_student_id(model, round_id, student_id):
     return qs
 
 
-def search_duplicate_student_name(model, round_id, student_first_name, student_father_name, student_last_name):
+def search_duplicate_student_name(model, round_id, student_first_name, student_father_name, student_last_name, student_mother_fullname):
     model = model
 
     qs = {}
@@ -3216,7 +3176,8 @@ def search_duplicate_student_name(model, round_id, student_first_name, student_f
             round=round_id,
             student__first_name=student_first_name,
             student__father_name=student_father_name,
-            student__last_name=student_last_name
+            student__last_name=student_last_name,
+            student__mother_fullname=student_mother_fullname,
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3225,7 +3186,8 @@ def search_duplicate_student_name(model, round_id, student_first_name, student_f
         qs = model.objects.filter(
             student__first_name=student_first_name,
             student__father_name=student_father_name,
-            student__last_name=student_last_name
+            student__last_name=student_last_name,
+            student__mother_fullname=student_mother_fullname,
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',

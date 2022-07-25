@@ -1,6 +1,6 @@
 from django import forms
 from student_registration.attendances.models import AttendanceDt
-import datetime
+from datetime import date, datetime, timedelta
 from .widgets import DatePickerInput
 from django.utils.translation import ugettext as _
 from django.forms import inlineformset_factory,HiddenInput
@@ -37,7 +37,7 @@ class AttendanceForm(forms.Form):
         ('weekly_holiday', _('Weekly Holiday')),
         ('roads_closed', _('Roads Closed')),
     )
-    attendance_date = forms.DateField(initial=datetime.date.today,widget=DatePickerInput)
+    attendance_date = forms.DateField(initial=date.today,widget=DatePickerInput)
 
     day_off = forms.ChoiceField(
         label=_("Day Off"),
@@ -62,7 +62,7 @@ class MainAttendanceForm(forms.ModelForm):
         initial=0
     )
     attendance_date = forms.DateField(
-        initial=datetime.date.today,
+        initial=date.today,
         widget=DatePickerInput,
         label=_('Attendance date')
     )
@@ -144,18 +144,26 @@ class MainAttendanceForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(MainAttendanceForm, self).clean()
+        attendance_date = cleaned_data.get('attendance_date')
+
+        # Make sure filters are provided
         if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') == '':
             self.add_error('close_reason', "The reason should be specified.")
-        # Make sure filters are provided
-
-        if self.instance is None:
-            if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and cleaned_data.get('attendance_date') != '' and cleaned_data.get('day_off') != '':
+    
+        if self.instance.id is None:
+            if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and attendance_date != '' and cleaned_data.get('day_off') != '':
                 num_results = CLMAttendance.objects.filter(school=cleaned_data['school'],
                                                            registration_level=cleaned_data['registration_level'],
-                                                           attendance_date=cleaned_data['attendance_date'],
+                                                           attendance_date=attendance_date,
                                                            ).count()
                 if num_results > 0:
-                    self.add_error('attendance_date', "There is already an attendance record for this date." )
+                    self.add_error('attendance_date', "There is already an attendance record for this date.")
+            if attendance_date != '':
+                current_date = datetime.today().date()
+                two_weeks_ago = current_date - timedelta(days=14)
+                if not ((attendance_date <= current_date)
+                        and (attendance_date >= two_weeks_ago)):
+                    self.add_error('attendance_date', "Attendance dates.")
 
     class Meta:
         model = CLMAttendance

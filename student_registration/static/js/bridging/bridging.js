@@ -97,11 +97,7 @@ $(document).ready(function() {
     });
 
     $(document).on('change', 'select#id_round', function () {
-//        new_registry = $('#id_new_registry').val();
-//        if (new_registry == 'no') {
-            duplicate_search('student id');
             duplicate_search_student_name();
-//        }
     });
 
     $(document).on('change', 'input#id_student_first_name', function () {
@@ -113,6 +109,11 @@ $(document).ready(function() {
     });
 
     $(document).on('change', 'input#id_student_last_name', function () {
+        duplicate_search_student_name();
+
+    });
+
+    $(document).on('change', 'input#id_student_mother_fullname', function () {
         duplicate_search_student_name();
 
     });
@@ -906,9 +907,9 @@ function check_duplicate_registration()
     enrollment_id = $('#id_enrollment_id').val();
     partner_name = $('#id_partner_name').val();
     id_round = $('#id_round').val();
-    if (enrollment_id > 0 && id_round > 0)
+    if (enrollment_id > 0 && id_round > 0 )
     {
-        if (isAddPage() && ($('.errorlist').length == 0))
+        if (isAddPage() && ($('.errorlist').length == 0) )
         {
             alert("The child already exists with the partner " + partner_name);
             $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
@@ -1353,8 +1354,9 @@ function duplicate_search_student_name()
     var student_first_name= $('#id_student_first_name').val();
     var student_father_name= $('#id_student_father_name').val();
     var student_last_name= $('#id_student_last_name').val();
+    var student_mother_fullname= $('#student_mother_fullname').val();
 
-    if (student_first_name!='' && student_father_name!='' && student_last_name!='' )
+    if (student_first_name!='' && student_father_name!='' && student_last_name!=''  && student_mother_fullname!='')
     {
         duplicate_search('student name');
     }
@@ -1373,6 +1375,7 @@ function duplicate_search(search_by) {
         var student_first_name = $('#id_student_first_name').val();
         var student_father_name = $('#id_student_father_name').val();
         var student_last_name = $('#id_student_last_name').val();
+        var student_mother_fullname = $('#id_student_mother_fullname').val();
         var phone_number = $('#id_phone_number').val();
         var id_type = $('#id_id_type').val();
         var case_number = $('#id_case_number').val();
@@ -1391,6 +1394,7 @@ function duplicate_search(search_by) {
             student_first_name: student_first_name,
             student_father_name: student_father_name,
             student_last_name: student_last_name,
+            student_mother_fullname: student_mother_fullname,
             phone_number: phone_number,
             id_type: id_type,
             case_number: case_number,
@@ -1731,4 +1735,5 @@ function load_schools(url)
         }
     })
 }
+
 
