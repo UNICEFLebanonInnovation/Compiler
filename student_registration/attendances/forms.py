@@ -91,18 +91,16 @@ class MainAttendanceForm(forms.ModelForm):
 
         attendance_student_formset = kwargs.pop('attendance_student_formset', None)
         saveStage = kwargs.pop('saveStage', None)
+        update_disabled = kwargs.pop('update_disabled', False)
 
-        # if attendance_student_formset:
-        #     print('loaded....')
-
-        if saveStage:
-
-            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info ', disabled=True)
+        if update_disabled:
+            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
+            submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
+        elif saveStage:
+            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
             submit_button = Submit('save', _('Save'), css_class='col-md-2')
-
         else:
-
-            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info ')
+            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info')
             submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
 
         attendance_students_context = {}
@@ -149,7 +147,7 @@ class MainAttendanceForm(forms.ModelForm):
         # Make sure filters are provided
         if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') == '':
             self.add_error('close_reason', "The reason should be specified.")
-    
+
         if self.instance.id is None:
             if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and attendance_date != '' and cleaned_data.get('day_off') != '':
                 num_results = CLMAttendance.objects.filter(school=cleaned_data['school'],

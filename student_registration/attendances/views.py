@@ -13,8 +13,7 @@ from django_tables2.export.views import ExportMixin
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
-
-
+from django.shortcuts import redirect
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
@@ -629,6 +628,23 @@ class MainAttendanceCreateView(CreateView):
         else:
             return self.form_invalid(form, attendance_student_formset)
 
+    def get(self, request, *args, **kwargs):
+        attendance_date = self.request.GET.get('attendance_date', '')
+        school = self.request.GET.get('school', '')
+        registration_level = self.request.GET.get('registration_level', '')
+
+        attendance = None
+        if school != '' and registration_level != '' and attendance_date != '':
+            attendance = CLMAttendance.objects.filter(school=school,
+                                                      registration_level=registration_level,
+                                                      attendance_date=attendance_date,
+                                                     ).values('id').first()
+        if attendance:
+            attendance_id = attendance['id']
+            return redirect(reverse('attendances:main_attendance_edit', kwargs={'pk': attendance_id}))
+        else:
+            return super(MainAttendanceCreateView, self).get(request)
+
     def form_valid(self, form, attendance_student_formset):
         self.object = form.save(commit=False)
         self.object.save()
@@ -671,7 +687,6 @@ class MainAttendanceCreateView(CreateView):
 class MainAttendanceUpdateView(UpdateView):
     model = CLMAttendance
     form_class = MainAttendanceForm
-
     template_name = 'attendances/main_attendance_form.html'
 
     def get_success_url(self):
@@ -687,15 +702,17 @@ class MainAttendanceUpdateView(UpdateView):
     def get_form(self, form_class=None):
         attendance_id = self.kwargs['pk']
         instance = CLMAttendance.objects.get(id=attendance_id)
+        update_disabled = True
+        messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
             form = MainAttendanceForm(self.request.POST, instance=instance,
                                       attendance_student_formset=self.get_student_formset(self.request.POST)
-                                      , saveStage=True)
+                                      , saveStage=True, update_disabled=update_disabled)
         else:
             form = MainAttendanceForm(instance=instance,
                                       attendance_student_formset=self.get_formset(attendance_id),
-                                      saveStage=True)
+                                      saveStage=True, update_disabled=update_disabled)
 
         form.helper.form_action = reverse('attendances:main_attendance_edit', args=[attendance_id])
 
