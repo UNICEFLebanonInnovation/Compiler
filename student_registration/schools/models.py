@@ -190,6 +190,7 @@ class School(TimeStampedModel):
         ),
         verbose_name=_('School weekends')
     )
+
     academic_year_start = models.DateField(
         blank=True,
         null=True,

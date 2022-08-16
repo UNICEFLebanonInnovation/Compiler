@@ -554,7 +554,7 @@ class ExportView(LoginRequiredMixin, ListView):
         return response
 
 
-class MainAttendanceCreateView(CreateView):
+class MainAttendanceCreateView(LoginRequiredMixin, CreateView):
     form_class = MainAttendanceForm
     template_name = 'attendances/main_attendance_form.html'
 
@@ -565,7 +565,7 @@ class MainAttendanceCreateView(CreateView):
             form=AttendanceStudentForm,
             extra=len(initial_records),
             fk_name='attendance_day',
-            fields=('attended', 'absence_reason', 'student_id'),
+            fields=('attended', 'absence_reason','absence_reason', 'student_id'),
             can_delete=False
         )
         return attendance_student_inline_formset(initial=initial_records)
@@ -576,7 +576,7 @@ class MainAttendanceCreateView(CreateView):
             CLMAttendanceStudent,
             form=AttendanceStudentForm,
             fk_name='attendance_day',
-            fields=('attended', 'absence_reason', 'student_id'),
+            fields=('attended', 'absence_reason', 'absence_reason',  'student_id'),
             can_delete=False
         )
         return attendance_student_inline_formset(parameters)
@@ -605,6 +605,8 @@ class MainAttendanceCreateView(CreateView):
                 }
                 data.append(student)
             kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
+
+        kwargs['partner_id'] = self.request.user.partner.id
 
         if ('school' in self.request.GET) and ('registration_level' in self.request.GET)\
            or\
@@ -684,7 +686,7 @@ class MainAttendanceCreateView(CreateView):
         return reverse('attendances:main_attendance')
 
 
-class MainAttendanceUpdateView(UpdateView):
+class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
     model = CLMAttendance
     form_class = MainAttendanceForm
     template_name = 'attendances/main_attendance_form.html'
@@ -703,16 +705,17 @@ class MainAttendanceUpdateView(UpdateView):
         attendance_id = self.kwargs['pk']
         instance = CLMAttendance.objects.get(id=attendance_id)
         update_disabled = True
+        partner_id = self.request.user.partner.id
         messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
             form = MainAttendanceForm(self.request.POST, instance=instance,
                                       attendance_student_formset=self.get_student_formset(self.request.POST)
-                                      , saveStage=True, update_disabled=update_disabled)
+                                      , saveStage=True, update_disabled=update_disabled, partner_id = partner_id)
         else:
             form = MainAttendanceForm(instance=instance,
                                       attendance_student_formset=self.get_formset(attendance_id),
-                                      saveStage=True, update_disabled=update_disabled)
+                                      saveStage=True, update_disabled=update_disabled, partner_id = partner_id)
 
         form.helper.form_action = reverse('attendances:main_attendance_edit', args=[attendance_id])
 
@@ -765,7 +768,8 @@ class MainAttendanceUpdateView(UpdateView):
                 'student_id': line.student.id,
                 'student_name': line.student.full_name,
                 'attended': line.attended,
-                'absence_reason': line.absence_reason
+                'absence_reason': line.absence_reason,
+                'absence_reason': line.absence_reason_other
             }
             data.append(student)
         return self.get_initial_student_formset(data)
@@ -777,7 +781,7 @@ class MainAttendanceUpdateView(UpdateView):
             form=AttendanceStudentForm,
             extra=len(initial_records),
             fk_name='attendance_day',
-            fields=('id','attended', 'absence_reason', 'student_id'),
+            fields=('id', 'attended', 'absence_reason', 'absence_reason_other', 'student_id'),
             can_delete=False
         )
         return attendance_student_inline_formset(initial=initial_records)
@@ -788,7 +792,7 @@ class MainAttendanceUpdateView(UpdateView):
             CLMAttendanceStudent,
             form=AttendanceStudentForm,
             fk_name='attendance_day',
-            fields=('id','attended', 'absence_reason', 'student_id'),
+            fields=('id', 'attended', 'absence_reason', 'absence_reason_other', 'student_id'),
             can_delete=False
         )
         return attendance_student_inline_formset(parameters)

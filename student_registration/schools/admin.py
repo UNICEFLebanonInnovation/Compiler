@@ -407,6 +407,11 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
     filter_horizontal = ('schools', )
     search_fields = ('name', )
 
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "schools":
+            kwargs["queryset"] = School.objects.filter(is_first_shift='yes')
+        return super(PartnerOrganizationAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()

@@ -17,6 +17,7 @@ from .models import CLMAttendance,CLMAttendanceStudent
 from student_registration.clm.models import Bridging
 from student_registration.schools.models import (
     School,
+    PartnerOrganization
 )
 
 from collections import OrderedDict
@@ -92,6 +93,7 @@ class MainAttendanceForm(forms.ModelForm):
         attendance_student_formset = kwargs.pop('attendance_student_formset', None)
         saveStage = kwargs.pop('saveStage', None)
         update_disabled = kwargs.pop('update_disabled', False)
+        partner_id = kwargs.pop('partner_id', None)
 
         if update_disabled:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
@@ -99,6 +101,7 @@ class MainAttendanceForm(forms.ModelForm):
         elif saveStage:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
             submit_button = Submit('save', _('Save'), css_class='col-md-2')
+
         else:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info')
             submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
@@ -139,6 +142,24 @@ class MainAttendanceForm(forms.ModelForm):
                         css_class='button-group'
                     )
         )
+        if partner_id > 0:
+            queryset = School.objects.filter(is_first_shift='yes',
+                                             id__in=PartnerOrganization
+                                             .objects
+                                             .filter(id=partner_id)
+                                             .values_list('schools', flat=True))
+            self.fields['school'] = forms.ModelChoiceField(
+                queryset=queryset,
+                widget=forms.Select,
+                label=_('School Name'),
+                empty_label='-------',
+                required=True, to_field_name='id',
+                initial=0
+            )
+
+        # if saveStage:
+        #     self.fields['school'].widget.attrs['disabled'] = 'disabled'
+        #     self.fields['registration_level'].widget.attrs['disabled'] = 'disabled'
 
     def clean(self):
         cleaned_data = super(MainAttendanceForm, self).clean()
@@ -149,9 +170,13 @@ class MainAttendanceForm(forms.ModelForm):
             self.add_error('close_reason', "The reason should be specified.")
 
         if self.instance.id is None:
-            if cleaned_data.get('school') != '' and cleaned_data.get('registration_level') != '' and attendance_date != '' and cleaned_data.get('day_off') != '':
-                num_results = CLMAttendance.objects.filter(school=cleaned_data['school'],
-                                                           registration_level=cleaned_data['registration_level'],
+            school = cleaned_data.get("phone_number")
+            registration_level = cleaned_data.get("registration_level")
+            day_off = cleaned_data.get("day_off")
+
+            if school != '' and registration_level != '' and attendance_date != '' and day_off != '':
+                num_results = CLMAttendance.objects.filter(school=school,
+                                                           registration_level=registration_level,
                                                            attendance_date=attendance_date,
                                                            ).count()
                 if num_results > 0:
@@ -161,7 +186,7 @@ class MainAttendanceForm(forms.ModelForm):
                 two_weeks_ago = current_date - timedelta(days=14)
                 if not ((attendance_date <= current_date)
                         and (attendance_date >= two_weeks_ago)):
-                    self.add_error('attendance_date', "Attendance dates.")
+                    self.add_error('attendance_date', "Attendance date is not valid.")
 
     class Meta:
         model = CLMAttendance
@@ -190,11 +215,15 @@ class AttendanceStudentForm(forms.ModelForm):
         choices=CLMAttendanceStudent.ABSENCE_REASON,
         initial=0
     )
+    absence_reason_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super(AttendanceStudentForm, self).__init__(*args, **kwargs)
         self.fields['student_name'].widget.attrs['readonly'] = True
-        fields_keyorder = ['id','student_name', 'attended', 'absence_reason', 'student_id']
+        fields_keyorder = ['id','student_name', 'attended', 'absence_reason', 'absence_reason_other', 'student_id']
         if self.fields.has_key('keyOrder'):
             self.fields.keyOrder = fields_keyorder
         else:
@@ -202,12 +231,19 @@ class AttendanceStudentForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(AttendanceStudentForm, self).clean()
-        if cleaned_data.get('attended') == 'no' and cleaned_data.get('absence_reason') == '':
-            self.add_error('absence_reason', "The reason should be specified for " + cleaned_data.get('student_name'))
+        attended = cleaned_data.get('attended')
+        absence_reason = cleaned_data.get('absence_reason')
+        absence_reason_other = cleaned_data.get('absence_reason_other')
+        if attended == 'no':
+            if absence_reason == '':
+                self.add_error('absence_reason', "The reason should be specified for " + cleaned_data.get('student_name'))
+            elif absence_reason == 'other' and absence_reason_other == '':
+                self.add_error('absence_reason_other',
+                               "The reason should be specified for " + cleaned_data.get('student_name'))
 
     class Meta:
         model = CLMAttendanceStudent
-        fields = ('id','absence_reason', 'attended', 'student_id')
+        fields = ('id','absence_reason','absence_reason_other', 'attended', 'student_id')
         widgets = {'tag': forms.HiddenInput()}
 
 
