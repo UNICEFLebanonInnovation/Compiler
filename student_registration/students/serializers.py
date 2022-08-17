@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import (
     Student,
+    Teacher
 )
 
 
@@ -79,4 +80,25 @@ class StudentSerializer(serializers.ModelSerializer):
             'unhcr_family',
             'unhcr_personal',
             'p_code',
+        )
+
+
+class TeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teacher
+        fields = (
+            'id',
+            'first_name',
+            'father_name',
+            'last_name',
+            'full_name',
+            'sex',
+            'primary_phone_number',
+            'school',
+            'email',
+            'subject_provided',
+            'grade_level',
+            'trainings',
+            'training_sessions_attended',
+            'extra_coaching'
         )

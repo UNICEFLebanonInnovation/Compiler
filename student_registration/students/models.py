@@ -1,14 +1,13 @@
 from __future__ import unicode_literals, absolute_import, division
-
-import datetime
-
+from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext as _
-
+from django.contrib.postgres.fields import ArrayField, JSONField
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
 from django.core.exceptions import ValidationError
+from student_registration.locations.models import Location
 
 
 def validate_file_size(value):
@@ -125,7 +124,7 @@ class Labour(models.Model):
 
 class Person(TimeStampedModel):
 
-    CURRENT_YEAR = datetime.datetime.now().year
+    CURRENT_YEAR = datetime.now().year
 
     MONTHS = Choices(
         ('1', _('January')),
@@ -323,7 +322,7 @@ class Person(TimeStampedModel):
     @property
     def age(self):
         if self.birthday_year and self.birthday_month and self.birthday_day:
-            today = datetime.datetime.now()
+            today = datetime.now()
             return today.year - int(self.birthday_year) - ((today.month, today.day) < (int(self.birthday_month), int(self.birthday_day)))
         # if self.birthday_year:
         #     return int(self.CURRENT_YEAR)-int(self.birthday_year)
@@ -465,7 +464,6 @@ class Student(Person):
 
     def current_secondshift_registration(self):
         from student_registration.schools.models import EducationYear
-
         education_year = EducationYear.objects.get(current_year=True)
         return self.student_enrollment.filter(education_year=education_year)
 
@@ -532,6 +530,7 @@ class Student(Person):
             return last_enrollment.education_year.name
         return ''
 
+
 class StudentMatching(models.Model):
 
     registry = models.ForeignKey(
@@ -543,4 +542,96 @@ class StudentMatching(models.Model):
         Student,
         blank=False, null=False,
         related_name='+',
+    )
+
+
+class Training(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Topics of teacher training"
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+
+class Teacher(Person):
+    SUBJECT_PROVIDED = (
+        ('arabic', _('Arabic')),
+        ('math', _('Math')),
+        ('english', _('English')),
+        ('french', _('French'))
+    )
+    GRADE_LEVEL = Choices(
+        ('full_time', _('Full time')),
+        ('part_time_mix_private', _('Part time, Mix private')),
+        ('part_time_sbp_only', _('Part time, SBP only')),
+    )
+    YES_NO = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    school = models.ForeignKey(
+        'schools.School',
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('School')
+    )
+    email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Email')
+    )
+    primary_phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number')
+    )
+    subject_provided = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SUBJECT_PROVIDED,
+        verbose_name=_('Subject provided')
+    )
+    grade_level = ArrayField(
+        models.CharField(
+            choices=GRADE_LEVEL,
+            max_length=50,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Grade level')
+    )
+    training = models.ForeignKey(
+        Training,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Topics of teacher training')
+    )
+    trainings = models.ManyToManyField(
+        Training,
+        blank=True
+    )
+    training_sessions_attended = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 30)),
+        verbose_name=_('Number of teacher training sessions (attended)')
+    )
+    extra_coaching = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Extra coaching')
     )

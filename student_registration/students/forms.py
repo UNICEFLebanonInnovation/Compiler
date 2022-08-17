@@ -2,10 +2,27 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import ugettext as _
 from django import forms
+from django.core.urlresolvers import reverse
+from django.contrib import messages
+from crispy_forms.helper import FormHelper
+from crispy_forms.bootstrap import (
+    FormActions,
+    InlineCheckboxes
+)
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from dal import autocomplete
 from student_registration.students.models import (
-    Student
+    Student,
+    Teacher,
+    Training
+)
+from student_registration.schools.models import (
+    School,
 )
 
+from student_registration.students.serializers import (
+    TeacherSerializer
+)
 
 class StudentEnrollmentForm(forms.ModelForm):
 
@@ -52,3 +69,189 @@ class ImageUploadForm(forms.Form):
     image = forms.ImageField()
 
 
+class TeacherForm(forms.ModelForm):
+    school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        label=_('School'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
+    )
+    first_name = forms.CharField(
+        label=_("First name"),
+        widget=forms.TextInput, required=False
+    )
+    father_name = forms.CharField(
+        label=_("Father name"),
+        widget=forms.TextInput, required=False
+    )
+    last_name = forms.CharField(
+        label=_("Last name"),
+        widget=forms.TextInput, required=False
+    )
+    sex = forms.ChoiceField(
+        label=_("Sex"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('Male', _('Male')),
+            ('Female', _('Female')),
+        )
+    )
+    primary_phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=False,
+        label=_('Main Phone number')
+    )
+    email = forms.RegexField(
+        regex=r'^\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',
+        required=False,
+        label=_('Email')
+    )
+    subject_provided = forms.ChoiceField(
+        label=_('Subject provided'),
+        widget=forms.Select,
+        required=False,
+        choices=Teacher.SUBJECT_PROVIDED,
+    )
+    grade_level = forms.MultipleChoiceField(
+        label=_('Grade level'),
+        choices=Teacher.GRADE_LEVEL,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    training = forms.ModelChoiceField(
+        queryset=Training.objects.all(),
+        widget=forms.Select,
+        label=_('Topics of teacher training'),
+        required=False,
+        to_field_name='id',
+        initial=0
+    )
+    trainings = forms.ModelMultipleChoiceField(
+        queryset=Training.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    training_sessions_attended = forms.IntegerField(
+        label=_('Number of teacher training sessions (attended)'),
+        widget=forms.TextInput, required=False
+    )
+    extra_coaching = forms.ChoiceField(
+        label=_('Extra coaching'),
+        widget=forms.Select,
+        required=False,
+        choices=Teacher.YES_NO,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(TeacherForm, self).__init__(*args, **kwargs)
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        form_action = reverse('students:teacher_add')
+
+        if instance:
+            form_action = reverse('students:teacher_edit', kwargs={'pk': instance.id})
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Teacher General Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('last_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('primary_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('email', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('subject_provided', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('grade_level', css_class='col-md-3 multiple-choice'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('trainings', css_class='col-md-3 multiple-choice'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('training_sessions_attended', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('extra_coaching', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/students/teacher-list/" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def save(self, request=None, instance=None):
+        if instance:
+            instance = super(TeacherForm, self).save()
+            serializer = TeacherSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+            serializer = TeacherSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.owner = request.user
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+        return instance
+
+    class Meta:
+        model = Teacher
+        fields = (
+            'id',
+            'first_name',
+            'father_name',
+            'last_name',
+            'sex',
+            'primary_phone_number',
+            'school',
+            'email',
+            'subject_provided',
+            'grade_level',
+            'trainings',
+            'training_sessions_attended',
+            'extra_coaching'
+        )

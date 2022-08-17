@@ -12886,6 +12886,7 @@ class BLNAdminForm(forms.ModelForm):
         model = BLN
         fields = '__all__'
 
+
 class ABLNAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
@@ -12899,6 +12900,7 @@ class ABLNAdminForm(forms.ModelForm):
     class Meta:
         model = ABLN
         fields = '__all__'
+
 
 class RSAdminForm(forms.ModelForm):
 
@@ -12914,6 +12916,7 @@ class RSAdminForm(forms.ModelForm):
         model = RS
         fields = '__all__'
 
+
 class InclusionAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
@@ -12927,6 +12930,7 @@ class InclusionAdminForm(forms.ModelForm):
     class Meta:
         model = BLN
         fields = '__all__'
+
 
 class CBECEAdminForm(forms.ModelForm):
 
@@ -12942,6 +12946,7 @@ class CBECEAdminForm(forms.ModelForm):
         model = CBECE
         fields = '__all__'
 
+
 class OutreachAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
@@ -12955,6 +12960,7 @@ class OutreachAdminForm(forms.ModelForm):
     class Meta:
         model = Outreach
         fields = '__all__'
+
 
 class RSAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
@@ -13917,6 +13923,7 @@ class RSAssessmentForm(forms.ModelForm):
             # 'child_health_concern',
         )
 
+
 class BLNReferralForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -14030,6 +14037,7 @@ class BLNReferralForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
+
 class BLNFollowupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -14128,6 +14136,7 @@ class BLNFollowupForm(forms.ModelForm):
         js = (
             # 'js/validator.js',
         )
+
 
 class ABLNReferralForm(forms.ModelForm):
 
@@ -14241,6 +14250,7 @@ class ABLNReferralForm(forms.ModelForm):
             # 'js/validator.js',
         )
 
+
 class ABLNFollowupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -14339,6 +14349,7 @@ class ABLNFollowupForm(forms.ModelForm):
         js = (
             # 'js/validator.js',
         )
+
 
 class CBECEReferralForm(forms.ModelForm):
 
@@ -14447,6 +14458,7 @@ class CBECEReferralForm(forms.ModelForm):
         js = (
             # 'js/validator.js',
         )
+
 
 class CBECEFollowupForm(forms.ModelForm):
 
@@ -15605,6 +15617,7 @@ class BLNFCForm(forms.ModelForm):
             'steps_acquire_competency_other',
         )
 
+
 class RSFCForm(forms.ModelForm):
     facilitator_name = forms.CharField(
         label=_('Facilitator name'),
@@ -16128,6 +16141,7 @@ class RSFCForm(forms.ModelForm):
             'steps_acquire_competency',
             'steps_acquire_competency_other',
         )
+
 
 class CBECEFCForm(forms.ModelForm):
     facilitator_name = forms.CharField(

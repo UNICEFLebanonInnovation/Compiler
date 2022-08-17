@@ -751,3 +751,10 @@ h1, h2, h3, h4, h5, div, span, p, label {
   position: relative !IMPORTANT;
   margin-left: 0px !IMPORTANT;
 }
+
+.multiple-choice input {
+  width: 13px !IMPORTANT;
+  position: relative !IMPORTANT;
+  top: 2px !IMPORTANT;
+  margin: 0px !IMPORTANT;
+}
