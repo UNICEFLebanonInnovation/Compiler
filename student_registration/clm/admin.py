@@ -904,7 +904,6 @@ class CenterAdmin(ImportExportModelAdmin):
     resource_class = CenterResource
 
 
-
 class OutreachResource(resources.ModelResource):
     class Meta:
         fields = (
@@ -947,6 +946,7 @@ class OutreachResource(resources.ModelResource):
         )
         model = Outreach
         export_order = fields
+
 
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
@@ -992,7 +992,6 @@ class OutreachAdmin(ImportExportModelAdmin):
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
-
 
 
 admin.site.register(Assessment)

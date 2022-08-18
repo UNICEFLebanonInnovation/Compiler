@@ -17,6 +17,7 @@ from .models import (
     SpecialNeeds,
     SpecialNeedsDt,
     Birth_DocumentType,
+    Training
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -726,6 +727,20 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class TrainingResource(resources.ModelResource):
+    class Meta:
+        model = Training
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = ('name', )
+
+
+class TrainingAdmin(ImportExportModelAdmin):
+    resource_class = TrainingResource
+
+
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
@@ -735,3 +750,4 @@ admin.site.register(SpecialNeeds)
 admin.site.register(SpecialNeedsDt)
 admin.site.register(FinancialSupport)
 admin.site.register(Birth_DocumentType)
+admin.site.register(Training, TrainingAdmin)

@@ -159,6 +159,7 @@ class CLM(TimeStampedModel):
         'post_test'
     )
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )

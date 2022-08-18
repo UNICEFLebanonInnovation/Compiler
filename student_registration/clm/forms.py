@@ -10652,14 +10652,14 @@ class BridgingAssessmentForm(forms.ModelForm):
     test_done = forms.ChoiceField(
         label=_("Post test has been done"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
+        choices=CLM.YES_NO,
         initial='yes'
     )
 
     round_complete = forms.ChoiceField(
         label=_("Briding Round complete"),
         widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
+        choices=CLM.YES_NO,
         initial='yes'
     )
 
@@ -10765,7 +10765,6 @@ class BridgingAssessmentForm(forms.ModelForm):
         label=_("Was the community Liaison at school level involved in follow up on child absence or drop out?"),
         widget=forms.Select, required=False,
         choices=CLM.YES_NO,
-        initial='yes'
     )
     community_liaison_specify = forms.CharField(
         label=_('specify'),
@@ -10962,13 +10961,12 @@ class BridgingAssessmentForm(forms.ModelForm):
         community_Liaison_follow_up = cleaned_data.get("community_Liaison_follow_up")
         community_liaison_specify = cleaned_data.get("community_liaison_specify")
 
-        if referal_other != 'no_absence':
+        if participation != 'no_absence':
             if not community_Liaison_follow_up:
                 self.add_error('community_Liaison_follow_up', 'This field is required')
-
-        if community_Liaison_follow_up == 'yes':
-            if not community_liaison_specify:
-                self.add_error('community_liaison_specify', 'This field is required')
+            elif community_Liaison_follow_up == 'yes':
+                if not community_liaison_specify:
+                    self.add_error('community_liaison_specify', 'This field is required')
 
 
 
