@@ -3,8 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import json
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
@@ -22,7 +21,6 @@ from dal import autocomplete
 from student_registration.backends.djqscsv import render_to_csv_response
 from student_registration.users.utils import force_default_language
 from .utils import is_allowed_create, is_allowed_edit
-
 from .models import (
     Student,
     Teacher
@@ -225,6 +223,10 @@ class TeacherAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
+            # if self.request.FILES:
+            #     if self.request.FILES.get('attach_file_1', False):
+            #         instance.attach_file_1 = self.request.FILES['attach_file_1']
+            # instance.save()
             return TeacherForm(self.request.POST, instance=None, request=self.request)
         else:
             return TeacherForm(None, instance=None, request=self.request, initial=self.get_initial())
@@ -256,6 +258,18 @@ class TeacherEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Teacher.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
+            if self.request.FILES:
+                if self.request.FILES.get('attach_file_1', False):
+                    instance.attach_file_1 = self.request.FILES['attach_file_1']
+                if self.request.FILES.get('attach_file_2', False):
+                    instance.attach_file_2 = self.request.FILES['attach_file_2']
+                if self.request.FILES.get('attach_file_3', False):
+                    instance.attach_file_3 = self.request.FILES['attach_file_3']
+                if self.request.FILES.get('attach_file_4', False):
+                    instance.attach_file_4 = self.request.FILES['attach_file_4']
+                if self.request.FILES.get('attach_file_5', False):
+                    instance.attach_file_5 = self.request.FILES['attach_file_5']
+            instance.save()
             return TeacherForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = TeacherSerializer(instance).data

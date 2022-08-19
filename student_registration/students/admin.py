@@ -17,7 +17,8 @@ from .models import (
     SpecialNeeds,
     SpecialNeedsDt,
     Birth_DocumentType,
-    Training
+    Training,
+    AttachmentType
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -741,6 +742,21 @@ class TrainingAdmin(ImportExportModelAdmin):
     resource_class = TrainingResource
 
 
+class AttachmentTypeResource(resources.ModelResource):
+    class Meta:
+        model = AttachmentType
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = ('name', )
+
+
+class AttachmentTypeAdmin(ImportExportModelAdmin):
+    resource_class = AttachmentTypeResource
+
+
+
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
@@ -751,3 +767,4 @@ admin.site.register(SpecialNeedsDt)
 admin.site.register(FinancialSupport)
 admin.site.register(Birth_DocumentType)
 admin.site.register(Training, TrainingAdmin)
+admin.site.register(AttachmentType, AttachmentTypeAdmin)

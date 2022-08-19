@@ -8,7 +8,7 @@ from model_utils.models import TimeStampedModel
 from .utils import *
 from django.core.exceptions import ValidationError
 from student_registration.locations.models import Location
-
+from django import forms
 
 def validate_file_size(value):
     filesize = value.size
@@ -153,7 +153,7 @@ class Person(TimeStampedModel):
         ('single', _('Single')),
     )
 
-    STUDENT_INCOME= Choices(
+    STUDENT_INCOME = Choices(
         ('', '----------'),
         ('thousand_or_less', _('10,000 LBP or less')),
         ('eleven_thousand_to_twenty_five', _('11,000 to 25,000 LBP')),
@@ -559,6 +559,20 @@ class Training(models.Model):
         return self.name
 
 
+class AttachmentType(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Attachment Type"
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+
 class Teacher(Person):
     SUBJECT_PROVIDED = (
         ('arabic', _('Arabic')),
@@ -634,4 +648,95 @@ class Teacher(Person):
         null=True,
         choices=YES_NO,
         verbose_name=_('Extra coaching')
+    )
+    attach_short_description_1 = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Description')
+    )
+    attach_file_1 = models.FileField(
+        upload_to='uploads/teacher',
+        blank=True,
+        null=True,
+        verbose_name=_('Attachment'),
+        # validators=[validate_file_size]
+    )
+    attach_type_1 = models.ForeignKey(
+        AttachmentType,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Type')
+    )
+    attach_short_description_2 = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Description')
+    )
+    attach_file_2 = models.FileField(
+        upload_to='uploads/teacher',
+        blank=True,
+        null=True,
+        verbose_name=_('Attachment'),
+    )
+    attach_type_2 = models.ForeignKey(
+        AttachmentType,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Type')
+    )
+    attach_short_description_3 = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Description')
+    )
+    attach_file_3 = models.FileField(
+        upload_to='uploads/teacher',
+        blank=True,
+        null=True,
+        verbose_name=_('Attachment'),
+    )
+    attach_type_3 = models.ForeignKey(
+        AttachmentType,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Type')
+    )
+    attach_short_description_4 = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Description')
+    )
+    attach_file_4 = models.FileField(
+        upload_to='uploads/teacher',
+        blank=True,
+        null=True,
+        verbose_name=_('Attachment'),
+    )
+    attach_type_4 = models.ForeignKey(
+        AttachmentType,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Type')
+    )
+    attach_short_description_5 = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_('Description')
+    )
+    attach_file_5 = models.FileField(
+        upload_to='uploads/teacher',
+        blank=True,
+        null=True,
+        verbose_name=_('Attachment'),
+    )
+    attach_type_5 = models.ForeignKey(
+        AttachmentType,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Type')
     )

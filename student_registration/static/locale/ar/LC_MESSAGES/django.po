@@ -9649,9 +9649,6 @@ msgstr ""
 msgid "Helpdesk Notifications"
 msgstr "رسائل خاصة بطلب المساعدة"
 
-#: student_registration/templates/schools/profile.html:165
-msgid "Description"
-msgstr "وصف المشكلة"
 
 #: student_registration/templates/schools/profile.html:168
 msgid "Last comment"

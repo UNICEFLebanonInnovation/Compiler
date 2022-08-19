@@ -14,7 +14,8 @@ from dal import autocomplete
 from student_registration.students.models import (
     Student,
     Teacher,
-    Training
+    Training,
+    AttachmentType
 )
 from student_registration.schools.models import (
     School,
@@ -23,6 +24,25 @@ from student_registration.schools.models import (
 from student_registration.students.serializers import (
     TeacherSerializer
 )
+
+from django.utils.safestring import mark_safe
+
+
+class AdminFileWidget(forms.FileInput):
+    """
+    A FileField Widget that shows its current value if it has one.
+    """
+    def __init__(self, attrs={}):
+        super(AdminFileWidget, self).__init__(attrs)
+
+    def render(self, name, value, attrs=None):
+        output = []
+        if value and hasattr(value, "url"):
+            output.append('%s <a target="_blank" href="%s">%s</a> <br />%s ' % \
+                (_('Currently:'), value.url, value, _('Change:')))
+        output.append(super(AdminFileWidget, self).render(name, value, attrs))
+        return mark_safe(u''.join(output))
+
 
 class StudentEnrollmentForm(forms.ModelForm):
 
@@ -144,6 +164,86 @@ class TeacherForm(forms.ModelForm):
         required=False,
         choices=Teacher.YES_NO,
     )
+    attach_short_description_1 = forms.CharField(
+        label=_("Description"),
+        widget=forms.TextInput, required=False
+    )
+    attach_file_1 = forms.FileField(
+        label=_("Attachment"),
+        required=False,
+        widget=AdminFileWidget
+    )
+    attach_type_1 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(), widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
+    )
+    attach_short_description_2 = forms.CharField(
+        label=_("Description"),
+        widget=forms.TextInput, required=False
+    )
+    attach_file_2 = forms.FileField(
+        label=_("Attachment"),
+        required=False,
+        widget=AdminFileWidget
+    )
+    attach_type_2 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(), widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
+    )
+    attach_short_description_3 = forms.CharField(
+        label=_("Description"),
+        widget=forms.TextInput, required=False
+    )
+    attach_file_3 = forms.FileField(
+        label=_("Attachment"),
+        required=False,
+        widget=AdminFileWidget
+    )
+    attach_type_3 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(), widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
+    )
+    attach_short_description_4 = forms.CharField(
+        label=_("Description"),
+        widget=forms.TextInput, required=False
+    )
+    attach_file_4 = forms.FileField(
+        label=_("Attachment"),
+        required=False,
+        widget=AdminFileWidget
+    )
+    attach_type_4 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(), widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
+    )
+    attach_short_description_5 = forms.CharField(
+        label=_("Description"),
+        widget=forms.TextInput, required=False
+    )
+    attach_file_5 = forms.FileField(
+        label=_("Attachment"),
+        required=False,
+        widget=AdminFileWidget
+    )
+    attach_type_5 = forms.ModelChoiceField(
+        queryset=AttachmentType.objects.all(), widget=forms.Select,
+        label=_('Type'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -204,8 +304,61 @@ class TeacherForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Attachments') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attach_file_1', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1.2</span>'),
+                    Div('attach_type_1', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">1.3</span>'),
+                    Div('attach_short_description_1', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('attach_file_2', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">2.2</span>'),
+                    Div('attach_type_2', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">2.3</span>'),
+                    Div('attach_short_description_2', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('attach_file_3', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">3.2</span>'),
+                    Div('attach_type_3', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">3.3</span>'),
+                    Div('attach_short_description_3', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('attach_file_4', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">4.2</span>'),
+                    Div('attach_type_4', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">4.3</span>'),
+                    Div('attach_short_description_4', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('attach_file_5', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5.2</span>'),
+                    Div('attach_type_5', css_class='col-md-2'),
+                    HTML('<span class="badge badge-default">5.3</span>'),
+                    Div('attach_short_description_5', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'
+            ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
+                Submit('save_add_another', _('Save and add another'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/students/teacher-list/" translation="' + _(
                     'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
@@ -253,5 +406,20 @@ class TeacherForm(forms.ModelForm):
             'grade_level',
             'trainings',
             'training_sessions_attended',
-            'extra_coaching'
+            'extra_coaching',
+            'attach_short_description_1',
+            'attach_file_1',
+            'attach_type_1',
+            'attach_short_description_2',
+            'attach_file_2',
+            'attach_type_2',
+            'attach_short_description_3',
+            'attach_file_3',
+            'attach_type_3',
+            'attach_short_description_4',
+            'attach_file_4',
+            'attach_type_4',
+            'attach_short_description_5',
+            'attach_file_5',
+            'attach_type_5',
         )
