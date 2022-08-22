@@ -170,7 +170,7 @@ class TeacherListView(LoginRequiredMixin,
     model = Teacher
     template_name = 'students/teacher_list.html'
     table = BootstrapTable(Teacher.objects.all(), order_by='id')
-    group_required = [u"CLM_Bridging"]
+    group_required = [u"CLM_TEACHER"]
     filterset_class = TeacherFilter
 
     def get_queryset(self):
@@ -185,7 +185,7 @@ class TeacherAddView(LoginRequiredMixin,
     template_name = 'students/teacher_create_form.html'
     form_class = TeacherForm
     success_url = '/students/teacher-list/'
-    group_required = [u"CLM_Bridging"]
+    group_required = [u"CLM_TEACHER"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
@@ -223,11 +223,7 @@ class TeacherAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            # if self.request.FILES:
-            #     if self.request.FILES.get('attach_file_1', False):
-            #         instance.attach_file_1 = self.request.FILES['attach_file_1']
-            # instance.save()
-            return TeacherForm(self.request.POST, instance=None, request=self.request)
+            return TeacherForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
         else:
             return TeacherForm(None, instance=None, request=self.request, initial=self.get_initial())
 
@@ -238,7 +234,7 @@ class TeacherEditView(LoginRequiredMixin,
     template_name = 'students/teacher_edit_form.html'
     form_class = TeacherForm
     success_url = '/students/teacher-list/'
-    group_required = [u"CLM_Bridging"]
+    group_required = [u"CLM_TEACHER"]
 
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
@@ -258,19 +254,7 @@ class TeacherEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Teacher.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            if self.request.FILES:
-                if self.request.FILES.get('attach_file_1', False):
-                    instance.attach_file_1 = self.request.FILES['attach_file_1']
-                if self.request.FILES.get('attach_file_2', False):
-                    instance.attach_file_2 = self.request.FILES['attach_file_2']
-                if self.request.FILES.get('attach_file_3', False):
-                    instance.attach_file_3 = self.request.FILES['attach_file_3']
-                if self.request.FILES.get('attach_file_4', False):
-                    instance.attach_file_4 = self.request.FILES['attach_file_4']
-                if self.request.FILES.get('attach_file_5', False):
-                    instance.attach_file_5 = self.request.FILES['attach_file_5']
-            instance.save()
-            return TeacherForm(self.request.POST, instance=instance, request=self.request)
+            return TeacherForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
             data = TeacherSerializer(instance).data
             return TeacherForm(data, instance=instance, request=self.request)

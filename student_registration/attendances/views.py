@@ -557,6 +557,7 @@ class ExportView(LoginRequiredMixin, ListView):
 class MainAttendanceCreateView(LoginRequiredMixin, CreateView):
     form_class = MainAttendanceForm
     template_name = 'attendances/main_attendance_form.html'
+    group_required = [u"CLM_ATTENDANCE"]
 
     def get_initial_student_formset(self, initial_records):
         attendance_student_inline_formset = inlineformset_factory(
@@ -690,6 +691,7 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
     model = CLMAttendance
     form_class = MainAttendanceForm
     template_name = 'attendances/main_attendance_form.html'
+    group_required = [u"CLM_ATTENDANCE"]
 
     def get_success_url(self):
         return reverse('attendances:main_attendance_edit', args=[self.kwargs['pk']])

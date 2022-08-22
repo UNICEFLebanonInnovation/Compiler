@@ -60,7 +60,7 @@ DJANGO_APPS = [
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
     'prettyjson',
-    #'storages',
+    #'storages'
 ]
 THIRD_PARTY_APPS = [
     'crispy_forms',  # Form layouts

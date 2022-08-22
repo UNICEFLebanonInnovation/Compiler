@@ -27,6 +27,8 @@ from student_registration.students.serializers import (
 
 from django.utils.safestring import mark_safe
 
+from django.forms.widgets import ClearableFileInput
+
 
 class AdminFileWidget(forms.FileInput):
     """
@@ -87,6 +89,10 @@ class StudentEnrollmentForm(forms.ModelForm):
 
 class ImageUploadForm(forms.Form):
     image = forms.ImageField()
+
+
+class CustomClearableFileInput(ClearableFileInput):
+    template_name = 'students/clearable_file_input.html'
 
 
 class TeacherForm(forms.ModelForm):
@@ -171,7 +177,7 @@ class TeacherForm(forms.ModelForm):
     attach_file_1 = forms.FileField(
         label=_("Attachment"),
         required=False,
-        widget=AdminFileWidget
+        widget=CustomClearableFileInput
     )
     attach_type_1 = forms.ModelChoiceField(
         queryset=AttachmentType.objects.all(), widget=forms.Select,
@@ -187,7 +193,7 @@ class TeacherForm(forms.ModelForm):
     attach_file_2 = forms.FileField(
         label=_("Attachment"),
         required=False,
-        widget=AdminFileWidget
+        widget=CustomClearableFileInput
     )
     attach_type_2 = forms.ModelChoiceField(
         queryset=AttachmentType.objects.all(), widget=forms.Select,
@@ -203,7 +209,7 @@ class TeacherForm(forms.ModelForm):
     attach_file_3 = forms.FileField(
         label=_("Attachment"),
         required=False,
-        widget=AdminFileWidget
+        widget=CustomClearableFileInput
     )
     attach_type_3 = forms.ModelChoiceField(
         queryset=AttachmentType.objects.all(), widget=forms.Select,
@@ -219,7 +225,7 @@ class TeacherForm(forms.ModelForm):
     attach_file_4 = forms.FileField(
         label=_("Attachment"),
         required=False,
-        widget=AdminFileWidget
+        widget=CustomClearableFileInput
     )
     attach_type_4 = forms.ModelChoiceField(
         queryset=AttachmentType.objects.all(), widget=forms.Select,
@@ -235,7 +241,7 @@ class TeacherForm(forms.ModelForm):
     attach_file_5 = forms.FileField(
         label=_("Attachment"),
         required=False,
-        widget=AdminFileWidget
+        widget=CustomClearableFileInput
     )
     attach_type_5 = forms.ModelChoiceField(
         queryset=AttachmentType.objects.all(), widget=forms.Select,
@@ -366,29 +372,8 @@ class TeacherForm(forms.ModelForm):
         )
 
     def save(self, request=None, instance=None):
-        if instance:
-            instance = super(TeacherForm, self).save()
-            serializer = TeacherSerializer(instance, data=request.POST)
-            if serializer.is_valid():
-                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
-                instance.modified_by = request.user
-                instance.save()
-                request.session['instance_id'] = instance.id
-                messages.success(request, _('Your data has been sent successfully to the server'))
-            else:
-                messages.warning(request, serializer.errors)
-        else:
-            serializer = TeacherSerializer(data=request.POST)
-            if serializer.is_valid():
-                instance = serializer.create(validated_data=serializer.validated_data)
-                instance.owner = request.user
-                instance.modified_by = request.user
-                instance.save()
-                request.session['instance_id'] = instance.id
-                messages.success(request, _('Your data has been sent successfully to the server'))
-            else:
-                messages.warning(request, serializer.errors)
-
+        instance = super(TeacherForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
         return instance
 
     class Meta:

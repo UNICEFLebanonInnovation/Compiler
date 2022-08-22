@@ -2530,7 +2530,7 @@ def bridging_build_xls_extraction(queryset_students):
 
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-
+    pay_progress = fields.Field(attribute='pay_progress')
     columns = [
         'enrollment_id',
         'First time registered?',
@@ -2557,7 +2557,9 @@ def bridging_build_xls_extraction(queryset_students):
         'Birthday - day',
         'Birthday - month',
         'Birthday - year',
+        # 'age',
         'P-Code If a child lives in a tent / Brax in a random camp',
+        'Does the child have any disability or special need?',
         'Education status',
         'Miss school date',
         'Internal number',
@@ -2713,7 +2715,9 @@ def bridging_build_xls_extraction(queryset_students):
         'student__birthday_day',
         'student__birthday_month',
         'student__birthday_year',
+        # 'student__age',
         'student__p_code',
+        'disability__name_en',
         'education_status',
         'miss_school_date',
         'internal_number',
