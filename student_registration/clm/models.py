@@ -20,16 +20,7 @@ from student_registration.schools.models import (
     EducationalLevel,
     PartnerOrganization
 )
-
-# class CLMRound(models.Model):
-#     name = models.CharField(max_length=45, unique=True)
-#
-#     class Meta:
-#         ordering = ['name']
-#         verbose_name = "CLM Round"
-#
-#     def __unicode__(self):
-#         return self.name
+from student_registration.attendances.models import CLMAttendanceStudent
 
 
 class Assessment(models.Model):
@@ -2096,6 +2087,42 @@ class Bridging(CLM):
 
     def post_assessment_form(self):
         return self.assessment_form(stage='post_test', assessment_slug='Bridging_post_test')
+
+    @property
+    def attendance_days(self):
+        return Bridging.get_attendance_days(self.student, self.round.start_date_bridging, self.round.end_date_bridging)
+
+    @staticmethod
+    def get_attendance_days(student_id, start_date, end_date):
+        if student_id and start_date and end_date:
+            return CLMAttendanceStudent.objects.filter(student=student_id,
+                                                       attended='yes',
+                                                       attendance_day__attendance_date__range=(start_date, end_date)
+                                                       ).count()
+        return 0
+
+    @property
+    def absent_days(self):
+        return Bridging.get_absent_days(self.student, self.round.start_date_bridging, self.round.end_date_bridging)
+
+    @staticmethod
+    def get_absent_days(student_id, start_date, end_date):
+        if student_id and start_date and end_date:
+            return CLMAttendanceStudent.objects.filter(student=student_id,
+                                                       attended='no',
+                                                       attendance_day__attendance_date__range=(start_date, end_date)
+                                                       ).count()
+        return 0
+
+    @property
+    def period_out_school(self):
+        return Bridging.get_period_out_school(self.student, self.miss_school_date, self.round.start_date_bridging)
+
+    @staticmethod
+    def get_period_out_school(student_id, miss_school_date, round_start_date):
+        if student_id and miss_school_date and round_start_date:
+            return (miss_school_date - round_start_date).days
+        return 0
 
     class Meta:
         ordering = ['-id']

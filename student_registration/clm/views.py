@@ -3644,6 +3644,7 @@ class BridgingListView(LoginRequiredMixin,
         return Bridging.objects.filter(partner=self.request.user.partner_id,
                                        round__current_year=True).order_by('-id')
 
+
 class BridgingExportViewSet(LoginRequiredMixin, ListView):
     current_round = CLMRound.objects.filter(current_year=True)
     qs_students = Bridging.objects.filter(round__in=current_round)

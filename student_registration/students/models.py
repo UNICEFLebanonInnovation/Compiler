@@ -321,9 +321,13 @@ class Person(TimeStampedModel):
 
     @property
     def age(self):
-        if self.birthday_year and self.birthday_month and self.birthday_day:
+        return Person.get_age(self.birthday_year,self.birthday_month,self.birthday_day)
+
+    @staticmethod
+    def get_age(birthday_year, birthday_month, birthday_day):
+        if birthday_year and birthday_month and birthday_day:
             today = datetime.now()
-            return today.year - int(self.birthday_year) - ((today.month, today.day) < (int(self.birthday_month), int(self.birthday_day)))
+            return today.year - int(birthday_year) - ((today.month, today.day) < (int(birthday_month), int(birthday_day)))
         # if self.birthday_year:
         #     return int(self.CURRENT_YEAR)-int(self.birthday_year)
         return 0
