@@ -1,5 +1,14 @@
-
+import io
+import xlwt
+import csv
 import datetime
+
+from datetime import date
+from django.http import HttpResponse, FileResponse
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, Color
+
+import copy
 
 
 def find_absentees(governorate=None, from_date=None, to_date=None):
@@ -233,3 +242,5 @@ def calculate_absentees(attendance, students):
             absentee.total_absent_days += 1
 
         absentee.save()
+
+

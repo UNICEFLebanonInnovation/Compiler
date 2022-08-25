@@ -247,5 +247,7 @@ class AttendanceStudentForm(forms.ModelForm):
         widgets = {'tag': forms.HiddenInput()}
 
 
+class AttendanceAbsenceForm(forms.Form):
+    absence_days = forms.IntegerField(required=True)
 
 

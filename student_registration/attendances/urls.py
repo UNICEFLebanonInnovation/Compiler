@@ -35,5 +35,15 @@ urlpatterns = [
         view=views.MainAttendanceUpdateView.as_view(),
         name='main_attendance_edit'
     ),
+    url(
+        regex=r'^attendance-absence/$',
+        view=views.AttendanceAbsenceView.as_view(),
+        name='attendance_absence'
+    ),
+    url(
+        regex=r'^absence-export/(?P<number_of_absences>[\w.@+-]+)/$',
+        view=views.absence_export,
+        name='absence_export'
+    ),
 
 ]

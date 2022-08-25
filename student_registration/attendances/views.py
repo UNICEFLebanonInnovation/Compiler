@@ -2,11 +2,20 @@
 from __future__ import absolute_import, unicode_literals
 import datetime
 import json
+import io
+import xlwt
+import csv
+import datetime
+from datetime import date
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, Color
+
+import copy
 
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, CreateView
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib import messages
 from django_filters.views import FilterView
 from django_tables2.export.views import ExportMixin
@@ -20,6 +29,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework import status
 
 from django.utils.translation import ugettext as _
+from django.views.generic.edit import FormView
+
 from student_registration.schools.models import (
     School,
     Section,
@@ -41,7 +52,7 @@ from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExp
 from .tables import CLMAttendanceStudentTable, BootstrapTable
 
 from .filters import CLMAttendanceStudentFilter
-from .forms import AttendanceForm, MainAttendanceForm, AttendanceStudentForm
+from .forms import AttendanceForm, MainAttendanceForm, AttendanceStudentForm, AttendanceAbsenceForm
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -798,3 +809,168 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
             can_delete=False
         )
         return attendance_student_inline_formset(parameters)
+
+
+class AttendanceAbsenceView(FormView):
+    template_name = 'attendances/attendance_Absence_form.html'
+    form_class = AttendanceAbsenceForm
+    success_url = '/thanks/'
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+
+def absence_export(request, number_of_absences):
+    from student_registration.schools.models import CLMRound
+
+    number_of_absences_integer = int(number_of_absences)
+    current_round = CLMRound.objects.all()
+    current_round = current_round.get(current_round_bridging=True)
+    start_date_bridging = current_round.start_date_bridging
+    end_date_bridging = current_round.end_date_bridging
+
+    absent_students = CLMAttendanceStudent.objects.filter(
+                                               attended='no',
+                                               attendance_day__attendance_date__range=(start_date_bridging, end_date_bridging)
+                                               ).order_by('student__id','attendance_day__attendance_date').all()
+    buffer = io.BytesIO()
+
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    ws = wb_student.add_sheet('Student')
+
+    # Sheet header, first row
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns_titles = [
+        'Student ID',
+        'Student First Name',
+        'Student Father Name',
+        'Student Last Name',
+        'School',
+        'Number of Consecutive Absences'
+    ]
+
+    for col_num in range(len(columns_titles)):
+        ws.write(0, col_num, columns_titles[col_num], font_style)
+
+    current_student_absence = StudentAbsenceTracking()
+
+    for row in absent_students:
+
+        print('current')
+        print(row.student.id)
+
+        absence_date = row.attendance_day.attendance_date
+
+        print('absence_date')
+        print(absence_date)
+
+        if current_student_absence is None:
+
+            current_student_absence.update_student(row.student.id,
+                                                   row.student.first_name,
+                                                   row.student.father_name,
+                                                   row.student.last_name,
+                                                   row.attendance_day.school.name,
+                                                   absence_date)
+
+        else:
+
+            if current_student_absence.current_student_id != row.student.id:
+
+                current_student_absence.update_tracking()
+                current_student_absence.check_add_excel_row(ws, number_of_absences_integer)
+                current_student_absence.update_student(row.student.id,
+                                                       row.student.first_name,
+                                                       row.student.father_name,
+                                                       row.student.last_name,
+                                                       row.attendance_day.school.name,
+                                                       absence_date)
+
+            else:
+                print('current repeated')
+                print(row.student.id)
+                current_student_absence.check_update_absence_date(absence_date)
+
+    current_student_absence.update_tracking()
+    current_student_absence.check_add_excel_row(ws, number_of_absences_integer)
+
+    wb_student.save(buffer)
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    response = FileResponse(buffer, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Absence.xls"'
+
+    return response
+
+
+class StudentAbsenceTracking:
+
+    row_num_student = 0
+    current_student_id = None
+    current_absence_date = None
+    student_maximum_absences = 0
+    student_current_absences = 0
+
+    font_style = xlwt.XFStyle()
+
+    def update_tracking(current_student_absence):
+
+        if current_student_absence.student_current_absences > current_student_absence.student_maximum_absences:
+            current_student_absence.student_maximum_absences = current_student_absence.student_current_absences
+
+    def check_add_excel_row(current_student_absence,ws,number_of_absences):
+
+        print('Checking')
+        print('current_student_absence.student_maximum_absences')
+        print(current_student_absence.student_maximum_absences)
+        print('number_of_absences')
+        print(number_of_absences)
+
+        if current_student_absence.student_maximum_absences >= number_of_absences:
+
+            print('Adding')
+
+            current_student_absence.row_num_student += 1
+
+            ws.write(current_student_absence.row_num_student, 0, current_student_absence.current_student_id, current_student_absence.font_style)
+            ws.write(current_student_absence.row_num_student, 1, current_student_absence.current_first_name, current_student_absence.font_style)
+            ws.write(current_student_absence.row_num_student, 2, current_student_absence.current_father_name, current_student_absence.font_style)
+            ws.write(current_student_absence.row_num_student, 3, current_student_absence.current_last_name, current_student_absence.font_style)
+            ws.write(current_student_absence.row_num_student, 4, current_student_absence.current_school_name, current_student_absence.font_style)
+            ws.write(current_student_absence.row_num_student, 5, current_student_absence.student_maximum_absences, current_student_absence.font_style)
+
+    def update_student(current_student_absence,student_id,first_name,father_name, last_name, school_name, absence_date):
+        current_student_absence.current_student_id = student_id
+        current_student_absence.current_first_name = first_name
+        current_student_absence.current_father_name = father_name
+        current_student_absence.current_last_name = last_name
+        current_student_absence.current_school_name = school_name
+        current_student_absence.student_maximum_absences = 0
+        current_student_absence.student_current_absences = 1
+        current_student_absence.current_absence_date = absence_date
+
+    def check_update_absence_date(current_student_absence,absence_date):
+
+        print('absence_date')
+        print(absence_date)
+        print('next date')
+        print(current_student_absence.current_absence_date + datetime.timedelta(days=1))
+
+        if absence_date == (current_student_absence.current_absence_date + datetime.timedelta(days=1)):
+            print('current next date')
+            print(current_student_absence.current_student_id)
+            current_student_absence.student_current_absences += 1
+
+            print('current_student_absence.student_current_absences')
+            print(current_student_absence.student_current_absences)
+
+        else:
+
+            current_student_absence.update_tracking()
+            current_student_absence.student_current_absences = 1
+
+        current_student_absence.current_absence_date = absence_date
