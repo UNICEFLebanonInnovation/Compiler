@@ -814,13 +814,14 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
 class AttendanceAbsenceView(FormView):
     template_name = 'attendances/attendance_Absence_form.html'
     form_class = AttendanceAbsenceForm
-    success_url = '/thanks/'
+    success_url = '/attendances/attendance-absence/'
 
     def form_valid(self, form):
-        return super().form_valid(form)
+        # return super().form_valid(form)
+        return super(AttendanceAbsenceView, self).form_valid(form)
 
 
-def absence_export(request, number_of_absences):
+def absence_export(request,number_of_absences):
     from student_registration.schools.models import CLMRound
 
     number_of_absences_integer = int(number_of_absences)
@@ -858,13 +859,13 @@ def absence_export(request, number_of_absences):
 
     for row in absent_students:
 
-        print('current')
-        print(row.student.id)
+        # print('current')
+        # print(row.student.id)
 
         absence_date = row.attendance_day.attendance_date
 
-        print('absence_date')
-        print(absence_date)
+        # print('absence_date')
+        # print(absence_date)
 
         if current_student_absence is None:
 
@@ -889,8 +890,8 @@ def absence_export(request, number_of_absences):
                                                        absence_date)
 
             else:
-                print('current repeated')
-                print(row.student.id)
+                # print('current repeated')
+                # print(row.student.id)
                 current_student_absence.check_update_absence_date(absence_date)
 
     current_student_absence.update_tracking()
@@ -924,15 +925,15 @@ class StudentAbsenceTracking:
 
     def check_add_excel_row(current_student_absence,ws,number_of_absences):
 
-        print('Checking')
-        print('current_student_absence.student_maximum_absences')
-        print(current_student_absence.student_maximum_absences)
-        print('number_of_absences')
-        print(number_of_absences)
+        # print('Checking')
+        # print('current_student_absence.student_maximum_absences')
+        # print(current_student_absence.student_maximum_absences)
+        # print('number_of_absences')
+        # print(number_of_absences)
 
         if current_student_absence.student_maximum_absences >= number_of_absences:
 
-            print('Adding')
+            # print('Adding')
 
             current_student_absence.row_num_student += 1
 
@@ -955,18 +956,18 @@ class StudentAbsenceTracking:
 
     def check_update_absence_date(current_student_absence,absence_date):
 
-        print('absence_date')
-        print(absence_date)
-        print('next date')
-        print(current_student_absence.current_absence_date + datetime.timedelta(days=1))
+        # print('absence_date')
+        # print(absence_date)
+        # print('next date')
+        # print(current_student_absence.current_absence_date + datetime.timedelta(days=1))
 
         if absence_date == (current_student_absence.current_absence_date + datetime.timedelta(days=1)):
-            print('current next date')
-            print(current_student_absence.current_student_id)
+            # print('current next date')
+            # print(current_student_absence.current_student_id)
             current_student_absence.student_current_absences += 1
 
-            print('current_student_absence.student_current_absences')
-            print(current_student_absence.student_current_absences)
+            # print('current_student_absence.student_current_absences')
+            # print(current_student_absence.student_current_absences)
 
         else:
 
@@ -974,3 +975,4 @@ class StudentAbsenceTracking:
             current_student_absence.student_current_absences = 1
 
         current_student_absence.current_absence_date = absence_date
+

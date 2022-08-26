@@ -138,7 +138,11 @@ class MainAttendanceForm(forms.ModelForm):
             HTML(self.render_attendance_students(self.request, attendance_students_context)),
             FormActions(
                         load_students_button,
+                        HTML('<div class="space"></div>'),
                         submit_button,
+                        HTML('<div class="space"></div>'),
+                        HTML('<a class="btn btn-success" onclick="openAbsencePage();" translation="' + _(
+                            'Export Absentee Report') + '">' + _('Export Absentee Report') + '</a>'),
                         css_class='button-group'
                     )
         )
@@ -250,4 +254,25 @@ class AttendanceStudentForm(forms.ModelForm):
 class AttendanceAbsenceForm(forms.Form):
     absence_days = forms.IntegerField(required=True)
 
-
+    def __init__(self, *args, **kwargs):
+        super(AttendanceAbsenceForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Attendance') + '</h4>')
+                ),
+                Div(
+                    Div('absence_days', css_class='col-md-3 form-group'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Button('ExportAbsentees', _('Export Absentees'), css_class='col-md-2 btn btn-success'),
+                HTML('<a class="btn btn-info cancel-button" href="/attendances/main-attendance/" translation="' + _(
+                    'Attendance') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )

@@ -758,3 +758,8 @@ h1, h2, h3, h4, h5, div, span, p, label {
   top: 2px !IMPORTANT;
   margin: 0px !IMPORTANT;
 }
+.space {
+  width: 4px;
+  height: auto;
+  display: inline-block;
+}
