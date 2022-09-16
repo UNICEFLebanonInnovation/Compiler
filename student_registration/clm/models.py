@@ -1510,6 +1510,256 @@ class CLM(TimeStampedModel):
         abstract = True
 
 
+class MSCC(CLM):
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('miss_school_date')
+    )
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('graduated_to_bln_next_level', _('Graduated to the next level')),
+        ('graduated_to_bln_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_to_bln_next_round_higher_level', _('Graduated to the next round, higher level')),
+        ('referred_to_alp', _('referred to ALP')),
+        ('referred_public_school', _('Referred to public school')),
+        ('referred_to_tvet', _('Referred to TVET')),
+        ('referred_to_ybln', _('Referred to YBLN')),
+        ('dropout', _('Dropout, referral not possible')),
+        ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
+        ('other', _('Other')),
+    )
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
+    MAIN_CAREGIVER = (
+        ('', '----------'),
+        ('mother', _('Mother')),
+        ('father', _('Father')),
+        ('other', _('Other')),
+    )
+    cycle = models.ForeignKey(
+        Cycle,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cycle')
+    )
+    referral = ArrayField(
+        models.CharField(
+            choices=CLM.REFERRAL,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Referral')
+    )
+
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+    learning_result_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    first_attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
+    round_start_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Round start date')
+    )
+    registration_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
+        verbose_name=_('Registration level')
+    )
+    main_caregiver = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=MAIN_CAREGIVER,
+        verbose_name=_('Main Caregiver')
+    )
+
+    main_caregiver_nationality = models.ForeignKey(
+        Nationality,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Main Caregiver Nationality')
+    )
+    main_caregiver_nationality_other = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('specify')
+    )
+
+    other_caregiver_relationship = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Other Caregiver Relationship')
+    )
+
+    student_number_children = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('How many children does this child have?')
+    )
+    phone_owner = models.CharField(
+        max_length=100,
+        blank=False,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Phone Owner')
+    )
+    second_phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Second Phone Owner')
+    )
+    second_phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Second Phone number')
+    )
+    second_phone_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Second Phone number confirm')
+    )
+
+    source_of_identification = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
+            ('abln', _('ABLN')),
+            ('RIMS', _('RIMS')),
+            ('Other Sources', _('Other Sources')),
+        ),
+        verbose_name=_('Source of identification of the child')
+    )
+
+    def calculate_sore(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/social_emotional',
+            'BLN_ASSESSMENT/psychomotor',
+            'BLN_ASSESSMENT/artistic',
+        ]
+        super(BLN, self).score(keys, stage)
+
+    def assessment_form(self, stage, assessment_slug, callback=''):
+        try:
+            assessment = Assessment.objects.get(slug=assessment_slug)
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
+                form=assessment.assessment_form,
+                status=stage,
+                enrollment_id=self.id,
+                callback=callback
+            )
+        except Assessment.DoesNotExist as ex:
+            return ''
+
+    def domain_improvement(self, domain_mame):
+        key = '{}/{}'.format(
+            'BLN_ASSESSMENT',
+            domain_mame,
+        )
+        try:
+            if self.pre_test and self.post_test:
+                return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                              20.0) * 100.0, 2)
+        except Exception:
+            return 0.0
+        return 0.0
+
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        if assessment:
+            key = 'BLN_ASSESSMENT/' + key
+            return assessment.get(key, 0)
+        return 0
+
+    @property
+    def arabic_improvement(self):
+        return str(self.domain_improvement('arabic')) + '%'
+
+    @property
+    def math_improvement(self):
+        return str(self.domain_improvement('math')) + '%'
+
+    @property
+    def english_improvement(self):
+        return str(self.domain_improvement('english')) + '%'
+
+    @property
+    def french_improvement(self):
+        return str(self.domain_improvement('french')) + '%'
+
+    @property
+    def social_emotional_improvement(self):
+        return str(self.domain_improvement('social_emotional')) + '%'
+
+    @property
+    def psychomotor_improvement(self):
+        return str(self.domain_improvement('psychomotor')) + '%'
+
+    @property
+    def artistic_improvement(self):
+        return str(self.domain_improvement('artistic')) + '%'
+
+    def pre_assessment_form(self):
+        return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
+
+    def post_assessment_form(self):
+        return self.assessment_form(stage='post_test', assessment_slug='bln_post_test')
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = "BLN"
+        verbose_name_plural = "BLN"
+
+
 class BLN(CLM):
     miss_school_date = models.DateField(
         blank=True,

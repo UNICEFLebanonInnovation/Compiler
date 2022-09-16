@@ -68,6 +68,12 @@ def is_allowed_create(programme):
                 return True
             return False
 
+        if programme == 'MSCC':
+            current_round = current_round.get(current_round_mscc=True)
+            if current_round.start_date_mscc < current < current_round.end_date_mscc:
+                return True
+            return False
+
 
     except Exception as ex:
         print(ex.message)
@@ -123,6 +129,12 @@ def is_allowed_edit(programme):
         if programme == 'Bridging':
             current_round = current_round.get(current_round_bridging=True)
             if current_round.start_date_bridging_edit < current < current_round.end_date_bridging_edit:
+                return True
+            return False
+
+        if programme == 'MSCC':
+            current_round = current_round.get(current_round_bridging=True)
+            if current_round.start_date_mscc_edit < current < current_round.end_date_mscc_edit:
                 return True
             return False
 

@@ -4,6 +4,7 @@ from django.conf.urls import url
 
 from . import views
 from . import inclusion_views
+from . import mscc_views
 
 urlpatterns = [
 
@@ -346,5 +347,27 @@ urlpatterns = [
         regex=r'^bridging-page/$',
         view=views.BridgingPage.as_view(),
         name='bridging_page'
-    )
+    ),
+
+    url(
+        regex=r'^mscc-add/$',
+        view=mscc_views.MSCCAddView.as_view(),
+        name='mscc_add'
+    ),
+    url(
+        regex=r'^mscc-edit/(?P<pk>[\w.@+-]+)/$',
+        view=mscc_views.MSCCEditView.as_view(),
+        name='mscc_edit'
+    ),
+    # url(
+    #     regex=r'^mscc-export/$',
+    #     view=mscc_views.MSCCExportViewSet.as_view(),
+    #     name='mscc_export'
+    # ),
+    url(
+        regex=r'^mscc-list/$',
+        view=mscc_views.MSCCListView.as_view(),
+        name='mscc_list'
+    ),
+
 ]
