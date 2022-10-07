@@ -1541,11 +1541,33 @@ class MSCC(CLM):
         ('father', _('Father')),
         ('other', _('Other')),
     )
+    CENTER_TYPE = (
+        ('', '----------'),
+        ('Municipality', _('Municipality')),
+        ('Collective Settlement', _('Collective Settlement')),
+        ('Informal Settlement', _('Informal Settlement')),
+        ('Welfare Center', _('Welfare Center')),
+        ('Collective Settlement', _('Collective Settlement')),
+    )
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Cycle')
+    )
+    center_p_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Center P-code')
+    )
+
+    center_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CENTER_TYPE,
+        verbose_name=_('Center Type')
     )
     referral = ArrayField(
         models.CharField(
@@ -1664,100 +1686,72 @@ class MSCC(CLM):
         null=True,
         choices=Choices(
             ('', '----------'),
-            ('Referred by CP partner', _('Referred by CP partner')),
-            ('Referred by youth partner', _('Referred by youth partner')),
-            ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _('Referral from another NGO')),
-            ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database')),
-            ('abln', _('ABLN')),
-            ('RIMS', _('RIMS')),
+            ('Dirassa', _('Dirassa')),
+            ('Awarness Session', _('Awarness Session')),
+            ('Child''s parents', _('Child''s parents')),
+            ('From Hosted Community', _('From Hosted Community')),
+            ('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
+             _('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ')),
+            ('From Profiling Database', _('From Profiling Database')),
+            ('From Other NGO', _('From Other NGO')),
+            ('From Displaced Community', _('From Displaced Community')),
+            ('Referred by the municipality/Other formal sources', _('Referred by the municipality/Other formal sources')),
             ('Other Sources', _('Other Sources')),
         ),
         verbose_name=_('Source of identification of the child')
     )
+    cash_support_programmes = ArrayField(
+        models.CharField(
+            choices=Choices(
+                ('', '----------'),
+                ('Haddi', _('Haddi')),
+                ('Education Cash assistance', _('Education Cash assistance')),
+                ('UNHCR cash assistance', _('UNHCR cash assistance')),
+                ('WFP cash assistance', _('WFP cash assistance')),
+            ),
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Cash support programmes that child is already benefitting from')
+    )
+    packages_received = ArrayField(
+        models.CharField(
+            choices=Choices(
+                ('', '----------'),
+                ('Early Childhood Development', _('Early Childhood Development')),
+                ('Education', _('Education')),
+                ('Child Protection/Psychosocial support', _('Child Protection/Psychosocial support')),
+                ('Youth Empowerment and engagement', _('Youth Empowerment and engagement')),
+                ('Health and Nutrition', _('Health and Nutrition')),
+                ('Parental and Caregiver Support', _('Parental and Caregiver Support')),
+                ('Social Cash Assistance', _('Social Cash Assistance')),
+            ),
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Packages received/to be provided to child under MSCC')
+    )
 
     def calculate_sore(self, stage):
         keys = [
-            'BLN_ASSESSMENT/arabic',
-            'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/social_emotional',
-            'BLN_ASSESSMENT/psychomotor',
-            'BLN_ASSESSMENT/artistic',
+            'MSCC_ASSESSMENT/arabic',
+            'MSCC_ASSESSMENT/math',
+            'MSCC_ASSESSMENT/social_emotional',
+            'MSCC_ASSESSMENT/psychomotor',
+            'MSCC_ASSESSMENT/artistic',
         ]
-        super(BLN, self).score(keys, stage)
-
-    def assessment_form(self, stage, assessment_slug, callback=''):
-        try:
-            assessment = Assessment.objects.get(slug=assessment_slug)
-            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
-                form=assessment.assessment_form,
-                status=stage,
-                enrollment_id=self.id,
-                callback=callback
-            )
-        except Assessment.DoesNotExist as ex:
-            return ''
-
-    def domain_improvement(self, domain_mame):
-        key = '{}/{}'.format(
-            'BLN_ASSESSMENT',
-            domain_mame,
-        )
-        try:
-            if self.pre_test and self.post_test:
-                return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
-                              20.0) * 100.0, 2)
-        except Exception:
-            return 0.0
-        return 0.0
-
-    def get_assessment_value(self, key, stage):
-        assessment = getattr(self, stage)
-        if assessment:
-            key = 'BLN_ASSESSMENT/' + key
-            return assessment.get(key, 0)
-        return 0
-
-    @property
-    def arabic_improvement(self):
-        return str(self.domain_improvement('arabic')) + '%'
-
-    @property
-    def math_improvement(self):
-        return str(self.domain_improvement('math')) + '%'
-
-    @property
-    def english_improvement(self):
-        return str(self.domain_improvement('english')) + '%'
-
-    @property
-    def french_improvement(self):
-        return str(self.domain_improvement('french')) + '%'
-
-    @property
-    def social_emotional_improvement(self):
-        return str(self.domain_improvement('social_emotional')) + '%'
-
-    @property
-    def psychomotor_improvement(self):
-        return str(self.domain_improvement('psychomotor')) + '%'
-
-    @property
-    def artistic_improvement(self):
-        return str(self.domain_improvement('artistic')) + '%'
-
-    def pre_assessment_form(self):
-        return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
-
-    def post_assessment_form(self):
-        return self.assessment_form(stage='post_test', assessment_slug='bln_post_test')
+        super(MSCC, self).score(keys, stage)
 
     class Meta:
         ordering = ['-id']
-        verbose_name = "BLN"
-        verbose_name_plural = "BLN"
+        verbose_name = "MSCC"
+        verbose_name_plural = "MSCC"
 
 
 class BLN(CLM):
