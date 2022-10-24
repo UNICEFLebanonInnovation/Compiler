@@ -99,7 +99,6 @@ REGISTRATION_LEVEL = (
 
 )
 
-
 class MSCCForm(forms.ModelForm):
     YEARS_MSCC = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 6)))
     YEARS_MSCC.insert(0, ('', '---------'))
@@ -144,12 +143,12 @@ class MSCCForm(forms.ModelForm):
         required=True, to_field_name='id',
         # initial=0
     )
-    language = forms.ChoiceField(
-        label=_('The language supported in the program'),
-        widget=forms.Select,
-        choices=CLM.LANGUAGES, required=True,
-        initial='english_arabic'
-    )
+    # language = forms.ChoiceField(
+    #     label=_('The language supported in the program'),
+    #     widget=forms.Select,
+    #     choices=CLM.LANGUAGES, required=True,
+    #     initial='english_arabic'
+    # )
 
     student_first_name = forms.CharField(
         label=_("First name"),
@@ -234,25 +233,25 @@ class MSCCForm(forms.ModelForm):
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    caretaker_birthday_year = forms.ChoiceField(
-        label=_("Caretaker birthday year"),
-        widget=forms.Select, required=True,
-        choices=YEARS_CT,
-    )
-    caretaker_birthday_month = forms.ChoiceField(
-        label=_("Caretaker birthday month"),
-        widget=forms.Select, required=True,
-        choices=MONTHS
-    )
-    caretaker_birthday_day = forms.ChoiceField(
-        label=_("Caretaker birthday day"),
-        widget=forms.Select, required=True,
-        choices=DAYS
-    )
-    first_attendance_date = forms.DateField(
-        label=_("First attendance date"),
-        required=True
-    )
+    # caretaker_birthday_year = forms.ChoiceField(
+    #     label=_("Caretaker birthday year"),
+    #     widget=forms.Select, required=False,
+    #     choices=YEARS_CT,
+    # )
+    # caretaker_birthday_month = forms.ChoiceField(
+    #     label=_("Caretaker birthday month"),
+    #     widget=forms.Select, required=False,
+    #     choices=MONTHS
+    # )
+    # caretaker_birthday_day = forms.ChoiceField(
+    #     label=_("Caretaker birthday day"),
+    #     widget=forms.Select, required=False,
+    #     choices=DAYS
+    # )
+    # first_attendance_date = forms.DateField(
+    #     label=_("First attendance date"),
+    #     required=True
+    # )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
         required=False,
@@ -273,11 +272,11 @@ class MSCCForm(forms.ModelForm):
         label=_("Round start date"),
         required=False
     )
-    registration_level = forms.ChoiceField(
-        label=_("Registration level"),
-        widget=forms.Select, required=True,
-        choices=REGISTRATION_LEVEL
-    )
+    # registration_level = forms.ChoiceField(
+    #     label=_("Registration level"),
+    #     widget=forms.Select, required=True,
+    #     choices=REGISTRATION_LEVEL
+    # )
     center = forms.ModelChoiceField(
         queryset=Center.objects.all(), widget=forms.Select,
         label=_('Site / Center'),
@@ -340,18 +339,18 @@ class MSCCForm(forms.ModelForm):
         initial='single',
         required=False
     )
-    education_status = forms.ChoiceField(
-        label=_('Education status'),
-        widget=forms.Select, required=True,
-        choices=(
-            ('', '----------'),
-            ('out of school', _('Out of school')),
-            ('enrolled in formal education but did not continue',
-             _("Enrolled in formal education but did not continue")),
-            ('enrolled in MSCC', _("Enrolled in MSCC")),
-        ),
-        initial=''
-    )
+    # education_status = forms.ChoiceField(
+    #     label=_('Education status'),
+    #     widget=forms.Select, required=True,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('out of school', _('Out of school')),
+    #         ('enrolled in formal education but did not continue',
+    #          _("Enrolled in formal education but did not continue")),
+    #         ('enrolled in MSCC', _("Enrolled in MSCC")),
+    #     ),
+    #     initial=''
+    # )
 
     other_nationality = forms.CharField(
         label=_('Specify the nationality'),
@@ -381,22 +380,22 @@ class MSCCForm(forms.ModelForm):
         required=False,
         label=_('Second Phone Number confirm')
     )
-    id_type = forms.ChoiceField(
-        label=_("ID type of the caretaker"),
-        widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
-        required=True,
-        choices=(
-            ('', '----------'),
-            ('UNHCR Registered', _('UNHCR Registered')),
-            ('UNHCR Recorded', _("UNHCR Recorded")),
-            ('Syrian national ID', _("Syrian national ID")),
-            ('Palestinian national ID', _("Palestinian national ID")),
-            ('Lebanese national ID', _("Lebanese national ID")),
-            ('Other nationality', _("Other nationality")),
-            ('Child have no ID', _("Child have no ID"))
-        ),
-        initial=''
-    )
+    # id_type = forms.ChoiceField(
+    #     label=_("ID type of the caretaker"),
+    #     widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
+    #     required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('UNHCR Registered', _('UNHCR Registered')),
+    #         ('UNHCR Recorded', _("UNHCR Recorded")),
+    #         ('Syrian national ID', _("Syrian national ID")),
+    #         ('Palestinian national ID', _("Palestinian national ID")),
+    #         ('Lebanese national ID', _("Lebanese national ID")),
+    #         ('Other nationality', _("Other nationality")),
+    #         ('Child have no ID', _("Child have no ID"))
+    #     ),
+    #     initial=''
+    # )
     case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
@@ -588,93 +587,6 @@ class MSCCForm(forms.ModelForm):
     rims_case_number = forms.CharField(
         required=False,
         label=_('RIMS Case Number')
-    )
-    attended_arabic = forms.ChoiceField(
-        label=_("Attended Arabic test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-
-    modality_arabic = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    arabic = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_english = forms.ChoiceField(
-        label=_("Attended English test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_english = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    english = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_math = forms.ChoiceField(
-        label=_("Attended Math test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_math = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    math = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_social = forms.ChoiceField(
-        label=_("Attended Social test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_social = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-
-    social_emotional = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_artistic = forms.ChoiceField(
-        label=_("Attended Artistic test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    modality_artistic = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    artistic = forms.FloatField(
-        label=_('Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
     )
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
@@ -882,7 +794,7 @@ class MSCCForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">13</span>'),
                     Div('student_family_status', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id=span_student_have_children">13.1</span>'),
-                    Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
+                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
                     HTML('<span class="badge badge-default" id="span_student_number_children">13.2</span>'),
                     Div('student_number_children', css_class='col-md-3'),
                     css_class='row',
@@ -896,9 +808,9 @@ class MSCCForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">15</span>'),
-                    Div('cash_support_programmes', css_class='col-md-3'),
+                    Div('cash_support_programmes', css_class='col-md-3 multiple-choice'),
                     HTML('<span class="badge badge-default" >16</span>'),
-                    Div('packages_received', css_class='col-md-3'),
+                    Div('packages_received', css_class='col-md-3 multiple-choice'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data B_right_border'
@@ -910,10 +822,10 @@ class MSCCForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('hh_educational_level', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('father_educational_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('hh_educational_level', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -946,7 +858,7 @@ class MSCCForm(forms.ModelForm):
                     Div('main_caregiver_nationality', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_main_caregiver_nationality_other">6.1</span>'),
                     Div('main_caregiver_nationality_other', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row d-none',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">7</span>'),
@@ -962,20 +874,20 @@ class MSCCForm(forms.ModelForm):
                     Div('caretaker_mother_name', css_class='col-md-3'),
                     css_class='row',
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">11</span>'),
-                    Div('caretaker_birthday_year', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">12</span>'),
-                    Div('caretaker_birthday_month', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">13</span>'),
-                    Div('caretaker_birthday_day', css_class='col-md-2'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">14</span>'),
-                    Div('id_type', css_class='col-md-3'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">11</span>'),
+                #     Div('caretaker_birthday_year', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default">12</span>'),
+                #     Div('caretaker_birthday_month', css_class='col-md-2'),
+                #     HTML('<span class="badge badge-default">13</span>'),
+                #     Div('caretaker_birthday_day', css_class='col-md-2'),
+                #     css_class='row d-none',
+                # ),
+                # Div(
+                #     HTML('<span class="badge badge-default">14</span>'),
+                #     Div('id_type', css_class='col-md-3'),
+                #     css_class='row d-none',
+                # ),
                 Div(
                     HTML('<span class="badge badge-default">15</span>'),
                     Div('case_number', css_class='col-md-4'),
@@ -1121,63 +1033,6 @@ class MSCCForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
-
-            Fieldset(
-                None,
-                Div(
-                    HTML('<span>E</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('attended_arabic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_arabic">1.1</span>'),
-                    Div('modality_arabic', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_arabic">1.2</span>'),
-                    Div('arabic', css_class='col-md-2'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('attended_english', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_english">2.1</span>'),
-                    Div('modality_english', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_english">2.2</span>'),
-                    Div('english', css_class='col-md-2'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('attended_math', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_math">3.1</span>'),
-                    Div('modality_math', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_math">3.2</span>'),
-                    Div('math', css_class='col-md-2'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('attended_social', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_social">4.1</span>'),
-                    Div('modality_social', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4.2</span>'),
-                    Div('social_emotional', css_class='col-md-2'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('attended_artistic', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_modality_artistic">5.1</span>'),
-                    Div('modality_artistic', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_artistic">5.2</span>'),
-                    Div('artistic', css_class='col-md-2'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning E_right_border'
-            ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
@@ -1209,7 +1064,7 @@ class MSCCForm(forms.ModelForm):
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
         second_phone_number = cleaned_data.get("second_phone_number")
         second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
-        id_type = cleaned_data.get("id_type")
+        # id_type = cleaned_data.get("id_type")
         case_number = cleaned_data.get("case_number")
         case_number_confirm = cleaned_data.get("case_number_confirm")
         individual_case_number = cleaned_data.get("individual_case_number")
@@ -1235,7 +1090,7 @@ class MSCCForm(forms.ModelForm):
         parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
-        education_status = cleaned_data.get("education_status")
+        # education_status = cleaned_data.get("education_status")
         miss_school_date = cleaned_data.get("miss_school_date")
         student_nationality = cleaned_data.get("student_nationality")
         other_nationality = cleaned_data.get("other_nationality")
@@ -1316,9 +1171,9 @@ class MSCCForm(forms.ModelForm):
             if not labours_other_specify:
                 self.add_error('labours_other_specify', 'This field is required')
 
-        if education_status != 'out of school':
-            if not miss_school_date:
-                self.add_error('miss_school_date', 'This field is required')
+        # if education_status != 'out of school':
+        #     if not miss_school_date:
+        #         self.add_error('miss_school_date', 'This field is required')
         if student_nationality.id == 6:
             if not other_nationality:
                 self.add_error('other_nationality', 'This field is required')
@@ -1346,148 +1201,106 @@ class MSCCForm(forms.ModelForm):
             msg = "The phone numbers are not matched"
             self.add_error('second_phone_number_confirm', msg)
 
-        if id_type == 'UNHCR Registered':
-            if not case_number:
-                self.add_error('case_number', 'This field is required')
+        # if id_type == 'UNHCR Registered':
+        #     if not case_number:
+        #         self.add_error('case_number', 'This field is required')
+        #
+        #     if case_number != case_number_confirm:
+        #         msg = "The case numbers are not matched"
+        #         self.add_error('case_number_confirm', msg)
+        #
+        #     if parent_individual_case_number != parent_individual_case_number_confirm:
+        #         msg = "The individual case numbers are not matched"
+        #         self.add_error('parent_individual_case_number_confirm', msg)
+        #
+        #     if individual_case_number != individual_case_number_confirm:
+        #         msg = "The individual case numbers are not matched"
+        #         self.add_error('individual_case_number_confirm', msg)
 
-            if case_number != case_number_confirm:
-                msg = "The case numbers are not matched"
-                self.add_error('case_number_confirm', msg)
-
-            if parent_individual_case_number != parent_individual_case_number_confirm:
-                msg = "The individual case numbers are not matched"
-                self.add_error('parent_individual_case_number_confirm', msg)
-
-            if individual_case_number != individual_case_number_confirm:
-                msg = "The individual case numbers are not matched"
-                self.add_error('individual_case_number_confirm', msg)
-
-        if id_type == 'UNHCR Recorded':
-            if not recorded_number:
-                self.add_error('recorded_number', 'This field is required')
-
-            if recorded_number != recorded_number_confirm:
-                msg = "The recorded numbers are not matched"
-                self.add_error('recorded_number_confirm', msg)
-
-        if id_type == 'Syrian national ID':
-
-            if not parent_syrian_national_number:
-                self.add_error('parent_syrian_national_number', 'This field is required')
-
-            if not parent_syrian_national_number_confirm:
-                self.add_error('parent_syrian_national_number_confirm', 'This field is required')
-
-            if parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
-                msg = "Please enter a valid number (11 digits)"
-                self.add_error('parent_syrian_national_number_confirm', msg)
-
-            if parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
-                msg = "Please enter a valid number (11 digits)"
-                self.add_error('parent_syrian_national_number', msg)
-
-            if parent_syrian_national_number != parent_syrian_national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('parent_syrian_national_number_confirm', msg)
-
-            if syrian_national_number != syrian_national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('syrian_national_number_confirm', msg)
-
-        if id_type == 'Lebanese national ID':
-            # if not parent_national_number:
-            #     self.add_error('parent_national_number', 'This field is required')
-            #
-            # if not parent_national_number_confirm:
-            #     self.add_error('parent_national_number_confirm', 'This field is required')
-
-            if parent_national_number and not len(parent_national_number) == 12:
-                msg = "Please enter a valid number (12 digits)"
-                self.add_error('parent_national_number', msg)
-
-            if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
-                msg = "Please enter a valid number (12 digits)"
-                self.add_error('parent_national_number_confirm', msg)
-
-            if parent_national_number != parent_national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('parent_national_number_confirm', msg)
-
-            if national_number != national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('national_number_confirm', msg)
-
-        if id_type == 'Palestinian national ID':
-            if not sop_parent_national_number:
-                self.add_error('parent_sop_national_number', 'This field is required')
-
-            if not sop_parent_national_number_confirm:
-                self.add_error('parent_sop_national_number_confirm', 'This field is required')
-
-            if sop_parent_national_number != sop_parent_national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('parent_sop_national_number_confirm', msg)
-
-            if sop_national_number != sop_national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('sop_national_number_confirm', msg)
-
-        if id_type == 'Other nationality':
-            if not parent_other_number:
-                self.add_error('parent_other_number', 'This field is required')
-
-            if not parent_other_number_confirm:
-                self.add_error('parent_other_number_confirm', 'This field is required')
-
-            if parent_other_number != parent_other_number_confirm:
-                msg = "The ID numbers are not matched"
-                self.add_error('parent_other_number_confirm', msg)
-
-            if other_number != other_number_confirm:
-                msg = "The ID numbers are not matched"
-                self.add_error('other_number_confirm', msg)
-
-        # grades Max Value validation
-        registration_level = cleaned_data.get("registration_level")
-        arabic = cleaned_data.get("arabic")
-        english = cleaned_data.get("english")
-        math = cleaned_data.get("math")
-        social_emotional = cleaned_data.get("social_emotional")
-        artistic = cleaned_data.get("artistic")
-
-        if registration_level == 'level_one':
-            if arabic > 48:
-                self.add_error('arabic', 'This value is greater that 48')
-            if english > 40:
-                self.add_error('english', 'This value is greater that 40')
-            if math > 18:
-                self.add_error('math', 'This value is greater that 18')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
-        elif registration_level == 'level_two':
-            if arabic > 56:
-                self.add_error('arabic', 'This value is greater that 56')
-            if english > 58:
-                self.add_error('english', 'This value is greater that 58')
-            if math > 30:
-                self.add_error('math', 'This value is greater that 30')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
-        else:
-            if arabic > 60:
-                self.add_error('arabic', 'This value is greater that 60')
-            if english > 62:
-                self.add_error('english', 'This value is greater that 62')
-            if math > 32:
-                self.add_error('math', 'This value is greater that 32')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
+        # if id_type == 'UNHCR Recorded':
+        #     if not recorded_number:
+        #         self.add_error('recorded_number', 'This field is required')
+        #
+        #     if recorded_number != recorded_number_confirm:
+        #         msg = "The recorded numbers are not matched"
+        #         self.add_error('recorded_number_confirm', msg)
+        #
+        # if id_type == 'Syrian national ID':
+        #
+        #     if not parent_syrian_national_number:
+        #         self.add_error('parent_syrian_national_number', 'This field is required')
+        #
+        #     if not parent_syrian_national_number_confirm:
+        #         self.add_error('parent_syrian_national_number_confirm', 'This field is required')
+        #
+        #     if parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
+        #         msg = "Please enter a valid number (11 digits)"
+        #         self.add_error('parent_syrian_national_number_confirm', msg)
+        #
+        #     if parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
+        #         msg = "Please enter a valid number (11 digits)"
+        #         self.add_error('parent_syrian_national_number', msg)
+        #
+        #     if parent_syrian_national_number != parent_syrian_national_number_confirm:
+        #         msg = "The national numbers are not matched"
+        #         self.add_error('parent_syrian_national_number_confirm', msg)
+        #
+        #     if syrian_national_number != syrian_national_number_confirm:
+        #         msg = "The national numbers are not matched"
+        #         self.add_error('syrian_national_number_confirm', msg)
+        #
+        # if id_type == 'Lebanese national ID':
+        #     # if not parent_national_number:
+        #     #     self.add_error('parent_national_number', 'This field is required')
+        #     #
+        #     # if not parent_national_number_confirm:
+        #     #     self.add_error('parent_national_number_confirm', 'This field is required')
+        #
+        #     if parent_national_number and not len(parent_national_number) == 12:
+        #         msg = "Please enter a valid number (12 digits)"
+        #         self.add_error('parent_national_number', msg)
+        #
+        #     if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
+        #         msg = "Please enter a valid number (12 digits)"
+        #         self.add_error('parent_national_number_confirm', msg)
+        #
+        #     if parent_national_number != parent_national_number_confirm:
+        #         msg = "The national numbers are not matched"
+        #         self.add_error('parent_national_number_confirm', msg)
+        #
+        #     if national_number != national_number_confirm:
+        #         msg = "The national numbers are not matched"
+        #         self.add_error('national_number_confirm', msg)
+        #
+        # if id_type == 'Palestinian national ID':
+        #     if not sop_parent_national_number:
+        #         self.add_error('parent_sop_national_number', 'This field is required')
+        #
+        #     if not sop_parent_national_number_confirm:
+        #         self.add_error('parent_sop_national_number_confirm', 'This field is required')
+        #
+        #     if sop_parent_national_number != sop_parent_national_number_confirm:
+        #         msg = "The national numbers are not matched"
+        #         self.add_error('parent_sop_national_number_confirm', msg)
+        #
+        #     if sop_national_number != sop_national_number_confirm:
+        #         msg = "The national numbers are not matched"
+        #         self.add_error('sop_national_number_confirm', msg)
+        #
+        # if id_type == 'Other nationality':
+        #     if not parent_other_number:
+        #         self.add_error('parent_other_number', 'This field is required')
+        #
+        #     if not parent_other_number_confirm:
+        #         self.add_error('parent_other_number_confirm', 'This field is required')
+        #
+        #     if parent_other_number != parent_other_number_confirm:
+        #         msg = "The ID numbers are not matched"
+        #         self.add_error('parent_other_number_confirm', msg)
+        #
+        #     if other_number != other_number_confirm:
+        #         msg = "The ID numbers are not matched"
+        #         self.add_error('other_number_confirm', msg)
 
     def save(self, request=None, instance=None):
         if instance:
@@ -1518,28 +1331,6 @@ class MSCCForm(forms.ModelForm):
 
     # def save(self, request=None, instance=None, serializer=None):
     #     instance = super(MSCCForm, self).save(request=request, instance=instance, serializer=MSCCSerializer)
-    #     instance.pre_test = {
-    #         "MSCC_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-    #         "MSCC_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
-    #         "MSCC_ASSESSMENT/arabic": request.POST.get('arabic'),
-    #
-    #         "MSCC_ASSESSMENT/attended_english": request.POST.get('attended_english'),
-    #         "MSCC_ASSESSMENT/modality_english": request.POST.getlist('modality_english'),
-    #         "MSCC_ASSESSMENT/english": request.POST.get('english'),
-    #
-    #         "MSCC_ASSESSMENT/attended_artistic": request.POST.get('attended_artistic'),
-    #         "MSCC_ASSESSMENT/modality_artistic": request.POST.getlist('modality_artistic'),
-    #         "MSCC_ASSESSMENT/artistic": request.POST.get('artistic'),
-    #
-    #         "MSCC_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-    #         "MSCC_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
-    #         "MSCC_ASSESSMENT/math": request.POST.get('math'),
-    #
-    #         "MSCC_ASSESSMENT/attended_social": request.POST.get('attended_social'),
-    #         "MSCC_ASSESSMENT/modality_social": request.POST.getlist('modality_social'),
-    #         "MSCC_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
-    #     }
-    #
     #     instance.save()
 
     class Meta:
@@ -1552,7 +1343,7 @@ class MSCCForm(forms.ModelForm):
             'center',
             'center_p_code',
             'center_type',
-            'language',
+            # 'language',
             'student_first_name',
             'student_father_name',
             'student_last_name',
@@ -1563,17 +1354,17 @@ class MSCCForm(forms.ModelForm):
             'student_mother_fullname',
             'student_address',
             'student_p_code',
-            'internal_number',
+            # 'internal_number',
             'disability',
             'hh_educational_level',
             'father_educational_level',
             'student_id',
             'enrollment_id',
             'partner_name',
-            'caretaker_birthday_year',
-            'caretaker_birthday_month',
-            'caretaker_birthday_day',
-            'first_attendance_date',
+            # 'caretaker_birthday_year',
+            # 'caretaker_birthday_month',
+            # 'caretaker_birthday_day',
+            # 'first_attendance_date',
             'student_birthday_year',
             'have_labour_single_selection',
             'labours_single_selection',
@@ -1585,7 +1376,7 @@ class MSCCForm(forms.ModelForm):
             'second_phone_number',
             'second_phone_number_confirm',
             'second_phone_owner',
-            'id_type',
+            # 'id_type',
             'case_number',
             'case_number_confirm',
             'individual_case_number',
@@ -1617,7 +1408,7 @@ class MSCCForm(forms.ModelForm):
             'cash_support_programmes',
             'packages_received',
             'other_nationality',
-            'education_status',
+            # 'education_status',
             'caretaker_first_name',
             'caretaker_middle_name',
             'caretaker_last_name',
@@ -1627,12 +1418,12 @@ class MSCCForm(forms.ModelForm):
             'student_family_status',
             'student_number_children',
             'round_start_date',
-            'registration_level',
+            # 'registration_level',
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
             'labour_weekly_income',
-            'source_of_transportation',
+            # 'source_of_transportation',
         )
 
 

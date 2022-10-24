@@ -65,6 +65,7 @@ from .models import (
     Center,
     Outreach,
     Bridging,
+    MSCC
 )
 from student_registration.schools.models import (
     School,
@@ -2970,6 +2971,8 @@ def search_clm_child(request):
         model = Outreach
     elif clm_type == 'Bridging':
         model = Bridging
+    elif clm_type == 'MSCC':
+        model = MSCC
 
     search_model = clm_type
 
@@ -3080,6 +3083,8 @@ def search_clm_duplicate_registration(request):
         model = Outreach
     elif clm_type == 'Bridging':
         model = Bridging
+    elif clm_type == 'MSCC':
+        model = MSCC
 
     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
                                       student_father_name,student_last_name,student_mother_fullname

@@ -41,6 +41,7 @@ from .models import (
     MSCC,
     Disability,
     Center,
+    Outreach, 
 )
 from student_registration.schools.models import (
     School,

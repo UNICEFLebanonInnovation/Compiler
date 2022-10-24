@@ -925,7 +925,7 @@ function check_duplicate_registration()
 function isAddPage()
 {
     var url_loc = window.location.toString();
-    return (url_loc.toLowerCase().search(/^.*\/clm\/bln-add|abln-add|cbece-add|rs-add|inclusion-add|bridging-add|outreach-add(\*)(\?.*)?$/i)>=0);
+    return (url_loc.toLowerCase().search(/^.*\/clm\/mscc-add|abln-add|cbece-add|rs-add|inclusion-add|bridging-add|outreach-add(\*)(\?.*)?$/i)>=0);
 }
 function reorganizeForm()
 {
@@ -1377,7 +1377,7 @@ function duplicate_search(search_by) {
         var student_last_name = $('#id_student_last_name').val();
         var student_mother_fullname = $('#id_student_mother_fullname').val();
         var phone_number = $('#id_phone_number').val();
-        var id_type = $('#id_id_type').val();
+//        var id_type = $('#id_id_type').val();
         var case_number = $('#id_case_number').val();
         var recorded_number = $('#id_recorded_number').val();
         var parent_syrian_national_number = $('#id_parent_syrian_national_number').val();
@@ -1396,7 +1396,8 @@ function duplicate_search(search_by) {
             student_last_name: student_last_name,
             student_mother_fullname: student_mother_fullname,
             phone_number: phone_number,
-            id_type: id_type,
+//            id_type: id_type,
+            id_type: '',
             case_number: case_number,
             recorded_number: recorded_number,
             parent_syrian_national_number: parent_syrian_national_number,
@@ -1404,7 +1405,6 @@ function duplicate_search(search_by) {
             parent_national_number: parent_national_number,
             parent_other_number: parent_other_number,
         };
-
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
 

@@ -15,13 +15,6 @@ def create_instance(validated_data, model):
     student_data = validated_data.pop('student', None)
     student = None
 
-    if 'partner' in validated_data and validated_data['partner'] and validated_data['partner'].id == 10:
-        if 'internal_number' in validated_data and validated_data['internal_number']:
-            queryset = model.objects.filter(internal_number=validated_data['internal_number'])
-
-            if queryset.count():
-                student = queryset.first().student
-
     if 'id' in student_data and student_data['id']:
         student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
         student_serializer.is_valid(raise_exception=True)
@@ -128,11 +121,11 @@ class MSCCSerializer(serializers.ModelSerializer):
             'round_name',
             'enrollment_id',
             'student_id',
-            'first_attendance_date',
+            # 'first_attendance_date',
             'round',
             'partner',
             'partner_name',
-            'language',
+            # 'language',
             'student_outreach_child',
             'student_outreach_child_id',
             'student_first_name',
@@ -150,7 +143,7 @@ class MSCCSerializer(serializers.ModelSerializer):
             'student_address',
             'student_p_code',
             'student_id_number',
-            'internal_number',
+            # 'internal_number',
             'owner',
             'owner_name',
             'modified_by',
@@ -222,9 +215,9 @@ class MSCCSerializer(serializers.ModelSerializer):
             'modified',
             'cycle_completed',
             'enrolled_at_school',
-            'caretaker_birthday_year',
-            'caretaker_birthday_month',
-            'caretaker_birthday_day',
+            # 'caretaker_birthday_year',
+            # 'caretaker_birthday_month',
+            # 'caretaker_birthday_day',
 
             # '-------------------------------------------------------------------------------------------------------',
             'have_labour',
@@ -239,7 +232,7 @@ class MSCCSerializer(serializers.ModelSerializer):
             'second_phone_number_confirm',
             'phone_owner',
             'second_phone_owner',
-            'id_type',
+            # 'id_type',
             'case_number',
             'case_number_confirm',
             'individual_case_number',
@@ -269,16 +262,16 @@ class MSCCSerializer(serializers.ModelSerializer):
             'rims_case_number',
             'source_of_identification_specify',
             'other_nationality',
-            'education_status',
+            # 'education_status',
             'caretaker_first_name',
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
             'round_start_date',
-            'registration_level',
+            # 'registration_level',
             'cadaster',
             'miss_school_date',
-            'source_of_transportation',
+            # 'source_of_transportation',
             'main_caregiver',
             'main_caregiver_nationality',
             'main_caregiver_nationality_other',
