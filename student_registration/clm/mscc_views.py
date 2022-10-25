@@ -41,7 +41,7 @@ from .models import (
     MSCC,
     Disability,
     Center,
-    Outreach, 
+    Outreach,
 )
 from student_registration.schools.models import (
     School,
@@ -52,7 +52,8 @@ from student_registration.schools.models import (
     PartnerOrganization,
 )
 from .mscc_forms import (
-    MSCCForm
+    MSCCForm,
+    MSCCEducationSituationForm
 )
 from .mscc_serializers import (
     MSCCSerializer
@@ -280,6 +281,35 @@ class MSCCListView(LoginRequiredMixin,
 
         return MSCC.objects.filter(partner=self.request.user.partner_id,
                                   round__current_year=True).order_by('-id')
+
+class MSCCEducationSituationView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+
+    template_name = 'clm/mscc_education_situation.html'
+    form_class = MSCCEducationSituationForm
+    success_url = '/clm/mscc-list/'
+    group_required = [u"CLM_MSCC"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(MSCCEducationSituationView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = MSCC.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = MSCC.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(MSCCEducationSituationView, self).form_valid(form)
 
 
 # ####################### API VIEWS #############################

@@ -369,5 +369,10 @@ urlpatterns = [
         view=mscc_views.MSCCListView.as_view(),
         name='mscc_list'
     ),
+    url(
+        regex=r'^education-situation/(?P<pk>[\w.@+-]+)/$',
+        view=mscc_views.MSCCEducationSituationView.as_view(),
+        name='education_situation'
+    ),
 
 ]

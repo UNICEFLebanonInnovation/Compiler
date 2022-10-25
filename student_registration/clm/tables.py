@@ -514,7 +514,7 @@ class BridgingTable(CommonTable):
                                                    template_name='django_tables2/clm_assessment_column.html',
                                                    attrs={'url': '/clm/bridging-post-assessment/', 'programme': 'Bridging'})
 
-    followup_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
+    followup_column = tables.TemplateColumn(verbose_name=_('Follow up'), orderable=False,
                                                    template_name='django_tables2/clm_followup_column.html',
                                                    attrs={'url': '/clm/bridging-followup/', 'programme': 'Bridging'})
     class Meta:

@@ -5032,8 +5032,8 @@ class CBECEForm(CommonForm):
                     HTML('<p>' + _(
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
-                ),
-                css_id='search_options_clm',
+                    ),
+                    css_id='search_options_clm',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
@@ -5148,14 +5148,6 @@ class CBECEForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
                     Div('disability', css_class='col-md-3'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default">12</span>'),
-                    Div('education_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_miss_school_date">12.1</span>'),
-                    Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -6006,7 +5998,6 @@ class OutreachForm(CommonForm):
         ),
         initial=''
     )
-
     other_nationality = forms.CharField(
         label=_('Specify the nationality'),
         widget=forms.TextInput, required=False

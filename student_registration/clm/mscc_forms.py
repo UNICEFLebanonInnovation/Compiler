@@ -99,8 +99,9 @@ REGISTRATION_LEVEL = (
 
 )
 
+
 class MSCCForm(forms.ModelForm):
-    YEARS_MSCC = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 6)))
+    YEARS_MSCC = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 3)))
     YEARS_MSCC.insert(0, ('', '---------'))
 
     YEARS_CT = list(((str(x), x) for x in range(1940, Person.CURRENT_YEAR - 18)))
@@ -248,14 +249,7 @@ class MSCCForm(forms.ModelForm):
     #     widget=forms.Select, required=False,
     #     choices=DAYS
     # )
-    # first_attendance_date = forms.DateField(
-    #     label=_("First attendance date"),
-    #     required=True
-    # )
-    miss_school_date = forms.DateField(
-        label=_("Miss school date"),
-        required=False,
-    )
+
     new_registry = forms.ChoiceField(
         label=_("First time registered MSCC?"),
         widget=forms.Select, required=True,
@@ -339,19 +333,6 @@ class MSCCForm(forms.ModelForm):
         initial='single',
         required=False
     )
-    # education_status = forms.ChoiceField(
-    #     label=_('Education status'),
-    #     widget=forms.Select, required=True,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('out of school', _('Out of school')),
-    #         ('enrolled in formal education but did not continue',
-    #          _("Enrolled in formal education but did not continue")),
-    #         ('enrolled in MSCC', _("Enrolled in MSCC")),
-    #     ),
-    #     initial=''
-    # )
-
     other_nationality = forms.CharField(
         label=_('Specify the nationality'),
         widget=forms.TextInput, required=False
@@ -709,8 +690,6 @@ class MSCCForm(forms.ModelForm):
                 # Div(
                 #     HTML('<span class="badge badge-default">9</span>'),
                 #     Div('registration_level', css_class='col-md-3'),
-                #     HTML('<span class="badge badge-default">10</span>'),
-                #     Div('first_attendance_date', css_class='col-md-3'),
                 #     css_class='row',
                 # ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -765,14 +744,6 @@ class MSCCForm(forms.ModelForm):
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
-
-                # Div(
-                #     HTML('<span class="badge badge-default">12</span>'),
-                #     Div('education_status', css_class='col-md-3'),
-                #     HTML('<span class="badge badge-default" id="span_miss_school_date">12.1</span>'),
-                #     Div('miss_school_date', css_class='col-md-3'),
-                #     css_class='row',
-                # ),
                 # Div(
                 #     HTML('<span class="badge badge-default">13</span>'),
                 #     Div('internal_number', css_class='col-md-3'),
@@ -1064,34 +1035,31 @@ class MSCCForm(forms.ModelForm):
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
         second_phone_number = cleaned_data.get("second_phone_number")
         second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
-        # id_type = cleaned_data.get("id_type")
-        case_number = cleaned_data.get("case_number")
-        case_number_confirm = cleaned_data.get("case_number_confirm")
-        individual_case_number = cleaned_data.get("individual_case_number")
-        individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
-        recorded_number = cleaned_data.get("recorded_number")
-        recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
-        national_number = cleaned_data.get("national_number")
-        national_number_confirm = cleaned_data.get("national_number_confirm")
-        syrian_national_number = cleaned_data.get("syrian_national_number")
-        syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
-        sop_national_number = cleaned_data.get("sop_national_number")
-        sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
-
-        parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
-        parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
-        parent_national_number = cleaned_data.get("parent_national_number")
-        parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
-        sop_parent_national_number = cleaned_data.get("parent_sop_national_number")
-        sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
-        parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
-        parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
-        parent_other_number = cleaned_data.get("parent_other_number")
-        parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
-        other_number = cleaned_data.get("other_number")
-        other_number_confirm = cleaned_data.get("other_number_confirm")
-        # education_status = cleaned_data.get("education_status")
-        miss_school_date = cleaned_data.get("miss_school_date")
+        # # id_type = cleaned_data.get("id_type")
+        # case_number = cleaned_data.get("case_number")
+        # case_number_confirm = cleaned_data.get("case_number_confirm")
+        # individual_case_number = cleaned_data.get("individual_case_number")
+        # individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
+        # recorded_number = cleaned_data.get("recorded_number")
+        # recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
+        # national_number = cleaned_data.get("national_number")
+        # national_number_confirm = cleaned_data.get("national_number_confirm")
+        # syrian_national_number = cleaned_data.get("syrian_national_number")
+        # syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
+        # sop_national_number = cleaned_data.get("sop_national_number")
+        # sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
+        # parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
+        # parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
+        # parent_national_number = cleaned_data.get("parent_national_number")
+        # parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        # sop_parent_national_number = cleaned_data.get("parent_sop_national_number")
+        # sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
+        # parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
+        # parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
+        # parent_other_number = cleaned_data.get("parent_other_number")
+        # parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
+        # other_number = cleaned_data.get("other_number")
+        # other_number_confirm = cleaned_data.get("other_number_confirm")
         student_nationality = cleaned_data.get("student_nationality")
         other_nationality = cleaned_data.get("other_nationality")
         main_caregiver = cleaned_data.get("main_caregiver")
@@ -1170,10 +1138,6 @@ class MSCCForm(forms.ModelForm):
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:
                 self.add_error('labours_other_specify', 'This field is required')
-
-        # if education_status != 'out of school':
-        #     if not miss_school_date:
-        #         self.add_error('miss_school_date', 'This field is required')
         if student_nationality.id == 6:
             if not other_nationality:
                 self.add_error('other_nationality', 'This field is required')
@@ -1364,7 +1328,6 @@ class MSCCForm(forms.ModelForm):
             # 'caretaker_birthday_year',
             # 'caretaker_birthday_month',
             # 'caretaker_birthday_day',
-            # 'first_attendance_date',
             'student_birthday_year',
             'have_labour_single_selection',
             'labours_single_selection',
@@ -1403,17 +1366,15 @@ class MSCCForm(forms.ModelForm):
             'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
-            'rims_case_number',
+            # 'rims_case_number',
             'source_of_identification_specify',
             'cash_support_programmes',
             'packages_received',
             'other_nationality',
-            # 'education_status',
             'caretaker_first_name',
             'caretaker_middle_name',
             'caretaker_last_name',
-            'caretaker_mother_name',
-            'miss_school_date',
+            'caretaker_mother_name', 
             'student_have_children',
             'student_family_status',
             'student_number_children',
@@ -1425,6 +1386,203 @@ class MSCCForm(forms.ModelForm):
             'labour_weekly_income',
             # 'source_of_transportation',
         )
+
+
+class MSCCEducationSituationForm(forms.ModelForm):
+    education_status = forms.ChoiceField(
+        label=_('Education status'),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('out of school', _('No Registered in any school before')),
+            ('Was registered in formal school but didnt continue', _('Was registered in formal school but didnt continue')),
+            ('Was registered in non formal program and was referred to MSCC', _('Was registered in non formal program and was referred to MSCC')),
+            ('Was registered in non formal program but did not continue', _('Was registered in non formal program but did not continue')),
+            ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programse'))
+        ),
+        initial=''
+    )
+    miss_school_date = forms.DateField(
+        label=_("Miss school date"),
+        required=False,
+    )
+    dropout_program = forms.ChoiceField(
+        label=_('Please specify programme'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
+            ('other	please specify	Was registered in BLN program', _('other please specify	Was registered in BLN program')),
+            ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue')),
+            ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
+        ),
+        initial=''
+    )
+    education_program = forms.ChoiceField(
+        label=_('Please specify education programme in MSCC'),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('BLN Level 1', _('BLN Level 1')),
+            ('BLN Level 2', _('BLN Level 2')),
+            ('YBLN', _('YBLN')),
+            ('YFNL', _('YFNL')),
+            ('CBECE Level 3', _('CBECE Level 3')),
+            ('Retention Support', _('Retention Support')),
+        ),
+        initial=''
+    )
+    first_attendance_date = forms.DateField(
+        label=_("First attendance date"),
+        required=True
+    )
+    volunteering_experience = forms.ChoiceField(
+        label=_("Does the adolescent have any volunteering experience?"),
+        widget=forms.Select, required=False,
+        choices=CLM.YES_NO,
+        initial='yes'
+    )
+    previous_community_initiative = forms.ChoiceField(
+        label=_("Was the adolescent part of any previous community based initiative?"),
+        widget=forms.Select, required=False,
+        choices=CLM.YES_NO,
+        initial='yes'
+    )
+    enrollement_reason = forms.CharField(
+        label=_('What is the reason for the adolescent enrollement in the programme?'),
+        widget=forms.TextInput, required=False
+    )
+    pre_tests_administered = forms.ChoiceField(
+        label=_("Were pre-tests administered to assess adolescents level?"),
+        widget=forms.Select, required=False,
+        choices=CLM.YES_NO,
+        initial='yes'
+    )
+
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    student_age = forms.IntegerField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(MSCCEducationSituationForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'MSCC'
+        self.fields['student_age'].initial = instance.student_age
+
+        display_followup = ''
+        form_action = reverse('clm:education_situation', kwargs={'pk': instance.id})
+
+        if instance.post_test:
+            followup_button = ' btn-outline-success '
+            followup = instance.assessment_form(
+                stage='followup',
+                assessment_slug='education_situation',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:education_situation', kwargs={'pk': instance.id}))
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            # Div('round_start_date', css_class='col-md-3 '),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('For All Ages') + '</h4>')
+                ),
+                Div(
+                    'clm_type',
+                    'student_age',
+                    css_class='row d-none',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('education_status', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_miss_school_date">1.1</span>'),
+                    Div('miss_school_date', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_dropout_program">1.2</span>'),
+                    Div('dropout_program', css_class='col-md-3'),
+
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('first_attendance_date', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('education_program', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning  A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('For Youth') + '</h4>')
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('volunteering_experience', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('previous_community_initiative', css_class='col-md-3'),
+                    css_class='row ',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('enrollement_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('pre_tests_administered', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='youth',
+                css_class='bd-callout bd-callout-warning  B_right_border '
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/mscc-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(MSCCEducationSituationForm, self).clean()
+
+        education_status = cleaned_data.get("education_status")
+        miss_school_date = cleaned_data.get("miss_school_date")
+        if education_status != 'out of school':
+            if not miss_school_date:
+                self.add_error('miss_school_date', 'This field is required')
+
+    def save(self, instance=None, request=None):
+        instance = super(MSCCEducationSituationForm, self).save()
+        # instance = super(MSCCEducationSituationForm, self).save(request=request, instance=instance, serializer=MSCCSerializer)
+
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = MSCC
+        fields = (
+            'education_status',
+            'miss_school_date',
+            'dropout_program',
+            'first_attendance_date',
+            'education_program',
+            'volunteering_experience',
+            'previous_community_initiative',
+            'enrollement_reason',
+            'pre_tests_administered'
+        )
+
 
 
 class MSCCAdminForm(forms.ModelForm):

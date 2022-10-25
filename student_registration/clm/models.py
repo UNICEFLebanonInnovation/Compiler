@@ -1511,6 +1511,11 @@ class CLM(TimeStampedModel):
 
 
 class MSCC(CLM):
+    YES_NO = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
     miss_school_date = models.DateField(
         blank=True,
         null=True,
@@ -1737,16 +1742,75 @@ class MSCC(CLM):
         null=True,
         verbose_name=_('Packages received/to be provided to child under MSCC')
     )
-
-    def calculate_sore(self, stage):
-        keys = [
-            'MSCC_ASSESSMENT/arabic',
-            'MSCC_ASSESSMENT/math',
-            'MSCC_ASSESSMENT/social_emotional',
-            'MSCC_ASSESSMENT/psychomotor',
-            'MSCC_ASSESSMENT/artistic',
-        ]
-        super(MSCC, self).score(keys, stage)
+    education_status = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('out of school', _('No Registered in any school before')),
+            ('Was registered in formal school but didnt continue', _('Was registered in formal school but didnt continue')),
+            ('Was registered in non formal program and was referred to MSCC', _('Was registered in non formal program and was referred to MSCC')),
+            ('Was registered in non formal program but did not continue', _('Was registered in non formal program but did not continue')),
+            ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programse'))
+        ),
+        verbose_name=_('Education status')
+    )
+    dropout_program = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
+            ('other	please specify	Was registered in BLN program', _('other please specify	Was registered in BLN program')),
+            ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue')),
+            ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
+        ),
+        verbose_name=_('Dropout Program')
+    )
+    education_program = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('BLN Level 1', _('BLN Level 1')),
+            ('BLN Level 2', _('BLN Level 2')),
+            ('YBLN', _('YBLN')),
+            ('YFNL', _('YFNL')),
+            ('CBECE Level 3', _('CBECE Level 3')),
+            ('Retention Support', _('Retention Support')),
+        ),
+        verbose_name=_('Education Program')
+    )
+    volunteering_experience = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the adolescent have any volunteering experience?')
+    )
+    previous_community_initiative = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the adolescent part of any previous community based initiative?')
+    )
+    enrollement_reason = models.CharField(
+        max_length=300,
+        blank=True,
+        null=True,
+        verbose_name=_('What is the reason for the adolescent enrollement in the programme?')
+    )
+    pre_tests_administered = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Were pre-tests administered to assess adolescents level?')
+    )
 
     class Meta:
         ordering = ['-id']
@@ -2205,7 +2269,6 @@ class Bridging(CLM):
         ),
         verbose_name=_('Education status')
     )
-
     community_Liaison_follow_up = models.CharField(
         max_length=10,
         blank=True,

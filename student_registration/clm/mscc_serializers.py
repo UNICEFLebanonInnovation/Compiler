@@ -121,7 +121,6 @@ class MSCCSerializer(serializers.ModelSerializer):
             'round_name',
             'enrollment_id',
             'student_id',
-            # 'first_attendance_date',
             'round',
             'partner',
             'partner_name',
@@ -262,7 +261,6 @@ class MSCCSerializer(serializers.ModelSerializer):
             'rims_case_number',
             'source_of_identification_specify',
             'other_nationality',
-            # 'education_status',
             'caretaker_first_name',
             'caretaker_middle_name',
             'caretaker_last_name',
@@ -270,7 +268,6 @@ class MSCCSerializer(serializers.ModelSerializer):
             'round_start_date',
             # 'registration_level',
             'cadaster',
-            'miss_school_date',
             # 'source_of_transportation',
             'main_caregiver',
             'main_caregiver_nationality',
@@ -302,7 +299,16 @@ class MSCCSerializer(serializers.ModelSerializer):
             'referal_health',
             'referal_other',
             'referal_other_specify',
-            'akelius_program'
+            'akelius_program',
+            'education_status',
+            'miss_school_date',
+            'dropout_program',
+            'first_attendance_date',
+            'education_program',
+            'volunteering_experience',
+            'previous_community_initiative',
+            'enrollement_reason',
+            'pre_tests_administered'
 
         )
 
