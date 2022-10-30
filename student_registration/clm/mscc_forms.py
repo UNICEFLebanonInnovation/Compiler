@@ -1878,7 +1878,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     volunteering_specify = forms.ChoiceField(
         label=_('Please specify the volunteering opportunity'),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
             ('Outreach', _('Outreach')),
@@ -1905,7 +1905,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     training_material = forms.ChoiceField(
         label=_('What training material was provided?'),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
             ('Printed workbook', _('Printed workbook')),
@@ -2119,16 +2119,8 @@ class EducationAssessmentForm(forms.ModelForm):
         modality_math = cleaned_data.get("modality_math")
         math = cleaned_data.get("math")
 
-        # learning_result = cleaned_data.get("learning_result")
-        # learning_result_other = cleaned_data.get("learning_result")
         test_done = cleaned_data.get("test_done")
         round_complete = cleaned_data.get("round_complete")
-        #
-        # referal_other = cleaned_data.get("referal_other")
-        # referal_other_specify = cleaned_data.get("referal_other_specify")
-        # if referal_other == 'yes':
-        #     if not referal_other_specify:
-        #         self.add_error('referal_other_specify', 'This field is required')
 
         if test_done == 'yes':
             if not round_complete:
@@ -2170,9 +2162,40 @@ class EducationAssessmentForm(forms.ModelForm):
             #     if math > 34:
             #         self.add_error('math', 'This value is greater that 34')
 
-        # if learning_result == 'other':
-        #     if not learning_result_other:
-        #         self.add_error('learning_result_other', 'This field is required')
+
+
+        test_diagnostic_done = cleaned_data.get("test_diagnostic_done")
+        receive_passing_grade = cleaned_data.get("receive_passing_grade")
+        if test_diagnostic_done == 'yes':
+            if not receive_passing_grade:
+                self.add_error('receive_passing_grade', 'This field is required')
+
+        participate_volunteering = cleaned_data.get("participate_volunteering")
+        volunteering_specify = cleaned_data.get("volunteering_specify")
+        if participate_volunteering == 'yes':
+            if not volunteering_specify:
+                self.add_error('volunteering_specify', 'This field is required')
+
+        yfs_course_completed = cleaned_data.get("yfs_course_completed")
+        training_material = cleaned_data.get("training_material")
+        if yfs_course_completed == 'yes':
+            if not training_material:
+                self.add_error('training_material', 'This field is required')
+
+        participate_community_initiatives = cleaned_data.get("participate_community_initiatives")
+        community_initiatives_specify = cleaned_data.get("community_initiatives_specify")
+        if participate_community_initiatives == 'yes':
+            if not community_initiatives_specify:
+                self.add_error('community_initiatives_specify', 'This field is required')
+
+        adolescent_attendance = cleaned_data.get("adolescent_attendance")
+        adolescent_dropout_reason = cleaned_data.get("adolescent_dropout_reason")
+        adolescent_dropout_date = cleaned_data.get("adolescent_dropout_date")
+        if adolescent_attendance == 'Dropout':
+            if not adolescent_dropout_reason:
+                self.add_error('adolescent_dropout_reason', 'This field is required')
+            if not adolescent_dropout_date:
+                self.add_error('adolescent_dropout_date', 'This field is required')
 
     def save(self, instance=None, request=None):
         instance = super(EducationAssessmentForm, self).save()
