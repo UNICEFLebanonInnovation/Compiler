@@ -1523,16 +1523,11 @@ class MSCC(CLM):
     )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('graduated_to_bln_next_level', _('Graduated to the next level')),
-        ('graduated_to_bln_next_round_same_level', _('Graduated to the next round, same level')),
-        ('graduated_to_bln_next_round_higher_level', _('Graduated to the next round, higher level')),
-        ('referred_to_alp', _('referred to ALP')),
-        ('referred_public_school', _('Referred to public school')),
-        ('referred_to_tvet', _('Referred to TVET')),
-        ('referred_to_ybln', _('Referred to YBLN')),
-        ('dropout', _('Dropout, referral not possible')),
-        ('Referral to School Bridging Programme', _('Referral to School Bridging Programme')),
-        ('other', _('Other')),
+        ('Transition to FE', _('Transition to FE')),
+        ('Repeat the school year', _('Repeat the school year')),
+        ('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL)', _('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL)')),
+        ('Transition to TVET', _('Transition to TVET')),
+        ('Internship or volunteering opportunity', _('Internship or volunteering opportunity')),
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -1811,6 +1806,127 @@ class MSCC(CLM):
         choices=YES_NO,
         verbose_name=_('Were pre-tests administered to assess adolescents level?')
     )
+    test_diagnostic_done = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent undertake any Post Diagnostic tests?')
+    )
+    receive_passing_grade = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent receive a passing grade for the tests?')
+    )
+    life_skills_completed = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent complete the life skills package?')
+    )
+    participate_volunteering = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent participate in any volunteering opportunity during the course of the program?')
+    )
+    volunteering_specify = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Outreach', _('Outreach')),
+            ('Data entry', _('Data entry')),
+            ('Admin work', _('Admin work')),
+            ('Awareness raising sessions', _('Awareness raising sessions')),
+            ('Empowerment and leadership', _('Empowerment and leadership')),
+            ('Other', _('Other')),
+        ),
+        verbose_name=_('Please specify the volunteering opportunity')
+    )
+    social_course = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent benefit from any social innovation/entrepreneurship course?')
+    )
+    yfs_course_completed = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent complete the YFS course?')
+    )
+    training_material = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Printed workbook', _('Printed workbook')),
+            ('Tablets', _('Tablets')),
+            ('Access to digital content (learning Passport) ', _('Access to digital content (learning Passport) ')),
+            ('Other', _('Other')),
+        ),
+        verbose_name=_('What training material was provided?')
+    )
+    participate_community_initiatives = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent participate/come up in community based initiatives?')
+    )
+    community_initiatives_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    adolescent_attendance = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Full attendance', _('Full attendance')),
+            ('Absence for less than 5 days', _('Absence for less than 5 days')),
+            ('Absence for more than 5 days', _('Absence for more than 5 days')),
+            ('Dropout', _('Dropout')),
+        ),
+        verbose_name=_('Adolescent attendance')
+    )
+    adolescent_dropout_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Reason for dropout')
+    )
+    adolescent_dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Dropout Date')
+    )
+
+    def assessment_form(self, stage, assessment_slug, callback=''):
+        try:
+            assessment = Assessment.objects.get(slug=assessment_slug)
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=MSCC&returnURL={callback}'.format(
+                form=assessment.assessment_form,
+                status=stage,
+                enrollment_id=self.id,
+                callback=callback
+            )
+        except Assessment.DoesNotExist as ex:
+            return ''
+
+    def pre_assessment_form(self):
+        return self.assessment_form(stage='pre_test', assessment_slug='pre_test')
+
+    def post_assessment_form(self):
+        return self.assessment_form(stage='post_test', assessment_slug='post_test')
 
     class Meta:
         ordering = ['-id']

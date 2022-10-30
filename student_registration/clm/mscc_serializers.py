@@ -308,7 +308,19 @@ class MSCCSerializer(serializers.ModelSerializer):
             'volunteering_experience',
             'previous_community_initiative',
             'enrollement_reason',
-            'pre_tests_administered'
-
+            'pre_tests_administered',
+            'test_diagnostic_done',
+            'receive_passing_grade',
+            'life_skills_completed',
+            'participate_volunteering',
+            'volunteering_specify',
+            'social_course',
+            'yfs_course_completed',
+            'training_material',
+            'participate_community_initiatives',
+            'community_initiatives_specify',
+            'adolescent_attendance',
+            'adolescent_dropout_reason',
+            'adolescent_dropout_date',
         )
 
