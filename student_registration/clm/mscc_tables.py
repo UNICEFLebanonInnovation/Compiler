@@ -35,6 +35,9 @@ class CommonTable(tables.Table):
 
 
 class MSCCTable(CommonTable):
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                        template_name='django_tables2/mscc/action_column.html',
+                                        )
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/clm_edit_column.html',
@@ -43,26 +46,27 @@ class MSCCTable(CommonTable):
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
 
-    education_column = tables.TemplateColumn(verbose_name=_('Education Situation'), orderable=False,
-                                            template_name='django_tables2/mscc/education-situation_column.html',
-                                            attrs={'url': '/clm/education-situation/', 'programme': 'MSCC'})
-
-    diagnostic_assessment_column = tables.TemplateColumn(verbose_name=_('Diagnostic-Assessment'), orderable=False,
-                                                   template_name='django_tables2/mscc/diagnostic_assessment_column.html',
-                                                   attrs={'url': '/clm/diagnostic-assessment/', 'programme': 'MSCC'})
-
-    education_assessment_column = tables.TemplateColumn(verbose_name=_('Education-Assessment'), orderable=False,
-                                                   template_name='django_tables2/mscc/education_assessment_column.html',
-                                                   attrs={'url': '/clm/education-assessment/', 'programme': 'MSCC'})
+    # education_column = tables.TemplateColumn(verbose_name=_('Education Situation'), orderable=False,
+    #                                         template_name='django_tables2/mscc/education-situation_column.html',
+    #                                         attrs={'url': '/clm/education-situation/', 'programme': 'MSCC'})
+    #
+    # diagnostic_assessment_column = tables.TemplateColumn(verbose_name=_('Diagnostic-Assessment'), orderable=False,
+    #                                                template_name='django_tables2/mscc/diagnostic_assessment_column.html',
+    #                                                attrs={'url': '/clm/diagnostic-assessment/', 'programme': 'MSCC'})
+    #
+    # education_assessment_column = tables.TemplateColumn(verbose_name=_('Education-Assessment'), orderable=False,
+    #                                                template_name='django_tables2/mscc/education_assessment_column.html',
+    #                                                attrs={'url': '/clm/education-assessment/', 'programme': 'MSCC'})
 
     class Meta:
         model = MSCC
         fields = (
+            'action_column',
             'edit_column',
             'delete_column',
-            'education_column',
-            'diagnostic_assessment_column',
-            'education_assessment_column',
+            # 'education_column',
+            # 'diagnostic_assessment_column',
+            # 'education_assessment_column',
             # 'monitoring_column',
             # 'referral_column',
             # 'followup_column',

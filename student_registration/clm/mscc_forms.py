@@ -1416,29 +1416,16 @@ class MSCCEducationSituationForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super(MSCCEducationSituationForm, self).__init__(*args, **kwargs)
 
-        education_situation = ''
-        education_situation_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         self.fields['clm_type'].initial = 'MSCC'
         self.fields['student_age'].initial = instance.student_age
 
-        display_followup = ''
         form_action = reverse('clm:education_situation', kwargs={'pk': instance.id})
-
-        if instance.education_situation:
-            education_situation_button = ' btn-outline-success '
-            education_situation = instance.assessment_form(
-                stage='education_situation',
-                assessment_slug='education_situation',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:education_situation', kwargs={'pk': instance.id}))
-            )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            # Div('round_start_date', css_class='col-md-3 '),
             Fieldset(
                 None,
                 Div(

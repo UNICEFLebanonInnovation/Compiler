@@ -92,6 +92,7 @@ $(document).ready(function() {
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+
     $(document).on('change', 'select#id_source_of_identification', function(){
          reorganizeForm();
     });
@@ -1199,6 +1200,11 @@ function family_status_single()
 
     }
 }
+function openSelectedURL(selected_element)
+{
+    window.location.href = selected_element.value;
+}
+
 
 function reorganize_pre_assessment()
 {
