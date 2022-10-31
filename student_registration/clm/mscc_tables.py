@@ -39,9 +39,9 @@ class MSCCTable(CommonTable):
                                         template_name='django_tables2/mscc/action_column.html',
                                         )
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
-                                        template_name='django_tables2/clm_edit_column.html',
-                                        attrs={'url': '/clm/mscc-edit/', 'programme': 'MSCC'})
+    # edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
+    #                                     template_name='django_tables2/clm_edit_column.html',
+    #                                     attrs={'url': '/clm/mscc-edit/', 'programme': 'MSCC'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
@@ -61,12 +61,8 @@ class MSCCTable(CommonTable):
     class Meta:
         model = MSCC
         fields = (
-            'action_column',
-            'edit_column',
+            'action_column', 
             'delete_column',
-            # 'education_column',
-            # 'diagnostic_assessment_column',
-            # 'education_assessment_column',
             # 'monitoring_column',
             # 'referral_column',
             # 'followup_column',
