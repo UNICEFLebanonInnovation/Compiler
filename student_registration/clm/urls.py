@@ -384,5 +384,20 @@ urlpatterns = [
         view=mscc_views.EducationAssessmentView.as_view(),
         name='education_assessment'
     ),
+    url(
+            regex=r'^mscc-youth-list/$',
+            view=mscc_views.MSCCYouthListView.as_view(),
+            name='mscc_youth-list'
+        ),
+    url(
+            regex=r'^mscc-health-list/$',
+            view=mscc_views.MSCCHealthListView.as_view(),
+            name='mscc_health_list'
+        ),
+    url(
+            regex=r'^mscc-cp-list/$',
+            view=mscc_views.MSCCCPListView.as_view(),
+            name='mscc_cp_list'
+        ),
 
 ]
