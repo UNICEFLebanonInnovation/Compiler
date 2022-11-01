@@ -387,7 +387,7 @@ urlpatterns = [
     url(
             regex=r'^mscc-youth-list/$',
             view=mscc_views.MSCCYouthListView.as_view(),
-            name='mscc_youth-list'
+            name='mscc_youth_list'
         ),
     url(
             regex=r'^mscc-health-list/$',
