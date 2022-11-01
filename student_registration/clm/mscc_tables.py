@@ -89,7 +89,7 @@ class MSCCTable(CommonTable):
 
 class MSCCYouthTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html',
+                                          template_name='django_tables2/mscc/action_column_youth.html',
                                           )
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
@@ -123,7 +123,7 @@ class MSCCYouthTable(CommonTable):
 
 class MSCCHealthTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html',
+                                          template_name='django_tables2/mscc/action_column_health.html',
                                           )
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
@@ -157,7 +157,7 @@ class MSCCHealthTable(CommonTable):
 
 class MSCCCPTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html',
+                                          template_name='django_tables2/mscc/action_column_cp.html',
                                           )
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
