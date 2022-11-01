@@ -90,12 +90,17 @@
                     <nav role="header-nav" class="navy">
 
                         <ul>
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'users:profile' %}" title="Profile">Profile</a></li>
 
-                            <li class="nav-active"><a href="index.html" title="Work">Profile</a></li>
+                            <li><a href="/admin/" title="Settings">Settings</a></li>
 
-                            <li><a href="about.html" title="About">Admin Settings</a></li>
+                            <li><a href="{% url 'account_logout' %}" title="Logout">Logout</a></li>
+                          {% else %}
 
-                            <li><a href="blog.html" title="Blog">Logout</a></li>
+                            <li><a href="{% url 'account_login' %}" title="Login">Login</a></li>
+
+                          {% endif %}
 
                         </ul>
 
@@ -109,7 +114,7 @@
 
 
 
-<main role="main-home-wrapper" class="container" {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>
+<main role="main-home-wrapper" class="container">
 
       {% if messages %}
           {% for message in messages %}
@@ -163,13 +168,17 @@
 
             	<ul>
 
-                	<li><a href="index.html" title="Work">Work</a></li>
+                    {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'users:profile' %}" title="Profile">Profile</a></li>
 
-                    <li><a href="about.html" title="About">About</a></li>
+                    <li><a href="/admin/" title="Settings">Settings</a></li>
 
-                    <li><a href="blog.html" title="Blog">Blog</a></li>
+                    <li><a href="{% url 'account_logout' %}" title="Logout">Logout</a></li>
+                  {% else %}
 
-                    <li><a href="contact.html" title="Contact">Contact</a></li>
+                    <li><a href="{% url 'account_login' %}" title="Login">Login</a></li>
+
+                  {% endif %}
 
                 </ul>
 
@@ -189,7 +198,7 @@
 
             </ul>
 
-            <p class="copy-right">&copy; 2015  avana LLC.. All rights Resved</p>
+            <p class="copy-right">&copy; 2021 UNICEF All rights Resved</p>
 
         </footer>
 
