@@ -36,8 +36,8 @@ class CommonTable(tables.Table):
 
 class MSCCTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                        template_name='django_tables2/mscc/action_column.html',
-                                        )
+                                          template_name='django_tables2/mscc/action_column.html',
+                                          )
 
     # edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
     #                                     template_name='django_tables2/clm_edit_column.html',
@@ -61,7 +61,7 @@ class MSCCTable(CommonTable):
     class Meta:
         model = MSCC
         fields = (
-            'action_column', 
+            'action_column',
             'delete_column',
             # 'monitoring_column',
             # 'referral_column',
@@ -85,4 +85,107 @@ class MSCCTable(CommonTable):
             'created',
             'modified',
         )
+
+
+class MSCCYouthTable(CommonTable):
+    action_column_youth = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                          template_name='django_tables2/mscc/action_column_youth.html',
+                                          )
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
+
+    class Meta:
+        model = MSCC
+        fields = (
+            'action_column_youth',
+            'delete_column',
+            'round',
+            'governorate',
+            'district',
+            # 'internal_number',
+            # 'student.id_number',
+            'student.number',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.mother_fullname',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+        )
+
+
+class MSCCHealthTable(CommonTable):
+    action_column_health = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                          template_name='django_tables2/mscc/action_column_health.html',
+                                          )
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
+
+    class Meta:
+        model = MSCC
+        fields = (
+            'action_column_health',
+            'delete_column',
+            'round',
+            'governorate',
+            'district',
+            # 'internal_number',
+            # 'student.id_number',
+            'student.number',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.mother_fullname',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+        )
+
+
+class MSCCCPTable(CommonTable):
+    action_column_cp = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                          template_name='django_tables2/mscc/action_column_cp.html',
+                                          )
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
+
+    class Meta:
+        model = MSCC
+        fields = (
+            'action_column_cp',
+            'delete_column',
+            'round',
+            'governorate',
+            'district',
+            # 'internal_number',
+            # 'student.id_number',
+            'student.number',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.mother_fullname',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+        )
+
 

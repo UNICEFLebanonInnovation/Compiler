@@ -35,7 +35,10 @@ from .mscc_filters import (
 )
 from .mscc_tables import (
     BootstrapTable,
-    MSCCTable
+    MSCCTable,
+    MSCCYouthTable,
+    MSCCCPTable,
+    MSCCHealthTable
 )
 from .models import (
     MSCC,
@@ -438,6 +441,70 @@ class EducationAssessmentView(LoginRequiredMixin,
         instance = MSCC.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(EducationAssessmentView, self).form_valid(form)
+
+
+class MSCCYouthListView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   FilterView,
+                   ExportMixin,
+                   SingleTableView,
+                   RequestConfig):
+    table_class = MSCCYouthTable
+    model = MSCC
+    template_name = 'clm/mscc_youth_list.html'
+    table = BootstrapTable(MSCC.objects.all(), order_by='id')
+    group_required = [u"MSCC_YOUTH"]
+
+    filterset_class = MSCCFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+
+        return MSCC.objects.filter(partner=self.request.user.partner_id,
+                                  round__current_year=True).order_by('-id')
+
+
+class MSCCHealthListView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   FilterView,
+                   ExportMixin,
+                   SingleTableView,
+                   RequestConfig):
+    table_class = MSCCHealthTable
+    model = MSCC
+    template_name = 'clm/mscc_health_list.html'
+    table = BootstrapTable(MSCC.objects.all(), order_by='id')
+    group_required = [u"MSCC_HEALTH"]
+
+    filterset_class = MSCCFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+
+        return MSCC.objects.filter(partner=self.request.user.partner_id,
+                                   round__current_year=True).order_by('-id')
+
+
+class MSCCCPListView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         FilterView,
+                         ExportMixin,
+                         SingleTableView,
+                         RequestConfig):
+    table_class = MSCCCPTable
+    model = MSCC
+    template_name = 'clm/mscc_CP_list.html'
+    table = BootstrapTable(MSCC.objects.all(), order_by='id')
+    group_required = [u"MSCC_CP"]
+
+    filterset_class = MSCCFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+
+        return MSCC.objects.filter(partner=self.request.user.partner_id,
+                                   round__current_year=True).order_by('-id')
+
 
 # ####################### API VIEWS #############################
 

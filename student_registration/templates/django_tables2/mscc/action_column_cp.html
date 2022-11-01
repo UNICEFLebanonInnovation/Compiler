@@ -1,0 +1,9 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+<select onchange="openSelectedURL(this);"  >
+  <option value="">------</option>
+  <option value="/clm/mscc-edit/{{ record.id }}">{% trans "Protection" %}</option>
+  <option value="/clm/mscc-edit/{{ record.id }}">{% trans "Protection Follow-up" %}</option>
+</select>
+
