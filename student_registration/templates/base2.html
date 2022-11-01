@@ -54,7 +54,7 @@
 
         <!-- font-awesome -->
 
-        <link href="{% static 'css/effects/set2.css' %}/effects/set2.css" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/effects/set2.css' %}" rel="stylesheet" type="text/css">
 
         <link href="{% static 'css/effects/normalize.css' %}" rel="stylesheet" type="text/css">
 
@@ -79,9 +79,9 @@
 
                     	<h1>
 
-                        	<a href="/" title="CLM +"><img src="images/logo.png" title="CLM +" alt="CLM +"/></a>
+                        	<a href="/" title="CLM +"><img src="{% static 'images/logo-gray.png' %}" style="width: 80px; height: 40px;" title="CLM +" alt="CLM +"/></a>
 
-                        </h1>
+                      </h1>
 
                     <!-- logo -->
 
@@ -156,7 +156,7 @@
 
                 <h1>
 
-                    <a href="" title="CLM +"><img src="images/logo.png" title="CLM +" alt="CLM +"/></a>
+                    <a href="/" title="CLM +"><img src="{% static 'images/logo-white.png' %}" style="width: 80px; height: 40px;" title="CLM +" alt="CLM +"/></a>
 
                 </h1>
 
@@ -198,7 +198,7 @@
 
             </ul>
 
-            <p class="copy-right">&copy; 2021 UNICEF All rights Resved</p>
+            <p class="copy-right">&copy; 2021 UNICEF All Rights Reserved</p>
 
         </footer>
 
@@ -208,7 +208,7 @@
 
         <!-- custom -->
 
-		<script src="{% static 'js/nav.js' %}" type="text/javascript"></script>
+		    <script src="{% static 'js/nav.js' %}" type="text/javascript"></script>
 
         <script src="{% static 'js/custom.js' %}" type="text/javascript"></script>
 
@@ -218,11 +218,9 @@
 
         <script src="{% static 'js/effects/masonry.pkgd.min.js' %}"  type="text/javascript"></script>
 
-		<script src="{% static 'js/effects/imagesloaded.js' %}"  type="text/javascript"></script>
+        <script src="{% static 'js/effects/imagesloaded.js' %}"  type="text/javascript"></script>
 
-		<script src="{% static 'js/effects/classie.js' %}"  type="text/javascript"></script>
-
-		<script src="{% static 'js/effects/AnimOnScroll.js' %}"  type="text/javascript"></script>
+        <script src="{% static 'js/effects/classie.js' %}"  type="text/javascript"></script>
 
         <script src="{% static 'js/effects/modernizr.custom.js' %}"></script>
 
