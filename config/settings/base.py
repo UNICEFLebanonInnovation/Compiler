@@ -74,6 +74,7 @@ THIRD_PARTY_APPS = [
 
     'bootstrap3',
     'bootstrap3_datetime',
+    # 'bootstrap4',
     'import_export',
     'django_tables2',
     'django_celery_beat',
@@ -158,19 +159,20 @@ MANAGERS = ADMINS
 # DATABASE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///Student_Registration'),
-}
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'Student_Registration',
-#         'USER': 'postgres',
-#         'PASSWORD': 'pg007',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
+#     'default': env.db('DATABASE_URL', default='postgres://compiler:TestInn0vation!@compiler-test.postgres.database.azure.com:5432/test'),
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'test',
+        'USER': 'compiler@compiler-test',
+        'PASSWORD': 'TestInn0vation!',
+        'HOST': 'compiler-test.postgres.database.azure.com',
+        'PORT': '5432',
+    }
+}
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 

@@ -275,7 +275,7 @@ class MSCCListView(LoginRequiredMixin,
                    RequestConfig):
     table_class = MSCCTable
     model = MSCC
-    template_name = 'clm/mscc_list.html'
+    template_name = 'clm/mscc_list_new.html'
     table = BootstrapTable(MSCC.objects.all(), order_by='id')
     group_required = [u"CLM_MSCC"]
 

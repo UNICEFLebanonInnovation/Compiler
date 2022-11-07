@@ -1,136 +1,187 @@
-{% extends "base2.html" %}
+{% extends "base4.html" %}
+{% load static i18n %}
 {% load static %}
-
-{% block main_content %}
-
-            <div class="row">
-
-
-
-            	<section class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
-                	<article role="pge-title-content">
-
-                    	<header>
-
-                        	<h2><span>CLM +</span> MSCC.</h2>
-
-                        </header>
-
-                        <p>Multi Service Community Center.</p>
-
-                    </article>
-
-                </section>
-
-
-
-                <section class="col-xs-12 col-sm-6 col-md-6 col-lg-6 grid">
-
-                	<figure class="effect-oscar">
-
-                    	<img src="{% static 'images/education.png' %}" alt="" class="img-responsive" style="width: 100%; height: 300px;"/>
-
-                        <figcaption>
-
-                        	<h2><span>Education & more</span></h2>
-
-							<p></p>
-
-							<a href="{% url 'clm:mscc_list' %}"></a>
-
-                        </figcaption>
-
-                    </figure>
-
-                </section>
-
-                <div class="clearfix"></div>
-
-                <section class="col-xs-6 col-sm-3 col-md-3 col-lg-3 grid">
-
-                	<figure class="effect-oscar">
-
-                    	<img src="{% static 'images/youth.png' %}" alt="" class="img-responsive" style="width: 100%; height: 300px;"/>
-
-                        <figcaption>
-
-                        	<h2><span>Youth</span></h2>
-
-							<p></p>
-
-							<a href="{% url 'clm:mscc_youth_list' %}"></a>
-
-                        </figcaption>
-
-                    </figure>
-
-                </section>
-
-                <section class="col-xs-6 col-sm-3 col-md-3 col-lg-3 grid">
-
-                	<figure class="effect-oscar">
-
-                    	<img src="{% static 'images/health.png' %}" alt="" class="img-responsive" style="width: 100%; height: 300px;"/>
-
-                        <figcaption>
-
-                        	<h2><span>Health</span></h2>
-
-							            <p></p>
-
-							<a href="{% url 'clm:mscc_health_list' %}"></a>
-
-                        </figcaption>
-
-                    </figure>
-
-                </section>
-
-                <section class="col-xs-6 col-sm-3 col-md-3 col-lg-3 grid">
-
-                	<figure class="effect-oscar">
-
-                    	<img src="{% static 'images/child protection.png' %}" alt="" class="img-responsive" style="width: 100%; height: 300px;"/>
-
-                        <figcaption>
-
-                        	<h2><span>Child Protection</span></h2>
-
-							<p></p>
-
-							<a href="{% url 'clm:mscc_cp_list' %}"></a>
-
-                        </figcaption>
-
-                    </figure>
-
-                </section>
-
-                <section class="col-xs-6 col-sm-3 col-md-3 col-lg-3 grid">
-
-                	<figure class="effect-oscar">
-
-                    	<img src="{% static 'images/social policy.png' %}" alt="" class="img-responsive" style="width: 100%; height: 300px;"/>
-
-                        <figcaption>
-
-                        	<h2><span>Social Policy</span></h2>
-
-							<p></p>
-
-							<a href="{% url 'clm:mscc_cp_list' %}"></a>
-
-                        </figcaption>
-
-                    </figure>
-
-                </section>
-
-                <div class="clearfix"></div>
-
-
-            </div>
-
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block content %}
+
+<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
+    Welcome {{ request.user }} to CLM<sup>+</sup>
+    <div class="page-title-subheading">
+                                    </div>
+</div></div><div class="page-title-actions">
+</div></div></div>
+
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">New accounts</div>
+                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+                                                    <span class="opacity-10 text-success pr-2">
+                                                        <i class="fa fa-angle-up"></i>
+                                                    </span>
+                                                    234
+                                                    <small class="opacity-5 pl-1">%</small>
+                                                </div>
+                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
+                                                    <div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">
+                                                        <small></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">Total Expenses</div>
+                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+                                                    <span class="opacity-10 text-danger pr-2">
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </span>
+                                                    71
+                                                    <small class="opacity-5 pl-1">%</small>
+                                                </div>
+                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
+                                                    <div class="circle-progress circle-progress-danger-sm d-inline-block">
+                                                        <small></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-warning border-warning card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">Company Value</div>
+                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+                                                    <small class="opacity-5 pr-1">$</small>
+                                                    1,45M
+                                                </div>
+                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
+                                                    <div class="circle-progress circle-progress-warning-sm d-inline-block">
+                                                        <small></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">New Employees</div>
+                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+                                                    <small class="text-success pr-1">+</small>
+                                                    34
+                                                    <small class="opacity-5 pl-1">hires</small>
+                                                </div>
+                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
+                                                    <div class="circle-progress circle-progress-success-sm d-inline-block">
+                                                        <small></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<div class="row">
+                            <div class="col-lg-12 col-xl-12">
+                                <div class="main-card mb-3 card">
+                                    <div class="grid-menu grid-menu-2col">
+                                        <div class="no-gutters row">
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-primary"></div>
+                                                        <i class="lnr-book text-primary"></i></div>
+                                                    <div class="widget-numbers"><a href="{% url 'clm:mscc_list' %}">Education</a></div>
+                                                    <!--<div class="widget-subheading">Total Views</div>-->
+                                                    <!--<div class="widget-description text-success">-->
+                                                        <!--<i class="fa fa-angle-up"></i>-->
+                                                        <!--<span class="pl-1">175.5%</span></div>-->
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-info"></div>
+                                                        <i class="lnr-graduation-hat text-info"></i>
+                                                    </div>
+                                                    <div class="widget-numbers">Youth</div>
+                                                    <!--<div class="widget-subheading">Bugs Fixed</div>-->
+                                                    <!--<div class="widget-description text-info">-->
+                                                        <!--<i class="fa fa-arrow-right"></i>-->
+                                                        <!--<span class="pl-1">175.5%</span></div>-->
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-danger"></div>
+                                                        <i class="lnr-hand text-danger"></i>
+                                                    </div>
+                                                    <div class="widget-numbers">Child Protection</div>
+                                                    <!--<div class="widget-subheading">Reports Submitted</div>-->
+                                                    <!--<div class="widget-description text-primary"><span class="pr-1">54.1%</span>-->
+                                                        <!--<i class="fa fa-angle-up"></i>-->
+                                                    <!--</div>-->
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover br-br">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-success"></div>
+                                                        <i class="pe-7s-eyedropper"></i></div>
+                                                    <div class="widget-numbers">Health & Nutrition</div>
+                                                    <!--<div class="widget-subheading">Profiles</div>-->
+                                                    <!--<div class="widget-description text-warning"><span class="pr-1">175.5%</span>-->
+                                                        <!--<i class="fa fa-arrow-left"></i>-->
+                                                    <!--</div>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+</div>
+
+{% endblock %}
+
+{% block modal %}
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
 
 {% endblock %}

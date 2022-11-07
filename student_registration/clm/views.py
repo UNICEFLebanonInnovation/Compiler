@@ -123,6 +123,20 @@ from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction,
     cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, bridging_build_xls_extraction
 
 
+class ProfileView(LoginRequiredMixin,
+                  TemplateView):
+    template_name = 'clm/mscc_view.html'
+
+    # group_required = [u"HR", u"Security"]
+
+    def get_context_data(self, **kwargs):
+        instance = MSCC.objects.get(id=self.kwargs['pk'])
+
+        return {
+            'instance': instance,
+        }
+
+
 class CLMView(LoginRequiredMixin,
               GroupRequiredMixin,
               TemplateView):

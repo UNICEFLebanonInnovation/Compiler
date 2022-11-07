@@ -20,7 +20,10 @@
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
     <![endif]-->
 
     {% block css %}
@@ -71,7 +74,7 @@
   </head>
 
   <body>
-        	<header role="header">
+        	<header role="header" style="padding-top: 5px;">
 
             	<div class="container">
 
@@ -90,6 +93,7 @@
                     <nav role="header-nav" class="navy">
 
                         <ul>
+                            <li><a href="/" title="Home">Home</a></li>
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'users:profile' %}" title="Profile">Profile</a></li>
 
@@ -125,108 +129,40 @@
       {% block main_content %}
       {% endblock main_content %}
 
+    <section style="direction: rtl;">
     {% block content-full-page %}
     {% endblock content-full-page %}
+    </section>
 
 </main>
     {% block modal %}{% endblock modal %}
 
+    {% include 'footer.html' %}
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    {% block javascript %}
       <!-- Required by Bootstrap v4 Alpha 4 -->
-      <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<script src="https://npmcdn.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
+<script src="https://unpkg.com/isotope-layout@3.0/dist/isotope.pkgd.min.js"></script>
+<script src="https://unpkg.com/scrollreveal@3.3.2/dist/scrollreveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
 
-      <!-- Your stuff: Third-party javascript libraries go here -->
+<script src="{% static 'vendor/mfp/js/jquery.magnific-popup.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'vendor/progressbar/progressbar.min.js' %}" type="text/javascript"></script>
 
-      <!-- place project specific Javascript in this file -->
-      <script src="{% static 'js/project.js' %}"></script>
+<script src="{% static 'vendor/anicounter/jquery.counterup.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'vendor/pjax/jquery.pjax.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'vendor/owl-carousel/owl.carousel.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'vendor/headlines/headlines.min.js' %}" type="text/javascript"></script>
+
+<!-- Custom scripts -->
+<script src="{% static 'custom/2.2.0/js/animation.js' %}" type="text/javascript"></script>
+<script src="{% static 'custom/2.2.0/js/custom.js' %}?v=2" type="text/javascript"></script>
+<script src="{% static 'js/project.js' %}?v=1"></script>
 
 
-    {% endblock javascript %}
-    {% block extra_js %}
-    {% endblock %}
-
-        <footer role="footer">
-
-            <!-- logo -->
-
-                <h1>
-
-                    <a href="/" title="CLM +"><img src="{% static 'images/logo-white.png' %}" style="width: 80px; height: 40px;" title="CLM +" alt="CLM +"/></a>
-
-                </h1>
-
-            <!-- logo -->
-
-            <!-- nav -->
-
-            <nav role="footer-nav">
-
-            	<ul>
-
-                    {% if request.user.is_authenticated %}
-                    <li><a href="{% url 'users:profile' %}" title="Profile">Profile</a></li>
-
-                    <li><a href="/admin/" title="Settings">Settings</a></li>
-
-                    <li><a href="{% url 'account_logout' %}" title="Logout">Logout</a></li>
-                  {% else %}
-
-                    <li><a href="{% url 'account_login' %}" title="Login">Login</a></li>
-
-                  {% endif %}
-
-                </ul>
-
-            </nav>
-
-            <!-- nav -->
-
-            <ul role="social-icons">
-
-            	<li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-
-                <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-
-                <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
-
-                <li><a href="#"><i class="fa fa-flickr" aria-hidden="true"></i></a></li>
-
-            </ul>
-
-            <p class="copy-right">&copy; 2021 UNICEF All Rights Reserved</p>
-
-        </footer>
-
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-
-        <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
-
-        <!-- custom -->
-
-		    <script src="{% static 'js/nav.js' %}" type="text/javascript"></script>
-
-        <script src="{% static 'js/custom.js' %}" type="text/javascript"></script>
-
-        <!-- Include all compiled plugins (below), or include individual files as needed -->
-
-        <script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
-
-        <script src="{% static 'js/effects/masonry.pkgd.min.js' %}"  type="text/javascript"></script>
-
-        <script src="{% static 'js/effects/imagesloaded.js' %}"  type="text/javascript"></script>
-
-        <script src="{% static 'js/effects/classie.js' %}"  type="text/javascript"></script>
-
-        <script src="{% static 'js/effects/modernizr.custom.js' %}"></script>
-
-        <!-- jquery.countdown -->
-
-        <script src="{% static 'js/html5shiv.js' %}" type="text/javascript"></script>
+{% block extra_js %}
+{% endblock %}
 
   </body>
 </html>

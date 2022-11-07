@@ -1,0 +1,109 @@
+{% extends "base4.html" %}
+{% load static i18n %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block content %}
+
+<style>
+    .form-filters .form-group {
+        padding-right: 10px;
+        padding-bottom: 5px;
+    }
+    .form-filters .btn {
+        margin-right: 10px;
+    }
+    .form-filters .form-control {
+        width: 200px;
+    }
+    .table-list .card-body .table-responsive {
+        padding-bottom: 15px;
+        max-height: 400px;
+        position: relative;
+    }
+    th {
+      background: white;
+      position: sticky;
+      top: 0; /* Don't forget this, required for the stickiness */
+      box-shadow: 0 1px 2px -1px rgba(63,106,216,0.5);
+      z-index: 999;
+      vertical-align: middle !important;
+    }
+    .table-list .card-body {
+        padding-top: 0px;
+    }
+    .dropdown-menu.show {
+        position: fixed !important;
+        top: 200px !important;
+        left: 50px !important;
+    }
+</style>
+
+<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
+    MSCC - Education
+    <div class="page-title-subheading">
+                                    </div>
+</div></div><div class="page-title-actions">
+</div></div></div>
+
+<div class="row">
+    <div class="col-lg-12">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters">
+    <div class="card">
+        <div id="headingOne" class="card-header">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+                <h5 class="m-0 p-0">
+                    <i class="pe-7s-filter text-primary"></i>
+                    Filters</h5>
+            </button>
+        </div>
+        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
+            <div class="card-body">
+            <form action="" method="get" class="form form-inline">
+                {% bootstrap_form filter.form layout='inline' %}
+
+                <a class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
+                  <i style="font-weight:bolder" class="pe-7s-search"></i>
+                </a>
+
+                <a href="" title="Cancel"
+                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i></a>
+                <a href="" title="Download" class="btn btn-outline-success download-report">
+                    <i class="lnr-download"></i>
+                </a>
+
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+<div class="row table-list">
+    <div class="col-lg-12">
+        <div class="card-hover-shadow-2x mb-3 card">
+            <div class="card-body">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap4">
+        {% csrf_token %}
+        {% render_table table 'django_tables2/bootstrap.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block modal %}
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+
+{% endblock %}

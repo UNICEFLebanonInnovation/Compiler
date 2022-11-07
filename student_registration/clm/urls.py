@@ -399,5 +399,10 @@ urlpatterns = [
             view=mscc_views.MSCCCPListView.as_view(),
             name='mscc_cp_list'
         ),
+    url(
+        regex=r'^mscc-view/(?P<pk>[\w.@+-]+)/$',
+        view=views.ProfileView.as_view(),
+        name='mscc_view'
+    ),
 
 ]

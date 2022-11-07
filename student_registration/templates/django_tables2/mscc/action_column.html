@@ -1,14 +1,24 @@
 {% load staticfiles i18n %}
 {% load util_tags %}
 
-<select onchange="openSelectedURL(this);"  >
-  <option value="">------</option>
-  <option value="/clm/mscc-edit/{{ record.id }}">{% trans "Edit" %}</option>
-  <option value="/clm/education-situation/{{ record.id }}">{% trans "Education Situation" %}</option>
-  <option value="/clm/diagnostic-assessment/{{ record.id }}">{% trans "Diagnostic Assessment" %}</option>
-  <option value="/clm/education-assessment/{{ record.id }}">{% trans "Education Assessment" %}</option>
-  <option value="/clm/mscc-edit/{{ record.id }}">{% trans "Referral" %}</option>
-  <option value="/clm/mscc-edit/{{ record.id }}">{% trans "Inclusion" %}</option>
-  <option value="/clm/mscc-edit/{{ record.id }}">{% trans "Retention support" %}</option>
-</select>
+<div class="mb-2 mr-2 btn-group dropdown">
+                                                <button class="btn btn-outline-secondary">Actions</button>
+                                                <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="dropdown-toggle-split dropdown-toggle btn btn-outline-secondary"><span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(89px, 33px, 0px);">
+                                                    <a type="button" href="/clm/mscc-view/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "View" %}</a>
+                                                    <a type="button" href="/clm/mscc-edit/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Edit" %}</a>
+                                                    <a type="button" href="/clm/education-situation/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Education Situation" %}</a>
+                                                    <a type="button" href="/clm/diagnostic-assessment/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Diagnostic Assessment" %}</a>
+                                                    <a type="button" href="/clm/education-assessment/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Education Assessment" %}</a>
+                                                    <a type="button" href="" tabindex="0" class="dropdown-item">{% trans "Referral" %}</a>
+                                                    <a type="button" href="" tabindex="0" class="dropdown-item">{% trans "Inclusion" %}</a>
+                                                    <a type="button" href="" tabindex="0" class="dropdown-item">{% trans "Retention Support" %}</a>
+                                                    <!--<h6 tabindex="-1" class="dropdown-header">Header</h6>-->
+                                                    <!--<a type="button" tabindex="0" class="dropdown-item">Actions</a>-->
+                                                    <!--<div tabindex="-1" class="dropdown-divider"></div>-->
+                                                    <!--<a type="button" tabindex="0" class="dropdown-item">Dividers</a>-->
+                                                </div>
+                                            </div>
+
 
