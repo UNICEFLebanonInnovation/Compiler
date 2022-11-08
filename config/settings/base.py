@@ -159,20 +159,20 @@ MANAGERS = ADMINS
 # DATABASE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-# DATABASES = {
-#     'default': env.db('DATABASE_URL', default='postgres://compiler:TestInn0vation!@compiler-test.postgres.database.azure.com:5432/test'),
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test',
-        'USER': 'compiler@compiler-test',
-        'PASSWORD': 'TestInn0vation!',
-        'HOST': 'compiler-test.postgres.database.azure.com',
-        'PORT': '5432',
-    }
+    'default': env.db('DATABASE_URL', default='postgres:///clm_07112022'),
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'test',
+#         'USER': 'compiler@compiler-test',
+#         'PASSWORD': 'TestInn0vation!',
+#         'HOST': 'compiler-test.postgres.database.azure.com',
+#         'PORT': '5432',
+#     }
+# }
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -187,8 +187,8 @@ TIME_ZONE = 'Asia/Beirut'
 
 LANGUAGE_COOKIE_NAME = 'default_language'
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-# LANGUAGE_CODE = 'en-us'
-LANGUAGE_CODE = 'ar-ar'
+LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
     ('ar-ar', 'arabic'),
@@ -196,7 +196,8 @@ LANGUAGES = (
     # ('fr-fr', 'french'),
 )
 
-LANGUAGES_BIDI = ["ar-ar"]
+# LANGUAGES_BIDI = ["ar-ar"]
+LANGUAGES_BIDI = ["en-us"]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -294,7 +295,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptPasswordHasher',
 ]
 #Turn Timezone off
-USE_TZ = False
+# USE_TZ = False
 
 # PASSWORD VALIDATION
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators

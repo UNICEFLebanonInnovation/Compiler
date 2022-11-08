@@ -1,68 +1,76 @@
-{% extends "base2.html" %}
-{% load staticfiles i18n %}
+{% extends "base4.html" %}
+{% load static i18n %}
 {% load static %}
 {% load render_table from django_tables2 %}
 {% load bootstrap3 %}
 {% load util_tags %}
 {% bootstrap_css %}
 
-{% block extra_head %}
-    <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
-{% endblock %}
+{% block content %}
 
-{% block content-full-page %}
-<section>
+<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
+    MSCC - Health
+    <div class="page-title-subheading">
+                                    </div>
+</div></div><div class="page-title-actions">
+  <a href="{% url 'clm:mscc_add' %}" type="button" class="btn btn-shadow btn-wide btn-primary">
+                                <span class="btn-icon-wrapper pr-2 opacity-7">
+                                    <i class="fa fa-plus fa-w-20"></i>
+                                </span>
+                                Add New Child
+                            </a>
+</div></div></div>
 
-    <section id="page-title" class="inline-form inner-section ui-menu-color02">
-        <div class="container-fluid nopadding">
-            <h3 class="font-accident-two-light color01 uppercase"
-                data-animation-origin="right"
-                data-animation-duration="400"
-                data-animation-delay="100"
-                data-animation-distance="50px">{% trans "MSCC - Multi Service Community Centers - Health" %}
-            </h3>
+<div class="row">
+    <div class="col-lg-12">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters">
+    <div class="card">
+        <div id="headingOne" class="card-header">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+                <h5 class="m-0 p-0">
+                    <i class="pe-7s-filter text-primary"></i>
+                    Filters</h5>
+            </button>
         </div>
-    </section>
+        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
+            <div class="card-body">
+            <form action="" method="get" class="form form-inline">
+                {% bootstrap_form filter.form layout='inline' %}
 
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
-      <li class="breadcrumb-item active">{{ request.user.partner }}</li>
-      <li class="breadcrumb-item active">{{ request.user }}</li>
-    </ol>
+                <a class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
+                  <i style="font-weight:bolder" class="pe-7s-search"></i>
+                </a>
 
-    <div class="pb-5 pr-5 list-filter" style="margin: 10px;">
-        <form action="" method="get" class="form form-inline">
-            {% bootstrap_form filter.form layout='inline' %}
-            <div class="">
-              <button class="btn btn-primary">
-                <i class="icon-validation-sign icon-white"></i>
-                {% trans "filter" %}
-              </button>
-              <a class="btn btn-warning" href="{% url 'clm:mscc_list' %}" type="link">
-                <i class="icon-synch-sign icon-white"></i>
-                {% trans "reset" %}
-              </a>
-              <a href="{% url 'clm:bln_export' %}" class="btn btn-success">
-                  <i class="icon-export-sign icon-white"></i>
-                  {% trans "Export data" %}
-              </a>
+                <a href="" title="Cancel"
+                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i></a>
+                <a href="" title="Download" class="btn btn-outline-success download-report">
+                    <i class="lnr-download"></i>
+                </a>
 
-              {% if 'MSCC'|is_allowed_create %}
-              <a href="{% url 'clm:mscc_add' %}" class="btn btn-success">
-                  <i class="icon-plus-sign icon-white"></i>
-                  {% trans "Add new Child" %}
-              </a>
-              {% endif %}
-
+            </form>
             </div>
-        </form>
+        </div>
     </div>
-    <div class="" style="overflow: auto; margin: 10px;">
+</div>
+    </div>
+</div>
+
+<div class="row table-list">
+    <div class="col-lg-12">
+        <div class="card-hover-shadow-2x mb-3 card">
+            <div class="card-body">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap4">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-</section>
+{% endblock %}
+
+{% block modal %}
 
 {% endblock %}
 

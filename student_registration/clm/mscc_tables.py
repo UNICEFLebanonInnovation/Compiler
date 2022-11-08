@@ -23,6 +23,7 @@ class CommonTable(tables.Table):
     #                                       attrs={'url': ''})
 
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
+    created = tables.Column(verbose_name='Created', accessor='clm.created')
     student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday')
 
     class Meta:
@@ -94,18 +95,15 @@ class MSCCYouthTable(CommonTable):
     action_column_youth = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                           template_name='django_tables2/mscc/action_column_youth.html',
                                           )
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-                                          template_name='django_tables2/clm_delete_column.html',
-                                          attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
+    # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+    #                                       template_name='django_tables2/clm_delete_column.html',
+    #                                       attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
 
     class Meta:
         model = MSCC
         fields = (
             'action_column_youth',
-            'delete_column',
-            'round',
-            'governorate',
-            'district',
+            # 'delete_column',
             # 'internal_number',
             # 'student.id_number',
             'student.number',
@@ -117,9 +115,12 @@ class MSCCYouthTable(CommonTable):
             'student_age',
             'student_birthday',
             'student.nationality',
+            'round',
+            'governorate',
+            'district',
             'owner',
-            'modified_by',
             'created',
+            'modified_by',
             'modified',
         )
 
@@ -128,18 +129,15 @@ class MSCCHealthTable(CommonTable):
     action_column_health = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                           template_name='django_tables2/mscc/action_column_health.html',
                                           )
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-                                          template_name='django_tables2/clm_delete_column.html',
-                                          attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
+    # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+    #                                       template_name='django_tables2/clm_delete_column.html',
+    #                                       attrs={'url': '/api/clm-mscc/', 'programme': 'MSCC'})
 
     class Meta:
         model = MSCC
         fields = (
             'action_column_health',
-            'delete_column',
-            'round',
-            'governorate',
-            'district',
+            # 'delete_column',
             # 'internal_number',
             # 'student.id_number',
             'student.number',
@@ -151,9 +149,12 @@ class MSCCHealthTable(CommonTable):
             'student_age',
             'student_birthday',
             'student.nationality',
+            'round',
+            'governorate',
+            'district',
             'owner',
-            'modified_by',
             'created',
+            'modified_by',
             'modified',
         )
 
