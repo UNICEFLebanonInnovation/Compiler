@@ -285,7 +285,7 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">UNLP</h4>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Engaged in Labor?</h4>
                                                                     <p>
                                                                     </p></div>
                                                             </div>
@@ -294,7 +294,7 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">National Passport 1</h4>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Type of Labor</h4>
                                                                     <p>
                                                                     </p></div>
                                                             </div>
@@ -302,15 +302,15 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">National Passport 2</h4>
-                                                                    <p>{{ instance.national_passport_number_2 }} - {{ instance.national_passport_expiry_date_2 }}</p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Working hours during a week? (in hours)</h4>
+                                                                    <p></p></div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">National Passport 3</h4>
-                                                                    <p>{{ instance.national_passport_number_3 }} - {{ instance.national_passport_expiry_date_3 }}</p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">How much get paid per week? (amount in LBP)</h4>
+                                                                    <p></p></div>
                                                             </div>
                                                         </div>
 
@@ -371,23 +371,30 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-map text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child’s educational level when registering for the round</h4>
                                                                             <p>
                                                                             </p>
                                                                         </div>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date from school</h4>
-                                                                            <p>{% if instance.warden %} {{ instance.warden.warden }} {% endif %}
-                                                                                <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Programme</h4>
-                                                                            <p>{% if instance.warden %} {{ instance.warden.warden_backup }} {% endif %}
-                                                                                <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
-                                                                            </p>
-                                                                        </div>
                                                                     </div>
                                                                 </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date from school</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Programme</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
@@ -466,19 +473,9 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-map text-warning"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child’s educational level when registering for the round</h4>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development Assessment</h4>
                                                                             <p>
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date from school</h4>
-                                                                            <p>{% if instance.warden %} {{ instance.warden.warden }} {% endif %}
-                                                                                <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Programme</h4>
-                                                                            <p>{% if instance.warden %} {{ instance.warden.warden_backup }} {% endif %}
-                                                                                <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -486,15 +483,15 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Education programme in MSCC</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development Assessment (only in BLN)</h4>
                                                                             <p>
                                                                             </p></div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-shield text-warning"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Date of registration in the round</h4>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Cognitive Development - Mathematics test</h4>
                                                                             <p>
                                                                             </p></div>
                                                                     </div>
@@ -513,24 +510,24 @@
                                                     <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-user text-danger"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Name</h4>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-info text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child Level of participation / Absence</h4>
                                                                     <p>
                                                                     </p></div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-smartphone text-danger"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Phone</h4>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-info text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Main barriers affecting attendance/participation, performance, or causing drop-out</h4>
                                                                     <p>
                                                                         </p></div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Email</h4>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-info text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Undertake the Post tests ?</h4>
                                                                     <p>
                                                                         </p></div>
                                                             </div>
@@ -554,6 +551,337 @@
                                     </div>
                                 </div>
                             </div>
+
+
+<div class="col-md-12 col-lg-6 col-xl-4">
+                                <div class="mb-3 card">
+                                    <!--<div class="card-header-tab card-header">-->
+                                        <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
+                                            <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
+                                            <!--Details-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <div class="p-0 card-body">
+                                        <div class="dropdown-menu-header mt-0 mb-0">
+                                            <div class="dropdown-menu-header-inner bg-heavy-rain">
+                                                <div class="menu-header-image opacity-1"></div>
+                                                <div class="menu-header-content text-dark">
+                                                    <h5 class="menu-header-title">Youth</h5>
+                                                    <!--<h6 class="menu-header-subtitle">-->
+                                                        <!--You have-->
+                                                        <!--<b class="text-danger">21 </b>-->
+                                                        <!--unread messages-->
+                                                    <!--</h6>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link active show" id="tab-c-6" data-toggle="tab" href="#tab-animated-6" aria-selected="true">
+                                                    <span>Basic</span>
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-7" data-toggle="tab" href="#tab-animated-7" aria-selected="true">
+                                                    <span>Assessment</span>
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-8" data-toggle="tab" href="#tab-animated-8" aria-selected="true">
+                                                    <span>Referral</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane active show" id="tab-animated-6" role="tabpanel">
+                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
+                                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">volunteering experience</h4>
+                                                                            <p>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Previous community based initiative</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reason for the adolescent enrollement in the programme</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Pre-tests administered to assess adolescents' level</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="tab-animated-7" role="tabpanel">
+                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                    <div class="scrollbar-container ps">
+                                                        <div class="p-3">
+
+                                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-user text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Post Diagnostic tests</h4>
+                                                                    <p>
+                                                                    </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-smartphone text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Receive a passing grade for the tests?</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills package</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Volunteering opportunity</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Social innovation/entrepreneurship course</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Completed the YFS course?</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="nav flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
+                                                    <!--<span class="badge badge-dot badge-dot-lg badge-warning badge-pulse">Badge</span>-->
+                                                    <!--View All Messages-->
+                                                <!--</button>-->
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+
+<div class="col-md-12 col-lg-6 col-xl-4">
+                                <div class="mb-3 card">
+                                    <!--<div class="card-header-tab card-header">-->
+                                        <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
+                                            <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
+                                            <!--Details-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <div class="p-0 card-body">
+                                        <div class="dropdown-menu-header mt-0 mb-0">
+                                            <div class="dropdown-menu-header-inner bg-heavy-rain">
+                                                <div class="menu-header-image opacity-1"></div>
+                                                <div class="menu-header-content text-dark">
+                                                    <h5 class="menu-header-title">Protection</h5>
+                                                    <!--<h6 class="menu-header-subtitle">-->
+                                                        <!--You have-->
+                                                        <!--<b class="text-danger">21 </b>-->
+                                                        <!--unread messages-->
+                                                    <!--</h6>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link active show" id="tab-c-9" data-toggle="tab" href="#tab-animated-9" aria-selected="true">
+                                                    <span>Psychosocial Support</span>
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-10" data-toggle="tab" href="#tab-animated-10" aria-selected="true">
+                                                    <span>Assessment</span>
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-11" data-toggle="tab" href="#tab-animated-11" aria-selected="true">
+                                                    <span>Follow-up</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-12" data-toggle="tab" href="#tab-animated-12" aria-selected="true">
+                                                    <span>Parents meeting</span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane active show" id="tab-animated-9" role="tabpanel">
+                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                    <div class="scrollbar-container ps ps--active-y">
+                                                        <div class="p-3">
+                                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Birth registration</h4>
+                                                                            <p>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Living arrangement</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Vulnerabilites of the child</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reasons being out of school</h4>
+                                                                            <p>
+                                                                            </p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="tab-animated-10" role="tabpanel">
+                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                    <div class="scrollbar-container ps">
+                                                        <div class="p-3">
+
+                                                    <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-user text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caregivers distress</h4>
+                                                                    <p>
+                                                                    </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-smartphone text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Distressed and anxious feelings</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Additional parenting or psychosocial support?</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Volunteering opportunity</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Social innovation/entrepreneurship course</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Completed the YFS course?</h4>
+                                                                    <p>
+                                                                        </p></div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="nav flex-column">
+                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
+                                                    <!--<span class="badge badge-dot badge-dot-lg badge-warning badge-pulse">Badge</span>-->
+                                                    <!--View All Messages-->
+                                                <!--</button>-->
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
 
 </div>
 

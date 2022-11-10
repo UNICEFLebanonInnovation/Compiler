@@ -547,7 +547,7 @@
                                                     <!--</li>-->
                                                     {% if request.user.is_superuser %}
                                                     <li class="nav-item">
-                                                        <a href="/Admin" class="nav-link">Admin
+                                                        <a href="/admin" class="nav-link">Admin
                                                             <!--<div class="ml-auto badge badge-success">New-->
                                                             <!--</div>-->
                                                         </a>
@@ -560,7 +560,7 @@
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a href="accounts/password/change/" class="nav-link">Change Password
+                                                        <a href="{% url 'account_change_password' %}" class="nav-link">Change Password
                                                             <!--<div class="ml-auto badge badge-success">New-->
                                                             <!--</div>-->
                                                         </a>
