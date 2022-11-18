@@ -87,8 +87,27 @@ class Child(Person):
         max_length=45,
         blank=True, null=True,
     )
+    dob = models.CharField(max_length=200, blank=True, null=True)
 
-
+    disability_type = ArrayField(
+        models.CharField(
+            choices=Choices(
+                ('Walking', _('Walking')),
+                ('Seeing', _('Seeing')),
+                ('Hearing', _('Hearing')),
+                ('Speaking', _('Speaking')),
+                ('Self_Care', _('Self Care')),
+                ('Learning', _('Learning')),
+                ('Interacting', _('Interacting')),
+                ('Other', _('Other')),
+            ),
+            max_length=50,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+    )
     # u_id = models.IntegerField(blank=True, null=True)
     # form_id = models.CharField(max_length=200, blank=True, null=True)
     barcode_subset = models.CharField(max_length=45, blank=True, null=True, db_index=True)
@@ -171,25 +190,7 @@ class Child(Person):
         )
     )
     work_type = models.CharField(max_length=100, blank=True, null=True)
-    disability_type = ArrayField(
-        models.CharField(
-            choices=Choices(
-                ('Walking', _('Walking')),
-                ('Seeing', _('Seeing')),
-                ('Hearing', _('Hearing')),
-                ('Speaking', _('Speaking')),
-                ('Self_Care', _('Self Care')),
-                ('Learning', _('Learning')),
-                ('Interacting', _('Interacting')),
-                ('Other', _('Other')),
-            ),
-            max_length=50,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-    )
+
     disability_note = models.CharField(max_length=100, blank=True, null=True)
     other_disability_note = models.CharField(max_length=100, blank=True, null=True)
     disability_comments = models.CharField(max_length=200, blank=True, null=True)

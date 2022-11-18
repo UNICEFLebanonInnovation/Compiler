@@ -37,7 +37,10 @@ def outreach_import_data(request):
         h.district = x["Districts"]
         h.cadaster = x["Cadaster"]
         h.address = x["address"]
-        h.gps = x["GPS"]
+        if x.has_key('gps'):
+            h.gps = x["gps"]
+        elif x.has_key('GPS'):
+            h.gps = x["GPS"]
         h.phone_number = x["primary_phone"]
         h.main_caregiver = x["caretaker"]
         h.caregiver_nationality = x["caretaker_nationality"]
@@ -55,14 +58,15 @@ def outreach_import_data(request):
         h.save()
         caregiver__id = h.id
         for c in x["DC"]:
-            print(c["DC/name"])
             st = Child()
             st.household = h
             st.first_name = c["DC/name"]
+            st.dob = c["DC/date_of_birth"]
+            st.sex = c["DC/gender"]
+            st.disability_type = c["DC/dis"]
             st.save()
-            print(st.id)
 
-    return HttpResponse("hello")
+    return HttpResponse("records saved successfully")
 
 
 class HouseHoldViewSet(mixins.RetrieveModelMixin,
