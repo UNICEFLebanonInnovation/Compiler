@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+# from rest_framework.response import Response
+import requests
+from requests.structures import CaseInsensitiveDict
+import json
+from django.db.models import Max
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
@@ -10,7 +15,64 @@ from dal import autocomplete
 from django.db.models import Q
 from .models import HouseHold, Child
 from .serializers import HouseHoldSerializer, ChildSerializer
+import datetime
 
+
+def outreach_import_data(request):
+    # last_loaded_identifier = HouseHold.objects.aggregate(Max('u_id'))['u_id__max']
+    # if last_loaded_identifier is None:
+    last_loaded_identifier = 0
+    last_loaded_identifier_str = str(last_loaded_identifier)
+    url = "https://kobo.humanitarianresponse.info/api/v2/assets/aSg3ARiCkQ4fZCWQR3Wceo/data.json?sort=%7B%22_id%22%3A+1%7D&query=%7B%22_id%22%3A+%7B%22%24gt%22%3A+" + last_loaded_identifier_str + "%7D%7D"
+    headers = CaseInsensitiveDict()
+    headers["Authorization"] = "Token 38ebfd9d7f948c67a1fb3d9249c4111c97bcb12d"
+    resp = requests.get(url, headers=headers)
+    data = json.loads(resp.text)
+
+    for record in data["results"]:
+        # for k, v in record.items():
+        #     print(k, v)
+        h = HouseHold()
+        h.u_id = record["_id"]
+        h.form_id = record["_xform_id_string"]
+        record_value(h, "governorate", record, "Governorate")
+        record_value(h, "district", record, "Districts")
+        record_value(h, "cadaster", record, "Cadaster")
+        record_value(h, "address", record, "cadaster_other_specify")
+        record_value(h, "address", record, "address")
+
+        record_value(h, "gps", record, "gps")
+        # h.phone_number = x["primary_phone"]
+        # h.main_caregiver = x["caretaker"]
+        # h.caregiver_nationality = x["caretaker_nationality"]
+        # h.caregiver_first_name = x["father"]
+        # h.caretaker_middle_name = x["caretaker_father"]
+        # h.caretaker_last_name = x["family"]
+        # h.caretaker_mother_name = x["caretaker_mother"]
+        # h.caretaker_dob = x["caretaker_dob"]
+        # h.mother_fullname = x["mother"]
+        # h.number_of_children = x["Q1"]
+        # h.geolocation = x["_geolocation"]
+        # h.interview_date = x["_submission_time"]
+        # h.submitted_by = x["_submitted_by"]
+        # h.interview_comment = x["_notes"]
+        # h.save()
+    #     caregiver__id = h.id
+    #     for c in x["DC"]:
+    #         st = Child()
+    #         st.household = h
+    #         st.first_name = c["DC/name"]
+    #         st.dob = c["DC/date_of_birth"]
+    #         st.sex = c["DC/gender"]
+    #         st.disability_type = c["DC/dis"]
+    #         st.save()
+
+    return HttpResponse("records saved successfully")
+
+
+def record_value(household,household_field,record, field):
+    if record.has_key(field):
+        household.household_field = record[field]
 
 class HouseHoldViewSet(mixins.RetrieveModelMixin,
                        mixins.ListModelMixin,
@@ -52,3 +114,6 @@ class ChildViewSet(mixins.RetrieveModelMixin,
             qs = self.queryset.filter(barcode_subset__contains=term).distinct()
             return qs
         return []
+
+
+

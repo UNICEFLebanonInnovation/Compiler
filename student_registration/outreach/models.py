@@ -22,11 +22,29 @@ class OutreachYear(models.Model):
 
 
 class HouseHold(models.Model):
+    u_id = models.IntegerField(blank=True, null=True)
+    form_id = models.CharField(max_length=200, blank=True, null=True)
+    governorate = models.CharField(max_length=200, blank=True, null=True)
+    district = models.CharField(max_length=200, blank=True, null=True)
+    cadaster = models.CharField(max_length=200, blank=True, null=True)
+    address = models.CharField(max_length=200, blank=True, null=True)
+    gps = models.CharField(max_length=200, blank=True, null=True)
+    phone_number = models.CharField(max_length=200, blank=True, null=True)
+    main_caregiver = models.CharField(max_length=200, blank=True, null=True)
+    caregiver_nationality = models.CharField(max_length=200, blank=True, null=True)
+    caregiver_first_name = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_middle_name = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_last_name = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_mother_name = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_dob = models.CharField(max_length=200, blank=True, null=True)
+    mother_fullname = models.CharField(max_length=200, blank=True, null=True)
+    number_of_children = models.CharField(max_length=45, blank=True, null=True)
+    geolocation = models.CharField(max_length=200, blank=True, null=True)
+    interview_date = models.CharField(max_length=200, blank=True, null=True)
+    submitted_by = models.CharField(max_length=200, blank=True, null=True)
+    interview_comment = models.CharField(max_length=200, blank=True, null=True)
 
-    form_id = models.CharField(
-        max_length=45,
-        blank=True, null=True,
-    )
+    # "to remove"
     interview_status = models.CharField(
         max_length=50,
         blank=True,
@@ -37,27 +55,20 @@ class HouseHold(models.Model):
             ('3', _('Granted for the referral')),
         )
     )
-    interview_comment = models.CharField(max_length=200, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
-    phone_number = models.CharField(max_length=45, blank=True, null=True)
     residence_type = models.CharField(
         max_length=200,
         blank=True,
         null=True,
     )
     p_code = models.CharField(max_length=100, blank=True, null=True)
-    address = models.CharField(max_length=200, blank=True, null=True)
-    number_of_children = models.CharField(max_length=45, blank=True, null=True)
     barcode_number = models.CharField(max_length=45, blank=True, null=True, db_index=True)
 
     social_worker_name = models.CharField(max_length=200, blank=True, null=True)
     partner_name = models.CharField(max_length=200, blank=True, null=True)
-    governorate = models.CharField(max_length=200, blank=True, null=True)
-    district = models.CharField(max_length=200, blank=True, null=True)
-    village = models.CharField(max_length=200, blank=True, null=True)
-    interview_date = models.CharField(max_length=200, blank=True, null=True)
 
     children = JSONField(blank=True, null=True)
+    village = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         ordering = ['id']
@@ -67,7 +78,6 @@ class HouseHold(models.Model):
 
 
 class Child(Person):
-
     household = models.ForeignKey(
         HouseHold,
         blank=True, null=True,
@@ -77,6 +87,29 @@ class Child(Person):
         max_length=45,
         blank=True, null=True,
     )
+    dob = models.CharField(max_length=200, blank=True, null=True)
+
+    disability_type = ArrayField(
+        models.CharField(
+            choices=Choices(
+                ('Walking', _('Walking')),
+                ('Seeing', _('Seeing')),
+                ('Hearing', _('Hearing')),
+                ('Speaking', _('Speaking')),
+                ('Self_Care', _('Self Care')),
+                ('Learning', _('Learning')),
+                ('Interacting', _('Interacting')),
+                ('Other', _('Other')),
+            ),
+            max_length=50,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+    )
+    # u_id = models.IntegerField(blank=True, null=True)
+    # form_id = models.CharField(max_length=200, blank=True, null=True)
     barcode_subset = models.CharField(max_length=45, blank=True, null=True, db_index=True)
     current_situation = models.CharField(
         max_length=50,
@@ -157,25 +190,7 @@ class Child(Person):
         )
     )
     work_type = models.CharField(max_length=100, blank=True, null=True)
-    disability_type = ArrayField(
-        models.CharField(
-            choices=Choices(
-                ('Walking', _('Walking')),
-                ('Seeing', _('Seeing')),
-                ('Hearing', _('Hearing')),
-                ('Speaking', _('Speaking')),
-                ('Self_Care', _('Self Care')),
-                ('Learning', _('Learning')),
-                ('Interacting', _('Interacting')),
-                ('Other', _('Other')),
-            ),
-            max_length=50,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-    )
+
     disability_note = models.CharField(max_length=100, blank=True, null=True)
     other_disability_note = models.CharField(max_length=100, blank=True, null=True)
     disability_comments = models.CharField(max_length=200, blank=True, null=True)
