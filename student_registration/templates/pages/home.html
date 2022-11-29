@@ -9,7 +9,11 @@
 {% block content %}
 
 <div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
-    Welcome {{ request.user }} to CLM<sup>+</sup>
+    Welcome
+  {% if request.user.is_authenticated %}
+  <i>{{ request.user }}</i>
+  {% endif %}
+  to CLM<sup>+</sup>
     <div class="page-title-subheading">
                                     </div>
 </div></div><div class="page-title-actions">
@@ -20,21 +24,21 @@
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registrations</div>
-                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
-                                                    <span class="opacity-10 text-success pr-2">
-                                                        <i class="fa fa-angle-up"></i>
+                                                    <span class="opacity-10 text-primary pr-2">
+                                                        <i class="fa fa-plus"></i>
                                                     </span>
-                                                    234
-                                                    <small class="opacity-5 pl-1">%</small>
+                                                    Core Package
+                                                    <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
-                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
-                                                    <div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">
-                                                        <small></small>
-                                                    </div>
-                                                </div>
+                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
+                                                        <!--<small></small>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
@@ -45,21 +49,21 @@
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Total Dropout</div>
-                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
                                                     <span class="opacity-10 text-danger pr-2">
-                                                        <i class="fa fa-angle-down"></i>
+                                                        <i class="fa fa-plus"></i>
                                                     </span>
-                                                    71
-                                                    <small class="opacity-5 pl-1">%</small>
+                                                    Walk-in - OOSC
+                                                    <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
-                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
-                                                    <div class="circle-progress circle-progress-danger-sm d-inline-block">
-                                                        <small></small>
-                                                    </div>
-                                                </div>
+                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                    <!--<div class="circle-progress circle-progress-danger-sm d-inline-block">-->
+                                                        <!--<small></small>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
@@ -70,112 +74,96 @@
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-warning border-warning card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Total Referred</div>
-                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
-                                                    <span class="opacity-10 text-sucess pr-2">
-                                                        <i class="fa fa-angle-left"></i>
+                                                    <span class="opacity-10 text-warning pr-2">
+                                                        <i class="fa fa-plus"></i>
                                                     </span>
-                                                    165
-                                                  <small class="opacity-5 pr-1">%</small>
+                                                    Walk-in - In School
+                                                  <!--<small class="opacity-5 pr-1">%</small>-->
                                                 </div>
-                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
-                                                    <div class="circle-progress circle-progress-warning-sm d-inline-block">
-                                                        <small></small>
-                                                    </div>
-                                                </div>
+                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                    <!--<div class="circle-progress circle-progress-warning-sm d-inline-block">-->
+                                                        <!--<small></small>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Need RS support</div>
-                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-                                                    <small class="text-success pr-1">+</small>
-                                                    34
-                                                    <small class="opacity-5 pl-1">%</small>
-                                                </div>
-                                                <div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">
-                                                    <div class="circle-progress circle-progress-success-sm d-inline-block">
-                                                        <small></small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                          <!--<div class="col-md-6 col-lg-3">-->
+                              <!--<div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">-->
+                                  <!--<div class="widget-chat-wrapper-outer">-->
+                                      <!--<div class="widget-chart-content">-->
+                                          <!--<div class="widget-title opacity-5 text-uppercase">Need RS support</div>-->
+                                          <!--<div class="widget-numbers mt-2 fsize-4 mb-0 w-100">-->
+                                              <!--<div class="widget-chart-flex align-items-center">-->
+                                                  <!--<div>-->
+                                                      <!--<small class="text-success pr-1">+</small>-->
+                                                      <!--34-->
+                                                      <!--<small class="opacity-5 pl-1">%</small>-->
+                                                  <!--</div>-->
+                                                  <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                      <!--<div class="circle-progress circle-progress-success-sm d-inline-block">-->
+                                                          <!--<small></small>-->
+                                                      <!--</div>-->
+                                                  <!--</div>-->
+                                              <!--</div>-->
+                                          <!--</div>-->
+                                      <!--</div>-->
+                                  <!--</div>-->
+                              <!--</div>-->
+                          <!--</div>-->
                     </div>
 
-<div class="row">
-                            <div class="col-lg-12 col-xl-12">
-                                <div class="main-card mb-3 card">
-                                    <div class="grid-menu grid-menu-2col">
-                                        <div class="no-gutters row">
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-primary"></div>
-                                                        <i class="lnr-book text-primary"></i></div>
-                                                    <div class="widget-numbers"><a href="{% url 'clm:mscc_list' %}" style="text-decoration: none;">Education</a></div>
-                                                    <!--<div class="widget-subheading">Total Views</div>-->
-                                                    <!--<div class="widget-description text-success">-->
-                                                        <!--<i class="fa fa-angle-up"></i>-->
-                                                        <!--<span class="pl-1">175.5%</span></div>-->
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-info"></div>
-                                                        <i class="lnr-graduation-hat text-info"></i>
-                                                    </div>
-                                                  <div class="widget-numbers"><a href="{% url 'clm:mscc_youth_list' %}" style="text-decoration: none;">Youth</a></div>
-                                                    <!--<div class="widget-subheading">Bugs Fixed</div>-->
-                                                    <!--<div class="widget-description text-info">-->
-                                                        <!--<i class="fa fa-arrow-right"></i>-->
-                                                        <!--<span class="pl-1">175.5%</span></div>-->
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-danger"></div>
-                                                        <i class="lnr-hand text-danger"></i>
-                                                    </div>
-                                                  <div class="widget-numbers"><a href="{% url 'clm:mscc_cp_list' %}" style="text-decoration: none;">Child Protection</a></div>
-                                                    <!--<div class="widget-subheading">Reports Submitted</div>-->
-                                                    <!--<div class="widget-description text-primary"><span class="pr-1">54.1%</span>-->
-                                                        <!--<i class="fa fa-angle-up"></i>-->
+<!--<div class="row">-->
+                            <!--<div class="col-lg-12 col-xl-12">-->
+                                <!--<div class="main-card mb-3 card">-->
+                                    <!--<div class="grid-menu grid-menu-2col">-->
+                                        <!--<div class="no-gutters row">-->
+                                            <!--<div class="col-sm-6">-->
+                                                <!--<div class="widget-chart widget-chart-hover">-->
+                                                    <!--<div class="icon-wrapper rounded-circle">-->
+                                                        <!--<div class="icon-wrapper-bg bg-primary"></div>-->
+                                                        <!--<i class="lnr-book text-primary"></i></div>-->
+                                                    <!--<div class="widget-numbers"><a href="{% url 'clm:mscc_list' %}" style="text-decoration: none;">Education</a></div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                            <!--<div class="col-sm-6">-->
+                                                <!--<div class="widget-chart widget-chart-hover">-->
+                                                    <!--<div class="icon-wrapper rounded-circle">-->
+                                                        <!--<div class="icon-wrapper-bg bg-info"></div>-->
+                                                        <!--<i class="lnr-graduation-hat text-info"></i>-->
                                                     <!--</div>-->
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover br-br">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-success"></div>
-                                                        <i class="pe-7s-eyedropper"></i></div>
-                                                  <div class="widget-numbers"><a href="{% url 'clm:mscc_health_list' %}" style="text-decoration: none;">Health & Nutrition</a></div>
-                                                    <!--<div class="widget-subheading">Profiles</div>-->
-                                                    <!--<div class="widget-description text-warning"><span class="pr-1">175.5%</span>-->
-                                                        <!--<i class="fa fa-arrow-left"></i>-->
+                                                  <!--<div class="widget-numbers"><a href="{% url 'clm:mscc_youth_list' %}" style="text-decoration: none;">Youth</a></div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                            <!--<div class="col-sm-6">-->
+                                                <!--<div class="widget-chart widget-chart-hover">-->
+                                                    <!--<div class="icon-wrapper rounded-circle">-->
+                                                        <!--<div class="icon-wrapper-bg bg-danger"></div>-->
+                                                        <!--<i class="lnr-hand text-danger"></i>-->
                                                     <!--</div>-->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-</div>
+                                                  <!--<div class="widget-numbers"><a href="{% url 'clm:mscc_cp_list' %}" style="text-decoration: none;">Child Protection</a></div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                            <!--<div class="col-sm-6">-->
+                                                <!--<div class="widget-chart widget-chart-hover br-br">-->
+                                                    <!--<div class="icon-wrapper rounded-circle">-->
+                                                        <!--<div class="icon-wrapper-bg bg-success"></div>-->
+                                                        <!--<i class="pe-7s-eyedropper"></i></div>-->
+                                                  <!--<div class="widget-numbers"><a href="{% url 'clm:mscc_health_list' %}" style="text-decoration: none;">Health & Nutrition</a></div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+<!--</div>-->
 
 {% endblock %}
 
