@@ -96,6 +96,7 @@ LOCAL_APPS = [
     'student_registration.backends',  # custom storage app
     'student_registration.staffenroll',
     'student_registration.staffs',
+    'student_registration.mscc',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -343,9 +344,10 @@ SOCIALACCOUNT_ADAPTER = 'student_registration.users.adapters.SocialAccountAdapte
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = 'users.User'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'login_success'
 # LOGIN_REDIRECT_URL = 'users:redirect'
-LOGIN_URL = 'account_login'
+LOGIN_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # SLUGLIFIER
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
