@@ -74,7 +74,6 @@ THIRD_PARTY_APPS = [
 
     'bootstrap3',
     'bootstrap3_datetime',
-    # 'bootstrap4',
     'import_export',
     'django_tables2',
     'django_celery_beat',
@@ -166,10 +165,10 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'test',
-#         'USER': 'compiler@compiler-test',
-#         'PASSWORD': 'TestInn0vation!',
-#         'HOST': 'compiler-test.postgres.database.azure.com',
+#         'NAME': 'Student_Registration',
+#         'USER': 'postgres',
+#         'PASSWORD': 'pg007',
+#         'HOST': 'localhost',
 #         'PORT': '5432',
 #     }
 # }
@@ -295,7 +294,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptPasswordHasher',
 ]
 #Turn Timezone off
-# USE_TZ = False
+USE_TZ = False
 
 # PASSWORD VALIDATION
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
