@@ -338,3 +338,137 @@ class Inclusion(TimeStampedModel):
         ordering = ['id']
         verbose_name = "Inclusion"
         verbose_name_plural = "Inclusions"
+
+
+class DigitalService(models.Model):
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    using_akelius = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child using Akelius?')
+    )
+
+    using_lp = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child using Learning Passport?')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Digital"
+        verbose_name_plural = "Digital"
+
+
+class PSSService(models.Model):
+
+    LIVING_ARRANGEMENT = Choices(
+        ('Unaccompanied or Separated Child', _('Unaccompanied or Separated Child')),
+        ('Living with single parent/caregiver', _('Living with single parent/caregiver')),
+        ('Living with Mother/women-headed Household ', _('Living with Mother/women-headed Household')),
+        ('Child-headed Household', _('Child-headed Household')),
+        ('Main caregiver is ill/disabled', _('Main caregiver is ill/disabled')),
+    )
+
+    CHILD_VULNERABILITY = Choices(
+        ('Clear signs of neglect', _('Clear signs of neglect')),
+        ('Clear signs of distress', _('Clear signs of distress')),
+        ('Clear signs of physical maltreatment/damage and/or injuries',
+         _('Clear signs of physical maltreatment/damage and/or injuries')),
+    )
+
+    OUT_SCHOOL_REASONS = Choices(
+        ('Fear of bullying, discrimination or violence at school or on the way to school',
+         _('Fear of bullying, discrimination or violence at school or on the way to school')),
+        ('The child needs to work', _('The child needs to work')),
+        ('The child needs to stay at home to support the family with chores',
+         _('The child needs to stay at home to support the family with chores')),
+        ('Disability', _('Disability')),
+    )
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    child_registered = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child registered/ have birth registration?')
+    )
+
+    child_living_arrangement = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=LIVING_ARRANGEMENT,
+        verbose_name=_("What is the child's living arrangement?")
+    )
+
+    child_vulnerability = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=CHILD_VULNERABILITY,
+        verbose_name=_("What is the child's living arrangement?")
+    )
+
+    child_out_school_reasons = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=OUT_SCHOOL_REASONS,
+        verbose_name=_("Reasons for a child being out of school")
+    )
+
+    caregivers_distress = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Do you feel distressed and anxious?')
+    )
+
+    caregivers_additional_parenting = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('If yes, would you like any additional parenting or psychosocial support?')
+    )
+
+    child_distress = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Are any of the children in your HH experiencing any '
+                       'signs of distress or negative mental health symptoms ?')
+    )
+
+    child_additional_parenting = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('If yes, do you need additional support '
+                       'for taking care or better dealing with your children?')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Digital"
+        verbose_name_plural = "Digital"
