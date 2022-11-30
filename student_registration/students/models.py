@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from student_registration.locations.models import Location
 from django import forms
 
+
 def validate_file_size(value):
     filesize = value.size
     if filesize > 250000:

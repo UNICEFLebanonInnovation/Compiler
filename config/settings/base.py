@@ -400,7 +400,7 @@ SWAGGER_SETTINGS = {
 
 # Django Suit configuration
 SUIT_CONFIG = {
-    'ADMIN_NAME': 'Compiler',
+    'ADMIN_NAME': 'CLM',
     'CONFIRM_UNSAVED_CHANGES': False,
 
     'MENU': (
