@@ -18,6 +18,17 @@ from student_registration.schools.models import (
     PartnerOrganization
 )
 
+TYPES = Choices(
+    ('Core-Package', _('Core Package')),
+    ('Walk-in-OOSC', _('Walk-in OOSC')),
+    ('Walk-in-In-School', _('Walk-in In School')),
+)
+
+YES_NO = Choices(
+    ('Yes', _("Yes")),
+    ('No', _("No"))
+)
+
 
 class Assessment(models.Model):
     name = models.CharField(max_length=100)
@@ -61,30 +72,50 @@ class Referral(models.Model):
 
 
 class Registration(TimeStampedModel):
-    CURRENT_YEAR = datetime.datetime.now().year
 
     HAVE_LABOUR = Choices(
-        ('no', _('No')),
-        ('yes_morning', _('Yes - Morning')),
-        ('yes_afternoon', _('Yes - Afternoon')),
-        ('yes_all_day', _('Yes - All day')),
+            ('No', _('No')),
+            ('Yes - Morning', _('Yes - Morning')),
+            ('Yes - Afternoon', _('Yes - Afternoon')),
+            ('Yes - All day', _('Yes - All day')),
     )
     LABOURS = Choices(
-        ('', '----------'),
-        ('agriculture', _('Agriculture')),
-        ('building', _('Building')),
-        ('manufacturing', _('Manufacturing')),
-        ('retail_store', _('Retail / Store')),
-        ('begging', _('Begging')),
-        ('other_many_other', _('Other services')),
-        # ('other', _('Other')),
+            ('', '----------'),
+            ('Agriculture', _('Agriculture')),
+            ('Building', _('Building')),
+            ('Manufacturing', _('Manufacturing')),
+            ('Retail / Store', _('Retail / Store')),
+            ('Begging', _('Begging')),
+            ('Other services', _('Other services')),
+            # ('other', _('Other')),
     )
     LABOUR_INCOME = Choices(
-        ('', '----------'),
-        ('thousand_or_less', _('10,000 LBP or less')),
-        ('eleven_thousand_to_twenty_five', _('11,000 to 25,000 LBP')),
-        ('twenty_six_thousand_to_fifty', _('26,000 to 50,000 LBP')),
-        ('more_than_fifty', _('More than 50,000 LBP'))
+            ('', '----------'),
+            ('thousand_or_less', _('10,000 LBP or less')),
+            ('eleven_thousand_to_twenty_five', _('11,000 to 25,000 LBP')),
+            ('twenty_six_thousand_to_fifty', _('26,000 to 50,000 LBP')),
+            ('more_than_fifty', _('More than 50,000 LBP'))
+    )
+    IDENTIFICATION_SOURCE = Choices(
+            ('', '----------'),
+            ('Dirassa', _('Dirassa')),
+            ('Awarness Session', _('Awarness Session')),
+            ('Child''s parents', _('Child''s parents')),
+            ('From Hosted Community', _('From Hosted Community')),
+            ('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
+             _('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ')),
+            ('From Profiling Database', _('From Profiling Database')),
+            ('From Other NGO', _('From Other NGO')),
+            ('From Displaced Community', _('From Displaced Community')),
+            ('Referred by the municipality/Other formal sources', _('Referred by the municipality/Other formal sources')),
+            ('Other Sources', _('Other Sources')),
+    )
+    CASH_SUPPORT_PROGRAMMES = Choices(
+            ('', '----------'),
+            ('Haddi', _('Haddi')),
+            ('Education Cash assistance', _('Education Cash assistance')),
+            ('UNHCR cash assistance', _('UNHCR cash assistance')),
+            ('WFP cash assistance', _('WFP cash assistance')),
     )
 
     center = models.ForeignKey(
@@ -127,8 +158,8 @@ class Registration(TimeStampedModel):
         max_length=100,
         blank=True,
         null=True,
-        verbose_name=_(
-            'Please specify (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')
+        verbose_name=_('Please specify (hotel, restaurant, transport, personal '
+                       'services such as cleaning, hair care, cooking and childcare)')
     )
     labour_hours = models.IntegerField(
         blank=True,
@@ -146,32 +177,12 @@ class Registration(TimeStampedModel):
         max_length=100,
         blank=True,
         null=True,
-        choices=Choices(
-            ('', '----------'),
-            ('Dirassa', _('Dirassa')),
-            ('Awarness Session', _('Awarness Session')),
-            ('Child''s parents', _('Child''s parents')),
-            ('From Hosted Community', _('From Hosted Community')),
-            ('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
-             _('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ')),
-            ('From Profiling Database', _('From Profiling Database')),
-            ('From Other NGO', _('From Other NGO')),
-            ('From Displaced Community', _('From Displaced Community')),
-            ('Referred by the municipality/Other formal sources', _('Referred by the municipality/Other formal sources')),
-            ('Other Sources', _('Other Sources')),
-        ),
+        choices=IDENTIFICATION_SOURCE,
         verbose_name=_('Source of referral of the child to MSCC')
     )
-
     cash_support_programmes = ArrayField(
         models.CharField(
-            choices=Choices(
-                ('', '----------'),
-                ('Haddi', _('Haddi')),
-                ('Education Cash assistance', _('Education Cash assistance')),
-                ('UNHCR cash assistance', _('UNHCR cash assistance')),
-                ('WFP cash assistance', _('WFP cash assistance')),
-            ),
+            choices=CASH_SUPPORT_PROGRAMMES,
             max_length=100,
             blank=True,
             null=True,
@@ -179,6 +190,13 @@ class Registration(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Cash support programmes that child is already benefitting from')
+    )
+    type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=TYPES,
+        verbose_name=_('Type')
     )
 
     owner = models.ForeignKey(
@@ -225,9 +243,96 @@ class Registration(TimeStampedModel):
         verbose_name_plural = "MSCC Registrations"
 
 
+class ProvidedServices(models.Model):
+
+    TYPES = Choices(
+            ('Core-Package', _('Core Package')),
+            ('Walk-in-OOSC', _('Walk-in OOSC')),
+            ('Walk-in-In-School', _('Walk-in In School')),
+    )
+
+    name = models.CharField(
+        max_length=250,
+        blank=False,
+        null=False,
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    child = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='+',
+    )
+    type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Type')
+    )
+    completed = models.BooleanField(blank=True, default=False)
+    required = models.BooleanField(blank=True, default=False)
+    completion_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Completion date')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Provided Service"
+        verbose_name_plural = "Provided Services"
+
+
+class Packages(models.Model):
+
+    name = models.CharField(
+        max_length=250,
+        blank=False,
+        null=False,
+    )
+    type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=TYPES,
+        verbose_name=_('Type')
+    )
+    required = models.BooleanField(blank=True, default=False)
+    age = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Package"
+        verbose_name_plural = "Packages"
+
+
 class Inclusion(TimeStampedModel):
 
+    PARENTAL_ENGAGEMENT = Choices(
+        ('Mother Only', _('Mother Only')),
+        ('Father Only', _('Father Only')),
+        ('Both', _('Both')),
+        ('No one', _('No one')),
+        ("Haven't started yet", _("Haven't started yet")),
+    )
 
+    dropout = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Dropout')
+    )
+    parental_engagement = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PARENTAL_ENGAGEMENT,
+        verbose_name=_('Parental Engagement Curriculum')
+    )
 
     class Meta:
         ordering = ['id']

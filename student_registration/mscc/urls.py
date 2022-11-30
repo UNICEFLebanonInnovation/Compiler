@@ -7,59 +7,44 @@ from . import views
 urlpatterns = [
 
     url(
-        regex=r'^mscc-add/$',
-        view=mscc_views.MSCCAddView.as_view(),
-        name='mscc_add'
+        regex=r'^add-child/$',
+        view=views.MainAddView.as_view(),
+        name='add_child'
     ),
     url(
-        regex=r'^mscc-edit/(?P<pk>[\w.@+-]+)/$',
-        view=mscc_views.MSCCEditView.as_view(),
-        name='mscc_edit'
+        regex=r'^edit-child/(?P<pk>[\w.@+-]+)/$',
+        view=views.MainEditView.as_view(),
+        name='edit_child'
     ),
     # url(
-    #     regex=r'^mscc-export/$',
-    #     view=mscc_views.MSCCExportViewSet.as_view(),
-    #     name='mscc_export'
+    #     regex=r'^export/$',
+    #     view=views.ExportViewSet.as_view(),
+    #     name='export'
     # ),
     url(
-        regex=r'^mscc-list/$',
-        view=mscc_views.MSCCListView.as_view(),
-        name='mscc_list'
+        regex=r'^list/$',
+        view=views.MainListView.as_view(),
+        name='list'
     ),
     url(
         regex=r'^education-situation/(?P<pk>[\w.@+-]+)/$',
-        view=mscc_views.MSCCEducationSituationView.as_view(),
+        view=views.EducationSituationView.as_view(),
         name='education_situation'
     ),
     url(
         regex=r'^diagnostic-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=mscc_views.DiagnosticAssessmentView.as_view(),
+        view=views.DiagnosticAssessmentView.as_view(),
         name='diagnostic_assessment'
     ),
     url(
         regex=r'^education-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=mscc_views.EducationAssessmentView.as_view(),
+        view=views.EducationAssessmentView.as_view(),
         name='education_assessment'
     ),
     url(
-        regex=r'^mscc-youth-list/$',
-        view=mscc_views.MSCCYouthListView.as_view(),
-        name='mscc_youth_list'
-    ),
-    url(
-        regex=r'^mscc-health-list/$',
-        view=mscc_views.MSCCHealthListView.as_view(),
-        name='mscc_health_list'
-    ),
-    url(
-        regex=r'^mscc-cp-list/$',
-        view=mscc_views.MSCCCPListView.as_view(),
-        name='mscc_cp_list'
-    ),
-    url(
-        regex=r'^mscc-view/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^child-profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
-        name='mscc_view'
+        name='view_child'
     ),
 
 

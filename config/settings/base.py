@@ -34,7 +34,7 @@ if READ_DOT_ENV_FILE:
     print('The .env file has been loaded. See base.py for more information')
 
 
-USE_TZ = False
+#USE_TZ = False
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
@@ -209,7 +209,7 @@ USE_I18N = True
 USE_L10N = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
-USE_TZ = True
+USE_TZ = False
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptPasswordHasher',
 ]
 #Turn Timezone off
-USE_TZ = False
+#USE_TZ = False
 
 # PASSWORD VALIDATION
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators

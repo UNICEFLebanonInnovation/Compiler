@@ -40,6 +40,18 @@ from .serializers import (
 )
 
 
+class ProfileView(LoginRequiredMixin,
+                  TemplateView):
+    template_name = 'mscc/profile.html'
+
+    def get_context_data(self, **kwargs):
+        instance = Registration.objects.get(id=self.kwargs['pk'])
+
+        return {
+            'instance': instance,
+        }
+
+
 class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
@@ -139,14 +151,13 @@ class MainEditView(LoginRequiredMixin,
         return super(MainEditView, self).form_valid(form)
 
 
-
-
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
                    ExportMixin,
                    SingleTableView,
                    RequestConfig):
+
     table_class = MainTable
     model = Registration
     template_name = 'mscc/list.html'
@@ -208,13 +219,13 @@ class DiagnosticAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = MSCC.objects.get(id=self.kwargs['pk'])
+        instance = Registration.objects.get(id=self.kwargs['pk'])
 
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
 
         else:
-            data = MSCCSerializer(instance).data
+            data = MainSerializer(instance).data
             if 'pre_test' in data:
                 p_test = data['pre_test']
                 if p_test:
@@ -249,7 +260,7 @@ class DiagnosticAssessmentView(LoginRequiredMixin,
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = MSCC.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = Registration.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(DiagnosticAssessmentView, self).form_valid(form)
 

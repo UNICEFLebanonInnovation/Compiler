@@ -15,9 +15,9 @@ class BootstrapTable(tables.Table):
 
 class CommonTable(tables.Table):
 
-    student_age = tables.Column(verbose_name=_('Age'), accessor='child.age')
+    child_age = tables.Column(verbose_name=_('Age'), accessor='child.age')
     created = tables.Column(verbose_name='Created', accessor='registration.created')
-    student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='child.birthday')
+    child_birthday = tables.Column(verbose_name=_('Birthday'), accessor='child.birthday')
 
     class Meta:
         model = Registration
@@ -40,16 +40,16 @@ class MainTable(CommonTable):
             # 'followup_column',
             # 'round',
             # 'internal_number',
-            # 'student.id_number',
-            'student.number',
-            'student.first_name',
-            'student.father_name',
-            'student.last_name',
-            'student.mother_fullname',
-            'student.sex',
-            'student_age',
-            'student_birthday',
-            'student.nationality',
+            # 'child.id_number',
+            'child.number',
+            'child.first_name',
+            'child.father_name',
+            'child.last_name',
+            'child.mother_fullname',
+            'child.sex',
+            'child_age',
+            'child_birthday',
+            'child.nationality',
             'governorate',
             'district',
             'owner',
