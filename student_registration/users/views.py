@@ -70,7 +70,7 @@ def login_success(request):
     Redirects users based on whether they are in the admins group
     """
 
-    return HttpResponseRedirect(reverse('clm:mscc_list'))
+    return HttpResponseRedirect(reverse('mscc:list'))
 
     # if request.user.groups.filter(name="HR").exists():
     #     # user is an admin
