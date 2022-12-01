@@ -34,7 +34,7 @@ if READ_DOT_ENV_FILE:
     print('The .env file has been loaded. See base.py for more information')
 
 
-USE_TZ = False
+#USE_TZ = False
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
@@ -96,6 +96,8 @@ LOCAL_APPS = [
     'student_registration.backends',  # custom storage app
     'student_registration.staffenroll',
     'student_registration.staffs',
+    'student_registration.mscc',
+    'student_registration.child',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -208,7 +210,7 @@ USE_I18N = True
 USE_L10N = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
-USE_TZ = True
+USE_TZ = False
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -294,7 +296,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptPasswordHasher',
 ]
 #Turn Timezone off
-USE_TZ = False
+#USE_TZ = False
 
 # PASSWORD VALIDATION
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
@@ -343,9 +345,10 @@ SOCIALACCOUNT_ADAPTER = 'student_registration.users.adapters.SocialAccountAdapte
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = 'users.User'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'login_success'
 # LOGIN_REDIRECT_URL = 'users:redirect'
-LOGIN_URL = 'account_login'
+LOGIN_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # SLUGLIFIER
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
@@ -398,7 +401,7 @@ SWAGGER_SETTINGS = {
 
 # Django Suit configuration
 SUIT_CONFIG = {
-    'ADMIN_NAME': 'Compiler',
+    'ADMIN_NAME': 'CLM',
     'CONFIRM_UNSAVED_CHANGES': False,
 
     'MENU': (

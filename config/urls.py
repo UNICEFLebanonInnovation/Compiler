@@ -47,7 +47,7 @@ from student_registration.locations.views import (
     LocationViewSet,
 )
 
-from student_registration.users.views import LoginRedirectView
+from student_registration.users.views import LoginRedirectView, home, login_success
 from student_registration.enrollments.views import (
     EnrollmentViewSet,
     EnrollmentImportViewSet,
@@ -103,9 +103,11 @@ schema_view = get_swagger_view(title='Compiler API')
 
 
 urlpatterns = [
-    url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
+    url(r'^$', home, name="home"),
+    # url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
+    url(r'login_success/$', login_success, name='login_success'),
     url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
@@ -118,6 +120,7 @@ urlpatterns = [
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     # url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
+    url(r'^mscc/', include('student_registration.mscc.urls', namespace='mscc')),
     url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     # url(r'^staffenroll/', include('student_registration.staffenroll.urls', namespace='staffenroll')),

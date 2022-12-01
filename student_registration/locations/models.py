@@ -40,3 +40,21 @@ class Location(MPTTModel):
     class Meta:
         unique_together = ('name', 'type', 'p_code')
         ordering = ['name']
+
+
+class Center(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Center')
+    )
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Center"
+        verbose_name_plural = "Centers"
+
+    def __unicode__(self):
+        return self.name
