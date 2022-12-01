@@ -486,5 +486,78 @@ class PSSService(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Digital"
-        verbose_name_plural = "Digital"
+        verbose_name = "Service"
+        verbose_name_plural = "Services"
+
+
+class HealthNutrition(TimeStampedModel):
+
+    DEVELOPMENT_DELAYS = Choices(
+        ('Mental', _('Mental')),
+        ('Cognitive', _('Cognitive')),
+        ('Neurological', _('Neurological')),
+        ('no', _('No')),
+    )
+    baby_breastfed = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the baby being Breastfed?')
+    )
+    infant_exclusively_breastfed = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?')
+    )
+    eat_solid_food = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child start to eat solid food?')
+    )
+    age_eat_solid_food = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('If yes, at which age ?')
+    )
+    child_vaccinated = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child being vaccinated as per the National vaccination calendar?')
+    )
+    development_delays_identified = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=DEVELOPMENT_DELAYS,
+        verbose_name=_('Any mental , cognitive or neurological development delays is being identified?')
+    )
+    eating_minimum_meals = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child eating 3 minimum meals per day?')
+    )
+    positive_parenting = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('positive parenting and dealing with difficult children without the use of harsh punishment?')
+    )
+    respond_stressful_events = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('how children of different ages respond to and understand stressful and traumatic events?')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Health"
+        verbose_name_plural = "Health"
+
