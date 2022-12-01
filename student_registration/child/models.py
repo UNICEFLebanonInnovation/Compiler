@@ -6,12 +6,12 @@ from student_registration.students.models import Nationality
 from student_registration.clm.models import Disability, EducationalLevel
 
 
-class Student(TimeStampedModel):
-    from student_registration.outreach.models import Child
-    outreach_child = models.ForeignKey(
-        Child,
-        blank=True, null=True,
-    )
+class Child(TimeStampedModel):
+    # from student_registration.outreach.models import Child
+    # outreach_child = models.ForeignKey(
+    #     Child,
+    #     blank=True, null=True,
+    # )
     CURRENT_YEAR = datetime.now().year
     MONTHS = Choices(
         ('1', _('January')),
