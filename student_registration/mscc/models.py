@@ -491,12 +491,16 @@ class PSSService(models.Model):
 
 
 class HealthNutrition(TimeStampedModel):
-
     DEVELOPMENT_DELAYS = Choices(
         ('Mental', _('Mental')),
         ('Cognitive', _('Cognitive')),
         ('Neurological', _('Neurological')),
         ('no', _('No')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
     )
     baby_breastfed = models.CharField(
         max_length=10,
@@ -561,3 +565,156 @@ class HealthNutrition(TimeStampedModel):
         verbose_name = "Health"
         verbose_name_plural = "Health"
 
+
+class Education(TimeStampedModel):
+    EDUCATION_STATUS = Choices(
+        ('', '----------'),
+        ('never registered', _('never registered in any formal school before')),
+        ('Was registered in formal school but didnt continue',
+         _('Was registered in formal school but didn’t continue')),
+        ('Was registered in non formal program and was referred to MSCC',
+         _('Was registered in non formal program and was referred to MSCC')),
+        ('Was registered in non formal program but did not continue',
+         _('Was registered in non formal program but did not continue')),
+        ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programse')),
+        ('no', _('No')),
+    )
+    DROPOUT_PROGRAM = Choices(
+        ('', '----------'),
+        ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
+        ('Was registered in BLN program', _('Was registered in BLN program')),
+        ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue')),
+        ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
+        ('other', _('Other')),
+    )
+    EDUCATION_PROGRAM = Choices(
+        ('', '----------'),
+        ('BLN Level 1', _('BLN Level 1')),
+        ('BLN Level 2', _('BLN Level 2')),
+        ('YBLN', _('YBLN')),
+        ('YFNL', _('YFNL')),
+        ('CBECE Level 3', _('CBECE Level 3')),
+        ('Retention Support', _('Retention Support')),
+    ),
+    SCHOOL_SHIFTS = Choices(
+        ('', _('----------')),
+        ('first', _('First shift')),
+        ('second', _('Second shift')),
+    )
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four')),
+        ('level_five', _('Level five')),
+        ('level_six', _('Level six'))
+    )
+    SUPPORT_NEEDED = Choices(
+        ('', _('----------')),
+        ('foreign languages', _('Foreign Languages')),
+        ('arabic', _('Arabic')),
+        ('math', _('Math')),
+        ('sciences', _('Sciences')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    education_status = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=EDUCATION_STATUS,
+        verbose_name=_('Child’s educational level when registering for the round')
+    )
+    dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Please Specify dropout date from school')
+    )
+    dropout_program = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=DROPOUT_PROGRAM,
+        verbose_name=_('Dropout Program')
+    )
+    dropout_program_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('please specify')
+    )
+    education_program = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=EDUCATION_PROGRAM,
+        verbose_name=_('Education Program')
+    )
+    registration_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of registration in the round')
+    )
+    # RS fields
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Name of public School')
+    )
+    foreign_language_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 100)),
+        verbose_name=_('Foreign Languages grade')
+    )
+    arabic_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 100)),
+        verbose_name=_('Arabic grade')
+    )
+    math_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 100)),
+        verbose_name=_('Math grade')
+    )
+    sciences_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 100)),
+        verbose_name=_('Sciences grade')
+    )
+    shift = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SCHOOL_SHIFTS,
+        verbose_name=_('First or Second shift schools')
+    )
+    grade_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
+        verbose_name=_('Grade level')
+    )
+    support_needed = ArrayField(
+        models.CharField(
+            choices=SUPPORT_NEEDED,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Needed support')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Education"
+        verbose_name_plural = "Education"
