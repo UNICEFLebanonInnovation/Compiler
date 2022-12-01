@@ -24,20 +24,26 @@ class OutreachYear(models.Model):
 class HouseHold(models.Model):
     u_id = models.IntegerField(blank=True, null=True)
     form_id = models.CharField(max_length=200, blank=True, null=True)
+    partner_name = models.CharField(max_length=200, blank=True, null=True)
     governorate = models.CharField(max_length=200, blank=True, null=True)
     district = models.CharField(max_length=200, blank=True, null=True)
     cadaster = models.CharField(max_length=200, blank=True, null=True)
+    cadaster_other_specify = models.CharField(max_length=200, blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     gps = models.CharField(max_length=200, blank=True, null=True)
     phone_number = models.CharField(max_length=200, blank=True, null=True)
+    secondary_phone = models.CharField(max_length=200, blank=True, null=True)
+    father_name = models.CharField(max_length=200, blank=True, null=True)
+    mother_full_name = models.CharField(max_length=200, blank=True, null=True)
+    last_name = models.CharField(max_length=200, blank=True, null=True)
     main_caregiver = models.CharField(max_length=200, blank=True, null=True)
     caregiver_nationality = models.CharField(max_length=200, blank=True, null=True)
+    caregiver_nationality_other = models.CharField(max_length=200, blank=True, null=True)
     caregiver_first_name = models.CharField(max_length=200, blank=True, null=True)
-    caretaker_middle_name = models.CharField(max_length=200, blank=True, null=True)
-    caretaker_last_name = models.CharField(max_length=200, blank=True, null=True)
-    caretaker_mother_name = models.CharField(max_length=200, blank=True, null=True)
-    caretaker_dob = models.CharField(max_length=200, blank=True, null=True)
-    mother_fullname = models.CharField(max_length=200, blank=True, null=True)
+    caregiver_father_name = models.CharField(max_length=200, blank=True, null=True)
+    caregiver_last_name = models.CharField(max_length=200, blank=True, null=True)
+    caregiver_mother_name = models.CharField(max_length=200, blank=True, null=True)
+    caregiver_dob = models.CharField(max_length=200, blank=True, null=True)
     number_of_children = models.CharField(max_length=45, blank=True, null=True)
     geolocation = models.CharField(max_length=200, blank=True, null=True)
     interview_date = models.CharField(max_length=200, blank=True, null=True)
@@ -65,11 +71,15 @@ class HouseHold(models.Model):
     barcode_number = models.CharField(max_length=45, blank=True, null=True, db_index=True)
 
     social_worker_name = models.CharField(max_length=200, blank=True, null=True)
-    partner_name = models.CharField(max_length=200, blank=True, null=True)
 
     children = JSONField(blank=True, null=True)
     village = models.CharField(max_length=200, blank=True, null=True)
 
+    mother_fullname = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_middle_name = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_last_name = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_mother_name = models.CharField(max_length=200, blank=True, null=True)
+    caretaker_dob = models.CharField(max_length=200, blank=True, null=True)
     class Meta:
         ordering = ['id']
 
