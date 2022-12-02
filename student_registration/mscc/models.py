@@ -486,16 +486,17 @@ class PSSService(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Service"
-        verbose_name_plural = "Services"
+        verbose_name = "PSS Service"
+        verbose_name_plural = "PSS Services"
 
 
 class HealthNutrition(TimeStampedModel):
+
     DEVELOPMENT_DELAYS = Choices(
         ('Mental', _('Mental')),
         ('Cognitive', _('Cognitive')),
         ('Neurological', _('Neurological')),
-        ('no', _('No')),
+        ('No', _('No')),
     )
     registration = models.ForeignKey(
         Registration,
@@ -557,7 +558,7 @@ class HealthNutrition(TimeStampedModel):
     )
     respond_stressful_events = models.TextField(
         blank=True, null=True,
-        verbose_name=_('how children of different ages respond to and understand stressful and traumatic events?')
+        verbose_name=_('How children of different ages respond to and understand stressful and traumatic events?')
     )
 
     class Meta:
@@ -569,15 +570,15 @@ class HealthNutrition(TimeStampedModel):
 class Education(TimeStampedModel):
     EDUCATION_STATUS = Choices(
         ('', '----------'),
-        ('never registered', _('never registered in any formal school before')),
+        ('Never registered in any formal school before', _('Never registered in any formal school before')),
         ('Was registered in formal school but didnt continue',
-         _('Was registered in formal school but didn’t continue')),
+         _('Was registered in formal school but didn\'t continue')),
         ('Was registered in non formal program and was referred to MSCC',
          _('Was registered in non formal program and was referred to MSCC')),
         ('Was registered in non formal program but did not continue',
          _('Was registered in non formal program but did not continue')),
         ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programse')),
-        ('no', _('No')),
+        ('No', _('No')),
     )
     DROPOUT_PROGRAM = Choices(
         ('', '----------'),
@@ -585,7 +586,7 @@ class Education(TimeStampedModel):
         ('Was registered in BLN program', _('Was registered in BLN program')),
         ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue')),
         ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
-        ('other', _('Other')),
+        ('Other', _('Other')),
     )
     EDUCATION_PROGRAM = Choices(
         ('', '----------'),
@@ -598,24 +599,24 @@ class Education(TimeStampedModel):
     ),
     SCHOOL_SHIFTS = Choices(
         ('', _('----------')),
-        ('first', _('First shift')),
-        ('second', _('Second shift')),
+        ('First shift', _('First shift')),
+        ('Second shift', _('Second shift')),
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
-        ('level_one', _('Level one')),
-        ('level_two', _('Level two')),
-        ('level_three', _('Level three')),
-        ('level_four', _('Level four')),
-        ('level_five', _('Level five')),
-        ('level_six', _('Level six'))
+        ('Level one', _('Level one')),
+        ('Level two', _('Level two')),
+        ('Level three', _('Level three')),
+        ('Level four', _('Level four')),
+        ('Level five', _('Level five')),
+        ('Level six', _('Level six'))
     )
     SUPPORT_NEEDED = Choices(
         ('', _('----------')),
-        ('foreign languages', _('Foreign Languages')),
-        ('arabic', _('Arabic')),
-        ('math', _('Math')),
-        ('sciences', _('Sciences')),
+        ('Foreign Languages', _('Foreign Languages')),
+        ('Arabic', _('Arabic')),
+        ('Math', _('Math')),
+        ('Sciences', _('Sciences')),
     )
     registration = models.ForeignKey(
         Registration,
@@ -627,7 +628,7 @@ class Education(TimeStampedModel):
         blank=True,
         null=True,
         choices=EDUCATION_STATUS,
-        verbose_name=_('Child’s educational level when registering for the round')
+        verbose_name=_('Child\'s educational level when registering for the round')
     )
     dropout_date = models.DateField(
         blank=True,
