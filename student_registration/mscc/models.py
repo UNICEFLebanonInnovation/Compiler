@@ -1092,3 +1092,124 @@ class Youth(TimeStampedModel):
         verbose_name = "Education Assessment"
         verbose_name_plural = "Education Assessments"
 
+
+class ProtectionFollowUp(TimeStampedModel):
+    FOLLOW_UP_TYPE = Choices(
+            ('none', _('----------')),
+            ('Phone call', _('Phone call')),
+            ('Home Visits', _('Home Visits')),
+            ('Caregiver visited the center', _('Caregiver visited the center')),
+    )
+    FOLLOW_UP_RESULT = Choices(
+        ('Child returned to program', _('Child returned to program')),
+        ('Child referred to specialized services', _('Child referred to specialized services')),
+        ('Child referred to CP', _('Child referred to CP')),
+        ('Child referred to Health programme', _('Child referred to Health programme')),
+        ('Follow-up with parents', _('Follow-up with parents')),
+        ('Dropout/No Interest', _('Dropout/No Interest')),
+    )
+    MEETING_TYPE = Choices(
+        ('PSS Session', _('PSS Session')),
+        ('COVID health awareness session', _('COVID health awareness session')),
+    )
+    SESSION_MODALITY = Choices(
+        ('Online via Whatsapp', _("Online via Whatsapp")),
+        ('Phone calls', _("Phone calls")),
+        ('Offline (F2F)', _("Offline (F2F)"))
+    )
+    CAREGIVER = Choices(
+        ('', '----------'),
+        ('mother', _('Mother')),
+        ('father', _('Father')),
+        ('other', _('Other')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    follow_up_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=FOLLOW_UP_TYPE,
+        verbose_name=_('In case of absence, type of Follow-up done')
+    )
+    phone_call_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of phone calls done')
+    )
+    house_visit_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of home visits done')
+    )
+    caregiver_visit_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of caregiver visits to center')
+    )
+    follow_up_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=FOLLOW_UP_RESULT,
+        verbose_name=_('Result of follow up')
+    )
+    dropout_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Reason for dropout')
+    )
+    dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Dropout Date')
+    )
+    parent_attended_meeting = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child\'s caregiver attend parent meeting/engagment sessions')
+    )
+    meeting_type = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=MEETING_TYPE,
+        verbose_name=_('Please indicate the types of meeting')
+    )
+    meeting_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('number of sessions attended')
+    )
+
+    meeting_modality = ArrayField(
+        models.CharField(
+            choices=SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Please the modality used per each session')
+    )
+    caregiver_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CAREGIVER,
+        verbose_name=_('Who attended the meetings')
+    )
+    caregiver_attended_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Protection Follow Up"
+        verbose_name_plural = "Protection Follow Up"
