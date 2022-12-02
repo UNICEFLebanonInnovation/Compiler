@@ -571,12 +571,12 @@ class Education(TimeStampedModel):
     EDUCATION_STATUS = Choices(
         ('', '----------'),
         ('Never registered in any formal school before', _('Never registered in any formal school before')),
-        ('Was registered in formal school but didnt continue',
+        ('Was registered in formal school but didn\'t continue',
          _('Was registered in formal school but didn\'t continue')),
         ('Was registered in non formal program and was referred to MSCC',
          _('Was registered in non formal program and was referred to MSCC')),
-        ('Was registered in non formal program but did not continue',
-         _('Was registered in non formal program but did not continue')),
+        ('Was registered in non formal program but didn\'t continue',
+         _('Was registered in non formal program but didn\'t continue')),
         ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programse')),
         ('No', _('No')),
     )
@@ -584,7 +584,7 @@ class Education(TimeStampedModel):
         ('', '----------'),
         ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
         ('Was registered in BLN program', _('Was registered in BLN program')),
-        ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue')),
+        ('Was registered in ALP program and didn\'t continue', _('Was registered in ALP program and didn\'t continue')),
         ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
         ('Other', _('Other')),
     )
@@ -596,13 +596,13 @@ class Education(TimeStampedModel):
         ('YFNL', _('YFNL')),
         ('CBECE Level 3', _('CBECE Level 3')),
         ('Retention Support', _('Retention Support')),
-    ),
+    )
     SCHOOL_SHIFTS = Choices(
         ('', _('----------')),
         ('First shift', _('First shift')),
         ('Second shift', _('Second shift')),
     )
-    REGISTRATION_LEVEL = (
+    REGISTRATION_LEVEL = Choices(
         ('', '----------'),
         ('Level one', _('Level one')),
         ('Level two', _('Level two')),
@@ -669,7 +669,7 @@ class Education(TimeStampedModel):
         blank=True,
         null=True,
         choices=((x, x) for x in range(0, 100)),
-        verbose_name=_('Foreign Languages grade')
+        verbose_name=_('Foreign Language\'s grade')
     )
     arabic_grade = models.IntegerField(
         blank=True,
@@ -719,3 +719,216 @@ class Education(TimeStampedModel):
         ordering = ['id']
         verbose_name = "Education"
         verbose_name_plural = "Education"
+
+
+class EducationAssessment(TimeStampedModel):
+    MODALITY = Choices(
+        ('Online Forms', _('Online Forms')),
+        ('Phone call/WhatsApp', _('Phone call/WhatsApp')),
+        ('Asking Parents', _('Asking Parents')),
+        ('Offline (F2F)', _('Offline (F2F)'))
+    )
+    PARTICIPATION = Choices(
+        ('', '----------'),
+        ('No Absence', _('No Absence')),
+        ('Absence for less than 5 days/equivlant remote learning sessions', _('Absence for less than 5 days/equivlant remote learning sessions')),
+        ('Absence for 5-10 days /equivlant remote learning sessions', _('Absence for 5-10 days /equivlant remote learning sessions')),
+        ('Absence for 10-15 days /equivlant remote learning sessions', _('Absence for 10-15 days /equivlant remote learning sessions')),
+        ('Absence for 15-25 days /equivlant remote learning sessions', _('Absence for 15-25 days /equivlant remote learning sessions')),
+        ('Absence for more than 25 days / equivlant remote learning sessions', _('Absence for more than 25 days / equivlant remote learning sessions')),
+    )
+    BARRIERS = Choices(
+        ('', '----------'),
+        ('Working Full-time to support family', _('Working Full-time to support family')),
+        ('Availablity of Electronic Device', _('Availablity of Electronic Device')),
+        ('Sickness', _('Sickness')),
+        ('Family changed address in Lebanon', _('Family changed address in Lebanon')),
+        ('Marriage/engagement', _('Marriage/engagement')),
+        ('No barriers', _('No barriers')),
+        ('Enrolled in Formal Education', _('Enrolled in Formal Education')),
+        ('Seasonal Work', _('Seasonal Work')),
+        ('Internet Connectivity', _('Internet Connectivity')),
+        ('Security Concerns', _('Security Concerns')),
+        ('Family moved back to Syria', _('Family moved back to Syria')),
+        ('No Interest in pursuing programme', _('No Interest in pursuing programme')),
+        ('Violence and Bullying', _('Violence and Bullying')),
+        ('other', _('Other')),
+    )
+    pre_attended_arabic = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the Child Undertake Arabic Language Development Assessment')
+    )
+    pre_modality_arabic = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=MODALITY,
+        verbose_name=_('Modality')
+    )
+    pre_arabic_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Grade')
+    )
+    pre_attended_language = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the Child Undertake Foreign Language Development Assessment')
+    )
+    pre_modality_language = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=MODALITY,
+        verbose_name=_('Modality')
+    )
+    pre_language_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Grade')
+    )
+    pre_attended_math = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the Child Undertake Cognitive Development - Mathematics test')
+    )
+    pre_modality_math = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=MODALITY,
+        verbose_name=_('Modality')
+    )
+    pre_math_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Grade')
+    )
+    participation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PARTICIPATION,
+        verbose_name=_('Child Level of participation / Absence')
+    )
+    barriers_single = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=BARRIERS,
+        verbose_name=_('The main barriers affecting the child\'s daily attendance/participation, performance, or causing drop-out')
+    )
+    barriers_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    post_test_done = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child undertake the Post tests ?')
+    )
+    school_year_completed = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Did the child fully complete the school year?')
+    )
+    post_attended_arabic = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the Child Undertake Arabic Language Development Assessment')
+    )
+    post_modality_arabic = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=MODALITY,
+        verbose_name=_('Modality')
+    )
+    post_arabic_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Grade')
+    )
+    post_attended_language = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the Child Undertake Foreign Language Development Assessment')
+    )
+    post_modality_language = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=MODALITY,
+        verbose_name=_('Modality')
+    )
+    post_language_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Grade')
+    )
+    post_attended_math = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the Child Undertake Cognitive Development - Mathematics test')
+    )
+    post_modality_math = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=MODALITY,
+        verbose_name=_('Modality')
+    )
+    post_math_grade = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Grade')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Education Assessment"
+        verbose_name_plural = "Education Assessments"
+
+
+class EduProgarmmeAssessment(TimeStampedModel):
+    PROGRAMME_TYPE = Choices(
+        ('BLN Level 1', _('BLN Level 1')),
+        ('BLN Level 2', _('BLN Level 2')),
+        ('YBLN', _('YBLN')),
+        ('YFNL', _('YFNL')),
+        ('CBECE Level 3', _('CBECE Level 3')),
+        ('Retention Support', _('Retention Support')),
+    )
+    pre_test = JSONField(blank=True, null=True)
+    post_test = JSONField(blank=True, null=True)
+    progarmme_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PROGRAMME_TYPE,
+        verbose_name=_('Education Programme Type')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Education Programme Assessments"
+        verbose_name_plural = "Education Programme Assessments"
+
+#

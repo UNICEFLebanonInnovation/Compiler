@@ -3188,6 +3188,7 @@ class RS(CLM):
         blank=True, null=True,
         verbose_name=_('School of Enrollment')
     )
+
     shift = models.CharField(
         max_length=50,
         blank=True,
