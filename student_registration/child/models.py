@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import, division
+import datetime
+
+from django.db import models
+from django.conf import settings
+from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import ArrayField, JSONField
+from django.core.urlresolvers import reverse
+
+from model_utils import Choices
+from model_utils.models import TimeStampedModel
 
 from django.db import models
 from student_registration.students.models import Nationality
 from student_registration.clm.models import Disability, EducationalLevel
+
+
+YES_NO = Choices(
+    ('Yes', _("Yes")),
+    ('No', _("No"))
+)
 
 
 class Child(TimeStampedModel):
@@ -12,7 +28,7 @@ class Child(TimeStampedModel):
     #     Child,
     #     blank=True, null=True,
     # )
-    CURRENT_YEAR = datetime.now().year
+    CURRENT_YEAR = datetime.datetime.now().year
     MONTHS = Choices(
         ('1', _('January')),
         ('2', _('February')),
@@ -32,11 +48,11 @@ class Child(TimeStampedModel):
         ('Female', _('Female')),
     )
     MARITAL_STATUS = Choices(
-        ('married', _('Married')),
-        ('engaged', _('Engaged')),
-        ('divorced', _('Divorced')),
-        ('widowed', _('Widowed')),
-        ('single', _('Single')),
+        ('Married', _('Married')),
+        ('Engaged', _('Engaged')),
+        ('Divorced', _('Divorced')),
+        ('Widowed', _('Widowed')),
+        ('Single', _('Single')),
     )
     ID_TYPE = Choices(
         ('UNHCR Registered', _('UNHCR Registered')),
@@ -49,10 +65,16 @@ class Child(TimeStampedModel):
     )
     MAIN_CAREGIVER = (
         ('', '----------'),
-        ('mother', _('Mother')),
-        ('father', _('Father')),
-        ('other', _('Other')),
+        ('Mother', _('Mother')),
+        ('Father', _('Father')),
+        ('Other', _('Other')),
     )
+    PHONE_OWNER = Choices(
+            ('Phone Main Caregiver', _('Phone Main Caregiver')),
+            ('Family Member', _('Family Member')),
+            ('Neighbors', _('Neighbors')),
+            ('Shawish', _('Shawish')),
+        )
     first_name = models.CharField(
         max_length=64,
         db_index=True,
@@ -127,7 +149,7 @@ class Child(TimeStampedModel):
     address = models.TextField(
         blank=True,
         null=True,
-        verbose_name=_(' Registered child Home Address')
+        verbose_name=_('Registered child Home Address')
     )
     disability = models.ForeignKey(
         Disability,
@@ -146,14 +168,14 @@ class Child(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No"))),
+        choices=YES_NO,
         verbose_name=_('Does the child have children?')
     )
     children_number = models.IntegerField(
         blank=True,
         null=True,
         choices=((x, x) for x in range(0, 20)),
-        verbose_name=_('If yes, How many?')
+        verbose_name=_('If yes, how many?')
     )
     id_type = models.CharField(
         max_length=100,
@@ -310,24 +332,19 @@ class Child(TimeStampedModel):
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('What is the father’s educational level?')
+        verbose_name=_('What is the father\'s educational level?')
     )
     mother_educational_level = models.ForeignKey(
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('What is the father’s educational level?')
+        verbose_name=_('What is the father\'s educational level?')
     )
     first_phone_owner = models.CharField(
         max_length=100,
         blank=False,
         null=True,
-        choices=Choices(
-            ('main_caregiver', _('Phone Main Caregiver')),
-            ('family member', _('Family Member')),
-            ('neighbors', _('Neighbors')),
-            ('shawish', _('Shawish')),
-        ),
+        choices=PHONE_OWNER,
         verbose_name=_('Who will be answering the phone?')
     )
     first_phone_number = models.CharField(
@@ -340,18 +357,13 @@ class Child(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Confirm Primary phone number')
+        verbose_name=_('Confirm primary phone number')
     )
     second_phone_owner = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        choices=Choices(
-            ('main_caregiver', _('Phone Main Caregiver')),
-            ('family member', _('Family Member')),
-            ('neighbors', _('Neighbors')),
-            ('shawish', _('Shawish')),
-        ),
+        choices=PHONE_OWNER,
         verbose_name=_('Who will be answering the phone')
     )
     second_phone_number = models.CharField(
@@ -399,7 +411,7 @@ class Child(TimeStampedModel):
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Mother Full Name')
+        verbose_name=_('Caretaker Mother\'s Full Name')
     )
     def __unicode__(self):
         if not self.first_name:
