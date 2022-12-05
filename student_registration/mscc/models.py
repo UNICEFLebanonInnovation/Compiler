@@ -468,6 +468,7 @@ class HealthNutrition(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Is the baby being Breastfed?')
     )
+    # Caregivers of children 0-2
     infant_exclusively_breastfed = models.CharField(
         max_length=10,
         blank=True,
@@ -475,6 +476,7 @@ class HealthNutrition(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?')
     )
+    # Caregivers of children 0-2
     eat_solid_food = models.CharField(
         max_length=10,
         blank=True,
@@ -482,10 +484,12 @@ class HealthNutrition(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Did the child start to eat solid food?')
     )
+    # Caregivers of children 0-2
     age_eat_solid_food = models.TextField(
         blank=True, null=True,
         verbose_name=_('If yes, at which age ?')
     )
+    # Caregivers of children 0-2 - children 3-5 - children 5-18
     child_vaccinated = models.CharField(
         max_length=10,
         blank=True,
@@ -493,6 +497,7 @@ class HealthNutrition(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Is the child being vaccinated as per the National vaccination calendar?')
     )
+    # Caregivers of children 0-2 - children 3-5
     development_delays_identified = models.CharField(
         max_length=10,
         blank=True,
@@ -501,7 +506,7 @@ class HealthNutrition(TimeStampedModel):
         verbose_name=_('Any mental , cognitive or neurological development delays is being identified?')
     )
 
-    # Caregivers of children 3-5 - Children 5-18
+    # Caregivers of children 3-5 - children 5-18
     eating_minimum_meals = models.CharField(
         max_length=10,
         blank=True,
@@ -509,6 +514,7 @@ class HealthNutrition(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Is the child eating 3 minimum meals per day?')
     )
+    # Caregivers of children 3-5
     positive_parenting = models.CharField(
         max_length=10,
         blank=True,
@@ -516,6 +522,7 @@ class HealthNutrition(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
+    # Caregivers of children 5-18
     respond_stressful_events = models.TextField(
         blank=True, null=True,
         verbose_name=_('How children of different ages respond to and understand stressful and traumatic events?')
