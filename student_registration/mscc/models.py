@@ -602,22 +602,6 @@ class Education(TimeStampedModel):
         ('First shift', _('First shift')),
         ('Second shift', _('Second shift')),
     )
-    REGISTRATION_LEVEL = Choices(
-        ('', '----------'),
-        ('Level one', _('Level one')),
-        ('Level two', _('Level two')),
-        ('Level three', _('Level three')),
-        ('Level four', _('Level four')),
-        ('Level five', _('Level five')),
-        ('Level six', _('Level six'))
-    )
-    SUPPORT_NEEDED = Choices(
-        ('', _('----------')),
-        ('Foreign Languages', _('Foreign Languages')),
-        ('Arabic', _('Arabic')),
-        ('Math', _('Math')),
-        ('Sciences', _('Sciences')),
-    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -658,7 +642,36 @@ class Education(TimeStampedModel):
         null=True,
         verbose_name=_('Date of registration in the round')
     )
-    # RS fields
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Education"
+        verbose_name_plural = "Education"
+
+
+class EducationRS(TimeStampedModel):
+
+    REGISTRATION_LEVEL = Choices(
+        ('', '----------'),
+        ('Level one', _('Level one')),
+        ('Level two', _('Level two')),
+        ('Level three', _('Level three')),
+        ('Level four', _('Level four')),
+        ('Level five', _('Level five')),
+        ('Level six', _('Level six'))
+    )
+    SUPPORT_NEEDED = Choices(
+        ('', _('----------')),
+        ('Foreign Languages', _('Foreign Languages')),
+        ('Arabic', _('Arabic')),
+        ('Math', _('Math')),
+        ('Sciences', _('Sciences')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
     school = models.ForeignKey(
         School,
         blank=False, null=True,
@@ -717,8 +730,8 @@ class Education(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Education"
-        verbose_name_plural = "Education"
+        verbose_name = "Education RS"
+        verbose_name_plural = "Education RS"
 
 
 class EducationAssessment(TimeStampedModel):
@@ -1213,3 +1226,88 @@ class ProtectionFollowUp(TimeStampedModel):
         ordering = ['id']
         verbose_name = "Protection Follow Up"
         verbose_name_plural = "Protection Follow Up"
+
+
+class EducationReferral(TimeStampedModel):
+
+    REFERRED_SERVICE = Choices(
+        ('', '----------'),
+        ('No', _('No')),
+        ('CP', _('CP')),
+        ('Wash', _('Wash')),
+        ('Health', _('Health')),
+        ('Youth', _('Youth')),
+        ('Other', _('Other')),
+    )
+    LEARNING_PATH = Choices(
+        ('', '----------'),
+        ('Transition to Dirasa', _('Transition to Dirasa')),
+        ('Repeat same level in next  school year', _('Repeat same level in next  school year')),
+        ('Progress to FE', _('Progress to FE')),
+        ('Referred to Specialized Education', _('Referred to Specialized Education')),
+        ('Referred to TVET', _('Referred to TVET')),
+        ('Drop out', _('Drop out')),
+        ('Referred to YBLN', _('Referred to YBLN')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    referred_formal_education = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child referred to formal education (Grade 1)?')
+    )
+    referred_school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Name of the School referred to')
+    )
+    using_akelius = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child using Akelius?')
+    )
+    using_learning_passport = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child using Learning Passport?')
+    )
+    receive_needed_material = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child receive all needed materials and resources (Stationery, Books, Learning bundle) ?')
+    )
+    referred_service = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REFERRED_SERVICE,
+        verbose_name=_('Was the child referred to a service?')
+    )
+    referred_service_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+    recommended_learning_path = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=LEARNING_PATH,
+        verbose_name=_('Based on the overall score, what is the recommended learning path/outcome?')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Education Referral"
+        verbose_name_plural = "Education Referrals"
