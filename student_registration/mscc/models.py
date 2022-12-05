@@ -26,59 +26,15 @@ PACKAGE_TYPES = Choices(
 
 PACKAGE_CATEGORIES = Choices(
     ('Education', _('Education')),
-    ('Health', _('Health')),
-    ('', _('')),
-    ('', _('')),
-    ('', _('')),
-    ('', _('')),
-    ('', _('')),
+    ('Health & Nutrition', _('Health & Nutrition')),
+    ('Child Protection', _('Child Protection')),
+    ('Social Protection', _('Social Protection')),
 )
 
 YES_NO = Choices(
     ('Yes', _("Yes")),
     ('No', _("No"))
 )
-
-
-class Assessment(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
-    overview = models.TextField(blank=True, null=True)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-    capacity = models.IntegerField(blank=True, null=True)
-    assessment_form = models.URLField(blank=True, null=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Cycle(models.Model):
-    name = models.CharField(max_length=100)
-    current_cycle = models.BooleanField(blank=True, default=False)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Program cycle"
-        verbose_name_plural = "Program cycles"
-
-    def __unicode__(self):
-        return self.name
-
-
-class Referral(models.Model):
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Referral"
-        verbose_name_plural = "Referrals"
-
-    def __unicode__(self):
-        return self.name
 
 
 class Registration(TimeStampedModel):
@@ -503,6 +459,8 @@ class HealthNutrition(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+
+    # Caregivers of children 0-2
     baby_breastfed = models.CharField(
         max_length=10,
         blank=True,
@@ -542,6 +500,8 @@ class HealthNutrition(TimeStampedModel):
         choices=DEVELOPMENT_DELAYS,
         verbose_name=_('Any mental , cognitive or neurological development delays is being identified?')
     )
+
+    # Caregivers of children 3-5 - Children 5-18
     eating_minimum_meals = models.CharField(
         max_length=10,
         blank=True,
@@ -563,8 +523,8 @@ class HealthNutrition(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Health"
-        verbose_name_plural = "Health"
+        verbose_name = "Health & Nutrition"
+        verbose_name_plural = "Health & Nutrition"
 
 
 class Education(TimeStampedModel):
@@ -596,11 +556,6 @@ class Education(TimeStampedModel):
         ('YFNL', _('YFNL')),
         ('CBECE Level 3', _('CBECE Level 3')),
         ('Retention Support', _('Retention Support')),
-    )
-    SCHOOL_SHIFTS = Choices(
-        ('', _('----------')),
-        ('First shift', _('First shift')),
-        ('Second shift', _('Second shift')),
     )
     registration = models.ForeignKey(
         Registration,
@@ -637,6 +592,7 @@ class Education(TimeStampedModel):
         choices=EDUCATION_PROGRAM,
         verbose_name=_('Education Program')
     )
+    # @todo not sure about this field
     registration_date = models.DateField(
         blank=True,
         null=True,
@@ -666,6 +622,11 @@ class EducationRS(TimeStampedModel):
         ('Arabic', _('Arabic')),
         ('Math', _('Math')),
         ('Sciences', _('Sciences')),
+    )
+    SCHOOL_SHIFTS = Choices(
+        ('', _('----------')),
+        ('First shift', _('First shift')),
+        ('Second shift', _('Second shift')),
     )
     registration = models.ForeignKey(
         Registration,
@@ -744,16 +705,21 @@ class EducationAssessment(TimeStampedModel):
     PARTICIPATION = Choices(
         ('', '----------'),
         ('No Absence', _('No Absence')),
-        ('Absence for less than 5 days/equivlant remote learning sessions', _('Absence for less than 5 days/equivlant remote learning sessions')),
-        ('Absence for 5-10 days /equivlant remote learning sessions', _('Absence for 5-10 days /equivlant remote learning sessions')),
-        ('Absence for 10-15 days /equivlant remote learning sessions', _('Absence for 10-15 days /equivlant remote learning sessions')),
-        ('Absence for 15-25 days /equivlant remote learning sessions', _('Absence for 15-25 days /equivlant remote learning sessions')),
-        ('Absence for more than 25 days / equivlant remote learning sessions', _('Absence for more than 25 days / equivlant remote learning sessions')),
+        ('Absence for less than 5 days/equivlant remote learning sessions',
+         _('Absence for less than 5 days/equivlant remote learning sessions')),
+        ('Absence for 5-10 days /equivlant remote learning sessions',
+         _('Absence for 5-10 days /equivlant remote learning sessions')),
+        ('Absence for 10-15 days /equivlant remote learning sessions',
+         _('Absence for 10-15 days /equivlant remote learning sessions')),
+        ('Absence for 15-25 days /equivlant remote learning sessions',
+         _('Absence for 15-25 days /equivlant remote learning sessions')),
+        ('Absence for more than 25 days / equivlant remote learning sessions',
+         _('Absence for more than 25 days / equivlant remote learning sessions')),
     )
     BARRIERS = Choices(
         ('', '----------'),
         ('Working Full-time to support family', _('Working Full-time to support family')),
-        ('Availablity of Electronic Device', _('Availablity of Electronic Device')),
+        ('Availability of Electronic Device', _('Availability of Electronic Device')),
         ('Sickness', _('Sickness')),
         ('Family changed address in Lebanon', _('Family changed address in Lebanon')),
         ('Marriage/engagement', _('Marriage/engagement')),
@@ -765,7 +731,7 @@ class EducationAssessment(TimeStampedModel):
         ('Family moved back to Syria', _('Family moved back to Syria')),
         ('No Interest in pursuing programme', _('No Interest in pursuing programme')),
         ('Violence and Bullying', _('Violence and Bullying')),
-        ('other', _('Other')),
+        ('Other', _('Other')),
     )
     pre_attended_arabic = models.CharField(
         max_length=100,
@@ -836,7 +802,8 @@ class EducationAssessment(TimeStampedModel):
         blank=True,
         null=True,
         choices=BARRIERS,
-        verbose_name=_('The main barriers affecting the child\'s daily attendance/participation, performance, or causing drop-out')
+        verbose_name=_('The main barriers affecting the child\'s '
+                       'daily attendance/participation, performance, or causing drop-out')
     )
     barriers_other = models.TextField(
         blank=True, null=True,
@@ -847,13 +814,13 @@ class EducationAssessment(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the child undertake the Post tests ?')
+        verbose_name=_('Did the child undertake the Post tests?')
     )
     school_year_completed = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
+        choices=YES_NO,
         verbose_name=_('Did the child fully complete the school year?')
     )
     post_attended_arabic = models.CharField(
@@ -920,7 +887,7 @@ class EducationAssessment(TimeStampedModel):
         verbose_name_plural = "Education Assessments"
 
 
-class EduProgarmmeAssessment(TimeStampedModel):
+class EducationProgrammeAssessment(TimeStampedModel):
     PROGRAMME_TYPE = Choices(
         ('BLN Level 1', _('BLN Level 1')),
         ('BLN Level 2', _('BLN Level 2')),
@@ -929,9 +896,14 @@ class EduProgarmmeAssessment(TimeStampedModel):
         ('CBECE Level 3', _('CBECE Level 3')),
         ('Retention Support', _('Retention Support')),
     )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
     pre_test = JSONField(blank=True, null=True)
     post_test = JSONField(blank=True, null=True)
-    progarmme_type = models.CharField(
+    programme_type = models.CharField(
         max_length=100,
         blank=True,
         null=True,
@@ -941,11 +913,11 @@ class EduProgarmmeAssessment(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Education Programme Assessments"
+        verbose_name = "Education Programme Assessment"
         verbose_name_plural = "Education Programme Assessments"
 
 
-class Youth(TimeStampedModel):
+class YouthKit(TimeStampedModel):
     VOLUNTEERING = Choices(
         ('', '----------'),
         ('Outreach', _('Outreach')),
@@ -959,14 +931,15 @@ class Youth(TimeStampedModel):
         ('', '----------'),
         ('Printed workbook', _('Printed workbook')),
         ('Tablets', _('Tablets')),
-        ('Access to digital content (learning Passport) ', _('Access to digital content (learning Passport) ')),
+        ('Access to digital content (learning Passport) ', _('Access to digital content (learning Passport)')),
         ('Other', _('Other')),
     ),
     FUTURE_PATH = Choices(
         ('', '----------'),
         ('Transition to FE', _('Transition to FE')),
         ('Repeat the school year', _('Repeat the school year')),
-        ('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL…)	', _('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL…)')),
+        ('Refer to a UNICEF Youth Programme (skills training, CBT, GIL)',
+         _('Refer to a UNICEF Youth Programme (skills training, CBT, GIL)')),
         ('Transition to TVET', _('Transition to TVET')),
         ('Internship or volunteering opportunity', _('Internship or volunteering opportunity')),
     )
@@ -1035,7 +1008,8 @@ class Youth(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent participate in any volunteering opportunity during the course of the program?')
+        verbose_name=_('Did the adolescent participate in any volunteering '
+                       'opportunity during the course of the program?')
     )
     volunteering_specify = models.CharField(
         max_length=200,
@@ -1126,7 +1100,7 @@ class ProtectionFollowUp(TimeStampedModel):
         ('COVID health awareness session', _('COVID health awareness session')),
     )
     SESSION_MODALITY = Choices(
-        ('Online via Whatsapp', _("Online via Whatsapp")),
+        ('Online via WhatsApp', _("Online via WhatsApp")),
         ('Phone calls', _("Phone calls")),
         ('Offline (F2F)', _("Offline (F2F)"))
     )
@@ -1196,18 +1170,13 @@ class ProtectionFollowUp(TimeStampedModel):
     meeting_number = models.IntegerField(
         blank=True,
         null=True,
-        verbose_name=_('number of sessions attended')
+        verbose_name=_('Number of sessions attended')
     )
-
-    meeting_modality = ArrayField(
-        models.CharField(
-            choices=SESSION_MODALITY,
-            max_length=200,
-            blank=True,
-            null=True,
-        ),
+    meeting_modality = models.CharField(
+        max_length=200,
         blank=True,
         null=True,
+        choices=SESSION_MODALITY,
         verbose_name=_('Please the modality used per each session')
     )
     caregiver_attended = models.CharField(
@@ -1266,20 +1235,6 @@ class EducationReferral(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
         verbose_name=_('Name of the School referred to')
-    )
-    using_akelius = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Is the child using Akelius?')
-    )
-    using_learning_passport = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Is the child using Learning Passport?')
     )
     receive_needed_material = models.CharField(
         max_length=10,
