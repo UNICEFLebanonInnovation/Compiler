@@ -931,4 +931,285 @@ class EduProgarmmeAssessment(TimeStampedModel):
         verbose_name = "Education Programme Assessments"
         verbose_name_plural = "Education Programme Assessments"
 
-#
+
+class Youth(TimeStampedModel):
+    VOLUNTEERING = Choices(
+        ('', '----------'),
+        ('Outreach', _('Outreach')),
+        ('Data entry', _('Data entry')),
+        ('Admin work', _('Admin work')),
+        ('Awareness raising sessions', _('Awareness raising sessions')),
+        ('Empowerment and leadership', _('Empowerment and leadership')),
+        ('Other', _('Other')),
+    )
+    TRAINING_MATERIAL = Choices(
+        ('', '----------'),
+        ('Printed workbook', _('Printed workbook')),
+        ('Tablets', _('Tablets')),
+        ('Access to digital content (learning Passport) ', _('Access to digital content (learning Passport) ')),
+        ('Other', _('Other')),
+    ),
+    FUTURE_PATH = Choices(
+        ('', '----------'),
+        ('Transition to FE', _('Transition to FE')),
+        ('Repeat the school year', _('Repeat the school year')),
+        ('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL…)	', _('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL…)')),
+        ('Transition to TVET', _('Transition to TVET')),
+        ('Internship or volunteering opportunity', _('Internship or volunteering opportunity')),
+    )
+    ATTENDANCE = Choices(
+        ('', '----------'),
+        ('Full attendance', _('Full attendance')),
+        ('Absence for less than 5 days', _('Absence for less than 5 days')),
+        ('Absence for more than 5 days', _('Absence for more than 5 days')),
+        ('Dropout', _('Dropout')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    volunteering_experience = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the adolescent have any volunteering experience?')
+    )
+    previous_community_initiative = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the adolescent part of any previous community based initiative?')
+    )
+    enrollment_reason = models.CharField(
+        max_length=300,
+        blank=True,
+        null=True,
+        verbose_name=_('What is the reason for the adolescent enrollment in the programme?')
+    )
+    pre_tests_administered = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Were pre-tests administered to assess adolescents level?')
+    )
+    test_diagnostic_done = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent undertake any Post Diagnostic tests?')
+    )
+    receive_passing_grade = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent receive a passing grade for the tests?')
+    )
+    life_skills_completed = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent complete the life skills package?')
+    )
+    participate_volunteering = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent participate in any volunteering opportunity during the course of the program?')
+    )
+    volunteering_specify = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=VOLUNTEERING ,
+        verbose_name=_('Please specify the volunteering opportunity')
+    )
+    social_course = models.CharField(
+            max_length=10,
+            blank=True,
+            null=True,
+            choices=YES_NO,
+            verbose_name=_('Did the adolescent benefit from any social innovation/entrepreneurship course?')
+    )
+    yfs_course_completed = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent complete the YFS course?')
+    )
+    training_material = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=TRAINING_MATERIAL,
+        verbose_name=_('What training material was provided?')
+    )
+    future_path = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=FUTURE_PATH,
+        verbose_name=_('What is the recommended future path for the adolescent?')
+    )
+    participate_community_initiatives = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the adolescent participate/come up in community based initiatives?')
+    )
+    community_initiatives_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('What is the initiative?')
+    )
+    adolescent_attendance = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=ATTENDANCE,
+        verbose_name=_('Adolescent attendance')
+    )
+    adolescent_dropout_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Reason for dropout')
+    )
+    adolescent_dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Dropout Date')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Education Assessment"
+        verbose_name_plural = "Education Assessments"
+
+
+class ProtectionFollowUp(TimeStampedModel):
+    FOLLOW_UP_TYPE = Choices(
+            ('none', _('----------')),
+            ('Phone call', _('Phone call')),
+            ('Home Visits', _('Home Visits')),
+            ('Caregiver visited the center', _('Caregiver visited the center')),
+    )
+    FOLLOW_UP_RESULT = Choices(
+        ('Child returned to program', _('Child returned to program')),
+        ('Child referred to specialized services', _('Child referred to specialized services')),
+        ('Child referred to CP', _('Child referred to CP')),
+        ('Child referred to Health programme', _('Child referred to Health programme')),
+        ('Follow-up with parents', _('Follow-up with parents')),
+        ('Dropout/No Interest', _('Dropout/No Interest')),
+    )
+    MEETING_TYPE = Choices(
+        ('PSS Session', _('PSS Session')),
+        ('COVID health awareness session', _('COVID health awareness session')),
+    )
+    SESSION_MODALITY = Choices(
+        ('Online via Whatsapp', _("Online via Whatsapp")),
+        ('Phone calls', _("Phone calls")),
+        ('Offline (F2F)', _("Offline (F2F)"))
+    )
+    CAREGIVER = Choices(
+        ('', '----------'),
+        ('mother', _('Mother')),
+        ('father', _('Father')),
+        ('other', _('Other')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    follow_up_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=FOLLOW_UP_TYPE,
+        verbose_name=_('In case of absence, type of Follow-up done')
+    )
+    phone_call_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of phone calls done')
+    )
+    house_visit_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of home visits done')
+    )
+    caregiver_visit_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of caregiver visits to center')
+    )
+    follow_up_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=FOLLOW_UP_RESULT,
+        verbose_name=_('Result of follow up')
+    )
+    dropout_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Reason for dropout')
+    )
+    dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Dropout Date')
+    )
+    parent_attended_meeting = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the child\'s caregiver attend parent meeting/engagment sessions')
+    )
+    meeting_type = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=MEETING_TYPE,
+        verbose_name=_('Please indicate the types of meeting')
+    )
+    meeting_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('number of sessions attended')
+    )
+
+    meeting_modality = ArrayField(
+        models.CharField(
+            choices=SESSION_MODALITY,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Please the modality used per each session')
+    )
+    caregiver_attended = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CAREGIVER,
+        verbose_name=_('Who attended the meetings')
+    )
+    caregiver_attended_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Protection Follow Up"
+        verbose_name_plural = "Protection Follow Up"
