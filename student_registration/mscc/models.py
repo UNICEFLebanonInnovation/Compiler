@@ -291,6 +291,11 @@ class Inclusion(TimeStampedModel):
         ("Haven't started yet", _("Haven't started yet")),
     )
 
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
     dropout = models.CharField(
         max_length=100,
         blank=True,
@@ -319,7 +324,6 @@ class DigitalService(models.Model):
         blank=False, null=True,
         related_name='+',
     )
-
     using_akelius = models.CharField(
         max_length=100,
         blank=True,
