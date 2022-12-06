@@ -2,18 +2,14 @@
 from __future__ import unicode_literals, absolute_import, division
 import datetime
 
-from django.db import models
-from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import ArrayField, JSONField
-from django.core.urlresolvers import reverse
-
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django.utils.translation import ugettext as _
 
 from django.db import models
 from student_registration.students.models import Nationality
-from student_registration.clm.models import   EducationalLevel
+from student_registration.clm.models import Disability, EducationalLevel
+from student_registration.students.utils import generate_id
 
 
 YES_NO = Choices(
@@ -23,11 +19,7 @@ YES_NO = Choices(
 
 
 class Child(TimeStampedModel):
-    # from student_registration.outreach.models import Child
-    # outreach_child = models.ForeignKey(
-    #     Child,
-    #     blank=True, null=True,
-    # )
+
     CURRENT_YEAR = datetime.datetime.now().year
     MONTHS = Choices(
         ('1', _('January')),
@@ -74,7 +66,8 @@ class Child(TimeStampedModel):
             ('Family Member', _('Family Member')),
             ('Neighbors', _('Neighbors')),
             ('Shawish', _('Shawish')),
-        )
+    )
+
     first_name = models.CharField(
         max_length=64,
         db_index=True,
@@ -171,6 +164,7 @@ class Child(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Does the child have children?')
     )
+    number = models.CharField(max_length=45, blank=True, null=True)
     children_number = models.IntegerField(
         blank=True,
         null=True,
@@ -413,6 +407,7 @@ class Child(TimeStampedModel):
         null=True,
         verbose_name=_('Caretaker Mother\'s Full Name')
     )
+
     def __unicode__(self):
         if not self.first_name:
             return 'No name'
@@ -447,12 +442,12 @@ class Child(TimeStampedModel):
 
     @property
     def age(self):
-        return Student.get_age(self.birthday_year, self.birthday_month, self.birthday_day)
+        return self.get_age(self.birthday_year, self.birthday_month, self.birthday_day)
 
     @staticmethod
     def get_age(birthday_year, birthday_month, birthday_day):
         if birthday_year and birthday_month and birthday_day:
-            today = datetime.now()
+            today = datetime.datetime.now()
             return today.year - int(birthday_year) - (
                     (today.month, today.day) < (int(birthday_month), int(birthday_day)))
         # if self.birthday_year:
@@ -482,6 +477,4 @@ class Child(TimeStampedModel):
                 self.birthday_year
             )
 
-        super(Student, self).save(**kwargs)
-
-
+        super(Child, self).save(**kwargs)
