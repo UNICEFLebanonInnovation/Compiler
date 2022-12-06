@@ -2,11 +2,11 @@
 from __future__ import unicode_literals, absolute_import, division
 import datetime
 
+from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
 
-from django.db import models
 from student_registration.students.models import Nationality
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.students.utils import generate_id
@@ -144,12 +144,12 @@ class Child(TimeStampedModel):
         null=True,
         verbose_name=_('Registered child Home Address')
     )
-    # disability = models.ForeignKey(
-    #     Disability,
-    #     blank=True, null=True,
-    #     related_name='+',
-    #     verbose_name=_('Does the child have any disability or special need?')
-    # )
+    disability = models.ForeignKey(
+        Disability,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Does the child have any disability or special need?')
+    )
     marital_status = models.CharField(
         max_length=50,
         blank=True,
@@ -454,12 +454,9 @@ class Child(TimeStampedModel):
         #     return int(self.CURRENT_YEAR)-int(self.birthday_year)
         return 0
 
-    class Meta:
-        abstract = True
-
     def save(self, **kwargs):
-        if self.phone:
-            self.std_phone = self.phone_prefix + self.phone
+        # if self.phone:
+        #     self.std_phone = self.phone_prefix + self.phone
         """
         Generate unique IDs for every person
         :param kwargs:

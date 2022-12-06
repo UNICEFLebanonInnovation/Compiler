@@ -18,9 +18,7 @@ from student_registration.schools.models import (
     EducationLevel,
     EducationYear
 )
-from student_registration.child.models import (
-    Child,
-)
+
 from student_registration.alp.models import ALPRound
 
 

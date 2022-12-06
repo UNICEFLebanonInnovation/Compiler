@@ -8,6 +8,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 from student_registration.child.models import Child
+from student_registration.outreach.models import OutreachChild
 from student_registration.locations.models import Center
 from student_registration.schools.models import (
     School,
@@ -90,6 +91,12 @@ class Registration(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
         verbose_name=_('Child')
+    )
+    child_outreach = models.ForeignKey(
+        OutreachChild,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Outreach Child')
     )
     partner = models.ForeignKey(
         PartnerOrganization,
@@ -218,11 +225,6 @@ class ProvidedServices(models.Model):
     )
     registration = models.ForeignKey(
         Registration,
-        blank=False, null=True,
-        related_name='+',
-    )
-    child = models.ForeignKey(
-        Student,
         blank=False, null=True,
         related_name='+',
     )
