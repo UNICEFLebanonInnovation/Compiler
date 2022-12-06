@@ -96,8 +96,8 @@ LOCAL_APPS = [
     'student_registration.backends',  # custom storage app
     'student_registration.staffenroll',
     'student_registration.staffs',
-    'student_registration.mscc',
     'student_registration.child',
+    'student_registration.mscc',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
