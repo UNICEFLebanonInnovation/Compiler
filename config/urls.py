@@ -120,7 +120,6 @@ urlpatterns = [
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     # url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
-    # url(r'^mscc/', include('student_registration.mscc.urls', namespace='mscc')),
     url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     # url(r'^staffenroll/', include('student_registration.staffenroll.urls', namespace='staffenroll')),

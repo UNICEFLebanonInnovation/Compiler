@@ -64,8 +64,7 @@ from .models import (
     GeneralQuestionnaire,
     Center,
     Outreach,
-    Bridging,
-    MSCC
+    Bridging
 )
 from student_registration.schools.models import (
     School,
@@ -122,19 +121,6 @@ from .serializers import (
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
     cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, bridging_build_xls_extraction
 
-
-class ProfileView(LoginRequiredMixin,
-                  TemplateView):
-    template_name = 'clm/mscc_view.html'
-
-    # group_required = [u"HR", u"Security"]
-
-    def get_context_data(self, **kwargs):
-        instance = MSCC.objects.get(id=self.kwargs['pk'])
-
-        return {
-            'instance': instance,
-        }
 
 
 class CLMView(LoginRequiredMixin,
@@ -2985,8 +2971,6 @@ def search_clm_child(request):
         model = Outreach
     elif clm_type == 'Bridging':
         model = Bridging
-    elif clm_type == 'MSCC':
-        model = MSCC
 
     search_model = clm_type
 
@@ -3097,8 +3081,6 @@ def search_clm_duplicate_registration(request):
         model = Outreach
     elif clm_type == 'Bridging':
         model = Bridging
-    elif clm_type == 'MSCC':
-        model = MSCC
 
     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
                                       student_father_name,student_last_name,student_mother_fullname
