@@ -11,33 +11,19 @@ class HouseHoldSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseHold
         fields = (
-            'u_id',
             'form_id',
+            'partner_name',
             'governorate',
             'district',
-            'cadaster',
-            'address',
-            'gps',
-            'phone_number',
-            'main_caregiver',
-            'caregiver_nationality',
-            'caregiver_first_name',
-            'caretaker_middle_name',
-            'caretaker_last_name',
-            'caretaker_mother_name',
-            'caretaker_dob',
-            'mother_fullname',
-            'number_of_children',
-            'geolocation',
-            'interview_date',
-            'submitted_by',
-            'interview_comment',
-            'partner_name',
             'village',
             'name',
+            'phone_number',
             'residence_type',
             'p_code',
+            'address',
+            'number_of_children',
             'barcode_number',
+            # 'children',
         )
 
 
