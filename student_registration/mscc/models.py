@@ -940,7 +940,7 @@ class YouthKit(TimeStampedModel):
         ('Tablets', _('Tablets')),
         ('Access to digital content (learning Passport) ', _('Access to digital content (learning Passport)')),
         ('Other', _('Other')),
-    ),
+    )
     FUTURE_PATH = Choices(
         ('', '----------'),
         ('Transition to FE', _('Transition to FE')),

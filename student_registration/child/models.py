@@ -13,7 +13,7 @@ from model_utils.models import TimeStampedModel
 
 from django.db import models
 from student_registration.students.models import Nationality
-from student_registration.clm.models import Disability, EducationalLevel
+from student_registration.clm.models import   EducationalLevel
 
 
 YES_NO = Choices(
@@ -151,12 +151,12 @@ class Child(TimeStampedModel):
         null=True,
         verbose_name=_('Registered child Home Address')
     )
-    disability = models.ForeignKey(
-        Disability,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Does the child have any disability or special need?')
-    )
+    # disability = models.ForeignKey(
+    #     Disability,
+    #     blank=True, null=True,
+    #     related_name='+',
+    #     verbose_name=_('Does the child have any disability or special need?')
+    # )
     marital_status = models.CharField(
         max_length=50,
         blank=True,
