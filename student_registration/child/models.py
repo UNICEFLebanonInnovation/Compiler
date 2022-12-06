@@ -4,10 +4,12 @@ import datetime
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django.utils.translation import ugettext as _
 
 from django.db import models
 from student_registration.students.models import Nationality
 from student_registration.clm.models import Disability, EducationalLevel
+from student_registration.students.utils import generate_id
 
 
 YES_NO = Choices(
@@ -445,7 +447,7 @@ class Child(TimeStampedModel):
     @staticmethod
     def get_age(birthday_year, birthday_month, birthday_day):
         if birthday_year and birthday_month and birthday_day:
-            today = datetime.now()
+            today = datetime.datetime.now()
             return today.year - int(birthday_year) - (
                     (today.month, today.day) < (int(birthday_month), int(birthday_day)))
         # if self.birthday_year:
