@@ -1,20 +1,16 @@
 from __future__ import unicode_literals, absolute_import, division
-import datetime
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.core.urlresolvers import reverse
-
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
-from student_registration.students.models import Student, Labour, Nationality
-from student_registration.locations.models import Location, Center
+from student_registration.child.models import Child
+from student_registration.locations.models import Center
 from student_registration.schools.models import (
     School,
-    EducationalLevel,
     PartnerOrganization
 )
 
@@ -53,20 +49,19 @@ class Registration(TimeStampedModel):
             ('Retail / Store', _('Retail / Store')),
             ('Begging', _('Begging')),
             ('Other services', _('Other services')),
-            # ('other', _('Other')),
     )
     LABOUR_INCOME = Choices(
             ('', '----------'),
-            ('thousand_or_less', _('10,000 LBP or less')),
-            ('eleven_thousand_to_twenty_five', _('11,000 to 25,000 LBP')),
-            ('twenty_six_thousand_to_fifty', _('26,000 to 50,000 LBP')),
-            ('more_than_fifty', _('More than 50,000 LBP'))
+            ('10,000 LBP or less', _('10,000 LBP or less')),
+            ('11,000 to 25,000 LBP', _('11,000 to 25,000 LBP')),
+            ('26,000 to 50,000 LBP', _('26,000 to 50,000 LBP')),
+            ('More than 50,000 LBP', _('More than 50,000 LBP'))
     )
     IDENTIFICATION_SOURCE = Choices(
             ('', '----------'),
             ('Dirassa', _('Dirassa')),
-            ('Awarness Session', _('Awarness Session')),
-            ('Child''s parents', _('Child''s parents')),
+            ('Awareness Session', _('Awareness Session')),
+            ('Child\'s parents', _('Child\'s parents')),
             ('From Hosted Community', _('From Hosted Community')),
             ('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
              _('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ')),
@@ -91,7 +86,7 @@ class Registration(TimeStampedModel):
         verbose_name=_('Center')
     )
     child = models.ForeignKey(
-        Student,
+        Child,
         blank=False, null=True,
         related_name='+',
         verbose_name=_('Child')
@@ -281,7 +276,7 @@ class Packages(models.Model):
         verbose_name_plural = "Packages"
 
 
-class Inclusion(TimeStampedModel):
+class InclusionService(TimeStampedModel):
 
     PARENTAL_ENGAGEMENT = Choices(
         ('Mother Only', _('Mother Only')),
@@ -331,7 +326,6 @@ class DigitalService(models.Model):
         choices=YES_NO,
         verbose_name=_('Is the child using Akelius?')
     )
-
     using_lp = models.CharField(
         max_length=100,
         blank=True,
@@ -377,7 +371,6 @@ class PSSService(models.Model):
         blank=False, null=True,
         related_name='+',
     )
-
     child_registered = models.CharField(
         max_length=100,
         blank=True,
@@ -385,7 +378,6 @@ class PSSService(models.Model):
         choices=YES_NO,
         verbose_name=_('Is the child registered/ have birth registration?')
     )
-
     child_living_arrangement = models.CharField(
         max_length=250,
         blank=True,
@@ -393,7 +385,6 @@ class PSSService(models.Model):
         choices=LIVING_ARRANGEMENT,
         verbose_name=_("What is the child's living arrangement?")
     )
-
     child_vulnerability = models.CharField(
         max_length=250,
         blank=True,
@@ -401,7 +392,6 @@ class PSSService(models.Model):
         choices=CHILD_VULNERABILITY,
         verbose_name=_("What is the child's living arrangement?")
     )
-
     child_out_school_reasons = models.CharField(
         max_length=250,
         blank=True,
@@ -409,7 +399,6 @@ class PSSService(models.Model):
         choices=OUT_SCHOOL_REASONS,
         verbose_name=_("Reasons for a child being out of school")
     )
-
     caregivers_distress = models.CharField(
         max_length=100,
         blank=True,
@@ -417,7 +406,6 @@ class PSSService(models.Model):
         choices=YES_NO,
         verbose_name=_('Do you feel distressed and anxious?')
     )
-
     caregivers_additional_parenting = models.CharField(
         max_length=100,
         blank=True,
@@ -425,7 +413,6 @@ class PSSService(models.Model):
         choices=YES_NO,
         verbose_name=_('If yes, would you like any additional parenting or psychosocial support?')
     )
-
     child_distress = models.CharField(
         max_length=100,
         blank=True,
@@ -434,7 +421,6 @@ class PSSService(models.Model):
         verbose_name=_('Are any of the children in your HH experiencing any '
                        'signs of distress or negative mental health symptoms ?')
     )
-
     child_additional_parenting = models.CharField(
         max_length=100,
         blank=True,
@@ -450,7 +436,7 @@ class PSSService(models.Model):
         verbose_name_plural = "PSS Services"
 
 
-class HealthNutrition(TimeStampedModel):
+class HealthNutritionService(TimeStampedModel):
 
     DEVELOPMENT_DELAYS = Choices(
         ('Mental', _('Mental')),
@@ -463,7 +449,6 @@ class HealthNutrition(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-
     # Caregivers of children 0-2
     baby_breastfed = models.CharField(
         max_length=10,
@@ -534,11 +519,12 @@ class HealthNutrition(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Health & Nutrition"
-        verbose_name_plural = "Health & Nutrition"
+        verbose_name = "Health & Nutrition Service"
+        verbose_name_plural = "Health & Nutrition Services"
 
 
-class Education(TimeStampedModel):
+class EducationService(TimeStampedModel):
+
     EDUCATION_STATUS = Choices(
         ('', '----------'),
         ('Never registered in any formal school before', _('Never registered in any formal school before')),
@@ -612,11 +598,11 @@ class Education(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Education"
-        verbose_name_plural = "Education"
+        verbose_name = "Education Service"
+        verbose_name_plural = "Education Services"
 
 
-class EducationRS(TimeStampedModel):
+class EducationRSService(TimeStampedModel):
 
     REGISTRATION_LEVEL = Choices(
         ('', '----------'),
@@ -702,8 +688,8 @@ class EducationRS(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Education RS"
-        verbose_name_plural = "Education RS"
+        verbose_name = "Education RS Service"
+        verbose_name_plural = "Education RS Services"
 
 
 class EducationAssessment(TimeStampedModel):
@@ -899,6 +885,7 @@ class EducationAssessment(TimeStampedModel):
 
 
 class EducationProgrammeAssessment(TimeStampedModel):
+
     PROGRAMME_TYPE = Choices(
         ('BLN Level 1', _('BLN Level 1')),
         ('BLN Level 2', _('BLN Level 2')),
@@ -928,7 +915,8 @@ class EducationProgrammeAssessment(TimeStampedModel):
         verbose_name_plural = "Education Programme Assessments"
 
 
-class YouthKit(TimeStampedModel):
+class YouthKitService(TimeStampedModel):
+
     VOLUNTEERING = Choices(
         ('', '----------'),
         ('Outreach', _('Outreach')),
@@ -961,6 +949,7 @@ class YouthKit(TimeStampedModel):
         ('Absence for more than 5 days', _('Absence for more than 5 days')),
         ('Dropout', _('Dropout')),
     )
+
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -1087,13 +1076,14 @@ class YouthKit(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Education Assessment"
-        verbose_name_plural = "Education Assessments"
+        verbose_name = "Youth Kit Service"
+        verbose_name_plural = "Youth Kit Services"
 
 
-class ProtectionFollowUp(TimeStampedModel):
+class FollowUpService(TimeStampedModel):
+
     FOLLOW_UP_TYPE = Choices(
-            ('none', _('----------')),
+            ('', _('----------')),
             ('Phone call', _('Phone call')),
             ('Home Visits', _('Home Visits')),
             ('Caregiver visited the center', _('Caregiver visited the center')),
@@ -1117,10 +1107,11 @@ class ProtectionFollowUp(TimeStampedModel):
     )
     CAREGIVER = Choices(
         ('', '----------'),
-        ('mother', _('Mother')),
-        ('father', _('Father')),
-        ('other', _('Other')),
+        ('Mother', _('Mother')),
+        ('Father', _('Father')),
+        ('Other', _('Other')),
     )
+
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -1204,11 +1195,11 @@ class ProtectionFollowUp(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Protection Follow Up"
-        verbose_name_plural = "Protection Follow Up"
+        verbose_name = "Follow Up Service"
+        verbose_name_plural = "Follow Up Services"
 
 
-class EducationReferral(TimeStampedModel):
+class Referral(TimeStampedModel):
 
     REFERRED_SERVICE = Choices(
         ('', '----------'),
@@ -1229,6 +1220,7 @@ class EducationReferral(TimeStampedModel):
         ('Drop out', _('Drop out')),
         ('Referred to YBLN', _('Referred to YBLN')),
     )
+
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -1252,7 +1244,7 @@ class EducationReferral(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the child receive all needed materials and resources (Stationery, Books, Learning bundle) ?')
+        verbose_name=_('Did the child receive all needed materials and resources (Stationery, Books, Learning bundle)?')
     )
     referred_service = models.CharField(
         max_length=100,
@@ -1275,5 +1267,5 @@ class EducationReferral(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Education Referral"
-        verbose_name_plural = "Education Referrals"
+        verbose_name = "Referral"
+        verbose_name_plural = "Referrals"
