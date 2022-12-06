@@ -4,12 +4,12 @@ from __future__ import absolute_import, unicode_literals
 from django.core.urlresolvers import reverse, reverse_lazy
 
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
-
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import translation
 from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.users.utils import force_default_language
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .models import User
 
 
@@ -63,6 +63,33 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
         translation.activate(user_language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
         return reverse('home')
+
+
+def login_success(request):
+    """
+    Redirects users based on whether they are in the admins group
+    """
+
+    return HttpResponseRedirect(reverse('mscc:list'))
+
+    # if request.user.groups.filter(name="HR").exists():
+    #     # user is an admin
+    #     return HttpResponseRedirect(reverse('staffs:hr_dashboard'))
+    # elif request.user.groups.filter(name="Security").exists():
+    #     # user is an admin
+    #     return HttpResponseRedirect(reverse('staffs:security_dashboard'))
+    # elif request.user.groups.filter(name="Operations").exists():
+    #     return HttpResponseRedirect(reverse('staffs:operations_person_list'))
+    # else:
+    #     return HttpResponseRedirect(reverse("home"))
+
+
+def home(request):
+
+    if request.user.is_authenticated:
+        return redirect('/login_success/')
+    else:
+        return redirect('/accounts/login/')
 
 
 class LoginRedirectView(LoginRequiredMixin, RedirectView):
