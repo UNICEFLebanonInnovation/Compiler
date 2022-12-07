@@ -44,11 +44,42 @@ class Location(MPTTModel):
 
 class Center(models.Model):
     name = models.CharField(max_length=100)
-    location = models.ForeignKey(
+    governorate = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('Center')
+        verbose_name=_('Governorate')
+    )
+    caza = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Caza')
+    )
+    cadaster = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cadaster')
+    )
+    p_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('P-Code')
+    )
+    type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Municipality', _('Municipality')),
+            ('Collective Settlement', _('Collective Settlement')),
+            ('Informal Settlement', _('Informal Settlement')),
+            ('Welfare Center', _('Welfare Center')),
+            ('Collective Settlement', _('Collective Settlement')),
+        ),
+        verbose_name=_('Type')
     )
 
     class Meta:
