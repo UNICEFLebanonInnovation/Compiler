@@ -15,8 +15,6 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from dal import autocomplete
 
 from student_registration.students.models import (
-    Student,
-    Person,
     Nationality,
     IDType,
 )
@@ -26,76 +24,21 @@ from student_registration.schools.models import (
     EducationalLevel,
     PartnerOrganization,
 )
-from student_registration.clm.models import CLM
 from student_registration.locations.models import Location
+from student_registration.clm.models import Disability, EducationalLevel
+from student_registration.child.models import Child
 from .models import (
     Registration,
     Center
 )
 from .serializers import MainSerializer
 
-YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
-
-YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 2)))
-YEARS.insert(0, ('', '---------'))
-
 DAYS = list(((str(x), x) for x in range(1, 32)))
 DAYS.insert(0, ('', '---------'))
 
-MONTHS = (
-    ('', '----------'),
-    ('1', _('January')),
-    ('2', _('February')),
-    ('3', _('March')),
-    ('4', _('April')),
-    ('5', _('May')),
-    ('6', _('June')),
-    ('7', _('July')),
-    ('8', _('August')),
-    ('9', _('September')),
-    ('10', _('October')),
-    ('11', _('November')),
-    ('12', _('December')),
-)
-
-FAMILY_STATUS = (
-    ('', '----------'),
-    ('married', _('Married')),
-    ('engaged', _('Engaged')),
-    ('divorced', _('Divorced')),
-    ('widower', _('Widower')),
-    ('single', _('Single')),
-)
-
-PARTICIPATION = (
-    ('', '----------'),
-    ('less_than_5days', _('Less than 5 absence days')),
-    ('5_10_days', _('5 to 10 absence days')),
-    ('10_15_days', _('10 to 15 absence days')),
-    ('more_than_15days', _('More than 15 absence days')),
-    ('no_absence', _('No Absence'))
-)
-
-LEARNING_RESULT = (
-    ('', '----------'),
-    ('repeat_level', _('Repeat level')),
-    ('graduated_next_level', _('Referred to the next level')),
-    ('graduated_to_formal_kg', _('Referred to formal education - KG')),
-    ('graduated_to_formal_level1', _('Referred to formal education - Level 1')),
-    ('referred_to_another_program', _('Referred to another program')),
-    ('dropout', _('Dropout, referral not possible'))
-)
-
-REGISTRATION_LEVEL = (
-    ('', '----------'),
-    ('level_one', _('Level one')),
-    ('level_two', _('Level two')),
-
-)
-
 
 class MainForm(forms.ModelForm):
-    YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 20, Person.CURRENT_YEAR - 3)))
+    YEARS = list(((str(x), x) for x in range(Child.CURRENT_YEAR - 20, Child.CURRENT_YEAR - 3)))
     YEARS.insert(0, ('', '---------'))
 
     center = forms.ModelChoiceField(
@@ -104,27 +47,35 @@ class MainForm(forms.ModelForm):
         empty_label='-------',
         required=True, to_field_name='id',
     )
-
     child_first_name = forms.CharField(
-        label=_("First name"),
+        label=_("Child\'s First Name"),
         widget=forms.TextInput, required=True
     )
     child_father_name = forms.CharField(
-        label=_("Father name"),
+        label=_("Child\'s Father Name"),
         widget=forms.TextInput, required=True
     )
     child_last_name = forms.CharField(
-        label=_("Last name"),
+        label=_("Child\'s Family Name"),
         widget=forms.TextInput, required=True
     )
-    child_sex = forms.ChoiceField(
-        label=_("Sex"),
+    child_mother_fullname = forms.CharField(
+        label=_("Child\'s Mother Full Name"),
+        widget=forms.TextInput, required=True
+    )
+    child_gender = forms.ChoiceField(
+        label=_("Child\'s Gender"),
         widget=forms.Select, required=True,
-        choices=(
-            ('', '----------'),
-            ('Male', _('Male')),
-            ('Female', _('Female')),
-        )
+        choices=Child.GENDER
+    )
+    child_nationality = forms.ModelChoiceField(
+        label=_("Child\'s Nationality"),
+        queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    child_nationality_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     child_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -134,137 +85,55 @@ class MainForm(forms.ModelForm):
     child_birthday_month = forms.ChoiceField(
         label=_("Birthday month"),
         widget=forms.Select, required=True,
-        choices=MONTHS
+        choices=Child.MONTHS
     )
     child_birthday_day = forms.ChoiceField(
         label=_("Birthday day"),
         widget=forms.Select, required=True,
         choices=DAYS
     )
-    child_nationality = forms.ModelChoiceField(
-        label=_("Nationality"),
-        queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
     main_caregiver_nationality = forms.ModelChoiceField(
-        label=_("Nationality"),
         queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
-        required=False, to_field_name='id',
+        label=_('Caregiver Nationality'),
+        required=True, to_field_name='id',
     )
     main_caregiver_nationality_other = forms.CharField(
         label=_('Please specify'),
         widget=forms.TextInput, required=False
     )
-    child_mother_fullname = forms.CharField(
-        label=_("Mother fullname"),
-        widget=forms.TextInput, required=True
+    child_p_code = forms.CharField(
+        label=_('Insert Pcode if the child lives in Internal Settlement/Camp'),
+        widget=forms.TextInput, required=False
     )
     child_address = forms.CharField(
-        label=_("The area where the child resides"),
+        label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
         widget=forms.TextInput, required=True
     )
-    child_p_code = forms.CharField(
-        label=_('P-Code If a child lives in a tent / Brax in a random camp'),
-        widget=forms.TextInput, required=False
+    child_disability = forms.ChoiceField(
+        label=_("Does the child have any disability or special need?"),
+        queryset=Disability.objects.all(), widget=forms.Select,
+        required=False, to_field_name='id',
     )
-
-    child_id = forms.CharField(widget=forms.HiddenInput, required=False)
-    enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
-    partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
-
-    child_family_status = forms.ChoiceField(
-        label=_('What is the family status of the child?'),
+    child_marital_status = forms.ChoiceField(
+        label=_('Child\'s Marital Status '),
         widget=forms.Select, required=True,
-        choices=Student.FAMILY_STATUS,
-        initial='single'
+        choices=Child.MARITAL_STATUS,
+        initial='Single'
     )
-    child_have_children = forms.TypedChoiceField(
+    child_have_children = forms.ChoiceField(
         label=_("Does the child have children?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True,
+        widget=forms.Select, required=True,
+        choices=Child.YES_NO
     )
     child_number_children = forms.IntegerField(
-        label=_('How many children does this child have?'),
+        label=_('How many?'),
         widget=forms.TextInput, required=False
     )
-
-    have_labour_single_selection = forms.ChoiceField(
-        label=_('Does the child participate in work?'),
-        widget=forms.Select, required=True,
-        choices=Registration.HAVE_LABOUR,
-        initial='no'
-    )
-    labours_single_selection = forms.ChoiceField(
-        label=_('What is the type of work ?'),
-        widget=forms.Select, required=False,
-        choices=Registration.LABOURS
-    )
-    labours_other_specify = forms.CharField(
-        label=_(
-            'Please specify(hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)'),
-        widget=forms.TextInput, required=False
-    )
-
-    labour_hours = forms.CharField(
-        label=_('How many hours does this child work in a day?'),
-        widget=forms.TextInput, required=False
-    )
-    labour_weekly_income = forms.ChoiceField(
-        label=_('What is the income of the child per week?'),
-        widget=forms.Select,
-        choices=Registration.LABOUR_INCOME,
-        initial='single',
-        required=False
-    )
-    other_nationality = forms.CharField(
-        label=_('Specify the nationality'),
-        widget=forms.TextInput, required=False
-    )
-    phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
-        label=_('Main Phone number')
-    )
-    phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
-        label=_('Main Phone number confirm')
-    )
-    second_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=False,
-        label=_('Second Phone Number')
-    )
-    second_phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=False,
-        label=_('Second Phone Number confirm')
-    )
-
     source_of_identification = forms.ChoiceField(
-        label=_("Source of identification of the child to MSCC"),
+        label=_("Source of referral of the child to MSCC"),
         widget=forms.Select,
         required=True,
-        choices=(
-            ('', '----------'),
-            ('Dirassa', _('Dirassa')),
-            ('Awarness Session', _('Awarness Session')),
-            ('Child''s parents', _('Child''s parents')),
-            ('From Hosted Community', _('From Hosted Community')),
-            ('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
-             _('Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ')),
-            ('From Profiling Database', _('From Profiling Database')),
-            ('From Other NGO', _('From Other NGO')),
-            ('From Displaced Community', _('From Displaced Community')),
-            ('Referred by the municipality/Other formal sources', _('Referred by the municipality/Other formal sources')),
-            ('Other Sources', _('Other Sources')),
-        ),
+        choices=Registration.IDENTIFICATION_SOURCE,
         initial=''
     )
     source_of_identification_specify = forms.CharField(
@@ -272,47 +141,118 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     cash_support_programmes = forms.MultipleChoiceField(
-        label=_('Cash support programmes that child is already benefitting from'),
-        choices=(
-                ('', '----------'),
-                ('Haddi', _('Haddi')),
-                ('Education Cash assistance', _('Education Cash assistance')),
-                ('UNHCR cash assistance', _('UNHCR cash assistance')),
-                ('WFP cash assistance', _('WFP cash assistance')),
-        ),
+        label=_('Cash support programmes that the child is already benefitting from.'),
+        choices=Registration.CASH_SUPPORT_PROGRAMMES,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    packages_received = forms.MultipleChoiceField(
-        label=_('Packages received/to be provided to child under MSCC'),
-        choices=(
-                ('', '----------'),
-                ('Early Childhood Development', _('Early Childhood Development')),
-                ('Education', _('Education')),
-                ('Child Protection/Psychosocial support', _('Child Protection/Psychosocial support')),
-                ('Youth Empowerment and engagement', _('Youth Empowerment and engagement')),
-                ('Health and Nutrition', _('Health and Nutrition')),
-                ('Parental and Caregiver Support', _('Parental and Caregiver Support')),
-                ('Social Cash Assistance', _('Social Cash Assistance')),
-            ),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+    father_educational_level = forms.ModelChoiceField(
+        queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
+        label=_('What is the father\'s educational level?'),
+        required=True, to_field_name='id',
     )
-
-    rims_case_number = forms.CharField(
+    mother_educational_level = forms.ModelChoiceField(
+        queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
+        label=_('What is the mother\'s educational level?'),
+        required=True, to_field_name='id',
+    )
+    first_phone_owner = forms.ChoiceField(
+        label=_("Who will be answering the phone?"),
+        widget=forms.Select,
+        required=True,
+        choices=Child.PHONE_OWNER,
+        initial=''
+    )
+    first_phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
-        label=_('RIMS Case Number')
+        label=_('Primary phone number')
+    )
+    first_phone_number_confirm = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=False,
+        label=_('Confirm primary phone number')
+    )
+    second_phone_owner = forms.ChoiceField(
+        label=_("Who will be answering the phone?"),
+        widget=forms.Select,
+        required=True,
+        choices=Child.PHONE_OWNER,
+        initial=''
+    )
+    second_phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=False,
+        label=_('Primary phone number')
+    )
+    second_phone_number_confirm = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=False,
+        label=_('Confirm primary phone number')
     )
     main_caregiver = forms.ChoiceField(
-        label=_("Main Caregiver"),
+        label=_("Who is the Child\'s primary caregiver?"),
         widget=forms.Select, required=True,
-        choices=(
-            ('', '----------'),
-            ('mother', _('Mother')),
-            ('father', _('Father')),
-            ('other', _('Other')),
-        )
+        choices=Child.MAIN_CAREGIVER
     )
+    main_caregiver_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    caregiver_first_name = forms.CharField(
+        label=_("Caregiver First Name"),
+        widget=forms.TextInput, required=True
+    )
+    caregiver_middle_name = forms.CharField(
+        label=_("Caregiver Middle Name"),
+        widget=forms.TextInput, required=True
+    )
+    caregiver_last_name = forms.CharField(
+        label=_("Caregiver Last Name"),
+        widget=forms.TextInput, required=True
+    )
+
+    caregiver_mother_name = forms.CharField(
+        label=_("Caretaker Mother\'s Full Name"),
+        widget=forms.TextInput, required=True
+    )
+    have_labour = forms.ChoiceField(
+        label=_('Does the child participate in work?'),
+        widget=forms.Select, required=True,
+        choices=Registration.HAVE_LABOUR,
+        initial='no'
+    )
+    labour_type = forms.ChoiceField(
+        label=_('What is the type of work?'),
+        widget=forms.Select, required=False,
+        choices=Registration.LABOURS
+    )
+    labour_type_specify = forms.CharField(
+        label=_('Please specify (hotel, restaurant, transport, '
+                'personal services such as cleaning, hair care, cooking and childcare)'),
+        widget=forms.TextInput, required=False
+    )
+    labour_hours = forms.IntegerField(
+        label=_('How many hours does this child work in a day?'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=0
+    )
+    labour_weekly_income = forms.ChoiceField(
+        label=_('How much does the child get paid per week?'),
+        widget=forms.Select,
+        choices=Registration.LABOUR_INCOME,
+        initial='',
+        required=False
+    )
+    child_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -321,8 +261,6 @@ class MainForm(forms.ModelForm):
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('mscc:add_child')
-        # self.fields['clm_type'].initial = 'MSCC'
-        # self.fields['new_registry'].initial = 'yes'
         if instance:
             display_registry = ' d-none'
             form_action = reverse('mscc:edit_child', kwargs={'pk': instance.id})
@@ -331,13 +269,13 @@ class MainForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-        Div(
+            Div(
                 Div(
                     Div('center', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
-            css_id='step-1'
-        ),
+                css_id='step-1'
+            ),
             Div(
                 Div(
                     Div('child_first_name', css_class='col-md-3'),
@@ -347,7 +285,12 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     Div('child_mother_fullname', css_class='col-md-3'),
-                    Div('child_sex', css_class='col-md-3'),
+                    Div('child_gender', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('child_nationality', css_class='col-md-3'),
+                    Div('child_nationality_other', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -357,18 +300,13 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('child_nationality', css_class='col-md-3'),
-                    Div('other_nationality', css_class='col-md-3'),
+                    Div('child_p_code', css_class='col-md-3'),
+                    Div('child_address', css_class='col-md-3'),
+                    Div('child_disability', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('child_p_code', css_class='col-md-4'),
-                    Div('child_address', css_class='col-md-4'),
-                    css_class='row card-body',
-                ),
-
-                Div(
-                    Div('child_family_status', css_class='col-md-4'),
+                    Div('child_marital_status', css_class='col-md-4'),
                     Div('child_have_children', css_class='col-md-3', css_id='child_have_children'),
                     Div('child_number_children', css_class='col-md-3'),
                     css_class='row card-body',
@@ -380,7 +318,6 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     Div('cash_support_programmes', css_class='col-md-6 multiple-choice'),
-                    Div('packages_received', css_class='col-md-6 multiple-choice'),
                     css_class='row card-body',
                 ),
                 css_id='step-2',
@@ -388,16 +325,34 @@ class MainForm(forms.ModelForm):
             Div(
                 Div(
                     Div('father_educational_level', css_class='col-md-4'),
-                    Div('hh_educational_level', css_class='col-md-4'),
+                    Div('mother_educational_level', css_class='col-md-4'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('first_phone_number', css_class='col-md-3'),
+                    Div('first_phone_number_confirm', css_class='col-md-3'),
+                    Div('first_phone_owner', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
                     Div('second_phone_number', css_class='col-md-3'),
                     Div('second_phone_number_confirm', css_class='col-md-3'),
+                    Div('second_phone_owner', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
                     Div('main_caregiver', css_class='col-md-3'),
+                    Div('main_caregiver_other', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('caregiver_first_name', css_class='col-md-3'),
+                    Div('caregiver_middle_name', css_class='col-md-3'),
+                    Div('caregiver_last_name', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('caregiver_mother_name', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -409,12 +364,12 @@ class MainForm(forms.ModelForm):
             ),
             Div(
                 Div(
-                    Div('have_labour_single_selection', css_class='col-md-4'),
+                    Div('have_labour', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('labours_single_selection', css_class='col-md-4', css_id='labours'),
-                    Div('labours_other_specify', css_class='col-md-4'),
+                    Div('labour_type', css_class='col-md-4', css_id='labours'),
+                    Div('labour_type_specify', css_class='col-md-4'),
                     css_class='row card-body',
                     id='labour_details_1'
                 ),
@@ -424,17 +379,20 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                     id='labour_details_2'
                 ),
-            # ),
-            FormActions(
-                Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Submit('save_add_another','Save & add another', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Submit('save_add_another','Save & go to Education', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-info'),
-                # HTML('<a class="btn btn-info cancel-button" href="/clm/mscc-list/" translation="' + _(
-                #     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
-                # css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn'
-            ),
+                # ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Submit('save_add_another', 'Save & add another',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Submit('save_add_another', 'Save & go to Education',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-info'),
+                    # HTML('<a class="btn btn-info cancel-button" href="/clm/mscc-list/" translation="' + _(
+                    #     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                    # css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn'
+                ),
                 css_id='step-4',
-        ),
+            ),
         )
         # partner_id = 0
         # if instance:
@@ -648,29 +606,43 @@ class MainForm(forms.ModelForm):
             'child_first_name',
             'child_father_name',
             'child_last_name',
-            'child_sex',
+            'child_mother_fullname',
+            'child_gender',
+            'child_nationality',
+            'child_nationality_other',
+            'child_birthday_year',
             'child_birthday_month',
             'child_birthday_day',
-            'child_nationality',
-            'child_mother_fullname',
-            'child_address',
+            'main_caregiver_nationality',
+            'main_caregiver_nationality_other',
             'child_p_code',
-            'child_birthday_year',
-            'have_labour_single_selection',
-            'labours_single_selection',
-            'labours_other_specify',
-            'labour_hours',
+            'child_address',
+            'child_disability',
+            'child_marital_status',
+            'child_have_children',
+            'child_number_children',
             'source_of_identification',
             'source_of_identification_specify',
             'cash_support_programmes',
-            'packages_received',
-            'other_nationality',
-            'child_have_children',
-            'child_family_status',
-            'child_number_children',
+            'father_educational_level',
+            'mother_educational_level',
+            'first_phone_owner',
+            'first_phone_number',
+            'first_phone_number_confirm',
+            'second_phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
             'main_caregiver',
-            'main_caregiver_nationality',
-            'labour_weekly_income',
+            'main_caregiver_other',
+            'caregiver_first_name',
+            'caregiver_middle_name',
+            'caregiver_last_name',
+            'caregiver_mother_name',
+            'have_labour',
+            'labour_type',
+            'labour_type_specify',
+            'labour_hours',
+            'labour_weekly_income'
         )
 
 
@@ -681,9 +653,12 @@ class EducationSituationForm(forms.ModelForm):
         choices=(
             ('', '----------'),
             ('out of school', _('No Registered in any school before')),
-            ('Was registered in formal school but didnt continue', _('Was registered in formal school but didnt continue')),
-            ('Was registered in non formal program and was referred to MSCC', _('Was registered in non formal program and was referred to MSCC')),
-            ('Was registered in non formal program but did not continue', _('Was registered in non formal program but did not continue')),
+            ('Was registered in formal school but didnt continue',
+             _('Was registered in formal school but didnt continue')),
+            ('Was registered in non formal program and was referred to MSCC',
+             _('Was registered in non formal program and was referred to MSCC')),
+            ('Was registered in non formal program but did not continue',
+             _('Was registered in non formal program but did not continue')),
             ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programse'))
         ),
         initial=''
@@ -698,7 +673,8 @@ class EducationSituationForm(forms.ModelForm):
         choices=(
             ('', '----------'),
             ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
-            ('other	please specify	Was registered in BLN program', _('other please specify	Was registered in BLN program')),
+            ('other	please specify	Was registered in BLN program',
+             _('other please specify	Was registered in BLN program')),
             ('Was registered in ALP program and didnt continue', _('Was registered in ALP program and didnt continue')),
             ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
         ),
@@ -795,7 +771,8 @@ class EducationSituationForm(forms.ModelForm):
                 css_id='step-2',
             ),
             FormActions(
-                Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
             )
         )
 
@@ -832,7 +809,6 @@ class EducationSituationForm(forms.ModelForm):
 
 
 class DiagnosticAssessmentForm(forms.ModelForm):
-
     attended_arabic = forms.ChoiceField(
         label=_("Attended Arabic test"),
         widget=forms.Select, required=True,
@@ -937,7 +913,8 @@ class DiagnosticAssessmentForm(forms.ModelForm):
                 css_id='step-1',
             ),
             FormActions(
-                Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 # HTML('<a class="btn btn-info cancel-button" href="/clm/mscc-list/" translation="' +
                 #      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
@@ -994,25 +971,24 @@ class DiagnosticAssessmentForm(forms.ModelForm):
             #     if math > 34:
             #         self.add_error('math', 'This value is greater that 34')
 
-
     def save(self, instance=None, request=None):
         instance = super(DiagnosticAssessmentForm, self).save()
 
         instance.modified_by = request.user
 
         instance.pre_test = {
-                "Diagnostic_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-                "Diagnostic_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
-                "Diagnostic_ASSESSMENT/arabic": request.POST.get('arabic'),
+            "Diagnostic_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "Diagnostic_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
+            "Diagnostic_ASSESSMENT/arabic": request.POST.get('arabic'),
 
-                "Diagnostic_ASSESSMENT/attended_foreign_language": request.POST.get('attended_foreign_language'),
-                "Diagnostic_ASSESSMENT/modality_foreign_language": request.POST.getlist('modality_foreign_language'),
-                "Diagnostic_ASSESSMENT/foreign_language": request.POST.get('foreign_language'),
+            "Diagnostic_ASSESSMENT/attended_foreign_language": request.POST.get('attended_foreign_language'),
+            "Diagnostic_ASSESSMENT/modality_foreign_language": request.POST.getlist('modality_foreign_language'),
+            "Diagnostic_ASSESSMENT/foreign_language": request.POST.get('foreign_language'),
 
-                "Diagnostic_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-                "Diagnostic_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
-                "Diagnostic_ASSESSMENT/math": request.POST.get('math'),
-            }
+            "Diagnostic_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "Diagnostic_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
+            "Diagnostic_ASSESSMENT/math": request.POST.get('math'),
+        }
 
         instance.save()
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -1034,15 +1010,15 @@ class EducationAssessmentForm(forms.ModelForm):
         label=_('How was the level of child participation in the program?'),
         widget=forms.Select, required=True,
         choices=(
-                ('', '----------'),
-                ('no_absence', _('No Absence')),
-                ('less_than_5days', _('Less than 5 absence days')),
-                ('5_10_days', _('5 to 10 absence days')),
-                ('10_15_days', _('10 to 15 absence days')),
-                ('15_25_days', _('15 to 25 absence days')),
-                ('more_than_25days', _('More than 25 absence days')),
+            ('', '----------'),
+            ('no_absence', _('No Absence')),
+            ('less_than_5days', _('Less than 5 absence days')),
+            ('5_10_days', _('5 to 10 absence days')),
+            ('10_15_days', _('10 to 15 absence days')),
+            ('15_25_days', _('15 to 25 absence days')),
+            ('more_than_25days', _('More than 25 absence days')),
 
-            ),
+        ),
         initial=''
     )
     barriers_single = forms.ChoiceField(
@@ -1314,7 +1290,8 @@ class EducationAssessmentForm(forms.ModelForm):
                 css_id='step-2',
             ),
             FormActions(
-                Submit('save', 'Save', css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 # HTML('<a class="btn btn-info cancel-button" href="/clm/mscc-list/" translation="' +
                 #      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
@@ -1388,8 +1365,6 @@ class EducationAssessmentForm(forms.ModelForm):
             #     if math > 34:
             #         self.add_error('math', 'This value is greater that 34')
 
-
-
         test_diagnostic_done = cleaned_data.get("test_diagnostic_done")
         receive_passing_grade = cleaned_data.get("receive_passing_grade")
         if test_diagnostic_done == 'yes':
@@ -1426,18 +1401,18 @@ class EducationAssessmentForm(forms.ModelForm):
     def save(self, instance=None, request=None):
         instance = super(EducationAssessmentForm, self).save()
         instance.post_test = {
-                "Education_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
-                "Education_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
-                "Education_ASSESSMENT/arabic": request.POST.get('arabic'),
+            "Education_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "Education_ASSESSMENT/modality_arabic": request.POST.getlist('modality_arabic'),
+            "Education_ASSESSMENT/arabic": request.POST.get('arabic'),
 
-                "Education_ASSESSMENT/attended_foreign_language": request.POST.get('attended_foreign_language'),
-                "Education_ASSESSMENT/modality_foreign_language": request.POST.getlist('modality_foreign_language'),
-                "Education_ASSESSMENT/foreign_language": request.POST.get('foreign_language'),
+            "Education_ASSESSMENT/attended_foreign_language": request.POST.get('attended_foreign_language'),
+            "Education_ASSESSMENT/modality_foreign_language": request.POST.getlist('modality_foreign_language'),
+            "Education_ASSESSMENT/foreign_language": request.POST.get('foreign_language'),
 
-                "Education_ASSESSMENT/attended_math": request.POST.get('attended_math'),
-                "Education_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
-                "Education_ASSESSMENT/math": request.POST.get('math'),
-            }
+            "Education_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "Education_ASSESSMENT/modality_math": request.POST.getlist('modality_math'),
+            "Education_ASSESSMENT/math": request.POST.get('math'),
+        }
 
         instance.save()
         messages.success(request, _('Your data has been sent successfully to the server'))

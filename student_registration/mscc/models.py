@@ -111,18 +111,14 @@ class Registration(TimeStampedModel):
         null=True,
         verbose_name=_('Does the child participate in work?')
     )
-    labours = ArrayField(
-        models.CharField(
-            choices=LABOURS,
-            max_length=50,
-            blank=True,
-            null=True,
-        ),
+    labour_type = models.CharField(
+        max_length=100,
+        choices=LABOURS,
         blank=True,
         null=True,
-        verbose_name=_('What is the type of work ?')
+        verbose_name=_('What is the type of work?')
     )
-    labours_other_specify = models.CharField(
+    labour_type_specify = models.CharField(
         max_length=100,
         blank=True,
         null=True,
@@ -147,6 +143,10 @@ class Registration(TimeStampedModel):
         null=True,
         choices=IDENTIFICATION_SOURCE,
         verbose_name=_('Source of referral of the child to MSCC')
+    )
+    source_of_identification_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('please specify')
     )
     cash_support_programmes = ArrayField(
         models.CharField(
