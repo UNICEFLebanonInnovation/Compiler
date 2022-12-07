@@ -12,12 +12,6 @@ from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.students.utils import generate_id
 
 
-YES_NO = Choices(
-    ('Yes', _("Yes")),
-    ('No', _("No"))
-)
-
-
 class Child(TimeStampedModel):
 
     CURRENT_YEAR = datetime.datetime.now().year
@@ -34,6 +28,10 @@ class Child(TimeStampedModel):
         ('10', _('October')),
         ('11', _('November')),
         ('12', _('December')),
+    )
+    YES_NO = Choices(
+        ('Yes', _("Yes")),
+        ('No', _("No"))
     )
     GENDER = Choices(
         ('Male', _('Male')),
@@ -62,10 +60,11 @@ class Child(TimeStampedModel):
         ('Other', _('Other')),
     )
     PHONE_OWNER = Choices(
-            ('Phone Main Caregiver', _('Phone Main Caregiver')),
-            ('Family Member', _('Family Member')),
-            ('Neighbors', _('Neighbors')),
-            ('Shawish', _('Shawish')),
+        ('', '----------'),
+        ('Phone Main Caregiver', _('Phone Main Caregiver')),
+        ('Family Member', _('Family Member')),
+        ('Neighbors', _('Neighbors')),
+        ('Shawish', _('Shawish')),
     )
 
     first_name = models.CharField(
@@ -164,13 +163,13 @@ class Child(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Does the child have children?')
     )
-    number = models.CharField(max_length=45, blank=True, null=True)
     children_number = models.IntegerField(
         blank=True,
         null=True,
         choices=((x, x) for x in range(0, 20)),
         verbose_name=_('If yes, how many?')
     )
+    number = models.CharField(max_length=45, blank=True, null=True)
     id_type = models.CharField(
         max_length=100,
         blank=True,
