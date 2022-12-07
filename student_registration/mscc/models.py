@@ -36,6 +36,11 @@ YES_NO = Choices(
 
 class Registration(TimeStampedModel):
 
+    YES_NO = Choices(
+        ('Yes', _("Yes")),
+        ('No', _("No"))
+    )
+
     HAVE_LABOUR = Choices(
             ('No', _('No')),
             ('Yes - Morning', _('Yes - Morning')),

@@ -18,18 +18,13 @@ from student_registration.students.models import (
     Nationality,
     IDType,
 )
-from student_registration.schools.models import (
-    School,
-    ClassRoom,
-    EducationalLevel,
-    PartnerOrganization,
-)
-from student_registration.locations.models import Location
+
+from student_registration.locations.models import Center
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.child.models import Child
 from .models import (
     Registration,
-    Center
+    EducationAssessment
 )
 from .serializers import MainSerializer
 
@@ -70,7 +65,7 @@ class MainForm(forms.ModelForm):
     )
     child_nationality = forms.ModelChoiceField(
         label=_("Child\'s Nationality"),
-        queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
+        queryset=Nationality.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     child_nationality_other = forms.CharField(
@@ -93,7 +88,7 @@ class MainForm(forms.ModelForm):
         choices=DAYS
     )
     main_caregiver_nationality = forms.ModelChoiceField(
-        queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
+        queryset=Nationality.objects.all(), widget=forms.Select,
         label=_('Caregiver Nationality'),
         required=True, to_field_name='id',
     )
@@ -109,7 +104,7 @@ class MainForm(forms.ModelForm):
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
         widget=forms.TextInput, required=True
     )
-    child_disability = forms.ChoiceField(
+    child_disability = forms.ModelChoiceField(
         label=_("Does the child have any disability or special need?"),
         queryset=Disability.objects.all(), widget=forms.Select,
         required=False, to_field_name='id',
@@ -147,12 +142,12 @@ class MainForm(forms.ModelForm):
         required=False
     )
     father_educational_level = forms.ModelChoiceField(
-        queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
+        queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the father\'s educational level?'),
         required=True, to_field_name='id',
     )
     mother_educational_level = forms.ModelChoiceField(
-        queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
+        queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the mother\'s educational level?'),
         required=True, to_field_name='id',
     )
@@ -575,7 +570,7 @@ class MainForm(forms.ModelForm):
 
     def save(self, request=None, instance=None):
         if instance:
-            serializer = MSCCSerializer(instance, data=request.POST)
+            serializer = MainSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
@@ -585,7 +580,7 @@ class MainForm(forms.ModelForm):
             else:
                 messages.warning(request, serializer.errors)
         else:
-            serializer = MSCCSerializer(data=request.POST)
+            serializer = MainSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
@@ -646,6 +641,7 @@ class MainForm(forms.ModelForm):
         )
 
 
+# @todo to be changed
 class EducationSituationForm(forms.ModelForm):
     education_status = forms.ChoiceField(
         label=_('Education status'),
@@ -701,13 +697,13 @@ class EducationSituationForm(forms.ModelForm):
     volunteering_experience = forms.ChoiceField(
         label=_("Does the adolescent have any volunteering experience?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     previous_community_initiative = forms.ChoiceField(
         label=_("Was the adolescent part of any previous community based initiative?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     enrollment_reason = forms.CharField(
@@ -717,7 +713,7 @@ class EducationSituationForm(forms.ModelForm):
     pre_tests_administered = forms.ChoiceField(
         label=_("Were pre-tests administered to assess adolescents level?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
 
@@ -808,6 +804,7 @@ class EducationSituationForm(forms.ModelForm):
         )
 
 
+# @todo to be changed
 class DiagnosticAssessmentForm(forms.ModelForm):
     attended_arabic = forms.ChoiceField(
         label=_("Attended Arabic test"),
@@ -818,7 +815,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
 
     modality_arabic = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
+        choices=EducationAssessment.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -835,7 +832,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
     )
     modality_foreign_language = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
+        choices=EducationAssessment.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -852,7 +849,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
     )
     modality_math = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
+        choices=EducationAssessment.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -999,6 +996,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         )
 
 
+# @todo to be changed
 class EducationAssessmentForm(forms.ModelForm):
     # REGISTRATION_LEVEL = (
     #     ('', '----------'),
@@ -1024,7 +1022,7 @@ class EducationAssessmentForm(forms.ModelForm):
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme? (Select more than one if applicable)'),
-        choices=CLM.BARRIERS,
+        choices=EducationAssessment.BARRIERS,
         widget=forms.Select,
         required=False
     )
@@ -1053,7 +1051,7 @@ class EducationAssessmentForm(forms.ModelForm):
 
     modality_arabic = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
+        choices=EducationAssessment.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -1070,7 +1068,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     modality_foreign_language = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
+        choices=EducationAssessment.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -1087,7 +1085,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     modality_math = forms.MultipleChoiceField(
         label=_('Please indicate modality'),
-        choices=CLM.MODALITY,
+        choices=EducationAssessment.MODALITY,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -1099,32 +1097,32 @@ class EducationAssessmentForm(forms.ModelForm):
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=True,
-        choices=CLM.LEARNING_RESULT,
+        # choices=EducationAssessment.LEARNING_RESULT,
         initial=''
     )
 
     test_diagnostic_done = forms.ChoiceField(
         label=_("Did the adolescent undertake any Post Diagnostic tests?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     receive_passing_grade = forms.ChoiceField(
         label=_("Did the adolescent receive a passing grade for the tests?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     life_skills_completed = forms.ChoiceField(
         label=_("Did the adolescent complete the life skills package?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     participate_volunteering = forms.ChoiceField(
         label=_("Did the adolescent participate in any volunteering opportunity during the course of the program?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     volunteering_specify = forms.ChoiceField(
@@ -1145,13 +1143,13 @@ class EducationAssessmentForm(forms.ModelForm):
     social_course = forms.ChoiceField(
         label=_("Did the adolescent benefit from any social innovation/entrepreneurship course?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     yfs_course_completed = forms.ChoiceField(
         label=_("Did the adolescent complete the YFS course?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
     training_material = forms.ChoiceField(
@@ -1169,7 +1167,7 @@ class EducationAssessmentForm(forms.ModelForm):
     participate_community_initiatives = forms.ChoiceField(
         label=_("Did the adolescent participate/come up in community based initiatives?"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
+        choices=Registration.YES_NO,
         initial='yes'
     )
 
