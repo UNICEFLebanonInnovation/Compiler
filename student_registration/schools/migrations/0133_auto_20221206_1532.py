@@ -14,31 +14,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='clmround',
-            name='current_round_mscc',
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name='clmround',
-            name='end_date_mscc',
-            field=models.DateField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='clmround',
-            name='end_date_mscc_edit',
-            field=models.DateField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='clmround',
-            name='start_date_mscc',
-            field=models.DateField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='clmround',
-            name='start_date_mscc_edit',
-            field=models.DateField(blank=True, null=True),
-        ),
         migrations.AlterField(
             model_name='alpassignmentmatrix',
             name='matrix_type',
