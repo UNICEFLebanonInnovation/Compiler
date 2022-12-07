@@ -22,14 +22,14 @@ class MainFilter(FilterSet):
     class Meta:
         model = Registration
         fields = {
-            'child__id_number': ['contains'],
-            'child__number': ['contains'],
+            # 'child__id_number': ['contains'],
+            # 'child__number': ['contains'],
             'child__first_name': ['contains'],
             'child__father_name': ['contains'],
             'child__last_name': ['contains'],
             'child__mother_fullname': ['contains'],
             'child__nationality': ['exact'],
-            'governorate': ['exact'],
+            # 'center__governorate': ['exact'],
             'center': ['exact'],
         }
 

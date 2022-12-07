@@ -320,12 +320,12 @@ class MainForm(forms.ModelForm):
 
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        form_action = reverse('clm:mscc_add')
-        self.fields['clm_type'].initial = 'MSCC'
-        self.fields['new_registry'].initial = 'yes'
+        form_action = reverse('mscc:add_child')
+        # self.fields['clm_type'].initial = 'MSCC'
+        # self.fields['new_registry'].initial = 'yes'
         if instance:
             display_registry = ' d-none'
-            form_action = reverse('clm:mscc_edit', kwargs={'pk': instance.id})
+            form_action = reverse('mscc:edit_child', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -436,21 +436,21 @@ class MainForm(forms.ModelForm):
                 css_id='step-4',
         ),
         )
-        partner_id = 0
-        if instance:
-            if instance.owner.partner:
-                partner_id = instance.owner.partner.id
-        else:
-            if self.request.user.partner:
-                partner_id = self.request.user.partner.id
-        if partner_id > 0:
-            queryset = Center.objects.filter(partner_id=partner_id)
-            self.fields['center'] = forms.ModelChoiceField(
-                queryset=queryset, widget=forms.Select,
-                label=_('Site / Center'),
-                empty_label='-------',
-                required=True, to_field_name='id',
-            )
+        # partner_id = 0
+        # if instance:
+        #     if instance.owner.partner:
+        #         partner_id = instance.owner.partner.id
+        # else:
+        #     if self.request.user.partner:
+        #         partner_id = self.request.user.partner.id
+        # if partner_id > 0:
+        #     queryset = Center.objects.filter(partner_id=partner_id)
+        #     self.fields['center'] = forms.ModelChoiceField(
+        #         queryset=queryset, widget=forms.Select,
+        #         label=_('Site / Center'),
+        #         empty_label='-------',
+        #         required=True, to_field_name='id',
+        #     )
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
@@ -745,7 +745,7 @@ class EducationSituationForm(forms.ModelForm):
         initial='yes'
     )
 
-    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    # clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
     child_age = forms.IntegerField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -753,7 +753,7 @@ class EducationSituationForm(forms.ModelForm):
         super(EducationSituationForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['clm_type'].initial = 'MSCC'
+        # self.fields['clm_type'].initial = 'MSCC'
         self.fields['child_age'].initial = instance.child_age
 
         form_action = reverse('clm:education_situation', kwargs={'pk': instance.id})
@@ -764,7 +764,7 @@ class EducationSituationForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    'clm_type',
+                    # 'clm_type',
                     'child_age',
                     css_class='d-none',
                 ),
