@@ -17,10 +17,12 @@
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
+                                                  <a href="{% url 'mscc:add_child' %}?type=Core-Package">
                                                     <span class="opacity-10 text-primary pr-2">
                                                         <i class="fa fa-plus"></i>
                                                     </span>
                                                     Core Package
+                                                  </a>
                                                     <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
                                                 <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
@@ -42,10 +44,12 @@
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
+                                                  <a href="{% url 'mscc:add_child' %}?type=Walk-in-OOSC">
                                                     <span class="opacity-10 text-danger pr-2">
                                                         <i class="fa fa-plus"></i>
                                                     </span>
                                                     Walk-in - OOSC
+                                                  </a>
                                                     <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
                                                 <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
@@ -67,14 +71,37 @@
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
+                                                  <a href="{% url 'mscc:add_child' %}?type=Walk-in-In-School">
                                                     <span class="opacity-10 text-warning pr-2">
                                                         <i class="fa fa-plus"></i>
                                                     </span>
                                                     Walk-in - In School
-                                                                <a href="{% url 'mscc:add_child' %}" class="btn btn-success">
-                                                                    <i class="icon-plus-sign icon-white"></i>
-                                                                    {% trans "Add new Child" %}
-                                                                </a>
+                                                  </a>
+                                                  <!--<small class="opacity-5 pr-1">%</small>-->
+                                                </div>
+                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                    <!--<div class="circle-progress circle-progress-warning-sm d-inline-block">-->
+                                                        <!--<small></small>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-warning border-warning card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">Attendance</div>
+                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+                                                    <span class="opacity-10 text-success pr-2">
+                                                        <i class="fa fa-list"></i>
+                                                    </span>
+                                                    Daily Attendance
                                                   <!--<small class="opacity-5 pr-1">%</small>-->
                                                 </div>
                                                 <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
@@ -112,29 +139,6 @@
                               <!--</div>-->
                           <!--</div>-->
                     </div>
-
-
-
-
-                            <div class="col-md-6">
-                                <div id="accordion1" class="accordion-wrapper mb-3">
-                                    <div class="card">
-                                        <div id="headingOne1" class="card-header">
-                                            <button type="button" data-toggle="collapse" data-target="#collapseOne2" aria-expanded="true" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block">
-                                                <h5 class="m-0 p-0">Collapsible Group Item #1</h5>
-                                            </button>
-                                        </div>
-                                        <div data-parent="#accordion1" id="collapseOne2" aria-labelledby="headingOne" class="collapse show">
-                                            <div class="card-body">1. Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa
-                                                nesciunt
-                                                laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
-                                                sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable
-                                                VHS.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
 
 <div class="row">
