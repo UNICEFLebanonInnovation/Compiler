@@ -12,6 +12,18 @@ from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.students.utils import generate_id
 
 
+class IDType(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "ID Type"
+        verbose_name_plural = "ID Types"
+
+    def __unicode__(self):
+        return self.name
+
+
 class Child(TimeStampedModel):
 
     CURRENT_YEAR = datetime.datetime.now().year
@@ -43,15 +55,6 @@ class Child(TimeStampedModel):
         ('Divorced', _('Divorced')),
         ('Widowed', _('Widowed')),
         ('Single', _('Single')),
-    )
-    ID_TYPE = Choices(
-        ('UNHCR Registered', _('UNHCR Registered')),
-        ('UNHCR Recorded', _("UNHCR Recorded")),
-        ('Syrian national ID', _("Syrian national ID")),
-        ('Palestinian national ID', _("Palestinian national ID")),
-        ('Lebanese national ID', _("Lebanese national ID")),
-        ('Other nationality', _("Other nationality")),
-        ('Child have no ID', _("Child have no ID"))
     )
     MAIN_CAREGIVER = (
         ('', '----------'),
@@ -170,11 +173,10 @@ class Child(TimeStampedModel):
         verbose_name=_('If yes, how many?')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
-    id_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=ID_TYPE,
+    id_type = models.ForeignKey(
+        IDType,
+        blank=False, null=True,
+        related_name='+',
         verbose_name=_('Child ID type')
     )
     case_number = models.CharField(
