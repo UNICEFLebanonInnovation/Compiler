@@ -21,7 +21,7 @@ from student_registration.students.models import (
 
 from student_registration.locations.models import Center
 from student_registration.clm.models import Disability, EducationalLevel
-from student_registration.child.models import Child , IDType
+from student_registration.child.models import Child
 from .models import (
     Registration,
     EducationAssessment
@@ -173,7 +173,7 @@ class MainForm(forms.ModelForm):
     second_phone_owner = forms.ChoiceField(
         label=_("Who will be answering the phone?"),
         widget=forms.Select,
-        required=True,
+        required=False,
         choices=Child.PHONE_OWNER,
         initial=''
     )
@@ -491,129 +491,71 @@ class MainForm(forms.ModelForm):
                     Div('main_caregiver_nationality_other', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                css_id='step-3',
-            ),
-            Div(
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
                     Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">16</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id1',
+                    css_class='row card-body child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">17</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">18</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id1',
+                    css_class='row card-body child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">19</span>'),
                     Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">20</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id1',
+                    css_class='row card-body child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">17</span>'),
                     Div('recorded_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">18</span>'),
                     Div('recorded_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id2',
+                    css_class='row card-body child_id2',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">19</span>'),
                     Div('parent_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">20</span>'),
                     Div('parent_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id3',
+                    css_class='row card-body child_id3',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">21</span>'),
                     Div('national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">22</span>'),
                     Div('national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id3',
+                    css_class='row card-body child_id3',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">23</span>'),
                     Div('parent_syrian_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">24</span>'),
                     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id4',
+                    css_class='row card-body child_id4',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">25</span>'),
                     Div('syrian_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">26</span>'),
                     Div('syrian_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id4',
+                    css_class='row card-body child_id4',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">27</span>'),
                     Div('parent_sop_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">28</span>'),
                     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id5',
+                    css_class='row card-body child_id5',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">29</span>'),
                     Div('sop_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">30</span>'),
                     Div('sop_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id5',
+                    css_class='row card-body child_id5',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">31</span>'),
                     Div('parent_other_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">32</span>'),
                     Div('parent_other_number_confirm', css_class='col-md-4'),
-                    css_class='row child_id child_id6',
+                    css_class='row card-body child_id6',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">33</span>'),
                     Div('other_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">34</span>'),
                     Div('other_number_confirm', css_class='col-md-4'),
-                    css_class='row child_id child_id6',
+                    css_class='row card-body child_id6',
                 ),
-                css_id='step-4',
+                css_id='step-3',
             ),
             Div(
                 Div(
@@ -632,7 +574,6 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                     id='labour_details_2'
                 ),
-                # ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -644,7 +585,7 @@ class MainForm(forms.ModelForm):
                     #     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                     # css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn'
                 ),
-                css_id='step-5',
+                css_id='step-4',
             ),
         )
         # partner_id = 0
@@ -717,27 +658,7 @@ class MainForm(forms.ModelForm):
         if main_caregiver == 'other' and not main_caregiver_other:
             self.add_error('main_caregiver_other', 'This field is required')
 
-
-        # id_type
-        # recorded_number
-        # recorded_number_confirm
-        # national_number
-        # national_number_confirm
-        # syrian_national_number
-        # syrian_national_number_confirm
-        # sop_national_number
-        # sop_national_number_confirm
-        # parent_national_number
-        # parent_national_number_confirm
-        # parent_syrian_national_number
-        # parent_syrian_national_number_confirm
-        # parent_sop_national_number
-        # parent_sop_national_number_confirm
-        # parent_other_number
-        # parent_other_number_confirm
-        # other_number
-        # other_number_confirm
-
+        id_type = cleaned_data.get("id_type")
         if id_type == 'UNHCR Registered':
             if not case_number:
                 self.add_error('case_number', 'This field is required')

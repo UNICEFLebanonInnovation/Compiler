@@ -1,4 +1,3 @@
-
 import json
 
 from rest_framework import serializers
@@ -61,6 +60,7 @@ def update_instance(instance, validated_data):
 
 
 class MainSerializer(serializers.ModelSerializer):
+    # 'number',
     original_id = serializers.IntegerField(source='id', read_only=True)
     registration_id = serializers.IntegerField(source='id', read_only=True)
     child_id = serializers.IntegerField(source='child.id', required=False)
@@ -76,11 +76,65 @@ class MainSerializer(serializers.ModelSerializer):
     child_birthday = serializers.CharField(source='child.birthday', read_only=True)
     child_nationality = serializers.CharField(source='child.nationality')
     child_nationality_id = serializers.CharField(source='child.nationality.id', read_only=True)
+    child_nationality_other = serializers.CharField(source='child.nationality_other')
     child_address = serializers.CharField(source='child.address', required=False)
+    child_disability = serializers.CharField(source='child.disability', required=False)
     child_p_code = serializers.CharField(source='child.p_code', required=False)
     child_id_number = serializers.CharField(source='child.id_number', required=False)
     child_marital_status = serializers.CharField(source='child.marital_status', required=False)
     child_have_children = serializers.CharField(source='child.have_children', required=False)
+    child_number_children = serializers.CharField(source='child.number_children', required=False)
+    main_caregiver_nationality = serializers.CharField(source='child.main_caregiver_nationality', required=False)
+    main_caregiver_nationality_other = serializers.CharField(source='child.main_caregiver_nationality_other',
+                                                             required=False)
+    id_type = serializers.CharField(source='child.id_type', required=False)
+    case_number = serializers.CharField(source='child.case_number', required=False)
+    case_number_confirm = serializers.CharField(source='child.case_number_confirm', required=False)
+    parent_individual_case_number = serializers.CharField(source='child.parent_individual_case_number',
+                                                          required=False)
+    parent_individual_case_number_confirm = serializers.CharField(source='child.parent_individual_case_number_confirm',
+                                                                  required=False)
+    individual_case_number = serializers.CharField(source='child.individual_case_number', required=False)
+    individual_case_number_confirm = serializers.CharField(source='child.individual_case_number_confirm',
+                                                           required=False)
+    recorded_number = serializers.CharField(source='child.recorded_number', required=False)
+    recorded_number_confirm = serializers.CharField(source='child.recorded_number_confirm', required=False)
+    parent_national_number = serializers.CharField(source='child.parent_national_number', required=False)
+    parent_national_number_confirm = serializers.CharField(source='child.parent_national_number_confirm',
+                                                           required=False)
+    national_number = serializers.CharField(source='child.national_number', required=False)
+    national_number_confirm = serializers.CharField(source='child.national_number_confirm', required=False)
+    parent_syrian_national_number = serializers.CharField(source='child.parent_syrian_national_number',
+                                                          required=False)
+    parent_syrian_national_number_confirm = serializers.CharField(source='child.parent_syrian_national_number_confirm',
+                                                                  required=False)
+    syrian_national_number = serializers.CharField(source='child.syrian_national_number', required=False)
+    syrian_national_number_confirm = serializers.CharField(source='child.syrian_national_number_confirm',
+                                                           required=False)
+    parent_sop_national_number = serializers.CharField(source='child.parent_sop_national_number', required=False)
+    parent_sop_national_number_confirm = serializers.CharField(source='child.parent_sop_national_number_confirm',
+                                                               required=False)
+    sop_national_number = serializers.CharField(source='child.sop_national_number', required=False)
+    sop_national_number_confirm = serializers.CharField(source='child.sop_national_number_confirm', required=False)
+    parent_other_number = serializers.CharField(source='child.parent_other_number', required=False)
+    parent_other_number_confirm = serializers.CharField(source='child.parent_other_number_confirm', required=False)
+    other_number = serializers.CharField(source='child.other_number', required=False)
+    other_number_confirm = serializers.CharField(source='child.other_number_confirm', required=False)
+    father_educational_level = serializers.CharField(source='child.father_educational_level', required=False)
+    mother_educational_level = serializers.CharField(source='child.mother_educational_level', required=False)
+    first_phone_owner = serializers.CharField(source='child.first_phone_owner', required=False)
+    first_phone_number = serializers.CharField(source='child.first_phone_number', required=False)
+    first_phone_number_confirm = serializers.CharField(source='child.first_phone_number_confirm', required=False)
+    second_phone_owner = serializers.CharField(source='child.second_phone_owner', required=False)
+    second_phone_number = serializers.CharField(source='child.second_phone_number', required=False)
+    second_phone_number_confirm = serializers.CharField(source='child.second_phone_number_confirm', required=False)
+    main_caregiver = serializers.CharField(source='child.main_caregiver', required=False)
+    main_caregiver_other = serializers.CharField(source='child.main_caregiver_other', required=False)
+    caregiver_first_name = serializers.CharField(source='child.caregiver_first_name', required=False)
+    caregiver_middle_name = serializers.CharField(source='child.caregiver_middle_name', required=False)
+    caregiver_last_name = serializers.CharField(source='child.caregiver_last_name', required=False)
+    caregiver_mother_name = serializers.CharField(source='child.caregiver_mother_name', required=False)
+
     # governorate_name = serializers.CharField(source='governorate.name', read_only=True)
     # district_name = serializers.CharField(source='district.name', read_only=True)
     # cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
@@ -184,4 +238,3 @@ class MainSerializer(serializers.ModelSerializer):
             'other_number',
             'other_number_confirm',
         )
-
