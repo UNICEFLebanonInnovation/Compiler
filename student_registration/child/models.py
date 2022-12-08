@@ -396,7 +396,16 @@ class Child(TimeStampedModel):
         null=True,
         verbose_name=_('Caretaker Mother\'s Full Name')
     )
-
+    main_caregiver_nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Caregiver Nationality')
+    )
+    main_caregiver_nationality_other = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
+    )
     def __unicode__(self):
         if not self.first_name:
             return 'No name'
