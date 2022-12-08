@@ -21,7 +21,7 @@ from student_registration.students.models import (
 
 from student_registration.locations.models import Center
 from student_registration.clm.models import Disability, EducationalLevel
-from student_registration.child.models import Child
+from student_registration.child.models import Child , IDType
 from .models import (
     Registration,
     EducationAssessment
@@ -245,6 +245,142 @@ class MainForm(forms.ModelForm):
         initial='',
         required=False
     )
+    id_type = forms.ModelChoiceField(
+        queryset=IDType.objects.all(), widget=forms.Select,
+        label=_('ID type of the caregiver'),
+        required=True, to_field_name='id'
+    )
+    case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('UNHCR Case Number')
+    )
+    case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('Confirm UNHCR Case Number')
+    )
+    parent_individual_case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+    )
+    parent_individual_case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+    )
+    individual_case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+            'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
+    )
+    individual_case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+            'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
+    )
+    recorded_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9][0-9]([C]\d{5})|(-[0-9][0-9][0-9][0-9][0-9])$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
+        required=False,
+        label=_('UNHCR Barcode number (Shifra number)')
+    )
+    recorded_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9][0-9]([C]\d{5})|(-[0-9][0-9][0-9][0-9][0-9])$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
+        required=False,
+        label=_('Confirm UNHCR Barcode number (Shifra number)')
+    )
+    national_number = forms.RegexField(
+        regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        required=False,
+        label=_('Lebanese ID number of the child (Optional)')
+    )
+    national_number_confirm = forms.RegexField(
+        regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        required=False,
+        label=_('Confirm Lebanese ID number of the child (optional)')
+    )
+    syrian_national_number = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('National ID number of the child (Optional)')
+    )
+    syrian_national_number_confirm = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('Confirm National ID number of the child (Optional)')
+    )
+    sop_national_number = forms.CharField(
+        required=False,
+        label=_('Palestinian ID number of the child (Optional)')
+    )
+    sop_national_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm Palestinian ID number of the child (optional)')
+    )
+    parent_national_number = forms.RegexField(
+        regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        required=False,
+        label=_('Lebanese ID number of the caretaker')
+    )
+    parent_national_number_confirm = forms.RegexField(
+        regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        required=False,
+        label=_('Confirm Lebanese ID number of the caretaker')
+    )
+    parent_syrian_national_number = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('National ID number of the Caretaker (Mandatory)')
+    )
+    parent_syrian_national_number_confirm = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+    )
+    parent_sop_national_number = forms.CharField(
+        # regex=r'^\d{11}$',
+        required=False,
+        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+    )
+    parent_sop_national_number_confirm = forms.CharField(
+        # regex=r'^\d{11}$',
+        required=False,
+        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+    )
+
+    parent_other_number = forms.CharField(
+        required=False,
+        label=_('ID number of the Caretaker (Mandatory)')
+    )
+    parent_other_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm ID number of the Caretaker (Mandatory)')
+    )
+    other_number = forms.CharField(
+        required=False,
+        label=_(' ID number of the child (Optional)')
+    )
+    other_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm ID number of the child (optional)')
+    )
     child_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -353,9 +489,131 @@ class MainForm(forms.ModelForm):
                 Div(
                     Div('main_caregiver_nationality', css_class='col-md-3'),
                     Div('main_caregiver_nationality_other', css_class='col-md-3'),
-                    css_class='row d-none card-body',
+                    css_class='row card-body',
                 ),
                 css_id='step-3',
+            ),
+            Div(
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('id_type', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">16</span>'),
+                    Div('case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">17</span>'),
+                    Div('parent_individual_case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">18</span>'),
+                    Div('parent_individual_case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">19</span>'),
+                    Div('individual_case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">20</span>'),
+                    Div('individual_case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">17</span>'),
+                    Div('recorded_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">18</span>'),
+                    Div('recorded_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id2',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">19</span>'),
+                    Div('parent_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">20</span>'),
+                    Div('parent_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id3',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">21</span>'),
+                    Div('national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">22</span>'),
+                    Div('national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id3',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">23</span>'),
+                    Div('parent_syrian_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">24</span>'),
+                    Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id4',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">25</span>'),
+                    Div('syrian_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">26</span>'),
+                    Div('syrian_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id4',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">27</span>'),
+                    Div('parent_sop_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">28</span>'),
+                    Div('parent_sop_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id5',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">29</span>'),
+                    Div('sop_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">30</span>'),
+                    Div('sop_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id5',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">31</span>'),
+                    Div('parent_other_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">32</span>'),
+                    Div('parent_other_number_confirm', css_class='col-md-4'),
+                    css_class='row child_id child_id6',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">33</span>'),
+                    Div('other_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">34</span>'),
+                    Div('other_number_confirm', css_class='col-md-4'),
+                    css_class='row child_id child_id6',
+                ),
+                css_id='step-4',
             ),
             Div(
                 Div(
@@ -386,7 +644,7 @@ class MainForm(forms.ModelForm):
                     #     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                     # css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn'
                 ),
-                css_id='step-4',
+                css_id='step-5',
             ),
         )
         # partner_id = 0
@@ -408,165 +666,167 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
-        phone_number = cleaned_data.get("phone_number")
-        phone_number_confirm = cleaned_data.get("phone_number_confirm")
-        second_phone_number = cleaned_data.get("second_phone_number")
-        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
         child_nationality = cleaned_data.get("child_nationality")
         other_nationality = cleaned_data.get("other_nationality")
-        main_caregiver = cleaned_data.get("main_caregiver")
-        other_caregiver_relationship = cleaned_data.get("other_caregiver_relationship")
+        if child_nationality and child_nationality.id == 6 and not other_nationality:
+            self.add_error('other_nationality', 'This field is required')
+
         main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
         main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
-        have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
-        labours_single_selection = cleaned_data.get("labours_single_selection")
-        labour_hours = cleaned_data.get("labour_hours")
-        labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
+            self.add_error('main_caregiver_nationality_other', 'This field is required')
+
         child_have_children = cleaned_data.get("child_have_children")
         child_number_children = cleaned_data.get("child_number_children")
-        labours_other_specify = cleaned_data.get("labours_other_specify")
+        if child_have_children and not child_number_children:
+            self.add_error('child_number_children', 'This field is required')
 
-        source_of_identification = cleaned_data.get("source_of_identification")
-        source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
-        rims_case_number = cleaned_data.get("rims_case_number")
-
-        if source_of_identification == 'Other Sources':
-            if not source_of_identification_specify:
-                self.add_error('source_of_identification_specify', 'This field is required')
-        if source_of_identification == 'RIMS':
-            if not rims_case_number:
-                self.add_error('rims_case_number', 'This field is required')
-
-        if labours_single_selection == 'other_many_other':
-            if not labours_other_specify:
-                self.add_error('labours_other_specify', 'This field is required')
-        if child_nationality.id == 6:
-            if not other_nationality:
-                self.add_error('other_nationality', 'This field is required')
-        if main_caregiver == 'other':
-            if not other_caregiver_relationship:
-                self.add_error('other_caregiver_relationship', 'This field is required')
-        if main_caregiver_nationality and main_caregiver_nationality.id == 6:
-            if not main_caregiver_nationality_other:
-                self.add_error('main_caregiver_nationality_other', 'This field is required')
-        if child_have_children:
-            if not child_number_children:
-                self.add_error('child_number_children', 'This field is required')
-        if have_labour_single_selection != 'no':
-            if not labours_single_selection:
-                self.add_error('labours_single_selection', 'This field is required')
+        have_labour = cleaned_data.get("have_labour")
+        labour_type = cleaned_data.get("labour_type")
+        labour_type_specify = cleaned_data.get("labour_type_specify")
+        labour_hours = cleaned_data.get("labour_hours")
+        labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        if have_labour != 'No':
+            if not labour_type:
+                self.add_error('labour_type', 'This field is required')
+            elif labour_type == 'other_many_other' and not labour_type_specify:
+                self.add_error('labour_type_specify', 'This field is required')
             if not labour_hours:
                 self.add_error('labour_hours', 'This field is required')
             if not labour_weekly_income:
                 self.add_error('labour_weekly_income', 'This field is required')
 
-        if phone_number != phone_number_confirm:
+        source_of_identification = cleaned_data.get("source_of_identification")
+        source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
+        if source_of_identification == 'Other Sources' and not source_of_identification_specify:
+            self.add_error('source_of_identification_specify', 'This field is required')
+
+        first_phone_number = cleaned_data.get("first_phone_number")
+        first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
+        if first_phone_number != first_phone_number_confirm:
             msg = "The phone numbers are not matched"
-            self.add_error('phone_number_confirm', msg)
+            self.add_error('first_phone_number_confirm', msg)
         if second_phone_number != second_phone_number_confirm:
             msg = "The phone numbers are not matched"
             self.add_error('second_phone_number_confirm', msg)
 
-        # if id_type == 'UNHCR Registered':
-        #     if not case_number:
-        #         self.add_error('case_number', 'This field is required')
-        #
-        #     if case_number != case_number_confirm:
-        #         msg = "The case numbers are not matched"
-        #         self.add_error('case_number_confirm', msg)
-        #
-        #     if parent_individual_case_number != parent_individual_case_number_confirm:
-        #         msg = "The individual case numbers are not matched"
-        #         self.add_error('parent_individual_case_number_confirm', msg)
-        #
-        #     if individual_case_number != individual_case_number_confirm:
-        #         msg = "The individual case numbers are not matched"
-        #         self.add_error('individual_case_number_confirm', msg)
+        main_caregiver = cleaned_data.get("main_caregiver")
+        main_caregiver_other = cleaned_data.get("main_caregiver_other")
+        if main_caregiver == 'other' and not main_caregiver_other:
+            self.add_error('main_caregiver_other', 'This field is required')
 
-        # if id_type == 'UNHCR Recorded':
-        #     if not recorded_number:
-        #         self.add_error('recorded_number', 'This field is required')
-        #
-        #     if recorded_number != recorded_number_confirm:
-        #         msg = "The recorded numbers are not matched"
-        #         self.add_error('recorded_number_confirm', msg)
-        #
-        # if id_type == 'Syrian national ID':
-        #
-        #     if not parent_syrian_national_number:
-        #         self.add_error('parent_syrian_national_number', 'This field is required')
-        #
-        #     if not parent_syrian_national_number_confirm:
-        #         self.add_error('parent_syrian_national_number_confirm', 'This field is required')
-        #
-        #     if parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
-        #         msg = "Please enter a valid number (11 digits)"
-        #         self.add_error('parent_syrian_national_number_confirm', msg)
-        #
-        #     if parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
-        #         msg = "Please enter a valid number (11 digits)"
-        #         self.add_error('parent_syrian_national_number', msg)
-        #
-        #     if parent_syrian_national_number != parent_syrian_national_number_confirm:
-        #         msg = "The national numbers are not matched"
-        #         self.add_error('parent_syrian_national_number_confirm', msg)
-        #
-        #     if syrian_national_number != syrian_national_number_confirm:
-        #         msg = "The national numbers are not matched"
-        #         self.add_error('syrian_national_number_confirm', msg)
-        #
-        # if id_type == 'Lebanese national ID':
-        #     # if not parent_national_number:
-        #     #     self.add_error('parent_national_number', 'This field is required')
-        #     #
-        #     # if not parent_national_number_confirm:
-        #     #     self.add_error('parent_national_number_confirm', 'This field is required')
-        #
-        #     if parent_national_number and not len(parent_national_number) == 12:
-        #         msg = "Please enter a valid number (12 digits)"
-        #         self.add_error('parent_national_number', msg)
-        #
-        #     if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
-        #         msg = "Please enter a valid number (12 digits)"
-        #         self.add_error('parent_national_number_confirm', msg)
-        #
-        #     if parent_national_number != parent_national_number_confirm:
-        #         msg = "The national numbers are not matched"
-        #         self.add_error('parent_national_number_confirm', msg)
-        #
-        #     if national_number != national_number_confirm:
-        #         msg = "The national numbers are not matched"
-        #         self.add_error('national_number_confirm', msg)
-        #
-        # if id_type == 'Palestinian national ID':
-        #     if not sop_parent_national_number:
-        #         self.add_error('parent_sop_national_number', 'This field is required')
-        #
-        #     if not sop_parent_national_number_confirm:
-        #         self.add_error('parent_sop_national_number_confirm', 'This field is required')
-        #
-        #     if sop_parent_national_number != sop_parent_national_number_confirm:
-        #         msg = "The national numbers are not matched"
-        #         self.add_error('parent_sop_national_number_confirm', msg)
-        #
-        #     if sop_national_number != sop_national_number_confirm:
-        #         msg = "The national numbers are not matched"
-        #         self.add_error('sop_national_number_confirm', msg)
-        #
-        # if id_type == 'Other nationality':
-        #     if not parent_other_number:
-        #         self.add_error('parent_other_number', 'This field is required')
-        #
-        #     if not parent_other_number_confirm:
-        #         self.add_error('parent_other_number_confirm', 'This field is required')
-        #
-        #     if parent_other_number != parent_other_number_confirm:
-        #         msg = "The ID numbers are not matched"
-        #         self.add_error('parent_other_number_confirm', msg)
-        #
-        #     if other_number != other_number_confirm:
-        #         msg = "The ID numbers are not matched"
-        #         self.add_error('other_number_confirm', msg)
+
+        # id_type
+        # recorded_number
+        # recorded_number_confirm
+        # national_number
+        # national_number_confirm
+        # syrian_national_number
+        # syrian_national_number_confirm
+        # sop_national_number
+        # sop_national_number_confirm
+        # parent_national_number
+        # parent_national_number_confirm
+        # parent_syrian_national_number
+        # parent_syrian_national_number_confirm
+        # parent_sop_national_number
+        # parent_sop_national_number_confirm
+        # parent_other_number
+        # parent_other_number_confirm
+        # other_number
+        # other_number_confirm
+
+        if id_type == 'UNHCR Registered':
+            if not case_number:
+                self.add_error('case_number', 'This field is required')
+            elif case_number != case_number_confirm:
+                msg = "The case numbers are not matched"
+                self.add_error('case_number_confirm', msg)
+
+            if parent_individual_case_number != parent_individual_case_number_confirm:
+                msg = "The individual case numbers are not matched"
+                self.add_error('parent_individual_case_number_confirm', msg)
+
+            if individual_case_number != individual_case_number_confirm:
+                msg = "The individual case numbers are not matched"
+                self.add_error('individual_case_number_confirm', msg)
+
+        if id_type == 'UNHCR Recorded':
+            if not recorded_number:
+                self.add_error('recorded_number', 'This field is required')
+            elif recorded_number != recorded_number_confirm:
+                msg = "The recorded numbers are not matched"
+                self.add_error('recorded_number_confirm', msg)
+
+        if id_type == 'Syrian national ID':
+            if not parent_syrian_national_number:
+                self.add_error('parent_syrian_national_number', 'This field is required')
+            elif parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('parent_syrian_national_number', msg)
+
+            if not parent_syrian_national_number_confirm:
+                self.add_error('parent_syrian_national_number_confirm', 'This field is required')
+            elif parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('parent_syrian_national_number_confirm', msg)
+
+            if parent_syrian_national_number != parent_syrian_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_syrian_national_number_confirm', msg)
+
+            if syrian_national_number != syrian_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('syrian_national_number_confirm', msg)
+
+        if id_type == 'Lebanese national ID':
+            if parent_national_number and not len(parent_national_number) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('parent_national_number', msg)
+
+            if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('parent_national_number_confirm', msg)
+
+            if parent_national_number != parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_national_number_confirm', msg)
+
+            if national_number != national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('national_number_confirm', msg)
+
+        if id_type == 'Palestinian national ID':
+            if not sop_parent_national_number:
+                self.add_error('parent_sop_national_number', 'This field is required')
+
+            if not sop_parent_national_number_confirm:
+                self.add_error('parent_sop_national_number_confirm', 'This field is required')
+
+            if sop_parent_national_number != sop_parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_sop_national_number_confirm', msg)
+
+            if sop_national_number != sop_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('sop_national_number_confirm', msg)
+
+        if id_type == 'Other nationality':
+            if not parent_other_number:
+                self.add_error('parent_other_number', 'This field is required')
+
+            if not parent_other_number_confirm:
+                self.add_error('parent_other_number_confirm', 'This field is required')
+
+            if parent_other_number != parent_other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('parent_other_number_confirm', msg)
+
+            if other_number != other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('other_number_confirm', msg)
 
     def save(self, request=None, instance=None):
         if instance:
@@ -637,7 +897,32 @@ class MainForm(forms.ModelForm):
             'labour_type',
             'labour_type_specify',
             'labour_hours',
-            'labour_weekly_income'
+            'labour_weekly_income',
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'parent_individual_case_number',
+            'parent_individual_case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'parent_national_number',
+            'parent_national_number_confirm',
+            'national_number',
+            'national_number_confirm',
+            'parent_syrian_national_number',
+            'parent_syrian_national_number_confirm',
+            'syrian_national_number',
+            'syrian_national_number_confirm',
+            'parent_sop_national_number',
+            'parent_sop_national_number_confirm',
+            'sop_national_number',
+            'sop_national_number_confirm',
+            'parent_other_number',
+            'parent_other_number_confirm',
+            'other_number',
+            'other_number_confirm',
         )
 
 

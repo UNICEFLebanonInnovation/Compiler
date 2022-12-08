@@ -8,43 +8,43 @@ from .models import (
 
 
 def create_instance(validated_data, model):
-    from student_registration.students.serializers import StudentSerializer
-    from student_registration.students.models import Student
+    from student_registration.child.serializers import ChildSerializer
+    from student_registration.child.models import Child
 
-    student_data = validated_data.pop('student', None)
-    student = None
+    child_data = validated_data.pop('child', None)
+    child = None
 
-    if 'id' in student_data and student_data['id']:
-        student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
-        student = student_serializer.instance
+    if 'id' in child_data and child_data['id']:
+        child_serializer = ChildSerializer(Child.objects.get(id=child_data['id']), data=child_data)
+        child_serializer.is_valid(raise_exception=True)
+        child_serializer.instance = child_serializer.save()
+        child = child_serializer.instance
 
-    if not student:
-        student_serializer = StudentSerializer(data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
-        student = student_serializer.instance
+    if not child:
+        child_serializer = ChildSerializer(data=student_data)
+        child_serializer.is_valid(raise_exception=True)
+        child_serializer.instance = child_serializer.save()
+        child = child_serializer.instance
 
     try:
         instance = model.objects.create(**validated_data)
-        instance.student = student
+        instance.child = child
         instance.save()
 
     except Exception as ex:
-        raise serializers.ValidationError({'Enrollment instance': ex.message})
+        raise serializers.ValidationError({'Registration instance': ex.message})
 
     return instance
 
 
 def update_instance(instance, validated_data):
-    from student_registration.students.serializers import StudentSerializer
-    student_data = validated_data.pop('student', None)
+    from student_registration.child.serializers import ChildSerializer
+    child_data = validated_data.pop('child', None)
 
-    if student_data:
-        student_serializer = StudentSerializer(instance.student, data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
+    if child_data:
+        child_serializer = ChildSerializer(instance.child, data=child_data)
+        child_serializer.is_valid(raise_exception=True)
+        child_serializer.instance = child_serializer.save()
 
     try:
 
@@ -55,54 +55,41 @@ def update_instance(instance, validated_data):
         instance.save()
 
     except Exception as ex:
-        raise serializers.ValidationError({'Enrollment instance': ex.message})
+        raise serializers.ValidationError({'Registration instance': ex.message})
 
     return instance
 
 
 class MainSerializer(serializers.ModelSerializer):
-
     original_id = serializers.IntegerField(source='id', read_only=True)
-    round_name = serializers.CharField(source='round.name', read_only=True)
-    student_id = serializers.IntegerField(source='student.id', required=False)
-    student_first_name = serializers.CharField(source='student.first_name')
-    student_father_name = serializers.CharField(source='student.father_name')
-    student_last_name = serializers.CharField(source='student.last_name')
-    student_full_name = serializers.CharField(source='student.full_name', read_only=True)
-    student_mother_fullname = serializers.CharField(source='student.mother_fullname')
-    student_sex = serializers.CharField(source='student.sex')
-    student_birthday_year = serializers.CharField(source='student.birthday_year')
-    student_birthday_month = serializers.CharField(source='student.birthday_month')
-    student_birthday_day = serializers.CharField(source='student.birthday_day')
-    student_birthday = serializers.CharField(source='student.birthday', read_only=True)
-    student_nationality = serializers.CharField(source='student.nationality')
-    student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
-    student_address = serializers.CharField(source='student.address', required=False)
-    student_p_code = serializers.CharField(source='student.p_code', required=False)
-    student_id_number = serializers.CharField(source='student.id_number', required=False)
-    student_family_status = serializers.CharField(source='student.family_status', required=False)
-    student_have_children = serializers.CharField(source='student.have_children', required=False)
-    comments = serializers.CharField(required=False)
-    unsuccessful_posttest_reason = serializers.CharField(required=False)
-    unsuccessful_pretest_reason = serializers.CharField(required=False)
-    pre_test = serializers.JSONField(required=False)
-    post_test = serializers.JSONField(required=False)
-    student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
-    student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
-    governorate_name = serializers.CharField(source='governorate.name', read_only=True)
-    district_name = serializers.CharField(source='district.name', read_only=True)
-    cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
-    partner_name = serializers.CharField(source='partner.name', read_only=True)
-    partner = serializers.CharField(source='partner.id', read_only=True)
+    registration_id = serializers.IntegerField(source='id', read_only=True)
+    child_id = serializers.IntegerField(source='child.id', required=False)
+    child_first_name = serializers.CharField(source='child.first_name')
+    child_father_name = serializers.CharField(source='child.father_name')
+    child_last_name = serializers.CharField(source='child.last_name')
+    child_full_name = serializers.CharField(source='child.full_name', read_only=True)
+    child_mother_fullname = serializers.CharField(source='child.mother_fullname')
+    child_gender = serializers.CharField(source='child.gender')
+    child_birthday_year = serializers.CharField(source='child.birthday_year')
+    child_birthday_month = serializers.CharField(source='child.birthday_month')
+    child_birthday_day = serializers.CharField(source='child.birthday_day')
+    child_birthday = serializers.CharField(source='child.birthday', read_only=True)
+    child_nationality = serializers.CharField(source='child.nationality')
+    child_nationality_id = serializers.CharField(source='child.nationality.id', read_only=True)
+    child_address = serializers.CharField(source='child.address', required=False)
+    child_p_code = serializers.CharField(source='child.p_code', required=False)
+    child_id_number = serializers.CharField(source='child.id_number', required=False)
+    child_marital_status = serializers.CharField(source='child.marital_status', required=False)
+    child_have_children = serializers.CharField(source='child.have_children', required=False)
+    # governorate_name = serializers.CharField(source='governorate.name', read_only=True)
+    # district_name = serializers.CharField(source='district.name', read_only=True)
+    # cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
+    # partner_name = serializers.CharField(source='partner.name', read_only=True)
+    # partner = serializers.CharField(source='partner.id', read_only=True)
     created = serializers.CharField(read_only=True)
-
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
-    # internal = serializers.CharField(read_only=True)
-    enrollment_id = serializers.IntegerField(source='id', read_only=True)
-    search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
-    search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
-
+    search_mscc_student = serializers.CharField(source='student.full_name', read_only=True)
     owner_name = serializers.CharField(source='owner.username', read_only=True)
     modified_by_name = serializers.CharField(source='modified_by.username', read_only=True)
 
@@ -117,209 +104,86 @@ class MainSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'original_id',
-            'round_name',
-            'enrollment_id',
-            'student_id',
-            'round',
-            'partner',
-            'partner_name',
-            # 'language',
-            'student_outreach_child',
-            'student_outreach_child_id',
-            'student_first_name',
-            'student_father_name',
-            'student_last_name',
-            'student_full_name',
-            'student_mother_fullname',
-            'student_sex',
-            'student_birthday_year',
-            'student_birthday_month',
-            'student_birthday_day',
-            'student_birthday',
-            'student_nationality',
-            'student_nationality_id',
-            'student_address',
-            'student_p_code',
-            'student_id_number',
-            # 'internal_number',
+            'registration_id',
+            'child_id',
+            'search_mscc_student',
+            'csrfmiddlewaretoken',
+            'save',
             'owner',
             'owner_name',
             'modified_by',
             'modified_by_name',
-            'governorate',
-            'governorate_name',
-            'district',
-            'district_name',
-            'cadaster',
-            'cadaster_name',
-            'location',
-            'center',
-            'center_p_code',
-            'center_type',
-            'outreach_barcode',
-            'disability',
-            'student_family_status',
-            'student_have_children',
-            'cash_support_programmes',
-            'packages_received',
-            'hh_educational_level',
-            'father_educational_level',
-            'participation',
-            'learning_result',
-            'learning_result_other',
-            'barriers_single',
-            'barriers_other',
-            'test_done',
-            'round_complete',
-            'follow_up_type',
-            'phone_call_number',
-            'house_visit_number',
-            'family_visit_number',
-            'phone_call_follow_up_result',
-            'house_visit_follow_up_result',
-            'family_visit_follow_up_result',
-            'cp_referral',
-            'parent_attended_visits',
-            'pss_session_attended',
-            'pss_session_number',
-            'pss_session_modality',
-            'pss_parent_attended',
-            'pss_parent_attended_other',
-            'covid_session_attended',
-            'covid_session_number',
-            'covid_session_modality',
-            'covid_parent_attended',
-            'covid_parent_attended_other',
-            'followup_session_attended',
-            'followup_session_number',
-            'followup_session_modality',
-            'followup_parent_attended_other',
-            'followup_parent_attended',
-            'child_health_examed',
-            'child_health_concern',
-            'student_outreached',
-            'new_registry',
-            'have_barcode',
-            'search_clm_student',
-            'search_barcode',
-            'csrfmiddlewaretoken',
-            'save',
-            'comments',
-            'unsuccessful_posttest_reason',
-            'unsuccessful_pretest_reason',
-            'pre_test',
-            'post_test',
             'created',
             'modified',
-            'cycle_completed',
-            'enrolled_at_school',
-            # 'caretaker_birthday_year',
-            # 'caretaker_birthday_month',
-            # 'caretaker_birthday_day',
-
-            # '-------------------------------------------------------------------------------------------------------',
-            'have_labour',
-            'labours',
-            'labour_hours',
-            'have_labour_single_selection',
-            'labours_single_selection',
-            'labour_weekly_income',
-            'phone_number',
-            'phone_number_confirm',
+            'center',
+            'child_first_name',
+            'child_father_name',
+            'child_last_name',
+            'child_mother_fullname',
+            'child_full_name',
+            'child_gender',
+            'child_nationality',
+            'child_nationality_other',
+            'child_nationality_id',
+            'child_birthday_year',
+            'child_birthday_month',
+            'child_birthday_day',
+            'child_birthday',
+            'main_caregiver_nationality',
+            'main_caregiver_nationality_other',
+            'child_p_code',
+            'child_id_number',
+            'child_address',
+            'child_disability',
+            'child_marital_status',
+            'child_have_children',
+            'child_number_children',
+            'source_of_identification',
+            'source_of_identification_specify',
+            'cash_support_programmes',
+            'father_educational_level',
+            'mother_educational_level',
+            'first_phone_owner',
+            'first_phone_number',
+            'first_phone_number_confirm',
+            'second_phone_owner',
             'second_phone_number',
             'second_phone_number_confirm',
-            'phone_owner',
-            'second_phone_owner',
-            # 'id_type',
+            'main_caregiver',
+            'main_caregiver_other',
+            'caregiver_first_name',
+            'caregiver_middle_name',
+            'caregiver_last_name',
+            'caregiver_mother_name',
+            'have_labour',
+            'labour_type',
+            'labour_type_specify',
+            'labour_hours',
+            'labour_weekly_income',
+            'id_type',
             'case_number',
             'case_number_confirm',
-            'individual_case_number',
-            'individual_case_number_confirm',
             'parent_individual_case_number',
             'parent_individual_case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
             'recorded_number',
             'recorded_number_confirm',
-            'national_number',
-            'national_number_confirm',
-            'syrian_national_number',
-            'syrian_national_number_confirm',
-            'sop_national_number',
-            'sop_national_number_confirm',
             'parent_national_number',
             'parent_national_number_confirm',
+            'national_number',
+            'national_number_confirm',
             'parent_syrian_national_number',
             'parent_syrian_national_number_confirm',
+            'syrian_national_number',
+            'syrian_national_number_confirm',
             'parent_sop_national_number',
             'parent_sop_national_number_confirm',
+            'sop_national_number',
+            'sop_national_number_confirm',
             'parent_other_number',
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
-            'no_child_id_confirmation',
-            'source_of_identification',
-            'rims_case_number',
-            'source_of_identification_specify',
-            'other_nationality',
-            'caretaker_first_name',
-            'caretaker_middle_name',
-            'caretaker_last_name',
-            'caretaker_mother_name',
-            'round_start_date',
-            # 'registration_level',
-            'cadaster',
-            # 'source_of_transportation',
-            'main_caregiver',
-            'main_caregiver_nationality',
-            'main_caregiver_nationality_other',
-            'other_caregiver_relationship',
-            'student_number_children',
-            'basic_stationery',
-            'pss_kit',
-            'remote_learning',
-            'remote_learning_reasons_not_engaged',
-            'reasons_not_engaged_other',
-            'reliable_internet',
-            'gender_participate',
-            'gender_participate_explain',
-            'remote_learning_engagement',
-            'meet_learning_outcomes',
-            'parent_learning_support_rate',
-            'covid_message',
-            'covid_message_how_often',
-            'covid_parents_message',
-            'covid_parents_message_how_often',
-            'follow_up_done',
-            'follow_up_done_with_who',
-            'labours_other_specify',
-            'child_received_books',
-            'child_received_printout',
-            'child_received_internet',
-            'referal_wash',
-            'referal_health',
-            'referal_other',
-            'referal_other_specify',
-            'akelius_program',
-            'education_status',
-            'miss_school_date',
-            'dropout_program',
-            'first_attendance_date',
-            'education_program',
-            'volunteering_experience',
-            'previous_community_initiative',
-            'enrollement_reason',
-            'pre_tests_administered',
-            'test_diagnostic_done',
-            'receive_passing_grade',
-            'life_skills_completed',
-            'participate_volunteering',
-            'volunteering_specify',
-            'social_course',
-            'yfs_course_completed',
-            'training_material',
-            'participate_community_initiatives',
-            'community_initiatives_specify',
-            'adolescent_attendance',
-            'adolescent_dropout_reason',
-            'adolescent_dropout_date',
         )
 
