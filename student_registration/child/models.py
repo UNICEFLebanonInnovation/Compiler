@@ -7,21 +7,9 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
 
-from student_registration.students.models import Nationality
+from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.students.utils import generate_id
-
-
-class IDType(models.Model):
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "ID Type"
-        verbose_name_plural = "ID Types"
-
-    def __unicode__(self):
-        return self.name
 
 
 class Child(TimeStampedModel):
