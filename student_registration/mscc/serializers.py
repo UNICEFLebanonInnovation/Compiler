@@ -89,7 +89,6 @@ class MainSerializer(serializers.ModelSerializer):
     created = serializers.CharField(read_only=True)
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
-    search_mscc_student = serializers.CharField(source='student.full_name', read_only=True)
     owner_name = serializers.CharField(source='owner.username', read_only=True)
     modified_by_name = serializers.CharField(source='modified_by.username', read_only=True)
 
@@ -106,7 +105,6 @@ class MainSerializer(serializers.ModelSerializer):
             'original_id',
             'registration_id',
             'child_id',
-            'search_mscc_student',
             'csrfmiddlewaretoken',
             'save',
             'owner',
