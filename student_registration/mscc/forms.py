@@ -120,7 +120,7 @@ class MainForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Child.YES_NO
     )
-    child_number_children = forms.IntegerField(
+    child_children_number = forms.IntegerField(
         label=_('How many?'),
         widget=forms.TextInput, required=False
     )
@@ -439,7 +439,7 @@ class MainForm(forms.ModelForm):
                 Div(
                     Div('child_marital_status', css_class='col-md-4'),
                     Div('child_have_children', css_class='col-md-3', css_id='child_have_children'),
-                    Div('child_number_children', css_class='col-md-3'),
+                    Div('child_children_number', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -608,9 +608,9 @@ class MainForm(forms.ModelForm):
         cleaned_data = super(MainForm, self).clean()
 
         child_nationality = cleaned_data.get("child_nationality")
-        other_nationality = cleaned_data.get("other_nationality")
-        if child_nationality and child_nationality.id == 6 and not other_nationality:
-            self.add_error('other_nationality', 'This field is required')
+        child_nationality_other = cleaned_data.get("child_nationality_other")
+        if child_nationality and child_nationality.id == 6 and not child_nationality_other:
+            self.add_error('child_nationality_other', 'This field is required')
 
         main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
         main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
@@ -618,9 +618,9 @@ class MainForm(forms.ModelForm):
             self.add_error('main_caregiver_nationality_other', 'This field is required')
 
         child_have_children = cleaned_data.get("child_have_children")
-        child_number_children = cleaned_data.get("child_number_children")
-        if child_have_children and not child_number_children:
-            self.add_error('child_number_children', 'This field is required')
+        child_children_number = cleaned_data.get("child_children_number")
+        if child_have_children and not child_children_number:
+            self.add_error('child_children_number', 'This field is required')
 
         have_labour = cleaned_data.get("have_labour")
         labour_type = cleaned_data.get("labour_type")
@@ -659,6 +659,12 @@ class MainForm(forms.ModelForm):
             self.add_error('main_caregiver_other', 'This field is required')
 
         id_type = cleaned_data.get("id_type")
+        case_number = cleaned_data.get("case_number")
+        case_number_confirm = cleaned_data.get("case_number_confirm")
+        parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
+        parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
+        individual_case_number = cleaned_data.get("individual_case_number")
+        individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
         if id_type == 'UNHCR Registered':
             if not case_number:
                 self.add_error('case_number', 'This field is required')
@@ -674,6 +680,8 @@ class MainForm(forms.ModelForm):
                 msg = "The individual case numbers are not matched"
                 self.add_error('individual_case_number_confirm', msg)
 
+        recorded_number = cleaned_data.get("recorded_number")
+        recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
         if id_type == 'UNHCR Recorded':
             if not recorded_number:
                 self.add_error('recorded_number', 'This field is required')
@@ -681,6 +689,10 @@ class MainForm(forms.ModelForm):
                 msg = "The recorded numbers are not matched"
                 self.add_error('recorded_number_confirm', msg)
 
+        parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
+        parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
+        syrian_national_number = cleaned_data.get("syrian_national_number")
+        syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
         if id_type == 'Syrian national ID':
             if not parent_syrian_national_number:
                 self.add_error('parent_syrian_national_number', 'This field is required')
@@ -702,6 +714,10 @@ class MainForm(forms.ModelForm):
                 msg = "The national numbers are not matched"
                 self.add_error('syrian_national_number_confirm', msg)
 
+        parent_national_number = cleaned_data.get("parent_national_number")
+        parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        national_number = cleaned_data.get("national_number")
+        national_number_confirm = cleaned_data.get("national_number_confirm")
         if id_type == 'Lebanese national ID':
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
@@ -719,6 +735,10 @@ class MainForm(forms.ModelForm):
                 msg = "The national numbers are not matched"
                 self.add_error('national_number_confirm', msg)
 
+        sop_parent_national_number = cleaned_data.get("sop_parent_national_number")
+        sop_parent_national_number_confirm = cleaned_data.get("sop_parent_national_number_confirm")
+        sop_national_number = cleaned_data.get("sop_national_number")
+        sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
         if id_type == 'Palestinian national ID':
             if not sop_parent_national_number:
                 self.add_error('parent_sop_national_number', 'This field is required')
@@ -734,6 +754,10 @@ class MainForm(forms.ModelForm):
                 msg = "The national numbers are not matched"
                 self.add_error('sop_national_number_confirm', msg)
 
+        parent_other_number = cleaned_data.get("parent_other_number")
+        parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
+        other_number = cleaned_data.get("other_number")
+        other_number_confirm = cleaned_data.get("other_number_confirm")
         if id_type == 'Other nationality':
             if not parent_other_number:
                 self.add_error('parent_other_number', 'This field is required')
@@ -796,7 +820,7 @@ class MainForm(forms.ModelForm):
             'child_disability',
             'child_marital_status',
             'child_have_children',
-            'child_number_children',
+            'child_children_number',
             'source_of_identification',
             'source_of_identification_specify',
             'cash_support_programmes',
@@ -1079,9 +1103,6 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         form_action = reverse('clm:diagnostic_assessment', kwargs={'pk': instance.id})
 
         if instance.pre_test:
-            print('-------------------------------------------------')
-            print(instance.pre_test)
-            print('-------------------------------------------------')
             pre_test_button = ' btn-outline-success '
             pre_test = instance.assessment_form(
                 stage='pre_test',

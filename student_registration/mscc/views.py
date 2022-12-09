@@ -80,10 +80,10 @@ class MainAddView(LoginRequiredMixin,
         data = {
             'student_outreached': self.request.GET.get('student_outreached', ''),
         }
-        if self.request.GET.get('enrollment_id'):
-            instance = Registration.objects.get(id=self.request.GET.get('enrollment_id'))
+        if self.request.GET.get('registration_id'):
+            instance = Registration.objects.get(id=self.request.GET.get('registration_id'))
             data = MainSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
+            data['child_nationality'] = data['child_nationality_id']
             data['learning_result'] = ''
 
         if self.request.GET.get('child_id'):
@@ -142,7 +142,12 @@ class MainEditView(LoginRequiredMixin,
             return MainForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = MainSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
+            data['child_nationality'] = data['child_nationality_id']
+            data['child_disability'] = data['child_disability_id']
+            data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']
+            data['father_educational_level'] = data['father_educational_level_id']
+            data['mother_educational_level'] = data['mother_educational_level_id']
+            data['id_type'] = data['id_type_id']
             return MainForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
@@ -168,8 +173,9 @@ class MainListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+        return Registration.objects.all().order_by('-id')
 
-        return Registration.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        # return Registration.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class EducationSituationView(LoginRequiredMixin,

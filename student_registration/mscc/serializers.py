@@ -1,5 +1,3 @@
-import json
-
 from rest_framework import serializers
 from .models import (
     Registration
@@ -20,7 +18,7 @@ def create_instance(validated_data, model):
         child = child_serializer.instance
 
     if not child:
-        child_serializer = ChildSerializer(data=student_data)
+        child_serializer = ChildSerializer(data=child_data)
         child_serializer.is_valid(raise_exception=True)
         child_serializer.instance = child_serializer.save()
         child = child_serializer.instance
@@ -79,15 +77,18 @@ class MainSerializer(serializers.ModelSerializer):
     child_nationality_other = serializers.CharField(source='child.nationality_other')
     child_address = serializers.CharField(source='child.address', required=False)
     child_disability = serializers.CharField(source='child.disability', required=False)
+    child_disability_id = serializers.CharField(source='child.disability.id', read_only=True)
     child_p_code = serializers.CharField(source='child.p_code', required=False)
     child_id_number = serializers.CharField(source='child.id_number', required=False)
     child_marital_status = serializers.CharField(source='child.marital_status', required=False)
     child_have_children = serializers.CharField(source='child.have_children', required=False)
-    child_number_children = serializers.CharField(source='child.number_children', required=False)
+    child_children_number = serializers.CharField(source='child.children_number', required=False)
     main_caregiver_nationality = serializers.CharField(source='child.main_caregiver_nationality', required=False)
+    main_caregiver_nationality_id = serializers.CharField(source='child.main_caregiver_nationality.id', required=False)
     main_caregiver_nationality_other = serializers.CharField(source='child.main_caregiver_nationality_other',
                                                              required=False)
     id_type = serializers.CharField(source='child.id_type', required=False)
+    id_type_id = serializers.CharField(source='child.id_type.id', required=False)
     case_number = serializers.CharField(source='child.case_number', required=False)
     case_number_confirm = serializers.CharField(source='child.case_number_confirm', required=False)
     parent_individual_case_number = serializers.CharField(source='child.parent_individual_case_number',
@@ -121,7 +122,9 @@ class MainSerializer(serializers.ModelSerializer):
     other_number = serializers.CharField(source='child.other_number', required=False)
     other_number_confirm = serializers.CharField(source='child.other_number_confirm', required=False)
     father_educational_level = serializers.CharField(source='child.father_educational_level', required=False)
+    father_educational_level_id = serializers.CharField(source='child.father_educational_level.id', required=False)
     mother_educational_level = serializers.CharField(source='child.mother_educational_level', required=False)
+    mother_educational_level_id = serializers.CharField(source='child.mother_educational_level.id', required=False)
     first_phone_owner = serializers.CharField(source='child.first_phone_owner', required=False)
     first_phone_number = serializers.CharField(source='child.first_phone_number', required=False)
     first_phone_number_confirm = serializers.CharField(source='child.first_phone_number_confirm', required=False)
@@ -182,19 +185,23 @@ class MainSerializer(serializers.ModelSerializer):
             'child_birthday_day',
             'child_birthday',
             'main_caregiver_nationality',
+            'main_caregiver_nationality_id',
             'main_caregiver_nationality_other',
             'child_p_code',
             'child_id_number',
             'child_address',
             'child_disability',
+            'child_disability_id',
             'child_marital_status',
             'child_have_children',
-            'child_number_children',
+            'child_children_number',
             'source_of_identification',
             'source_of_identification_specify',
             'cash_support_programmes',
             'father_educational_level',
+            'father_educational_level_id',
             'mother_educational_level',
+            'mother_educational_level_id',
             'first_phone_owner',
             'first_phone_number',
             'first_phone_number_confirm',
@@ -213,6 +220,7 @@ class MainSerializer(serializers.ModelSerializer):
             'labour_hours',
             'labour_weekly_income',
             'id_type',
+            'id_type_id',
             'case_number',
             'case_number_confirm',
             'parent_individual_case_number',
