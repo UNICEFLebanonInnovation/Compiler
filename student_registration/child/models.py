@@ -38,13 +38,14 @@ class Child(TimeStampedModel):
         ('Female', _('Female')),
     )
     MARITAL_STATUS = Choices(
+        ('', '----------'),
         ('Married', _('Married')),
         ('Engaged', _('Engaged')),
         ('Divorced', _('Divorced')),
         ('Widowed', _('Widowed')),
         ('Single', _('Single')),
     )
-    MAIN_CAREGIVER = (
+    MAIN_CAREGIVER = Choices(
         ('', '----------'),
         ('Mother', _('Mother')),
         ('Father', _('Father')),

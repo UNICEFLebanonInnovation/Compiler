@@ -78,13 +78,11 @@ class Registration(TimeStampedModel):
             ('Other Sources', _('Other Sources')),
     )
     CASH_SUPPORT_PROGRAMMES = Choices(
-            ('', '----------'),
             ('Haddi', _('Haddi')),
             ('Education Cash assistance', _('Education Cash assistance')),
             ('UNHCR cash assistance', _('UNHCR cash assistance')),
             ('WFP cash assistance', _('WFP cash assistance')),
     )
-
     center = models.ForeignKey(
         Center,
         blank=True, null=True,
