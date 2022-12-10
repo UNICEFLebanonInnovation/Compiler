@@ -16,7 +16,8 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import Child
+from student_registration.outreach.models import OutreachChild
+from student_registration.child.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from .filters import (
     MainFilter
