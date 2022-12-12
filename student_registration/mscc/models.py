@@ -735,6 +735,11 @@ class EducationAssessment(TimeStampedModel):
         ('Violence and Bullying', _('Violence and Bullying')),
         ('Other', _('Other')),
     )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
     pre_attended_arabic = models.CharField(
         max_length=100,
         blank=True,
@@ -799,7 +804,7 @@ class EducationAssessment(TimeStampedModel):
         choices=PARTICIPATION,
         verbose_name=_('Child Level of participation / Absence')
     )
-    barriers_single = models.CharField(
+    barriers = models.CharField(
         max_length=100,
         blank=True,
         null=True,
