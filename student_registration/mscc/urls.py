@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 
-from . import views
+from . import views, education_view
 
 urlpatterns = [
 
@@ -27,18 +27,8 @@ urlpatterns = [
         name='list'
     ),
     url(
-        regex=r'^education-situation/(?P<pk>[\w.@+-]+)/$',
-        view=views.EducationSituationView.as_view(),
-        name='education_situation'
-    ),
-    url(
-        regex=r'^diagnostic-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.DiagnosticAssessmentView.as_view(),
-        name='diagnostic_assessment'
-    ),
-    url(
         regex=r'^education-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.EducationAssessmentView.as_view(),
+        view=education_view.EducationAssessmentView.as_view(),
         name='education_assessment'
     ),
     url(
