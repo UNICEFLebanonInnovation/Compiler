@@ -27,8 +27,18 @@ urlpatterns = [
         name='list'
     ),
     url(
+        regex=r'^add-education-assessment/(?P<reg_id>[\w.@+-]+)$',
+        view=education_view.EducationAssessmentAddView.as_view(),
+        name='add_education_assessment'
+    ),
+    url(
+        regex=r'^edit-education-assessment/(?P<pk>[\w.@+-]+)$',
+        view=education_view.EducationAssessmentEditView.as_view(),
+        name='edit_education_assessment'
+    ),
+    url(
         regex=r'^education-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=education_view.EducationAssessmentView.as_view(),
+        view=education_view.EducationAssessmentRedirectView.as_view(),
         name='education_assessment'
     ),
     url(

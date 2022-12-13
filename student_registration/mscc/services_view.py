@@ -37,7 +37,7 @@ class InclusionAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(InclusionServiceForm, self).get_context_data(**kwargs)
+        return super(InclusionAddView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
@@ -48,7 +48,7 @@ class InclusionAddView(LoginRequiredMixin,
     def form_valid(self, form):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
-        return super(InclusionServiceForm, self).form_valid(form)
+        return super(InclusionAddView, self).form_valid(form)
 
 
 class InclusionEditView(LoginRequiredMixin,
