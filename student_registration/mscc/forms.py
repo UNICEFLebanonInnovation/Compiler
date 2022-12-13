@@ -69,7 +69,7 @@ class MainForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     child_nationality_other = forms.CharField(
-        label=_('Please specify'),
+        label=_('If other, Please specify'),
         widget=forms.TextInput, required=False
     )
     child_birthday_year = forms.ChoiceField(
@@ -121,7 +121,7 @@ class MainForm(forms.ModelForm):
         choices=Child.YES_NO
     )
     child_children_number = forms.IntegerField(
-        label=_('How many?'),
+        label=_('If yes, How many?'),
         widget=forms.TextInput, required=False
     )
     source_of_identification = forms.ChoiceField(
@@ -132,7 +132,7 @@ class MainForm(forms.ModelForm):
         initial=''
     )
     source_of_identification_specify = forms.CharField(
-        label=_('Please specify'),
+        label=_('If Other, Please specify'),
         widget=forms.TextInput, required=False
     )
     cash_support_programmes = forms.MultipleChoiceField(
@@ -431,13 +431,19 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('child_p_code', css_class='col-md-3'),
-                    Div('child_address', css_class='col-md-3'),
-                    Div('child_disability', css_class='col-md-3'),
+                    Div('child_p_code', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('child_marital_status', css_class='col-md-4'),
+                    Div('child_address', css_class='col-md-6'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('child_disability', css_class='col-md-6'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('child_marital_status', css_class='col-md-3'),
                     Div('child_have_children', css_class='col-md-3', css_id='child_have_children'),
                     Div('child_children_number', css_class='col-md-3'),
                     css_class='row card-body',
@@ -455,7 +461,7 @@ class MainForm(forms.ModelForm):
             ),
             Div(
                 Div(
-                    Div('father_educational_level', css_class='col-md-4'),
+                    Div('father_educational_level', css_class='col-md-5'),
                     Div('mother_educational_level', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
@@ -619,7 +625,7 @@ class MainForm(forms.ModelForm):
 
         child_have_children = cleaned_data.get("child_have_children")
         child_children_number = cleaned_data.get("child_children_number")
-        if child_have_children and not child_children_number:
+        if child_have_children == "Yes" and not child_children_number:
             self.add_error('child_children_number', 'This field is required')
 
         have_labour = cleaned_data.get("have_labour")
@@ -665,6 +671,8 @@ class MainForm(forms.ModelForm):
         parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
         individual_case_number = cleaned_data.get("individual_case_number")
         individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
+
+        # @todo use database ID
         if id_type == 'UNHCR Registered':
             if not case_number:
                 self.add_error('case_number', 'This field is required')

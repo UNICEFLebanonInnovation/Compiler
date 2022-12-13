@@ -27,13 +27,15 @@ class CommonTable(tables.Table):
 
 class MainTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html',
-                                          )
+                                          template_name='django_tables2/mscc/action_column.html')
+    status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
+                                          template_name='django_tables2/mscc/status_column.html')
 
     class Meta:
         model = Registration
         fields = (
             'action_column',
+            'status_column',
             # 'delete_column',
             # 'monitoring_column',
             # 'referral_column',
@@ -41,6 +43,7 @@ class MainTable(CommonTable):
             # 'round',
             # 'internal_number',
             # 'child.id_number',
+            'type',
             'child.number',
             'child.first_name',
             'child.father_name',

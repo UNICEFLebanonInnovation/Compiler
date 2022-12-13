@@ -32,7 +32,7 @@ urlpatterns = [
         name='education_assessment'
     ),
     url(
-        regex=r'^child-profile/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='view_child'
     ),
