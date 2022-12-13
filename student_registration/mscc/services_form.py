@@ -131,7 +131,7 @@ class PSSServiceForm(forms.ModelForm):
         instance.child_additional_parenting = validated_data.get('child_additional_parenting')
         instance.modified_by = request.user
         instance.save()
-        
+
         request.session['instance_id'] = instance.id
         messages.success(request, _('Your data has been sent successfully to the server'))
 
@@ -167,12 +167,14 @@ class InclusionServiceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
         super(InclusionServiceForm, self).__init__(*args, **kwargs)
 
-        instance = kwargs['instance'] if 'instance' in kwargs else ''
-        form_action = reverse('mscc:service_inclusion_create')
+        form_action = reverse('mscc:service_inclusion_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_inclusion_edit', kwargs={'pk': instance.id})
+            form_action = reverse('mscc:service_inclusion_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -186,24 +188,28 @@ class InclusionServiceForm(forms.ModelForm):
                 ),
                 css_id='step-1'
             ),
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+            )
         )
 
-    def save(self, request=None, instance=None):
+    def save(self, request=None, instance=None, registry=None):
 
-        data = {}
         validated_data = request.POST
 
         if not instance:
-            instance = InclusionService.objects.create(owner=request.user)
+            instance = InclusionService.objects.create(registration_id=registry)
+        else:
+            instance = InclusionService.objects.get(id=instance)
 
         instance.dropout = validated_data.get('dropout')
         instance.parental_engagement = validated_data.get('parental_engagement')
-        instance.modified_by = request.user
+        # instance.modified_by = request.user
         instance.save()
-        
-        request.session['instance_id'] = instance.id
+
         messages.success(request, _('Your data has been sent successfully to the server'))
-        
+
         return instance
 
     class Meta:
@@ -263,7 +269,7 @@ class DigitalServiceForm(forms.ModelForm):
         instance.using_lp = validated_data.get('using_lp')
         instance.modified_by = request.user
         instance.save()
-        
+
         request.session['instance_id'] = instance.id
         messages.success(request, _('Your data has been sent successfully to the server'))
 
@@ -298,8 +304,9 @@ class HealthNutritionServiceForm(forms.ModelForm):
         label=_('Did the child start to eat solid food?')
     )
     # Caregivers of children 0-2
-    age_eat_solid_food = forms.TextField(
-        blank=True, null=True,
+    age_eat_solid_food = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
         label=_('If yes, at which age ?')
     )
     # Caregivers of children 0-2 - children 3-5 - children 5-18
@@ -328,8 +335,9 @@ class HealthNutritionServiceForm(forms.ModelForm):
         label=_('positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
     # Caregivers of children 5-18
-    respond_stressful_events = forms.TextField(
-        blank=True, null=True,
+    respond_stressful_events = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
         label=_('How children of different ages respond to and understand stressful and traumatic events?')
     )
 

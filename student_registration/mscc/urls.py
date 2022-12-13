@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 
-from . import views, education_view
+from . import views, education_view, services_view
 
 urlpatterns = [
 
@@ -22,7 +22,7 @@ urlpatterns = [
     #     name='export'
     # ),
     url(
-        regex=r'^list/$',
+        regex=r'^List/$',
         view=views.MainListView.as_view(),
         name='list'
     ),
@@ -47,5 +47,15 @@ urlpatterns = [
         name='view_child'
     ),
 
+    url(
+        regex=r'^Services/Inclusion-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.InclusionFormView.as_view(),
+        name='service_inclusion_add'
+    ),
+    url(
+        regex=r'^Services/Inclusion-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.InclusionFormView.as_view(),
+        name='service_inclusion_edit'
+    ),
 
 ]

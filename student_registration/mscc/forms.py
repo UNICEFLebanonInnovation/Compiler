@@ -583,10 +583,10 @@ class MainForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Submit('save_add_another', 'Save & add another',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Submit('save_add_another', 'Save & go to Education',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-info'),
+                    # Submit('save_add_another', 'Save & add another',
+                    #        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    # Submit('save_add_another', 'Save & go to Education',
+                    #        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-info'),
                     # HTML('<a class="btn btn-info cancel-button" href="/clm/mscc-list/" translation="' + _(
                     #     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                     # css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn'
