@@ -9,6 +9,7 @@ from import_export.admin import ImportExportModelAdmin
 from .models import (
     Location,
     LocationType,
+    Center
 )
 
 
@@ -41,4 +42,4 @@ class LocationAdmin(ImportExportModelAdmin):
 
 admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationType)
-
+admin.site.register(Center)

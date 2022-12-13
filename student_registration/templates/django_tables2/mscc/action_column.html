@@ -6,13 +6,13 @@
     <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="dropdown-toggle-split dropdown-toggle btn btn-outline-secondary"><span class="sr-only">Toggle Dropdown</span>
     </button>
     <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(89px, 33px, 0px);">
-        <a type="button" href="/mscc/mscc-view/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "View" %}</a>
+        <a type="button" href="/mscc/Child-Profile/{{ record.id }}/" tabindex="0" class="dropdown-item">{% trans "View" %}</a>
         <a type="button" href="/mscc/edit-child/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Edit" %}</a>
         <a type="button" href="/mscc/education-situation/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Education Situation" %}</a>
         <a type="button" href="/mscc/diagnostic-assessment/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Diagnostic Assessment" %}</a>
         <a type="button" href="/mscc/education-assessment/{{ record.id }}" tabindex="0" class="dropdown-item">{% trans "Education Assessment" %}</a>
+        <a type="button" href="/mscc/Services/Inclusion-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">Inclusion</a>
         <a type="button" href="" tabindex="0" class="dropdown-item">{% trans "Referral" %}</a>
-        <a type="button" href="" tabindex="0" class="dropdown-item">{% trans "Inclusion" %}</a>
         <a type="button" href="" tabindex="0" class="dropdown-item">{% trans "Retention Support" %}</a>
         <!--<h6 tabindex="-1" class="dropdown-header">Header</h6>-->
         <!--<a type="button" tabindex="0" class="dropdown-item">Actions</a>-->

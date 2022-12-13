@@ -97,7 +97,7 @@ class Registration(TimeStampedModel):
     )
     child_outreach = models.ForeignKey(
         OutreachChild,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
         verbose_name=_('Outreach Child')
     )

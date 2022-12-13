@@ -16,6 +16,7 @@ class Child(TimeStampedModel):
 
     CURRENT_YEAR = datetime.datetime.now().year
     MONTHS = Choices(
+        ('', '---------'),
         ('1', _('January')),
         ('2', _('February')),
         ('3', _('March')),

@@ -21,62 +21,34 @@ from .models import Registration
 from .services_form import *
 
 
-class InclusionAddView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FormView):
-    template_name = 'mscc/service_inclusion.html'
+class InclusionFormView(LoginRequiredMixin,
+                        GroupRequiredMixin,
+                        FormView):
+    template_name = 'mscc/service_inclusion_form.html'
     form_class = InclusionServiceForm
     success_url = ''
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Profile/{}/'.format(str(self.request.session.get('registration_id')))
+        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(InclusionServiceForm, self).get_context_data(**kwargs)
+        return super(InclusionFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         if self.request.method == "POST":
-            return InclusionServiceForm(self.request.POST, instance=None, request=self.request)
+            return InclusionServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
-            return InclusionServiceForm(None, instance=None, request=self.request)
+            return InclusionServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Registration.objects.get(id=self.kwargs['pk'])
-        form.save(request=self.request, instance=instance)
-        return super(InclusionServiceForm, self).form_valid(form)
-
-
-class InclusionEditView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   FormView):
-    template_name = 'mscc/service_inclusion.html'
-    form_class = InclusionServiceForm
-    success_url = ''
-    group_required = [u"MSCC"]
-
-    def get_success_url(self):
-        return '/MSCC/Profile/{}/'.format(str(self.request.session.get('registration_id')))
-
-    def get_context_data(self, **kwargs):
-        force_default_language(self.request)
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(InclusionEditView, self).get_context_data(**kwargs)
-
-    def get_form(self, form_class=None):
-        instance = Registration.objects.get(id=self.kwargs['pk'])
-        if self.request.method == "POST":
-            return InclusionServiceForm(self.request.POST, instance=instance, request=self.request)
-        else:
-            return InclusionServiceForm(None, instance=instance, request=self.request)
-
-    def form_valid(self, form):
-        instance = Registration.objects.get(id=self.kwargs['pk'])
-        form.save(request=self.request, instance=instance)
-        return super(InclusionEditView, self).form_valid(form)
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(InclusionFormView, self).form_valid(form)
