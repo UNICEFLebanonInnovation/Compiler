@@ -32,7 +32,7 @@ urlpatterns = [
         name='service_education_assessment_add'
     ),
     url(
-        regex=r'^Services/Inclusion-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Services/Education-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationAssessmentFormView.as_view(),
         name='service_education_assessment_edit'
     ),
