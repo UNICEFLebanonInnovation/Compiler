@@ -232,16 +232,17 @@ class DigitalServiceForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=YES_NO
     )
-    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
         super(DigitalServiceForm, self).__init__(*args, **kwargs)
 
-        instance = kwargs['instance'] if 'instance' in kwargs else ''
-        form_action = reverse('mscc:service_digital_create')
+        form_action = reverse('mscc:service_digital_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_digital_edit', kwargs={'pk': instance.id})
+            form_action = reverse('mscc:service_digital_edit', kwargs={'registry': registry, 'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -255,22 +256,26 @@ class DigitalServiceForm(forms.ModelForm):
                 ),
                 css_id='step-1'
             ),
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+            )
         )
 
-    def save(self, request=None, instance=None):
+    def save(self, request=None, instance=None, registry=None):
 
-        data = {}
         validated_data = request.POST
 
         if not instance:
-            instance = DigitalService.objects.create(owner=request.user)
+            instance = DigitalService.objects.create(registration_id=registry)
+        else:
+            instance = DigitalService.objects.get(id=instance)
 
         instance.using_akelius = validated_data.get('using_akelius')
         instance.using_lp = validated_data.get('using_lp')
-        instance.modified_by = request.user
+        # instance.modified_by = request.user
         instance.save()
 
-        request.session['instance_id'] = instance.id
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance

@@ -71,5 +71,15 @@ urlpatterns = [
         view=services_view.InclusionFormView.as_view(),
         name='service_inclusion_edit'
     ),
+    url(
+        regex=r'^Services/Digital-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.DigitalFormView.as_view(),
+        name='service_digital_add'
+    ),
+    url(
+        regex=r'^Services/Digital-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.DigitalFormView.as_view(),
+        name='service_digital_edit'
+    ),
 
 ]
