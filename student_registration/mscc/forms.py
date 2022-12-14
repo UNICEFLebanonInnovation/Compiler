@@ -246,7 +246,8 @@ class MainForm(forms.ModelForm):
         required=False
     )
     id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.all(), widget=forms.Select,
+        queryset=IDType.objects.filter(active =True),
+        widget=forms.Select,
         label=_('ID type of the caregiver'),
         required=True, to_field_name='id'
     )
@@ -462,7 +463,7 @@ class MainForm(forms.ModelForm):
             Div(
                 Div(
                     Div('father_educational_level', css_class='col-md-5'),
-                    Div('mother_educational_level', css_class='col-md-4'),
+                    Div('mother_educational_level', css_class='col-md-5'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -504,62 +505,62 @@ class MainForm(forms.ModelForm):
                 Div(
                     Div('case_number', css_class='col-md-4'),
                     Div('case_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id1',
+                    css_class='row card-body child_id child_id1',
                 ),
                 Div(
                     Div('parent_individual_case_number', css_class='col-md-4'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id1',
+                    css_class='row card-body child_id child_id1',
                 ),
                 Div(
                     Div('individual_case_number', css_class='col-md-4'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id1',
+                    css_class='row card-body child_id child_id1',
                 ),
                 Div(
                     Div('recorded_number', css_class='col-md-4'),
                     Div('recorded_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id2',
+                    css_class='row card-body child_id child_id2',
                 ),
                 Div(
                     Div('parent_national_number', css_class='col-md-4'),
                     Div('parent_national_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id3',
+                    css_class='row card-body child_id child_id3',
                 ),
                 Div(
                     Div('national_number', css_class='col-md-4'),
                     Div('national_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id3',
+                    css_class='row card-body child_id child_id3',
                 ),
                 Div(
                     Div('parent_syrian_national_number', css_class='col-md-4'),
                     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id4',
+                    css_class='row card-body child_id child_id4',
                 ),
                 Div(
                     Div('syrian_national_number', css_class='col-md-4'),
                     Div('syrian_national_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id4',
+                    css_class='row card-body child_id child_id4',
                 ),
                 Div(
                     Div('parent_sop_national_number', css_class='col-md-4'),
                     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id5',
+                    css_class='row card-body child_id child_id5',
                 ),
                 Div(
                     Div('sop_national_number', css_class='col-md-4'),
                     Div('sop_national_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id5',
+                    css_class='row card-body child_id child_id5',
                 ),
                 Div(
                     Div('parent_other_number', css_class='col-md-4'),
                     Div('parent_other_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id6',
+                    css_class='row card-body child_id child_id6',
                 ),
                 Div(
                     Div('other_number', css_class='col-md-4'),
                     Div('other_number_confirm', css_class='col-md-4'),
-                    css_class='row card-body child_id6',
+                    css_class='row card-body child_id child_id6',
                 ),
                 css_id='step-3',
             ),
@@ -570,7 +571,11 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     Div('labour_type', css_class='col-md-4', css_id='labours'),
-                    Div('labour_type_specify', css_class='col-md-4'),
+                    css_class='row card-body',
+                    id='labour_details_1'
+                ),
+                Div(
+                    Div('labour_type_specify', css_class='col-md-8'),
                     css_class='row card-body',
                     id='labour_details_1'
                 ),
@@ -672,8 +677,8 @@ class MainForm(forms.ModelForm):
         individual_case_number = cleaned_data.get("individual_case_number")
         individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
 
-        # @todo use database ID
-        if id_type == 'UNHCR Registered':
+        # UNHCR Registered
+        if id_type and id_type.id == 1:
             if not case_number:
                 self.add_error('case_number', 'This field is required')
             elif case_number != case_number_confirm:
@@ -690,7 +695,8 @@ class MainForm(forms.ModelForm):
 
         recorded_number = cleaned_data.get("recorded_number")
         recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
-        if id_type == 'UNHCR Recorded':
+        # UNHCR Recorded
+        if id_type and id_type.id == 2:
             if not recorded_number:
                 self.add_error('recorded_number', 'This field is required')
             elif recorded_number != recorded_number_confirm:
@@ -701,7 +707,9 @@ class MainForm(forms.ModelForm):
         parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
         syrian_national_number = cleaned_data.get("syrian_national_number")
         syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
-        if id_type == 'Syrian national ID':
+
+        # Syrian national ID
+        if id_type and id_type.id == 3:
             if not parent_syrian_national_number:
                 self.add_error('parent_syrian_national_number', 'This field is required')
             elif parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
@@ -722,11 +730,33 @@ class MainForm(forms.ModelForm):
                 msg = "The national numbers are not matched"
                 self.add_error('syrian_national_number_confirm', msg)
 
+        sop_parent_national_number = cleaned_data.get("sop_parent_national_number")
+        sop_parent_national_number_confirm = cleaned_data.get("sop_parent_national_number_confirm")
+        sop_national_number = cleaned_data.get("sop_national_number")
+        sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
+        # Palestinian national ID
+        if id_type and id_type.id == 4:
+            if not sop_parent_national_number:
+                self.add_error('parent_sop_national_number', 'This field is required')
+
+            if not sop_parent_national_number_confirm:
+                self.add_error('parent_sop_national_number_confirm', 'This field is required')
+
+            if sop_parent_national_number != sop_parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_sop_national_number_confirm', msg)
+
+            if sop_national_number != sop_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('sop_national_number_confirm', msg)
+
+
         parent_national_number = cleaned_data.get("parent_national_number")
         parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
         national_number = cleaned_data.get("national_number")
         national_number_confirm = cleaned_data.get("national_number_confirm")
-        if id_type == 'Lebanese national ID':
+        # Lebanese national ID
+        if id_type and id_type.id == 5:
             if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
                 self.add_error('parent_national_number', msg)
@@ -743,30 +773,12 @@ class MainForm(forms.ModelForm):
                 msg = "The national numbers are not matched"
                 self.add_error('national_number_confirm', msg)
 
-        sop_parent_national_number = cleaned_data.get("sop_parent_national_number")
-        sop_parent_national_number_confirm = cleaned_data.get("sop_parent_national_number_confirm")
-        sop_national_number = cleaned_data.get("sop_national_number")
-        sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
-        if id_type == 'Palestinian national ID':
-            if not sop_parent_national_number:
-                self.add_error('parent_sop_national_number', 'This field is required')
-
-            if not sop_parent_national_number_confirm:
-                self.add_error('parent_sop_national_number_confirm', 'This field is required')
-
-            if sop_parent_national_number != sop_parent_national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('parent_sop_national_number_confirm', msg)
-
-            if sop_national_number != sop_national_number_confirm:
-                msg = "The national numbers are not matched"
-                self.add_error('sop_national_number_confirm', msg)
-
         parent_other_number = cleaned_data.get("parent_other_number")
         parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
-        if id_type == 'Other nationality':
+        # Other nationality
+        if id_type and id_type.id == 6:
             if not parent_other_number:
                 self.add_error('parent_other_number', 'This field is required')
 

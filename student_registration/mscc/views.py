@@ -55,7 +55,7 @@ class MainAddView(LoginRequiredMixin,
                   FormView):
     template_name = 'mscc/create_form.html'
     form_class = MainForm
-    success_url = '/mscc/list/'
+    success_url = '/MSCC/List/'
     group_required = [u"MSCC"]
 
     def get_success_url(self):
@@ -114,7 +114,7 @@ class MainEditView(LoginRequiredMixin,
                    FormView):
     template_name = 'mscc/edit_form.html'
     form_class = MainForm
-    success_url = '/mscc/list/'
+    success_url = '/MSCC/List/'
     group_required = [u"MSCC"]
 
     def get_success_url(self):
