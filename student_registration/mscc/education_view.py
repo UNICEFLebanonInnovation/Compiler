@@ -14,10 +14,10 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from student_registration.users.utils import force_default_language
 
 from .models import EducationAssessment, Registration
 from .education_form import *
+from .utils import *
 
 
 class EducationAssessmentFormView(LoginRequiredMixin,
@@ -32,7 +32,6 @@ class EducationAssessmentFormView(LoginRequiredMixin,
         return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -41,12 +40,14 @@ class EducationAssessmentFormView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
         if self.request.method == "POST":
             return EducationAssessmentForm(self.request.POST, instance=instance, registry=registry,
                                            request=self.request)
         else:
-            return EducationAssessmentForm(registry=registry, instance=instance, request=self.request)
-
+            if instance:
+                data = to_array(EducationAssessmentForm.Meta.fields, EducationAssessment.objects.get(id=instance))
+            return EducationAssessmentForm(data, registry=registry, instance=instance, request=self.request)
     def form_valid(self, form):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
@@ -66,7 +67,6 @@ class EducationServiceFormView(LoginRequiredMixin,
         return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -75,11 +75,14 @@ class EducationServiceFormView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
         if self.request.method == "POST":
             return EducationServiceForm(self.request.POST, instance=instance, registry=registry,
                                            request=self.request)
         else:
-            return EducationServiceForm(registry=registry, instance=instance, request=self.request)
+            if instance:
+                data = to_array(EducationServiceForm.Meta.fields, EducationService.objects.get(id=instance))
+            return EducationServiceForm(data, registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
@@ -101,7 +104,6 @@ class EducationRSServiceFormView(LoginRequiredMixin,
         return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -110,11 +112,14 @@ class EducationRSServiceFormView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
         if self.request.method == "POST":
             return EducationRSServiceForm(self.request.POST, instance=instance, registry=registry,
                                            request=self.request)
         else:
-            return EducationRSServiceForm(registry=registry, instance=instance, request=self.request)
+            if instance:
+                data = to_array(EducationRSServiceForm.Meta.fields, EducationRSService.objects.get(id=instance))
+            return EducationRSServiceForm(data, registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

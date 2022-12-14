@@ -354,13 +354,6 @@ class EducationServiceForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        # education_status
-        # dropout_date
-        # dropout_program
-        # dropout_program_specify
-        # education_program
-        # registration_date
-
         self.helper.layout = Layout(
             Div(
                 Div(
