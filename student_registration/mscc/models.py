@@ -699,6 +699,7 @@ class EducationRSService(TimeStampedModel):
 
 class EducationAssessment(TimeStampedModel):
     MODALITY = Choices(
+        ('', '----------'),
         ('Online Forms', _('Online Forms')),
         ('Phone call/WhatsApp', _('Phone call/WhatsApp')),
         ('Asking Parents', _('Asking Parents')),

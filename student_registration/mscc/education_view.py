@@ -52,3 +52,72 @@ class EducationAssessmentFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry, instance=instance)
         return super(EducationAssessmentFormView, self).form_valid(form)
+
+
+class EducationServiceFormView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  FormView):
+    template_name = 'mscc/service_education_service_form.html'
+    form_class = EducationServiceForm
+    success_url = ''
+    group_required = [u"MSCC"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(EducationServiceFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        if self.request.method == "POST":
+            return EducationServiceForm(self.request.POST, instance=instance, registry=registry,
+                                           request=self.request)
+        else:
+            return EducationServiceForm(registry=registry, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(EducationServiceFormView, self).form_valid(form)
+
+
+
+class EducationRSServiceFormView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  FormView):
+    template_name = 'mscc/service_education_rs_service_form.html'
+    form_class = EducationRSServiceForm
+    success_url = ''
+    group_required = [u"MSCC"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(EducationRSServiceFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        if self.request.method == "POST":
+            return EducationRSServiceForm(self.request.POST, instance=instance, registry=registry,
+                                           request=self.request)
+        else:
+            return EducationRSServiceForm(registry=registry, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(EducationRSServiceFormView, self).form_valid(form)
