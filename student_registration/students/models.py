@@ -68,6 +68,7 @@ class Nationality(models.Model):
 
 class IDType(models.Model):
     name = models.CharField(max_length=45, unique=True)
+    active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['id']

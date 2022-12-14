@@ -2,7 +2,7 @@
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, ," +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 var protocol = window.location.protocol;
-var host = protocol+window.location.host;  
+var host = protocol+window.location.host;
 
 $(window).load(function () {
 
@@ -103,8 +103,8 @@ $(document).ready(function() {
         $('#id_parent_other_number_confirm').val('');
         $('#id_other_number').val('');
         $('#id_other_number_confirm').val('');
-
-        if($(this).val() != 'Child have no ID'){
+//        Child have no ID = 7
+        if($(this).val() != 7){
             return true;
         }
         if(confirm($(this).attr('translation'))) {
@@ -380,27 +380,35 @@ function reorganizeForm()
         $('#id_labours_other_specify').val('');
     }
 
-    if(id_type == 'UNHCR Registered'){
+//    1	"UNHCR Registered"
+//    2	"UNHCR Recorded"
+//    3	"Syrian national ID"
+//    4	"Palestinian national ID"
+//    5	"Lebanese national ID"
+//    6	"Other nationality"
+//    7	"Child have no ID"
+    $('div.child_id').addClass('d-none');
+    if(id_type == 1){
         $('div.child_id1').removeClass('d-none');
     }
 
-    if(id_type == 'UNHCR Recorded'){
+    if(id_type == 2){
         $('div.child_id2').removeClass('d-none');
     }
 
-    if(id_type == 'Lebanese national ID'){
+    if(id_type == 5){
         $('div.child_id3').removeClass('d-none');
     }
 
-    if(id_type == 'Syrian national ID'){
+    if(id_type == 3){
         $('div.child_id4').removeClass('d-none');
     }
 
-    if(id_type == 'Palestinian national ID'){
+    if(id_type == 4){
         $('div.child_id5').removeClass('d-none');
     }
 
-    if(id_type == 'Other nationality'){
+    if(id_type == 6){
         $('div.child_id6').removeClass('d-none');
     }
 
