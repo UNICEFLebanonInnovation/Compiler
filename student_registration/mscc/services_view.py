@@ -17,7 +17,7 @@ from django_tables2.export.views import ExportMixin
 
 from student_registration.users.utils import force_default_language
 from .models import Registration
-
+from .utils import *
 from .services_form import *
 
 
@@ -33,7 +33,6 @@ class InclusionFormView(LoginRequiredMixin,
         return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -42,10 +41,13 @@ class InclusionFormView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
         if self.request.method == "POST":
             return InclusionServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
-            return InclusionServiceForm(registry=registry, instance=instance, request=self.request)
+            if instance:
+                data = to_array(InclusionServiceForm.Meta.fields, InclusionService.objects.get(id=instance))
+            return InclusionServiceForm(data, registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

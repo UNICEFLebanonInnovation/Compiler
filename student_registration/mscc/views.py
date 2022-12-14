@@ -66,11 +66,9 @@ class MainAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = True
         return super(MainAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -127,11 +125,9 @@ class MainEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = True
         return super(MainEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
