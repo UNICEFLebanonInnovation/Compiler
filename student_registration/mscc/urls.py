@@ -27,26 +27,20 @@ urlpatterns = [
         name='list'
     ),
     url(
-        regex=r'^add-education-assessment/(?P<reg_id>[\w.@+-]+)$',
-        view=education_view.EducationAssessmentAddView.as_view(),
-        name='add_education_assessment'
+        regex=r'^Services/Education-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+        view=education_view.EducationAssessmentFormView.as_view(),
+        name='service_education_assessment_add'
     ),
     url(
-        regex=r'^edit-education-assessment/(?P<pk>[\w.@+-]+)$',
-        view=education_view.EducationAssessmentEditView.as_view(),
-        name='edit_education_assessment'
-    ),
-    url(
-        regex=r'^education-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=education_view.EducationAssessmentRedirectView.as_view(),
-        name='education_assessment'
+        regex=r'^Services/Inclusion-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.EducationAssessmentFormView.as_view(),
+        name='service_education_assessment_edit'
     ),
     url(
         regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='view_child'
     ),
-
     url(
         regex=r'^Services/Inclusion-Add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.InclusionFormView.as_view(),
