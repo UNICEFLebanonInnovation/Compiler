@@ -37,6 +37,26 @@ urlpatterns = [
         name='service_education_assessment_edit'
     ),
     url(
+        regex=r'^Services/Education-Service-Add/(?P<registry>[\w.@+-]+)/$',
+        view=education_view.EducationServiceFormView.as_view(),
+        name='service_education_service_add'
+    ),
+    url(
+        regex=r'^Services/Education-Service-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.EducationServiceFormView.as_view(),
+        name='service_education_service_edit'
+    ),
+    url(
+        regex=r'^Services/Education-RS-Service-Add/(?P<registry>[\w.@+-]+)/$',
+        view=education_view.EducationRSServiceFormView.as_view(),
+        name='service_education_rs_service_add'
+    ),
+    url(
+        regex=r'^Services/Education-RS-Service-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.EducationRSServiceFormView.as_view(),
+        name='service_education_rs_service_edit'
+    ),
+    url(
         regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='view_child'
