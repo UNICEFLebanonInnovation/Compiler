@@ -20,12 +20,13 @@ from .models import (
     YES_NO
 )
 
+
 class EducationAssessmentForm(forms.ModelForm):
     # Pre Test
     pre_attended_arabic = forms.ChoiceField(
         label=_("Did the Child Undertake Arabic Language Development Assessment"),
         widget=forms.Select, required=True,
-        choices= YES_NO,
+        choices=YES_NO,
         initial='yes'
     )
     pre_modality_arabic = forms.MultipleChoiceField(
@@ -80,7 +81,7 @@ class EducationAssessmentForm(forms.ModelForm):
     )
     barriers = forms.ChoiceField(
         label=_('The main barriers affecting the child\'s '
-                       'daily attendance/participation, performance, or causing drop-out'),
+                'daily attendance/participation, performance, or causing drop-out'),
         widget=forms.Select, required=True,
         choices=EducationAssessment.BARRIERS
     )
@@ -102,7 +103,7 @@ class EducationAssessmentForm(forms.ModelForm):
     post_attended_arabic = forms.ChoiceField(
         label=_("Did the Child Undertake Arabic Language Development Assessment"),
         widget=forms.Select, required=True,
-        choices= YES_NO,
+        choices=YES_NO,
         initial='yes'
     )
     post_modality_arabic = forms.MultipleChoiceField(
@@ -150,33 +151,26 @@ class EducationAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
-
-        reg_id = kwargs.pop('reg_id', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
 
         super(EducationAssessmentForm, self).__init__(*args, **kwargs)
 
-
-        instance = kwargs['instance'] if 'instance' in kwargs else ''
-        form_action = reverse('mscc:add_education_assessment', kwargs={'reg_id': reg_id})
-
-        self.fields['registration_id'].initial = reg_id
-
+        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:edit_education_assessment', kwargs={'pk': instance.id})
+            form_action = reverse('mscc:service_education_assessment_edit',
+                                  kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Div(
-                Div(
-                    'registration_id',
-                    css_class='row d-none',
-                ),
                 Div(
                     Div('pre_attended_arabic', css_class='col-md-3'),
                     Div('pre_modality_arabic', css_class='col-md-3'),
@@ -235,15 +229,47 @@ class EducationAssessmentForm(forms.ModelForm):
             ),
         )
 
-    def get_form_kwargs(self):
-        kwargs = super(EducationAssessmentForm, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    def save(self, request=None, instance=None, registry=None):
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = EducationAssessment.objects.create(registration_id=registry)
+        else:
+            instance = EducationAssessment.objects.get(id=instance)
+
+        instance.pre_attended_arabic = validated_data.get('pre_attended_arabic')
+        instance.pre_modality_arabic = validated_data.get('pre_modality_arabic')
+        instance.pre_arabic_grade = validated_data.get('pre_arabic_grade')
+        instance.pre_attended_language = validated_data.get('pre_attended_language')
+        instance.pre_modality_language = validated_data.get('pre_modality_language')
+        instance.pre_language_grade = validated_data.get('pre_language_grade')
+        instance.pre_attended_math = validated_data.get('pre_attended_math')
+        instance.pre_modality_math = validated_data.get('pre_modality_math')
+        instance.pre_math_grade = validated_data.get('pre_math_grade')
+        instance.participation = validated_data.get('participation')
+        instance.barriers = validated_data.get('barriers')
+        instance.barriers_other = validated_data.get('barriers_other')
+        instance.post_test_done = validated_data.get('post_test_done')
+        instance.school_year_completed = validated_data.get('school_year_completed')
+        instance.post_attended_arabic = validated_data.get('post_attended_arabic')
+        instance.post_modality_arabic = validated_data.get('post_modality_arabic')
+        instance.post_arabic_grade = validated_data.get('post_arabic_grade')
+        instance.post_attended_language = validated_data.get('post_attended_language')
+        instance.post_modality_language = validated_data.get('post_modality_language')
+        instance.post_language_grade = validated_data.get('post_language_grade')
+        instance.post_attended_math = validated_data.get('post_attended_math')
+        instance.post_modality_math = validated_data.get('post_modality_math')
+        instance.post_math_grade = validated_data.get('post_math_grade')
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
 
     class Meta:
         model = EducationAssessment
         fields = (
-            'registration_id',
             'pre_attended_arabic',
             'pre_modality_arabic',
             'pre_arabic_grade',
