@@ -39,7 +39,8 @@ class InclusionFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(InclusionServiceForm.Meta.fields, InclusionService.objects.get(id=instance))
-            return InclusionServiceForm(data, registry=registry, instance=instance, request=self.request)
+                return InclusionServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return InclusionServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
@@ -74,6 +75,7 @@ class DigitalFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(DigitalServiceForm.Meta.fields, DigitalService.objects.get(id=instance))
+                return DigitalServiceForm(registry=registry, instance=instance, request=self.request)
             return DigitalServiceForm(data, registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
@@ -109,7 +111,8 @@ class HealthNutritionFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(HealthNutritionService.Meta.fields, HealthNutritionService.objects.get(id=instance))
-            return HealthNutritionServiceForm(data, registry=registry, instance=instance, request=self.request)
+                return HealthNutritionServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return HealthNutritionServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
@@ -144,8 +147,9 @@ class PSSFormView(LoginRequiredMixin,
             return PSSServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(PSSService.Meta.fields, HealthNutritionService.objects.get(id=instance))
-            return PSSServiceForm(data, registry=registry, instance=instance, request=self.request)
+                data = to_array(HealthNutritionService.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                return PSSServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return PSSServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
