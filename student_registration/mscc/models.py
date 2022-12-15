@@ -449,6 +449,30 @@ class HealthNutritionService(TimeStampedModel):
         ('Neurological', _('Neurological')),
         ('No', _('No')),
     )
+    AGE_EAT_SOLID_FOOD = Choices(
+        ('', '----------'),
+        ('4 months', _('4 months')),
+        ('5 months', _('5 months')),
+        ('6 months', _('6 months')),
+        ('7 months', _('7 months')),
+        ('8 months', _('8 months')),
+        ('9 months', _('9 months')),
+        ('10 months', _('10 months')),
+        ('11 months', _('11 months')),
+        ('12 months', _('12 months')),
+        ('13 months', _('13 months')),
+        ('14 months', _('14 months')),
+        ('15 months', _('15 months')),
+        ('16 months', _('16 months')),
+        ('17 months', _('17 months')),
+        ('18 months', _('18 months')),
+        ('19 months', _('19 months')),
+        ('20 months', _('20 months')),
+        ('21 months', _('21 months')),
+        ('22 months', _('22 months')),
+        ('23 months', _('23 months')),
+        ('24 months', _('24 months'))
+    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -479,8 +503,11 @@ class HealthNutritionService(TimeStampedModel):
         verbose_name=_('Did the child start to eat solid food?')
     )
     # Caregivers of children 0-2
-    age_eat_solid_food = models.TextField(
-        blank=True, null=True,
+    age_eat_solid_food = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=AGE_EAT_SOLID_FOOD,
         verbose_name=_('If yes, at which age ?')
     )
     # Caregivers of children 0-2 - children 3-5 - children 5-18
