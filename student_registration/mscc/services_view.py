@@ -147,7 +147,7 @@ class PSSFormView(LoginRequiredMixin,
             return PSSServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(HealthNutritionService.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                data = to_array(PSSServiceForm.Meta.fields, PSSService.objects.get(id=instance))
                 return PSSServiceForm(data, registry=registry, instance=instance, request=self.request)
             return PSSServiceForm(registry=registry, instance=instance, request=self.request)
 
