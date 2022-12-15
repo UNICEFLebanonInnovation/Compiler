@@ -81,5 +81,15 @@ urlpatterns = [
         view=services_view.DigitalFormView.as_view(),
         name='service_digital_edit'
     ),
+    url(
+        regex=r'^Services/Health-Nutrition-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.HealthNutritionFormView.as_view(),
+        name='health_nutrition_add'
+    ),
+    url(
+        regex=r'^Services/Health-Nutrition-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.HealthNutritionFormView.as_view(),
+        name='health_nutrition_edit'
+    ),
 
 ]

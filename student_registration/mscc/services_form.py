@@ -289,7 +289,6 @@ class DigitalServiceForm(forms.ModelForm):
 
 
 class HealthNutritionServiceForm(forms.ModelForm):
-
     # Caregivers of children 0-2
     baby_breastfed = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -309,9 +308,9 @@ class HealthNutritionServiceForm(forms.ModelForm):
         label=_('Did the child start to eat solid food?')
     )
     # Caregivers of children 0-2
-    age_eat_solid_food = forms.CharField(
-        required=False,
-        widget=forms.TextInput,
+    age_eat_solid_food = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=HealthNutritionService.AGE_EAT_SOLID_FOOD,
         label=_('If yes, at which age ?')
     )
     # Caregivers of children 0-2 - children 3-5 - children 5-18
@@ -350,12 +349,14 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
         super(HealthNutritionServiceForm, self).__init__(*args, **kwargs)
 
-        instance = kwargs['instance'] if 'instance' in kwargs else ''
-        form_action = reverse('mscc:service_health_create')
+        form_action = reverse('mscc:health_nutrition_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_health_edit', kwargs={'pk': instance.id})
+            form_action = reverse('mscc:health_nutrition_edit', kwargs={'registry': registry, 'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -385,15 +386,20 @@ class HealthNutritionServiceForm(forms.ModelForm):
                 ),
                 css_id='step-1'
             ),
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+            )
         )
 
-    def save(self, request=None, instance=None):
+    def save(self, request=None, instance=None, registry=None):
 
-        data = {}
         validated_data = request.POST
 
         if not instance:
-            instance = HealthNutritionService.objects.create(owner=request.user)
+            instance = HealthNutritionService.objects.create(registration_id=registry)
+        else:
+            instance = HealthNutritionService.objects.get(id=instance)
 
         instance.baby_breastfed = validated_data.get('baby_breastfed')
         instance.infant_exclusively_breastfed = validated_data.get('infant_exclusively_breastfed')
@@ -406,10 +412,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.respond_stressful_events = validated_data.get('respond_stressful_events')
         instance.modified_by = request.user
         instance.save()
-
-        request.session['instance_id'] = instance.id
         messages.success(request, _('Your data has been sent successfully to the server'))
-
         return instance
 
     class Meta:

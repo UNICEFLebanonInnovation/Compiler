@@ -1,0 +1,70 @@
+{% extends "base4.html" %}
+{% load staticfiles i18n %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
+    Digital Component
+    <div class="page-title-subheading">
+                                    </div>
+</div></div><div class="page-title-actions">
+</div></div></div>
+
+        <!--{{ form.errors }}-->
+
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                        <ul class="forms-wizard">
+                                            <li>
+                                                <a href="#step-1">
+                                                    <em>1</em><span>Health and Nutrition</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <div class="form-wizard-content">
+
+                                           {% crispy form 'bootstrap4' %}
+                                        </div>
+                                    </div>
+                                    <div class="divider"></div>
+
+                                    <div class="clearfix">
+                                        <button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
+                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+
+                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
+                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
+
+                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>-->
+                                        <!--<button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>-->
+                                    </div>
+                                </div>
+                            </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=8"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+
+{% endblock %}
