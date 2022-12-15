@@ -1,10 +1,12 @@
 {% load static i18n %}
 {% load static %}
 {% load util_tags %}
+{% load simple_tags %}
 
 <div class="row staff-profile">
 
 <div class="col-md-12 col-lg-6 col-xl-4">
+  {% service_data 'InclusionService' instance as result %}
                                 <div class="mb-3 card">
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
@@ -13,8 +15,11 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Inclusion
                                                       <div style="float:right;">
-                                                            <a><i class="pe-7s-pen"></i></a>
-                                                            <!--<a><i class="pe-7s-plus"> </i></a>-->
+                                                            {% if result %}
+                                                              <a href="/MSCC/Services/Inclusion-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                            {% else %}
+                                                              <a href="/MSCC/Services/Inclusion-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                            {% endif %}
                                                       </div>
                                                     </h5>
                                                 </div>
@@ -35,18 +40,19 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout</h4>
-                                                                            <p>
+                                                                            <p> {{ result.dropout }}
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Parental Engagement Curriculum</h4>
                                                                             <p>
+                                                                              {{ result.parental_engagement }}
                                                                             </p></div>
                                                                     </div>
                                                                 </div>
@@ -66,6 +72,7 @@
                             </div>
 
 <div class="col-md-12 col-lg-6 col-xl-4">
+  {% service_data 'DigitalService' instance as result %}
                                 <div class="mb-3 card">
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
@@ -74,8 +81,11 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Digital Component
                                                       <div style="float:right;">
-                                                            <a><i class="pe-7s-pen"></i></a>
-                                                            <!--<a><i class="pe-7s-plus"> </i></a>-->
+                                                            {% if result %}
+                                                              <a href="/MSCC/Services/Digital-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                            {% else %}
+                                                              <a href="/MSCC/Services/Digital-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                            {% endif %}
                                                       </div>
                                                     </h5>
                                                 </div>
@@ -96,18 +106,20 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child using Akelius?</h4>
                                                                             <p>
+                                                                              {{ result.using_akelius }}
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child using Learning Passport?</h4>
                                                                             <p>
+                                                                              {{ result.using_lp }}
                                                                             </p></div>
                                                                     </div>
                                                                 </div>
@@ -127,6 +139,7 @@
                             </div>
 
 <div class="col-md-12 col-lg-6 col-xl-4">
+  {% service_data 'HealthNutritionService' instance as result %}
                                 <div class="mb-3 card">
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
@@ -135,8 +148,11 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Health & Nutrition
                                                       <div style="float:right;">
-                                                            <a><i class="pe-7s-pen"></i></a>
-                                                            <!--<a><i class="pe-7s-plus"> </i></a>-->
+                                                            {% if result %}
+                                                              <a href="/MSCC/Services/Inclusion-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                            {% else %}
+                                                              <a href="/MSCC/Services/Inclusion-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                            {% endif %}
                                                       </div>
                                                     </h5>
                                                 </div>
@@ -158,7 +174,7 @@
 
                                                                 <!--Caregivers of children 0-2-->
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the baby being Breastfed?</h4>
                                                                             <p>
                                                                             </p>
@@ -168,7 +184,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child start to eat solid food?</h4>
                                                                             <p>
                                                                             </p>
@@ -178,7 +194,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child being vaccinated as per the National vaccination calendar?</h4>
                                                                             <p>
                                                                             </p></div>
@@ -186,7 +202,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Any mental , cognitive or neurological development delays is being identified?</h4>
                                                                             <p>
                                                                             </p></div>
@@ -195,7 +211,7 @@
 
                                                                 <!--Caregivers of children 3-5-->
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
                                                                             <p>
                                                                             </p>
@@ -204,7 +220,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child being vaccinated as per the National vaccination calendar?</h4>
                                                                             <p>
                                                                             </p></div>
@@ -212,7 +228,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">positive parenting and dealing with difficult children without the use of harsh punishment?</h4>
                                                                             <p>
                                                                             </p></div>
@@ -220,7 +236,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Any mental , cognitive or neurological development delays is being identified?</h4>
                                                                             <p>
                                                                             </p></div>
@@ -229,7 +245,7 @@
 
                                                                 <!--Children 5-18-->
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
                                                                             <p>
                                                                             </p>
@@ -238,7 +254,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Received all vaccination as per the national vaccination calendar?</h4>
                                                                             <p>
                                                                             </p></div>
@@ -260,6 +276,7 @@
                             </div>
 
 <div class="col-md-12 col-lg-6 col-xl-4">
+{% service_data 'YouthKitService' instance as result %}
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
@@ -274,13 +291,16 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Youth Kit
                                                       <div style="float:right;">
-                                                            <a><i class="pe-7s-pen"></i></a>
-                                                            <!--<a><i class="pe-7s-plus"> </i></a>-->
+                                                            {% if result %}
+                                                              <a href="/MSCC/Services/Inclusion-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                            {% else %}
+                                                              <a href="/MSCC/Services/Inclusion-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                            {% endif %}
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
-                                                        <!--<b class="text-danger">21 </b>-->
+                                                        <!--<b class="text-info">21 </b>-->
                                                         <!--unread messages-->
                                                     <!--</h6>-->
                                                 </div>
@@ -313,7 +333,7 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">volunteering experience</h4>
                                                                             <p>
                                                                             </p>
@@ -322,7 +342,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Previous community based initiative</h4>
                                                                             <p>
                                                                             </p></div>
@@ -330,7 +350,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reason for the adolescent enrollement in the programme</h4>
                                                                             <p>
                                                                             </p></div>
@@ -338,7 +358,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Pre-tests administered to assess adolescents' level</h4>
                                                                             <p>
                                                                             </p></div>
@@ -358,7 +378,7 @@
                                                     <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-user text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Post Diagnostic tests</h4>
                                                                     <p>
                                                                     </p></div>
@@ -366,7 +386,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-smartphone text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Receive a passing grade for the tests?</h4>
                                                                     <p>
                                                                         </p></div>
@@ -374,7 +394,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills package</h4>
                                                                     <p>
                                                                         </p></div>
@@ -382,7 +402,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Volunteering opportunity</h4>
                                                                     <p>
                                                                         </p></div>
@@ -391,7 +411,7 @@
 
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Social innovation/entrepreneurship course</h4>
                                                                     <p>
                                                                         </p></div>
@@ -399,7 +419,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Completed the YFS course?</h4>
                                                                     <p>
                                                                         </p></div>
@@ -416,7 +436,7 @@
                                         <ul class="nav flex-column">
                                             <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
                                                 <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-warning badge-pulse">Badge</span>-->
+                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -426,6 +446,7 @@
                             </div>
 
 <div class="col-md-12 col-lg-6 col-xl-4">
+{% service_data 'PSSService' instance as result %}
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
@@ -440,13 +461,16 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">PSS
                                                       <div style="float:right;">
-                                                            <a><i class="pe-7s-pen"></i></a>
-                                                            <!--<a><i class="pe-7s-plus"> </i></a>-->
+                                                            {% if result %}
+                                                              <a href="/MSCC/Services/Inclusion-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                            {% else %}
+                                                              <a href="/MSCC/Services/Inclusion-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                            {% endif %}
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
-                                                        <!--<b class="text-danger">21 </b>-->
+                                                        <!--<b class="text-info">21 </b>-->
                                                         <!--unread messages-->
                                                     <!--</h6>-->
                                                 </div>
@@ -474,7 +498,7 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Birth registration</h4>
                                                                             <p>
                                                                             </p>
@@ -483,7 +507,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Living arrangement</h4>
                                                                             <p>
                                                                             </p></div>
@@ -491,7 +515,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Vulnerabilites of the child</h4>
                                                                             <p>
                                                                             </p></div>
@@ -499,7 +523,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reasons being out of school</h4>
                                                                             <p>
                                                                             </p></div>
@@ -519,7 +543,7 @@
                                                     <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-user text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caregivers distress</h4>
                                                                     <p>
                                                                     </p></div>
@@ -527,7 +551,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-smartphone text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Distressed and anxious feelings</h4>
                                                                     <p>
                                                                         </p></div>
@@ -535,7 +559,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Additional parenting or psychosocial support?</h4>
                                                                     <p>
                                                                         </p></div>
@@ -543,7 +567,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Volunteering opportunity</h4>
                                                                     <p>
                                                                         </p></div>
@@ -552,7 +576,7 @@
 
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Social innovation/entrepreneurship course</h4>
                                                                     <p>
                                                                         </p></div>
@@ -560,7 +584,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Completed the YFS course?</h4>
                                                                     <p>
                                                                         </p></div>
@@ -577,7 +601,7 @@
                                         <ul class="nav flex-column">
                                             <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
                                                 <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-warning badge-pulse">Badge</span>-->
+                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>
@@ -587,6 +611,7 @@
                             </div>
 
 <div class="col-md-12 col-lg-6 col-xl-4">
+{% service_data 'FollowUpService' instance as result %}
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
@@ -601,13 +626,15 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Follow-up and parents engagement
                                                       <div style="float:right;">
-                                                            <a><i class="pe-7s-pen"></i></a>
-                                                            <a><i class="pe-7s-plus"> </i></a>
+                                                            {% if result %}
+                                                              <a href="/MSCC/Services/Inclusion-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                            {% endif %}
+                                                              <a href="/MSCC/Services/Inclusion-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
-                                                        <!--<b class="text-danger">21 </b>-->
+                                                        <!--<b class="text-info">21 </b>-->
                                                         <!--unread messages-->
                                                     <!--</h6>-->
                                                 </div>
@@ -635,7 +662,7 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">In case of absence, type of Follow-up done</h4>
                                                                             <p>
                                                                             </p>
@@ -644,7 +671,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Follow-up results</h4>
                                                                             <p>
                                                                             </p></div>
@@ -652,7 +679,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reasons of Dropout</h4>
                                                                             <p>
                                                                             </p></div>
@@ -660,7 +687,7 @@
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="pe-7s-info text-warning"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout Date</h4>
                                                                             <p>
                                                                             </p></div>
@@ -680,7 +707,7 @@
                                                     <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-user text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child's caretaker attend parent meeting/engagment sessions</h4>
                                                                     <p>
                                                                     </p></div>
@@ -688,7 +715,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-smartphone text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">if "Yes" please indicate the types of meeting; number of sessions attended.</h4>
                                                                     <p>
                                                                         </p></div>
@@ -696,7 +723,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Please the modality used per each session</h4>
                                                                     <p>
                                                                         </p></div>
@@ -704,7 +731,7 @@
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who attended the meetings</h4>
                                                                     <p>
                                                                         </p></div>
@@ -713,7 +740,7 @@
 
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="pe-7s-mail text-danger"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">If Other Please Specify</h4>
                                                                     <p>
                                                                         </p></div>
@@ -730,7 +757,7 @@
                                         <ul class="nav flex-column">
                                             <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
                                                 <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
-                                                    <!--<span class="badge badge-dot badge-dot-lg badge-warning badge-pulse">Badge</span>-->
+                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
                                                     <!--View All Messages-->
                                                 <!--</button>-->
                                             </li>

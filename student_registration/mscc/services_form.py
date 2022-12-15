@@ -242,7 +242,7 @@ class DigitalServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_digital_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_digital_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_digital_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
