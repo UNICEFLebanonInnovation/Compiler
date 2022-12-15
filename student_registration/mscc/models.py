@@ -993,6 +993,7 @@ class YouthKitService(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    # For Youth
     volunteering_experience = models.CharField(
         max_length=10,
         blank=True,
@@ -1020,6 +1021,7 @@ class YouthKitService(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Were pre-tests administered to assess adolescents level?')
     )
+    # Youth Assessment
     test_diagnostic_done = models.CharField(
         max_length=10,
         blank=True,

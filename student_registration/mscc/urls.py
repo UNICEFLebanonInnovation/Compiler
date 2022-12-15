@@ -101,5 +101,15 @@ urlpatterns = [
         view=services_view.PSSFormView.as_view(),
         name='service_pss_edit'
     ),
+    url(
+        regex=r'^Services/Youth-Kit-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.YouthKitServiceFormView.as_view(),
+        name='service_youth_kit_add'
+    ),
+    url(
+        regex=r'^Services/Youth-Kit-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.YouthKitServiceFormView.as_view(),
+        name='service_youth_kit_edit'
+    ),
 
 ]
