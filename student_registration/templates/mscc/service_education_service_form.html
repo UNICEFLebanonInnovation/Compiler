@@ -18,7 +18,7 @@
 {% block content %}
 
 <div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
-    New Registrations
+    Education
     <div class="page-title-subheading">
                                     </div>
 </div></div><div class="page-title-actions">
@@ -66,19 +66,5 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=8"></script>
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
-
-    <script>
-      var url = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
-
-
-      $("#id_governorate").change(function () {
-          load_districts(url);
-          load_cadasters(url_cadasters);
-      });
-      $("#id_district").change(function () {
-          load_cadasters(url_cadasters);
-      });
-    </script>
 
 {% endblock %}

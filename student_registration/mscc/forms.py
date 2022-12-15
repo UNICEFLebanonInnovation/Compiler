@@ -392,10 +392,10 @@ class MainForm(forms.ModelForm):
 
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        form_action = reverse('mscc:add_child')
+        form_action = reverse('mscc:child_add')
         if instance:
             display_registry = ' d-none'
-            form_action = reverse('mscc:edit_child', kwargs={'pk': instance.id})
+            form_action = reverse('mscc:child_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True

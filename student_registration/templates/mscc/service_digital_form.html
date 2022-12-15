@@ -18,36 +18,21 @@
 {% block content %}
 
 <div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>
-    MSCC - Education
+    Digital Component
     <div class="page-title-subheading">
                                     </div>
 </div></div><div class="page-title-actions">
 </div></div></div>
 
-        {{ form.errors }}
+        <!--{{ form.errors }}-->
 
-                            <div class="main-card mb-3 card">
+<div class="main-card mb-3 card">
                                 <div class="card-body">
                                     <div id="smartwizard3" class="forms-wizard-vertical">
                                         <ul class="forms-wizard">
                                             <li>
                                                 <a href="#step-1">
-                                                    <em>1</em><span>General Information</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#step-2">
-                                                    <em>2</em><span>Child Information</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#step-3">
-                                                    <em>3</em><span>Parent/Caregiver Information</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#step-4">
-                                                    <em>4</em><span>Work Status</span>
+                                                    <em>1</em><span>Digital</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -61,12 +46,12 @@
                                     <div class="clearfix">
                                         <button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
                                         <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
-<!---->
+
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
 
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
-                                        <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+                                        <!--<button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>-->
+                                        <!--<button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>-->
                                     </div>
                                 </div>
                             </div>
@@ -79,19 +64,7 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=10"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=8"></script>
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
 
-    <script>
-      var url = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
-
-      $("#id_governorate").change(function () {
-          load_districts(url);
-          load_cadasters(url_cadasters);
-      });
-      $("#id_district").change(function () {
-          load_cadasters(url_cadasters);
-      });
-    </script>
 {% endblock %}

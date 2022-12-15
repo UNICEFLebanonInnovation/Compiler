@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from rest_framework import status
+from django.core.urlresolvers import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -53,17 +54,13 @@ class ProfileView(LoginRequiredMixin,
 class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
-    template_name = 'mscc/create_form.html'
+    template_name = 'mscc/main_form.html'
     form_class = MainForm
     success_url = '/MSCC/List/'
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/mscc/add-child/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/mscc/edit-child/' + str(self.request.session.get('instance_id')) + '/'
-        return self.success_url
+        return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -112,17 +109,13 @@ class MainAddView(LoginRequiredMixin,
 class MainEditView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
-    template_name = 'mscc/edit_form.html'
+    template_name = 'mscc/main_form.html'
     form_class = MainForm
     success_url = '/MSCC/List/'
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/mscc/add-child/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/mscc/edit-child/' + str(self.request.session.get('instance_id')) + '/'
-        return self.success_url
+        return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
