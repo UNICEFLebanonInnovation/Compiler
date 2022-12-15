@@ -23,7 +23,7 @@ from .models import (
     YES_NO
 )
 
-
+# continue
 class PSSServiceForm(forms.ModelForm):
 
     child_registered = forms.ChoiceField(
@@ -74,12 +74,14 @@ class PSSServiceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
         super(PSSServiceForm, self).__init__(*args, **kwargs)
 
-        instance = kwargs['instance'] if 'instance' in kwargs else ''
-        form_action = reverse('mscc:service_pss_create')
+        form_action = reverse('mscc:service_pss_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_pss_edit', kwargs={'pk': instance.id})
+            form_action = reverse('mscc:service_pss_edit', kwargs={'registry': registry, 'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -109,18 +111,20 @@ class PSSServiceForm(forms.ModelForm):
                     Div('child_additional_parenting', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                ),
                 css_id='step-2'
-            ),
+            )
         )
-
-    def save(self, request=None, instance=None):
-
-        data = {}
+    def save(self, request=None, instance=None, registry=None):
         validated_data = request.POST
 
         if not instance:
-            instance = PSSService.objects.create(owner=request.user)
-
+            instance = PSSService.objects.create(registration_id=registry)
+        else:
+            instance = PSSService.objects.get(id=instance)
         instance.child_registered = validated_data.get('child_registered')
         instance.child_living_arrangement = validated_data.get('child_living_arrangement')
         instance.child_vulnerability = validated_data.get('child_vulnerability')
@@ -131,10 +135,7 @@ class PSSServiceForm(forms.ModelForm):
         instance.child_additional_parenting = validated_data.get('child_additional_parenting')
         instance.modified_by = request.user
         instance.save()
-
-        request.session['instance_id'] = instance.id
         messages.success(request, _('Your data has been sent successfully to the server'))
-
         return instance
 
     class Meta:
@@ -354,9 +355,9 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         super(HealthNutritionServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:health_nutrition_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:health_nutrition_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry, 'pk': instance.id})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
