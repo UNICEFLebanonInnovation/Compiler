@@ -81,7 +81,7 @@ class PSSServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_pss_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_pss_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_pss_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -243,7 +243,7 @@ class DigitalServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_digital_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_digital_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_digital_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -357,7 +357,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True

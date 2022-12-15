@@ -16,7 +16,7 @@ class BootstrapTable(tables.Table):
 class CommonTable(tables.Table):
 
     child_age = tables.Column(verbose_name=_('Age'), accessor='child.age')
-    created = tables.Column(verbose_name='Created', accessor='registration.created')
+    # created = tables.Column(verbose_name='Created', accessor='registration.created')
     child_birthday = tables.Column(verbose_name=_('Birthday'), accessor='child.birthday')
 
     class Meta:
@@ -30,6 +30,11 @@ class MainTable(CommonTable):
                                           template_name='django_tables2/mscc/action_column.html')
     status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
                                           template_name='django_tables2/mscc/status_column.html')
+
+    center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
+    governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
+    caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
+    cadaster = tables.Column(verbose_name=_('Cadaster'), accessor='center.cadaster')
 
     class Meta:
         model = Registration
@@ -49,14 +54,17 @@ class MainTable(CommonTable):
             'child.father_name',
             'child.last_name',
             'child.mother_fullname',
-            'child.sex',
+            'child.gender',
             'child_age',
             'child_birthday',
             'child.nationality',
+            'center',
+            'center_type',
             'governorate',
-            'district',
-            'owner',
-            'created',
-            'modified_by',
-            'modified',
+            'caza',
+            'cadaster',
+            # 'owner',
+            # 'created',
+            # 'modified_by',
+            # 'modified',
         )
