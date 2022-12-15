@@ -7,14 +7,14 @@ from . import views, education_view, services_view
 urlpatterns = [
 
     url(
-        regex=r'^add-child/$',
+        regex=r'^Child-Add/$',
         view=views.MainAddView.as_view(),
-        name='add_child'
+        name='child_add'
     ),
     url(
-        regex=r'^edit-child/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
-        name='edit_child'
+        name='child_edit'
     ),
     # url(
     #     regex=r'^export/$',
@@ -59,7 +59,7 @@ urlpatterns = [
     url(
         regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
-        name='view_child'
+        name='child_profile'
     ),
     url(
         regex=r'^Services/Inclusion-Add/(?P<registry>[\w.@+-]+)/$',
