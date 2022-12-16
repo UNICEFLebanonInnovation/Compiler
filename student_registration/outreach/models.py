@@ -284,8 +284,8 @@ class OutreachCaregiver(models.Model):
     caregiver_unhcr_id = models.CharField(max_length=200, blank=True, null=True)
     unhcr_barcode = models.CharField(max_length=200, blank=True, null=True)
     caregiver_personal_id = models.CharField(max_length=200, blank=True, null=True)
-    father_education = models.CharField(max_length=200, blank=True, null=True)
-    mother_education = models.CharField(max_length=200, blank=True, null=True)
+    father_education_level = models.CharField(max_length=200, blank=True, null=True)
+    mother_education_level = models.CharField(max_length=200, blank=True, null=True)
     other_education_level = models.CharField(max_length=200, blank=True, null=True)
     number_of_children = models.CharField(max_length=45, blank=True, null=True)
     geolocation = models.CharField(max_length=200, blank=True, null=True)
@@ -303,7 +303,7 @@ class OutreachCaregiver(models.Model):
         return self.father_name
 
 
-class OutreachChild(Person):
+class OutreachChild(models.Model):
     outreach_caregiver = models.ForeignKey(
         OutreachCaregiver,
         blank=True, null=True,
@@ -336,3 +336,4 @@ class OutreachChild(Person):
 
     def __unicode__(self):
         return self.first_name
+

@@ -19,9 +19,10 @@ import datetime
 
 
 def outreach_import_data(request):
-    last_loaded_identifier = HouseHold.objects.aggregate(Max('u_id'))['u_id__max']
-    if last_loaded_identifier is None:
-        last_loaded_identifier = 0
+    # last_loaded_identifier = HouseHold.objects.aggregate(Max('u_id'))['u_id__max']
+    # if last_loaded_identifier is None:
+    #     last_loaded_identifier = 0
+    last_loaded_identifier = 0
     last_loaded_identifier_str = str(last_loaded_identifier)
     url = "https://kobo.humanitarianresponse.info/api/v2/assets/aSg3ARiCkQ4fZCWQR3Wceo/data.json?sort=%7B%22_id%22%3A+1%7D&query=%7B%22_id%22%3A+%7B%22%24gt%22%3A+" + last_loaded_identifier_str + "%7D%7D"
     headers = CaseInsensitiveDict()
@@ -30,8 +31,6 @@ def outreach_import_data(request):
     data = json.loads(resp.text)
 
     for record in data["results"]:
-        # for k, v in record.items():
-        #     print(k, v)
         caregiver = OutreachCaregiver()
         caregiver.u_id = record["_id"]
         caregiver.form_id = record["_xform_id_string"]
@@ -61,8 +60,8 @@ def outreach_import_data(request):
         record_value(caregiver, "caregiver_unhcr_id", record, "caregiver_unhcr_id")
         record_value(caregiver, "unhcr_barcode", record, "unhcr_barcode")
         record_value(caregiver, "caregiver_personal_id", record, "caretaker_personal_id")
-        record_value(caregiver, "father_education", record, "father_education")
-        record_value(caregiver, "mother_education", record, "mother_education")
+        record_value(caregiver, "father_education_level", record, "father_education_level")
+        record_value(caregiver, "mother_education_level", record, "mother_education_level")
         record_value(caregiver, "other_education_level", record, "other_education_level")
         record_value(caregiver, "number_of_children", record, "DC_count")
         record_value(caregiver, "geolocation", record, "_geolocation")
@@ -71,39 +70,43 @@ def outreach_import_data(request):
         record_value(caregiver, "interview_comment", record, "child_notes")
         record_value(caregiver, "submission_status", record, "_status")
         caregiver.save()
-        # caregiver_id = caregiver.id
+        caregiver_id = caregiver.id
         if record.has_key("DC"):
             for student in record["DC"]:
-                st = Child()
+                st = OutreachChild()
                 st.outreach_caregiver = caregiver
-                st.first_name = student["DC/first_name"]
-                st.date_of_birth = student["DC/date_of_birth"]
-                st.gender = student["DC/gender"]
-                st.nationality = student["DC/nationality"]
-                st.nationality_other = student["DC/nationality_other"]
-                st.child_unhcr_number = student["DC/child_unhcr_number"]
-                st.child_personal_id = student["DC/child_personal_id"]
-                st.family_status = student["DC/family_status"]
-                st.disability = student["DC/disability"]
-                st.disability_other = student["DC/disability_other"]
-                st.education_status = student["DC/education_status"]
-                st.dropout_date = student["DC/dropout_date"]
-                st.dropout_reason = student["DC/dropout_reason"]
-                st.dropout_reason_other = student["DC/dropout_reason_other"]
-                st.working_status = student["DC/working_status"]
-                st.work_type = student["DC/work_type"]
-                st.work_type_other = student["DC/work_type_other"]
-                st.child_referral = student["DC/child_referral"]
-                if student.has_key("DC/child_notes"):
-                     st.child_notes = student["DC/child_notes"]
+                record_value(st, "first_name", student, "DC/first_name")
+                record_value(st, "date_of_birth", student, "DC/date_of_birth")
+                if student.has_key("DC/gender"):
+                    if student["DC/gender"] == '_':
+                        st.gender = "Male"
+                    elif student["DC/gender"] == '__1':
+                        st.gender = "Female"
+                    else:
+                        st.gender = student["DC/gender"]
+                record_value(st, "nationality", student, "DC/nationality")
+                record_value(st, "nationality_other", student, "DC/nationality_other")
+                record_value(st, "child_unhcr_number", student, "DC/child_unhcr_number")
+                record_value(st, "child_personal_id", student, "DC/child_personal_id")
+                record_value(st, "family_status", student, "DC/family_status")
+                record_value(st, "disability", student, "DC/disability")
+                record_value(st, "disability_other", student, "DC/disability_other")
+                record_value(st, "education_status", student, "DC/education_status")
+                record_value(st, "dropout_date", student, "DC/dropout_date")
+                record_value(st, "dropout_reason", student, "DC/dropout_reason")
+                record_value(st, "dropout_reason_other", student, "DC/dropout_reason_other")
+                record_value(st, "working_status", student, "DC/working_status")
+                record_value(st, "work_type", student, "DC/work_type")
+                record_value(st, "work_type_other", student, "DC/work_type_other")
+                record_value(st, "child_referral", student, "DC/child_referral")
+                record_value(st, "child_notes", student, "DC/child_notes")
                 st.save()
-
     return HttpResponse("records saved successfully")
 
 
-def record_value(household,household_field,record, field):
+def record_value(model,model_field,record, field):
     if record.has_key(field):
-        household.household_field = record[field]
+        model.__setattr__(model_field, record[field])
 
 
 class HouseHoldViewSet(mixins.RetrieveModelMixin,
@@ -146,6 +149,7 @@ class ChildViewSet(mixins.RetrieveModelMixin,
             qs = self.queryset.filter(barcode_subset__contains=term).distinct()
             return qs
         return []
+
 
 
 
