@@ -55,7 +55,7 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     child_mother_fullname = forms.CharField(
-        label=_("Child\'s Mother Full Name"),
+        label=_("Mother Full Name"),
         widget=forms.TextInput, required=True
     )
     child_gender = forms.ChoiceField(
@@ -69,7 +69,7 @@ class MainForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     child_nationality_other = forms.CharField(
-        label=_('If other, Please specify'),
+        label=_('If Other, Please specify'),
         widget=forms.TextInput, required=False
     )
     child_birthday_year = forms.ChoiceField(
@@ -93,7 +93,7 @@ class MainForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     main_caregiver_nationality_other = forms.CharField(
-        label=_('Please specify'),
+        label=_('If Other, Please specify'),
         widget=forms.TextInput, required=False
     )
     child_p_code = forms.CharField(
@@ -195,7 +195,7 @@ class MainForm(forms.ModelForm):
         choices=Child.MAIN_CAREGIVER
     )
     main_caregiver_other = forms.CharField(
-        label=_('Please specify'),
+        label=_('If Other, Please specify'),
         widget=forms.TextInput, required=False
     )
 
@@ -403,39 +403,33 @@ class MainForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('center', css_class='col-md-3'),
+                    Div('center', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
             ),
             Div(
                 Div(
-                    Div('child_first_name', css_class='col-md-3'),
-                    Div('child_father_name', css_class='col-md-3'),
-                    Div('child_last_name', css_class='col-md-3'),
+                    Div('child_first_name', css_class='col-md-4'),
+                    Div('child_father_name', css_class='col-md-4'),
+                    Div('child_last_name', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('child_mother_fullname', css_class='col-md-3'),
+                    Div('child_birthday_year', css_class='col-md-3'),
+                    Div('child_birthday_month', css_class='col-md-3'),
+                    Div('child_birthday_day', css_class='col-md-3'),
                     Div('child_gender', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('child_nationality', css_class='col-md-3'),
-                    Div('child_nationality_other', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    Div('child_birthday_year', css_class='col-md-2'),
-                    Div('child_birthday_month', css_class='col-md-2'),
-                    Div('child_birthday_day', css_class='col-md-2'),
+                    Div('child_mother_fullname', css_class='col-md-4'),
+                    Div('child_nationality', css_class='col-md-4'),
+                    Div('child_nationality_other', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
                     Div('child_p_code', css_class='col-md-6'),
-                    css_class='row card-body',
-                ),
-                Div(
                     Div('child_address', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
@@ -444,144 +438,140 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('child_marital_status', css_class='col-md-3'),
-                    Div('child_have_children', css_class='col-md-3', css_id='child_have_children'),
+                    Div('child_marital_status', css_class='col-md-4'),
+                    Div('child_have_children', css_class='col-md-5', css_id='child_have_children'),
                     Div('child_children_number', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('source_of_identification', css_class='col-md-4'),
-                    Div('source_of_identification_specify', css_class='col-md-4'),
+                    Div('source_of_identification', css_class='col-md-6'),
+                    Div('source_of_identification_specify', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('cash_support_programmes', css_class='col-md-6 multiple-choice'),
+                    Div('cash_support_programmes', css_class='col-md-12 multiple-choice'),
                     css_class='row card-body',
                 ),
                 css_id='step-2',
             ),
             Div(
                 Div(
-                    Div('father_educational_level', css_class='col-md-5'),
-                    Div('mother_educational_level', css_class='col-md-5'),
+                    Div('father_educational_level', css_class='col-md-6'),
+                    Div('mother_educational_level', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('first_phone_number', css_class='col-md-3'),
-                    Div('first_phone_number_confirm', css_class='col-md-3'),
-                    Div('first_phone_owner', css_class='col-md-3'),
+                    Div('first_phone_number', css_class='col-md-4'),
+                    Div('first_phone_number_confirm', css_class='col-md-4'),
+                    Div('first_phone_owner', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('second_phone_number', css_class='col-md-3'),
-                    Div('second_phone_number_confirm', css_class='col-md-3'),
-                    Div('second_phone_owner', css_class='col-md-3'),
+                    Div('second_phone_number', css_class='col-md-4'),
+                    Div('second_phone_number_confirm', css_class='col-md-4'),
+                    Div('second_phone_owner', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('main_caregiver', css_class='col-md-3'),
-                    Div('main_caregiver_other', css_class='col-md-3'),
+                    Div('main_caregiver', css_class='col-md-6'),
+                    Div('main_caregiver_other', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('caregiver_first_name', css_class='col-md-3'),
-                    Div('caregiver_middle_name', css_class='col-md-3'),
-                    Div('caregiver_last_name', css_class='col-md-3'),
+                    Div('caregiver_first_name', css_class='col-md-4'),
+                    Div('caregiver_middle_name', css_class='col-md-4'),
+                    Div('caregiver_last_name', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('caregiver_mother_name', css_class='col-md-3'),
+                    Div('caregiver_mother_name', css_class='col-md-8'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('main_caregiver_nationality', css_class='col-md-3'),
-                    Div('main_caregiver_nationality_other', css_class='col-md-3'),
+                    Div('main_caregiver_nationality', css_class='col-md-6'),
+                    Div('main_caregiver_nationality_other', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('id_type', css_class='col-md-3'),
+                    Div('id_type', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('case_number', css_class='col-md-4'),
-                    Div('case_number_confirm', css_class='col-md-4'),
+                    Div('case_number', css_class='col-md-6'),
+                    Div('case_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id1',
                 ),
                 Div(
-                    Div('parent_individual_case_number', css_class='col-md-4'),
-                    Div('parent_individual_case_number_confirm', css_class='col-md-4'),
+                    Div('parent_individual_case_number', css_class='col-md-6'),
+                    Div('parent_individual_case_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id1',
                 ),
                 Div(
-                    Div('individual_case_number', css_class='col-md-4'),
-                    Div('individual_case_number_confirm', css_class='col-md-4'),
+                    Div('individual_case_number', css_class='col-md-6'),
+                    Div('individual_case_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id1',
                 ),
                 Div(
-                    Div('recorded_number', css_class='col-md-4'),
-                    Div('recorded_number_confirm', css_class='col-md-4'),
+                    Div('recorded_number', css_class='col-md-6'),
+                    Div('recorded_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id2',
                 ),
                 Div(
-                    Div('parent_national_number', css_class='col-md-4'),
-                    Div('parent_national_number_confirm', css_class='col-md-4'),
+                    Div('parent_national_number', css_class='col-md-6'),
+                    Div('parent_national_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id3',
                 ),
                 Div(
-                    Div('national_number', css_class='col-md-4'),
-                    Div('national_number_confirm', css_class='col-md-4'),
+                    Div('national_number', css_class='col-md-6'),
+                    Div('national_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id3',
                 ),
                 Div(
-                    Div('parent_syrian_national_number', css_class='col-md-4'),
-                    Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
+                    Div('parent_syrian_national_number', css_class='col-md-6'),
+                    Div('parent_syrian_national_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id4',
                 ),
                 Div(
-                    Div('syrian_national_number', css_class='col-md-4'),
-                    Div('syrian_national_number_confirm', css_class='col-md-4'),
+                    Div('syrian_national_number', css_class='col-md-6'),
+                    Div('syrian_national_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id4',
                 ),
                 Div(
-                    Div('parent_sop_national_number', css_class='col-md-4'),
-                    Div('parent_sop_national_number_confirm', css_class='col-md-4'),
+                    Div('parent_sop_national_number', css_class='col-md-6'),
+                    Div('parent_sop_national_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id5',
                 ),
                 Div(
-                    Div('sop_national_number', css_class='col-md-4'),
-                    Div('sop_national_number_confirm', css_class='col-md-4'),
+                    Div('sop_national_number', css_class='col-md-6'),
+                    Div('sop_national_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id5',
                 ),
                 Div(
-                    Div('parent_other_number', css_class='col-md-4'),
-                    Div('parent_other_number_confirm', css_class='col-md-4'),
+                    Div('parent_other_number', css_class='col-md-6'),
+                    Div('parent_other_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id6',
                 ),
                 Div(
-                    Div('other_number', css_class='col-md-4'),
-                    Div('other_number_confirm', css_class='col-md-4'),
+                    Div('other_number', css_class='col-md-6'),
+                    Div('other_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id6',
                 ),
                 css_id='step-3',
             ),
             Div(
                 Div(
-                    Div('have_labour', css_class='col-md-4'),
+                    Div('have_labour', css_class='col-md-6'),
+                    Div('labour_type', css_class='col-md-6', css_id='labours'),
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('labour_type', css_class='col-md-4', css_id='labours'),
-                    css_class='row card-body',
-                    id='labour_details_1'
-                ),
-                Div(
-                    Div('labour_type_specify', css_class='col-md-8'),
+                    Div('labour_type_specify', css_class='col-md-12'),
                     css_class='row card-body',
                     id='labour_details_1'
                 ),
                 Div(
-                    Div('labour_hours', css_class='col-md-4', css_id='labour_hours'),
-                    Div('labour_weekly_income', css_class='col-md-4'),
+                    Div('labour_hours', css_class='col-md-6', css_id='labour_hours'),
+                    Div('labour_weekly_income', css_class='col-md-6'),
                     css_class='row card-body',
                     id='labour_details_2'
                 ),
