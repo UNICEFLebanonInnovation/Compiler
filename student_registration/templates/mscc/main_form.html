@@ -24,9 +24,10 @@
 </div></div><div class="page-title-actions">
 </div></div></div>
 
-        {{ form.errors }}
+        <!--{{ form.errors }}-->
+<div class="row">
 
-<div class="main-card mb-3 card">
+<div class="main-card mb-3 card col-md-9">
                                 <div class="card-body">
                                     <div id="smartwizard3" class="forms-wizard-vertical">
                                         <ul class="forms-wizard">
@@ -71,6 +72,22 @@
                                 </div>
                             </div>
 
+<div class="col-md-3">
+<div class="main-card mb-3 card">
+                                        <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Outreach filter result
+                                        </div>
+                                        <div class="card-body" style="height: 450px;">
+
+                                        </div>
+                                        <!--<div class="d-block text-right card-footer">-->
+                                            <!--<button class="mr-2 btn btn-link btn-sm">Cancel</button>-->
+                                            <!--<button class="btn btn-success btn-lg">Save</button>-->
+                                        <!--</div>-->
+                                    </div>
+</div>
+
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -80,7 +97,7 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=8"></script>
-    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
 
     <script>
       var url = "{% url 'clm:load_districts' %}";
