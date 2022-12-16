@@ -122,7 +122,8 @@ class MainForm(forms.ModelForm):
     )
     child_children_number = forms.IntegerField(
         label=_('If yes, How many?'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=False,
+        initial=0
     )
     source_of_identification = forms.ChoiceField(
         label=_("Source of referral of the child to MSCC"),
@@ -236,6 +237,7 @@ class MainForm(forms.ModelForm):
         label=_('How many hours does this child work in a day?'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
+        initial = 0,
         min_value=0
     )
     labour_weekly_income = forms.ChoiceField(
