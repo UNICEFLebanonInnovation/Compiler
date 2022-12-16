@@ -77,7 +77,13 @@ def outreach_import_data(request):
                 st.outreach_caregiver = caregiver
                 record_value(st, "first_name", student, "DC/first_name")
                 record_value(st, "date_of_birth", student, "DC/date_of_birth")
-                record_value(st, "gender", student, "DC/gender")
+                if student.has_key("DC/gender"):
+                    if student["DC/gender"] == '_':
+                        st.gender = "Male"
+                    elif student["DC/gender"] == '__1':
+                        st.gender = "Female"
+                    else:
+                        st.gender = student["DC/gender"]
                 record_value(st, "nationality", student, "DC/nationality")
                 record_value(st, "nationality_other", student, "DC/nationality_other")
                 record_value(st, "child_unhcr_number", student, "DC/child_unhcr_number")
