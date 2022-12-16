@@ -192,3 +192,39 @@ class YouthKitServiceFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry, instance=instance)
         return super(YouthKitServiceFormView, self).form_valid(form)
+
+class FollowUpFormView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      FormView):
+    template_name = 'mscc/service_follow_up_form.html'
+    form_class = FollowUpServiceForm
+    success_url = ''
+    group_required = [u"MSCC"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(FollowUpFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
+        if self.request.method == "POST":
+            return FollowUpServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
+        else:
+            if instance:
+                data = to_array(FollowUpServiceForm.Meta.fields, FollowUpService.objects.get(id=instance))
+                return FollowUpServiceForm(registry=registry, instance=instance, request=self.request)
+            return FollowUpServiceForm(data, registry=registry, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(FollowUpFormView, self).form_valid(form)
+

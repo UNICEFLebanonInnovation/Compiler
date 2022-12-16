@@ -21,6 +21,8 @@ from .models import (
     DigitalService,
     HealthNutritionService,
     YouthKitService,
+    FollowUpService,
+    Referral,
     YES_NO
 )
 
@@ -659,4 +661,185 @@ class YouthKitServiceForm(forms.ModelForm):
             'adolescent_dropout_date'
         )
 
+
+class FollowUpServiceForm(forms.ModelForm):
+
+    follow_up_type = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=FollowUpService.FOLLOW_UP_TYPE,
+        label=_('In case of absence, type of Follow-up done')
+    )
+    phone_call_number = forms.IntegerField(
+        label=_('Number of phone calls done'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=0
+    )
+    house_visit_number = forms.IntegerField(
+        label=_('Number of home visits done'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=0
+    )
+    caregiver_visit_number = forms.IntegerField(
+        label=_('Number of caregiver visits to center'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=0
+    )
+    follow_up_result = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=FollowUpService.FOLLOW_UP_RESULT,
+        label=_('Result of follow up')
+    )
+    dropout_reason = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('Reason for dropout')
+    )
+    adolescent_dropout_datedropout_date = forms.DateField(
+        label=_("Dropout Date"),
+        required=False
+    )
+    parent_attended_meeting = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Did the child\'s caregiver attend parent meeting/engagment sessions')
+    )
+    meeting_type = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=FollowUpService.MEETING_TYPE,
+        label=_('Please indicate the types of meeting')
+    )
+    meeting_number = forms.IntegerField(
+        label=_('Number of sessions attended'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=0
+    )
+    meeting_type = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=FollowUpService.MEETING_TYPE,
+        label=_('Please indicate the types of meeting')
+    )
+    meeting_modality = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=FollowUpService.SESSION_MODALITY,
+        label=_('Please the modality used per each session')
+    )
+    caregiver_attended = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=FollowUpService.CAREGIVER,
+        label=_('Who attended the meetings')
+    )
+    caregiver_attended_other = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('If Other, Please specify')
+    )
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(FollowUpServiceForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_follow_up_add', kwargs={'registry': registry})
+        if instance:
+            form_action = reverse('mscc:service_follow_up_edit', kwargs={'registry': registry, 'pk': instance.id})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    Div('follow_up_type', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('phone_call_number', css_class='col-md-4'),
+                    Div('house_visit_number', css_class='col-md-4'),
+                    Div('caregiver_visit_number', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                css_id='step-1'
+            ),
+            Div(
+                Div(
+                    Div('follow_up_result', css_class='col-md-4'),
+                    Div('dropout_reason', css_class='col-md-4'),
+                    Div('dropout_date', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('parent_attended_meeting', css_class='col-md-6'),
+                    css_class='row card-body'
+                ),
+
+                Div(
+                    Div('meeting_type', css_class='col-md-4'),
+                    Div('meeting_number', css_class='col-md-4'),
+                    Div('meeting_modality', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('caregiver_attended', css_class='col-md-4'),
+                    Div('caregiver_attended_other', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                ),
+                css_id='step-2',
+            )
+        )
+
+    def save(self, request=None, instance=None, registry=None):
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = YouthKitService.objects.create(registration_id=registry)
+        else:
+            instance = YouthKitService.objects.get(id=instance)
+
+        instance.follow_up_type = validated_data.get('follow_up_type')
+        instance.phone_call_number = validated_data.get('phone_call_number,, 	')
+        instance.house_visit_number = validated_data.get('house_visit_number')
+        instance.caregiver_visit_number = validated_data.get('caregiver_visit_number')
+        instance.follow_up_result = validated_data.get('follow_up_result')
+        instance.dropout_reason = validated_data.get('dropout_reason')
+        instance.dropout_date = validated_data.get('dropout_date')
+        instance.parent_attended_meeting = validated_data.get('parent_attended_meeting')
+        instance.meeting_type = validated_data.get('meeting_type')
+        instance.meeting_number = validated_data.get('meeting_number')
+        instance.meeting_modality = validated_data.get('meeting_modality')
+        instance.caregiver_attended = validated_data.get('caregiver_attended')
+        instance.caregiver_attended_other = validated_data.get('caregiver_attended_other')
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+        return instance
+
+    class Meta:
+        model = FollowUpService
+        fields = (
+            'follow_up_type',
+            'phone_call_number',
+            'house_visit_number',
+            'caregiver_visit_number',
+            'follow_up_result',
+            'dropout_reason',
+            'dropout_date',
+            'parent_attended_meeting',
+            'meeting_type',
+            'meeting_number',
+            'meeting_modality',
+            'caregiver_attended',
+            'caregiver_attended_other',
+        )
 

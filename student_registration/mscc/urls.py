@@ -111,5 +111,15 @@ urlpatterns = [
         view=services_view.YouthKitServiceFormView.as_view(),
         name='service_youth_kit_edit'
     ),
+    url(
+        regex=r'^Services/Follow-Up-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.FollowUpFormView.as_view(),
+        name='service_follow_up_add'
+    ),
+    url(
+        regex=r'^Services/DFollow-Up-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.FollowUpFormView.as_view(),
+        name='service_follow_up_edit'
+    ),
 
 ]

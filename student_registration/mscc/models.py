@@ -1123,12 +1123,13 @@ class YouthKitService(TimeStampedModel):
 class FollowUpService(TimeStampedModel):
 
     FOLLOW_UP_TYPE = Choices(
-            ('', _('----------')),
-            ('Phone call', _('Phone call')),
-            ('Home Visits', _('Home Visits')),
-            ('Caregiver visited the center', _('Caregiver visited the center')),
+        ('', _('----------')),
+        ('Phone call', _('Phone call')),
+        ('Home Visits', _('Home Visits')),
+        ('Caregiver visited the center', _('Caregiver visited the center')),
     )
     FOLLOW_UP_RESULT = Choices(
+        ('', '----------'),
         ('Child returned to program', _('Child returned to program')),
         ('Child referred to specialized services', _('Child referred to specialized services')),
         ('Child referred to CP', _('Child referred to CP')),
@@ -1137,10 +1138,12 @@ class FollowUpService(TimeStampedModel):
         ('Dropout/No Interest', _('Dropout/No Interest')),
     )
     MEETING_TYPE = Choices(
+        ('', '----------'),
         ('PSS Session', _('PSS Session')),
         ('COVID health awareness session', _('COVID health awareness session')),
     )
     SESSION_MODALITY = Choices(
+        ('', '----------'),
         ('Online via WhatsApp', _("Online via WhatsApp")),
         ('Phone calls', _("Phone calls")),
         ('Offline (F2F)', _("Offline (F2F)"))
@@ -1203,7 +1206,7 @@ class FollowUpService(TimeStampedModel):
         verbose_name=_('Did the child\'s caregiver attend parent meeting/engagment sessions')
     )
     meeting_type = models.CharField(
-        max_length=10,
+        max_length=50,
         blank=True,
         null=True,
         choices=MEETING_TYPE,
