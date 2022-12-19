@@ -215,12 +215,6 @@ class Registration(TimeStampedModel):
 
 class ProvidedServices(models.Model):
 
-    TYPES = Choices(
-            ('Core-Package', _('Core Package')),
-            ('Walk-in-OOSC', _('Walk-in OOSC')),
-            ('Walk-in-In-School', _('Walk-in In School')),
-    )
-
     name = models.CharField(
         max_length=250,
         blank=False,

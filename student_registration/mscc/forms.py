@@ -26,6 +26,7 @@ from .models import (
     Registration,
     EducationAssessment
 )
+from .utils import generate_services
 from .serializers import MainSerializer
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -786,13 +787,13 @@ class MainForm(forms.ModelForm):
                 self.add_error('other_number_confirm', msg)
 
     def save(self, request=None, instance=None):
+
         if instance:
             serializer = MainSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
-                request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
@@ -804,7 +805,8 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.save()
-                request.session['instance_id'] = instance.id
+                generate_services(instance.child.age, instance)
+                
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
