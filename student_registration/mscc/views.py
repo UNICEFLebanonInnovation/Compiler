@@ -16,6 +16,9 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+
 from student_registration.users.utils import force_default_language
 from student_registration.outreach.models import OutreachChild
 from student_registration.child.models import Child
@@ -196,3 +199,47 @@ class MainViewSet(mixins.RetrieveModelMixin,
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
+
+
+def mscc_child_search(request):
+    from datetime import datetime
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    birthday_year = body['birthday_year']
+    birthday_month = body['birthday_month']
+    birthday_day = body['birthday_day']
+    # nationality = body['nationality']
+    gender = body['gender']
+    first_name = body['first_name']
+    father_name = body['father_name']
+    last_name = body['last_name']
+
+    form_str = '{} {} {}'.format(first_name, father_name, last_name)
+    form_dob = datetime(int(birthday_year), int(birthday_month), int(birthday_day)).strftime("%Y-%m-%d")
+
+    filtered_results = OutreachChild.objects.filter(
+        date_of_birth = form_dob,
+        # nationality=nationality,
+        gender=gender
+    ).values('id',
+             'first_name',
+             'outreach_caregiver__father_name',
+             'outreach_caregiver__last_name',
+             'outreach_caregiver__mother_full_name',
+             'gender',
+             'nationality',
+             'date_of_birth',
+             ).distinct()
+
+    result_match = []
+    for result in filtered_results:
+        print('filtered results')
+        result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'], result['outreach_caregiver__last_name'])
+        fuzzy_match = fuzz.ratio(form_str, result_str)
+        if fuzzy_match > 85:
+            element = {'result': result, 'score': fuzzy_match}
+            result_match.append(element)
+    if filtered_results != '':
+        return JsonResponse({'result': result_match})
+
+    return JsonResponse({'result': ''})

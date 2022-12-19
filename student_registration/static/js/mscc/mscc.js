@@ -142,6 +142,14 @@ $(document).ready(function() {
 
     });
 
+    $(document).on('change', 'input#id_child_first_name, input#id_child_father_name, input#id_child_last_name', function () {
+        mscc_child_search();
+    });
+
+     $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day, select#id_child_nationality, select#id_child_gender', function(){
+        mscc_child_search();
+    });
+
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -275,6 +283,57 @@ function urlParam(name)
     return 0;
 }
 
+
+function mscc_child_search() {
+
+    if (isAddPage() ) {
+
+        var birthday_year = $('#id_child_birthday_year').val();
+        var birthday_month = $('#id_child_birthday_month').val();
+        var birthday_day = $('#id_child_birthday_day').val();
+        var nationality = $( "#id_child_nationality option:selected" ).text();
+        var gender = $('#id_child_gender').val();
+        var first_name = $('#id_child_first_name').val();
+        var father_name = $('#id_child_father_name').val();
+        var last_name = $('#id_child_last_name').val();
+
+        if (birthday_year!='' && birthday_month!='' && birthday_day!='' && nationality!='' && gender!='' && first_name!='' && father_name!='' && last_name!='')
+        {
+            var data = {
+                birthday_year: birthday_year,
+                birthday_month: birthday_month,
+                birthday_day: birthday_day,
+                nationality: nationality,
+                gender: gender,
+                first_name: first_name,
+                father_name: father_name,
+                last_name: last_name,
+            };
+            requestHeaders = getHeader();
+            requestHeaders["content-type"] = 'application/json';
+            $.ajax({
+                type: "POST",
+                url: '/MSCC/mscc-child-search/',
+                data: JSON.stringify(data),
+                cache: false,
+                async: false,
+                headers: requestHeaders,
+                dataType: 'json',
+                success: function (response) {
+
+                    if (response.result != "") {
+                        alert("child with more than 85% match exists");
+                    }
+                    console.log(response);
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+    }
+}
+
 function check_duplicate_registration()
 {
     enrollment_id = $('#id_enrollment_id').val();
@@ -299,7 +358,7 @@ function check_duplicate_registration()
 function isAddPage()
 {
     var url_loc = window.location.toString();
-    return (url_loc.toLowerCase().search(/^.*\/clm\/mscc-add|abln-add|cbece-add|rs-add|inclusion-add|bridging-add|outreach-add(\*)(\?.*)?$/i)>=0);
+    return (url_loc.toLowerCase().search(/^.*\/MSCC\/child-add(\/)?(\?.*)?$/i)>=0);
 }
 
 function reorganizeForm()
