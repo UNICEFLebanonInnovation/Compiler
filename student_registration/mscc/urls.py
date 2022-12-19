@@ -117,9 +117,14 @@ urlpatterns = [
         name='service_follow_up_add'
     ),
     url(
-        regex=r'^Services/DFollow-Up-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Services/Follow-Up-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.FollowUpFormView.as_view(),
         name='service_follow_up_edit'
+    ),
+    url(
+        'mscc-child-search/$',
+        views.mscc_child_search,
+        name='mscc_child_search'
     ),
 
 ]
