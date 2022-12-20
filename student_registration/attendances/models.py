@@ -18,7 +18,8 @@ from student_registration.schools.models import (
     EducationLevel,
     EducationYear
 )
-
+from student_registration.locations.models import Center
+from student_registration.child.models import Child
 from student_registration.alp.models import ALPRound
 
 
@@ -425,137 +426,115 @@ class CLMAttendanceStudent(TimeStampedModel):
         return ''
 
 
-# class MSCCAttendance(TimeStampedModel):
-#     YES_NO = Choices(
-#         ('', '----------'),
-#         ('yes', _("Yes")),
-#         ('no', _("No")),
-#     )
-#     REGISTRATION_LEVEL = (
-#         ('', '----------'),
-#         ('level_one', _('Level one')),
-#         ('level_two', _('Level two')),
-#         ('level_three', _('Level three')),
-#         ('level_four', _('Level four')),
-#         ('level_five', _('Level five')),
-#         ('level_six', _('Level six'))
-#     )
-#     CLOSE_REASON = Choices(
-#         ('', '----------'),
-#         ('public_holiday', _('Public Holiday')),
-#         ('school_holiday', _('School Holiday')),
-#         ('strike', _('Strike')),
-#         ('weekly_holiday', _('Weekly Holiday')),
-#         ('roads_closed', _('Roads Closed')),
-#     )
-#     school = models.ForeignKey(
-#         School,
-#         blank=False, null=True,
-#         related_name='+',
-#     )
-#     registration_level = models.CharField(
-#         max_length=100,
-#         blank=True,
-#         null=True,
-#         choices=REGISTRATION_LEVEL,
-#         verbose_name=_('Registration level')
-#     )
-#     attendance_date = models.DateField(
-#         blank=True,
-#         null=True,
-#         verbose_name=_('Attendance date')
-#     )
-#
-#     day_off = models.CharField(
-#         max_length=10,
-#         blank=True,
-#         null=True,
-#         choices=YES_NO,
-#         verbose_name=_('Day off ?')
-#     )
-#     close_reason = models.CharField(
-#         max_length=50,
-#         blank=True,
-#         null=True,
-#         choices=CLOSE_REASON,
-#         verbose_name=_('Day off reason')
-#     )
-#
-#     class Meta:
-#         ordering = ['attendance_date']
-#         verbose_name = "Attendances by School by Day"
-#
-#     def __unicode__(self):
-#         return self.school.__unicode__()
-#
-#
-# class MSCCAttendanceStudent(TimeStampedModel):
-#     readonly_fields = ('student_name')
-#
-#     ABSENCE_REASON = Choices(
-#         ('', '----------'),
-#         ('sick', _('Sick')),
-#         ('no_transport', _('No transport')),
-#         ('other', _('Other reason')),
-#     )
-#
-#     YES_NO = Choices(
-#         ('', '----------'),
-#         ('yes', _("Yes")),
-#         ('no', _("No")),
-#     )
-#     attendance_day = models.ForeignKey(
-#         MSCCAttendance,
-#         blank=True, null=True,
-#         related_name='+',
-#     )
-#     student = models.ForeignKey(
-#         Child,
-#         blank=True, null=True,
-#         related_name='+',
-#         verbose_name=_('Student')
-#     )
-#     attended = models.CharField(
-#         max_length=10,
-#         blank=True,
-#         null=True,
-#         choices=YES_NO,
-#         verbose_name=_('Student Attended?')
-#     )
-#     absence_reason = models.CharField(
-#         max_length=50,
-#         blank=True,
-#         null=True,
-#         choices=ABSENCE_REASON
-#     )
-#     absence_reason_other = models.CharField(
-#         max_length=500,
-#         blank=True,
-#         null=True,
-#         verbose_name=_('specify')
-#     )
-#
-#     class Meta:
-#         ordering = ['id']
-#         verbose_name = "Student Attendance"
-#
-#     @property
-#     def student_name(self):
-#         result = ''
-#         if self.student:
-#             result = self.student.full_name
-#         return result
-#
-#     @property
-#     def student_gender(self):
-#         result = ''
-#         if self.student:
-#             result = self.student.student_gender
-#         return result
-#
-#     @property
-#     def student_fullname(self):
-#         if self.student:
-#             return self.student.full_name
-#         return ''
-#
+class MSCCAttendance(TimeStampedModel):
+    YES_NO = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    CLOSE_REASON = Choices(
+        ('', '----------'),
+        ('public_holiday', _('Public Holiday')),
+        ('school_holiday', _('School Holiday')),
+        ('strike', _('Strike')),
+        ('weekly_holiday', _('Weekly Holiday')),
+        ('roads_closed', _('Roads Closed')),
+    )
+    center = models.ForeignKey(
+        Center,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Center')
+    )
+    attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Attendance date')
+    )
+    day_off = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Day off ?')
+    )
+    close_reason = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CLOSE_REASON,
+        verbose_name=_('Day off reason')
+    )
+
+    class Meta:
+        ordering = ['attendance_date']
+        verbose_name = "Attendances by School by Day"
+
+    def __unicode__(self):
+        return self.school.__unicode__()
+
+
+class MSCCAttendanceStudent(TimeStampedModel):
+    readonly_fields = ('child_name')
+
+    ABSENCE_REASON = Choices(
+        ('', '----------'),
+        ('sick', _('Sick')),
+        ('no_transport', _('No transport')),
+        ('other', _('Other reason')),
+    )
+    attendance_day = models.ForeignKey(
+        MSCCAttendance,
+        blank=True, null=True,
+        related_name='+',
+    )
+    child = models.ForeignKey(
+        Child,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Child')
+    )
+    attended = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=Child.YES_NO,
+        verbose_name=_('Student Attended?')
+    )
+    absence_reason = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=ABSENCE_REASON
+    )
+    absence_reason_other = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('specify')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Student Attendance"
+
+    @property
+    def child_name(self):
+        result = ''
+        if self.child:
+            result = self.child.full_name
+        return result
+
+    @property
+    def child_gender(self):
+        result = ''
+        if self.child:
+            result = self.child.gender
+        return result
+
+    @property
+    def child_fullname(self):
+        if self.child:
+            return self.child.full_name
+        return ''
+

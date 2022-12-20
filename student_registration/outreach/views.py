@@ -19,10 +19,9 @@ import datetime
 
 
 def outreach_import_data(request):
-    # last_loaded_identifier = HouseHold.objects.aggregate(Max('u_id'))['u_id__max']
-    # if last_loaded_identifier is None:
-    #     last_loaded_identifier = 0
-    last_loaded_identifier = 0
+    last_loaded_identifier = HouseHold.objects.aggregate(Max('u_id'))['u_id__max']
+    if last_loaded_identifier is None:
+        last_loaded_identifier = 0
     last_loaded_identifier_str = str(last_loaded_identifier)
     url = "https://kobo.humanitarianresponse.info/api/v2/assets/aSg3ARiCkQ4fZCWQR3Wceo/data.json?sort=%7B%22_id%22%3A+1%7D&query=%7B%22_id%22%3A+%7B%22%24gt%22%3A+" + last_loaded_identifier_str + "%7D%7D"
     headers = CaseInsensitiveDict()
