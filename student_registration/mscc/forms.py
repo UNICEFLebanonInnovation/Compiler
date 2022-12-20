@@ -451,7 +451,7 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('cash_support_programmes', css_class='col-md-12 multiple-choice'),
+                    Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
                 css_id='step-2',
