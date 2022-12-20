@@ -1,12 +1,27 @@
 from django import template
 from django.apps import apps
 
+from student_registration.mscc.models import ProvidedServices
+
 register = template.Library()
 
 
 @register.simple_tag
 def have_service(services, service_name):
-    return services.filter(name=service_name).exists()
+    if service_name in services:
+        return services[service_name]
+
+
+@register.simple_tag
+def get_service(registry, service_name):
+    return ProvidedServices.objects.filter(name=service_name, registration=registry).last()
+
+
+@register.simple_tag
+def get_services(registry):
+    services = ProvidedServices.objects.filter(registration=registry).values()
+    print(services)
+    return services
 
 
 @register.simple_tag

@@ -32,5 +32,6 @@ class PackagesAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Registration)
+admin.site.register(ProvidedServices)
 admin.site.register(Packages, PackagesAdmin)
 admin.site.register(InclusionService)
