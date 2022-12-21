@@ -1,3 +1,5 @@
+# -- coding: utf-8 --
+
 import datetime
 
 from student_registration.outreach.models import OutreachChild
@@ -26,7 +28,7 @@ def update_service(service_name, registry_id, service_id):
     ProvidedServices.objects.filter(registration_id=registry_id,
                                     name=service_name).update(service_id=service_id,
                                                               completed=True,
-                                                              completion_date=datetime.date.now())
+                                                              completion_date=datetime.datetime.now())
 
 
 def get_outreach_child(initial,outreach_id,center_id):
@@ -40,9 +42,9 @@ def get_outreach_child(initial,outreach_id,center_id):
     if instance.date_of_birth :
         dt_string = instance.date_of_birth
         dt = datetime.strptime(dt_string, '%Y-%m-%d')
-    initial['child_birthday_year'] = dt.year
-    initial['child_birthday_month'] = dt.month
-    initial['child_birthday_day'] = dt.day
+        initial['child_birthday_year'] = dt.year
+        initial['child_birthday_month'] = dt.month
+        initial['child_birthday_day'] = dt.day
     initial['gender'] = instance.gender
     nationality = instance.nationality
     if nationality == 'syrian':

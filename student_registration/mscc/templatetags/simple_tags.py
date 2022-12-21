@@ -33,10 +33,7 @@ def get_completion_rate(registry):
     nbr_services = services.count()
     nbr_completed = services.filter(completed=True).count()
     try:
-        print(nbr_completed)
-        print(nbr_services)
-        print((nbr_completed/nbr_services) * 100)
-        return (nbr_completed/nbr_services) * 100
+        return int(round(float(nbr_completed)/float(nbr_services), 2) * 100.0)
     except Exception as ex:
         print(ex.message)
         return 0

@@ -4,6 +4,7 @@
 {% load render_table from django_tables2 %}
 {% load bootstrap3 %}
 {% load util_tags %}
+{% load simple_tags %}
 {% bootstrap_css %}
 
 {% block content %}
@@ -48,6 +49,13 @@
                                 <button type="button" data-toggle="tooltip" title="" data-placement="bottom" class="btn-shadow mr-3 btn btn-primary" data-original-title="">
                                     {{ instance.type }}
                                 </button>
+
+{% get_completion_rate instance as result %}
+
+<div class="progress mr-3" style="height: 35px; float: right; width: 150px;">
+    <div class="progress-bar" role="progressbar" aria-valuenow="{{ result }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ result }}%;">{{ result }}%</div>
+</div>
+
 
                             </div>
 
