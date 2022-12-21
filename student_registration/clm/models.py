@@ -20,7 +20,6 @@ from student_registration.schools.models import (
     EducationalLevel,
     PartnerOrganization
 )
-from student_registration.attendances.models import CLMAttendanceStudent
 
 
 class Assessment(models.Model):
@@ -2092,6 +2091,7 @@ class Bridging(CLM):
 
     @staticmethod
     def get_attendance_days(student_id, start_date, end_date):
+        from student_registration.attendances.models import CLMAttendanceStudent
         if student_id and start_date and end_date:
             return CLMAttendanceStudent.objects.filter(student=student_id,
                                                        attended='yes',
@@ -2105,6 +2105,7 @@ class Bridging(CLM):
 
     @staticmethod
     def get_absent_days(student_id, start_date, end_date):
+        from student_registration.attendances.models import CLMAttendanceStudent
         if student_id and start_date and end_date:
             return CLMAttendanceStudent.objects.filter(student=student_id,
                                                        attended='no',

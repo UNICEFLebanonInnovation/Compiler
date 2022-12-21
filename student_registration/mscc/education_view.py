@@ -55,6 +55,41 @@ class EducationAssessmentFormView(LoginRequiredMixin,
         return super(EducationAssessmentFormView, self).form_valid(form)
 
 
+class DiagnosticAssessmentFormView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  FormView):
+    template_name = 'mscc/service_diagnostic_assessment_form.html'
+    form_class = DiagnosticAssessmentForm
+    success_url = ''
+    group_required = [u"MSCC"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(DiagnosticAssessmentFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
+        if self.request.method == "POST":
+            return DiagnosticAssessmentForm(self.request.POST, instance=instance, registry=registry,
+                                           request=self.request)
+        else:
+            if instance:
+                data = to_array(DiagnosticAssessmentForm.Meta.fields, EducationAssessment.objects.get(id=instance))
+            return DiagnosticAssessmentForm(data, registry=registry, instance=instance, request=self.request)
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(DiagnosticAssessmentFormView, self).form_valid(form)
+
+
 class EducationServiceFormView(LoginRequiredMixin,
                                   GroupRequiredMixin,
                                   FormView):

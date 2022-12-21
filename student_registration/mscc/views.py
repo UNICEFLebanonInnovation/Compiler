@@ -41,6 +41,8 @@ from .serializers import (
     MainSerializer
 )
 
+from .utils import *
+
 
 class ProfileView(LoginRequiredMixin,
                   TemplateView):
@@ -86,11 +88,10 @@ class MainAddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
 
-        if self.request.GET.get('outreach_id'):
-            instance = Child.objects.get(id=self.request.GET.get('outreach_id'))
-            data = MainSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
+        if self.request.GET.get('outreach_id') and self.request.GET.get('center_id'):
+            outreach_id = int(self.request.GET.get('outreach_id'))
+            center_id = int(self.request.GET.get('center_id'))
+            return get_outreach_child(initial,outreach_id,center_id )
 
         if data:
             data['student_outreached'] = self.request.GET.get('student_outreached', '')
