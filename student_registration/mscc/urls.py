@@ -37,6 +37,16 @@ urlpatterns = [
         name='service_education_assessment_edit'
     ),
     url(
+        regex=r'^Services/Diagnostic-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+        view=education_view.DiagnosticAssessmentFormView.as_view(),
+        name='service_diagnostic_assessment_add'
+    ),
+    url(
+        regex=r'^Services/Diagnostic-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.DiagnosticAssessmentFormView.as_view(),
+        name='service_diagnostic_assessment_edit'
+    ),
+    url(
         regex=r'^Services/Education-Service-Add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_service_add'

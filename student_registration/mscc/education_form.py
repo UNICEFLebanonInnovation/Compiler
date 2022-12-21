@@ -83,6 +83,92 @@ class EducationAssessmentForm(forms.ModelForm):
         min_value=0, required=False,
         initial = 0
     )
+
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(EducationAssessmentForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
+        if instance:
+            form_action = reverse('mscc:service_education_assessment_edit',
+                                  kwargs={'registry': registry, 'pk': instance})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    Div('pre_attended_arabic', css_class='col-md-3'),
+                    Div('pre_modality_arabic', css_class='col-md-3'),
+                    Div('pre_arabic_grade', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('pre_attended_language', css_class='col-md-3'),
+                    Div('pre_modality_language', css_class='col-md-3'),
+                    Div('pre_language_grade', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('pre_attended_math', css_class='col-md-3'),
+                    Div('pre_modality_math', css_class='col-md-3'),
+                    Div('pre_math_grade', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                ),
+                css_id='step-1'
+            ),
+        )
+
+    def save(self, request=None, instance=None, registry=None):
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = EducationAssessment.objects.create(registration_id=registry)
+        else:
+            instance = EducationAssessment.objects.get(id=instance)
+
+        instance.pre_attended_arabic = validated_data.get('pre_attended_arabic')
+        instance.pre_modality_arabic = validated_data.get('pre_modality_arabic')
+        instance.pre_arabic_grade = int(validated_data.get('pre_arabic_grade'))
+        instance.pre_attended_language = validated_data.get('pre_attended_language')
+        instance.pre_modality_language = validated_data.get('pre_modality_language')
+        instance.pre_language_grade = int(validated_data.get('pre_language_grade'))
+        instance.pre_attended_math = validated_data.get('pre_attended_math')
+        instance.pre_modality_math = validated_data.get('pre_modality_math')
+        instance.pre_math_grade = int(validated_data.get('pre_math_grade'))
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = EducationAssessment
+        fields = (
+            'pre_attended_arabic',
+            'pre_modality_arabic',
+            'pre_arabic_grade',
+            'pre_attended_language',
+            'pre_modality_language',
+            'pre_language_grade',
+            'pre_attended_math',
+            'pre_modality_math',
+            'pre_math_grade',
+        )
+
+class DiagnosticAssessmentForm(forms.ModelForm):
+
     participation = forms.ChoiceField(
         label=_("Child Level of participation / Absence"),
         widget=forms.Select, required=True,
@@ -171,38 +257,17 @@ class EducationAssessmentForm(forms.ModelForm):
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
-        super(EducationAssessmentForm, self).__init__(*args, **kwargs)
+        super(DiagnosticAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_diagnostic_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_education_assessment_edit',
+            form_action = reverse('mscc:service_diagnostic_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Div(
-                Div(
-                    Div('pre_attended_arabic', css_class='col-md-3'),
-                    Div('pre_modality_arabic', css_class='col-md-3'),
-                    Div('pre_arabic_grade', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('pre_attended_language', css_class='col-md-3'),
-                    Div('pre_modality_language', css_class='col-md-3'),
-                    Div('pre_language_grade', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('pre_attended_math', css_class='col-md-3'),
-                    Div('pre_modality_math', css_class='col-md-3'),
-                    Div('pre_math_grade', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                css_id='step-1'
-            ),
             Div(
                 Div(
                     Div('participation', css_class='col-md-3'),
@@ -237,7 +302,7 @@ class EducationAssessmentForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 ),
-                css_id='step-2'
+                css_id='step-1'
             ),
         )
 
@@ -250,15 +315,6 @@ class EducationAssessmentForm(forms.ModelForm):
         else:
             instance = EducationAssessment.objects.get(id=instance)
 
-        instance.pre_attended_arabic = validated_data.get('pre_attended_arabic')
-        instance.pre_modality_arabic = validated_data.get('pre_modality_arabic')
-        instance.pre_arabic_grade = int(validated_data.get('pre_arabic_grade'))
-        instance.pre_attended_language = validated_data.get('pre_attended_language')
-        instance.pre_modality_language = validated_data.get('pre_modality_language')
-        instance.pre_language_grade = int(validated_data.get('pre_language_grade'))
-        instance.pre_attended_math = validated_data.get('pre_attended_math')
-        instance.pre_modality_math = validated_data.get('pre_modality_math')
-        instance.pre_math_grade = int(validated_data.get('pre_math_grade'))
         instance.participation = validated_data.get('participation')
         instance.barriers = validated_data.get('barriers')
         instance.barriers_other = validated_data.get('barriers_other')
@@ -282,15 +338,6 @@ class EducationAssessmentForm(forms.ModelForm):
     class Meta:
         model = EducationAssessment
         fields = (
-            'pre_attended_arabic',
-            'pre_modality_arabic',
-            'pre_arabic_grade',
-            'pre_attended_language',
-            'pre_modality_language',
-            'pre_language_grade',
-            'pre_attended_math',
-            'pre_modality_math',
-            'pre_math_grade',
             'participation',
             'barriers',
             'barriers_other',
