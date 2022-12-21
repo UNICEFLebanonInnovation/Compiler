@@ -218,7 +218,7 @@ def mscc_child_search(request):
     form_dob = datetime(int(birthday_year), int(birthday_month), int(birthday_day)).strftime("%Y-%m-%d")
 
     filtered_results = OutreachChild.objects.filter(
-        date_of_birth = form_dob,
+        date_of_birth=form_dob,
         # nationality=nationality,
         gender=gender
     ).values('id',
@@ -233,13 +233,14 @@ def mscc_child_search(request):
 
     result_match = []
     for result in filtered_results:
-        print('filtered results')
+        # print('filtered results')
         result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'], result['outreach_caregiver__last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
         if fuzzy_match > 85:
-            element = {'result': result, 'score': fuzzy_match}
-            result_match.append(element)
+            result['score'] = fuzzy_match
+            # element = {'result': result, 'score': fuzzy_match}
+            result_match.append(result)
     if filtered_results != '':
         return JsonResponse({'result': result_match})
 
-    return JsonResponse({'result': ''})
+    return JsonResponse({'result': []})

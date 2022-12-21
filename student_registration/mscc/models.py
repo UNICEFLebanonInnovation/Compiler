@@ -231,6 +231,7 @@ class ProvidedServices(models.Model):
         null=True,
         verbose_name=_('Type')
     )
+    service_id = models.IntegerField(blank=True, null=True)
     completed = models.BooleanField(blank=True, default=False)
     required = models.BooleanField(blank=True, default=False)
     completion_date = models.DateField(

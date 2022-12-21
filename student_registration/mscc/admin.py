@@ -31,7 +31,35 @@ class PackagesAdmin(ImportExportModelAdmin):
     )
 
 
+class ProvidedServicesResource(resources.ModelResource):
+    class Meta:
+        model = ProvidedServices
+        fields = (
+            'id',
+            'name',
+            'type',
+            'registration',
+            'completed',
+            'required',
+            'completion_date',
+        )
+        export_order = ('name', )
+
+
+class ProvidedServicesAdmin(ImportExportModelAdmin):
+    resource_class = ProvidedServicesResource
+    list_display = (
+        'id',
+        'name',
+        'type',
+        'registration',
+        'completed',
+        'required',
+        'completion_date',
+    )
+
+
 admin.site.register(Registration)
-admin.site.register(ProvidedServices)
+admin.site.register(ProvidedServices, ProvidedServicesAdmin)
 admin.site.register(Packages, PackagesAdmin)
 admin.site.register(InclusionService)

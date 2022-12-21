@@ -13,15 +13,33 @@ def have_service(services, service_name):
 
 
 @register.simple_tag
+def get_service_info(services, registry, service_name):
+    return services.filter(name=service_name, registration=registry).last()
+
+
+@register.simple_tag
 def get_service(registry, service_name):
     return ProvidedServices.objects.filter(name=service_name, registration=registry).last()
 
 
 @register.simple_tag
 def get_services(registry):
-    services = ProvidedServices.objects.filter(registration=registry).values()
-    print(services)
-    return services
+    return ProvidedServices.objects.filter(registration=registry)
+
+
+@register.simple_tag
+def get_completion_rate(registry):
+    services = get_services(registry)
+    nbr_services = services.count()
+    nbr_completed = services.filter(completed=True).count()
+    try:
+        print(nbr_completed)
+        print(nbr_services)
+        print((nbr_completed/nbr_services) * 100)
+        return (nbr_completed/nbr_services) * 100
+    except Exception as ex:
+        print(ex.message)
+        return 0
 
 
 @register.simple_tag

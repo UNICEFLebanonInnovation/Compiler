@@ -75,8 +75,8 @@ class DigitalFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(DigitalServiceForm.Meta.fields, DigitalService.objects.get(id=instance))
-                return DigitalServiceForm(registry=registry, instance=instance, request=self.request)
-            return DigitalServiceForm(data, registry=registry, instance=instance, request=self.request)
+                return DigitalServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return DigitalServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
@@ -158,7 +158,6 @@ class PSSFormView(LoginRequiredMixin,
         return super(PSSFormView, self).form_valid(form)
 
 
-
 class YouthKitServiceFormView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
@@ -185,7 +184,8 @@ class YouthKitServiceFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(YouthKitService.Meta.fields, HealthNutritionService.objects.get(id=instance))
-            return YouthKitServiceForm(data, registry=registry, instance=instance, request=self.request)
+                return YouthKitServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return YouthKitServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
@@ -193,9 +193,10 @@ class YouthKitServiceFormView(LoginRequiredMixin,
         form.save(request=self.request, registry=registry, instance=instance)
         return super(YouthKitServiceFormView, self).form_valid(form)
 
+
 class FollowUpFormView(LoginRequiredMixin,
-                      GroupRequiredMixin,
-                      FormView):
+                       GroupRequiredMixin,
+                       FormView):
     template_name = 'mscc/service_follow_up_form.html'
     form_class = FollowUpServiceForm
     success_url = ''
@@ -219,8 +220,8 @@ class FollowUpFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(FollowUpServiceForm.Meta.fields, FollowUpService.objects.get(id=instance))
-                return FollowUpServiceForm(registry=registry, instance=instance, request=self.request)
-            return FollowUpServiceForm(data, registry=registry, instance=instance, request=self.request)
+                return FollowUpServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return FollowUpServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

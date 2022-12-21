@@ -30,6 +30,8 @@ class MainTable(CommonTable):
                                           template_name='django_tables2/mscc/action_column.html')
     status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
                                           template_name='django_tables2/mscc/status_column.html')
+    type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
+                                          template_name='django_tables2/mscc/type_column.html')
 
     center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
     governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
@@ -41,14 +43,7 @@ class MainTable(CommonTable):
         fields = (
             'action_column',
             'status_column',
-            # 'delete_column',
-            # 'monitoring_column',
-            # 'referral_column',
-            # 'followup_column',
-            # 'round',
-            # 'internal_number',
-            # 'child.id_number',
-            'type',
+            'type_column',
             'child.number',
             'child.first_name',
             'child.father_name',
@@ -63,8 +58,4 @@ class MainTable(CommonTable):
             'governorate',
             'caza',
             'cadaster',
-            # 'owner',
-            # 'created',
-            # 'modified_by',
-            # 'modified',
         )

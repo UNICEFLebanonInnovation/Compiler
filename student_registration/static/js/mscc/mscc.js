@@ -321,10 +321,7 @@ function mscc_child_search() {
                 dataType: 'json',
                 success: function (response) {
 
-                    if (response.result != "") {
-                        alert("child with more than 85% match exists");
-                    }
-                    console.log(response);
+                    append_new_result(response);
                 },
                 error: function (response) {
                     console.log(response);
@@ -332,6 +329,17 @@ function mscc_child_search() {
             });
         }
     }
+}
+
+function append_new_result(data)
+{
+
+var child_html = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success bg-success"><i class="fa fa-child text-white"></i></div></div><div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title text-success"><a href="/MSCC/Child-Add/?$parameters$">$title$</h4><p>$line1$</p><p>$line2$</p></div></div></div>';
+
+    $(data.result).each(function(i) {
+        console.log($(this));
+        $('#outreach_search_result').append(child_html);
+    });
 }
 
 function check_duplicate_registration()
