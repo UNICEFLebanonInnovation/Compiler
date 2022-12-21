@@ -561,6 +561,7 @@ class EducationRSServiceForm(forms.ModelForm):
         )
 
     def save(self, request=None, instance=None, registry=None):
+        from .utils import update_service
 
         validated_data = request.POST
 
@@ -580,6 +581,8 @@ class EducationRSServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='RS', service_id=instance.id)
 
         return instance
 

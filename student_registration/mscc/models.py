@@ -215,12 +215,6 @@ class Registration(TimeStampedModel):
 
 class ProvidedServices(models.Model):
 
-    TYPES = Choices(
-            ('Core-Package', _('Core Package')),
-            ('Walk-in-OOSC', _('Walk-in OOSC')),
-            ('Walk-in-In-School', _('Walk-in In School')),
-    )
-
     name = models.CharField(
         max_length=250,
         blank=False,
@@ -237,6 +231,7 @@ class ProvidedServices(models.Model):
         null=True,
         verbose_name=_('Type')
     )
+    service_id = models.IntegerField(blank=True, null=True)
     completed = models.BooleanField(blank=True, default=False)
     required = models.BooleanField(blank=True, default=False)
     completion_date = models.DateField(

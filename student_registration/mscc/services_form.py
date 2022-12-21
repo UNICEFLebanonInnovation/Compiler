@@ -14,6 +14,7 @@ from crispy_forms.bootstrap import (
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from dal import autocomplete
 
+from .utils import update_service
 from .models import (
     Registration,
     PSSService,
@@ -91,26 +92,26 @@ class PSSServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('child_registered', css_class='col-md-3'),
-                    Div('child_living_arrangement', css_class='col-md-3'),
+                    Div('child_registered', css_class='col-md-6'),
+                    Div('child_living_arrangement', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_vulnerability', css_class='col-md-3'),
-                    Div('child_out_school_reasons', css_class='col-md-3'),
+                    Div('child_vulnerability', css_class='col-md-6'),
+                    Div('child_out_school_reasons', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
             ),
             Div(
                 Div(
-                    Div('caregivers_distress', css_class='col-md-3'),
-                    Div('caregivers_additional_parenting', css_class='col-md-3'),
+                    Div('caregivers_distress', css_class='col-md-6'),
+                    Div('caregivers_additional_parenting', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_distress', css_class='col-md-3'),
-                    Div('child_additional_parenting', css_class='col-md-3'),
+                    Div('child_distress', css_class='col-md-6'),
+                    Div('child_additional_parenting', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 FormActions(
@@ -137,7 +138,11 @@ class PSSServiceForm(forms.ModelForm):
         instance.child_additional_parenting = validated_data.get('child_additional_parenting')
         instance.modified_by = request.user
         instance.save()
+
         messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='PSS', service_id=instance.id)
+
         return instance
 
     class Meta:
@@ -213,6 +218,8 @@ class InclusionServiceForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
+        update_service(registry_id=registry, service_name='Inclusion', service_id=instance.id)
+
         return instance
 
     class Meta:
@@ -280,6 +287,8 @@ class DigitalServiceForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='Digital component', service_id=instance.id)
 
         return instance
 
@@ -415,7 +424,11 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.respond_stressful_events = validated_data.get('respond_stressful_events')
         instance.modified_by = request.user
         instance.save()
+
         messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
+
         return instance
 
     class Meta:
@@ -635,7 +648,11 @@ class YouthKitServiceForm(forms.ModelForm):
         instance.adolescent_dropout_date = validated_data.get('adolescent_dropout_date')
         instance.modified_by = request.user
         instance.save()
+
         messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='Adolescents kit', service_id=instance.id)
+
         return instance
 
     class Meta:
@@ -716,11 +733,6 @@ class FollowUpServiceForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
         min_value=0
-    )
-    meeting_type = forms.ChoiceField(
-        widget=forms.Select, required=False,
-        choices=FollowUpService.MEETING_TYPE,
-        label=_('Please indicate the types of meeting')
     )
     meeting_modality = forms.ChoiceField(
         widget=forms.Select, required=False,
@@ -822,7 +834,11 @@ class FollowUpServiceForm(forms.ModelForm):
         instance.caregiver_attended_other = validated_data.get('caregiver_attended_other')
         instance.modified_by = request.user
         instance.save()
+
         messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='Caregivers Package', service_id=instance.id)
+
         return instance
 
     class Meta:
