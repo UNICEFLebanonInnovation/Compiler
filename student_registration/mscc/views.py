@@ -78,7 +78,7 @@ class MainAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(MainAddView, self).get_initial()
         data = {
-            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'type': self.request.GET.get('type', ''),
         }
         if self.request.GET.get('registration_id'):
             instance = Registration.objects.get(id=self.request.GET.get('registration_id'))
@@ -95,8 +95,6 @@ class MainAddView(LoginRequiredMixin,
             center_id = int(self.request.GET.get('center_id'))
             return get_outreach_child(initial,outreach_id,center_id )
 
-        if data:
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
         initial = data
 
         return initial

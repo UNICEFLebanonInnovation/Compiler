@@ -245,4 +245,5 @@ class MainSerializer(serializers.ModelSerializer):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+            'type'
         )

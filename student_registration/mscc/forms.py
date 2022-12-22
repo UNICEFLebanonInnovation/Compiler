@@ -167,13 +167,13 @@ class MainForm(forms.ModelForm):
     first_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=False,
+        required=True,
         label=_('Primary phone number')
     )
     first_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=False,
+        required=True,
         label=_('Confirm primary phone number')
     )
     second_phone_owner = forms.ChoiceField(
@@ -392,6 +392,7 @@ class MainForm(forms.ModelForm):
     child_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
+    type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -451,8 +452,8 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    Div('source_of_identification', css_class='col-md-6'),
-                    Div('source_of_identification_specify', css_class='col-md-6'),
+                    Div('source_of_identification', css_class='col-md-8'),
+                    Div('source_of_identification_specify', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -776,6 +777,7 @@ class MainForm(forms.ModelForm):
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
@@ -787,6 +789,7 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.save()
+                request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
 
                 messages.success(request, _('Your data has been sent successfully to the server'))
@@ -864,6 +867,7 @@ class MainForm(forms.ModelForm):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+            'type'
         )
 
 
