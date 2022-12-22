@@ -105,21 +105,21 @@ class EducationAssessmentForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('pre_attended_arabic', css_class='col-md-3'),
+                    Div('pre_attended_arabic', css_class='col-md-7'),
                     Div('pre_modality_arabic', css_class='col-md-3'),
-                    Div('pre_arabic_grade', css_class='col-md-3'),
+                    Div('pre_arabic_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('pre_attended_language', css_class='col-md-3'),
+                    Div('pre_attended_language', css_class='col-md-7'),
                     Div('pre_modality_language', css_class='col-md-3'),
-                    Div('pre_language_grade', css_class='col-md-3'),
+                    Div('pre_language_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('pre_attended_math', css_class='col-md-3'),
+                    Div('pre_attended_math', css_class='col-md-7'),
                     Div('pre_modality_math', css_class='col-md-3'),
-                    Div('pre_math_grade', css_class='col-md-3'),
+                    Div('pre_math_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 FormActions(
@@ -271,32 +271,35 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('participation', css_class='col-md-3'),
-                    Div('barriers', css_class='col-md-3'),
-                    Div('barriers_other', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('post_test_done', css_class='col-md-3'),
-                    Div('school_year_completed', css_class='col-md-3'),
+                    Div('barriers', css_class='col-md-8'),
+                    Div('barriers_other', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('post_attended_arabic', css_class='col-md-3'),
+                    Div('post_test_done', css_class='col-md-6'),
+                    Div('school_year_completed', css_class='col-md-6'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('post_attended_arabic', css_class='col-md-7'),
                     Div('post_modality_arabic', css_class='col-md-3'),
-                    Div('post_arabic_grade', css_class='col-md-3'),
+                    Div('post_arabic_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('post_attended_language', css_class='col-md-3'),
+                    Div('post_attended_language', css_class='col-md-7'),
                     Div('post_modality_language', css_class='col-md-3'),
-                    Div('post_language_grade', css_class='col-md-3'),
+                    Div('post_language_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('post_attended_math', css_class='col-md-3'),
+                    Div('post_attended_math', css_class='col-md-7'),
                     Div('post_modality_math', css_class='col-md-3'),
-                    Div('post_math_grade', css_class='col-md-3'),
+                    Div('post_math_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 FormActions(
