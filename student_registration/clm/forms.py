@@ -1437,7 +1437,6 @@ class BLNForm(CommonForm):
             if social_emotional is None:
                 self.add_error('social_emotional', 'This field is required')
 
-
         if labours_single_selection == 'other_many_other':
             if not labours_other_specify:
                 self.add_error('labours_other_specify', 'This field is required')

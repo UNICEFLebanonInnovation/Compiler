@@ -923,21 +923,21 @@ class ReferralForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('referred_formal_education', css_class='col-md-4'),
-                    Div('referred_school', css_class='col-md-4'),
+                    Div('referred_formal_education', css_class='col-md-6'),
+                    Div('referred_school', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('receive_needed_material', css_class='col-md-8'),
+                    Div('receive_needed_material', css_class='col-md-12'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('referred_service', css_class='col-md-3'),
-                    Div('referred_service_other', css_class='col-md-3'),
+                    Div('referred_service', css_class='col-md-6'),
+                    Div('referred_service_other', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('recommended_learning_path', css_class='col-md-6'),
+                    Div('recommended_learning_path', css_class='col-md-12'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'

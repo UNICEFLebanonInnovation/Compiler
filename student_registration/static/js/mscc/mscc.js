@@ -147,7 +147,7 @@ $(document).ready(function() {
     });
 
      $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day, select#id_child_nationality, select#id_child_gender', function(){
-        console.log('ok');
+        $('#search_loader').show();
         mscc_child_search();
     });
 
@@ -321,7 +321,7 @@ function mscc_child_search() {
                 headers: requestHeaders,
                 dataType: 'json',
                 success: function (response) {
-
+                    console.log(response);
                     append_new_result(response);
                 },
                 error: function (response) {
@@ -335,13 +335,22 @@ function mscc_child_search() {
 function append_new_result(data)
 {
 
-var child_html = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success bg-success"><i class="fa fa-child text-white"></i></div></div><div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title text-success"><a href="/MSCC/Child-Add/?$parameters$">$title$</h4><p>$line1$</p><p>$line2$</p></div></div></div>';
+    var child_html = '';
+    $('#outreach_search_result').empty();
+    $('#search_loader').hide();
 
-    $(data.result).each(function(i) {
+    $(data.result).each(function(i, item) {
+        console.log(item);
         var full_name = "";
-        full_name = full_name.concat($(this).first_name, " ", $(this).father_name, " ", $(this).last_name);
-        child_html = child_html.replace("$title$", full_name);
-        console.log(child_html.search("$title$"));
+        full_name = full_name.concat(item.first_name, " ", item.outreach_caregiver__father_name, " ", item.outreach_caregiver__last_name);
+
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success bg-success"><i class="fa fa-child text-white"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-success"><a href="/MSCC/Child-Add/?type='+ $('#id_type').val() +'&center_id='+ $('#id_center').val() +'&outreach_id='+ item.id +'">'+full_name+'</a> - <b class="text-danger"> '+ item.score +'% matching</b></h4>';
+        var html_line3 = '<p>'+ item.date_of_birth + ' - '+ item.outreach_caregiver__mother_full_name +'</p>';
+        var html_line4 = '<p>'+ item.gender + ' - '+ item.nationality +'</p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
         $('#outreach_search_result').append(child_html);
     });
 }
