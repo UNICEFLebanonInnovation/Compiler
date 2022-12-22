@@ -165,14 +165,9 @@ class MainListView(LoginRequiredMixin,
     filterset_class = MainFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
         return Registration.objects.all().order_by('-id')
-
         # return Registration.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
-
-
-# ####################### API VIEWS #############################
 
 class MainViewSet(mixins.RetrieveModelMixin,
                   mixins.ListModelMixin,
@@ -276,7 +271,8 @@ class ReferralFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(ReferralForm.Meta.fields, Referral.objects.get(id=instance))
-            return ReferralForm(data, registry=registry, instance=instance, request=self.request)
+                return ReferralForm(data, registry=registry, instance=instance, request=self.request)
+            return ReferralForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
