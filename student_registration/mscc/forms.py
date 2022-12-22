@@ -24,7 +24,11 @@ from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.child.models import Child
 from .models import (
     Registration,
-    EducationAssessment
+    Referral,
+    YES_NO
+)
+from student_registration.schools.models import (
+    School
 )
 from .utils import generate_services
 from .serializers import MainSerializer
@@ -806,7 +810,7 @@ class MainForm(forms.ModelForm):
                 instance.partner = request.user.partner
                 instance.save()
                 generate_services(instance.child.age, instance)
-                
+
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
@@ -882,4 +886,118 @@ class MainForm(forms.ModelForm):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+        )
+
+
+class ReferralForm(forms.ModelForm):
+
+    referred_formal_education = forms.ChoiceField(
+        label=_("Was the child referred to formal education (Grade 1)?"),
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+    )
+    referred_school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        label=_('Name of the School referred to'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    receive_needed_material = forms.ChoiceField(
+        label=_("Did the child receive all needed materials and resources (Stationery, Books, Learning bundle)?"),
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+    )
+    referred_service = forms.ChoiceField(
+        label=_("Was the child referred to a service?"),
+        widget=forms.Select, required=True,
+        choices=Referral.REFERRED_SERVICE,
+    )
+    referred_service_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    recommended_learning_path = forms.ChoiceField(
+        label=_("Based on the overall score, what is the recommended learning path/outcome?"),
+        widget=forms.Select, required=True,
+        choices=Referral.LEARNING_PATH,
+    )
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(ReferralForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:referral_add', kwargs={'registry': registry})
+        if instance:
+            form_action = reverse('mscc:referral_edit',
+                                  kwargs={'registry': registry, 'pk': instance})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    Div('referred_formal_education', css_class='col-md-4'),
+                    Div('referred_school', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('receive_needed_material', css_class='col-md-8'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('referred_service', css_class='col-md-3'),
+                    Div('referred_service_other', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('recommended_learning_path', css_class='col-md-6'),
+                    css_class='row card-body'
+                ),
+                css_id='step-1'
+            ),
+
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                ),
+        )
+
+    def save(self, request=None, instance=None, registry=None):
+        from .utils import update_service
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = Referral.objects.create(registration_id=registry)
+        else:
+            instance = Referral.objects.get(id=instance)
+
+        instance.referred_formal_education = validated_data.get('referred_formal_education')
+        instance.referred_school_id = validated_data.get('referred_school')
+        instance.receive_needed_material = validated_data.get('receive_needed_material')
+        instance.referred_service = validated_data.get('referred_service')
+        instance.referred_service_other = validated_data.get('referred_service_other')
+        instance.recommended_learning_path = validated_data.get('recommended_learning_path')
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='RS', service_id=instance.id)
+
+        return instance
+
+    class Meta:
+        model = Referral
+        fields = (
+            'referred_formal_education',
+            'referred_school',
+            'receive_needed_material',
+            'referred_service',
+            'referred_service_other',
+            'recommended_learning_path',
         )
