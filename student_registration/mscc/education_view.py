@@ -47,7 +47,9 @@ class EducationAssessmentFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(EducationAssessmentForm.Meta.fields, EducationAssessment.objects.get(id=instance))
-            return EducationAssessmentForm(data, registry=registry, instance=instance, request=self.request)
+                return EducationAssessmentForm(data, registry=registry, instance=instance, request=self.request)
+            return EducationAssessmentForm(registry=registry, instance=instance, request=self.request)
+
     def form_valid(self, form):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
@@ -82,7 +84,9 @@ class DiagnosticAssessmentFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(DiagnosticAssessmentForm.Meta.fields, EducationAssessment.objects.get(id=instance))
-            return DiagnosticAssessmentForm(data, registry=registry, instance=instance, request=self.request)
+                return DiagnosticAssessmentForm(data, registry=registry, instance=instance, request=self.request)
+            return DiagnosticAssessmentForm(registry=registry, instance=instance, request=self.request)
+
     def form_valid(self, form):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
@@ -117,7 +121,8 @@ class EducationServiceFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(EducationServiceForm.Meta.fields, EducationService.objects.get(id=instance))
-            return EducationServiceForm(data, registry=registry, instance=instance, request=self.request)
+                return EducationServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return EducationServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
@@ -126,10 +131,9 @@ class EducationServiceFormView(LoginRequiredMixin,
         return super(EducationServiceFormView, self).form_valid(form)
 
 
-
 class EducationRSServiceFormView(LoginRequiredMixin,
-                                  GroupRequiredMixin,
-                                  FormView):
+                                 GroupRequiredMixin,
+                                 FormView):
     template_name = 'mscc/service_education_rs_service_form.html'
     form_class = EducationRSServiceForm
     success_url = ''
@@ -154,7 +158,8 @@ class EducationRSServiceFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(EducationRSServiceForm.Meta.fields, EducationRSService.objects.get(id=instance))
-            return EducationRSServiceForm(data, registry=registry, instance=instance, request=self.request)
+                return EducationRSServiceForm(data, registry=registry, instance=instance, request=self.request)
+            return EducationRSServiceForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

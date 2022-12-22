@@ -147,6 +147,7 @@ $(document).ready(function() {
     });
 
      $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day, select#id_child_nationality, select#id_child_gender', function(){
+        console.log('ok');
         mscc_child_search();
     });
 
@@ -337,7 +338,10 @@ function append_new_result(data)
 var child_html = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success bg-success"><i class="fa fa-child text-white"></i></div></div><div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title text-success"><a href="/MSCC/Child-Add/?$parameters$">$title$</h4><p>$line1$</p><p>$line2$</p></div></div></div>';
 
     $(data.result).each(function(i) {
-        console.log($(this));
+        var full_name = "";
+        full_name = full_name.concat($(this).first_name, " ", $(this).father_name, " ", $(this).last_name);
+        child_html = child_html.replace("$title$", full_name);
+        console.log(child_html.search("$title$"));
         $('#outreach_search_result').append(child_html);
     });
 }

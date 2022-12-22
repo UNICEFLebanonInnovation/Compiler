@@ -641,7 +641,7 @@ class EducationRSService(TimeStampedModel):
         ('Level six', _('Level six'))
     )
     SUPPORT_NEEDED = Choices(
-        ('', _('----------')),
+        # ('', _('----------')),
         ('Foreign Languages', _('Foreign Languages')),
         ('Arabic', _('Arabic')),
         ('Math', _('Math')),

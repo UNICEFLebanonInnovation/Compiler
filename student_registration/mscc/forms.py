@@ -585,32 +585,10 @@ class MainForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    # Submit('save_add_another', 'Save & add another',
-                    #        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    # Submit('save_add_another', 'Save & go to Education',
-                    #        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-info'),
-                    # HTML('<a class="btn btn-info cancel-button" href="/clm/mscc-list/" translation="' + _(
-                    #     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
-                    # css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn'
                 ),
                 css_id='step-4',
             ),
         )
-        # partner_id = 0
-        # if instance:
-        #     if instance.owner.partner:
-        #         partner_id = instance.owner.partner.id
-        # else:
-        #     if self.request.user.partner:
-        #         partner_id = self.request.user.partner.id
-        # if partner_id > 0:
-        #     queryset = Center.objects.filter(partner_id=partner_id)
-        #     self.fields['center'] = forms.ModelChoiceField(
-        #         queryset=queryset, widget=forms.Select,
-        #         label=_('Site / Center'),
-        #         empty_label='-------',
-        #         required=True, to_field_name='id',
-        #     )
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
@@ -960,11 +938,10 @@ class ReferralForm(forms.ModelForm):
                 ),
                 css_id='step-1'
             ),
-
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                ),
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+            ),
         )
 
     def save(self, request=None, instance=None, registry=None):
@@ -986,8 +963,6 @@ class ReferralForm(forms.ModelForm):
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
-
-        update_service(registry_id=registry, service_name='RS', service_id=instance.id)
 
         return instance
 
