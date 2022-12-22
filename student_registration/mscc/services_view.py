@@ -121,7 +121,6 @@ class HealthNutritionFormView(LoginRequiredMixin,
         return super(HealthNutritionFormView, self).form_valid(form)
 
 
-
 class PSSFormView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):

@@ -17,28 +17,55 @@
 
         {% get_services record as services %}
 
-        <!--<a type="button" href="/MSCC/Services/Education-Assessment-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">-->
-          <!--<button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>-->
-          <!--Education Assessment-->
-        <!--</a>-->
+      {% service_data 'EducationAssessment' record as result %}
+      {% if result %}
+        <a type="button" href="/MSCC/Services/Diagnostic-Assessment-Edit/{{ record.id }}/{{ result.id }}/" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
+          Diagnostic Assessment
+        </a>
+        {% if result.post_test_done %}
+        <a type="button" href="/MSCC/Services/Education-Assessment-Edit/{{ record.id }}/{{ result.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
+          Education Assessment
+        </a>
+        {% else %}
+        <a type="button" href="/MSCC/Services/Education-Assessment-Edit/{{ record.id }}/{{ result.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
+          Education Assessment
+        </a>
+        {% endif %}
+      {% else %}
+        <a type="button" href="/MSCC/Services/Diagnostic-Assessment-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
+          Diagnostic Assessment
+        </a>
+      {% endif %}
 
-        <!--<a type="button" href="/MSCC/Services/Education-Service-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">-->
-          <!--<button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>-->
-          <!--Education Service-->
-        <!--</a>-->
+{% service_data 'EducationService' record as result %}
+      {% if result %}
+        <a type="button" href="/MSCC/Services/Education-Edit/{{ record.id }}/{{ result.id }}/" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
+          Education Situation
+        </a>
+      {% else %}
+        <a type="button" href="/MSCC/Services/Education-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
+          Education Situation
+        </a>
+      {% endif %}
 
 
         {% get_service_info services record 'RS' as result %}
         {% if result %}
           {% if result.service_id %}
-              <a type="button" href="/MSCC/Services/Education-RS-Service-Edit/{{ record.id }}/{{ result.service_id }}/" tabindex="0" class="dropdown-item">
+              <a type="button" href="/MSCC/Services/RS-Edit/{{ record.id }}/{{ result.service_id }}/" tabindex="0" class="dropdown-item">
                 <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
-                Education RS Service
+                Retention Support
               </a>
           {% else %}
-            <a type="button" href="/MSCC/Services/Education-RS-Service-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">
+            <a type="button" href="/MSCC/Services/RS-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">
               <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
-              Education RS Service
+              Retention Support
             </a>
           {% endif %}
         {% endif %}

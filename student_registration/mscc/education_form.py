@@ -393,9 +393,9 @@ class EducationServiceForm(forms.ModelForm):
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_service_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_education_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_education_service_edit',
+            form_action = reverse('mscc:service_education_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -503,7 +503,7 @@ class EducationRSServiceForm(forms.ModelForm):
         choices=EducationRSService.REGISTRATION_LEVEL
     )
     support_needed = forms.MultipleChoiceField(
-        label=_('Needed support'),
+        label=_('Needed Support?'),
         choices=EducationRSService.SUPPORT_NEEDED,
         widget=forms.CheckboxSelectMultiple,
         required=False
@@ -518,9 +518,9 @@ class EducationRSServiceForm(forms.ModelForm):
 
         super(EducationRSServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_rs_service_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_education_rs_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_education_rs_service_edit',
+            form_action = reverse('mscc:service_education_rs_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -529,20 +529,17 @@ class EducationRSServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
         Div(
                 Div(
-                    Div('school', css_class='col-md-3'),
+                    Div('school', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
                 Div(
                     Div('foreign_language_grade', css_class='col-md-3'),
                     Div('arabic_grade', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
                     Div('math_grade', css_class='col-md-3'),
-                    Div('sciences_grade', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
+                    Div('sciences_grade', css_class='col-md-3'),
                     Div('shift', css_class='col-md-3'),
                     Div('grade_level', css_class='col-md-3'),
                     css_class='row card-body'
