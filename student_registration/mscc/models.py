@@ -1278,7 +1278,7 @@ class Referral(TimeStampedModel):
         verbose_name=_('Name of the School referred to')
     )
     receive_needed_material = models.CharField(
-        max_length=10,
+        max_length=50,
         blank=True,
         null=True,
         choices=YES_NO,
@@ -1296,7 +1296,7 @@ class Referral(TimeStampedModel):
         verbose_name=_('Please specify')
     )
     recommended_learning_path = models.CharField(
-        max_length=10,
+        max_length=100,
         blank=True,
         null=True,
         choices=LEARNING_PATH,

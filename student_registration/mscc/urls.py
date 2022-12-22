@@ -136,5 +136,14 @@ urlpatterns = [
         views.mscc_child_search,
         name='mscc_child_search'
     ),
-
+    url(
+        regex=r'^Referral-Add/(?P<registry>[\w.@+-]+)/$',
+        view=views.ReferralFormView.as_view(),
+        name='referral_add'
+    ),
+    url(
+        regex=r'^Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=views.ReferralFormView.as_view(),
+        name='referral_edit'
+    ),
 ]

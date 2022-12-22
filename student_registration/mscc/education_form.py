@@ -19,6 +19,7 @@ from .models import (
     EducationAssessment,
     EducationService,
     EducationRSService,
+    Referral,
     YES_NO
 )
 from student_registration.schools.models import (
@@ -598,5 +599,3 @@ class EducationRSServiceForm(forms.ModelForm):
             'grade_level',
             'support_needed',
         )
-
-
