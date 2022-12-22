@@ -190,8 +190,8 @@ class InclusionServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('dropout', css_class='col-md-3'),
-                    Div('parental_engagement', css_class='col-md-3'),
+                    Div('dropout', css_class='col-md-4'),
+                    Div('parental_engagement', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
@@ -260,8 +260,8 @@ class DigitalServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('using_akelius', css_class='col-md-3'),
-                    Div('using_lp', css_class='col-md-3'),
+                    Div('using_akelius', css_class='col-md-4'),
+                    Div('using_lp', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
@@ -376,24 +376,24 @@ class HealthNutritionServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('baby_breastfed', css_class='col-md-3'),
-                    Div('infant_exclusively_breastfed', css_class='col-md-3'),
+                    Div('baby_breastfed', css_class='col-md-6'),
+                    Div('infant_exclusively_breastfed', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('eat_solid_food', css_class='col-md-3'),
-                    Div('age_eat_solid_food', css_class='col-md-3'),
+                    Div('eat_solid_food', css_class='col-md-6'),
+                    Div('age_eat_solid_food', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_vaccinated', css_class='col-md-3'),
-                    Div('development_delays_identified', css_class='col-md-3'),
+                    Div('child_vaccinated', css_class='col-md-6'),
+                    Div('development_delays_identified', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('eating_minimum_meals', css_class='col-md-3'),
-                    Div('positive_parenting', css_class='col-md-3'),
-                    Div('respond_stressful_events', css_class='col-md-3'),
+                    Div('eating_minimum_meals', css_class='col-md-4'),
+                    Div('positive_parenting', css_class='col-md-4'),
+                    Div('respond_stressful_events', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'

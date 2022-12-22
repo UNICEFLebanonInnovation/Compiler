@@ -236,6 +236,7 @@ def mscc_child_search(request):
             result['score'] = fuzzy_match
             # element = {'result': result, 'score': fuzzy_match}
             result_match.append(result)
+
     if filtered_results != '':
         return JsonResponse({'result': result_match})
 
@@ -243,8 +244,8 @@ def mscc_child_search(request):
 
 
 class ReferralFormView(LoginRequiredMixin,
-                                  GroupRequiredMixin,
-                                  FormView):
+                       GroupRequiredMixin,
+                       FormView):
     template_name = 'mscc/referral_form.html'
     form_class = ReferralForm
     success_url = ''
@@ -257,6 +258,7 @@ class ReferralFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['registry'] = self.kwargs['registry']
         return super(ReferralFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
