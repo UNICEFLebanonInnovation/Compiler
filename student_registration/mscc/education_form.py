@@ -405,18 +405,18 @@ class EducationServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('education_status', css_class='col-md-3'),
+                    Div('education_status', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('dropout_date', css_class='col-md-3'),
-                    Div('dropout_program', css_class='col-md-3'),
+                    Div('dropout_date', css_class='col-md-5'),
+                    Div('dropout_program', css_class='col-md-4'),
                     Div('dropout_program_specify', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('education_program', css_class='col-md-3'),
-                    Div('registration_date', css_class='col-md-3'),
+                    Div('education_program', css_class='col-md-4'),
+                    Div('registration_date', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'

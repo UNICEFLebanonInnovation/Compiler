@@ -1,6 +1,3 @@
-/**
- * Created by yosr on 25/10/22.
- */
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 
