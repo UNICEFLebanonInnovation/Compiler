@@ -72,6 +72,7 @@ class MainSerializer(serializers.ModelSerializer):
     child_birthday_month = serializers.CharField(source='child.birthday_month')
     child_birthday_day = serializers.CharField(source='child.birthday_day')
     child_birthday = serializers.CharField(source='child.birthday', read_only=True)
+    child_age = serializers.CharField(source='child.age', read_only=True)
     child_nationality = serializers.CharField(source='child.nationality')
     child_nationality_id = serializers.CharField(source='child.nationality.id', read_only=True)
     child_nationality_other = serializers.CharField(source='child.nationality_other')
@@ -138,6 +139,7 @@ class MainSerializer(serializers.ModelSerializer):
     caregiver_last_name = serializers.CharField(source='child.caregiver_last_name', required=False)
     caregiver_mother_name = serializers.CharField(source='child.caregiver_mother_name', required=False)
 
+
     # governorate_name = serializers.CharField(source='governorate.name', read_only=True)
     # district_name = serializers.CharField(source='district.name', read_only=True)
     # cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
@@ -184,6 +186,7 @@ class MainSerializer(serializers.ModelSerializer):
             'child_birthday_month',
             'child_birthday_day',
             'child_birthday',
+            'child_age',
             'main_caregiver_nationality',
             'main_caregiver_nationality_id',
             'main_caregiver_nationality_other',

@@ -356,25 +356,31 @@ class HealthNutritionServiceForm(forms.ModelForm):
         widget=forms.TextInput,
         label=_('How children of different ages respond to and understand stressful and traumatic events?')
     )
-
+    child_age = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
+        age = kwargs.pop('age', None)
 
         super(HealthNutritionServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry, 'age': age})
         if instance:
-            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry,'age': age, 'pk': instance})
 
+        self.fields['child_age'].initial= age
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Div(
+                Div(
+                    Div('child_age', css_class='col-md-4'),
+                    css_class='row card-body d-none'
+                ),
                 Div(
                     Div('baby_breastfed', css_class='col-md-4'),
                     Div('infant_exclusively_breastfed', css_class='col-md-8'),

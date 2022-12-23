@@ -92,12 +92,12 @@ urlpatterns = [
         name='service_digital_edit'
     ),
     url(
-        regex=r'^Services/Health-Nutrition-Add/(?P<registry>[\w.@+-]+)/$',
+        regex=r'^Services/Health-Nutrition-Add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',
         view=services_view.HealthNutritionFormView.as_view(),
         name='service_health_nutrition_add'
     ),
     url(
-        regex=r'^Services/Health-Nutrition-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Services/Health-Nutrition-Edit/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.HealthNutritionFormView.as_view(),
         name='service_health_nutrition_edit'
     ),

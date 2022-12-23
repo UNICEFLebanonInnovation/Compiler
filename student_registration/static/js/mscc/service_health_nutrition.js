@@ -17,7 +17,7 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
-//    age_questions();
+    age_questions();
 
 
     $(document).on('click', '.delete-button', function(){
@@ -69,7 +69,8 @@ function pageScripts() {
 }
 
 function age_questions() {
-    var age = 6
+    var age = $('#id_child_age').val();
+
     if(age<=2)
     {
         $('div#div_id_eating_minimum_meals').addClass('d-none');
@@ -94,7 +95,7 @@ function age_questions() {
         $('div#div_id_positive_parenting').removeClass('d-none');
 
     }
-    else if(age>=6 && age<=18)
+    else
     {
         $('div#div_id_baby_breastfed').addClass('d-none');
 
