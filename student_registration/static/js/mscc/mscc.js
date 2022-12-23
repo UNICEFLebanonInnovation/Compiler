@@ -397,14 +397,14 @@ function fill_outreach_child_data(data)
 //        }
         $('select#id_gender').val(item.gender)
 
-        nationality_str = item.nationality
-        nationality_id= get_nationality_id(nationality_str)
+        var nationality_str = item.nationality
+        var nationality_id= get_nationality_id(nationality_str)
         $('select#id_child_nationality').val(nationality_id)
 
         $('#id_child_nationality_other').val(item.nationality_other);
         $('#id_child_address').val(item.outreach_caregiver__address);
 
-        disability = item.disability
+        var disability = item.disability
         if (disability == 'no'){ $('select#id_child_disability').val(1)}
         else if(disability == 'difficulty_seeing'){ $('select#id_child_disability').val(6)}
         else if(disability == 'difficulty_interacting_with_others'){ $('select#id_child_disability').val(9)}
@@ -418,14 +418,14 @@ function fill_outreach_child_data(data)
         $('#id_disability_other').val(item.disability_other);
         $('#id_child_marital_status').val(Uppercase(item.family_status));
 
-        main_caregiver_nationality_str = item.outreach_caregiver__caregiver_nationality
-        main_caregiver_nationality_id= get_nationality_id(main_caregiver_nationality_str)
+        var main_caregiver_nationality_str = item.outreach_caregiver__caregiver_nationality
+        var main_caregiver_nationality_id= get_nationality_id(main_caregiver_nationality_str)
         $('select#id_main_caregiver_nationality').val(main_caregiver_nationality_id)
 
         $('#id_main_caregiver_nationality_other').val(item.outreach_caregiver__main_caregiver_nationality_other);
         $('select#id_have_labour').val(Uppercase(item.working_status))
 
-        labour_type=item.work_type
+        var labour_type=item.work_type
         if (labour_type == 'manufacturing_producing'){$('select#id_labour_type').val('Manufacturing')}
         else if ( labour_type == 'garage_mechanics_workshop'){$('select#id_labour_type').val('')}
         else if ( labour_type == 'construction_site'){$('select#id_labour_type').val('Building')}
@@ -440,7 +440,7 @@ function fill_outreach_child_data(data)
         $('#id_second_phone_number').val(item.outreach_caregiver__secondary_phone);
         $('#id_second_phone_number_confirm').val(item.outreach_caregiver__secondary_phone);
 
-        main_caregiver = item.outreach_caregiver__main_caregiver
+        var main_caregiver = item.outreach_caregiver__main_caregiver
         if (main_caregiver == 'الاب'){
             $('select#id_main_caregiver').val('Father')
             $('#id_caregiver_first_name').val(item.outreach_caregiver__father_name)
@@ -456,13 +456,13 @@ function fill_outreach_child_data(data)
             $('#id_caregiver_first_name').val(item.outreach_caregiver__caregiver_first_name)
             $('#id_caregiver_last_name').val(item.outreach_caregiver__caregiver_last_name)
             }
-//
+
         $('#id_caregiver_middle_name').val(item.outreach_caregiver__caregiver_father_name)
         $('#id_caregiver_mother_name').val(item.outreach_caregiver__caregiver_mother_name)
 
     $('div.child_id').addClass('d-none');
 
-        id_type = item.outreach_caregiver__id_type
+        var id_type = item.outreach_caregiver__id_type
         if (id_type == 'unhcr_registered'){
             $('select#id_id_type').val(1)
             $('div.child_id1').removeClass('d-none');
@@ -507,7 +507,7 @@ function fill_outreach_child_data(data)
 }
 
 function Uppercase(str){
-     str_upper = str.charAt(0).toUpperCase() + str.slice(1);
+     var str_upper = str.charAt(0).toUpperCase() + str.slice(1);
      return str_upper
 }
 
