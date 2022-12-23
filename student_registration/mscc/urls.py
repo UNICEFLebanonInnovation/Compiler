@@ -137,6 +137,11 @@ urlpatterns = [
         name='mscc_child_search'
     ),
     url(
+        'mscc-outreach-child/$',
+        views.mscc_outreach_child,
+        name='mscc_outreach_child'
+    ),
+    url(
         regex=r'^Referral-Add/(?P<registry>[\w.@+-]+)/$',
         view=views.ReferralFormView.as_view(),
         name='referral_add'

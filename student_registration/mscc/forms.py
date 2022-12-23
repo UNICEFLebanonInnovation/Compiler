@@ -123,7 +123,8 @@ class MainForm(forms.ModelForm):
     child_have_children = forms.ChoiceField(
         label=_("Does the child have children?"),
         widget=forms.Select, required=True,
-        choices=Child.YES_NO
+        choices=Child.YES_NO,
+        initial='No'
     )
     child_children_number = forms.IntegerField(
         label=_('If yes, How many?'),

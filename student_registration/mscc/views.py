@@ -90,11 +90,6 @@ class MainAddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
 
-        if self.request.GET.get('outreach_id') and self.request.GET.get('center_id'):
-            outreach_id = int(self.request.GET.get('outreach_id'))
-            center_id = int(self.request.GET.get('center_id'))
-            return get_outreach_child(initial,outreach_id,center_id )
-
         initial = data
 
         return initial
@@ -229,16 +224,62 @@ def mscc_child_search(request):
 
     result_match = []
     for result in filtered_results:
-        # print('filtered results')
         result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'], result['outreach_caregiver__last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
         if fuzzy_match > 85:
             result['score'] = fuzzy_match
-            # element = {'result': result, 'score': fuzzy_match}
             result_match.append(result)
 
     if filtered_results != '':
         return JsonResponse({'result': result_match})
+
+    return JsonResponse({'result': []})
+
+
+def mscc_outreach_child(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    id = body['id']
+    result = OutreachChild.objects.filter(
+        id= id
+    ).values('id',
+             'first_name',
+             'outreach_caregiver__father_name',
+             'outreach_caregiver__last_name',
+             'outreach_caregiver__mother_full_name',
+             'gender',
+             'nationality',
+             'date_of_birth',
+             'nationality_other',
+             'outreach_caregiver__address',
+             'disability',
+             'disability_other',
+             'family_status',
+             'outreach_caregiver__caregiver_nationality',
+             'outreach_caregiver__caregiver_nationality_other',
+             'working_status',
+             'work_type',
+             'work_type_other',
+             'outreach_caregiver__primary_phone',
+             'outreach_caregiver__primary_phone',
+             'outreach_caregiver__secondary_phone',
+             'outreach_caregiver__secondary_phone',
+             'outreach_caregiver__main_caregiver',
+             'outreach_caregiver__caregiver_first_name',
+             'outreach_caregiver__father_name',
+             'outreach_caregiver__last_name',
+             'outreach_caregiver__caregiver_mother_name',
+             'outreach_caregiver__id_type',
+             'outreach_caregiver__unhcr_case_number',
+             'outreach_caregiver__caregiver_unhcr_id',
+             'child_unhcr_number',
+             'outreach_caregiver__unhcr_barcode',
+             'outreach_caregiver__caregiver_personal_id',
+             'child_personal_id'
+             ).first()
+
+    if result != '':
+        return JsonResponse({'result': result})
 
     return JsonResponse({'result': []})
 
