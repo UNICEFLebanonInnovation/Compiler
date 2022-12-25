@@ -578,9 +578,8 @@ class EducationRSServiceForm(forms.ModelForm):
         instance.sciences_grade = int(validated_data.get('sciences_grade'))
         instance.shift = validated_data.get('shift')
         instance.grade_level = validated_data.get('grade_level')
-        instance.support_needed = validated_data.get('support_needed')
+        instance.support_needed = validated_data.getlist('support_needed')
         instance.save()
-
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         update_service(registry_id=registry, service_name='RS', service_id=instance.id)

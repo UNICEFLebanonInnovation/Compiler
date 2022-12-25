@@ -107,15 +107,16 @@ class HealthNutritionFormView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
+        age = self.kwargs['age']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         data = {}
         if self.request.method == "POST":
-            return HealthNutritionServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
+            return HealthNutritionServiceForm(self.request.POST, instance=instance, registry=registry,age=age, request=self.request)
         else:
             if instance:
                 data = to_array(HealthNutritionService.Meta.fields, HealthNutritionService.objects.get(id=instance))
-                return HealthNutritionServiceForm(data, registry=registry, instance=instance, request=self.request)
-            return HealthNutritionServiceForm(registry=registry, instance=instance, request=self.request)
+                return HealthNutritionServiceForm(data, registry=registry, age=age, instance=instance, request=self.request)
+            return HealthNutritionServiceForm(registry=registry, age=age, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

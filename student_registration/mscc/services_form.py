@@ -303,25 +303,25 @@ class DigitalServiceForm(forms.ModelForm):
 class HealthNutritionServiceForm(forms.ModelForm):
     # Caregivers of children 0-2
     baby_breastfed = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the baby being Breastfed?')
     )
     # Caregivers of children 0-2
     infant_exclusively_breastfed = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?')
     )
     # Caregivers of children 0-2
     eat_solid_food = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Did the child start to eat solid food?')
     )
     # Caregivers of children 0-2
     age_eat_solid_food = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=HealthNutritionService.AGE_EAT_SOLID_FOOD,
         label=_('If yes, at which age ?')
     )
@@ -333,20 +333,20 @@ class HealthNutritionServiceForm(forms.ModelForm):
     )
     # Caregivers of children 0-2 - children 3-5
     development_delays_identified = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=HealthNutritionService.DEVELOPMENT_DELAYS,
         label=_('Any mental , cognitive or neurological development delays is being identified?')
     )
 
     # Caregivers of children 3-5 - children 5-18
     eating_minimum_meals = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the child eating 3 minimum meals per day?')
     )
     # Caregivers of children 3-5
     positive_parenting = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
@@ -356,28 +356,34 @@ class HealthNutritionServiceForm(forms.ModelForm):
         widget=forms.TextInput,
         label=_('How children of different ages respond to and understand stressful and traumatic events?')
     )
-
+    child_age = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
+        age = kwargs.pop('age', None)
 
         super(HealthNutritionServiceForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry, 'age': age})
         if instance:
-            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry, 'pk': instance})
+            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry,'age': age, 'pk': instance})
 
+        self.fields['child_age'].initial= age
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('baby_breastfed', css_class='col-md-6'),
-                    Div('infant_exclusively_breastfed', css_class='col-md-6'),
+                    Div('child_age', css_class='col-md-4'),
+                    css_class='row card-body d-none'
+                ),
+                Div(
+                    Div('baby_breastfed', css_class='col-md-4'),
+                    Div('infant_exclusively_breastfed', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -386,14 +392,23 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_vaccinated', css_class='col-md-6'),
-                    Div('development_delays_identified', css_class='col-md-6'),
+                    Div('child_vaccinated', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('eating_minimum_meals', css_class='col-md-4'),
-                    Div('positive_parenting', css_class='col-md-4'),
-                    Div('respond_stressful_events', css_class='col-md-4'),
+                    Div('development_delays_identified', css_class='col-md-8'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('eating_minimum_meals', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('positive_parenting', css_class='col-md-9'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('respond_stressful_events', css_class='col-md-12'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'

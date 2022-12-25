@@ -354,9 +354,9 @@
                                                     <h5 class="menu-header-title">Health & Nutrition
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child_age }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child_age }}/"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
