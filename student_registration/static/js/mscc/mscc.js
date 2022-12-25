@@ -147,7 +147,7 @@ $(document).ready(function() {
     });
 
      $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day, select#id_child_nationality, select#id_child_gender', function(){
-        $('#search_loader').show();
+        $('#search_loader').removeClass('hidden');
         mscc_child_search();
     });
 
@@ -321,7 +321,7 @@ function mscc_child_search() {
                 headers: requestHeaders,
                 dataType: 'json',
                 success: function (response) {
-                    console.log(response);
+
                     append_new_result(response);
                 },
                 error: function (response) {
@@ -337,15 +337,15 @@ function append_new_result(data)
 
     var child_html = '';
     $('#outreach_search_result').empty();
-    $('#search_loader').hide();
+    $('#search_loader').addClass('hidden');
 
     $(data.result).each(function(i, item) {
-        console.log(item);
+
         var full_name = "";
         full_name = full_name.concat(item.first_name, " ", item.outreach_caregiver__father_name, " ", item.outreach_caregiver__last_name);
 
-        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success bg-success"><i class="fa fa-child text-white"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
-        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_child_data('+ item.id +');">'+full_name+'</a> - <b class="text-danger"> '+ item.score +'% matching</b></h4>';
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success">'+ item.score +'%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_child_data('+ item.id +');">'+full_name+'</a></h4>';
         var html_line3 = '<p>'+ item.date_of_birth + ' - '+ item.outreach_caregiver__mother_full_name +'</p>';
         var html_line4 = '<p>'+ item.gender + ' - '+ item.nationality +'</p></div></div></div>';
 
@@ -357,6 +357,8 @@ function append_new_result(data)
 
 function get_child_data(id)
 {
+    $('#search_loader').removeClass('hidden');
+
     var data = {
         id: id,
     };
@@ -382,6 +384,8 @@ function get_child_data(id)
 
 function fill_outreach_child_data(data)
 {
+    $('#search_loader').addClass('hidden');
+
     $(data.result).each(function(i, item) {
         console.log(item);
         $('#id_child_first_name').val(item.first_name);
@@ -504,6 +508,7 @@ function fill_outreach_child_data(data)
             $('#id_national_number_confirm').val(item.child_personal_id)
             }
     });
+    $('#search_loader').addClass('hidden');
 }
 
 function Uppercase(str){
