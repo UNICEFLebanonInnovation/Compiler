@@ -392,13 +392,14 @@ function fill_outreach_child_data(data)
         $('#id_child_father_name').val(item.outreach_caregiver__father_name);
         $('#id_child_last_name').val(item.outreach_caregiver__last_name);
         $('#id_child_mother_fullname').val(item.outreach_caregiver__mother_full_name);
-//        if (item.date_of_birth){
-//            dt_string = item.date_of_birth
-//            dt = new Date(dt_string);
-//            $('select#id_child_birthday_year').val(dt.getYear())
-//            $('select#id_child_birthday_month').val(dt.getMonth())
-//            $('select#id_child_birthday_day').val(dt.getDay())
-//        }
+        if (item.date_of_birth){
+            alert(item.date_of_birth);
+            dt_string = item.date_of_birth
+            var dt = new Date(dt_string);
+            $('select#id_child_birthday_year').val(dt.getFullYear())
+            $('select#id_child_birthday_month').val(dt.getMonth())
+            $('select#id_child_birthday_day').val(dt.getDate())
+        }
         $('select#id_gender').val(item.gender)
 
         var nationality_str = item.nationality

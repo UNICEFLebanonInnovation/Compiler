@@ -348,7 +348,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     positive_parenting = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
-        label=_('positive parenting and dealing with difficult children without the use of harsh punishment?')
+        label=_('Positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
     # Caregivers of children 5-18
     respond_stressful_events = forms.CharField(
@@ -392,19 +392,19 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_vaccinated', css_class='col-md-8'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('development_delays_identified', css_class='col-md-8'),
-                    css_class='row card-body'
-                ),
-                Div(
                     Div('eating_minimum_meals', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
+                    Div('child_vaccinated', css_class='col-md-8'),
+                    css_class='row card-body'
+                ),
+                Div(
                     Div('positive_parenting', css_class='col-md-9'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('development_delays_identified', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
