@@ -188,7 +188,7 @@ class YouthKitServiceFormView(LoginRequiredMixin,
             return YouthKitServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(YouthKitServiceForm.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                data = to_array(YouthKitServiceForm.Meta.fields, YouthKitService.objects.get(id=instance))
                 return YouthKitServiceForm(data, registry=registry, instance=instance, request=self.request)
             return YouthKitServiceForm(registry=registry, instance=instance, request=self.request)
 

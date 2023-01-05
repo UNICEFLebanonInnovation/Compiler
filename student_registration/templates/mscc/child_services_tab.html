@@ -60,8 +60,11 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic Language Development Assessment</h4>
-                                                                            <p>
-                                                                            </p>
+                                                                           {% if result.pre_attended_arabic == 'Yes'  %}
+                                                                              <p> {{result.pre_attended_arabic}} - {{result.pre_modality_arabic}} - {{result.pre_arabic_grade}}</p>
+                                                                          {% else %}
+                                                                              <p> {{result.pre_attended_arabic}}</p>
+                                                                          {% endif %}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -69,16 +72,24 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development Assessment (only in BLN)</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            {% if result.pre_attended_language == 'Yes'  %}
+                                                                              <p> {{result.pre_attended_language}} - {{result.pre_modality_language}} - {{result.pre_language_grade}}</p>
+                                                                            {% else %}
+                                                                              <p> {{result.pre_attended_language}}</p>
+                                                                            {% endif %}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Cognitive Development - Mathematics test</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            {% if result.pre_attended_math == 'Yes'  %}
+                                                                              <p> {{result.pre_attended_math}} - {{result.pre_modality_math}} - {{result.pre_math_grade}}</p>
+                                                                            {% else %}
+                                                                              <p> {{result.pre_attended_math}}</p>
+                                                                            {% endif %}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
@@ -107,26 +118,75 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child Level of participation / Absence</h4>
-                                                                    <p>
-                                                                    </p></div>
+                                                                    <p> {{result.participation}}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Main barriers affecting attendance/participation, performance, or causing drop-out</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                    {% if result.barriers == 'Yes'  %}
+                                                                      <p> {{result.barriers}} - {{result.barriers_other}}</p>
+                                                                    {% else %}
+                                                                      <p> {{result.barriers}}</p>
+                                                                    {% endif %}
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Undertake the Post tests ?</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                    <p> {{result.post_test_done}}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child fully complete the school year?</h4>
+                                                                      <p> {{result.school_year_completed}}</p>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+
+                                                      {% if result.post_test_done == 'Yes'  %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the Child Undertake Arabic Language Development Assessment?</h4>
+                                                                      {% if result.post_attended_arabic == 'Yes'  %}
+                                                                        <p> {{result.post_attended_arabic}} - {{result.post_modality_arabic}} - {{result.post_arabic_grade}}</p>
+                                                                      {% else %}
+                                                                        <p> {{result.post_attended_arabic}}</p>
+                                                                      {% endif %}
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the Child Undertake Foreign Language Development Assessment?</h4>
+                                                                      {% if result.post_attended_language == 'Yes'  %}
+                                                                        <p> {{result.post_attended_language}} - {{result.post_modality_language}} - {{result.post_language_grade}}</p>
+                                                                      {% else %}
+                                                                        <p> {{result.post_attended_language}}</p>
+                                                                      {% endif %}
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the Child Undertake Cognitive Development - Mathematics test ?</h4>
+                                                                      {% if result.post_attended_math == 'Yes'  %}
+                                                                        <p> {{result.pre_attended_math}} - {{result.post_modality_math}} - {{result.post_math_grade}}</p>
+                                                                      {% else %}
+                                                                        <p> {{result.post_attended_math}}</p>
+                                                                      {% endif %}
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                      {% endif %}
 
                                                     </div>
 
@@ -181,18 +241,65 @@
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Name of public School</h4>
-                                                                            <p>
-
-                                                                            </p>
+                                                                          <p> {{result.school.name}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language's grade</h4>
+                                                                        <p> {{result.foreign_language_grade}}</p>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Arabic grade</h4>
+                                                                      <p> {{result.arabic_grade}}</p>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Math grade</h4>
+                                                                      <p> {{result.math_grade}}</p>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Sciences grade</h4>
+                                                                      <p> {{result.sciences_grade}}</p>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">First or Second shift schools</h4>
+                                                                      <p> {{result.shift}}</p>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Grade level</h4>
+                                                                      <p> {{result.grade_level}}</p>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
 
-
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Needed Support?</h4>
+                                                                      {% for support in result.support_needed %}
+                                                                        <p> {{support}} </p>
+                                                                      {% endfor %}
+                                                                  </div>
+                                                                </div>
+                                                              </div>
                                                             </div>
                                                         </div>
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
@@ -245,8 +352,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout</h4>
-                                                                            <p> {{ result.dropout }}
-                                                                            </p>
+                                                                            <p> {{ result.dropout }}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -254,9 +360,8 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Parental Engagement Curriculum</h4>
-                                                                            <p>
-                                                                              {{ result.parental_engagement }}
-                                                                            </p></div>
+                                                                            <p>{{ result.parental_engagement }}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
@@ -312,9 +417,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child using Akelius?</h4>
-                                                                            <p>
-                                                                              {{ result.using_akelius }}
-                                                                            </p>
+                                                                            <p> {{ result.using_akelius }} </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -322,9 +425,8 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child using Learning Passport?</h4>
-                                                                            <p>
-                                                                              {{ result.using_lp }}
-                                                                            </p></div>
+                                                                            <p> {{ result.using_lp }} </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
@@ -376,96 +478,107 @@
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-
                                                                 <!--Caregivers of children 0-2-->
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the baby being Breastfed?</h4>
-                                                                            <p>
-                                                                            </p>
-                                                                          <!--if yes, is it exclusively breastfeeding for infants between 0-6 months?-->
+                                                              {% if instance.child.age <= 2 %}
+                                                                  <div class="vertical-timeline-item vertical-timeline-element">
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the baby being Breastfed?</h4>
+                                                                              <p> {{ result.baby_breastfed }} </p>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                                  {% if result.baby_breastfed == 'Yes' %}
+                                                                    <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is it exclusively breastfeeding for infants between 0-6 months?</h4>
+                                                                                <p> {{ result.infant_exclusively_breastfed }} </p>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                  {% endif %}
 
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child start to eat solid food?</h4>
-                                                                            <p>
-                                                                            </p>
-                                                                           <!--If yes, at which age ?-->
+                                                                  <div class="vertical-timeline-item vertical-timeline-element">
+                                                                          <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                              <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child start to eat solid food?</h4>
+                                                                                  <p> {{ result.eat_solid_food }} </p>
+                                                                              </div>
+                                                                          </div>
+                                                                  </div>
+                                                                  {% if result.eat_solid_food == 'Yes' %}
+                                                                      <div class="vertical-timeline-item vertical-timeline-element">
+                                                                          <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                              <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">If yes, at which age?</h4>
+                                                                                  <p> {{ result.age_eat_solid_food }} </p>
+                                                                              </div>
+                                                                          </div>
+                                                                      </div>
+                                                                    {% endif %}
+                                                                    <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child being vaccinated as per the National vaccination calendar?</h4>
+                                                                                <p> {{ result.child_vaccinated }} </p>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="vertical-timeline-item vertical-timeline-element">
+                                                                          <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                              <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Any mental , cognitive or neurological development delays is being identified?</h4>
+                                                                                   <p> {{ result.development_delays_identified }} </p>
+                                                                              </div>
+                                                                          </div>
+                                                                      </div>
+                                                              {% elif instance.child.age >= 3 and instance.child.age <= 5 %}
+                                                                   <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
+                                                                                <p> {{ result.eating_minimum_meals }} </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                  <div class="vertical-timeline-item vertical-timeline-element">
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child being vaccinated as per the National vaccination calendar?</h4>
+                                                                              <p> {{ result.child_vaccinated }} </p>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                                  <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">positive parenting and dealing with difficult children without the use of harsh punishment?</h4>
+                                                                                <p> {{ result.positive_parenting }} </p>
+                                                                            </div>
+                                                                        </div>
+                                                                  </div>
+                                                                 <div class="vertical-timeline-item vertical-timeline-element">
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Any mental , cognitive or neurological development delays is being identified?</h4>
+                                                                               <p> {{ result.development_delays_identified }} </p>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                              {% else %}
+                                                                 <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
+                                                                              <p> {{ result.eating_minimum_meals }} </p>
+                                                                          </div>
+                                                                      </div>
                                                                 </div>
-
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child being vaccinated as per the National vaccination calendar?</h4>
-                                                                            <p>
-                                                                            </p></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Any mental , cognitive or neurological development delays is being identified?</h4>
-                                                                            <p>
-                                                                            </p></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!--Caregivers of children 3-5-->
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
-                                                                            <p>
-                                                                            </p>
+                                                                            <p> {{ result.child_vaccinated }} </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child being vaccinated as per the National vaccination calendar?</h4>
-                                                                            <p>
-                                                                            </p></div>
-                                                                    </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                      <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                          <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">positive parenting and dealing with difficult children without the use of harsh punishment?</h4>
+                                                                              <p> {{ result.positive_parenting }} </p>
+                                                                          </div>
+                                                                      </div>
                                                                 </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">positive parenting and dealing with difficult children without the use of harsh punishment?</h4>
-                                                                            <p>
-                                                                            </p></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Any mental , cognitive or neurological development delays is being identified?</h4>
-                                                                            <p>
-                                                                            </p></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!--Children 5-18-->
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
-                                                                            <p>
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Received all vaccination as per the national vaccination calendar?</h4>
-                                                                            <p>
-                                                                            </p></div>
-                                                                    </div>
-                                                                </div>
-
+                                                              {% endif %}
                                                             </div>
                                                         </div>
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
@@ -537,12 +650,10 @@
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">volunteering experience</h4>
-                                                                            <p>
-                                                                            </p>
+                                                                            <p> {{ result.volunteering_experience }} </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -550,24 +661,24 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Previous community based initiative</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p> {{ result.previous_community_initiative }} </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reason for the adolescent enrollement in the programme</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p> {{ result.enrollment_reason }} </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Pre-tests administered to assess adolescents' level</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p> {{ result.pre_tests_administered }} </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 

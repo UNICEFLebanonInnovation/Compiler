@@ -55,8 +55,8 @@
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">Birthday</div>
-                                                    <div class="widget-subheading">{{ instance.child.birthday }}
-                                                      - {{ instance.child.age }} years
+                                                    <div class="widget-subheading">
+                                                      {{ instance.child.birthday }} - {{ instance.child.age }} years
                                                     </div>
                                                 </div>
                                                 <div class="widget-content-right">
@@ -148,7 +148,6 @@
                                 </ul>
                             </div>
                         </div>
-
 <div class="col-md-12 col-lg-6 col-xl-4">
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
@@ -445,8 +444,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child’s educational level when registering for the round</h4>
-                                                                            <p>
-                                                                            </p>
+                                                                            <p> {{result.education_status}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -454,33 +452,36 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date from school</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p> {{result.dropout_date}}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Programme</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout Programme</h4>
+                                                                          {% if result.dropout_program == 'Other'  %}
+                                                                              <p> {{result.dropout_program}} - {{result.dropout_program_specify}}</p>
+                                                                          {% else %}
+                                                                              <p> {{result.dropout_program}}</p>
+                                                                          {% endif %}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Education programme in MSCC</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p> {{result.education_program}}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-shield text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Date of registration in the round</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p>{{result.registration_date}}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
@@ -504,3 +505,4 @@
 
 
 </div>
+

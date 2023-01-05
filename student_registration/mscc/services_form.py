@@ -371,7 +371,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
         if instance:
             form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry,'age': age, 'pk': instance})
 
-        self.fields['child_age'].initial= age
+        self.fields['child_age'].initial = age
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -567,7 +567,7 @@ class YouthKitServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_youth_kit_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_youth_kit_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_youth_kit_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -775,7 +775,7 @@ class FollowUpServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_follow_up_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_follow_up_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_follow_up_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
