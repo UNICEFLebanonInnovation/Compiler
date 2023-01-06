@@ -697,52 +697,102 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Post Diagnostic tests</h4>
-                                                                    <p>
-                                                                    </p></div>
+                                                                    <p> {{ result.test_diagnostic_done }} </p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Receive a passing grade for the tests?</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                    <p> {{ result.receive_passing_grade }} </p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Life skills package</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                    <p> {{ result.life_skills_completed }} </p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Volunteering opportunity</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                  {% if result.participate_volunteering == 'Yes'  %}
+                                                                    <p> {{ result.participate_volunteering }} - {{ result.volunteering_specify }} </p>
+                                                                  {% else %}
+                                                                    <p> {{ result.participate_volunteering }} </p>
+                                                                  {% endif %}
+                                                                </div>
                                                             </div>
                                                         </div>
-
-
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Social innovation/entrepreneurship course</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                    <p> {{ result.social_course }} </p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Completed the YFS course?</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                  {% if result.yfs_course_completed == 'Yes'  %}
+                                                                    <p> {{ result.yfs_course_completed }} - {{ result.training_material }} </p>
+                                                                  {% else %}
+                                                                    <p> {{ result.yfs_course_completed }} </p>
+                                                                  {% endif %}
+                                                                </div>
                                                             </div>
                                                         </div>
 
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Recommended future path for the adolescent</h4>
+                                                                    <p> {{ result.future_path }} </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Participate in community based initiatives</h4>
+                                                                    {% if result.participate_community_initiatives == 'Yes'  %}
+                                                                      <p> {{ result.participate_community_initiatives }} - {{ result.community_initiatives_specify }} </p>
+                                                                    {% else %}
+                                                                      <p> {{ result.participate_community_initiatives }} </p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Adolescent attendance</h4>
+                                                                    <p> {{ result.adolescent_attendance }} </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% if result.adolescent_attendance == 'Dropout'  %}
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                    <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reason for dropout </h4>
+                                                                        <p>{{ result.adolescent_dropout_reason }} </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                    <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout Date</h4>
+                                                                        <p>{{ result.adolescent_dropout_date }} </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
                                                     </div>
 
                                                         </div>
@@ -818,8 +868,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Birth registration</h4>
-                                                                            <p>
-                                                                            </p>
+                                                                            <p>{{ result.child_registered }} </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -827,24 +876,24 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Living arrangement</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                             <p>{{ result.child_living_arrangement }} </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Vulnerabilites of the child</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p>{{ result.child_vulnerability }} </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reasons being out of school</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p>{{ result.child_out_school_reasons }} </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
@@ -863,51 +912,39 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caregivers distress</h4>
-                                                                    <p>
-                                                                    </p></div>
+                                                                    <p>{{ result.caregivers_distress }} </p>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        {% if result.caregivers_distress == 'Yes'  %}
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                    <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Additional parenting or psychosocial support</h4>
+                                                                        <p>{{ result.caregivers_additional_parenting }} </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Distressed and anxious feelings</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Children in the HH experiencing any signs of distress or negative mental health symptoms</h4>
+                                                                    <p>{{ result.child_distress }} </p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Additional parenting or psychosocial support?</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                        {% if result.child_distress == 'Yes'  %}
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                    <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Additional support for taking care or better dealing with the children</h4>
+                                                                        <p>{{ result.child_additional_parenting }} </p>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Volunteering opportunity</h4>
-                                                                    <p>
-                                                                        </p></div>
-                                                            </div>
-                                                        </div>
+                                                        {% endif %}
 
 
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Social innovation/entrepreneurship course</h4>
-                                                                    <p>
-                                                                        </p></div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Completed the YFS course?</h4>
-                                                                    <p>
-                                                                        </p></div>
-                                                            </div>
-                                                        </div>
 
                                                     </div>
 
@@ -947,8 +984,9 @@
                                                       <div style="float:right;">
                                                             {% if result %}
                                                               <a href="/MSCC/Services/Follow-Up-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
-                                                            {% endif %}
+                                                            {% else %}
                                                               <a href="/MSCC/Services/Follow-Up-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                            {% endif %}
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
@@ -983,36 +1021,35 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">In case of absence, type of Follow-up done</h4>
-                                                                            <p>
-                                                                            </p>
+                                                                            <p>{{ result.follow_up_type }}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Follow-up results</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                {% if result.follow_up_type == 'Phone call' %}
+                                                                    <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of phone calls done</h4>
+                                                                                <p>{{ result.phone_call_number }}</p>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reasons of Dropout</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                {% elif result.follow_up_type == 'Home Visits' %}
+                                                                     <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of home visits done</h4>
+                                                                                <p>{{ result.house_visit_number }}</p>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout Date</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                {% elif result.follow_up_type == 'Caregiver visited the center' %}
+                                                                     <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of caregiver visits to center</h4>
+                                                                                <p>{{ result.caregiver_visit_number }}</p>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-
+                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
@@ -1027,44 +1064,71 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child's caretaker attend parent meeting/engagment sessions</h4>
-                                                                    <p>
-                                                                    </p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Result of follow up</h4>
+                                                                    <p>{{ result.follow_up_result }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                      {% if result.follow_up_result == 'Dropout/No Interest' %}
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Reason for dropout</h4>
+                                                                    <p>{{ result.dropout_reason }}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">if "Yes" please indicate the types of meeting; number of sessions attended.</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date</h4>
+                                                                    <p>{{ result.dropout_date }}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                      {% endif %}
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Please the modality used per each session</h4>
-                                                                    <p>
-                                                                        </p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title"> Caregiver attend parent meeting/engagment sessions</h4>
+                                                                    <p>{{ result.parent_attended_meeting }}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who attended the meetings</h4>
-                                                                    <p>
-                                                                        </p></div>
-                                                            </div>
-                                                        </div>
-
-
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">If Other Please Specify</h4>
-                                                                    <p>
-                                                                        </p></div>
-                                                            </div>
-                                                        </div>
+                                                      {% if result.follow_up_result == 'Dropout/No Interest' %}
+                                                          <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Meeting Type</h4>
+                                                                      <p>{{ result.meeting_type }}</p>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                          <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of sessions attended</h4>
+                                                                      <p>{{ result.meeting_number }}</p>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                          <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Please the modality used per each session</h4>
+                                                                      <p>{{ result.meeting_modality }}</p>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                          <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who attended the meetings</h4>
+                                                                    {% if result.caregiver_attended == 'Other'  %}
+                                                                        <p>{{ result.caregiver_attended }} - {{result.caregiver_attended_other}}</p>
+                                                                    {% else %}
+                                                                        <p>{{ result.caregiver_attended }}</p>
+                                                                    {% endif %}
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                      {% endif %}
 
                                                     </div>
 
@@ -1122,15 +1186,47 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">field name</h4>
-                                                                            <p>
-
-                                                                            </p>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to formal education (Grade 1)</h4>
+                                                                            <p>{{ result.referred_formal_education }}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                {% if result.referred_formal_education == 'Yes' %}
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Name of the School referred to</h4>
+                                                                            <p>{{ result.referred_school }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                              {% endif %}
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child receive all needed materials and resources (Stationery, Books, Learning bundle)</h4>
+                                                                            <p>{{ result.receive_needed_material }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                  <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                      <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to a service</h4>
+                                                                        {% if result.referred_service == 'Other'  %}
+                                                                            <p>{{ result.referred_service }} - {{result.referred_service_other}}</p>
+                                                                        {% else %}
+                                                                            <p>{{ result.referred_service }}</p>
+                                                                        {% endif %}
+                                                                      </div>
+                                                                  </div>
+                                                              </div>
 
 
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Recommended learning path/outcome</h4>
+                                                                            <p>{{ result.recommended_learning_path }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                              </div>
                                                             </div>
                                                         </div>
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
