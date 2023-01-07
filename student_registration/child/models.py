@@ -427,6 +427,14 @@ class Child(TimeStampedModel):
             self.last_name,
         )
 
+    @property
+    def caregiver_full_name(self):
+        return u'{} {} {}'.format(
+            self.caregiver_first_name,
+            self.caregiver_middle_name,
+            self.caregiver_last_name,
+        )
+
     def nationality_name(self):
         if self.nationality:
             return self.nationality.name

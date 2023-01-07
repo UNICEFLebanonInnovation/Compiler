@@ -56,7 +56,7 @@ class PSSServiceForm(forms.ModelForm):
         label=_('Do you feel distressed and anxious?')
     )
     caregivers_additional_parenting = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('If yes, would you like any additional parenting or psychosocial support?')
     )
@@ -67,7 +67,7 @@ class PSSServiceForm(forms.ModelForm):
                        'signs of distress or negative mental health symptoms ?')
     )
     child_additional_parenting = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('If yes, do you need additional support '
                        'for taking care or better dealing with your children?')
@@ -133,8 +133,8 @@ class PSSServiceForm(forms.ModelForm):
         instance.child_vulnerability = validated_data.get('child_vulnerability')
         instance.child_out_school_reasons = validated_data.get('child_out_school_reasons')
         instance.caregivers_distress = validated_data.get('caregivers_distress')
-        instance.child_additional_parenting = validated_data.get('caregivers_additional_parenting')
-        instance.child_additional_parenting = validated_data.get('child_distress')
+        instance.caregivers_additional_parenting = validated_data.get('caregivers_additional_parenting')
+        instance.child_distress = validated_data.get('child_distress')
         instance.child_additional_parenting = validated_data.get('child_additional_parenting')
         instance.modified_by = request.user
         instance.save()
@@ -348,7 +348,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     positive_parenting = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
-        label=_('positive parenting and dealing with difficult children without the use of harsh punishment?')
+        label=_('Positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
     # Caregivers of children 5-18
     respond_stressful_events = forms.CharField(
@@ -371,7 +371,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
         if instance:
             form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry,'age': age, 'pk': instance})
 
-        self.fields['child_age'].initial= age
+        self.fields['child_age'].initial = age
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
@@ -392,19 +392,19 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_vaccinated', css_class='col-md-8'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('development_delays_identified', css_class='col-md-8'),
-                    css_class='row card-body'
-                ),
-                Div(
                     Div('eating_minimum_meals', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
+                    Div('child_vaccinated', css_class='col-md-8'),
+                    css_class='row card-body'
+                ),
+                Div(
                     Div('positive_parenting', css_class='col-md-9'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('development_delays_identified', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -567,7 +567,7 @@ class YouthKitServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_youth_kit_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_youth_kit_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_youth_kit_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -775,7 +775,7 @@ class FollowUpServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_follow_up_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_follow_up_edit', kwargs={'registry': registry, 'pk': instance.id})
+            form_action = reverse('mscc:service_follow_up_edit', kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -830,12 +830,12 @@ class FollowUpServiceForm(forms.ModelForm):
         validated_data = request.POST
 
         if not instance:
-            instance = YouthKitService.objects.create(registration_id=registry)
+            instance = FollowUpService.objects.create(registration_id=registry)
         else:
-            instance = YouthKitService.objects.get(id=instance)
+            instance = FollowUpService.objects.get(id=instance)
 
         instance.follow_up_type = validated_data.get('follow_up_type')
-        instance.phone_call_number = validated_data.get('phone_call_number,, 	')
+        instance.phone_call_number = validated_data.get('phone_call_number')
         instance.house_visit_number = validated_data.get('house_visit_number')
         instance.caregiver_visit_number = validated_data.get('caregiver_visit_number')
         instance.follow_up_result = validated_data.get('follow_up_result')

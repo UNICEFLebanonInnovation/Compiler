@@ -38,7 +38,11 @@
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">Nationality</div>
-                                                    <div class="widget-subheading">{{ instance.child.nationality.name }}</div>
+                                                        {% if instance.child.nationality.id == 6  %}
+                                                            <div class="widget-subheading">{{ instance.child.nationality.name }} - {{ instance.child.nationality_other }}</div>
+                                                        {% else %}
+                                                            <div class="widget-subheading">{{ instance.child.nationality.name }}</div>
+                                                        {% endif %}
                                                 </div>
                                                 <div class="widget-content-right">
                                                     <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
@@ -51,8 +55,8 @@
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">Birthday</div>
-                                                    <div class="widget-subheading">{{ instance.child.birthday }}
-                                                      - {{ instance.child.age }} years
+                                                    <div class="widget-subheading">
+                                                      {{ instance.child.birthday }} - {{ instance.child.age }} years
                                                     </div>
                                                 </div>
                                                 <div class="widget-content-right">
@@ -81,7 +85,11 @@
                                                 <div class="widget-content-left">
                                                     <div class="widget-heading">Family Status</div>
                                                     <div class="widget-subheading">
-                                                      {{ instance.child.family_status }} - {{ instance.child.number_children }} child
+                                                      {% if instance.child.have_children == 'Yes'  %}
+                                                        <div class="widget-subheading">{{ instance.child.marital_status }} - {{ instance.child.children_number }} child</div>
+                                                      {% else %}
+                                                        <div class="widget-subheading">{{ instance.child.marital_status }}</div>
+                                                      {% endif %}
                                                     </div>
                                                 </div>
                                                 <div class="widget-content-right">
@@ -105,10 +113,41 @@
                                             </div>
                                         </div>
                                     </li>
+                                    <li class="list-group-item">
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left">
+                                                    <div class="widget-heading">Source of referral of the child to MSCC</div>
+                                                    <div class="widget-subheading">
+                                                      {{ instance.source_of_identification }}
+                                                    </div>
+                                                </div>
+                                                <div class="widget-content-right">
+                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left">
+                                                    <div class="widget-heading">Cash support programmes that the child is already benefitting from</div>
+                                                    <div class="widget-subheading">
+                                                      {% for prog in instance.cash_support_programmes %}
+                                                        <div> {{prog}} </div>
+                                                      {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <div class="widget-content-right">
+                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
-
 <div class="col-md-12 col-lg-6 col-xl-4">
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
@@ -160,68 +199,85 @@
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Father’s educational level</h4>
-                                                                            <p></p></div>
+                                                                            <p> {{instance.child.father_educational_level}}</p></div>
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-graduation-hat text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mother’s educational level</h4>
+                                                                            <p> {{instance.child.mother_educational_level}}</p></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
+                                                                            <p> {{instance.child.first_phone_number}}</p></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-info text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
+                                                                            <p> {{instance.child.first_phone_owner}}</p></div>
                                                                     </div>
                                                                 </div>
 
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone-handset text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Mother’s educational level</h4>
-                                                                            <p></p></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-laptop-phone text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
-                                                                            <p></p></div>
+                                                                            <p> {{instance.child.second_phone_number}}</p></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-laptop-phone text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-user text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
-                                                                            <p></p></div>
+                                                                            <p> {{instance.child.second_phone_owner}}</p></div>
                                                                     </div>
                                                                 </div>
 
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-laptop-phone text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
-                                                                            <p></p></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-laptop-phone text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Who will be answering the phone</h4>
-                                                                            <p></p></div>
-                                                                    </div>
-                                                                </div>
-
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-smartphone text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
-                                                                            <p></p></div>
+                                                                          {% if instance.child.main_caregiver == 'Other'  %}
+                                                                              <p> {{instance.child.main_caregiver}} - {{instance.child.main_caregiver_other}}</p>
+                                                                          {% else %}
+                                                                              <p> {{instance.child.main_caregiver}}</p>
+                                                                          {% endif %}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-cloud text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Full Name</h4>
-                                                                            <p></p></div>
+                                                                            <p> {{instance.child.caregiver_full_name}}</p></div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-cloud text-dark"></i></div></span>
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="pe-7s-user-female text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Caretaker's Mother Full Name</h4>
-                                                                            <p></p></div>
+                                                                            <p> {{instance.child.caregiver_mother_name}}</p></div>
                                                                     </div>
                                                                 </div>
+                                                               <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
+                                                                          {% if instance.child.main_caregiver_nationality.id == 6 %}
+                                                                              <p> {{instance.child.main_caregiver_nationality}} - {{instance.child.main_caregiver_other}}</p>
+                                                                          {% else %}
+
+                                                                              <p> {{instance.child.main_caregiver_nationality}}</p>
+                                                                          {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                               </div>
 
 
                                                             </div>
@@ -237,7 +293,7 @@
                                                     <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-home text-info"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-culture text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">
                                                                     Pcode where the child lives in Internal Settlement/Camp
 
@@ -245,8 +301,21 @@
                                                                     <p>
                                                                         <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
                                                                     </p>
-                                                                    <p> {{ instance.child.address }}</p>
                                                                     <p>{{ instance.child.p_code }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                      <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-home text-info"></i></div></span>
+
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">
+                                                                    Address
+
+                                                                </h4>
+                                                                    <p>
+                                                                        <span class="badge badge-dot badge-dot-lg badge-dot-inside"></span>
+                                                                    </p>
+                                                                    <p> {{ instance.child.address }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -254,7 +323,7 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-map-marker text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Governorate / District</h4>
-                                                                    <p> {{ instance.governorate }} / {{ instance.district }}
+                                                                    <p> {{ instance.center.governorate }} / {{ instance.center.caza }}
                                                                     </p>
                                                                 </div>
                                                             </div>
@@ -275,9 +344,8 @@
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Engaged in Labor?</h4>
-                                                                    <p>
-                                                                    </p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Does the child participate in work?</h4>
+                                                                    <p>{{ instance.have_labour }} </p></div>
                                                             </div>
                                                         </div>
 
@@ -285,22 +353,26 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Type of Labor</h4>
-                                                                    <p>
-                                                                    </p></div>
+                                                                      {% if instance.labour_type == 'Other services'%}
+                                                                          <p> {{instance.labour_type}} - {{instance.labour_type_specify}}</p>
+                                                                      {% else %}
+                                                                          <p> {{instance.labour_type}}</p>
+                                                                      {% endif %}
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
-                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="lnr-hourglass text-info text-alternate"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Working hours during a week? (in hours)</h4>
-                                                                    <p></p></div>
+                                                                     <p>{{ instance.labour_hours }} </p></div>
                                                             </div>
                                                         </div>
 
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
-                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">How much get paid per week? (amount in LBP)</h4>
-                                                                    <p></p></div>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">How much does the child get paid per week?</h4>
+                                                                     <p>{{ instance.labour_weekly_income }} </p></div>
                                                             </div>
                                                         </div>
 
@@ -372,8 +444,7 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child’s educational level when registering for the round</h4>
-                                                                            <p>
-                                                                            </p>
+                                                                            <p> {{result.education_status}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -381,33 +452,36 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date from school</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p> {{result.dropout_date}}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Programme</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout Programme</h4>
+                                                                          {% if result.dropout_program == 'Other'  %}
+                                                                              <p> {{result.dropout_program}} - {{result.dropout_program_specify}}</p>
+                                                                          {% else %}
+                                                                              <p> {{result.dropout_program}}</p>
+                                                                          {% endif %}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Education programme in MSCC</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p> {{result.education_program}}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-shield text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Date of registration in the round</h4>
-                                                                            <p>
-                                                                            </p></div>
+                                                                            <p>{{result.registration_date}}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
@@ -431,3 +505,4 @@
 
 
 </div>
+

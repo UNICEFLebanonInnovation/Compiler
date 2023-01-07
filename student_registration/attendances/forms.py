@@ -174,7 +174,7 @@ class MainAttendanceForm(forms.ModelForm):
             self.add_error('close_reason', "The reason should be specified.")
 
         if self.instance.id is None:
-            school = cleaned_data.get("phone_number")
+            school = cleaned_data.get("school")
             registration_level = cleaned_data.get("registration_level")
             day_off = cleaned_data.get("day_off")
 

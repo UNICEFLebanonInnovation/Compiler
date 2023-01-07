@@ -114,7 +114,7 @@ class HealthNutritionFormView(LoginRequiredMixin,
             return HealthNutritionServiceForm(self.request.POST, instance=instance, registry=registry,age=age, request=self.request)
         else:
             if instance:
-                data = to_array(HealthNutritionService.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                data = to_array(HealthNutritionServiceForm.Meta.fields, HealthNutritionService.objects.get(id=instance))
                 return HealthNutritionServiceForm(data, registry=registry, age=age, instance=instance, request=self.request)
             return HealthNutritionServiceForm(registry=registry, age=age, instance=instance, request=self.request)
 
@@ -188,7 +188,7 @@ class YouthKitServiceFormView(LoginRequiredMixin,
             return YouthKitServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
-                data = to_array(YouthKitService.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                data = to_array(YouthKitServiceForm.Meta.fields, YouthKitService.objects.get(id=instance))
                 return YouthKitServiceForm(data, registry=registry, instance=instance, request=self.request)
             return YouthKitServiceForm(registry=registry, instance=instance, request=self.request)
 

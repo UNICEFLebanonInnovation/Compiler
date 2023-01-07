@@ -28,7 +28,7 @@ from student_registration.schools.models import (
 )
 
 
-class EducationAssessmentForm(forms.ModelForm):
+class DiagnosticAssessmentForm(forms.ModelForm):
     # Pre Test
     pre_attended_arabic = forms.ChoiceField(
         label=_("Did the Child Undertake Arabic Language Development Assessment"),
@@ -64,7 +64,7 @@ class EducationAssessmentForm(forms.ModelForm):
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False,
-        initial = 0
+        initial=0
     )
     pre_attended_math = forms.ChoiceField(
         label=_("Did the Child Undertake Cognitive Development - Mathematics test"),
@@ -82,7 +82,7 @@ class EducationAssessmentForm(forms.ModelForm):
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False,
-        initial = 0
+        initial=0
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -92,11 +92,11 @@ class EducationAssessmentForm(forms.ModelForm):
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
-        super(EducationAssessmentForm, self).__init__(*args, **kwargs)
+        super(DiagnosticAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_diagnostic_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_education_assessment_edit',
+            form_action = reverse('mscc:service_diagnostic_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -168,8 +168,8 @@ class EducationAssessmentForm(forms.ModelForm):
             'pre_math_grade',
         )
 
-class DiagnosticAssessmentForm(forms.ModelForm):
 
+class EducationAssessmentForm(forms.ModelForm):
     participation = forms.ChoiceField(
         label=_("Child Level of participation / Absence"),
         widget=forms.Select, required=True,
@@ -258,11 +258,11 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
-        super(DiagnosticAssessmentForm, self).__init__(*args, **kwargs)
+        super(EducationAssessmentForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_diagnostic_assessment_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:service_education_assessment_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('mscc:service_diagnostic_assessment_edit',
+            form_action = reverse('mscc:service_education_assessment_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
@@ -309,7 +309,6 @@ class DiagnosticAssessmentForm(forms.ModelForm):
                 css_id='step-1'
             ),
         )
-
     def save(self, request=None, instance=None, registry=None):
 
         validated_data = request.POST
@@ -357,6 +356,7 @@ class DiagnosticAssessmentForm(forms.ModelForm):
             'post_modality_math',
             'post_math_grade'
         )
+
 
 class EducationServiceForm(forms.ModelForm):
 
@@ -461,6 +461,7 @@ class EducationServiceForm(forms.ModelForm):
             'education_program',
             'registration_date',
         )
+
 
 class EducationRSServiceForm(forms.ModelForm):
 
