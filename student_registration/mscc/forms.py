@@ -166,13 +166,13 @@ class MainForm(forms.ModelForm):
         initial=''
     )
     first_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
         label=_('Primary phone number')
     )
     first_phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
         label=_('Confirm primary phone number')
@@ -185,13 +185,13 @@ class MainForm(forms.ModelForm):
         initial=''
     )
     second_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
         label=_('Primary phone number')
     )
     second_phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
         label=_('Confirm primary phone number')
