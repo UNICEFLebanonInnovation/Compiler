@@ -378,17 +378,6 @@ function reorganizeForm()
         $('#id_main_caregiver_nationality_other').val('');
     }
 
-//    Main Caregiver
-    var main_caregiver = $('select#id_main_caregiver').val();
-    if(main_caregiver == 'other'){
-        $('div#div_id_other_caregiver_relationship').removeClass('d-none');
-        $('#span_other_caregiver_relationship').removeClass('d-none');
-    }
-    else {
-        $('div#div_id_other_caregiver_relationship').addClass('d-none');
-        $('#span_other_caregiver_relationship').addClass('d-none');
-        }
-
 
 //    ID Type
     var id_type = $('select#id_id_type').val();
