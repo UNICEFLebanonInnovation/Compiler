@@ -143,10 +143,11 @@ $(document).ready(function() {
     });
 
     $(document).on('change', 'input#id_child_first_name, input#id_child_father_name, input#id_child_last_name', function () {
+        alert('searching');
         mscc_child_search();
     });
 
-     $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day, select#id_child_nationality, select#id_child_gender', function(){
+     $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
         $('#search_loader').removeClass('hidden');
         mscc_child_search();
     });
@@ -292,20 +293,16 @@ function mscc_child_search() {
         var birthday_year = $('#id_child_birthday_year').val();
         var birthday_month = $('#id_child_birthday_month').val();
         var birthday_day = $('#id_child_birthday_day').val();
-        var nationality = $( "#id_child_nationality option:selected" ).text();
-        var gender = $('#id_child_gender').val();
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
 
-        if (birthday_year!='' && birthday_month!='' && birthday_day!='' && nationality!='' && gender!='' && first_name!='' && father_name!='' && last_name!='')
+        if (birthday_year!='')
         {
             var data = {
                 birthday_year: birthday_year,
                 birthday_month: birthday_month,
                 birthday_day: birthday_day,
-                nationality: nationality,
-                gender: gender,
                 first_name: first_name,
                 father_name: father_name,
                 last_name: last_name,
@@ -340,7 +337,6 @@ function append_new_result(data)
     $('#search_loader').addClass('hidden');
 
     $(data.result).each(function(i, item) {
-
         var full_name = "";
         full_name = full_name.concat(item.first_name, " ", item.outreach_caregiver__father_name, " ", item.outreach_caregiver__last_name);
 
@@ -393,7 +389,6 @@ function fill_outreach_child_data(data)
         $('#id_child_last_name').val(item.outreach_caregiver__last_name);
         $('#id_child_mother_fullname').val(item.outreach_caregiver__mother_full_name);
         if (item.date_of_birth){
-            alert(item.date_of_birth);
             dt_string = item.date_of_birth
             var dt = new Date(dt_string);
             $('select#id_child_birthday_year').val(dt.getFullYear())
@@ -401,7 +396,6 @@ function fill_outreach_child_data(data)
             $('select#id_child_birthday_day').val(dt.getDate())
         }
         $('select#id_gender').val(item.gender)
-
         var nationality_str = item.nationality
         var nationality_id= get_nationality_id(nationality_str)
         $('select#id_child_nationality').val(nationality_id)

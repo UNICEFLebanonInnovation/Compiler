@@ -70,13 +70,19 @@ def outreach_import_data(request):
         record_value(caregiver, "interview_comment", record, "child_notes")
         record_value(caregiver, "submission_status", record, "_status")
         caregiver.save()
-        caregiver_id = caregiver.id
+        # caregiver_id = caregiver.id
         if record.has_key("DC"):
             for student in record["DC"]:
                 st = OutreachChild()
                 st.outreach_caregiver = caregiver
                 record_value(st, "first_name", student, "DC/first_name")
                 record_value(st, "date_of_birth", student, "DC/date_of_birth")
+                if student.has_key("DC/date_of_birth"):
+                    dt_string = student["DC/date_of_birth"]
+                    dt = datetime.datetime.strptime(dt_string, '%Y-%m-%d')
+                    st.birthday_year = dt.year
+                    st.birthday_month = dt.month
+                    st.birthday_day = dt.day
                 if student.has_key("DC/gender"):
                     if student["DC/gender"] == '_':
                         st.gender = "Male"

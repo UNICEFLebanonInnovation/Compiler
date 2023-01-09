@@ -304,6 +304,21 @@ class OutreachCaregiver(models.Model):
 
 
 class OutreachChild(models.Model):
+    MONTHS = Choices(
+        ('', '---------'),
+        ('1', _('January')),
+        ('2', _('February')),
+        ('3', _('March')),
+        ('4', _('April')),
+        ('5', _('May')),
+        ('6', _('June')),
+        ('7', _('July')),
+        ('8', _('August')),
+        ('9', _('September')),
+        ('10', _('October')),
+        ('11', _('November')),
+        ('12', _('December')),
+    )
     outreach_caregiver = models.ForeignKey(
         OutreachCaregiver,
         blank=True, null=True,
@@ -311,6 +326,9 @@ class OutreachChild(models.Model):
     )
     first_name = models.CharField(max_length=200, blank=True, null=True)
     date_of_birth = models.CharField(max_length=200, blank=True, null=True)
+    birthday_year = models.CharField( max_length=4, blank=True, null=True, default=0)
+    birthday_month = models.CharField( max_length=2, blank=True, null=True, default=0, choices=MONTHS)
+    birthday_day = models.CharField( max_length=2, blank=True, null=True, default=0)
     gender = models.CharField(max_length=200, blank=True, null=True)
     nationality = models.CharField(max_length=200, blank=True, null=True)
     nationality_other = models.CharField(max_length=200, blank=True, null=True)
@@ -328,7 +346,6 @@ class OutreachChild(models.Model):
     work_type_other = models.CharField(max_length=200, blank=True, null=True)
     child_referral = models.CharField(max_length=200, blank=True, null=True)
     child_notes = models.CharField(max_length=200, blank=True, null=True)
-
     class Meta:
         ordering = ['id']
         verbose_name = "Outreach Child"

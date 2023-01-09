@@ -193,34 +193,40 @@ class MainViewSet(mixins.RetrieveModelMixin,
 
 
 def mscc_child_search(request):
-    from datetime import datetime
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     birthday_year = body['birthday_year']
     birthday_month = body['birthday_month']
     birthday_day = body['birthday_day']
-    # nationality = body['nationality']
-    gender = body['gender']
     first_name = body['first_name']
     father_name = body['father_name']
     last_name = body['last_name']
 
     form_str = '{} {} {}'.format(first_name, father_name, last_name)
-    form_dob = datetime(int(birthday_year), int(birthday_month), int(birthday_day)).strftime("%Y-%m-%d")
-
     filtered_results = OutreachChild.objects.filter(
-        date_of_birth=form_dob,
-        # nationality=nationality,
-        gender=gender
-    ).values('id',
-             'first_name',
-             'outreach_caregiver__father_name',
-             'outreach_caregiver__last_name',
-             'outreach_caregiver__mother_full_name',
-             'gender',
-             'nationality',
-             'date_of_birth',
-             ).distinct()
+        birthday_year=birthday_year
+    )
+    if birthday_month:
+        filtered_results = filtered_results.filter(
+            birthday_month=birthday_month
+        )
+    if birthday_day:
+        filtered_results = filtered_results.filter(
+            birthday_day=birthday_day
+        )
+    filtered_results = filtered_results.values(
+        'id',
+        'first_name',
+        'outreach_caregiver__father_name',
+        'outreach_caregiver__last_name',
+        'outreach_caregiver__mother_full_name',
+        'gender',
+        'nationality',
+        'date_of_birth',
+        'birthday_year',
+        'birthday_month',
+        'birthday_day',
+    ).distinct()
 
     result_match = []
     for result in filtered_results:
@@ -250,6 +256,9 @@ def mscc_outreach_child(request):
              'gender',
              'nationality',
              'date_of_birth',
+             'birthday_year',
+             'birthday_month',
+             'birthday_day',
              'nationality_other',
              'outreach_caregiver__address',
              'disability',
