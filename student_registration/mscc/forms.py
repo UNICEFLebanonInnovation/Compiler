@@ -166,13 +166,13 @@ class MainForm(forms.ModelForm):
         initial=''
     )
     first_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
         label=_('Primary phone number')
     )
     first_phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
         label=_('Confirm primary phone number')
@@ -185,13 +185,13 @@ class MainForm(forms.ModelForm):
         initial=''
     )
     second_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
         label=_('Primary phone number')
     )
     second_phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
         label=_('Confirm primary phone number')
@@ -600,51 +600,26 @@ class MainForm(forms.ModelForm):
         if child_nationality and child_nationality.id == 6 and not child_nationality_other:
             self.add_error('child_nationality_other', 'This field is required')
 
-        main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
-        main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
-        if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
-            self.add_error('main_caregiver_nationality_other', 'This field is required')
-
         child_have_children = cleaned_data.get("child_have_children")
         child_children_number = cleaned_data.get("child_children_number")
         if child_have_children == "Yes" and not child_children_number:
             self.add_error('child_children_number', 'This field is required')
-
-        have_labour = cleaned_data.get("have_labour")
-        labour_type = cleaned_data.get("labour_type")
-        labour_type_specify = cleaned_data.get("labour_type_specify")
-        labour_hours = cleaned_data.get("labour_hours")
-        labour_weekly_income = cleaned_data.get("labour_weekly_income")
-        if have_labour != 'No':
-            if not labour_type:
-                self.add_error('labour_type', 'This field is required')
-            elif labour_type == 'other_many_other' and not labour_type_specify:
-                self.add_error('labour_type_specify', 'This field is required')
-            if not labour_hours:
-                self.add_error('labour_hours', 'This field is required')
-            if not labour_weekly_income:
-                self.add_error('labour_weekly_income', 'This field is required')
 
         source_of_identification = cleaned_data.get("source_of_identification")
         source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
         if source_of_identification == 'Other Sources' and not source_of_identification_specify:
             self.add_error('source_of_identification_specify', 'This field is required')
 
-        first_phone_number = cleaned_data.get("first_phone_number")
-        first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
-        second_phone_number = cleaned_data.get("second_phone_number")
-        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
-        if first_phone_number != first_phone_number_confirm:
-            msg = "The phone numbers are not matched"
-            self.add_error('first_phone_number_confirm', msg)
-        if second_phone_number != second_phone_number_confirm:
-            msg = "The phone numbers are not matched"
-            self.add_error('second_phone_number_confirm', msg)
-
         main_caregiver = cleaned_data.get("main_caregiver")
         main_caregiver_other = cleaned_data.get("main_caregiver_other")
         if main_caregiver == 'other' and not main_caregiver_other:
             self.add_error('main_caregiver_other', 'This field is required')
+
+        main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
+        main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
+        if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
+            self.add_error('main_caregiver_nationality_other', 'This field is required')
+
 
         id_type = cleaned_data.get("id_type")
         case_number = cleaned_data.get("case_number")
@@ -769,6 +744,33 @@ class MainForm(forms.ModelForm):
             if other_number != other_number_confirm:
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
+
+        have_labour = cleaned_data.get("have_labour")
+        labour_type = cleaned_data.get("labour_type")
+        labour_type_specify = cleaned_data.get("labour_type_specify")
+        labour_hours = cleaned_data.get("labour_hours")
+        labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        if have_labour != 'No':
+            if not labour_type:
+                self.add_error('labour_type', 'This field is required')
+            elif labour_type == 'other_many_other' and not labour_type_specify:
+                self.add_error('labour_type_specify', 'This field is required')
+            if not labour_hours:
+                self.add_error('labour_hours', 'This field is required')
+            if not labour_weekly_income:
+                self.add_error('labour_weekly_income', 'This field is required')
+
+    
+        first_phone_number = cleaned_data.get("first_phone_number")
+        first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
+        if first_phone_number != first_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('first_phone_number_confirm', msg)
+        if second_phone_number != second_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('second_phone_number_confirm', msg)
 
     def save(self, request=None, instance=None):
 
