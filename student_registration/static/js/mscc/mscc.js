@@ -177,127 +177,13 @@ function get_child_data(id)
 function fill_outreach_child_data(data)
 {
     $('#search_loader').addClass('hidden');
-
-    $(data.result).each(function(i, item) {
+    $(data).each(function(i, item) {
         console.log(item);
-        $('#id_child_first_name').val(item.first_name);
-        $('#id_child_father_name').val(item.outreach_caregiver__father_name);
-        $('#id_child_last_name').val(item.outreach_caregiver__last_name);
-        $('#id_child_mother_fullname').val(item.outreach_caregiver__mother_full_name);
-        if (item.date_of_birth){
-            dt_string = item.date_of_birth
-            var dt = new Date(dt_string);
-            $('select#id_child_birthday_year').val(dt.getFullYear())
-            $('select#id_child_birthday_month').val(dt.getMonth())
-            $('select#id_child_birthday_day').val(dt.getDate())
+        {
+            Object.keys(item).forEach(key => {
+                $('#id_'+ key).val(item[key]);
+            });
         }
-        $('select#id_gender').val(item.gender)
-        var nationality_str = item.nationality
-        var nationality_id= get_nationality_id(nationality_str)
-        $('select#id_child_nationality').val(nationality_id)
-
-        $('#id_child_nationality_other').val(item.nationality_other);
-        $('#id_child_address').val(item.outreach_caregiver__address);
-
-        var disability = item.disability
-        if (disability == 'no'){ $('select#id_child_disability').val(1)}
-        else if(disability == 'difficulty_seeing'){ $('select#id_child_disability').val(6)}
-        else if(disability == 'difficulty_interacting_with_others'){ $('select#id_child_disability').val(9)}
-        else if(disability == 'difficulty_speaking'){ $('select#id_child_disability').val(5)}
-        else if(disability == 'intellectual_disability'){ $('select#id_child_disability').val(10)}
-        else if(disability == 'difficulty_hearing'){ $('select#id_child_disability').val(3)}
-        else if(disability == 'learning_difficulties'){ $('select#id_child_disability').val(8)}
-        else if(disability == 'difficulty_walking_or_moving_hands'){ $('select#id_child_disability').val(4)}
-        else if(disability == 'Other'){ $('select#id_child_disability').val(2)}
-
-        $('#id_disability_other').val(item.disability_other);
-        $('#id_child_marital_status').val(Uppercase(item.family_status));
-
-        var main_caregiver_nationality_str = item.outreach_caregiver__caregiver_nationality
-        var main_caregiver_nationality_id= get_nationality_id(main_caregiver_nationality_str)
-        $('select#id_main_caregiver_nationality').val(main_caregiver_nationality_id)
-
-        $('#id_main_caregiver_nationality_other').val(item.outreach_caregiver__main_caregiver_nationality_other);
-        $('select#id_have_labour').val(Uppercase(item.working_status))
-
-        var labour_type=item.work_type
-        if (labour_type == 'manufacturing_producing'){$('select#id_labour_type').val('Manufacturing')}
-        else if ( labour_type == 'garage_mechanics_workshop'){$('select#id_labour_type').val('')}
-        else if ( labour_type == 'construction_site'){$('select#id_labour_type').val('Building')}
-        else if ( labour_type == 'shop_restaurant_bakery_barber'){$('select#id_labour_type').val('Retail / Store')}
-        else if ( labour_type == 'street_connected_work__begging__vending_'){$('select#id_labour_type').val('Begging')}
-        else if ( labour_type == 'agriculture_animal_herding'){$('select#id_labour_type').val('Agriculture')}
-        else if ( labour_type == 'others'){$('select#id_labour_type').val('Other services')}
-
-        $('#id_labour_type_specify').val(item.work_type_other);
-        $('#id_first_phone_number').val(item.outreach_caregiver__primary_phone);
-        $('#id_first_phone_number_confirm').val(item.outreach_caregiver__primary_phone);
-        $('#id_second_phone_number').val(item.outreach_caregiver__secondary_phone);
-        $('#id_second_phone_number_confirm').val(item.outreach_caregiver__secondary_phone);
-
-        var main_caregiver = item.outreach_caregiver__main_caregiver
-        if (main_caregiver == 'الاب'){
-            $('select#id_main_caregiver').val('Father')
-            $('#id_caregiver_first_name').val(item.outreach_caregiver__father_name)
-            $('#id_caregiver_last_name').val(item.outreach_caregiver__last_name)
-            }
-        else{
-            if (main_caregiver == 'الام'){
-                $('select#id_main_caregiver').val('Mother')
-            }
-            else if (main_caregiver == 'اخر'){
-                $('select#id_main_caregiver').val('Other')
-            }
-            $('#id_caregiver_first_name').val(item.outreach_caregiver__caregiver_first_name)
-            $('#id_caregiver_last_name').val(item.outreach_caregiver__caregiver_last_name)
-            }
-
-        $('#id_caregiver_middle_name').val(item.outreach_caregiver__caregiver_father_name)
-        $('#id_caregiver_mother_name').val(item.outreach_caregiver__caregiver_mother_name)
-
-    $('div.child_id').addClass('d-none');
-
-        var id_type = item.outreach_caregiver__id_type
-        if (id_type == 'unhcr_registered'){
-            $('select#id_id_type').val(1)
-            $('div.child_id1').removeClass('d-none');
-            $('#id_case_number').val(item.outreach_caregiver__unhcr_case_number)
-            $('#id_case_number_confirm').val(item.outreach_caregiver__unhcr_case_number)
-            $('#id_parent_individual_case_number').val(item.outreach_caregiver__caregiver_unhcr_id)
-            $('#id_parent_individual_case_number_confirm').val(item.outreach_caregiver__caregiver_unhcr_id)
-            $('#id_individual_case_number').val(item.child_unhcr_number)
-            $('#id_individual_case_number_confirm').val(item.child_unhcr_number)
-            }
-        else if(id_type == 'unhcr_recorded'){
-            $('select#id_id_type').val(2)
-            $('div.child_id2').removeClass('d-none');
-            $('#id_recorded_number').val(item.outreach_caregiver__unhcr_barcode)
-            $('#id_recorded_number_confirm').val(item.outreach_caregiver__unhcr_barcode)
-            }
-        else if( id_type == 'syrian_id'){
-            $('select#id_id_type').val(3)
-            $('div.child_id4').removeClass('d-none');
-            $('#id_parent_syrian_national_number').val(item.outreach_caregiver__caregiver_personal_id)
-            $('#id_parent_syrian_national_number_confirm').val(item.outreach_caregiver__caregiver_personal_id)
-            $('#id_syrian_national_number').val(item.child_personal_id)
-            $('#id_syrian_national_number_confirm').val(item.child_personal_id)
-            }
-        else if( id_type == 'palestinian_id'){
-            $('select#id_id_type').val(4)
-            $('div.child_id5').removeClass('d-none');
-            $('#id_sop_parent_national_number').val(item.outreach_caregiver__caregiver_personal_id)
-            $('#id_sop_parent_national_number_confirm').val(item.outreach_caregiver__caregiver_personal_id)
-            $('#id_sop_national_number').val(item.child_personal_id)
-            $('#id_sop_national_number_confirm').val(item.child_personal_id)
-            }
-        else if( id_type == 'lebanese_id'){
-            $('select#id_id_type').val(5)
-            $('div.child_id3').removeClass('d-none');
-            $('#id_parent_national_number').val(item.outreach_caregiver__caregiver_personal_id)
-            $('#id_parent_national_number_confirm').val(item.outreach_caregiver__caregiver_personal_id)
-            $('#id_national_number').val(item.child_personal_id)
-            $('#id_national_number_confirm').val(item.child_personal_id)
-            }
     });
     $('#search_loader').addClass('hidden');
 }
@@ -418,11 +304,13 @@ function reorganizeForm()
     //  Labour
     var have_labour = $('select#id_have_labour').val();
     if(have_labour != 'No'){
+        $('div#div_id_labour_type').removeClass('d-none');
         $('#labour_details_1').removeClass('d-none');
         $('#labour_details_2').removeClass('d-none');
     }
     else
     {
+        $('div#div_id_labour_type').addClass('d-none');
         $('#labour_details_1').addClass('d-none');
         $('#labour_details_2').addClass('d-none');
         $('#id_labour_type').val('')
