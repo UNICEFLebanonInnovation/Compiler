@@ -795,9 +795,7 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.center = request.user.center
-                instance.type = request
                 instance.save()
-
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
 
