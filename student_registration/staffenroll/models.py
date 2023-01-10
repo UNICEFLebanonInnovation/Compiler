@@ -52,6 +52,9 @@ class Jobs(models.Model):
         ordering = ['id']
         verbose_name_plural = 'Jobs'
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -61,6 +64,9 @@ class Worklist(models.Model):
 
     class Meta:
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -72,6 +78,9 @@ class Subjects(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name_plural = 'Subjects'
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name

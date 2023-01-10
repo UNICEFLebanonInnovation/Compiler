@@ -34,6 +34,9 @@ class Assessment(models.Model):
     class Meta:
         ordering = ['name']
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -47,6 +50,9 @@ class Cycle(models.Model):
         verbose_name = "Program cycle"
         verbose_name_plural = "Program cycles"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -57,6 +63,9 @@ class RSCycle(models.Model):
 
     class Meta:
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -71,6 +80,9 @@ class Site(models.Model):
         verbose_name = "Program site"
         verbose_name_plural = "Program sites"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -82,6 +94,9 @@ class Referral(models.Model):
         ordering = ['name']
         verbose_name = "Referral"
         verbose_name_plural = "Referrals"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -96,6 +111,9 @@ class Disability(models.Model):
         ordering = ['name']
         verbose_name = "Disability"
         verbose_name_plural = "Disabilities"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -115,6 +133,9 @@ class Center(models.Model):
         ordering = ['name']
         verbose_name = "Site / Center"
         verbose_name_plural = "Sites / Centers"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -1486,6 +1507,11 @@ class CLM(TimeStampedModel):
 
     def get_absolute_url(self):
         return '/clm/edit/%d/' % self.pk
+
+    def __str__(self):
+        if self.student:
+            return self.student.__str__()
+        return str(self.id)
 
     def __unicode__(self):
         if self.student:
@@ -3634,6 +3660,9 @@ class SelfPerceptionGrades(models.Model):
     def __unicode__(self):
         return self.enrollment
 
+    def __str__(self):
+        return self.enrollment
+
 
 class Inclusion(TimeStampedModel):
     CURRENT_YEAR = datetime.datetime.now().year
@@ -4317,6 +4346,11 @@ class Inclusion(TimeStampedModel):
     def __unicode__(self):
         if self.student:
             return self.student.__unicode__()
+        return str(self.id)
+
+    def __str__(self):
+        if self.student:
+            return self.student.__str__()
         return str(self.id)
 
     class Meta:
@@ -6072,16 +6106,16 @@ class GeneralQuestionnaire(TimeStampedModel):
         verbose_name=_('Please explain')
     )
 
-def get_absolute_url(self):
-    return '/general_questionnaire/edit/%d/' % self.pk
+    def get_absolute_url(self):
+        return '/general_questionnaire/edit/%d/' % self.pk
 
 
-# def __unicode__(self):
-#     if self.student:
-#         return self.student.__unicode__()
-#     return str(self.id)
+    # def __unicode__(self):
+    #     if self.student:
+    #         return self.student.__unicode__()
+    #     return str(self.id)
 
-class Meta:
-    ordering = ['id']
-    verbose_name = "General Questionnaire"
-    verbose_name_plural = "General Questionnaire"
+    class Meta:
+        ordering = ['id']
+        verbose_name = "General Questionnaire"
+        verbose_name_plural = "General Questionnaire"

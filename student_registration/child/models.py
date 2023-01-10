@@ -409,6 +409,9 @@ class Child(TimeStampedModel):
         verbose_name=_('Please specify')
     )
 
+    def __str__(self):
+        return self.full_name
+
     def __unicode__(self):
         if not self.first_name:
             return 'No name'

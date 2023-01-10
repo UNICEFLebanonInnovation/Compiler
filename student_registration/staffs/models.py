@@ -29,6 +29,9 @@ class Bank(models.Model):
         ordering = ['code']
         verbose_name_plural = "Bank"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -38,6 +41,9 @@ class Certificate(models.Model):
 
     class Meta:
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -49,6 +55,9 @@ class University(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'Universities'
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -331,6 +340,17 @@ class Staffs(models.Model):
         blank=True, null=True,
         verbose_name=_('Picture of the iban')
     )
+
+    def __str__(self):
+        if not self.first_name:
+            return 'No name'
+
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
+
     def __unicode__(self):
         if not self.first_name:
             return 'No name'

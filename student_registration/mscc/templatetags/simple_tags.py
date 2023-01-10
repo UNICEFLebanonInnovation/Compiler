@@ -35,7 +35,6 @@ def get_completion_rate(registry):
     try:
         return int(round(float(nbr_completed)/float(nbr_services), 2) * 100.0)
     except Exception as ex:
-        print(ex.message)
         return 0
 
 

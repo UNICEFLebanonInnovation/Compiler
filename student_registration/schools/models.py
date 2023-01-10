@@ -18,6 +18,9 @@ class Coordinator(models.Model):
         ordering = ['name']
         verbose_name = 'Coordinator'
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
             return self.name
 
@@ -27,6 +30,9 @@ class PublicHolidays(models.Model):
         unique=True,
         verbose_name=_('Public holidays')
     )
+
+    def __str__(self):
+        return self.holiday.strftime("%m/%d/%Y")
 
     def __unicode__(self):
         return self.holiday.strftime("%m/%d/%Y")
@@ -466,6 +472,9 @@ class School(TimeStampedModel):
     #         self.number
     #     )
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -497,6 +506,9 @@ class EducationLevel(models.Model):
         ordering = ['id']
         verbose_name = "ALP Level"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -508,6 +520,9 @@ class ClassLevel(models.Model):
         ordering = ['id']
         verbose_name = "ALP Result"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -517,6 +532,9 @@ class Section(models.Model):
 
     class Meta:
         ordering = ['id']
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -535,6 +553,9 @@ class ClassRoom(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Formal Education Level"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -592,6 +613,9 @@ class CLMRound(models.Model):
         ordering = ['name']
         verbose_name = "CLM Round"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -624,6 +648,9 @@ class PartnerOrganization(models.Model):
     class Meta:
         ordering = ['name']
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -651,6 +678,9 @@ class ALPReferMatrix(models.Model):
         ordering = ['id']
         verbose_name = "ALP Post-test Refer Matrix"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return str(self.id)
 
@@ -662,6 +692,9 @@ class EducationYear(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = "Education Year"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -695,6 +728,9 @@ class ALPAssignmentMatrix(models.Model):
         ordering = ['id']
         verbose_name = "ALP Pre-test Refer Matrix"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return str(self.id)
 
@@ -704,6 +740,9 @@ class EducationalLevel(models.Model):
 
     class Meta:
         ordering = ['id']
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -717,6 +756,9 @@ class Holiday(models.Model):
     class Meta:
         ordering = ['id']
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -729,6 +771,9 @@ class PublicDocument(TimeStampedModel):
 
     class Meta:
         ordering = ['created']
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -2417,6 +2462,9 @@ class Evaluation(TimeStampedModel):
         choices=((x, x) for x in range(0, 50))
     )
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
             return self.school.name
 
@@ -2427,8 +2475,12 @@ class Schl_Subject(models.Model):
         unique=True,
         verbose_name=_('Subject')
     )
+
     class Meta:
         verbose_name_plural = "Subjects"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name

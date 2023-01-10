@@ -27,6 +27,9 @@ class Birth_DocumentType(models.Model):
         verbose_name = "Document Type"
         verbose_name_plural = "Documents Type"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -62,6 +65,9 @@ class Nationality(models.Model):
         ordering = ['id']
         verbose_name_plural = "Nationalities"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -75,6 +81,9 @@ class IDType(models.Model):
         verbose_name = "ID Type"
         verbose_name_plural = 'ID Types'
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -84,6 +93,9 @@ class SpecialNeeds(models.Model):
 
     class Meta:
         verbose_name_plural = 'Special Needs'
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -102,12 +114,18 @@ class SpecialNeedsDt(models.Model):
         verbose_name_plural = 'Details Special Needs '
         verbose_name ='Detail Special Needs'
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
 
 class FinancialSupport(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -119,6 +137,9 @@ class Labour(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Labour"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -288,6 +309,16 @@ class Person(TimeStampedModel):
     number_part2 = models.CharField(max_length=45, blank=True, null=True)
     std_phone = models.CharField(max_length=74, blank=True, null=True)
     recordnumber = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Identity record number'))
+
+    def __str__(self):
+        if not self.first_name:
+            return 'No name'
+
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
 
     def __unicode__(self):
         if not self.first_name:
