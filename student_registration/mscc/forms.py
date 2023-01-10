@@ -41,12 +41,12 @@ class MainForm(forms.ModelForm):
     YEARS = list(((str(x), x) for x in range(Child.CURRENT_YEAR - 20, Child.CURRENT_YEAR )))
     YEARS.insert(0, ('', '---------'))
 
-    center = forms.ModelChoiceField(
-        queryset=Center.objects.all(), widget=forms.Select,
-        label=_('Center'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-    )
+    # center = forms.ModelChoiceField(
+    #     queryset=Center.objects.all(), widget=forms.Select,
+    #     label=_('Center'),
+    #     empty_label='-------',
+    #     required=True, to_field_name='id',
+    # )
     child_first_name = forms.CharField(
         label=_("Child\'s First Name"),
         widget=forms.TextInput, required=True
@@ -410,13 +410,13 @@ class MainForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Div(
-                Div(
-                    Div('center', css_class='col-md-6'),
-                    css_class='row card-body'
-                ),
-                css_id='step-1'
-            ),
+            # Div(
+            #     Div(
+            #         Div('center', css_class='col-md-6'),
+            #         css_class='row card-body'
+            #     ),
+            #     css_id='step-1'
+            # ),
             Div(
                 Div(
                     Div('child_first_name', css_class='col-md-4'),
@@ -461,7 +461,7 @@ class MainForm(forms.ModelForm):
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
-                css_id='step-2',
+                css_id='step-1',
             ),
             Div(
                 Div(
@@ -565,7 +565,7 @@ class MainForm(forms.ModelForm):
                     Div('other_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id6',
                 ),
-                css_id='step-3',
+                css_id='step-2',
             ),
             Div(
                 Div(
@@ -588,7 +588,7 @@ class MainForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 ),
-                css_id='step-4',
+                css_id='step-3',
             ),
         )
 
@@ -620,7 +620,6 @@ class MainForm(forms.ModelForm):
         if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
             self.add_error('main_caregiver_nationality_other', 'This field is required')
 
-
         id_type = cleaned_data.get("id_type")
         case_number = cleaned_data.get("case_number")
         case_number_confirm = cleaned_data.get("case_number_confirm")
@@ -647,6 +646,7 @@ class MainForm(forms.ModelForm):
 
         recorded_number = cleaned_data.get("recorded_number")
         recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
+
         # UNHCR Recorded
         if id_type and id_type.id == 2:
             if not recorded_number:
@@ -686,6 +686,7 @@ class MainForm(forms.ModelForm):
         sop_parent_national_number_confirm = cleaned_data.get("sop_parent_national_number_confirm")
         sop_national_number = cleaned_data.get("sop_national_number")
         sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
+
         # Palestinian national ID
         if id_type and id_type.id == 4:
             if not sop_parent_national_number:
@@ -702,11 +703,11 @@ class MainForm(forms.ModelForm):
                 msg = "The national numbers are not matched"
                 self.add_error('sop_national_number_confirm', msg)
 
-
         parent_national_number = cleaned_data.get("parent_national_number")
         parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
         national_number = cleaned_data.get("national_number")
         national_number_confirm = cleaned_data.get("national_number_confirm")
+
         # Lebanese national ID
         if id_type and id_type.id == 5:
             if parent_national_number and not len(parent_national_number) == 12:
@@ -729,6 +730,7 @@ class MainForm(forms.ModelForm):
         parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
+
         # Other nationality
         if id_type and id_type.id == 6:
             if not parent_other_number:
@@ -750,6 +752,7 @@ class MainForm(forms.ModelForm):
         labour_type_specify = cleaned_data.get("labour_type_specify")
         labour_hours = cleaned_data.get("labour_hours")
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
+
         if have_labour != 'No':
             if not labour_type:
                 self.add_error('labour_type', 'This field is required')
@@ -760,11 +763,11 @@ class MainForm(forms.ModelForm):
             if not labour_weekly_income:
                 self.add_error('labour_weekly_income', 'This field is required')
 
-    
         first_phone_number = cleaned_data.get("first_phone_number")
         first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
         second_phone_number = cleaned_data.get("second_phone_number")
         second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
+
         if first_phone_number != first_phone_number_confirm:
             msg = "The phone numbers are not matched"
             self.add_error('first_phone_number_confirm', msg)
@@ -791,7 +794,10 @@ class MainForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
+                instance.center = request.user.center
+                instance.type = request
                 instance.save()
+
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
 
@@ -804,7 +810,7 @@ class MainForm(forms.ModelForm):
     class Meta:
         model = Registration
         fields = (
-            'center',
+            # 'center',
             'child_first_name',
             'child_father_name',
             'child_last_name',

@@ -52,6 +52,7 @@ class ProfileView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         instance = Registration.objects.get(id=self.kwargs['pk'])
+        generate_services(instance.child.age, instance)
 
         return {
             'instance': instance,
@@ -158,8 +159,8 @@ class MainListView(LoginRequiredMixin,
     filterset_class = MainFilter
 
     def get_queryset(self):
-        return Registration.objects.all().order_by('-id')
-        # return Registration.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        # return Registration.objects.all().order_by('-id')
+        return Registration.objects.filter(center=self.request.user.center_id).order_by('-id')
 
 
 class MainViewSet(mixins.RetrieveModelMixin,

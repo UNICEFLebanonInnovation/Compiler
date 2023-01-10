@@ -75,7 +75,7 @@ class MainSerializer(serializers.ModelSerializer):
     child_age = serializers.CharField(source='child.age', read_only=True)
     child_nationality = serializers.CharField(source='child.nationality')
     child_nationality_id = serializers.CharField(source='child.nationality.id', read_only=True)
-    child_nationality_other = serializers.CharField(source='child.nationality_other')
+    child_nationality_other = serializers.CharField(source='child.nationality_other', required=False)
     child_address = serializers.CharField(source='child.address', required=False)
     child_disability = serializers.CharField(source='child.disability', required=False)
     child_disability_id = serializers.CharField(source='child.disability.id', read_only=True)
@@ -172,7 +172,7 @@ class MainSerializer(serializers.ModelSerializer):
             'modified_by_name',
             'created',
             'modified',
-            'center',
+            # 'center',
             'child_first_name',
             'child_father_name',
             'child_last_name',
