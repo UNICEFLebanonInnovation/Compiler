@@ -202,6 +202,11 @@ class Registration(TimeStampedModel):
     def get_absolute_url(self):
         return '/MSCC/Child-Profile/%d/' % self.pk
 
+    def __str__(self):
+        if self.child:
+            return self.child.__str__()
+        return str(self.id)
+
     def __unicode__(self):
         if self.child:
             return self.child.__unicode__()
@@ -240,6 +245,9 @@ class ProvidedServices(models.Model):
         verbose_name=_('Completion date')
     )
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         ordering = ['id']
         verbose_name = "Provided Service"
@@ -269,6 +277,9 @@ class Packages(models.Model):
     )
     required = models.BooleanField(blank=True, default=False)
     age = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         ordering = ['id']

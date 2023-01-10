@@ -409,6 +409,16 @@ class Child(TimeStampedModel):
         verbose_name=_('Please specify')
     )
 
+    def __str__(self):
+        if not self.first_name:
+            return 'No name'
+
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
+
     def __unicode__(self):
         if not self.first_name:
             return 'No name'

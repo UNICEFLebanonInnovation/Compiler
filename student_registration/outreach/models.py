@@ -17,6 +17,9 @@ class OutreachYear(models.Model):
         ordering = ['name']
         verbose_name = "Outreach Year"
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -61,6 +64,9 @@ class HouseHold(models.Model):
 
     class Meta:
         ordering = ['id']
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -299,6 +305,9 @@ class OutreachCaregiver(models.Model):
         verbose_name = "Outreach Caregiver"
         verbose_name_plural = "Outreach Caregivers"
 
+    def __str__(self):
+        return self.father_name
+
     def __unicode__(self):
         return self.father_name
 
@@ -350,6 +359,9 @@ class OutreachChild(models.Model):
         ordering = ['id']
         verbose_name = "Outreach Child"
         verbose_name_plural = "Outreach Children"
+
+    def __str__(self):
+        return self.first_name
 
     def __unicode__(self):
         return self.first_name

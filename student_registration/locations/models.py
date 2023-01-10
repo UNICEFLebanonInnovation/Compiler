@@ -15,6 +15,9 @@ class LocationType(models.Model):
         ordering = ['name']
         verbose_name = 'Location Type'
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -28,6 +31,9 @@ class Location(MPTTModel):
     longitude = models.FloatField(null=True, blank=True)
     p_code = models.CharField(max_length=32, blank=True, null=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         # if self.type:
@@ -43,6 +49,7 @@ class Location(MPTTModel):
 
 
 class Center(models.Model):
+
     name = models.CharField(max_length=100)
     governorate = models.ForeignKey(
         Location,
@@ -85,6 +92,9 @@ class Center(models.Model):
         ordering = ['name']
         verbose_name = "Center"
         verbose_name_plural = "Centers"
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
