@@ -246,52 +246,9 @@ def mscc_child_search(request):
 def mscc_outreach_child(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
-    id = body['id']
-    result = OutreachChild.objects.filter(
-        id= id
-    ).values('id',
-             'first_name',
-             'outreach_caregiver__father_name',
-             'outreach_caregiver__last_name',
-             'outreach_caregiver__mother_full_name',
-             'gender',
-             'nationality',
-             'date_of_birth',
-             'birthday_year',
-             'birthday_month',
-             'birthday_day',
-             'nationality_other',
-             'outreach_caregiver__address',
-             'disability',
-             'disability_other',
-             'family_status',
-             'outreach_caregiver__caregiver_nationality',
-             'outreach_caregiver__caregiver_nationality_other',
-             'working_status',
-             'work_type',
-             'work_type_other',
-             'outreach_caregiver__primary_phone',
-             'outreach_caregiver__primary_phone',
-             'outreach_caregiver__secondary_phone',
-             'outreach_caregiver__secondary_phone',
-             'outreach_caregiver__main_caregiver',
-             'outreach_caregiver__caregiver_first_name',
-             'outreach_caregiver__father_name',
-             'outreach_caregiver__last_name',
-             'outreach_caregiver__caregiver_mother_name',
-             'outreach_caregiver__id_type',
-             'outreach_caregiver__unhcr_case_number',
-             'outreach_caregiver__caregiver_unhcr_id',
-             'child_unhcr_number',
-             'outreach_caregiver__unhcr_barcode',
-             'outreach_caregiver__caregiver_personal_id',
-             'child_personal_id'
-             ).first()
-
-    if result != '':
-        return JsonResponse({'result': result})
-
-    return JsonResponse({'result': []})
+    outreach_id = body['id']
+    result = get_outreach_child(outreach_id)
+    return JsonResponse(result)
 
 
 class ReferralFormView(LoginRequiredMixin,

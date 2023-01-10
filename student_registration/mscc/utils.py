@@ -34,21 +34,18 @@ def update_service(service_name, registry_id, service_id):
 
 
 
-def get_outreach_child(initial,outreach_id,center_id):
+def get_outreach_child(outreach_id):
+    initial = {}
     from datetime import datetime
     instance = OutreachChild.objects.get(id=outreach_id)
-    initial['center'] = center_id
     initial['child_first_name'] = instance.first_name
     initial['child_father_name'] = instance.outreach_caregiver.father_name
     initial['child_last_name'] = instance.outreach_caregiver.last_name
     initial['child_mother_fullname'] = instance.outreach_caregiver.mother_full_name
-    if instance.date_of_birth :
-        dt_string = instance.date_of_birth
-        dt = datetime.strptime(dt_string, '%Y-%m-%d')
-        initial['child_birthday_year'] = dt.year
-        initial['child_birthday_month'] = dt.month
-        initial['child_birthday_day'] = dt.day
-    initial['gender'] = instance.gender
+    initial['child_birthday_year'] = instance.birthday_year
+    initial['child_birthday_month'] = instance.birthday_month
+    initial['child_birthday_day'] = instance.birthday_day
+    initial['child_gender'] = instance.gender
     nationality = instance.nationality
     if nationality == 'syrian':
         initial['child_nationality'] = 1
@@ -118,6 +115,8 @@ def get_outreach_child(initial,outreach_id,center_id):
         initial['labour_type'] = 'Agriculture'
     elif labour_type == 'others':
         initial['labour_type'] = 'Other services'
+    else:
+        initial['labour_type'] = ''
 
     initial['labour_type_specify'] = instance.work_type_other
     initial['first_phone_number'] = instance.outreach_caregiver.primary_phone

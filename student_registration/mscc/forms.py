@@ -128,9 +128,11 @@ class MainForm(forms.ModelForm):
     )
     child_children_number = forms.IntegerField(
         label=_('If yes, How many?'),
-        widget=forms.TextInput, required=False,
-        initial=0
-    )
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0,
+        min_value=0
+    ) 
     source_of_identification = forms.ChoiceField(
         label=_("Source of referral of the child to MSCC"),
         widget=forms.Select,
@@ -612,7 +614,7 @@ class MainForm(forms.ModelForm):
 
         main_caregiver = cleaned_data.get("main_caregiver")
         main_caregiver_other = cleaned_data.get("main_caregiver_other")
-        if main_caregiver == 'other' and not main_caregiver_other:
+        if main_caregiver == 'Other' and not main_caregiver_other:
             self.add_error('main_caregiver_other', 'This field is required')
 
         main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
@@ -756,7 +758,7 @@ class MainForm(forms.ModelForm):
         if have_labour != 'No':
             if not labour_type:
                 self.add_error('labour_type', 'This field is required')
-            elif labour_type == 'other_many_other' and not labour_type_specify:
+            elif labour_type == 'Other services' and not labour_type_specify:
                 self.add_error('labour_type_specify', 'This field is required')
             if not labour_hours:
                 self.add_error('labour_hours', 'This field is required')
@@ -795,9 +797,7 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.center = request.user.center
-                instance.type = request
                 instance.save()
-
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
 
