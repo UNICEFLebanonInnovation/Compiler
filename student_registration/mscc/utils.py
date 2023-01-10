@@ -17,7 +17,6 @@ def generate_services(child_age, registry):
     from .models import ProvidedServices, Packages
 
     packages = Packages.objects.filter(type=registry.type, age=child_age)
-    print(packages)
 
     for package in packages.all():
         instance, created = ProvidedServices.objects.get_or_create(name=package.name,
