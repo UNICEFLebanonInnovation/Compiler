@@ -410,7 +410,14 @@ class Child(TimeStampedModel):
     )
 
     def __str__(self):
-        return self.full_name
+        if not self.first_name:
+            return 'No name'
+
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
 
     def __unicode__(self):
         if not self.first_name:
