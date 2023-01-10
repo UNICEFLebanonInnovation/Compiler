@@ -8,6 +8,52 @@
 
 {% block content %}
 
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                            {{ request.user.username }}
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="/">
+                                                        <i aria-hidden="true" class="fa fa-home"></i>
+                                                    </a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                      <a href="/">List</a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.governorate }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.caza }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.name }} - {{ request.user.center.type }}
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
+
+                        </div>
+</div>
+
+
                     <div class="row">
                         <div class="col-md-6 col-lg-3">
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
@@ -142,7 +188,6 @@
                               <!--</div>-->
                           <!--</div>-->
                     </div>
-
 
 <div class="row">
     <div class="col-lg-12">

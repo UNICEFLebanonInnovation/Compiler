@@ -6,8 +6,8 @@
 <div class="row staff-profile">
 
   <!-- Education -->
+{% service_data 'EducationAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
-  {% service_data 'EducationAssessment' instance as result %}
 
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
@@ -208,6 +208,8 @@
                             </div>
 
   <!--RS-->
+{% get_service instance 'RS' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationRSService' instance as result %}
                                 <div class="mb-3 card">
@@ -313,8 +315,11 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 
   <!--Inclusion-->
+{% get_service instance 'Inclusion' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'InclusionService' instance as result %}
                                 <div class="mb-3 card">
@@ -378,8 +383,11 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 
   <!--Digital component-->
+{% get_service instance 'Digital component' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'DigitalService' instance as result %}
                                 <div class="mb-3 card">
@@ -443,8 +451,11 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 
   <!--Health and Nutrition-->
+{% get_service instance 'Health & Nutrition' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'HealthNutritionService' instance as result %}
                                 <div class="mb-3 card">
@@ -528,7 +539,7 @@
                                                                           </div>
                                                                       </div>
                                                               {% elif instance.child.age >= 3 and instance.child.age <= 5 %}
-                                                                   <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                   <div class="vertical-timeline-item vertical-timeline-element">
                                                                         <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                             <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
                                                                                 <p> {{ result.eating_minimum_meals }} </p>
@@ -542,7 +553,7 @@
                                                                           </div>
                                                                       </div>
                                                                   </div>
-                                                                  <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                  <div class="vertical-timeline-item vertical-timeline-element">
                                                                         <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                             <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">positive parenting and dealing with difficult children without the use of harsh punishment?</h4>
                                                                                 <p> {{ result.positive_parenting }} </p>
@@ -557,7 +568,7 @@
                                                                       </div>
                                                                   </div>
                                                               {% else %}
-                                                                 <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                       <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                           <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the child eating 3 minimum meals per day?</h4>
                                                                               <p> {{ result.eating_minimum_meals }} </p>
@@ -571,7 +582,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="vertical-timeline-item vertical-timeline-element">-->
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
                                                                       <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                           <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">positive parenting and dealing with difficult children without the use of harsh punishment?</h4>
                                                                               <p> {{ result.positive_parenting }} </p>
@@ -592,8 +603,11 @@
                                     </div>
                                 </div>
                             </div>
+{% endif %}
 
   <!--Adolescents kit-->
+{% get_service instance 'Adolescents kit' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'YouthKitService' instance as result %}
                                 <div class="mb-3 card">
@@ -811,8 +825,11 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 
   <!--PSS-->
+{% get_service instance 'PSS' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'PSSService' instance as result %}
                                 <div class="mb-3 card">
@@ -964,8 +981,11 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 
-  <!--Follow-up-->
+  <!--Follow-up / Caregivers Package	 -->
+{% get_service instance 'Caregivers Package' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'FollowUpService' instance as result %}
                                 <div class="mb-3 card">
@@ -1148,6 +1168,7 @@
                                     </div>
                                 </div>
                             </div>
+{% endif %}
 
   <!--Referral-->
 <div class="col-md-12 col-lg-6 col-xl-4">
@@ -1184,18 +1205,12 @@
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
+                                                                {% get_service instance 'CBECE' as result %}
+                                                                {% if result %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to formal education (Grade 1)</h4>
-                                                                            <p>{{ result.referred_formal_education }}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                {% if result.referred_formal_education == 'Yes' %}
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Name of the School referred to</h4>
-                                                                            <p>{{ result.referred_school }}</p>
+                                                                            <p>{{ result.referred_formal_education }} - {{ result.referred_school }}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1219,7 +1234,6 @@
                                                                   </div>
                                                               </div>
 
-
                                                               <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Recommended learning path/outcome</h4>
@@ -1242,8 +1256,10 @@
                             </div>
 
   <!--Recreational-->
+{% get_service instance 'Recreational' as result %}
+  {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
-  {% service_data 'EducationRSService' instance as result %}
+  {% service_data 'Recreational' instance as result %}
                                 <div class="mb-3 card">
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
@@ -1270,7 +1286,7 @@
                                             <!--</li>-->
                                         <!--</ul>-->
                                         <div class="tab-content">
-                                            <div class="tab-pane active show" id="tab-animated-22" role="tabpanel">
+                                            <div class="tab-pane active show" id="tab-animated-23" role="tabpanel">
                                                 <div class="scroll-area-sm" style="height: 222px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
@@ -1300,5 +1316,6 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 
 </div>

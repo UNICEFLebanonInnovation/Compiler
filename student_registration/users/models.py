@@ -7,7 +7,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from student_registration.schools.models import PartnerOrganization,EducationYear, School
-from student_registration.locations.models import Location
+from student_registration.locations.models import Location, Center
 
 
 @python_2_unicode_compatible
@@ -37,6 +37,11 @@ class User(AbstractUser):
         blank=True, null=True,
         related_name='+',
     )
+    center = models.ForeignKey(
+        Center,
+        blank=True, null=True,
+        related_name='+',
+    )
     locations = models.ManyToManyField(Location, blank=True)
     schools = models.ManyToManyField(School, blank=True)
     regions = models.ManyToManyField(Location, blank=True, related_name='regions')
@@ -46,6 +51,7 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
+
     def __str__(self):
         return self.username
 

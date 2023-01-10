@@ -53,9 +53,18 @@
                                                       <a href="/MSCC/Child-Profile/{{ form.instance.id }}">Child Profile</a>
                                                     {% endif %}
                                                 </li>
-                                                <!--<li class="active breadcrumb-item" aria-current="page">-->
-                                                    <!--Child Profile and Provided Services-->
-                                                <!--</li>-->
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.governorate }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.caza }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                    {{ request.user.center.name }} - {{ request.user.center.type }}
+                                                </li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -66,31 +75,32 @@
                         </div>
 </div>
 
-        <!--{{ form.errors }}-->
+{{ form.errors }}
+
 <div class="row">
 
 <div class="main-card mb-3 card {% if form.instance.id == None %}col-md-9{% else %}col-md-12{% endif %}">
                                 <div class="card-body">
                                     <div id="smartwizard3" class="forms-wizard-vertical">
                                         <ul class="forms-wizard">
+                                            <!--<li>-->
+                                                <!--<a href="#step-1">-->
+                                                    <!--<em>1</em><span>General Information</span>-->
+                                                <!--</a>-->
+                                            <!--</li>-->
                                             <li>
                                                 <a href="#step-1">
-                                                    <em>1</em><span>General Information</span>
+                                                    <em>1</em><span>Child Information</span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#step-2">
-                                                    <em>2</em><span>Child Information</span>
+                                                    <em>2</em><span>Parent/Caregiver Information</span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#step-3">
-                                                    <em>3</em><span>Parent/Caregiver Information</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#step-4">
-                                                    <em>4</em><span>Work Status</span>
+                                                    <em>3</em><span>Work Status</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -168,19 +178,5 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=23"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
-
-    <script>
-      var url = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
-
-
-      $("#id_governorate").change(function () {
-          load_districts(url);
-          load_cadasters(url_cadasters);
-      });
-      $("#id_district").change(function () {
-          load_cadasters(url_cadasters);
-      });
-    </script>
 
 {% endblock %}

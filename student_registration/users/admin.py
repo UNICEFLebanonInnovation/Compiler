@@ -51,6 +51,7 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         'groups',
         'school',
         'location',
+        'center',
         'partner',
         'is_active',
     )
@@ -91,7 +92,7 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools', 'regions')})
+        (None, {'fields': ('partner', 'center', 'location', 'school', 'locations', 'schools', 'regions')})
     )
 
     add_fieldsets = (
@@ -100,7 +101,7 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools', 'regions')})
+        (None, {'fields': ('partner', 'center', 'location', 'school', 'locations', 'schools', 'regions')})
     )
 
     def activate(self, request, queryset):

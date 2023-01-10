@@ -200,7 +200,7 @@ class Registration(TimeStampedModel):
         return 0
 
     def get_absolute_url(self):
-        return '/mscc/edit-child/%d/' % self.pk
+        return '/MSCC/Child-Profile/%d/' % self.pk
 
     def __unicode__(self):
         if self.child:
