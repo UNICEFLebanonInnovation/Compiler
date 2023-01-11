@@ -132,7 +132,7 @@ class MainForm(forms.ModelForm):
         required=False,
         initial=0,
         min_value=0
-    ) 
+    )
     source_of_identification = forms.ChoiceField(
         label=_("Source of referral of the child to MSCC"),
         widget=forms.Select,
@@ -394,6 +394,7 @@ class MainForm(forms.ModelForm):
     )
     child_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    child_outreach_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     type = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -797,6 +798,8 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.center = request.user.center
+                if request.POST.get("child_outreach_id"):
+                    instance.child_outreach_id = request.POST.get("child_outreach_id")
                 instance.save()
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
@@ -811,6 +814,7 @@ class MainForm(forms.ModelForm):
         model = Registration
         fields = (
             # 'center',
+            'child_outreach_id',
             'child_first_name',
             'child_father_name',
             'child_last_name',

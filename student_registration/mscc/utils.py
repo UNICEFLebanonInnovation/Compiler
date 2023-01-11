@@ -36,8 +36,8 @@ def update_service(service_name, registry_id, service_id):
 
 def get_outreach_child(outreach_id):
     initial = {}
-    from datetime import datetime
     instance = OutreachChild.objects.get(id=outreach_id)
+    initial['child_outreach_id'] = instance.id
     initial['child_first_name'] = instance.first_name
     initial['child_father_name'] = instance.outreach_caregiver.father_name
     initial['child_last_name'] = instance.outreach_caregiver.last_name
