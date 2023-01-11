@@ -31,12 +31,15 @@ class MainTable(CommonTable):
     status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
                                           template_name='django_tables2/mscc/status_column.html')
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
-                                          template_name='django_tables2/mscc/type_column.html')
+                                        template_name='django_tables2/mscc/type_column.html')
+    outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
+                                       template_name='django_tables2/mscc/outreached_column.html')
 
-    center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
-    governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
-    caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
-    cadaster = tables.Column(verbose_name=_('Cadaster'), accessor='center.cadaster')
+
+    # center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
+    # governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
+    # caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
+    # cadaster = tables.Column(verbose_name=_('Cadaster'), accessor='center.cadaster')
 
     class Meta:
         model = Registration
@@ -44,6 +47,7 @@ class MainTable(CommonTable):
             'action_column',
             'status_column',
             'type_column',
+            'outreached',
             'child.number',
             'child.first_name',
             'child.father_name',
@@ -53,9 +57,9 @@ class MainTable(CommonTable):
             'child_age',
             'child_birthday',
             'child.nationality',
-            'center',
-            'center_type',
-            'governorate',
-            'caza',
-            'cadaster',
+            # 'center',
+            # 'center_type',
+            # 'governorate',
+            # 'caza',
+            # 'cadaster',
         )

@@ -52,13 +52,13 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', 'input#id_child_first_name, input#id_child_father_name, input#id_child_last_name', function () {
-        mscc_child_search();
-    });
+//    $(document).on('change', 'input#id_child_first_name, input#id_child_father_name, input#id_child_last_name', function () {
+//        outreach_child_search();
+//    });
 
     $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
         $('#search_loader').removeClass('hidden');
-        mscc_child_search();
+        outreach_child_search();
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
@@ -79,12 +79,28 @@ $(document).ready(function() {
         checkArabicOnly($(this));
     });
 
+    $(document).on('click', '#next-page', function(e){
+        $(this).removeClass('error-field');
+        var error_fields = false;
+        $('input, select').filter('[required]:visible').each(function(){
+            e.preventDefault();
+            if($(this).val() == null || $(this).val() == ''){
+                $(this).addClass('error-field');
+                error_fields = true;
+            }
+        });
+        if(!error_fields){
+            $('#next-btn22').trigger('click');
+            $(this).removeClass('error-field');
+         }
+    });
+
 
 });
 
-function mscc_child_search() {
+function outreach_child_search() {
 
-    if (isAddPage() ) {
+    if (isAddPage()) {
 
         var birthday_year = $('#id_child_birthday_year').val();
         var birthday_month = $('#id_child_birthday_month').val();
@@ -93,35 +109,28 @@ function mscc_child_search() {
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
 
-        if (birthday_year!='')
-        {
-            var data = {
-                birthday_year: birthday_year,
-                birthday_month: birthday_month,
-                birthday_day: birthday_day,
-                first_name: first_name,
-                father_name: father_name,
-                last_name: last_name,
-            };
-            requestHeaders = getHeader();
-            requestHeaders["content-type"] = 'application/json';
-            $.ajax({
-                type: "POST",
-                url: '/MSCC/mscc-child-search/',
-                data: JSON.stringify(data),
-                cache: false,
-                async: true,
-                headers: requestHeaders,
-                dataType: 'json',
-                success: function (response) {
+        var data = {
+            birthday_year: birthday_year,
+            birthday_month: birthday_month,
+            birthday_day: birthday_day,
+            first_name: first_name,
+            father_name: father_name,
+            last_name: last_name,
+        };
 
-                    append_new_result(response);
-                },
-                error: function (response) {
-                    console.log(response);
-                }
-            });
-        }
+        $.ajax({
+            url: '/MSCC/Outreach-Child-Search/',
+            dataType: "json",
+            data: data,
+            cache: false,
+            async: true,
+            success: function (response) {
+                append_new_result(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
     }
 }
 
@@ -147,25 +156,17 @@ function append_new_result(data)
     });
 }
 
-function get_child_data(id)
+function get_child_data(outreach_id)
 {
     $('#search_loader').removeClass('hidden');
 
-    var data = {
-        id: id,
-    };
-    requestHeaders = getHeader();
-    requestHeaders["content-type"] = 'application/json';
     $.ajax({
-        type: "POST",
-        url: '/MSCC/mscc-outreach-child/',
-        data: JSON.stringify(data),
+        url: '/MSCC/Outreach-Child/',
+        data: { outreach_id: outreach_id},
         cache: false,
         async: true,
-        headers: requestHeaders,
         dataType: 'json',
         success: function (response) {
-            console.log(response);
             fill_outreach_child_data(response);
         },
         error: function (response) {
@@ -188,11 +189,13 @@ function fill_outreach_child_data(data)
     $('#search_loader').addClass('hidden');
 }
 
+// todo check this function
 function Uppercase(str){
      var str_upper = str.charAt(0).toUpperCase() + str.slice(1);
      return str_upper
 }
 
+// todo check this function
 function get_nationality_id(nationality_str){
         if (nationality_str == 'syrian'){ return 1; }
         else if(nationality_str == 'lebanese'){ return 5;}
@@ -204,8 +207,13 @@ function get_nationality_id(nationality_str){
 
 function isAddPage()
 {
-    var url_loc = window.location.toString();
-    return (url_loc.toLowerCase().search(/^.*\/MSCC\/child-add(\/)?(\?.*)?$/i)>=0);
+    if( $(document).find('#outreach-result').length == 1) {
+        return true;
+    }
+    return false;
+
+//    var url_loc = window.location.toString();
+//    return (url_loc.toLowerCase().search(/^.*\/MSCC\/child-add(\/)?(\?.*)?$/i)>=0);
 }
 
 function reorganizeForm()

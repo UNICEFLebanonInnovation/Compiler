@@ -81,15 +81,15 @@ class MainAddView(LoginRequiredMixin,
         data = {
             'type': self.request.GET.get('type', ''),
         }
-        if self.request.GET.get('registration_id'):
-            instance = Registration.objects.get(id=self.request.GET.get('registration_id'))
-            data = MainSerializer(instance).data
-            data['child_nationality'] = data['child_nationality_id']
-            data['learning_result'] = ''
-
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
-            data = ChildSerializer(instance).data
+        # if self.request.GET.get('registration_id'):
+        #     instance = Registration.objects.get(id=self.request.GET.get('registration_id'))
+        #     data = MainSerializer(instance).data
+        #     data['child_nationality'] = data['child_nationality_id']
+        #     data['learning_result'] = ''
+        #
+        # if self.request.GET.get('child_id'):
+        #     instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+        #     data = ChildSerializer(instance).data
 
         initial = data
 
@@ -193,20 +193,20 @@ class MainViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-def mscc_child_search(request):
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    birthday_year = body['birthday_year']
-    birthday_month = body['birthday_month']
-    birthday_day = body['birthday_day']
-    first_name = body['first_name']
-    father_name = body['father_name']
-    last_name = body['last_name']
+def outreach_child_search(request):
+
+    birthday_year = request.GET.get('birthday_year')
+    birthday_month = request.GET.get('birthday_month')
+    birthday_day = request.GET.get('birthday_day')
+    first_name = request.GET.get('first_name')
+    father_name = request.GET.get('father_name')
+    last_name = request.GET.get('last_name')
 
     form_str = '{} {} {}'.format(first_name, father_name, last_name)
     filtered_results = OutreachChild.objects.filter(
         birthday_year=birthday_year
     )
+
     if birthday_month:
         filtered_results = filtered_results.filter(
             birthday_month=birthday_month
@@ -215,6 +215,7 @@ def mscc_child_search(request):
         filtered_results = filtered_results.filter(
             birthday_day=birthday_day
         )
+
     filtered_results = filtered_results.values(
         'id',
         'first_name',
@@ -243,10 +244,9 @@ def mscc_child_search(request):
     return JsonResponse({'result': []})
 
 
-def mscc_outreach_child(request):
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    outreach_id = body['id']
+def outreach_child(request):
+
+    outreach_id = request.GET.get('outreach_id')
     result = get_outreach_child(outreach_id)
     return JsonResponse(result)
 

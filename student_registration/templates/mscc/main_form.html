@@ -118,14 +118,15 @@
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
 
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
+                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary" style="display: none;">Next</button>
+                                        <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
                                         <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
                                     </div>
                                 </div>
                             </div>
 {% if form.instance.id == None %}
 
-<div class="col-md-3">
+<div class="col-md-3" id="outreach-result">
 <div class="main-card mb-3 card">
       <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Outreach filter result</div>
                                                   <div id="search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
@@ -176,7 +177,7 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=23"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=27"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
 
 {% endblock %}
