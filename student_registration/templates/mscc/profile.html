@@ -46,6 +46,19 @@
                                 </div>
                             </div>
                         <div class="page-title-actions">
+
+                                {% if instance.child_outreach %}
+                                <button type="button" data-toggle="tooltip" title="" data-placement="bottom" class="btn-shadow mr-3 btn btn-success" data-original-title="">
+                                    <i class="lnr-thumbs-up btn-icon-wrapper"> </i>
+                                </button>
+                                {% else %}
+                                <button type="button" data-toggle="tooltip" title="" data-placement="bottom" class="btn-shadow mr-3 btn btn-warning" data-original-title="">
+                                    <i class="lnr-thumbs-down btn-icon-wrapper"> </i>
+                                </button>
+
+                                {% endif %}
+
+
                                 <button type="button" data-toggle="tooltip" title="" data-placement="bottom" class="btn-shadow mr-3 btn btn-primary" data-original-title="">
                                     {{ instance.type }}
                                 </button>

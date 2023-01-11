@@ -132,14 +132,14 @@ urlpatterns = [
         name='service_follow_up_edit'
     ),
     url(
-        'mscc-child-search/$',
-        views.mscc_child_search,
-        name='mscc_child_search'
+        'Outreach-Child-Search/$',
+        views.outreach_child_search,
+        name='outreach_child_search'
     ),
     url(
-        'mscc-outreach-child/$',
-        views.mscc_outreach_child,
-        name='mscc_outreach_child'
+        'Outreach-Child/$',
+        views.outreach_child,
+        name='outreach_child'
     ),
     url(
         regex=r'^Referral-Add/(?P<registry>[\w.@+-]+)/$',

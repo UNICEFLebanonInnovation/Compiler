@@ -4,7 +4,7 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
-from .models import HouseHold, Child, OutreachYear
+from .models import HouseHold, Child, OutreachYear, OutreachChild
 
 
 class HouseHoldResource(resources.ModelResource):
@@ -73,3 +73,4 @@ class ChildAdmin(ImportExportModelAdmin):
 # admin.site.register(HouseHold, HouseHoldAdmin)
 # admin.site.register(Child, ChildAdmin)
 # admin.site.register(OutreachYear)
+admin.site.register(OutreachChild)
