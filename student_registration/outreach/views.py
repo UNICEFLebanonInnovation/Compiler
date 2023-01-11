@@ -71,19 +71,19 @@ def outreach_import_data(request):
         record_value(caregiver, "submission_status", record, "_status")
         caregiver.save()
         # caregiver_id = caregiver.id
-        if record.has_key("DC"):
+        if "DC" in record:
             for student in record["DC"]:
                 st = OutreachChild()
                 st.outreach_caregiver = caregiver
                 record_value(st, "first_name", student, "DC/first_name")
                 record_value(st, "date_of_birth", student, "DC/date_of_birth")
-                if student.has_key("DC/date_of_birth"):
+                if "DC/date_of_birth" in student:
                     dt_string = student["DC/date_of_birth"]
                     dt = datetime.datetime.strptime(dt_string, '%Y-%m-%d')
                     st.birthday_year = dt.year
                     st.birthday_month = dt.month
                     st.birthday_day = dt.day
-                if student.has_key("DC/gender"):
+                if "DC/gender" in student:
                     if student["DC/gender"] == '_':
                         st.gender = "Male"
                     elif student["DC/gender"] == '__1':
@@ -111,7 +111,7 @@ def outreach_import_data(request):
 
 
 def record_value(model,model_field,record, field):
-    if record.has_key(field):
+    if field in record:
         model.__setattr__(model_field, record[field])
 
 
