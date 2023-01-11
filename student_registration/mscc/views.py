@@ -232,7 +232,8 @@ def outreach_child_search(request):
 
     result_match = []
     for result in filtered_results:
-        result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'], result['outreach_caregiver__last_name'])
+        result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'],
+                                       result['outreach_caregiver__last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
         if fuzzy_match > 85:
             result['score'] = fuzzy_match

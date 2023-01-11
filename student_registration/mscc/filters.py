@@ -9,15 +9,15 @@ from .models import (
 )
 
 
-# class CommonFilter(FilterSet):
+class CommonFilter(FilterSet):
     # round = ModelChoiceFilter(queryset=CLMRound.objects.all(), empty_label=_('Round'))
     # governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     # center = ModelChoiceFilter(queryset=Center.objects.filter(), empty_label=_('Center'))
-    # child__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))
+    child__nationality = ModelChoiceFilter(queryset=Nationality.objects.all(), empty_label=_('Nationality'))
     # disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
 
 
-class MainFilter(FilterSet):
+class MainFilter(CommonFilter):
 
     class Meta:
         model = Registration
@@ -30,6 +30,6 @@ class MainFilter(FilterSet):
             'child__mother_fullname': ['contains'],
             'child__nationality': ['exact'],
             # 'center__governorate': ['exact'],
-            'center': ['exact'],
+            # 'center': ['exact'],
         }
 
