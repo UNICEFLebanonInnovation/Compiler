@@ -154,6 +154,18 @@ function append_new_result(data)
 
         $('#outreach_search_result').append(child_html);
     });
+
+    if(data.result.length == 0) {
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><span class="text-danger">0%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-danger">No result found</h4>';
+        var html_line3 = '<p></p>';
+        var html_line4 = '<p></p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
+        $('#outreach_search_result').append(child_html);
+
+    }
 }
 
 function get_child_data(outreach_id)
