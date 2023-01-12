@@ -17,6 +17,8 @@
 
         {% get_services record as services %}
 
+{% service_data 'EducationService' instance as result1 %}
+  {% if result1 %}
       {% service_data 'EducationAssessment' record as result %}
       {% if result %}
         <a type="button" href="/MSCC/Services/Diagnostic-Assessment-Edit/{{ record.id }}/{{ result.id }}/" tabindex="0" class="dropdown-item">
@@ -40,6 +42,7 @@
           Diagnostic Assessment
         </a>
       {% endif %}
+{% endif %}
 
 {% service_data 'EducationService' record as result %}
       {% if result %}
