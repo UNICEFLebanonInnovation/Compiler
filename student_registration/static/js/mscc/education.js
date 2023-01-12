@@ -13,6 +13,7 @@ $(window).load(function () {
 });
 
 $(document).ready(function() {
+    reorganizeForm();
 
     if($(document).find('#id_dropout_date').length == 1) {
         $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
@@ -21,6 +22,9 @@ $(document).ready(function() {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    $(document).on('change', '#id_dropout_program', function(){
+        reorganizeForm();
+    });
 
     $(document).on('click', '.cancel-button', function(e){
         e.preventDefault();
@@ -31,6 +35,19 @@ $(document).ready(function() {
     });
 });
 
+function reorganizeForm()
+{
+//    Dropout Program
+   var dropout_program = $('select#id_dropout_program').val();
+    if(dropout_program == 'Other'){
+        $('#div_id_dropout_program_specify').removeClass('d-none');
+    }
+    else
+    {
+        $('div#div_id_dropout_program_specify').addClass('d-none');
+        $('#id_dropout_program_specify').val('');
+    }
+}
 
 function urlParam(name){
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
