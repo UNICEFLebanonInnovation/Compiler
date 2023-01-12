@@ -286,21 +286,21 @@ class EducationAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     Div('post_attended_arabic', css_class='col-md-7'),
-                    Div('post_modality_arabic', css_class='col-md-3'),
-                    Div('post_arabic_grade', css_class='col-md-2'),
-                    css_class='row card-body'
+                    Div('post_modality_arabic', css_class='col-md-3 grd-arabic'),
+                    Div('post_arabic_grade', css_class='col-md-2 grd-arabic'),
+                    css_class='row grades card-body'
                 ),
                 Div(
                     Div('post_attended_language', css_class='col-md-7'),
                     Div('post_modality_language', css_class='col-md-3'),
                     Div('post_language_grade', css_class='col-md-2'),
-                    css_class='row card-body'
+                    css_class='row grades card-body'
                 ),
                 Div(
                     Div('post_attended_math', css_class='col-md-7'),
                     Div('post_modality_math', css_class='col-md-3'),
                     Div('post_math_grade', css_class='col-md-2'),
-                    css_class='row card-body'
+                    css_class='row grades card-body'
                 ),
                 FormActions(
                     Submit('save', 'Save',
