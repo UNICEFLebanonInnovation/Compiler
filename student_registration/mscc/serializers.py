@@ -58,7 +58,6 @@ def update_instance(instance, validated_data):
 
 
 class MainSerializer(serializers.ModelSerializer):
-    # 'number',
     original_id = serializers.IntegerField(source='id', read_only=True)
     registration_id = serializers.IntegerField(source='id', read_only=True)
     child_id = serializers.IntegerField(source='child.id', required=False)
@@ -138,13 +137,6 @@ class MainSerializer(serializers.ModelSerializer):
     caregiver_middle_name = serializers.CharField(source='child.caregiver_middle_name', required=False)
     caregiver_last_name = serializers.CharField(source='child.caregiver_last_name', required=False)
     caregiver_mother_name = serializers.CharField(source='child.caregiver_mother_name', required=False)
-
-
-    # governorate_name = serializers.CharField(source='governorate.name', read_only=True)
-    # district_name = serializers.CharField(source='district.name', read_only=True)
-    # cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
-    # partner_name = serializers.CharField(source='partner.name', read_only=True)
-    # partner = serializers.CharField(source='partner.id', read_only=True)
     created = serializers.CharField(read_only=True)
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
@@ -172,7 +164,6 @@ class MainSerializer(serializers.ModelSerializer):
             'modified_by_name',
             'created',
             'modified',
-            # 'center',
             'child_first_name',
             'child_father_name',
             'child_last_name',
