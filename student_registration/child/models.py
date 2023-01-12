@@ -445,10 +445,57 @@ class Child(TimeStampedModel):
             self.caregiver_last_name,
         )
 
+    @property
+    def id_number(self):
+        # 1	"UNHCR Registered"
+        if self.id_type.id == 1:
+            return  self.individual_case_number
+        # 2	"UNHCR Recorded"
+        elif self.id_type.id == 2:
+            return  ''
+        # 3	"Syrian national ID"
+        elif self.id_type.id == 3:
+            return  self.syrian_national_number
+        # 4	"Palestinian national ID"
+        elif self.id_type.id == 4:
+            return  self.sop_national_number
+        # 5	"Lebanese national ID"
+        elif self.id_type.id == 5:
+            return  self.national_number
+        # 6	"Other nationality"
+        elif self.id_type.id == 6:
+            return  self.other_number
+        # 7 "Child have no ID"
+        else:
+            return self.id_type.id
+
+    @property
+    def caregiver_id_number(self):
+        # 1	"UNHCR Registered"
+        if self.id_type.id == 1:
+            return  self.parent_individual_case_number
+        # 2	"UNHCR Recorded"
+        elif self.id_type.id == 2:
+            return  self.recorded_number
+        # 3	"Syrian national ID"
+        elif self.id_type.id == 3:
+            return  self.parent_syrian_national_number
+        # 4	"Palestinian national ID"
+        elif self.id_type.id == 4:
+            return  self.sop_parent_national_number
+        # 5	"Lebanese national ID"
+        elif self.id_type.id == 5:
+            return  self.parent_national_number
+        # 6	"Other nationality"
+        elif self.id_type.id == 6:
+            return  self.parent_other_number
+        # 7 "Child have no ID"
+        else:
+            return self.id_type.id
+
     def nationality_name(self):
         if self.nationality:
             return self.nationality.name
-
         return ''
 
     @property

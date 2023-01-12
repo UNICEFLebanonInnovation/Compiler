@@ -54,6 +54,25 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
+                                                    <div class="widget-heading">ID type - Number</div>
+                                                    <div class="widget-subheading">
+                                                      {% if instance.child.id_type.id != 7 %}
+                                                        {{ instance.child.id_type.name }} - {{ instance.child.id_number }}
+                                                      {% else %}
+                                                        {{ instance.child.id_type.name }}
+                                                      {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="widget-content-right">
+                                                    <!--<div class="widget-numbers widget-numbers-sm text-primary"><span>764</span></div>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                  <li class="list-group-item">
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left">
                                                     <div class="widget-heading">Birthday</div>
                                                     <div class="widget-subheading">
                                                       {{ instance.child.birthday }} - {{ instance.child.age }} years
@@ -278,8 +297,17 @@
                                                                         </div>
                                                                     </div>
                                                                </div>
-
-
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
+                                                                          {% if instance.child.id_type.id != 7 %}
+                                                                              <p> {{ instance.child.id_type.name }} - {{ instance.child.caregiver_id_number }}</p>
+                                                                          {% else %}
+                                                                              <p> {{ instance.child.id_type.name }}</p>
+                                                                          {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                               </div>
                                                             </div>
                                                         </div>
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
