@@ -514,6 +514,12 @@ class EducationServiceForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(EducationServiceForm, self).clean()
+        dropout_program = cleaned_data.get("dropout_program")
+        dropout_program_specify = cleaned_data.get("dropout_program_specify")
+        if dropout_program and dropout_program == 'Other' and not dropout_program_specify:
+            self.add_error('dropout_program_specify', 'This field is required')
     class Meta:
         model = EducationService
         fields = (
