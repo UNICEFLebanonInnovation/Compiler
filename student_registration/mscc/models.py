@@ -199,6 +199,12 @@ class Registration(TimeStampedModel):
             return self.child.age
         return 0
 
+    @property
+    def is_cbece(self):
+        return 'Yes'
+
+
+
     def get_absolute_url(self):
         return '/MSCC/Child-Profile/%d/' % self.pk
 
