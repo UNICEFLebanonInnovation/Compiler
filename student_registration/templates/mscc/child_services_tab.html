@@ -1208,16 +1208,16 @@
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
-                                                                {% get_service instance 'CBECE' as result %}
-                                                                {% if result %}
+                                                                 {% get_service instance 'CBECE' as result1 %}
+                                                                 {% if result1 %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to formal education (Grade 1)</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to formal education (CBECE Grade 1)</h4>
                                                                             <p>{{ result.referred_formal_education }} - {{ result.referred_school }}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                              {% endif %}
+                                                               {% endif %}
                                                               <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child receive all needed materials and resources (Stationery, Books, Learning bundle)</h4>
@@ -1228,11 +1228,9 @@
                                                               <div class="vertical-timeline-item vertical-timeline-element">
                                                                   <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                       <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to a service</h4>
-                                                                        {% if result.referred_service == 'Other'  %}
-                                                                            <p>{{ result.referred_service }} - {{result.referred_service_other}}</p>
-                                                                        {% else %}
-                                                                            <p>{{ result.referred_service }}</p>
-                                                                        {% endif %}
+                                                                            <p>{{ result.referred_service }}
+                                                                              {% if result.referred_service == 'Other'  %} - {{result.referred_service_other}}{% endif %}
+                                                                            </p>
                                                                       </div>
                                                                   </div>
                                                               </div>
