@@ -446,6 +446,18 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(HealthNutritionServiceForm, self).clean()
+        baby_breastfed = cleaned_data.get("baby_breastfed")
+        infant_exclusively_breastfed = cleaned_data.get("infant_exclusively_breastfed")
+        if baby_breastfed and baby_breastfed == 'Yes' and not infant_exclusively_breastfed:
+            self.add_error('infant_exclusively_breastfed', 'This field is required')
+
+        eat_solid_food = cleaned_data.get("eat_solid_food")
+        age_eat_solid_food = cleaned_data.get("age_eat_solid_food")
+        if eat_solid_food and eat_solid_food == 'Yes' and not age_eat_solid_food:
+            self.add_error('age_eat_solid_food', 'This field is required')
+
     class Meta:
         model = HealthNutritionService
         fields = (
