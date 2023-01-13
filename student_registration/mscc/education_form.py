@@ -15,11 +15,9 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from dal import autocomplete
 
 from .models import (
-    Registration,
     EducationAssessment,
     EducationService,
     EducationRSService,
-    Referral,
     YES_NO
 )
 from student_registration.schools.models import (
@@ -154,6 +152,35 @@ class DiagnosticAssessmentForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(DiagnosticAssessmentForm, self).clean()
+
+        pre_attended_arabic = cleaned_data.get("pre_attended_arabic")
+        pre_modality_arabic = cleaned_data.get("pre_modality_arabic")
+        pre_arabic_grade = cleaned_data.get("pre_arabic_grade")
+        if pre_attended_arabic and pre_attended_arabic == 'Yes' :
+            if not pre_modality_arabic:
+                self.add_error('pre_modality_arabic', 'This field is required')
+            if not pre_arabic_grade:
+                self.add_error('pre_arabic_grade', 'This field is required')
+
+        pre_attended_language = cleaned_data.get("pre_attended_language")
+        pre_modality_language = cleaned_data.get("pre_modality_language")
+        pre_language_grade = cleaned_data.get("pre_language_grade")
+        if pre_attended_language and pre_attended_language == 'Yes' :
+            if not pre_modality_language:
+                self.add_error('pre_modality_language', 'This field is required')
+            if not pre_language_grade:
+                self.add_error('pre_language_grade', 'This field is required')
+
+        pre_attended_math = cleaned_data.get("pre_attended_math")
+        pre_modality_math = cleaned_data.get("pre_modality_math")
+        pre_math_grade = cleaned_data.get("pre_math_grade")
+        if pre_attended_math and pre_attended_math == 'Yes' :
+            if not pre_modality_math:
+                self.add_error('pre_modality_math', 'This field is required')
+            if not pre_math_grade:
+                self.add_error('pre_math_grade', 'This field is required')
     class Meta:
         model = EducationAssessment
         fields = (
@@ -338,6 +365,43 @@ class EducationAssessmentForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(EducationAssessmentForm, self).clean()
+        barriers = cleaned_data.get("barriers")
+        barriers_other = cleaned_data.get("barriers_other")
+        if barriers and barriers == 'Other' and not barriers_other:
+            self.add_error('barriers_other', 'This field is required')
+
+        post_test_done = cleaned_data.get("post_test_done")
+        if post_test_done and post_test_done == 'Yes':
+
+            post_attended_arabic = cleaned_data.get("post_attended_arabic")
+            post_modality_arabic = cleaned_data.get("post_modality_arabic")
+            post_arabic_grade = cleaned_data.get("post_arabic_grade")
+            if post_attended_arabic and post_attended_arabic == 'Yes':
+                if not post_modality_arabic:
+                    self.add_error('post_modality_arabic', 'This field is required')
+                if not post_arabic_grade:
+                    self.add_error('post_arabic_grade', 'This field is required')
+
+            post_attended_language = cleaned_data.get("post_attended_language")
+            post_modality_language = cleaned_data.get("post_modality_language")
+            post_language_grade = cleaned_data.get("post_language_grade")
+            if post_attended_language and post_attended_language == 'Yes':
+                if not post_modality_language:
+                    self.add_error('post_modality_language', 'This field is required')
+                if not post_language_grade:
+                    self.add_error('post_language_grade', 'This field is required')
+
+            post_attended_math = cleaned_data.get("post_attended_math")
+            post_modality_math = cleaned_data.get("post_modality_math")
+            post_math_grade = cleaned_data.get("post_math_grade")
+            if post_attended_math and post_attended_math == 'Yes':
+                if not post_modality_math:
+                    self.add_error('post_modality_math', 'This field is required')
+                if not post_math_grade:
+                    self.add_error('post_math_grade', 'This field is required')
+
     class Meta:
         model = EducationAssessment
         fields = (
@@ -359,7 +423,6 @@ class EducationAssessmentForm(forms.ModelForm):
 
 
 class EducationServiceForm(forms.ModelForm):
-
     education_status = forms.ChoiceField(
         label=_("Child\'s educational level when registering for the round"),
         widget=forms.Select, required=True,
