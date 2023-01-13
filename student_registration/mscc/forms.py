@@ -983,6 +983,13 @@ class ReferralForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(ReferralForm, self).clean()
+        referred_service = cleaned_data.get("referred_service")
+        referred_service_other = cleaned_data.get("referred_service_other")
+        if referred_service and referred_service == 'Other' and not referred_service_other:
+            self.add_error('referred_service_other', 'This field is required')
+
     class Meta:
         model = Referral
         fields = (

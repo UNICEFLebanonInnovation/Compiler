@@ -23,10 +23,12 @@ function reorganizeForm()
     var barriers = $('select#id_barriers').val();
     if(barriers == 'Other'){
         $('div#div_id_barriers_other').removeClass('d-none');
+        $('#id_barriers_other').addClass('error-field');
     }
     else{
         $('#id_barriers_other').val('');
         $('div#div_id_barriers_other').addClass('d-none');
+        $('#id_barriers_other').removeClass('error-field');
     }
 
     var test_done = $('select#id_post_test_done').val();
