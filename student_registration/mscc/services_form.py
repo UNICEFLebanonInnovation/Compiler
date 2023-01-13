@@ -145,6 +145,18 @@ class PSSServiceForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(PSSServiceForm, self).clean()
+        caregivers_distress = cleaned_data.get("caregivers_distress")
+        caregivers_additional_parenting = cleaned_data.get("caregivers_additional_parenting")
+        if caregivers_distress and caregivers_distress == 'Yes' and not caregivers_additional_parenting:
+            self.add_error('caregivers_additional_parenting', 'This field is required')
+
+        child_distress = cleaned_data.get("child_distress")
+        child_additional_parenting = cleaned_data.get("child_additional_parenting")
+        if child_distress and child_distress == 'Yes' and not child_additional_parenting:
+            self.add_error('child_additional_parenting', 'This field is required')
+
     class Meta:
         model = PSSService
         fields = (
