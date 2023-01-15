@@ -1,11 +1,4 @@
 
-var protocol = window.location.protocol;
-var host = protocol+window.location.host;
-
-$(window).load(function () {
-
-
-});
 
 $(document).ready(function(){
        reorganizeForm();

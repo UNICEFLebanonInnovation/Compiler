@@ -1,10 +1,4 @@
 
-var protocol = window.location.protocol;
-var host = protocol+window.location.host;
-
-$(window).load(function () {
-
-});
 
 $(document).ready(function(){
     reorganizeForm();
@@ -17,7 +11,7 @@ $(document).ready(function(){
 
 function reorganizeForm()
 {
-    var is_cbece = $('#id_is_cbece').val(); 
+    var is_cbece = $('#id_is_cbece').val();
     if (is_cbece == 'Yes'){
         $('div#div_id_referred_formal_education').removeClass('d-none');
         $('#id_referred_formal_education').addClass('error-field');

@@ -272,17 +272,15 @@ class ReferralFormView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
-        is_cbece = self.kwargs['is_cbece']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         data = {}
         if self.request.method == "POST":
-            return ReferralForm(self.request.POST, instance=instance, registry=registry, is_cbece=is_cbece,
-                                           request=self.request)
+            return ReferralForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
                 data = to_array(ReferralForm.Meta.fields, Referral.objects.get(id=instance))
-                return ReferralForm(data, registry=registry, is_cbece=is_cbece, instance=instance, request=self.request)
-            return ReferralForm(registry=registry, is_cbece=is_cbece, instance=instance, request=self.request)
+                return ReferralForm(data, registry=registry, instance=instance, request=self.request)
+            return ReferralForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

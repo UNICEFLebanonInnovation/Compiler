@@ -1,16 +1,4 @@
-var protocol = window.location.protocol;
-var host = protocol+window.location.host;
 
-$(window).load(function () {
-    /* Background loading full-size images */
-    $('.image-link').each(function() {
-        var src = $(this).attr('href');
-        var img = document.createElement('img');
-        img.src = src;
-        $('#image-cache').append(img);
-    });
-
-});
 
 $(document).ready(function() {
     reorganizeForm();
@@ -24,14 +12,6 @@ $(document).ready(function() {
 
     $(document).on('change', 'select#id_education_status', function(){
         reorganizeForm();
-    });
-
-    $(document).on('click', '.cancel-button', function(e){
-        e.preventDefault();
-        var item = $(this);
-        if(confirm($(this).attr('translation'))) {
-            window_location(item.attr('href'));
-        }
     });
 });
 
@@ -67,50 +47,3 @@ function urlParam(name){
     }
     return 0;
 }
-
-function window_location(value)
-{
-    console.log('OK');
-    $('head').append('<meta http-equiv="refresh" content="0; URL='+value+'" id="redirect"/>');
-}
-
-function load_districts(url)
-{
-    var value = $("#id_governorate").val();
-    $.ajax({
-        url: url,
-        data: {
-            'id_governorate': value
-        },
-        success: function (data) {
-            $("#id_district").html(data);
-        }
-    })
-}
-function load_cadasters(url)
-{
-    var value = $("#id_district").val();
-    $.ajax({
-        url: url,
-        data: {
-            'id_district': value
-        },
-        success: function (data) {
-            $("#id_cadaster").html(data);
-        }
-    })
-}
-function load_schools(url)
-{
-    var value = $("#id_governorate").val();
-    $.ajax({
-        url: url,
-        data: {
-            'id_governorate': value
-        },
-        success: function (data) {
-            $("#id_school").html(data);
-        }
-    })
-}
-

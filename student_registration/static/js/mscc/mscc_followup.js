@@ -1,20 +1,4 @@
 
-var protocol = window.location.protocol;
-var host = protocol+window.location.host;
-
-$(window).load(function () {
-
-    /* Background loading full-size images */
-    $('.image-link').each(function() {
-        var src = $(this).attr('href');
-        var img = document.createElement('img');
-
-        img.src = src;
-        $('#image-cache').append(img);
-    });
-
-});
-
 $(document).ready(function(){
 
     learning_result_next_level();
