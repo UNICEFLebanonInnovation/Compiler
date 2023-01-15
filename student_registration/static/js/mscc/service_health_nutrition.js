@@ -4,69 +4,16 @@ var host = protocol+window.location.host;
 
 $(window).load(function () {
 
-    /* Background loading full-size images */
-    $('.image-link').each(function() {
-        var src = $(this).attr('href');
-        var img = document.createElement('img');
-
-        img.src = src;
-        $('#image-cache').append(img);
-    });
-
 });
 
 $(document).ready(function(){
 
     age_questions();
-
-
-    $(document).on('click', '.delete-button', function(){
-        var item = $(this);
-        if(confirm($(this).attr('translation'))) {
-            var callback = function(){
-                item.parents('tr').remove();
-            };
-            delete_student(item, callback());
-        }
+    reorganizeForm();
+    $(document).on('change', 'select#id_baby_breastfed, select#id_eat_solid_food' , function(){
+       reorganizeForm();
     });
-
-    $(document).on('click', '.cancel-button', function(e){
-        e.preventDefault();
-        var item = $(this);
-        if(confirm($(this).attr('translation'))) {
-            window_location(item.attr('href'));
-//            window.location = item.attr('href');
-        }
-    });
-
-    pageScripts();
-
-        /* Ajax page load settings */
-        $(document).on('pjax:end', pageScripts);
-        if (sessionStorage.getItem("pjax-enabled") === "0") {
-            return;
-        }
-
-        // Comment it to disable Ajax Page load
-        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
-
-        $(document).on('pjax:beforeReplace', function() {
-            $('.content-wrap').css('opacity', '0.1');
-            setTimeout(function() {
-                $('.content-wrap').fadeTo('100', '1');
-            }, 1);
-        });
 });
-
-function pageScripts() {
-    /* Magnific Popup */
-    $('.image-link').magnificPopup({
-        type: 'image',
-        gallery: {
-            enabled: true
-        }
-    });
-}
 
 function age_questions() {
     var age = $('#id_child_age').val();
@@ -110,4 +57,32 @@ function age_questions() {
 
     }
 }
+
+function reorganizeForm() {
+    var age = $('#id_child_age').val();
+    if(age<=2){
+        var baby_breastfed = $('select#id_baby_breastfed').val();
+        if(baby_breastfed == 'Yes'){
+            $('div#div_id_infant_exclusively_breastfed').removeClass('d-none');
+            $('#id_infant_exclusively_breastfed').addClass('error-field');
+        }
+        else{
+            $('#id_infant_exclusively_breastfed').val('');
+            $('div#div_id_infant_exclusively_breastfed').addClass('d-none');
+            $('#id_infant_exclusively_breastfed').removeClass('error-field');
+        }
+        var eat_solid_food = $('select#id_eat_solid_food').val();
+        if(eat_solid_food == 'Yes'){
+            $('div#div_id_age_eat_solid_food').removeClass('d-none');
+            $('#id_age_eat_solid_food').addClass('error-field');
+        }
+        else{
+            $('#id_age_eat_solid_food').val('');
+            $('div#div_id_age_eat_solid_food').addClass('d-none');
+            $('#id_age_eat_solid_food').removeClass('error-field');
+        }
+
+  }
+
+ }
 

@@ -888,7 +888,7 @@ class ReferralForm(forms.ModelForm):
 
     referred_formal_education = forms.ChoiceField(
         label=_("Was the child referred to formal education (Grade 1)?"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
     )
     referred_school = forms.ModelChoiceField(
@@ -916,25 +916,31 @@ class ReferralForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Referral.LEARNING_PATH,
     )
+    is_cbece = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
+        is_cbece = kwargs.pop('is_cbece', None)
 
         super(ReferralForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:referral_add', kwargs={'registry': registry})
+        form_action = reverse('mscc:referral_add', kwargs={'registry': registry, 'is_cbece': is_cbece})
         if instance:
             form_action = reverse('mscc:referral_edit',
-                                  kwargs={'registry': registry, 'pk': instance})
-
+                                  kwargs={'registry': registry, 'is_cbece': is_cbece, 'pk': instance})
+        self.fields['is_cbece'].initial = is_cbece
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Div(
+                Div(
+                    Div('is_cbece', css_class='col-md-4'),
+                    css_class='row card-body d-none'
+                ),
                 Div(
                     Div('referred_formal_education', css_class='col-md-6'),
                     Div('referred_school', css_class='col-md-6'),
@@ -985,6 +991,16 @@ class ReferralForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ReferralForm, self).clean()
+        is_cbece  = cleaned_data.get("is_cbece")
+        referred_formal_education = cleaned_data.get("referred_formal_education")
+        referred_school = cleaned_data.get("referred_school")
+        if is_cbece and is_cbece == 'Yes' :
+            if not referred_formal_education:
+                self.add_error('referred_formal_education', 'This field is required')
+            if not referred_school:
+                self.add_error('referred_school', 'This field is required')
+
+
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
         if referred_service and referred_service == 'Other' and not referred_service_other:

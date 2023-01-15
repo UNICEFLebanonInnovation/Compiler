@@ -48,7 +48,7 @@ function reorganizeForm()
 
         }
         else{
-            $('#id_post_arabic_grade').val('0');
+            $('#id_post_arabic_grade').val(0);
             $('select#id_post_modality_arabic').val("");
 
             $('div#div_id_post_arabic_grade').addClass('d-none');
@@ -66,7 +66,7 @@ function reorganizeForm()
 
         }
         else{
-            $('#id_post_language_grade').val('0');
+            $('#id_post_language_grade').val(0);
             $('div#div_id_post_language_grade').addClass('d-none');
             $('#id_post_language_grade').removeClass('error-field');
             $('select#id_post_modality_language').val("");
@@ -81,7 +81,7 @@ function reorganizeForm()
             $('#id_post_modality_math').addClass('error-field');
         }
         else{
-            $('#id_post_math_grade').val('0');
+            $('#id_post_math_grade').val(0);
             $('div#div_id_post_math_grade').addClass('d-none');
             $('#id_post_math_grade').removeClass('error-field');
             $('select#id_post_modality_math').val("");

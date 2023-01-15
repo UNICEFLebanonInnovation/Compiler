@@ -145,6 +145,18 @@ class PSSServiceForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(PSSServiceForm, self).clean()
+        caregivers_distress = cleaned_data.get("caregivers_distress")
+        caregivers_additional_parenting = cleaned_data.get("caregivers_additional_parenting")
+        if caregivers_distress and caregivers_distress == 'Yes' and not caregivers_additional_parenting:
+            self.add_error('caregivers_additional_parenting', 'This field is required')
+
+        child_distress = cleaned_data.get("child_distress")
+        child_additional_parenting = cleaned_data.get("child_additional_parenting")
+        if child_distress and child_distress == 'Yes' and not child_additional_parenting:
+            self.add_error('child_additional_parenting', 'This field is required')
+
     class Meta:
         model = PSSService
         fields = (
@@ -445,6 +457,18 @@ class HealthNutritionServiceForm(forms.ModelForm):
         update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
 
         return instance
+
+    def clean(self):
+        cleaned_data = super(HealthNutritionServiceForm, self).clean()
+        baby_breastfed = cleaned_data.get("baby_breastfed")
+        infant_exclusively_breastfed = cleaned_data.get("infant_exclusively_breastfed")
+        if baby_breastfed and baby_breastfed == 'Yes' and not infant_exclusively_breastfed:
+            self.add_error('infant_exclusively_breastfed', 'This field is required')
+
+        eat_solid_food = cleaned_data.get("eat_solid_food")
+        age_eat_solid_food = cleaned_data.get("age_eat_solid_food")
+        if eat_solid_food and eat_solid_food == 'Yes' and not age_eat_solid_food:
+            self.add_error('age_eat_solid_food', 'This field is required')
 
     class Meta:
         model = HealthNutritionService
@@ -788,7 +812,13 @@ class FollowUpServiceForm(forms.ModelForm):
                 ),
                 Div(
                     Div('phone_call_number', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
                     Div('house_visit_number', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
                     Div('caregiver_visit_number', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
@@ -855,6 +885,48 @@ class FollowUpServiceForm(forms.ModelForm):
         update_service(registry_id=registry, service_name='Caregivers Package', service_id=instance.id)
 
         return instance
+
+    def clean(self):
+        cleaned_data = super(FollowUpServiceForm, self).clean()
+        follow_up_type = cleaned_data.get("follow_up_type")
+        phone_call_number = cleaned_data.get("phone_call_number")
+        house_visit_number = cleaned_data.get("house_visit_number")
+        caregiver_visit_number = cleaned_data.get("caregiver_visit_number")
+        if follow_up_type :
+            if follow_up_type == 'Phone call' and not phone_call_number:
+                self.add_error('phone_call_number', 'This field is required')
+            if follow_up_type == 'Home Visits' and not house_visit_number:
+                self.add_error('house_visit_number', 'This field is required')
+            if follow_up_type == 'Caregiver visited the center' and not caregiver_visit_number:
+                self.add_error('caregiver_visit_number', 'This field is required')
+
+        follow_up_result = cleaned_data.get("follow_up_result")
+        dropout_reason = cleaned_data.get("dropout_reason")
+        dropout_date = cleaned_data.get("dropout_date")
+        if follow_up_result and follow_up_result == 'Dropout/No Interest':
+            if not dropout_reason:
+                self.add_error('dropout_reason', 'This field is required')
+            if not dropout_date:
+                self.add_error('dropout_date', 'This field is required')
+
+        parent_attended_meeting = cleaned_data.get("parent_attended_meeting")
+        meeting_type = cleaned_data.get("meeting_type")
+        meeting_number = cleaned_data.get("meeting_number")
+        meeting_modality = cleaned_data.get("meeting_modality")
+        caregiver_attended = cleaned_data.get("caregiver_attended")
+        caregiver_attended_other = cleaned_data.get("caregiver_attended_other")
+        if parent_attended_meeting and parent_attended_meeting == 'Yes':
+            if not meeting_type:
+                self.add_error('meeting_type', 'This field is required')
+            if not meeting_number:
+                self.add_error('meeting_number', 'This field is required')
+            if not meeting_modality:
+                self.add_error('meeting_modality', 'This field is required')
+            if not caregiver_attended:
+                self.add_error('caregiver_attended', 'This field is required')
+            elif caregiver_attended =='Other' and not caregiver_attended_other:
+                self.add_error('caregiver_attended_other', 'This field is required')
+
 
     class Meta:
         model = FollowUpService

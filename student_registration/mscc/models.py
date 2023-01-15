@@ -199,6 +199,12 @@ class Registration(TimeStampedModel):
             return self.child.age
         return 0
 
+    @property
+    def is_cbece(self):
+        return 'Yes'
+
+
+
     def get_absolute_url(self):
         return '/MSCC/Child-Profile/%d/' % self.pk
 
@@ -526,7 +532,7 @@ class HealthNutritionService(TimeStampedModel):
     )
     # Caregivers of children 0-2 - children 3-5
     development_delays_identified = models.CharField(
-        max_length=10,
+        max_length=50,
         blank=True,
         null=True,
         choices=DEVELOPMENT_DELAYS,
