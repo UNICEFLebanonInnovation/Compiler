@@ -142,12 +142,12 @@ urlpatterns = [
         name='outreach_child'
     ),
     url(
-        regex=r'^Referral-Add/(?P<registry>[\w.@+-]+)/(?P<is_cbece>[\w.@+-]+)/$',
+        regex=r'^Referral-Add/(?P<registry>[\w.@+-]+)/$',
         view=views.ReferralFormView.as_view(),
         name='referral_add'
     ),
     url(
-        regex=r'^Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<is_cbece>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.ReferralFormView.as_view(),
         name='referral_edit'
     ),
