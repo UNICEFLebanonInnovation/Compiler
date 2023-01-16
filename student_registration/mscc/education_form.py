@@ -238,7 +238,7 @@ class EducationAssessmentForm(forms.ModelForm):
     post_arabic_grade = forms.IntegerField(
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False,
+        required=False,
         initial = 0
     )
     post_attended_language = forms.ChoiceField(
@@ -256,7 +256,7 @@ class EducationAssessmentForm(forms.ModelForm):
     post_language_grade = forms.IntegerField(
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False,
+        required=False,
         initial = 0
     )
     post_attended_math = forms.ChoiceField(
@@ -274,7 +274,7 @@ class EducationAssessmentForm(forms.ModelForm):
     post_math_grade = forms.IntegerField(
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False,
+        required=False,
         initial = 0
     )
 

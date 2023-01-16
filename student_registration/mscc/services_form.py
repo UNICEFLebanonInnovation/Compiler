@@ -339,7 +339,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     )
     # Caregivers of children 0-2 - children 3-5 - children 5-18
     child_vaccinated = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the child being vaccinated as per the National vaccination calendar?')
     )
@@ -753,7 +753,7 @@ class FollowUpServiceForm(forms.ModelForm):
         widget=forms.TextInput,
         label=_('Reason for dropout')
     )
-    adolescent_dropout_datedropout_date = forms.DateField(
+    dropout_date = forms.DateField(
         label=_("Dropout Date"),
         required=False
     )
@@ -763,7 +763,7 @@ class FollowUpServiceForm(forms.ModelForm):
         label=_('Did the child\'s caregiver attend parent meeting/engagment sessions')
     )
     meeting_type = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=FollowUpService.MEETING_TYPE,
         label=_('Please indicate the types of meeting')
     )
@@ -870,7 +870,8 @@ class FollowUpServiceForm(forms.ModelForm):
         instance.caregiver_visit_number = validated_data.get('caregiver_visit_number')
         instance.follow_up_result = validated_data.get('follow_up_result')
         instance.dropout_reason = validated_data.get('dropout_reason')
-        instance.dropout_date = validated_data.get('dropout_date')
+        if validated_data.get('dropout_date'):
+            instance.dropout_date = validated_data.get('dropout_date')
         instance.parent_attended_meeting = validated_data.get('parent_attended_meeting')
         instance.meeting_type = validated_data.get('meeting_type')
         instance.meeting_number = validated_data.get('meeting_number')

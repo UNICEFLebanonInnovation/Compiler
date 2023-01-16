@@ -103,9 +103,7 @@ function reorganizeForm()
         $('#id_caregiver_attended').addClass('error-field');
 
         var caregiver_attended = $('select#id_caregiver_attended').val();
-        alert(caregiver_attended);
         if (caregiver_attended=='Other'){
-            alert('other');
             $('#div_id_caregiver_attended_other').removeClass('d-none');
             $('#id_caregiver_attended_other').addClass('error-field');
         }
