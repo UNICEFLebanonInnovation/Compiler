@@ -923,7 +923,7 @@ class ReferralForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
-        is_cbece = 'Yes' if get_service(registry, 'CBECE') else 'No'
+        is_cbece = 'Yes' if get_service(registry, 'CB-ECE') else 'No'
 
         super(ReferralForm, self).__init__(*args, **kwargs)
 
@@ -937,10 +937,6 @@ class ReferralForm(forms.ModelForm):
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Div(
-                Div(
-                    Div('is_cbece', css_class='col-md-4'),
-                    css_class='row card-body d-none'
-                ),
                 Div(
                     Div('referred_formal_education', css_class='col-md-6'),
                     Div('referred_school', css_class='col-md-6'),

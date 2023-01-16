@@ -36,8 +36,6 @@ function reorganizeForm()
             $('#id_post_arabic_grade').addClass('error-field');
             $('div#div_id_post_modality_arabic').removeClass('d-none');
             $('#id_post_modality_arabic').addClass('error-field');
-
-
         }
         else{
             $('#id_post_arabic_grade').val(0);
@@ -84,6 +82,9 @@ function reorganizeForm()
     else
     {
         $('div.grades').addClass('d-none');
+        $('#id_post_arabic_grade').val(0);
+        $('#id_post_language_grade').val(0);
+        $('#id_post_math_grade').val(0);
     }
 
   }

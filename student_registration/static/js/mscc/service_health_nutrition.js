@@ -26,11 +26,12 @@ function age_questions() {
     }
     else if(age>=3 && age<=5){
         $('div#div_id_baby_breastfed').addClass('d-none');
+        $('#id_baby_breastfed').val('');
         $('div#div_id_infant_exclusively_breastfed').addClass('d-none');
         $('div#div_id_eat_solid_food').addClass('d-none');
+        $('#id_eat_solid_food').val('');
         $('div#div_id_age_eat_solid_food').addClass('d-none');
         $('div#div_id_respond_stressful_events').addClass('d-none');
-
         $('div#div_id_development_delays_identified').removeClass('d-none');
         $('div#div_id_eating_minimum_meals').removeClass('d-none');
         $('div#div_id_positive_parenting').removeClass('d-none');
@@ -39,9 +40,10 @@ function age_questions() {
     else
     {
         $('div#div_id_baby_breastfed').addClass('d-none');
-
+        $('#id_baby_breastfed').val('');
         $('div#div_id_infant_exclusively_breastfed').addClass('d-none');
         $('div#div_id_eat_solid_food').addClass('d-none');
+        $('#id_eat_solid_food').val('');
         $('div#div_id_age_eat_solid_food').addClass('d-none');
         $('div#div_id_development_delays_identified').addClass('d-none')
         $('div#div_id_positive_parenting').addClass('d-none');
