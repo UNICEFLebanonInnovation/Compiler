@@ -58,6 +58,8 @@ $(document).ready(function() {
 
     $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
         $('#search_loader').removeClass('hidden');
+        $('#nfe_search_loader').removeClass('hidden');
+
         outreach_child_search();
     });
 
@@ -219,13 +221,10 @@ function get_nationality_id(nationality_str){
 
 function isAddPage()
 {
-    if( $(document).find('#outreach-result').length == 1) {
+    if( $(document).find('#outreach-nfe-result').length == 1) {
         return true;
     }
     return false;
-
-//    var url_loc = window.location.toString();
-//    return (url_loc.toLowerCase().search(/^.*\/MSCC\/child-add(\/)?(\?.*)?$/i)>=0);
 }
 
 function reorganizeForm()
