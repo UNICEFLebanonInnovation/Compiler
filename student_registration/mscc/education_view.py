@@ -154,16 +154,15 @@ class EducationRSServiceFormView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
-        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        data = {}
+        pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
         if self.request.method == "POST":
-            return EducationRSServiceForm(self.request.POST, instance=instance, registry=registry,
-                                           request=self.request)
+            return EducationRSServiceForm(self.request.POST, pk=pk, registry=registry, request=self.request)
         else:
-            if instance:
-                data = to_array(EducationRSServiceForm.Meta.fields, EducationRSService.objects.get(id=instance))
-                return EducationRSServiceForm(data, registry=registry, instance=instance, request=self.request)
-            return EducationRSServiceForm(registry=registry, instance=instance, request=self.request)
+            if pk:
+                instance = EducationRSService.objects.get(id=pk)
+                return EducationRSServiceForm(instance=instance, registry=registry, pk=pk, request=self.request)
+            return EducationRSServiceForm(registry=registry, pk=pk, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

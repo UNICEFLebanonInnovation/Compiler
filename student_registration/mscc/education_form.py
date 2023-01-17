@@ -588,14 +588,14 @@ class EducationRSServiceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
-        instance = kwargs.pop('instance', None)
+        pk = kwargs.pop('pk', None)
 
         super(EducationRSServiceForm, self).__init__(*args, **kwargs)
 
         form_action = reverse('mscc:service_education_rs_add', kwargs={'registry': registry})
-        if instance:
+        if pk:
             form_action = reverse('mscc:service_education_rs_edit',
-                                  kwargs={'registry': registry, 'pk': instance})
+                                  kwargs={'registry': registry, 'pk': pk})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -603,7 +603,7 @@ class EducationRSServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
         Div(
                 Div(
-                    Div('school', css_class='col-md-9'),
+                    Div('school', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -642,6 +642,7 @@ class EducationRSServiceForm(forms.ModelForm):
             instance = EducationRSService.objects.get(id=instance)
 
         instance.school_id = validated_data.get('school')
+
         instance.foreign_language_grade = int(validated_data.get('foreign_language_grade'))
         instance.arabic_grade = int(validated_data.get('arabic_grade'))
         instance.math_grade = int(validated_data.get('math_grade'))
@@ -655,6 +656,7 @@ class EducationRSServiceForm(forms.ModelForm):
         update_service(registry_id=registry, service_name='RS', service_id=instance.id)
 
         return instance
+
 
     class Meta:
         model = EducationRSService
