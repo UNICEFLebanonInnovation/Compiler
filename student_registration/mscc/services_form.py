@@ -16,7 +16,6 @@ from dal import autocomplete
 
 from .utils import update_service
 from .models import (
-    Registration,
     PSSService,
     InclusionService,
     DigitalService,
@@ -24,7 +23,6 @@ from .models import (
     YouthKitService,
     FollowUpService,
     YouthAssessment,
-    Referral,
     YES_NO
 )
 
@@ -1052,8 +1050,8 @@ class YouthAssessmentForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('undertake_post_diagnostic', css_class='col-md-4'),
-                    Div('receive_passing_grade', css_class='col-md-4'),
+                    Div('undertake_post_diagnostic', css_class='col-md-6'),
+                    Div('receive_passing_grade', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -1061,25 +1059,25 @@ class YouthAssessmentForm(forms.ModelForm):
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('participate_volunteering', css_class='col-md-4'),
+                    Div('participate_volunteering', css_class='col-md-8'),
                     Div('volunteering_opportunity', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('benefit_innovation_course', css_class='col-md-4'),
+                    Div('benefit_innovation_course', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('compelete_yfs_course', css_class='col-md-4'),
+                    Div('compelete_yfs_course', css_class='col-md-6'),
                     Div('training_material', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('future_path', css_class='col-md-4'),
+                    Div('future_path', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('participate_community_initiatives', css_class='col-md-4'),
+                    Div('participate_community_initiatives', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -1132,7 +1130,7 @@ class YouthAssessmentForm(forms.ModelForm):
             self.add_error('receive_passing_grade', 'This field is required')
 
         participate_volunteering = cleaned_data.get("participate_volunteering")
-        volunteering_opportunity = cleaned_data.get("receive_passing_grade")
+        volunteering_opportunity = cleaned_data.get("volunteering_opportunity")
         if participate_volunteering and participate_volunteering == 'Yes' and not volunteering_opportunity:
             self.add_error('volunteering_opportunity', 'This field is required')
 
