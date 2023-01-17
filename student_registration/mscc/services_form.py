@@ -500,7 +500,7 @@ class YouthKitServiceForm(forms.ModelForm):
         label=_('Was the adolescent part of any previous community based initiative?')
     )
     enrollment_reason = forms.CharField(
-        required=True,
+        required=False,
         widget=forms.TextInput,
         label=_('What is the reason for the adolescent enrollment in the programme?')
     )
@@ -694,6 +694,33 @@ class YouthKitServiceForm(forms.ModelForm):
         update_service(registry_id=registry, service_name='Adolescents kit', service_id=instance.id)
 
         return instance
+
+    def clean(self):
+        cleaned_data = super(YouthKitServiceForm, self).clean()
+
+        participate_volunteering = cleaned_data.get("participate_volunteering")
+        volunteering_specify = cleaned_data.get("volunteering_specify")
+        if participate_volunteering and participate_volunteering == 'Yes' and not volunteering_specify:
+            self.add_error('volunteering_specify', 'This field is required')
+
+        yfs_course_completed = cleaned_data.get("yfs_course_completed")
+        training_material = cleaned_data.get("training_material")
+        if yfs_course_completed and yfs_course_completed == 'Yes' and not training_material:
+            self.add_error('training_material', 'This field is required')
+
+        participate_community_initiatives = cleaned_data.get("participate_community_initiatives")
+        community_initiatives_specify = cleaned_data.get("community_initiatives_specify")
+        if participate_community_initiatives and participate_community_initiatives == 'Yes' and not community_initiatives_specify:
+            self.add_error('community_initiatives_specify', 'This field is required')
+
+        adolescent_attendance = cleaned_data.get("adolescent_attendance")
+        adolescent_dropout_reason = cleaned_data.get("adolescent_dropout_reason")
+        adolescent_dropout_date = cleaned_data.get("adolescent_dropout_date")
+        if adolescent_attendance and adolescent_attendance == 'Dropout':
+            if not adolescent_dropout_reason:
+                self.add_error('adolescent_dropout_reason', 'This field is required')
+            if not adolescent_dropout_date:
+                self.add_error('adolescent_dropout_date', 'This field is required')
 
     class Meta:
         model = YouthKitService
@@ -1115,7 +1142,7 @@ class YouthAssessmentForm(forms.ModelForm):
             self.add_error('training_material', 'This field is required')
 
     class Meta:
-        model = FollowUpService
+        model = YouthAssessment
         fields = (
             'undertake_post_diagnostic',
             'receive_passing_grade',
