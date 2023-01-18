@@ -807,7 +807,7 @@ class MainForm(forms.ModelForm):
                 instance.save()
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
-                generate_education_history(instance)
+                generate_education_history(instance.id, instance.child_id, instance.student_old_id)
 
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
