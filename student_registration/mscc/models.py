@@ -227,14 +227,6 @@ class Registration(TimeStampedModel):
 
 class EducationHistory(TimeStampedModel):
 
-    PROGRAMME_TYPE = Choices(
-        ('BLN', _("BLN")),
-        ('Bridging', _("Bridging")),
-        ('ABLN', _("ABLN")),
-        ('RS', _("RS")),
-        ('CBECE', _("CBECE")),
-        ('Inclusion', _("Inclusion"))
-    )
     child = models.ForeignKey(
         Child,
         blank=False, null=True,
@@ -253,8 +245,6 @@ class EducationHistory(TimeStampedModel):
         max_length=100,
         blank=True,
         null=True,
-        choices=PROGRAMME_TYPE,
-        verbose_name=_('Dropout')
     )
     programme_id = models.IntegerField(blank=True, null=True)
 
