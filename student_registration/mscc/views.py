@@ -23,6 +23,7 @@ from student_registration.users.utils import force_default_language
 from student_registration.outreach.models import OutreachChild
 from student_registration.child.models import Child
 from student_registration.outreach.serializers import ChildSerializer
+from student_registration.students.models import Student
 from .filters import (
     MainFilter
 )
@@ -42,6 +43,7 @@ from .forms import (
 from .serializers import (
     MainSerializer
 )
+
 
 from .utils import *
 
@@ -290,3 +292,61 @@ class ReferralFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry, instance=instance)
         return super(ReferralFormView, self).form_valid(form)
+
+def old_child_search(request):
+
+    birthday_year = request.GET.get('birthday_year')
+    birthday_month = request.GET.get('birthday_month')
+    birthday_day = request.GET.get('birthday_day')
+    first_name = request.GET.get('first_name')
+    father_name = request.GET.get('father_name')
+    last_name = request.GET.get('last_name')
+
+    form_str = '{} {} {}'.format(first_name, father_name, last_name)
+    filtered_results = Student.objects.filter(
+        birthday_year=birthday_year
+    )
+
+    if birthday_month:
+        filtered_results = filtered_results.filter(
+            birthday_month=birthday_month
+        )
+    if birthday_day:
+        filtered_results = filtered_results.filter(
+            birthday_day=birthday_day
+        )
+
+    filtered_results = filtered_results.values(
+        'id',
+        'first_name',
+        'father_name',
+        'last_name',
+        'mother_fullname',
+        'sex',
+        'nationality',
+        'birthday_year',
+        'birthday_month',
+        'birthday_day',
+    ).distinct()
+
+    result_match = []
+    for result in filtered_results:
+        result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
+                                       result['last_name'])
+        fuzzy_match = fuzz.ratio(form_str, result_str)
+        if fuzzy_match > 85:
+            result['score'] = fuzzy_match
+            result_match.append(result)
+
+    if filtered_results != '':
+        return JsonResponse({'result': result_match})
+
+    return JsonResponse({'result': []})
+
+
+def old_child(request):
+
+    student_id = request.GET.get('student_id')
+    result = get_old_child(student_id)
+    return JsonResponse(result)
+

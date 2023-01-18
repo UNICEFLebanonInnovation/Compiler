@@ -14,6 +14,7 @@ from student_registration.schools.models import (
     School,
     PartnerOrganization
 )
+from student_registration.students.models import Student
 
 PACKAGE_TYPES = Choices(
     ('Core-Package', _('Core Package')),
@@ -100,6 +101,12 @@ class Registration(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Outreach Child')
+    )
+    student_old = models.ForeignKey(
+        Student,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Old Student')
     )
     partner = models.ForeignKey(
         PartnerOrganization,
@@ -216,6 +223,45 @@ class Registration(TimeStampedModel):
         ordering = ['-id']
         verbose_name = "MSCC Registration"
         verbose_name_plural = "MSCC Registrations"
+
+
+class EducationHistory(TimeStampedModel):
+
+    PROGRAMME_TYPE = Choices(
+        ('BLN', _("BLN")),
+        ('Bridging', _("Bridging")),
+        ('ABLN', _("ABLN")),
+        ('RS', _("RS")),
+        ('CBECE', _("CBECE")),
+        ('Inclusion', _("Inclusion"))
+    )
+    child = models.ForeignKey(
+        Child,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Child')
+    )
+    student_old = models.ForeignKey(
+        Student,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Old Student')
+    )
+    registration_id = models.IntegerField(blank=True, null=True)
+
+    programme_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PROGRAMME_TYPE,
+        verbose_name=_('Dropout')
+    )
+    programme_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = "Education History"
+        verbose_name_plural = "Education Histories"
 
 
 class ProvidedServices(models.Model):

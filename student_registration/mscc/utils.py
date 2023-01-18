@@ -3,6 +3,7 @@
 import datetime
 
 from student_registration.outreach.models import OutreachChild
+from student_registration.students.models import Student
 
 def to_array(fields, obj):
     data = {}
@@ -31,7 +32,6 @@ def update_service(service_name, registry_id, service_id):
                                     name=service_name).update(service_id=service_id,
                                                               completed=True,
                                                               completion_date=datetime.datetime.now())
-
 
 
 def get_outreach_child(outreach_id):
@@ -173,3 +173,44 @@ def get_outreach_child(outreach_id):
         initial['national_number_confirm'] = instance.child_personal_id
 
     return initial
+
+
+def get_old_child(student_id):
+    initial = {}
+    instance = Student.objects.get(id=student_id)
+    initial['student_old_id'] = instance.id
+    initial['child_first_name'] = instance.first_name
+    initial['child_father_name'] = instance.father_name
+    initial['child_last_name'] = instance.last_name
+    initial['child_mother_full_name'] = instance.mother_fullname
+    initial['child_birthday_year'] = instance.birthday_year
+    initial['child_birthday_month'] = instance.birthday_month
+    initial['child_birthday_day'] = instance.birthday_day
+    initial['child_gender'] = instance.sex
+    initial['child_nationality'] = instance.nationality.id
+    initial['child_marital_status'] = instance.family_status
+
+    # initial['id_type'] = instance.outreach_caregiver.id_type
+    # initial['case_number'] = instance.outreach_caregiver.unhcr_case_number
+    # initial['case_number_confirm'] = instance.outreach_caregiver.unhcr_case_number
+    # initial['parent_individual_case_number'] = instance.outreach_caregiver.caregiver_unhcr_id
+    # initial['parent_individual_case_number_confirm'] = instance.outreach_caregiver.caregiver_unhcr_id
+    # initial['individual_case_number'] = instance.child_unhcr_number
+    # initial['individual_case_number_confirm'] = instance.child_unhcr_number
+    # initial['recorded_number'] = instance.outreach_caregiver.unhcr_barcode
+    # initial['recorded_number_confirm'] = instance.outreach_caregiver.unhcr_barcode
+    # initial['parent_syrian_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['parent_syrian_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['syrian_national_number'] = instance.child_personal_id
+    # initial['syrian_national_number_confirm'] = instance.child_personal_id
+    # initial['sop_parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['sop_parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['sop_national_number'] = instance.child_personal_id
+    # initial['sop_national_number_confirm'] = instance.child_personal_id
+    # initial['parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['national_number'] = instance.child_personal_id
+    # initial['national_number_confirm'] = instance.child_personal_id
+
+    return initial
+
