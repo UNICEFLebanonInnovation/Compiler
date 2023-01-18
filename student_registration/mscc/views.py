@@ -100,7 +100,6 @@ class MainAddView(LoginRequiredMixin,
         return initial
 
     def form_valid(self, form):
-        print('----------saving--------')
         form.save(self.request)
         return super(MainAddView, self).form_valid(form)
 
