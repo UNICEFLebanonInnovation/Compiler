@@ -277,7 +277,6 @@ function append_old_result(data)
 
 function get_old_child_data(student_id)
 {
-    alert(student_id);
     $('#nfe_search_loader').removeClass('hidden');
 
     $.ajax({

@@ -1,7 +1,7 @@
 from django import template
 from django.apps import apps
 
-from student_registration.mscc.models import ProvidedServices
+from student_registration.mscc.models import ProvidedServices, EducationHistory
 
 register = template.Library()
 
@@ -65,19 +65,7 @@ def service_data(model_name, obj):
 
 
 @register.simple_tag
-def get_old_programmes(student_id):
-    #     BLN,
-    #     ABLN,
-    #     Bridging,
-    #     RS,
-    #     CBECE,
-    #     Inclusion
-    bln_old_registrations = BLN.objects.filter(student=student_id).values('id')
-    # abln_old_registrations = ABLN.objects.filter(student=student_id).values('id')
-    # bridging_old_registrations = Bridging.objects.filter(student=student_id).values('id')
-    # rs_old_registrations = RS.objects.filter(student=student_id).values('id')
-    # cbece_old_registrations = CBECE.objects.filter(student=student_id).values('id')
-    # inclusion_old_registrations = Inclusion.objects.filter(student=student_id).values('id')
+def education_history(registration_id):
+    return EducationHistory.objects.filter(registration_id=registration_id)
 
-    return bln_old_registrations
 
