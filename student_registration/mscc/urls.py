@@ -161,4 +161,14 @@ urlpatterns = [
         view=views.ReferralFormView.as_view(),
         name='referral_edit'
     ),
+    url(
+        'Old-Child-Search/$',
+        views.old_child_search,
+        name='old_child_search'
+    ),
+    url(
+        'Old-Child/$',
+        views.old_child,
+        name='old_child'
+    ),
 ]

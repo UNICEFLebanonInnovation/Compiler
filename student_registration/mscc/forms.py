@@ -396,6 +396,7 @@ class MainForm(forms.ModelForm):
     child_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     child_outreach_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+    student_old_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     type = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -801,6 +802,8 @@ class MainForm(forms.ModelForm):
                 instance.center = request.user.center
                 if request.POST.get("child_outreach_id"):
                     instance.child_outreach_id = request.POST.get("child_outreach_id")
+                if request.POST.get("student_old_id"):
+                    instance.student_old_id = request.POST.get("student_old_id")
                 instance.save()
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
@@ -816,6 +819,7 @@ class MainForm(forms.ModelForm):
         fields = (
             # 'center',
             'child_outreach_id',
+            'student_old_id',
             'child_first_name',
             'child_father_name',
             'child_last_name',
