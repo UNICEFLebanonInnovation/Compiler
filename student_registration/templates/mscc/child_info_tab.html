@@ -380,15 +380,11 @@
                                                             </div>
                                                         </div>
 
-
+                                                        {% if instance.have_labour == 'Yes' %}
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Type of Labor</h4>
-                                                                      {% if instance.labour_type == 'Other services'%}
-                                                                          <p> {{instance.labour_type}} - {{instance.labour_type_specify}}</p>
-                                                                      {% else %}
-                                                                          <p> {{instance.labour_type}}</p>
-                                                                      {% endif %}
+                                                                  <p> {{instance.labour_type}} {% if instance.labour_type == 'Other services'%} - {{instance.labour_type_specify}}{% endif %}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -406,6 +402,7 @@
                                                                      <p>{{ instance.labour_weekly_income }} </p></div>
                                                             </div>
                                                         </div>
+                                                        {% endif %}
 
                                                     </div>
 
@@ -531,7 +528,7 @@
                                             </div>
 
                                             {% get_educations_data instance.id as result %}
-                                              <div class="tab-pane active show" id="tab-animated-4" role="tabpanel">
+                                              <div class="tab-pane" id="tab-animated-4" role="tabpanel">
                                                   <div class="scroll-area-sm" style="height: 340px;">
                                                       <div class="scrollbar-container ps ps--active-y">
                                                           <div class="p-3">
@@ -540,9 +537,10 @@
                                                                 {% for item in result %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-study text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{{ item.programme_type }}</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{{ item.programme_type }} {% if item.round %} - {{ item.round }}{% endif %}
+                                                                          <a href="{% url 'mscc:find_programme_details' %}?programme_id={{ item.programme_id }}&programme_type={{ item.programme_type }}" class="show-progarmme-details" style="float: right;font-size: 20px;" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-search-plus"> </i></a>
+                                                                          </h4>
                                                                             {% if item.registration_date %}<p>Registration Date: {{ item.registration_date }}</p>{% endif %}
-                                                                            {% if item.round %}<p>Round: {{ item.round }}</p>{% endif %}
                                                                             {% if item.center %}<p>Center: {{ item.center }}</p>{% endif %}
                                                                             {% if item.registration_level %}<p>Level: {{ item.registration_level }}</p>{% endif %}
                                                                         </div>

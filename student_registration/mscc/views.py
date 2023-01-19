@@ -17,13 +17,7 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 
-from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import OutreachChild
-from student_registration.child.models import Child
-from student_registration.outreach.serializers import ChildSerializer
-from student_registration.students.models import Student
 from .filters import (
     MainFilter
 )
@@ -33,7 +27,8 @@ from .tables import (
 )
 from .models import (
     Registration,
-    Referral
+    Referral,
+    EducationHistory
 )
 
 from .forms import (
@@ -47,7 +42,7 @@ from .serializers import (
 
 from .utils import *
 
-from student_registration.mscc.templatetags.simple_tags import get_service
+from student_registration.mscc.templatetags.simple_tags import education_history_model
 
 
 class ProfileView(LoginRequiredMixin,
@@ -350,4 +345,22 @@ def old_child(request):
     student_id = request.GET.get('student_id')
     result = get_old_child(student_id)
     return JsonResponse(result)
+
+
+class ProgrammeDetails(LoginRequiredMixin,
+                       TemplateView):
+
+    template_name = 'mscc/programme_details.html'
+
+    def get_context_data(self, **kwargs):
+
+        programme_id = self.request.GET.get('programme_id')
+        programme_type = self.request.GET.get('programme_type')
+
+        instance = education_history_model(programme_id, programme_type)
+
+        return {
+            'instance': instance,
+            'programme_type': programme_type
+        }
 

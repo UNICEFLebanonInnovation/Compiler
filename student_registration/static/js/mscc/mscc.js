@@ -6,6 +6,29 @@ var host = protocol+window.location.host;
 
 $(document).ready(function() {
 
+    $('.show-progarmme-details').click(function(e){
+        e.preventDefault();
+
+        $('#programme-body-content').empty("");
+        $('#programme-body-content').append("Loading...");
+        $('#programmeModal').modal('show');
+
+        $.ajax({
+            type: "GET",
+            url: $(this).attr('href'),
+            cache: false,
+            async: true,
+            dataType: 'html',
+            success: function (response) {
+                $('#programme-body-content').empty("");
+                $('#programme-body-content').append(response);
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+    });
+
     $(document).on('change', 'select#id_source_of_identification', function(){
         reorganizeForm();
     });

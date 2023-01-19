@@ -70,10 +70,20 @@ def education_history(registration_id):
 
 
 @register.simple_tag
+def education_history_model(programme_id, programme_type):
+    try:
+        model = apps.get_model('clm', programme_type)
+        model_data = model.objects.get(id=programme_id)
+        return model_data
+    except Exception as ex:
+        return None
+
+
+@register.simple_tag
 def get_educations_data(obj):
     try:
         history = education_history(obj)
-        print(history.count())
+
         educations = []
         for item in history:
             model = apps.get_model('clm', item.programme_type)
