@@ -293,6 +293,7 @@ class ReferralFormView(LoginRequiredMixin,
         form.save(request=self.request, registry=registry, instance=instance)
         return super(ReferralFormView, self).form_valid(form)
 
+
 def old_child_search(request):
 
     birthday_year = request.GET.get('birthday_year')

@@ -69,3 +69,24 @@ def education_history(registration_id):
     return EducationHistory.objects.filter(registration_id=registration_id)
 
 
+@register.simple_tag
+def get_educations_data(obj):
+    try:
+        history = education_history(obj)
+        print(history.count())
+        educations = []
+        for item in history:
+            model = apps.get_model('clm', item.programme_type)
+            model_data = model.objects.get(id=item.programme_id)
+            educations.append({
+                'programme_type': item.programme_type,
+                'programme_id': item.programme_id,
+                'round': model_data.round,
+                'registration_level': model_data.registration_level,
+                'center': model_data.center,
+                'registration_date': model_data.registration_date
+            })
+        return educations
+    except Exception as ex:
+        print(ex.message)
+        return []
