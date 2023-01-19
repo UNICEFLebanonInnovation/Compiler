@@ -96,18 +96,8 @@ class Registration(TimeStampedModel):
         related_name='+',
         verbose_name=_('Child')
     )
-    child_outreach = models.ForeignKey(
-        OutreachChild,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Outreach Child')
-    )
-    student_old = models.ForeignKey(
-        Student,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Old Student')
-    )
+    child_outreach = models.IntegerField(blank=True, null=True)
+    student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
         PartnerOrganization,
         blank=True, null=True,
@@ -227,18 +217,8 @@ class Registration(TimeStampedModel):
 
 class EducationHistory(TimeStampedModel):
 
-    child = models.ForeignKey(
-        Child,
-        blank=False, null=True,
-        related_name='+',
-        verbose_name=_('Child')
-    )
-    student_old = models.ForeignKey(
-        Student,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Old Student')
-    )
+    child = models.IntegerField(blank=True, null=True)
+    student_old = models.IntegerField(blank=True, null=True)
     registration_id = models.IntegerField(blank=True, null=True)
 
     programme_type = models.CharField(
