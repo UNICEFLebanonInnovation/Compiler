@@ -70,6 +70,30 @@ def education_history(registration_id):
 
 
 @register.simple_tag
+def education_history_programmes(student_id):
+    try:
+        programmes = []
+        programme_types = ['BLN', 'ABLN', 'Bridging', 'RS', 'CBECE', 'Inclusion']
+        
+        for programme_type in programme_types:
+            if education_history_programme(programme_type, student_id):
+                programmes.append(programme_type)
+
+        return ", ".join(programmes)
+    except Exception as ex:
+        return ''
+
+
+def education_history_programme(model_name, student_id):
+    try:
+        model = apps.get_model('clm', model_name)
+        e = model.objects.filter(student_id=student_id).exists()
+        return e
+    except Exception as ex:
+        return False
+
+
+@register.simple_tag
 def education_history_model(programme_id, programme_type):
     try:
         model = apps.get_model('clm', programme_type)

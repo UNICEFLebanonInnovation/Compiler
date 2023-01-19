@@ -278,9 +278,9 @@ function append_old_result(data)
         var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success">'+ item.score +'%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
         var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_old_child_data('+ item.id +');">'+full_name+'</a></h4>';
         var html_line3 = '<p>'+ item.birthday_day + '/'+ item.birthday_month + '/'+ item.birthday_year + ' - '+ item.mother_fullname +'</p>';
-        var html_line4 = '<p>'+ item.sex + ' - '+ item.nationality +'</p></div></div></div>';
-
-        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+        var html_line4 = '<p>'+ item.sex + ' - '+ item.nationality__name +'</p>';
+        var html_line5 = '<p>'+ item.programmes +'</p></div></div></div>';
+        child_html = html_line1 + html_line2 + html_line3 + html_line4 + html_line5;
 
         $('#nfe_search_result').append(child_html);
     });

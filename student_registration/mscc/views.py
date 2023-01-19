@@ -42,7 +42,7 @@ from .serializers import (
 
 from .utils import *
 
-from student_registration.mscc.templatetags.simple_tags import education_history_model
+from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 
 
 class ProfileView(LoginRequiredMixin,
@@ -80,16 +80,6 @@ class MainAddView(LoginRequiredMixin,
         data = {
             'type': self.request.GET.get('type', ''),
         }
-        # if self.request.GET.get('registration_id'):
-        #     instance = Registration.objects.get(id=self.request.GET.get('registration_id'))
-        #     data = MainSerializer(instance).data
-        #     data['child_nationality'] = data['child_nationality_id']
-        #     data['learning_result'] = ''
-        #
-        # if self.request.GET.get('child_id'):
-        #     instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
-        #     data = ChildSerializer(instance).data
-
         initial = data
 
         return initial
@@ -319,7 +309,7 @@ def old_child_search(request):
         'last_name',
         'mother_fullname',
         'sex',
-        'nationality',
+        'nationality__name',
         'birthday_year',
         'birthday_month',
         'birthday_day',
@@ -330,8 +320,9 @@ def old_child_search(request):
         result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
                                        result['last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
-        if fuzzy_match > 85:
+        if fuzzy_match > 50:
             result['score'] = fuzzy_match
+            result['programmes'] = education_history_programmes(result['id'])
             result_match.append(result)
 
     if filtered_results != '':
