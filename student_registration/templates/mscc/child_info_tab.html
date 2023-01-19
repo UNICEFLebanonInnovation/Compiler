@@ -5,6 +5,7 @@
 
 <div class="row staff-profile">
 
+<!--Child Bio Data-->
 <div class="col-md-12 col-lg-6 col-xl-4">
                             <div class="card-shadow-primary profile-responsive card-border mb-3 card">
 <div class="dropdown-menu-header">
@@ -167,6 +168,8 @@
                                 </ul>
                             </div>
                         </div>
+
+<!--General Info-->
 <div class="col-md-12 col-lg-6 col-xl-4">
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
@@ -377,15 +380,11 @@
                                                             </div>
                                                         </div>
 
-
+                                                        {% if instance.have_labour == 'Yes' %}
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Type of Labor</h4>
-                                                                      {% if instance.labour_type == 'Other services'%}
-                                                                          <p> {{instance.labour_type}} - {{instance.labour_type_specify}}</p>
-                                                                      {% else %}
-                                                                          <p> {{instance.labour_type}}</p>
-                                                                      {% endif %}
+                                                                  <p> {{instance.labour_type}} {% if instance.labour_type == 'Other services'%} - {{instance.labour_type_specify}}{% endif %}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -403,6 +402,7 @@
                                                                      <p>{{ instance.labour_weekly_income }} </p></div>
                                                             </div>
                                                         </div>
+                                                        {% endif %}
 
                                                     </div>
 
@@ -424,6 +424,7 @@
                                 </div>
                             </div>
 
+  <!--Education history and current stituation-->
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationService' instance as result %}
                                 <div class="mb-3 card">
@@ -475,6 +476,7 @@
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
+
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child’s educational level when registering for the round</h4>
@@ -525,14 +527,28 @@
                                                 </div>
                                             </div>
 
-                                            {% education_history instance.id as result %}
-                                              <div class="tab-pane active show" id="tab-animated-4" role="tabpanel">
+                                            {% get_educations_data instance.id as result %}
+                                              <div class="tab-pane" id="tab-animated-4" role="tabpanel">
                                                   <div class="scroll-area-sm" style="height: 340px;">
                                                       <div class="scrollbar-container ps ps--active-y">
                                                           <div class="p-3">
-                                                            {% for history in result %}
-                                                              <div> {{history.programme_type}} </div>
-                                                            {% endfor %}
+                                                              <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+
+                                                                {% for item in result %}
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-study text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{{ item.programme_type }} {% if item.round %} - {{ item.round }}{% endif %}
+                                                                          <a href="{% url 'mscc:find_programme_details' %}?programme_id={{ item.programme_id }}&programme_type={{ item.programme_type }}" class="show-progarmme-details" style="float: right;font-size: 20px;" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-search-plus"> </i></a>
+                                                                          </h4>
+                                                                            {% if item.registration_date %}<p>Registration Date: {{ item.registration_date }}</p>{% endif %}
+                                                                            {% if item.center %}<p>Center: {{ item.center }}</p>{% endif %}
+                                                                            {% if item.registration_level %}<p>Level: {{ item.registration_level }}</p>{% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                {% endfor %}
+
+                                                              </div>
                                                           </div>
                                                       <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                   </div>

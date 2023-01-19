@@ -17,13 +17,7 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 
-from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import OutreachChild
-from student_registration.child.models import Child
-from student_registration.outreach.serializers import ChildSerializer
-from student_registration.students.models import Student
 from .filters import (
     MainFilter
 )
@@ -33,7 +27,8 @@ from .tables import (
 )
 from .models import (
     Registration,
-    Referral
+    Referral,
+    EducationHistory
 )
 
 from .forms import (
@@ -47,7 +42,7 @@ from .serializers import (
 
 from .utils import *
 
-from student_registration.mscc.templatetags.simple_tags import get_service, education_history_programmes
+from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 
 
 class ProfileView(LoginRequiredMixin,
@@ -85,16 +80,6 @@ class MainAddView(LoginRequiredMixin,
         data = {
             'type': self.request.GET.get('type', ''),
         }
-        # if self.request.GET.get('registration_id'):
-        #     instance = Registration.objects.get(id=self.request.GET.get('registration_id'))
-        #     data = MainSerializer(instance).data
-        #     data['child_nationality'] = data['child_nationality_id']
-        #     data['learning_result'] = ''
-        #
-        # if self.request.GET.get('child_id'):
-        #     instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
-        #     data = ChildSerializer(instance).data
-
         initial = data
 
         return initial
@@ -293,6 +278,7 @@ class ReferralFormView(LoginRequiredMixin,
         form.save(request=self.request, registry=registry, instance=instance)
         return super(ReferralFormView, self).form_valid(form)
 
+
 def old_child_search(request):
 
     birthday_year = request.GET.get('birthday_year')
@@ -334,7 +320,7 @@ def old_child_search(request):
         result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
                                        result['last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
-        if fuzzy_match > 85:
+        if fuzzy_match > 50:
             result['score'] = fuzzy_match
             result['programmes'] = education_history_programmes(result['id'])
             result_match.append(result)
@@ -350,4 +336,22 @@ def old_child(request):
     student_id = request.GET.get('student_id')
     result = get_old_child(student_id)
     return JsonResponse(result)
+
+
+class ProgrammeDetails(LoginRequiredMixin,
+                       TemplateView):
+
+    template_name = 'mscc/programme_details.html'
+
+    def get_context_data(self, **kwargs):
+
+        programme_id = self.request.GET.get('programme_id')
+        programme_type = self.request.GET.get('programme_type')
+
+        instance = education_history_model(programme_id, programme_type)
+
+        return {
+            'instance': instance,
+            'programme_type': programme_type
+        }
 

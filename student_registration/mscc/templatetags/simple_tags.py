@@ -72,37 +72,16 @@ def education_history(registration_id):
 @register.simple_tag
 def education_history_programmes(student_id):
     try:
-        programmes = ''
-        if education_history_programme('BLN', student_id):
-            programmes += 'BLN'
-        if education_history_programme('ABLN', student_id):
-            if programmes != '':
-                programmes += ', ABLN'
-            else:
-                programmes += 'ABLN'
-        if education_history_programme('Bridging', student_id):
-            if programmes != '':
-                programmes += ', Bridging'
-            else:
-                programmes += 'Bridging'
-        # if education_history_programme('RS', student_id):
-        #             if programmes != '':
-        #                 programmes += ', RS'
-        #             else:
-        #                 programmes += 'RS'
-        if education_history_programme('CBECE', student_id):
-            if programmes != '':
-                programmes += ', CBECE'
-            else:
-                programmes += 'CBECE'
-        if education_history_programme('Inclusion', student_id):
-            if programmes != '':
-                programmes += ', Inclusion'
-            else:
-                programmes += 'Inclusion' 
-        return programmes
+        programmes = []
+        programme_types = ['BLN', 'ABLN', 'Bridging', 'RS', 'CBECE', 'Inclusion']
+        
+        for programme_type in programme_types:
+            if education_history_programme(programme_type, student_id):
+                programmes.append(programme_type)
+
+        return ", ".join(programmes)
     except Exception as ex:
-        return False
+        return ''
 
 
 def education_history_programme(model_name, student_id):
@@ -114,3 +93,34 @@ def education_history_programme(model_name, student_id):
         return False
 
 
+@register.simple_tag
+def education_history_model(programme_id, programme_type):
+    try:
+        model = apps.get_model('clm', programme_type)
+        model_data = model.objects.get(id=programme_id)
+        return model_data
+    except Exception as ex:
+        return None
+
+
+@register.simple_tag
+def get_educations_data(obj):
+    try:
+        history = education_history(obj)
+
+        educations = []
+        for item in history:
+            model = apps.get_model('clm', item.programme_type)
+            model_data = model.objects.get(id=item.programme_id)
+            educations.append({
+                'programme_type': item.programme_type,
+                'programme_id': item.programme_id,
+                'round': model_data.round,
+                'registration_level': model_data.registration_level,
+                'center': model_data.center,
+                'registration_date': model_data.registration_date
+            })
+        return educations
+    except Exception as ex:
+        print(ex.message)
+        return []

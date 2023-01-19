@@ -171,4 +171,9 @@ urlpatterns = [
         views.old_child,
         name='old_child'
     ),
+    url(
+        'Find-Programme-Details/$',
+        view=views.ProgrammeDetails.as_view(),
+        name='find_programme_details'
+    ),
 ]
