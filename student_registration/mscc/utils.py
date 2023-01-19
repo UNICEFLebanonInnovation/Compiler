@@ -52,8 +52,8 @@ def generate_education_history(registration_id, child_id, student_old_id):
 
     for reg_id in bln_old_registrations:
         instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
-                                                                   child_id=child_id,
-                                                                   student_old_id=student_old_id,
+                                                                   child=child_id,
+                                                                   student_old=student_old_id,
                                                                    programme_type = 'BLN',
                                                                    programme_id = reg_id)
         instance.save()
@@ -65,7 +65,7 @@ def generate_education_history(registration_id, child_id, student_old_id):
     for reg_id in abln_old_registrations:
         instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
                                                                    child=child_id,
-                                                                   student_old_id=student_old_id,
+                                                                   student_old=student_old_id,
                                                                    programme_type='ABLN',
                                                                    programme_id=reg_id)
         instance.save()
@@ -77,7 +77,7 @@ def generate_education_history(registration_id, child_id, student_old_id):
     for reg_id in bridging_old_registrations:
         instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
                                                                    child=child_id,
-                                                                   student_old_id=student_old_id,
+                                                                   student_old=student_old_id,
                                                                    programme_type='Bridging',
                                                                    programme_id=reg_id)
         instance.save()
@@ -90,7 +90,7 @@ def generate_education_history(registration_id, child_id, student_old_id):
     for reg_id in rs_old_registrations:
         instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
                                                                    child=child_id,
-                                                                   student_old_id=student_old_id,
+                                                                   student_old=student_old_id,
                                                                    programme_type='RS',
                                                                    programme_id=reg_id)
         instance.save()
@@ -102,7 +102,7 @@ def generate_education_history(registration_id, child_id, student_old_id):
     for reg_id in cbece_old_registrations:
         instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
                                                                    child=child_id,
-                                                                   student_old_id=student_old_id,
+                                                                   student_old=student_old_id,
                                                                    programme_type='CBECE',
                                                                    programme_id=reg_id)
         instance.save()
@@ -114,7 +114,7 @@ def generate_education_history(registration_id, child_id, student_old_id):
     for reg_id in inclusion_old_registrations:
         instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
                                                                    child=child_id,
-                                                                   student_old_id=student_old_id,
+                                                                   student_old=student_old_id,
                                                                    programme_type='Inclusion',
                                                                    programme_id=reg_id)
         instance.save()
