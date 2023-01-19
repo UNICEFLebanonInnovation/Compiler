@@ -30,7 +30,7 @@ from .models import (
 from student_registration.schools.models import (
     School
 )
-from .utils import generate_services
+from .utils import generate_services, generate_education_history
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service
 
@@ -807,6 +807,7 @@ class MainForm(forms.ModelForm):
                 instance.save()
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
+                generate_education_history(instance.id, instance.child_id, instance.student_old_id)
 
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:

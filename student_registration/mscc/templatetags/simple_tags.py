@@ -1,7 +1,7 @@
 from django import template
 from django.apps import apps
 
-from student_registration.mscc.models import ProvidedServices
+from student_registration.mscc.models import ProvidedServices, EducationHistory
 
 register = template.Library()
 
@@ -62,3 +62,10 @@ def service_data(model_name, obj):
         return model.objects.filter(registration=obj).last()
     except Exception as ex:
         return False
+
+
+@register.simple_tag
+def education_history(registration_id):
+    return EducationHistory.objects.filter(registration_id=registration_id)
+
+

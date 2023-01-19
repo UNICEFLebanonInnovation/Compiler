@@ -1,9 +1,18 @@
 # -- coding: utf-8 --
-
+from itertools import chain
 import datetime
+
 
 from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
+from student_registration.clm.models import (
+    BLN,
+    ABLN,
+    Bridging,
+    RS,
+    CBECE,
+    Inclusion
+)
 
 def to_array(fields, obj):
     data = {}
@@ -32,6 +41,83 @@ def update_service(service_name, registry_id, service_id):
                                     name=service_name).update(service_id=service_id,
                                                               completed=True,
                                                               completion_date=datetime.datetime.now())
+
+
+def generate_education_history(registration_id, child_id, student_old_id):
+    from .models import EducationHistory
+
+    # 'BLN'
+    bln_old_registrations = BLN.objects.filter(student_id=student_old_id).values_list('id', flat=True)
+    bln_old_registrations = list(bln_old_registrations)
+
+    for reg_id in bln_old_registrations:
+        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
+                                                                   child_id=child_id,
+                                                                   student_old_id=student_old_id,
+                                                                   programme_type = 'BLN',
+                                                                   programme_id = reg_id)
+        instance.save()
+
+    # 'ABLN'
+    abln_old_registrations = ABLN.objects.filter(student_id=student_old_id).values_list('id', flat=True)
+    abln_old_registrations = list(abln_old_registrations)
+
+    for reg_id in abln_old_registrations:
+        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
+                                                                   child=child_id,
+                                                                   student_old_id=student_old_id,
+                                                                   programme_type='ABLN',
+                                                                   programme_id=reg_id)
+        instance.save()
+
+    # 'Bridging'
+    bridging_old_registrations = Bridging.objects.filter(student_id=student_old_id).values_list('id', flat=True)
+    bridging_old_registrations = list(bridging_old_registrations)
+
+    for reg_id in bridging_old_registrations:
+        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
+                                                                   child=child_id,
+                                                                   student_old_id=student_old_id,
+                                                                   programme_type='Bridging',
+                                                                   programme_id=reg_id)
+        instance.save()
+
+
+    # 'RS'
+    rs_old_registrations = RS.objects.filter(student_id=student_old_id).values_list('id', flat=True)
+    rs_old_registrations = list(rs_old_registrations)
+
+    for reg_id in rs_old_registrations:
+        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
+                                                                   child=child_id,
+                                                                   student_old_id=student_old_id,
+                                                                   programme_type='RS',
+                                                                   programme_id=reg_id)
+        instance.save()
+
+    # 'CBECE'
+    cbece_old_registrations = CBECE.objects.filter(student_id=student_old_id).values_list('id', flat=True)
+    cbece_old_registrations = list(cbece_old_registrations)
+
+    for reg_id in cbece_old_registrations:
+        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
+                                                                   child=child_id,
+                                                                   student_old_id=student_old_id,
+                                                                   programme_type='CBECE',
+                                                                   programme_id=reg_id)
+        instance.save()
+
+    # 'Inclusion'
+    inclusion_old_registrations = Inclusion.objects.filter(student_id=student_old_id).values_list('id', flat=True)
+    inclusion_old_registrations = list(inclusion_old_registrations)
+
+    for reg_id in inclusion_old_registrations:
+        instance, created = EducationHistory.objects.get_or_create(registration_id=registration_id,
+                                                                   child=child_id,
+                                                                   student_old_id=student_old_id,
+                                                                   programme_type='Inclusion',
+                                                                   programme_id=reg_id)
+        instance.save()
 
 
 def get_outreach_child(outreach_id):

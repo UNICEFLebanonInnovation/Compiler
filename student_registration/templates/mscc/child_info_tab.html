@@ -461,7 +461,13 @@
                                                     <span>Situation</span>
                                                 </a>
                                             </li>
+                                            <li class="nav-item">
+                                                  <a role="tab" class="nav-link" id="tab-c-4" data-toggle="tab" href="#tab-animated-4">
+                                                      <span>Education History</span>
+                                                  </a>
+                                              </li>
                                         </ul>
+
                                         <div class="tab-content">
                                             <div class="tab-pane active show" id="tab-animated-3" role="tabpanel">
                                                 <div class="scroll-area-sm" style="height: 340px;">
@@ -518,6 +524,20 @@
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
                                             </div>
+
+                                            {% education_history instance.id as result %}
+                                              <div class="tab-pane active show" id="tab-animated-4" role="tabpanel">
+                                                  <div class="scroll-area-sm" style="height: 340px;">
+                                                      <div class="scrollbar-container ps ps--active-y">
+                                                          <div class="p-3">
+                                                            {% for history in result %}
+                                                              <div> {{history.programme_type}} </div>
+                                                            {% endfor %}
+                                                          </div>
+                                                      <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
+                                                  </div>
+                                              </div>
+
                                         </div>
                                         <ul class="nav flex-column">
                                             <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
