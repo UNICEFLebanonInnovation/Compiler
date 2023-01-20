@@ -185,7 +185,7 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">General info.
                                                       <div style="float:right;">
-                                                            <a href="/MSCC/Child-Edit/{{ instance.id }}/"><i class="pe-7s-pen"></i></a>
+                                                            <a href="/MSCC/Child-Edit/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Child Infos."><i class="pe-7s-pen"></i></a>
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
@@ -442,9 +442,9 @@
                                                     <h5 class="menu-header-title">Education
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Education-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Education-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos."><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Education-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Education-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos."><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -538,7 +538,9 @@
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-study text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">{{ item.programme_type }} {% if item.round %} - {{ item.round }}{% endif %}
-                                                                          <a href="{% url 'mscc:find_programme_details' %}?programme_id={{ item.programme_id }}&programme_type={{ item.programme_type }}" class="show-progarmme-details" style="float: right;font-size: 20px;" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-search-plus"> </i></a>
+                                                                          <div data-toggle="tooltip" data-placement="top" data-original-title="View Progarmme details" style="float: right;font-size: 20px;">
+                                                                              <a href="{% url 'mscc:find_programme_details' %}?programme_id={{ item.programme_id }}&programme_type={{ item.programme_type }}" class="show-progarmme-details" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-search-plus"> </i></a>
+                                                                          </div>
                                                                           </h4>
                                                                             {% if item.registration_date %}<p>Registration Date: {{ item.registration_date }}</p>{% endif %}
                                                                             {% if item.center %}<p>Center: {{ item.center }}</p>{% endif %}

@@ -23,10 +23,11 @@ PACKAGE_TYPES = Choices(
 )
 
 PACKAGE_CATEGORIES = Choices(
-    ('Education', _('Education')),
-    ('Health & Nutrition', _('Health & Nutrition')),
-    ('Child Protection', _('Child Protection')),
-    ('Social Protection', _('Social Protection')),
+    ('Education', 'Education'),
+    ('Youth', 'Youth'),
+    ('Health & Nutrition', 'Health & Nutrition'),
+    ('Child Protection', 'Child Protection'),
+    ('Social Protection', 'Social Protection'),
 )
 
 YES_NO = Choices(
@@ -252,6 +253,12 @@ class ProvidedServices(models.Model):
         null=True,
         verbose_name=_('Type')
     )
+    category = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Category')
+    )
     service_id = models.IntegerField(blank=True, null=True)
     completed = models.BooleanField(blank=True, default=False)
     required = models.BooleanField(blank=True, default=False)
@@ -260,6 +267,9 @@ class ProvidedServices(models.Model):
         null=True,
         verbose_name=_('Completion date')
     )
+
+    def __unicode__(self):
+        return self.name
 
     def __str__(self):
         return self.name
@@ -289,10 +299,13 @@ class Packages(models.Model):
         blank=True,
         null=True,
         choices=PACKAGE_CATEGORIES,
-        verbose_name=_('Type')
+        verbose_name=_('Category')
     )
     required = models.BooleanField(blank=True, default=False)
     age = models.IntegerField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
 
     def __str__(self):
         return self.name

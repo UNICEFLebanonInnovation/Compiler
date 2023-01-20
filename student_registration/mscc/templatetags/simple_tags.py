@@ -56,6 +56,15 @@ def service_info(services, service_name):
 
 
 @register.simple_tag
+def have_service_category(category, obj):
+    try:
+        services = get_services(obj)
+        return services.filter(category=category).count()
+    except Exception as ex:
+        return False
+
+
+@register.simple_tag
 def service_data(model_name, obj):
     try:
         model = apps.get_model('mscc', model_name)
@@ -74,7 +83,7 @@ def education_history_programmes(student_id):
     try:
         programmes = []
         programme_types = ['BLN', 'ABLN', 'Bridging', 'RS', 'CBECE', 'Inclusion']
-        
+
         for programme_type in programme_types:
             if education_history_programme(programme_type, student_id):
                 programmes.append(programme_type)
