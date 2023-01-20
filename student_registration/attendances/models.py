@@ -434,11 +434,11 @@ class MSCCAttendance(TimeStampedModel):
     )
     CLOSE_REASON = Choices(
         ('', '----------'),
-        ('public_holiday', _('Public Holiday')),
-        ('school_holiday', _('School Holiday')),
-        ('strike', _('Strike')),
-        ('weekly_holiday', _('Weekly Holiday')),
-        ('roads_closed', _('Roads Closed')),
+        ('Public Holiday', _('Public Holiday')),
+        ('School Holiday', _('School Holiday')),
+        ('Strike', _('Strike')),
+        ('Weekly Holiday', _('Weekly Holiday')),
+        ('Roads Closed', _('Roads Closed')),
     )
     center = models.ForeignKey(
         Center,
@@ -479,9 +479,10 @@ class MSCCAttendanceStudent(TimeStampedModel):
 
     ABSENCE_REASON = Choices(
         ('', '----------'),
-        ('sick', _('Sick')),
-        ('no_transport', _('No transport')),
-        ('other', _('Other reason')),
+        ('Sick', _('Sick')),
+        ('No transport', _('No transport')),
+        ('Other', _('Other')),
+        ('Unspecified', _('Unspecified')),
     )
     attendance_day = models.ForeignKey(
         MSCCAttendance,
