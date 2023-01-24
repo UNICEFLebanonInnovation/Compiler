@@ -167,9 +167,14 @@ urlpatterns = [
         name='old_child_search'
     ),
     url(
-        'Old-Child/$',
-        views.old_child,
-        name='old_child'
+        'Get-Old-Child-Data/$',
+        views.old_child_data,
+        name='old_child_data'
+    ),
+    url(
+        'Child-Duplication-Check/$',
+        views.child_duplication_check,
+        name='child_duplication_check'
     ),
     url(
         'Find-Programme-Details/$',

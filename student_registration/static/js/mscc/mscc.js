@@ -85,6 +85,7 @@ $(document).ready(function() {
 
         outreach_child_search();
         old_child_search();
+        child_duplication_check();
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
@@ -118,6 +119,8 @@ $(document).ready(function() {
         if(!error_fields){
             $('#next-btn22').trigger('click');
             $(this).removeClass('error-field');
+         }else{
+            $('#formErrorModal').modal('show');
          }
     });
 
@@ -265,6 +268,48 @@ function old_child_search() {
     }
 }
 
+function child_duplication_check() {
+
+    $('#child-duplication-error').hide();
+
+    if (isAddPage()) {
+
+        var birthday_year = $('#id_child_birthday_year').val();
+        var birthday_month = $('#id_child_birthday_month').val();
+        var birthday_day = $('#id_child_birthday_day').val();
+        var first_name = $('#id_child_first_name').val();
+        var father_name = $('#id_child_father_name').val();
+        var last_name = $('#id_child_last_name').val();
+
+        var data = {
+            birthday_year: birthday_year,
+            birthday_month: birthday_month,
+            birthday_day: birthday_day,
+            first_name: first_name,
+            father_name: father_name,
+            last_name: last_name,
+        };
+
+        $.ajax({
+            url: '/MSCC/Child-Duplication-Check/',
+            dataType: "json",
+            data: data,
+            cache: false,
+            async: true,
+            success: function (response) {
+                if(response.result.length > 0){
+                    $('#child-duplication-error').show();
+                }
+                console.log(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+}
+
+
 function append_old_result(data)
 {
     var child_html = '';
@@ -303,7 +348,7 @@ function get_old_child_data(student_id)
     $('#nfe_search_loader').removeClass('hidden');
 
     $.ajax({
-        url: '/MSCC/Old-Child/',
+        url: '/MSCC/Get-Old-Child-Data/',
         data: { student_id: student_id},
         cache: false,
         async: true,
