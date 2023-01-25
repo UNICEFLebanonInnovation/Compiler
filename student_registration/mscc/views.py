@@ -290,10 +290,25 @@ def old_child_search(request):
 
     form_str = '{} {} {}'.format(first_name, father_name, last_name)
     filtered_results = Student.objects.filter(
-        birthday_year=birthday_year,
-        birthday_month=birthday_month,
-        birthday_day=birthday_day
+        birthday_year=birthday_year
     )
+    if filtered_results.count() > 1000 and not birthday_month and not birthday_day:
+        return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
+                                                 'month to get more accurate result'}})
+
+    if birthday_month:
+        filtered_results = filtered_results.filter(
+            birthday_month=birthday_month
+        )
+
+    if filtered_results.count() > 1000 and not birthday_day:
+        return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
+                                                 'day to get more accurate result'}})
+
+    if birthday_day:
+        filtered_results = filtered_results.filter(
+            birthday_day=birthday_day
+        )
 
     filtered_results = filtered_results.values(
         'id',
@@ -330,8 +345,6 @@ def old_child_data(request):
 
 def child_duplication_check(request):
 
-    from student_registration.child.models import Child
-
     birthday_year = request.GET.get('birthday_year')
     birthday_month = request.GET.get('birthday_month')
     birthday_day = request.GET.get('birthday_day')
@@ -340,29 +353,24 @@ def child_duplication_check(request):
     last_name = request.GET.get('last_name')
 
     form_str = '{} {} {}'.format(first_name, father_name, last_name)
-    filtered_results = Child.objects.filter(
-        birthday_year=birthday_year,
-        birthday_month=birthday_month,
-        birthday_day=birthday_day
+    filtered_results = Registration.objects.filter(
+        child__birthday_year=birthday_year,
+        child__birthday_month=birthday_month,
+        child__birthday_day=birthday_day
     )
 
     filtered_results = filtered_results.values(
         'id',
-        'first_name',
-        'father_name',
-        'last_name',
-        'mother_fullname',
-        'gender',
-        'nationality__name',
-        'birthday_year',
-        'birthday_month',
-        'birthday_day',
+        'child__first_name',
+        'child__father_name',
+        'child__last_name',
+        'center__name'
     ).distinct()
 
     result_match = []
     for result in filtered_results:
-        result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
-                                       result['last_name'])
+        result_str = '{} {} {}'.format(result['child__first_name'], result['child__father_name'],
+                                       result['child__last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
         if fuzzy_match > 90:
             result['score'] = fuzzy_match
@@ -388,3 +396,17 @@ class ProgrammeDetails(LoginRequiredMixin,
             'programme_type': programme_type
         }
 
+
+class ChildProfilePreview(LoginRequiredMixin,
+                       TemplateView):
+
+    template_name = 'mscc/child_profile_preview.html'
+
+    def get_context_data(self, **kwargs):
+        registry_id = self.request.GET.get('registry_id')
+
+        instance = Registration.objects.get(id=registry_id)
+
+        return {
+            'instance': instance,
+        }

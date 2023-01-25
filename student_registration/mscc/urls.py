@@ -181,4 +181,9 @@ urlpatterns = [
         view=views.ProgrammeDetails.as_view(),
         name='find_programme_details'
     ),
+    url(
+        'Child-Profile-Preview/$',
+        view=views.ChildProfilePreview.as_view(),
+        name='child_profile_preview'
+    ),
 ]

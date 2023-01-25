@@ -29,6 +29,29 @@ $(document).ready(function() {
         });
     });
 
+    $(document).on('click', '.show-child-details', function(e){
+        e.preventDefault();
+
+        $('#child-content').empty("");
+        $('#child-content').append("Loading...");
+        $('#childModal').modal('show');
+
+        $.ajax({
+            type: "GET",
+            url: $(this).attr('href'),
+            cache: false,
+            async: true,
+            dataType: 'html',
+            success: function (response) {
+                $('#child-content').empty("");
+                $('#child-content').append(response);
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+    });
+
     $(document).on('change', 'select#id_source_of_identification', function(){
         reorganizeForm();
     });
@@ -185,7 +208,7 @@ function append_new_result(data)
     });
 
     if(data.result.length == 0) {
-        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><span class="text-danger">0%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-cross text-danger"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
         var html_line2 = '<h4 class="timeline-title text-danger">No result found</h4>';
         var html_line3 = '<p></p>';
         var html_line4 = '<p></p></div></div></div>';
@@ -298,6 +321,11 @@ function child_duplication_check() {
             async: true,
             success: function (response) {
                 if(response.result.length > 0){
+                    var text = ''
+                    $(response.result).each(function(i, item){
+                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/MSCC/Child-Profile-Preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name;
+                    })
+                    $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
                 }
                 console.log(response);
@@ -316,6 +344,32 @@ function append_old_result(data)
     $('#nfe_search_result').empty();
     $('#nfe_search_loader').addClass('hidden');
 
+    if(data.result.error) {
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="lnr-cross text-warning"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-warning">'+ data.result.error +'</h4>';
+        var html_line3 = '<p></p>';
+        var html_line4 = '<p></p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
+        $('#nfe_search_result').append(child_html);
+
+        return true;
+    }
+
+    if(data.result.length == 0) {
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-warning text-danger"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-danger">No result found</h4>';
+        var html_line3 = '<p></p>';
+        var html_line4 = '<p></p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
+        $('#nfe_search_result').append(child_html);
+
+        return true;
+    }
+
     $(data.result).each(function(i, item) {
         var full_name = "";
         full_name = full_name.concat(item.first_name, " ", item.father_name, " ", item.last_name);
@@ -328,19 +382,10 @@ function append_old_result(data)
         child_html = html_line1 + html_line2 + html_line3 + html_line4 + html_line5;
 
         $('#nfe_search_result').append(child_html);
+
+        return true;
     });
 
-    if(data.result.length == 0) {
-        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><span class="text-danger">0%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
-        var html_line2 = '<h4 class="timeline-title text-danger">No result found</h4>';
-        var html_line3 = '<p></p>';
-        var html_line4 = '<p></p></div></div></div>';
-
-        child_html = html_line1 + html_line2 + html_line3 + html_line4;
-
-        $('#nfe_search_result').append(child_html);
-
-    }
 }
 
 function get_old_child_data(student_id)

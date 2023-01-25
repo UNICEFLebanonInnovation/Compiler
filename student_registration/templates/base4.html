@@ -39,6 +39,9 @@
       .app-page-title {
           padding:  15px;
       }
+    .form-wizard-content.sw-container.tab-content {
+      min-height: 485px !important;
+    }
  form .card-body {
     padding-bottom: 0px;
     padding-top: 0px;
@@ -193,32 +196,31 @@
                                 <div class="dropdown-menu-header-inner bg-plum-plate">
                                     <div class="menu-header-image"></div>
                                     <div class="menu-header-content text-white">
-                                        <h5 class="menu-header-title">CLM <sup>+</sup> modules</h5>
+                                        <h5 class="menu-header-title">CLM <sup>+</sup> Extra Modules</h5>
                                         <h6 class="menu-header-subtitle"></h6>
                                     </div>
                                 </div>
                             </div>
                             <div class="grid-menu grid-menu-xl grid-menu-3col">
                                 <div class="no-gutters row">
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-notebook icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Education
-                                        </a>
-                                    </div>
-
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-browser icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"> </i>
-                                            Social Policy
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-6 col-xl-4">
-                                        <button class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-hourglass icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"> </i>
-                                            Other
-                                        </button>
-                                    </div>
+                                    <!--<div class="col-sm-6 col-xl-4">-->
+                                        <!--<a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">-->
+                                            <!--<i class="pe-7s-notebook icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>-->
+                                            <!--Education-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<div class="col-sm-6 col-xl-4">-->
+                                        <!--<a class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">-->
+                                            <!--<i class="pe-7s-browser icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"> </i>-->
+                                            <!--Social Policy-->
+                                        <!--</a>-->
+                                    <!--</div>-->
+                                    <!--<div class="col-sm-6 col-xl-4">-->
+                                        <!--<button class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">-->
+                                            <!--<i class="pe-7s-hourglass icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"> </i>-->
+                                            <!--Other-->
+                                        <!--</button>-->
+                                    <!--</div>-->
                                 </div>
                             </div>
                             <!--<ul class="nav flex-column">-->
@@ -699,7 +701,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <div class="nav-link">
-                                            CLM<sup>+</sup> 2022 - Version 1.0
+                                            CLM<sup>+</sup> 2022 - Version 1.3
                                         </div>
                                     </li>
                                 </ul>
@@ -753,6 +755,27 @@
                 </button>
             </div>
             <div class="modal-body" id="programme-body-content">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade bd-example-modal-lg-2" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="childModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">Child Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="child-content">
 
             </div>
             <div class="modal-footer">
