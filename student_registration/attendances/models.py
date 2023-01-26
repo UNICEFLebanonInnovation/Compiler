@@ -468,13 +468,13 @@ class MSCCAttendance(TimeStampedModel):
 
     class Meta:
         ordering = ['attendance_date']
-        verbose_name = "Attendances by School by Day"
+        verbose_name = "Attendances by Day"
 
     def __unicode__(self):
         return self.school.__unicode__()
 
 
-class MSCCAttendanceStudent(TimeStampedModel):
+class MSCCAttendanceChild(TimeStampedModel):
     readonly_fields = ('child_name')
 
     ABSENCE_REASON = Choices(

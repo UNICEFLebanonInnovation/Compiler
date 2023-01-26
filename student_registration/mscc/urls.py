@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 
-from . import views, education_view, services_view
+from . import views, education_view, services_view, attendance_views
 
 urlpatterns = [
 
@@ -190,5 +190,20 @@ urlpatterns = [
         'Child-Profile-Preview/$',
         view=views.ChildProfilePreview.as_view(),
         name='child_profile_preview'
+    ),
+    url(
+        regex=r'^Attendance-Main/$',
+        view=attendance_views.MainAttendanceCreateView.as_view(),
+        name='attendance_main'
+    ),
+    url(
+        regex=r'^Attendance-Main-Edit/(?P<pk>[\w.@+-]+)/$',
+        view=attendance_views.MainAttendanceUpdateView.as_view(),
+        name='attendance_main_edit'
+    ),
+    url(
+        regex=r'^Attendance-Child/$',
+        view=attendance_views.ChildAttendanceView.as_view(),
+        name='attendance_child'
     ),
 ]

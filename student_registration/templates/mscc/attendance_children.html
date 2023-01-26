@@ -1,0 +1,49 @@
+{% load staticfiles i18n %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+<h4 class="text-info">Children Attendance </h4>
+
+{% for dict in attendance_child_formset.errors %}
+    {% for error in dict.values %}
+        {{ error }}
+    {% endfor %}
+{% endfor %}
+
+{{ attendance_child_formset.non_form_errors }}
+{{ attendance_child_formset.management_form }}
+<table class="table">
+{% for form in attendance_child_formset.forms %}
+
+   {% if forloop.first %}
+      <thead align="right">
+      <tr align="right">
+          {% for field in form.visible_fields %}
+              <th style="text-align:right">{{ field.label|capfirst }}</th>
+          {% endfor %}
+      </tr>
+      </thead>
+  {% endif %}
+  <tr class="{% cycle row1 row2 %} formset_row">
+
+      {% for field in form.visible_fields %}
+          <td>
+              {% if field.name == 'child_name' %}
+                  {{field.value}}
+                  <span style="display:none">{{field}}</span>
+              {% else %}
+                  {{field}}
+              {% endif %}
+          </td>
+      {% endfor %}
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+  </tr>
+{% endfor %}
+</table>
+
