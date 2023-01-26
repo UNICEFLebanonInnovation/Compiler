@@ -58,6 +58,27 @@ class ProfileView(LoginRequiredMixin,
         }
 
 
+class DashboardView(LoginRequiredMixin,
+                    TemplateView):
+    template_name = 'mscc/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.locations.models import Center, Location
+
+        instances = Registration.objects.all()
+        centers = Center.objects.all()
+        governorates = Location.objects.filter(type_id=1)
+
+        return {
+            'total': instances.count(),
+            'total_corepackage': instances.filter(type='Core-Package').count(),
+            'total_woosc': instances.filter(type='Walk-in-OOSC').count(),
+            'total_wshl': instances.filter(type='Walk-in-In-School').count(),
+            'centers': centers,
+            'governorates': governorates
+        }
+
+
 class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
