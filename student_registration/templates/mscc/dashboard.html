@@ -161,8 +161,8 @@
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children per Age Group</div>
-              <div class="card-body" id="children_per_age_group"></div>
+              <div class="card-header">Children per Gender</div>
+              <div class="card-body" id="children_per_gender"></div>
           </div>
       </div>
 
@@ -204,7 +204,7 @@
 
       <div class="col-md-4">
           <div class="main-card mb-3 card">
-              <div class="card-header">Children per Disability</div>
+              <div class="card-header">Children per Disability Type</div>
               <div class="card-body" id="children_per_disability"></div>
           </div>
       </div>
@@ -277,19 +277,19 @@
    var countries = [{
        name: 'Lebanese',
        color: 'rgba(255, 152, 0,0.4)',
-       borderColor:'#FF9800'
+       borderColor:'#074650'
    }, {
        name: 'Syrians',
        color: 'rgba(0, 162, 255,0.4)',
-       borderColor: '#00A2FF'
+       borderColor: '#009292'
    }, {
        name: 'PRL',
        color: 'rgba(163, 102, 188,0.4)',
-       borderColor: '#A366BC'
+       borderColor: '#FE6DB6'
    }, {
        name: 'PRS',
        color: 'rgba(158, 229, 161,0.4)',
-       borderColor: '#9EE5A1'
+       borderColor: '#FEB5DA'
    }];
 
 
@@ -305,7 +305,7 @@
    }
 
    Highcharts.theme = {
-           colors: ['#34C73B', '#00A2FF', '#F192F1', '#9010BC', '#CF2C2C', '#FF9800'],
+           colors: ['#074650', '#009292', '#FE6DB6', '#FEB5DA', '#480091', '#B66DFF'],
            title: {
                style: {
                    color: '#4D4D4D',
@@ -381,7 +381,7 @@
        Highcharts.setOptions(Highcharts.theme);
 
 
-   Highcharts.chart('children_per_age_group', {
+   Highcharts.chart('children_per_gender', {
        chart: {
            plotBackgroundColor: null,
            plotBorderWidth: 0,
@@ -389,7 +389,6 @@
            type: 'pie'
        },
        title: {
-           //text: 'Total Population<br>5,742,742',
            text: '',
            align: 'center',
            verticalAlign: 'middle',
@@ -426,21 +425,17 @@
 
        },
        series: [{
-           name: 'Nationality',
+           name: 'Gender',
            colorByPoint: true,
            innerSize: '50%',
            data: [{
-               name: 'Lebanese',
-               y: 3864296,
-               color: '#FF9800'
+               name: 'Male',
+               y: 658,
+               color: '#01B8AA'
            }, {
-               name: 'Syrians',
-               y: 1500000,
-               color: '#00A2FF'
-           }, {
-               name: 'Palestinians',
-               y: 208800,
-               color: '#34C73B'
+               name: 'Female',
+               y: 895,
+               color: '#FD625E'
            }]
        }]
    });
@@ -504,254 +499,50 @@
 
        series: [
            {
-               name: "Total per programme",
+               name: "Total per Service",
                colorByPoint: true,
                data: [
                    {
-                       name: "263 Cadasters",
-                       y: 4292701,
-                       drilldown: "263 Cadasters",
-                       color: '#3f6ad8'
+                       name: "CBECE",
+                       y: 233,
+                       drilldown: "",
+                       color: '#B66DFF'
                    },
                    {
-                       name: "Most Vulnerable",
-                       y: 2470043,
-                       drilldown: "Most Vulnerable",
-                       color: '#d92550'
+                       name: "BLN",
+                       y: 234,
+                       drilldown: "",
+                       color: '#480091'
                    },
                    {
-                       name: "2nd Most Vulnerable",
-                       y: 751460,
-                       drilldown: "2nd Most Vulnerable",
-                       color: '#f7b924'
+                       name: "RS",
+                       y: 233,
+                       drilldown: "",
+                       color: '#FEB5DA'
                    },
                    {
-                       name: "3rd Most Vulnerable",
-                       y: 469736,
-                       drilldown: "3rd Most Vulnerable",
-                       color: '#EDDA2A'
+                       name: "YBLN",
+                       y: 343,
+                       drilldown: "",
+                       color: '#FE6DB6'
                    },
                    {
-                       name: "4th Most Vulnerable",
-                       y: 343759,
-                       drilldown: "4th Most Vulnerable",
-                       color: '#3ac47d'
+                       name: "PSS",
+                       y: 545,
+                       drilldown: "",
+                       color: '#009292'
                    },
                    {
-                       name: "5th Most Vulnerable",
-                       y: 257703,
-                       drilldown: "5th Most Vulnerable",
-                       color: '#16aaff'
+                       name: "Digital component",
+                       y: 767,
+                       drilldown: "",
+                       color: '#074650'
                    }
                ]
            }
        ],
        drilldown: {
            series: [
-               {
-                   name: "263 Cadasters",
-                   id: "263 Cadasters",
-                   data: [
-                       [
-                           "Children",
-                           1350371
-                       ],
-                       [
-                           "Lebanese",
-                           2907571
-                       ],
-                       [
-                           "LBN Children",
-                           905708
-                       ],
-                       [
-                           "Displaced Syrians",
-                           1212930
-                       ],
-                       [
-                           "SYR Children",
-                           650130
-                       ],
-                       [
-                           "Palestinian Refugees",
-                           172200
-                       ],
-                       [
-                           "PRL Children",
-                           59981
-                       ]
-                   ]
-               },
-               {
-                   name: "Most Vulnerable",
-                   id: "Most Vulnerable",
-                   data: [
-                       [
-                           "Children",
-                           931760
-                       ],
-                       [
-                           "Lebanese",
-                           1625629
-                       ],
-                       [
-                           "LBN Children",
-                           506383
-                       ],
-                       [
-                           "Displaced Syrians",
-                           699730
-                       ],
-                       [
-                           "SYR Children",
-                           375055
-                       ],
-                       [
-                           "Palestinian Refugees",
-                           144684
-                       ],
-                       [
-                           "PRL Children",
-                           50321
-                       ]
-                   ]
-               },
-               {
-                   name: "2nd Most Vulnerable",
-                   id: "2nd Most Vulnerable",
-                   data: [
-                       [
-                           "Children",
-                           285902
-                       ],
-                       [
-                           "Lebanese",
-                           504141
-                       ],
-                       [
-                           "LBN Children",
-                           157040
-                       ],
-                       [
-                           "Displaced Syrians",
-                           227655
-                       ],
-                       [
-                           "SYR Children",
-                           122023
-                       ],
-                       [
-                           "Palestinian Refugees",
-                           19664
-                       ],
-                       [
-                           "PRL Children",
-                           6839
-                       ]
-                   ]
-               },
-               {
-                   name: "3rd Most Vulnerable",
-                   id: "3rd Most Vulnerable",
-                   data: [
-                       [
-                           "Children",
-                           172803
-                       ],
-                       [
-                           "Lebanese",
-                           348860
-                       ],
-                       [
-                           "LBN Children",
-                           108670
-                       ],
-                       [
-                           "Displaced Syrians",
-                           117390
-                       ],
-                       [
-                           "SYR Children",
-                           62921
-                       ],
-                       [
-                           "Palestinian Refugees",
-                           3486
-                       ],
-                       [
-                           "PRL Children",
-                           1212
-                       ]
-                   ]
-               },
-               {
-                   name: "4th Most Vulnerable",
-                   id: "4th Most Vulnerable",
-                   data: [
-                       [
-                           "Children",
-                           131008
-                       ],
-                       [
-                           "Lebanese",
-                           234114
-                       ],
-                       [
-                           "LBN Children",
-                           72927
-                       ],
-                       [
-                           "Displaced Syrians",
-                           105990
-                       ],
-                       [
-                           "SYR Children",
-                           56811
-                       ],
-                       [
-                           "Palestinian Refugees",
-                           3655
-                       ],
-                       [
-                           "PRL Children",
-                           1271
-                       ]
-                   ]
-               },
-               {
-                   name: "5th Most Vulnerable",
-                   id: "5th Most Vulnerable",
-                   data: [
-                       [
-                           "Children",
-                           94256
-                       ],
-                       [
-                           "Lebanese",
-                           194827
-                       ],
-                       [
-                           "LBN Children",
-                           60689
-                       ],
-                       [
-                           "Displaced Syrians",
-                           62165
-                       ],
-                       [
-                           "SYR Children",
-                           33320
-                       ],
-                       [
-                           "Palestinian Refugees",
-                           711
-                       ],
-                       [
-                           "PRL Children",
-                           274
-                       ]
-                   ]
-               }
            ]
        }
    });
@@ -830,29 +621,29 @@
                        name: "Lebanese",
                        y: 3864296,
                        drilldown: "Lebanese",
-                       color: 'rgba(255, 152, 0,0.4)',
-                       borderColor:'#FF9800'
+                       color: '#DC5B57',
+                       borderColor:'#DC5B57'
                    },
                    {
                        name: "Syrian",
                        y: 1500000,
                        drilldown: "Syrian",
-                       color: 'rgba(0, 162, 255,0.4)',
-                       borderColor: '#00A2FF'
+                       color: '#F3C911',
+                       borderColor: '#F3C911'
                    },
                    {
                        name: "PRL",
                        y: 180000,
                        drilldown: "PRL",
-                       color: 'rgba(163, 102, 188,0.4)',
-                       borderColor: '#A366BC'
+                       color: '#4C5D8A',
+                       borderColor: '#4C5D8A'
                    },
                    {
                        name: "PRS",
                        y: 27700,
                        drilldown: "PRS",
-                       color: 'rgba(158, 229, 161,0.4)',
-                       borderColor: '#9EE5A1'
+                       color: '#4A8DDC',
+                       borderColor: '#4A8DDC'
                    }
                ]
            }
@@ -1110,6 +901,268 @@
            ]
        }
    });
+
+
+   Highcharts.chart('children_per_status', {
+       chart: {
+           plotBackgroundColor: null,
+           plotBorderWidth: 0,
+           plotShadow: false,
+           type: 'pie'
+       },
+       title: {
+           //text: 'Total Population<br>5,742,742',
+           text: '',
+           align: 'center',
+           verticalAlign: 'middle',
+           y: 50
+       },
+       subtitle: {
+           text: '',
+           align: 'left',
+           verticalAlign: 'bottom',
+       },
+       tooltip: {
+           pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+       },
+       accessibility: {
+           point: {
+               valueSuffix: '%'
+           }
+       },
+       plotOptions: {
+           pie: {
+               allowPointSelect: true,
+               cursor: 'pointer',
+               dataLabels: {
+                   enabled: false,
+                   format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+               },
+               showInLegend: true
+           }
+       },
+       legend: {
+           align: 'right',
+           verticalAlign: 'middle',
+           layout: 'vertical',
+
+       },
+       series: [{
+           name: 'Family Status',
+           colorByPoint: true,
+           innerSize: '50%',
+           data: [{
+               name: 'Married',
+               y: 123,
+               color: '#73B761'
+           }, {
+               name: 'Engaged',
+               y: 2345,
+               color: '#4A588A'
+           }, {
+               name: 'Divorced',
+               y: 5,
+               color: '#ECC846'
+           },{
+               name: 'Widowed',
+               y: 0,
+               color: '#CD4C46'
+           },{
+               name: 'Single',
+               y: 1345,
+               color: '#71AFE2'
+           },
+           ]
+       }]
+   });
+
+
+   // Create the chart
+   Highcharts.chart('children_per_source', {
+       chart: {
+           type: 'column',
+             margin:80,
+           marginBottom:100,
+
+       },
+       title: {
+           text: '',
+
+       },
+       subtitle: {
+           text: '',
+           align: 'left',
+           verticalAlign: 'bottom',
+       },
+       accessibility: {
+           announceNewData: {
+               enabled: true
+           }
+       },
+       xAxis: {
+           type: 'category'
+       },
+       yAxis: {
+           title: {
+               //text: 'Total'
+               text:' '
+           }
+
+       },
+       legend: {
+           enabled: false
+       },
+       plotOptions: {
+           series: {
+               borderWidth: 1,
+               borderColor:'{point.borderColor}',
+               pointWidth:40,
+               dataLabels: {
+                   enabled: false,
+                   formatter: function() {
+                     return formatNumber(this.point.y);
+                   }
+               }
+           }
+       },
+
+       tooltip: {
+           formatter: function() {
+                 return '<b>'+this.point.name+': </b>'+ formatNumber(this.point.y);
+           }
+       },
+
+       series: [
+           {
+               name: "Total per Source of Identification",
+               colorByPoint: true,
+               data: [
+                   {
+                       name: "Dirassa",
+                       y: 233,
+                       drilldown: "",
+                       color: '#01B8AA'
+                   },
+                   {
+                       name: "Awareness Session",
+                       y: 234,
+                       drilldown: "",
+                       color: '#374649'
+                   },
+                   {
+                       name: "Sector Partners referral",
+                       y: 233,
+                       drilldown: "",
+                       color: '#FD625E'
+                   },
+                   {
+                       name: "From Profiling Database",
+                       y: 343,
+                       drilldown: "",
+                       color: '#F2C80F'
+                   },
+                   {
+                       name: "From Other NGO",
+                       y: 545,
+                       drilldown: "",
+                       color: '#5F6B6D'
+                   },
+                   {
+                       name: "From Displaced Community",
+                       y: 767,
+                       drilldown: "",
+                       color: '#8AD4EB'
+                   },
+                   {
+                       name: "Referred by the municipality",
+                       y: 767,
+                       drilldown: "",
+                       color: '#FE9666'
+                   },
+                   {
+                       name: "Other Sources",
+                       y: 767,
+                       drilldown: "",
+                       color: '#A66999'
+                   }
+               ]
+           }
+       ],
+       drilldown: {
+           series: [
+           ]
+       }
+   });
+
+   Highcharts.chart('children_cash_support', {
+       chart: {
+           plotBackgroundColor: null,
+           plotBorderWidth: 0,
+           plotShadow: false,
+           type: 'pie'
+       },
+       title: {
+           //text: 'Total Population<br>5,742,742',
+           text: '',
+           align: 'center',
+           verticalAlign: 'middle',
+           y: 50
+       },
+       subtitle: {
+           text: '',
+           align: 'left',
+           verticalAlign: 'bottom',
+       },
+       tooltip: {
+           pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+       },
+       accessibility: {
+           point: {
+               valueSuffix: '%'
+           }
+       },
+       plotOptions: {
+           pie: {
+               allowPointSelect: true,
+               cursor: 'pointer',
+               dataLabels: {
+                   enabled: false,
+                   format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+               },
+               showInLegend: true
+           }
+       },
+       legend: {
+           align: 'right',
+           verticalAlign: 'middle',
+           layout: 'vertical',
+
+       },
+       series: [{
+           name: 'Cash Support',
+           colorByPoint: true,
+           innerSize: '50%',
+           data: [{
+               name: 'Haddi',
+               y: 123,
+               color: '#F17925'
+           }, {
+               name: 'Education Cash assistance',
+               y: 2345,
+               color: '#004753'
+           }, {
+               name: 'UNHCR cash assistance',
+               y: 565,
+               color: '#CCAA14'
+           },{
+               name: 'WFP cash assistance',
+               y: 245,
+               color: '#4B4C4E'
+           }
+           ]
+       }]
+   });
+
 
 
 </script>
