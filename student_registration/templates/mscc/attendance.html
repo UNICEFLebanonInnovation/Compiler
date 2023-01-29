@@ -7,22 +7,8 @@
 {% load util_tags %}
 {% bootstrap_css %}
 
-
-
-{% block extra_head %}
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
-
-{% endblock %}
-
 {% block content %}
 
-<style>
-  .hidden {
-    display: none !important;
-  }
-</style>
 <div class="app-page-title">
                         <div class="page-title-wrapper">
                             <div class="page-title-heading">
@@ -66,80 +52,99 @@
                         </div>
 </div>
 
-
- <div class="mb-3 card">
-                            <div class="card-header-tab card-header">
-                                <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                                    <i class="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
-                                    Daily Attendance
-                                </div>
-                                <div class="btn-actions-pane-right text-capitalize">
-                                    <button class="btn-wide btn-outline-2x mr-md-2 btn btn-outline-focus btn-sm">Export</button>
-                                </div>
-                            </div>
-
-                            <div class="text-center d-block p-3 card-footer">
-                                <button class="btn-pill btn-shadow btn-wide fsize-1 btn btn-primary btn-lg">
-                                    <span class="mr-2 opacity-7">
-                                        <i class="icon icon-anim-pulse ion-ios-analytics-outline"></i>
-                                    </span>
-                                    <span class="mr-1">Load</span>
-                                </button>
-<!--                              <button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
-
-                            </div>
-                        </div>
-
 <div class="row">
-  <div class="col-md-12" id="student-attendance">
+<div class="col-md-4">
+                                    <div class="main-card mb-3 card">
+                                        <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
+                                            <div class="btn-actions-pane-right actions-icon-btn">
+                                                <!--<button class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-leaf btn-icon-wrapper"></i></button>-->
+                                                <button class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-cloud-download btn-icon-wrapper"></i></button>
+                                                <!--<div class="btn-group dropdown">-->
+                                                    <!--<button type="button" aria-haspopup="true" data-toggle="dropdown" aria-expanded="false" class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-menu btn-icon-wrapper"></i></button>-->
+                                                    <!--<div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-shadow dropdown-menu-right dropdown-menu-hover-link dropdown-menu" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(28px, 36px, 0px);"><h6 tabindex="-1" class="dropdown-header">Header</h6>-->
+                                                        <!--<button type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-inbox"> </i><span>Menus</span></button>-->
+                                                        <!--<button type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i><span>Settings</span></button>-->
+                                                        <!--<button type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-book"> </i><span>Actions</span></button>-->
+                                                        <!--<div tabindex="-1" class="dropdown-divider"></div>-->
+                                                        <!--<div class="p-3 text-right">-->
+                                                            <!--<button class="mr-2 btn-shadow btn-sm btn btn-link">View Details</button>-->
+                                                            <!--<button class="mr-2 btn-shadow btn-sm btn btn-primary">Action</button>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
 
+                                          <div class="form-group">
+                                              <input type="hidden" value="{{ request.user.center.id }}" name="center_id" id="center_id" />
+                                                  <div class="input-group">
+                                                      <div class="input-group-prepend datepicker-trigger">
+                                                          <div class="input-group-text">
+                                                              <i class="fa fa-calendar-alt"></i>
+                                                          </div>
+                                                      </div>
+                                                    <input type="text" class="form-control" data-toggle="datepicker-icon" id="attendance_date"/>
+                                                  </div>
+                                          </div>
+                                              <div class="form-row">
+                                                  <div class="col-md-6">
+                                                      <input id="attendance_day_off" type="checkbox" data-toggle="toggle" data-on="Working Day" data-off="Day Off" checked>
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                      <div class="dropdown d-inline-block hidden">
+                                                          <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="mb-2 mr-2 dropdown-toggle btn btn-warning">Closing Reason</button>
+                                                            <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-hover-warning dropdown-menu">
+                                                              <button type="button" tabindex="0" class="dropdown-item">Public Holiday</button>
+                                                              <button type="button" tabindex="0" class="dropdown-item">School Holiday</button>
+                                                              <button type="button" tabindex="0" class="dropdown-item">Strike</button>
+                                                              <button type="button" tabindex="0" class="dropdown-item">Weekly Holiday</button>
+                                                              <button type="button" tabindex="0" class="dropdown-item">Roads Closed</button>
+                                                            </div>
+                                                      </div>
+                                                      <input name="close_reason" id="close_reason" type="text" class="form-control hidden" />
+
+<!--<div class="btn-group btn-group-toggle" data-toggle="buttons">-->
+  <!--<label class="btn btn-secondary active">-->
+    <!--<input type="radio" name="options" id="option1" autocomplete="off" checked> Active-->
+  <!--</label>-->
+  <!--<label class="btn btn-secondary">-->
+    <!--<input type="radio" name="options" id="option2" autocomplete="off"> Radio-->
+  <!--</label>-->
+  <!--<label class="btn btn-secondary">-->
+    <!--<input type="radio" name="options" id="option3" autocomplete="off"> Radio-->
+  <!--</label>-->
+<!--</div>-->
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                        <div class="d-block text-right card-footer">
+                                            <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
+                                            <a class="btn-wide mb-2 mr-2 btn-icon btn btn-success" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+                                        </div>
+                                      </div>
+                                    </div>
+
+
+  <div class="col-md-8">
 
     <div class="main-card mb-3 card">
-      <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>Students</div>
-                                                  <div id="student_search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
-                                                    <div class="loader">
-                                                        <div class="ball-spin-fade-loader">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        <div class="card-body" style="height: 225px; overflow: auto;">
-                                            <div  id="student_search_result">
-                                                <h5 class="card-title">Student 1</h5>
-                                                <h5 class="card-title">Student 2</h5>
-                                                <h5 class="card-title">Student 3</h5>
-                                                <h5 class="card-title">Student 4</h5>
-                                                <h5 class="card-title">Student 5</h5>
-
+      <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>Children</div>
+                                        <div class="card-body" style="height: 400px; overflow: auto;">
+                                            <div id="attendance_children">
 
                                             </div>
-                                        <div class="divider"></div>
-
-                                    <div class="clearfix">
-                                        <button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
-
-
-                                    </div>
                                         </div>
+<div class="d-block text-center card-footer">
                                     </div>
-</div>
+
+                                    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance-main.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=2"></script>
 
 {% endblock %}

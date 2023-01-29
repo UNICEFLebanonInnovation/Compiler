@@ -192,18 +192,14 @@ urlpatterns = [
         name='child_profile_preview'
     ),
     url(
-        regex=r'^Attendance-Main/$',
-        view=attendance_views.MainAttendanceCreateView.as_view(),
-        name='attendance_main'
+        regex=r'^Attendance/$',
+        view=attendance_views.AttendanceView.as_view(),
+        name='attendance'
     ),
     url(
-        regex=r'^Attendance-Main-Edit/(?P<pk>[\w.@+-]+)/$',
-        view=attendance_views.MainAttendanceUpdateView.as_view(),
-        name='attendance_main_edit'
+        'Load-Attendance-Children/$',
+        view=attendance_views.LoadAttendanceChildren.as_view(),
+        name='load_attendance_children'
     ),
-    url(
-        regex=r'^Attendance-Child/$',
-        view=attendance_views.ChildAttendanceView.as_view(),
-        name='attendance_child'
-    ),
+
 ]

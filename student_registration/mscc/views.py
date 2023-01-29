@@ -419,7 +419,7 @@ class ProgrammeDetails(LoginRequiredMixin,
 
 
 class ChildProfilePreview(LoginRequiredMixin,
-                       TemplateView):
+                          TemplateView):
 
     template_name = 'mscc/child_profile_preview.html'
 
