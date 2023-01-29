@@ -64,10 +64,12 @@ class DashboardView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         from student_registration.locations.models import Center, Location
+        from student_registration.clm.models import PartnerOrganization
 
         instances = Registration.objects.all()
         centers = Center.objects.all()
         governorates = Location.objects.filter(type_id=1)
+        partners = PartnerOrganization.objects.all()
 
         return {
             'total': instances.count(),
@@ -75,7 +77,8 @@ class DashboardView(LoginRequiredMixin,
             'total_woosc': instances.filter(type='Walk-in-OOSC').count(),
             'total_wshl': instances.filter(type='Walk-in-In-School').count(),
             'centers': centers,
-            'governorates': governorates
+            'governorates': governorates,
+            'partners': partners
         }
 
 
