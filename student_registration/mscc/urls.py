@@ -201,5 +201,10 @@ urlpatterns = [
         view=attendance_views.LoadAttendanceChildren.as_view(),
         name='load_attendance_children'
     ),
+    url(
+        'Save-Attendance-Children/$',
+        view=attendance_views.save_attendance_children,
+        name='save_attendance_children'
+    ),
 
 ]

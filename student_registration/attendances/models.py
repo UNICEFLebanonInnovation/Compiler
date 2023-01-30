@@ -500,7 +500,7 @@ class MSCCAttendanceChild(TimeStampedModel):
         blank=True,
         null=True,
         choices=Child.YES_NO,
-        verbose_name=_('Student Attended?')
+        verbose_name=_('Child Attended?')
     )
     absence_reason = models.CharField(
         max_length=50,

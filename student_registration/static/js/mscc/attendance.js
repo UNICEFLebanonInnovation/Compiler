@@ -6,12 +6,35 @@ var host = protocol+window.location.host;
 
 $(document).ready(function() {
 
-    $(document).on('change', '#attendance_day_off', function(e){
+    $(document).on('change', '.attendance_day_off', function(e){
         console.log($(this).val());
         if($(this).val() == ''){
 
         }
     });
+
+    $(document).on('click', '#save_attendance_children', function(e){
+        e.preventDefault();
+
+
+
+        var params = [];
+
+        $.ajax({
+            type: "GET",
+            url: $(this).attr('href'),
+            cache: false,
+            data: params,
+            async: true,
+            dataType: 'json',
+            success: function (response) {
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+    });
+
 
     $(document).on('click', '#load_attendance_children', function(e){
         e.preventDefault();
