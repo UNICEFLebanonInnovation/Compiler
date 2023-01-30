@@ -6,6 +6,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 
+from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from .models import *
 
 
@@ -68,3 +69,6 @@ admin.site.register(ProvidedServices, ProvidedServicesAdmin)
 admin.site.register(Packages, PackagesAdmin)
 admin.site.register(InclusionService)
 admin.site.register(EducationHistory)
+
+admin.site.register(MSCCAttendance)
+admin.site.register(MSCCAttendanceChild)

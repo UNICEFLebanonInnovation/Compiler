@@ -48,7 +48,8 @@ class EducationAssessmentFormView(LoginRequiredMixin,
         else:
             if instance:
                 data = to_array(EducationAssessmentForm.Meta.fields, EducationAssessment.objects.get(id=instance))
-                return EducationAssessmentForm(data, registry=registry, instance=instance, request=self.request)
+                if data['post_test_done']:
+                    return EducationAssessmentForm(data, registry=registry, instance=instance, request=self.request)
             return EducationAssessmentForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
