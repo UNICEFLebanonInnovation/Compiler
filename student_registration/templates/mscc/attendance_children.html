@@ -18,6 +18,8 @@
                                                           <img width="42" class="rounded-circle" src="{% static 'images/avatars/male.png' %}">
                                                         </div>
                                                         <div class="widget-content-left" style="width: 200px !important;">
+                                                            <input type="hidden" class="registry_id" name="registry_id[]" value="{{ item.id }}" />
+                                                            <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child.id }}" />
                                                             <div class="widget-heading"><a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.id }}">{{ item.child.full_name }}</a></div>
                                                             <div class="widget-subheading">{{ item.child.mother_fullname }}</div>
                                                         </div>
@@ -30,12 +32,13 @@
 
 <div class="btn-group btn-group-toggle attendance_status" data-toggle="buttons">
   <label class="btn btn-light active">
-    <input type="radio" name="options" id="attendance_status_on_{{ item.id }}" autocomplete="off" checked> Attended
+    <input type="radio" name="attendance_status[]" class="attendance_status" value="yes" id="attendance_status_on_{{ item.id }}" autocomplete="off" checked> Attended
   </label>
   <label class="btn btn-light">
-    <input type="radio" name="options" id="attendance_status_off_{{ item.id }}" autocomplete="off"> Absent
+    <input type="radio" name="attendance_status[]" class="attendance_status" value="no" id="attendance_status_off_{{ item.id }}" autocomplete="off"> Absent
   </label>
 </div>
+
 </div>
                                                         </div>
                                                         <div class="widget-content-right">
