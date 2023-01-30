@@ -55,7 +55,6 @@ class LoadAttendanceChildren(LoginRequiredMixin,
 
 def save_attendance_children(request):
     data = json.loads(request.body)
-    data["center_id"] = request.user.center_id
-    result = create_attendance(data)
-    return JsonResponse({'attendance_successful': result})
+    result = create_attendance(data, request.GET.get('center_id'))
+    return JsonResponse({'result': result})
 

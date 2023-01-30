@@ -2,7 +2,7 @@
 from itertools import chain
 import datetime
 
-
+from datetime import datetime
 from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
 from student_registration.clm.models import (
@@ -14,6 +14,7 @@ from student_registration.clm.models import (
     Inclusion
 )
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
+
 
 def to_array(fields, obj):
     data = {}
@@ -302,21 +303,22 @@ def get_old_child(student_id):
 
     return initial
 
-def create_attendance(data):
-    from datetime import datetime
-    attendance = MSCCAttendance()
-    attendance.center_id = data["center_id"]
-    attendance.attendance_date = datetime.strptime(data["attendance_date"], '%m/%d/%Y')
-    attendance.day_off = data["attendance_day_off"]
-    attendance.save()
-    for child in data['children_attendance']:
-        attendance_child = MSCCAttendanceChild()
-        attendance_child.attendance_day = attendance
-        attendance_child.child_id = child['child_id']
-        attendance_child.attended = child['attended']
-        attendance_child.save()
 
-    if attendance:
+def create_attendance(data, center_id):
+    try:
+
+        attendance, created = MSCCAttendance.objects.get_or_create(center_id=center_id,
+                                                                   attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'))
+        attendance.day_off = data["attendance_day_off"]
+        attendance.save()
+
+        for child in data['children_attendance']:
+            attendance_child, created = MSCCAttendanceChild.objects.get_or_create(attendance_day=attendance,
+                                                                                  child_id=child['child_id'])
+            attendance_child.attended = child['attended']
+            attendance_child.save()
+
         return True
-
-
+    except Exception as ex:
+        print(ex.message)
+        return False

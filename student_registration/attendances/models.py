@@ -470,8 +470,11 @@ class MSCCAttendance(TimeStampedModel):
         ordering = ['attendance_date']
         verbose_name = "Attendances by Day"
 
+    def __str__(self):
+        return '{} - {}'.format(self.center, self.attendance_date)
+
     def __unicode__(self):
-        return self.school.__unicode__()
+        return '{} - {}'.format(self.center, self.attendance_date)
 
 
 class MSCCAttendanceChild(TimeStampedModel):
@@ -539,3 +542,8 @@ class MSCCAttendanceChild(TimeStampedModel):
             return self.child.full_name
         return ''
 
+    def __str__(self):
+        return '{} - {}'.format(self.child, self.attendance_day)
+
+    def __unicode__(self):
+        return '{} - {}'.format(self.child, self.attendance_day)
