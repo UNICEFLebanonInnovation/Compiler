@@ -104,10 +104,10 @@
 
 <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
   <label class="btn btn-light active">
-    <input type="radio" class="attendance_day_off" value="on" name="attendance_day_off" autocomplete="off"> Working day
+    <input type="radio" class="attendance_day_off" value="Yes" name="attendance_day_off" autocomplete="Yes" checked> Working day
   </label>
   <label class="btn btn-light">
-    <input type="radio" class="attendance_day_off" value="off" name="attendance_day_off" autocomplete="off"> Day Off
+    <input type="radio" class="attendance_day_off" value="No" name="attendance_day_off" autocomplete="No"> Day Off
   </label>
 </div>
 
@@ -168,6 +168,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=2"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=3"></script>
 
 {% endblock %}

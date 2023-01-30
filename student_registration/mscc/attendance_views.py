@@ -9,6 +9,10 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, Http
 from .models import Registration
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 
+import json
+
+from .utils import *
+
 
 class AttendanceView(LoginRequiredMixin,
                      TemplateView):
@@ -50,5 +54,8 @@ class LoadAttendanceChildren(LoginRequiredMixin,
 
 
 def save_attendance_children(request):
+    data = json.loads(request.body)
+    data["center_id"] = request.user.center_id
+    result = create_attendance(data)
+    return JsonResponse({'attendance_successful': result})
 
-    return JsonResponse({})

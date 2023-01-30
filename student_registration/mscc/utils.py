@@ -13,6 +13,7 @@ from student_registration.clm.models import (
     CBECE,
     Inclusion
 )
+from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 
 def to_array(fields, obj):
     data = {}
@@ -300,4 +301,22 @@ def get_old_child(student_id):
     # initial['national_number_confirm'] = instance.child_personal_id
 
     return initial
+
+def create_attendance(data):
+    from datetime import datetime
+    attendance = MSCCAttendance()
+    attendance.center_id = data["center_id"]
+    attendance.attendance_date = datetime.strptime(data["attendance_date"], '%m/%d/%Y')
+    attendance.day_off = data["attendance_day_off"]
+    attendance.save()
+    for child in data['children_attendance']:
+        attendance_child = MSCCAttendanceChild()
+        attendance_child.attendance_day = attendance
+        attendance_child.child_id = child['child_id']
+        attendance_child.attended = child['attended']
+        attendance_child.save()
+
+    if attendance:
+        return True
+
 

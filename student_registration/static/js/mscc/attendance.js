@@ -1,6 +1,4 @@
 
-var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
-    " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 
@@ -16,15 +14,46 @@ $(document).ready(function() {
     $(document).on('click', '#save_attendance_children', function(e){
         e.preventDefault();
 
+        var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
+        var attendance_date = $("#attendance_date").val();
 
+        children_attendance = [];
+
+        $(".list-group-item")
+        .each
+        (
+            function()
+            {
+               child_id = $(this).find(".child_id").val();
+
+               var attended = $("input[name='attendance_status[]']:checked").val();
+
+               children_attendance.push
+               (
+                  {
+                     "child_id": child_id,
+                     "attended": attended
+                  }
+               );
+            }
+        );
+
+
+        var attendance_information =
+        {
+           "attendance_date": attendance_date,
+           "attendance_day_off": attendance_day_off,
+           "children_attendance": children_attendance
+        };
 
         var params = [];
 
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: $(this).attr('href'),
             cache: false,
-            data: params,
+            headers: getHeader(),
+            data: JSON.stringify(attendance_information),
             async: true,
             dataType: 'json',
             success: function (response) {
@@ -33,6 +62,7 @@ $(document).ready(function() {
                 console.log(response);
             }
         });
+
     });
 
 
@@ -80,5 +110,4 @@ $(document).ready(function() {
             }
         });
     });
-
 });
