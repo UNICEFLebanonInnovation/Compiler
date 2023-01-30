@@ -16,7 +16,8 @@ class PackagesResource(resources.ModelResource):
             'id',
             'name',
             'type',
-            'age'
+            'age',
+            'category'
         )
         export_order = ('name', )
 
@@ -27,7 +28,8 @@ class PackagesAdmin(ImportExportModelAdmin):
         'id',
         'name',
         'type',
-        'age'
+        'age',
+        'category'
     )
 
 
@@ -38,6 +40,7 @@ class ProvidedServicesResource(resources.ModelResource):
             'id',
             'name',
             'type',
+            'category',
             'registration',
             'completed',
             'required',
@@ -52,6 +55,7 @@ class ProvidedServicesAdmin(ImportExportModelAdmin):
         'id',
         'name',
         'type',
+        'category',
         'registration',
         'completed',
         'required',

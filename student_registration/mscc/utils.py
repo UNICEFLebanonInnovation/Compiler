@@ -31,7 +31,8 @@ def generate_services(child_age, registry):
     for package in packages.all():
         instance, created = ProvidedServices.objects.get_or_create(name=package.name,
                                                                    registration=registry,
-                                                                   type=package.type)
+                                                                   type=package.type,
+                                                                   category=package.category)
         instance.save()
 
 

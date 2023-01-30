@@ -1,20 +1,12 @@
 {% extends "base4.html" %}
 {% load static i18n %}
 {% load static %}
-{% load render_table from django_tables2 %}
 {% load bootstrap3 %}
 {% load util_tags %}
 {% load simple_tags %}
 {% bootstrap_css %}
 
 {% block content %}
-
-<!--<div class="app-page-title"><div class="page-title-wrapper"><div class="page-title-heading"><div class="page-title-icon"><i class="icon pe-7s-server icon-gradient bg-ripe-malin"></i></div><div>-->
-    <!--Child Profile-->
-    <!--<div class="page-title-subheading">-->
-                                    <!--</div>-->
-<!--</div></div><div class="page-title-actions">-->
-<!--</div></div></div>-->
 
 <div class="app-page-title">
                         <div class="page-title-wrapper">
@@ -47,25 +39,36 @@
                             </div>
                         <div class="page-title-actions">
 
+                                {% if instance.student_old %}
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in one the previous NFE progarmmes">
+                                    <i class="lnr-link btn-icon-wrapper"> </i>
+                                </button>
+                                {% else %}
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in any of the previous NFE progarmmes">
+                                    <i class="lnr-unlink btn-icon-wrapper"> </i>
+                                </button>
+
+                                {% endif %}
+
                                 {% if instance.child_outreach %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="bottom" class="btn-shadow mr-3 btn btn-success" data-original-title="">
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in the outreach data">
                                     <i class="lnr-thumbs-up btn-icon-wrapper"> </i>
                                 </button>
                                 {% else %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="bottom" class="btn-shadow mr-3 btn btn-warning" data-original-title="">
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in the outreach data">
                                     <i class="lnr-thumbs-down btn-icon-wrapper"> </i>
                                 </button>
 
                                 {% endif %}
 
 
-                                <button type="button" data-toggle="tooltip" title="" data-placement="bottom" class="btn-shadow mr-3 btn btn-primary" data-original-title="">
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">
                                     {{ instance.type }}
                                 </button>
 
 {% get_completion_rate instance as result %}
 
-<div class="progress mr-3" style="height: 35px; float: right; width: 150px;">
+<div class="progress mr-3" style="height: 35px; float: right; width: 150px;" data-toggle="tooltip" title="" data-placement="top" data-original-title="Completion Percentage of the Child Services">
     <div class="progress-bar" role="progressbar" aria-valuenow="{{ result }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ result }}%;">{{ result }}%</div>
 </div>
 

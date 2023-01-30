@@ -3,6 +3,25 @@
 {% load util_tags %}
 {% load simple_tags %}
 
+<div class="row">
+
+        <div class="col-md-12">
+                                    <div class="mb-3 card">
+
+                                        <!--<div class="tabs-lg-alternate card-header">-->
+                                            <!--<ul class="nav nav-justified">-->
+                                                <!--<li class="nav-item">-->
+                                                    <!--<a data-toggle="tab" href="#tab-eg9-0" class="nav-link active show">-->
+                                                        <!--<div class="widget-number">Child Info.</div>-->
+                                                    <!--</a></li>-->
+                                            <!--</ul>-->
+                                        <!--</div>-->
+
+                                        <div class="tab-content">
+                                            <div class="tab-pane active show" id="tab-eg9-0" role="tabpanel">
+                                                <div class="card-body">
+
+
 <div class="row staff-profile">
 
 <!--Child Bio Data-->
@@ -26,9 +45,6 @@
                                                 <h6 class="menu-header-subtitle">Father: {{ instance.child.father_name  }}</h6>
                                                 <h6 class="menu-header-subtitle">Mother: {{ instance.child.mother_fullname  }}</h6>
                                             </div>
-                                            <!--<div class="menu-header-btn-pane">-->
-                                                <!--<button class="button btn btn-pill btn-dark" data-style="slide-right"><a href="/MSCC/Child-Edit/{{ instance.id }}" style="color: white;"><i class="pe-7s-pen"></i></a></button>-->
-                                            <!--</div>-->
                                         </div>
                                     </div>
                                 </div>
@@ -183,11 +199,7 @@
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">General info.
-                                                      <div style="float:right;">
-                                                            <a href="/MSCC/Child-Edit/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Child Infos."><i class="pe-7s-pen"></i></a>
-                                                      </div>
-                                                    </h5>
+                                                    <h5 class="menu-header-title">General info.</h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
                                                         <!--<b class="text-info">21 </b>-->
@@ -440,13 +452,6 @@
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Education
-                                                      <div style="float:right;">
-                                                            {% if result %}
-                                                              <a href="/MSCC/Services/Education-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos."><i class="pe-7s-pen"></i></a>
-                                                            {% else %}
-                                                              <a href="/MSCC/Services/Education-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos."><i class="pe-7s-plus"></i></a>
-                                                            {% endif %}
-                                                      </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
@@ -572,3 +577,13 @@
 
 </div>
 
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+</div>

@@ -475,7 +475,7 @@ class MSCCAttendance(TimeStampedModel):
 
 
 class MSCCAttendanceChild(TimeStampedModel):
-    readonly_fields = ('child_name')
+    readonly_fields = ('child_name', )
 
     ABSENCE_REASON = Choices(
         ('', '----------'),
@@ -517,7 +517,7 @@ class MSCCAttendanceChild(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Student Attendance"
+        verbose_name = "Child Attendance"
 
     @property
     def child_name(self):

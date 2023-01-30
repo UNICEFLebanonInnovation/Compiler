@@ -27,6 +27,11 @@ urlpatterns = [
         name='list'
     ),
     url(
+        regex=r'^Dashboard/$',
+        view=views.DashboardView.as_view(),
+        name='dashboard'
+    ),
+    url(
         regex=r'^Services/Education-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationAssessmentFormView.as_view(),
         name='service_education_assessment_add'
@@ -167,9 +172,14 @@ urlpatterns = [
         name='old_child_search'
     ),
     url(
-        'Old-Child/$',
-        views.old_child,
-        name='old_child'
+        'Get-Old-Child-Data/$',
+        views.old_child_data,
+        name='old_child_data'
+    ),
+    url(
+        'Child-Duplication-Check/$',
+        views.child_duplication_check,
+        name='child_duplication_check'
     ),
     url(
         'Find-Programme-Details/$',
@@ -177,18 +187,19 @@ urlpatterns = [
         name='find_programme_details'
     ),
     url(
-        regex=r'^Attendance-Main/$',
-        view=attendance_views.MainAttendanceCreateView.as_view(),
-        name='attendance_main'
+        'Child-Profile-Preview/$',
+        view=views.ChildProfilePreview.as_view(),
+        name='child_profile_preview'
     ),
     url(
-        regex=r'^Attendance-Main-Edit/(?P<pk>[\w.@+-]+)/$',
-        view=attendance_views.MainAttendanceUpdateView.as_view(),
-        name='attendance_main_edit'
+        regex=r'^Attendance/$',
+        view=attendance_views.AttendanceView.as_view(),
+        name='attendance'
     ),
     url(
-        regex=r'^Attendance-Child/$',
-        view=attendance_views.ChildAttendanceView.as_view(),
-        name='attendance_child'
+        'Load-Attendance-Children/$',
+        view=attendance_views.LoadAttendanceChildren.as_view(),
+        name='load_attendance_children'
     ),
+
 ]

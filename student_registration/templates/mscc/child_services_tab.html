@@ -7,7 +7,9 @@
 
   <!-- Education -->
 {% service_data 'EducationService' instance as result1 %}
-  {% if result1 %}
+{% have_service_category 'Education' instance as result2 %}
+
+  {% if result1 and result2 %}
 {% service_data 'EducationAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
@@ -34,24 +36,24 @@
                                         </div>
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
                                             <li class="nav-item">
-                                                <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-4" data-toggle="tab" href="#tab-animated-4" aria-selected="true">
+                                                <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-4a" data-toggle="tab" href="#tab-animated-4a" aria-selected="true">
                                                   <span>Diagnostic Assessment</span>
                                                 </a>
                                             </li>
 
                                             <li class="nav-item">
-                                                <a role="tab" class="nav-link" id="tab-c-5" data-toggle="tab" href="#tab-animated-5" aria-selected="true">
+                                                <a role="tab" class="nav-link" id="tab-c-5" data-toggle="tab" href="#tab-animated-5">
                                                     <span>Education Assessment</span>
                                                 </a>
                                             </li>
                                         </ul>
                                         <div class="tab-content">
-                                            <div class="tab-pane active show" id="tab-animated-4" role="tabpanel">
-                                                    <div style="float:right;    margin-top: 5px;margin-right: 12px;font-size: 25px;">
+                                            <div class="tab-pane active show" id="tab-animated-4a" role="tabpanel">
+                                                    <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                      <a href="/MSCC/Services/Diagnostic-Assessment-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                      <a href="/MSCC/Services/Diagnostic-Assessment-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Diagnostic Assessment Data"><i class="pe-7s-pen"></i></a>
                                                     {% else %}
-                                                      <a href="/MSCC/Services/Diagnostic-Assessment-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                      <a href="/MSCC/Services/Diagnostic-Assessment-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Diagnostic Assessment Data"><i class="pe-7s-plus"></i></a>
                                                     {% endif %}
                                                     </div>
 
@@ -101,17 +103,17 @@
                                                 </div>
                                             </div>
                                             <div class="tab-pane" id="tab-animated-5" role="tabpanel">
-                                                      <div style="float:right;    margin-top: 5px;margin-right: 12px;font-size: 25px;">
+                                                      <div style="float:right; margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                       {% if result %}
                                                         {% if result.post_test_done %}
-                                                        <a href="/MSCC/Services/Education-Assessment-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                        <a href="/MSCC/Services/Education-Assessment-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Assessment Data"><i class="pe-7s-pen"></i></a>
                                                         {% else %}
-                                                        <a href="/MSCC/Services/Education-Assessment-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-plus"></i></a>
+                                                        <a href="/MSCC/Services/Education-Assessment-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add the Education Assessment Data"><i class="pe-7s-plus"></i></a>
                                                         {% endif %}
                                                       {% endif %}
                                                       </div>
 
-                                                <div class="scroll-area-sm" style="height: 300px;">
+                                                <div class="scroll-area-sm" style="height: 222px;">
                                                     <div class="scrollbar-container ps">
                                                         <div class="p-3">
 
@@ -224,9 +226,9 @@
                                                     <h5 class="menu-header-title">Retention Support
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/RS-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/RS-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The RS Service Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/RS-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/RS-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The RS Service Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -334,9 +336,9 @@
                                                     <h5 class="menu-header-title">Inclusion
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Inclusion-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Inclusion-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Inclusion Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Inclusion-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Inclusion-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Inclusion Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -402,9 +404,9 @@
                                                     <h5 class="menu-header-title">Digital Component
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Digital-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Digital-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Digital Component Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Digital-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Digital-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Digital Component Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -470,9 +472,9 @@
                                                     <h5 class="menu-header-title">Health & Nutrition
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child_age }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child_age }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child_age }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child_age }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -628,9 +630,9 @@
                                                     <h5 class="menu-header-title">Adolescents Kit
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Youth-Kit-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Youth-Kit-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Adolescents Kit Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Youth-Kit-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Youth-Kit-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Adolescents Kit Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -850,9 +852,9 @@
                                                     <h5 class="menu-header-title">PSS
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/PSS-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/PSS-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The PSS Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/PSS-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/PSS-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add the PSS Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -1006,9 +1008,9 @@
                                                     <h5 class="menu-header-title">Caregivers Package
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Follow-Up-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Follow-Up-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Caregivers Package Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Follow-Up-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Follow-Up-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Caregivers Package Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -1185,9 +1187,9 @@
                                                     <h5 class="menu-header-title">Referral
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Referral-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Referral-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Referral Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Referral-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Referral-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add the Referral Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -1256,9 +1258,13 @@
                                 </div>
                             </div>
 
+{% service_data 'EducationService' instance as result1 %}
+{% have_service_category 'Youth' instance as result2 %}
+
+  {% if result1 and result2 %}
+{% service_data 'YouthAssessment' instance as result %}
   <!--Youth Assessment-->
 <div class="col-md-12 col-lg-6 col-xl-4">
-  {% service_data 'YouthAssessment' instance as result %}
                                 <div class="mb-3 card">
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
@@ -1268,9 +1274,9 @@
                                                     <h5 class="menu-header-title">Youth Assessment
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Youth-Assessment-Edit/{{ instance.id }}/{{ result.id }}/"><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Youth-Assessment-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Assessment Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Youth-Assessment-Add/{{ instance.id }}/"><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Youth-Assessment-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Youth Assessment Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
@@ -1372,6 +1378,7 @@
                                 </div>
                             </div>
                             </div>
+{% endif %}
 
   <!--Recreational-->
 {% get_service instance 'Recreational' as result %}

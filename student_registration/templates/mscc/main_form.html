@@ -17,11 +17,6 @@
 
 {% block content %}
 
-<style>
-  .hidden {
-    display: none !important;
-  }
-</style>
 <div class="app-page-title">
                         <div class="page-title-wrapper">
                             <div class="page-title-heading">
@@ -76,6 +71,10 @@
 </div>
 
 {{ form.errors }}
+
+<div class="" style="display:none;" id="child-duplication-error">
+  <div class="alert alert-danger fade show" role="alert" id="child-duplication-error-text"></div>
+</div>
 
 <div class="row">
 
@@ -208,11 +207,7 @@
 
 {% block extra_js %}
 
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=30"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=3"></script>
 
 {% endblock %}
