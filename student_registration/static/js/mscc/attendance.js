@@ -4,19 +4,29 @@ var host = protocol+window.location.host;
 
 $(document).ready(function() {
 
-    $(document).on('change', '.attendance_day_off', function(e){
-        console.log($(this).val());
-        if($(this).val() == ''){
+$('[data-toggle="datepicker-icon"]').datepicker({trigger:".datepicker-trigger"});
 
+//  Default Setting: close_reason is hidden
+    $('#close_reason').addClass('d-none');
+    $('input[name=attendance_day_off]').change(function(e) {
+        var attendance_day_off = this.value
+
+        if (attendance_day_off == 'No') {
+            $('#close_reason').removeClass('d-none');
         }
-    });
+        else {
+            $('#close_reason').addClass('d-none');
+        }
+//        $('#save_attendance_children').addClass('disabled');
+//        $('#load_attendance_children').removeClass('disabled');
+        });
 
     $(document).on('click', '#save_attendance_children', function(e){
         e.preventDefault();
 
         var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
         var attendance_date = $("#attendance_date").val();
-
+        var close_reason = $("#close_reason").val();
         children_attendance = [];
 
         $(".list-group-item")
@@ -24,15 +34,16 @@ $(document).ready(function() {
         (
             function()
             {
-               child_id = $(this).find(".child_id").val();
-
+               var child_id = $(this).find(".child_id").val();
                var attended = $("input[name='attendance_status[]']:checked").val();
+               var absence_reason = $(this).find(".absence_reason").val();
 
                children_attendance.push
                (
                   {
                      "child_id": child_id,
-                     "attended": attended
+                     "attended": attended,
+                     "absence_reason": absence_reason
                   }
                );
             }
@@ -43,10 +54,9 @@ $(document).ready(function() {
         {
            "attendance_date": attendance_date,
            "attendance_day_off": attendance_day_off,
+           "close_reason": close_reason,
            "children_attendance": children_attendance
         };
-
-        var params = [];
 
         $.ajax({
             type: "POST",
@@ -57,6 +67,13 @@ $(document).ready(function() {
             async: true,
             dataType: 'json',
             success: function (response) {
+                if (response.result) {
+                    $('#attendance_children').empty("");
+                    $('#save_attendance_children').addClass('disabled');
+                    $('#load_attendance_children').removeClass('disabled');
+                    alert("Attendance successfully saved");
+                }
+                console.log(response);
             },
             error: function(response) {
                 console.log(response);
@@ -81,6 +98,9 @@ $(document).ready(function() {
             success: function (response) {
                 $('#attendance_children').empty("");
                 $('#attendance_children').append(response);
+
+                $('#save_attendance_children').removeClass('disabled');
+                $('#load_attendance_children').addClass('disabled');
             },
             error: function(response) {
                 console.log(response);
@@ -110,4 +130,5 @@ $(document).ready(function() {
             }
         });
     });
+
 });

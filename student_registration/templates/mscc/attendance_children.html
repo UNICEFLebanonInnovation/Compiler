@@ -30,37 +30,29 @@
                                                         <div class="widget-content-right">
                                                             <div role="group" class="btn-group-sm btn-group">
 
-<div class="btn-group btn-group-toggle attendance_status" data-toggle="buttons">
-  <label class="btn btn-light active">
-    <input type="radio" name="attendance_status[]" class="attendance_status" value="Yes" id="attendance_status_on_{{ item.id }}" autocomplete="off" checked> Attended
-  </label>
-  <label class="btn btn-light">
-    <input type="radio" name="attendance_status[]" class="attendance_status" value="No" id="attendance_status_off_{{ item.id }}" autocomplete="off"> Absent
-  </label>
-</div>
+                                                              <div class="btn-group btn-group-toggle attendance_status" data-toggle="buttons">
+                                                                <label class="btn btn-light active">
+                                                                  <input type="radio" name="attendance_status[]" class="attendance_status" value="Yes" id="attendance_status_on_{{ item.id }}" autocomplete="off" checked> Attended
+                                                                </label>
+                                                                <label class="btn btn-light">
+                                                                  <input type="radio" name="attendance_status[]" class="attendance_status" value="No" id="attendance_status_off_{{ item.id }}" autocomplete="off"> Absent
+                                                                </label>
+                                                              </div>
 
-</div>
-
-
-<div class="input-group">
-                                                <div class="input-group-prepend">
-                                    <select id="absence_reason[]" class="btn-primary">
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                        <option value="3">Option 3</option>
-                                        <option value="4">Option 4</option>
-                                        <option value="5">Option 5</option>
-                                        <option value="6">Option 6</option>
-                                    </select>
-                                                </div>
-                                                <input name="" type="text" class="form-control"></div>
+                                                              </div>
 
                                                         </div>
                                                         <div class="widget-content-right">
-                                                            <div role="group" class="btn-group-sm btn-group">
-                                                                <!--<button type="button" class="btn-shadow btn btn-primary">Hire</button>-->
-                                                                <!--<button type="button" class="btn-shadow btn btn-primary">Fire</button>-->
-                                                            </div>
+                                                              <div class="input-group">
+                                                                  <div class="input-group-prepend">
+                                                                      <select id="absence_reason_{{ item.id }}" class="btn-primary absence_reason">
+                                                                          <option value="Sick">Sick</option>
+                                                                          <option value="Transportation">Transportation</option>
+                                                                          <option value="Other">Other</option>
+                                                                      </select>
+                                                                  </div>
+                                                                  <input name="" type="text" class="form-control hidden">
+                                                              </div>
                                                         </div>
                                                     </div>
                                                 </div>
