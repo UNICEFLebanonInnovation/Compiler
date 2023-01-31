@@ -1,8 +1,10 @@
 {% load static i18n %}
 {% load static %}
 {% load util_tags %}
+{% load simple_tags %}
 
 <div class="card no-shadow bg-transparent no-border rm-borders mb-3">
+  {% child_attendance_history  46 as result %}
                             <div class="card">
                                 <div class="no-gutters row">
                                     <div class="col-md-12 col-lg-6 col-xl-3">
