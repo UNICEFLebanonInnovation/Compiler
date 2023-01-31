@@ -4,22 +4,23 @@ var host = protocol+window.location.host;
 
 $(document).ready(function() {
 
-$('[data-toggle="datepicker-icon"]').datepicker({trigger:".datepicker-trigger"});
+    $('.attendance_day_off label').click(function(e) {
+        setTimeout(
+          function()
+          {
+                var attendance_day_off = $('input[name=attendance_day_off]:checked').val();
 
-//  Default Setting: close_reason is hidden
-    $('#close_reason').addClass('d-none');
-    $('input[name=attendance_day_off]').change(function(e) {
-        var attendance_day_off = this.value
+                if (attendance_day_off == 'No') {
+                    $('#close_reason').removeClass('hidden');
+                    $('#load_attendance_children').addClass('disabled');
+                    $('#save_attendance_children').removeClass('disabled');
+                }else {
+                    $('#close_reason').addClass('hidden');
+                    $('#load_attendance_children').removeClass('disabled');
+                }
+          }, 500);
 
-        if (attendance_day_off == 'No') {
-            $('#close_reason').removeClass('d-none');
-        }
-        else {
-            $('#close_reason').addClass('d-none');
-        }
-//        $('#save_attendance_children').addClass('disabled');
-//        $('#load_attendance_children').removeClass('disabled');
-        });
+    });
 
     $(document).on('click', '#save_attendance_children', function(e){
         e.preventDefault();
@@ -35,15 +36,17 @@ $('[data-toggle="datepicker-icon"]').datepicker({trigger:".datepicker-trigger"})
             function()
             {
                var child_id = $(this).find(".child_id").val();
-               var attended = $("input[name='attendance_status[]']:checked").val();
+               var attended = $(this).find("input.status:checked").val();
                var absence_reason = $(this).find(".absence_reason").val();
+               var absence_reason_other = $(this).find(".absence_reason_other").val();
 
                children_attendance.push
                (
                   {
                      "child_id": child_id,
                      "attended": attended,
-                     "absence_reason": absence_reason
+                     "absence_reason": absence_reason,
+                     "absence_reason_other": absence_reason_other
                   }
                );
             }
@@ -68,10 +71,9 @@ $('[data-toggle="datepicker-icon"]').datepicker({trigger:".datepicker-trigger"})
             dataType: 'json',
             success: function (response) {
                 if (response.result) {
-                    $('#attendance_children').empty("");
-                    $('#save_attendance_children').addClass('disabled');
-                    $('#load_attendance_children').removeClass('disabled');
-                    alert("Attendance successfully saved");
+//                    $('#attendance_children').empty("");
+//                    $('#save_attendance_children').addClass('disabled');
+//                    $('#load_attendance_children').removeClass('disabled');
                 }
                 console.log(response);
             },
@@ -100,7 +102,7 @@ $('[data-toggle="datepicker-icon"]').datepicker({trigger:".datepicker-trigger"})
                 $('#attendance_children').append(response);
 
                 $('#save_attendance_children').removeClass('disabled');
-                $('#load_attendance_children').addClass('disabled');
+//                $('#load_attendance_children').addClass('disabled');
             },
             error: function(response) {
                 console.log(response);
