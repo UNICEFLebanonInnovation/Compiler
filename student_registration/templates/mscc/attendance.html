@@ -1,4 +1,4 @@
-{% extends "base4.html" %}
+{% extends "base5.html" %}
 {% load staticfiles i18n %}
 {% load crispy_forms_tags %}
 {% load static %}
@@ -104,28 +104,48 @@
 
 <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
   <label class="btn btn-light active">
-    <input type="radio" class="attendance_day_off" value="Yes" name="attendance_day_off" autocomplete="Yes" checked> Working day
+    <input id="attendance_day_off" type="radio" class="attendance_day_off" value="Yes" name="attendance_day_off" checked> Working day
   </label>
   <label class="btn btn-light">
-    <input type="radio" class="attendance_day_off" value="No" name="attendance_day_off" autocomplete="No"> Day Off
+    <input type="radio" class="attendance_day_off" value="No" name="attendance_day_off"> Day Off
   </label>
 </div>
 
+<!-- <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">-->
+<!--<input type="radio" id="html" name="fav_language" value="HTML">-->
+<!--<label for="html">HTML</label><br>-->
+<!--<input type="radio" id="css" name="fav_language" value="CSS">-->
+<!--<label for="css">CSS</label><br>-->
+<!-- </div>-->
 </div>
 
                                                   </div>
                                                   <div class="col-md-6">
-                                                      <div class="dropdown d-inline-block hidden">
-                                                          <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="mb-2 mr-2 dropdown-toggle btn btn-warning">Closing Reason</button>
-                                                            <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-hover-warning dropdown-menu">
-                                                              <button type="button" tabindex="0" class="dropdown-item">Public Holiday</button>
-                                                              <button type="button" tabindex="0" class="dropdown-item">School Holiday</button>
-                                                              <button type="button" tabindex="0" class="dropdown-item">Strike</button>
-                                                              <button type="button" tabindex="0" class="dropdown-item">Weekly Holiday</button>
-                                                              <button type="button" tabindex="0" class="dropdown-item">Roads Closed</button>
-                                                            </div>
-                                                      </div>
-                                                      <input name="close_reason" id="close_reason" type="text" class="form-control hidden" />
+<!--                                                      <div class="dropdown d-inline-block ">-->
+<!--                                                          <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="mb-2 mr-2 dropdown-toggle btn btn-warning">Closing Reason</button>-->
+<!--                                                            <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-hover-warning dropdown-menu">-->
+<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Public Holiday</button>-->
+<!--                                                              <button type="button" tabindex="0" class="dropdown-item">School Holiday</button>-->
+<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Strike</button>-->
+<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Weekly Holiday</button>-->
+<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Roads Closed</button>-->
+<!--                                                            </div>-->
+<!--                                                      </div>-->
+<!--                                                      <input name="close_reason" id="close_reason" type="text" class="form-control hidden" />-->
+
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="close_reason" class="btn-primary">
+                                                                          <option value="Public Holiday">Public Holiday</option>
+                                                                          <option value="School Holiday">School Holiday</option>
+                                                                          <option value="Strike">Strike</option>
+                                                                          <option value="Weekly Holiday">Weekly Holiday</option>
+                                                                          <option value="Roads Closed">Roads Closed</option>
+                                                                      </select>
+                                                                  </div>
+                                                                  <input name="" type="text" class="form-control hidden">
+                                                              </div>
+
 
 <!--<div class="btn-group btn-group-toggle" data-toggle="buttons">-->
   <!--<label class="btn btn-secondary active">-->
@@ -144,7 +164,7 @@
 
                                         <div class="d-block text-right card-footer">
                                             <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
-                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
                                         </div>
                                       </div>
                                     </div>
@@ -168,6 +188,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=3"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=7"></script>
 
 {% endblock %}

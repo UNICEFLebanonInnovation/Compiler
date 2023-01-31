@@ -1,7 +1,9 @@
 from django import template
 from django.apps import apps
 
-from student_registration.mscc.models import ProvidedServices, EducationHistory
+from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration
+from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
+
 
 register = template.Library()
 
@@ -133,3 +135,46 @@ def get_educations_data(obj):
     except Exception as ex:
         print(ex.message)
         return []
+
+
+@register.simple_tag
+def child_attendance(child_id):
+    try:
+        return MSCCAttendanceChild.objects.filter(child_id=child_id)
+
+    except Exception as ex:
+        print(ex.message)
+        return []
+
+@register.simple_tag
+def child_attendance_history(child_id):
+    try:
+        attendance = child_attendance(child_id)
+
+        #     'attendance': attendance,
+        #     'total_attendance': 100,
+        #     'total_absence': 9,
+        #     'month_absence': 3,
+        #     'total_working_days': 50,
+
+        return attendance
+    except Exception as ex:
+        print(ex.message)
+        return []
+
+
+@register.simple_tag
+def attendance_exists(center_id, attendance_date):
+    try:
+        e = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).exists()
+        return e
+    except Exception as ex:
+        return False
+
+@register.simple_tag
+def attendance_records(center_id, attendance_date):
+    try:
+       attendance_children = MSCCAttendanceChild.objects.filter(attendance_day__center_id=center_id, attendance_day__attendance_date=attendance_date)
+       return attendance_children
+    except Exception as ex:
+        return False

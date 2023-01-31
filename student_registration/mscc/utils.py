@@ -306,18 +306,18 @@ def get_old_child(student_id):
 
 def create_attendance(data, center_id):
     try:
-
         attendance, created = MSCCAttendance.objects.get_or_create(center_id=center_id,
                                                                    attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'))
         attendance.day_off = data["attendance_day_off"]
+        attendance.close_reason = data["close_reason"]
         attendance.save()
 
         for child in data['children_attendance']:
             attendance_child, created = MSCCAttendanceChild.objects.get_or_create(attendance_day=attendance,
                                                                                   child_id=child['child_id'])
             attendance_child.attended = child['attended']
+            attendance_child.absence_reason = child['absence_reason']
             attendance_child.save()
-
         return True
     except Exception as ex:
         print(ex.message)
