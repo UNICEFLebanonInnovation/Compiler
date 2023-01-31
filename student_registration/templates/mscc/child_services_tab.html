@@ -62,7 +62,7 @@
                                                     {% endif %}
                                                     </div>
 
-                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
@@ -80,7 +80,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development Assessment (only in BLN)</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Foreign Language Development Assessment</h4>
                                                                             {% if result.pre_attended_language == 'Yes'  %}
                                                                               <p> {{result.pre_attended_language}} - {{result.pre_modality_language}} - {{result.pre_language_grade}}</p>
                                                                             {% else %}
@@ -118,7 +118,7 @@
                                                       {% endif %}
                                                       </div>
 
-                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps">
                                                         <div class="p-3">
 
@@ -204,7 +204,7 @@
                                                 </div>
                                             </div>
                                             <div class="tab-pane" id="tab-animated-99" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                <div class="scroll-area-sm" style="height: 200px;">
                                                     <div class="scrollbar-container ps">
                                                         <div class="p-3">
 
@@ -213,7 +213,7 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">ARABIC LANGUAGE DEVELOPMENT</h4>
-                                                                    <p></p>
+                                                                    <p>{{ result.arabic_improvement }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -221,7 +221,7 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">FOREIGN LANGUAGE DEVELOPMENT</h4>
-                                                                      <p></p>
+                                                                      <p>{{ result.language_improvement }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -229,17 +229,10 @@
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">COGNITIVE DEVELOPMENT - MATHEMATICS </h4>
-                                                                    <p></p>
+                                                                    <p>{{ result.math_improvement }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="vertical-timeline-item vertical-timeline-element">
-                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Did the child fully complete the school year?</h4>
-                                                                      <p> {{result.school_year_completed}}</p>
-                                                                  </div>
-                                                              </div>
-                                                          </div>
                                                     </div>
 
                                                         </div>

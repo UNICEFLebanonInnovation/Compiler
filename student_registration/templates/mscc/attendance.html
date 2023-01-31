@@ -1,8 +1,6 @@
-{% extends "base5.html" %}
+{% extends "base4.html" %}
 {% load staticfiles i18n %}
-{% load crispy_forms_tags %}
 {% load static %}
-{% load render_table from django_tables2 %}
 {% load bootstrap3 %}
 {% load util_tags %}
 {% bootstrap_css %}
@@ -66,21 +64,7 @@
                                     <div class="main-card mb-3 card">
                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
                                             <div class="btn-actions-pane-right actions-icon-btn">
-                                                <!--<button class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-leaf btn-icon-wrapper"></i></button>-->
                                                 <button class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-cloud-download btn-icon-wrapper"></i></button>
-                                                <!--<div class="btn-group dropdown">-->
-                                                    <!--<button type="button" aria-haspopup="true" data-toggle="dropdown" aria-expanded="false" class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-menu btn-icon-wrapper"></i></button>-->
-                                                    <!--<div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-shadow dropdown-menu-right dropdown-menu-hover-link dropdown-menu" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(28px, 36px, 0px);"><h6 tabindex="-1" class="dropdown-header">Header</h6>-->
-                                                        <!--<button type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-inbox"> </i><span>Menus</span></button>-->
-                                                        <!--<button type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i><span>Settings</span></button>-->
-                                                        <!--<button type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-book"> </i><span>Actions</span></button>-->
-                                                        <!--<div tabindex="-1" class="dropdown-divider"></div>-->
-                                                        <!--<div class="p-3 text-right">-->
-                                                            <!--<button class="mr-2 btn-shadow btn-sm btn btn-link">View Details</button>-->
-                                                            <!--<button class="mr-2 btn-shadow btn-sm btn btn-primary">Action</button>-->
-                                                        <!--</div>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
                                             </div>
                                         </div>
                                         <div class="card-body">
@@ -98,44 +82,25 @@
                                           </div>
                                               <div class="form-row">
                                                   <div class="col-md-6">
-                                                      <!--<input id="attendance_day_off" type="checkbox" data-toggle="toggle" data-on="Working Day" data-off="Day Off" checked>-->
-
                                                             <div role="group" class="btn-group-sm btn-group">
 
-<div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
-  <label class="btn btn-light active">
-    <input id="attendance_day_off" type="radio" class="attendance_day_off" value="Yes" name="attendance_day_off" checked> Working day
-  </label>
-  <label class="btn btn-light">
-    <input type="radio" class="attendance_day_off" value="No" name="attendance_day_off"> Day Off
-  </label>
-</div>
+                                                              <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
+                                                                <label class="btn btn-light active">
+                                                                  <input type="radio" value="Yes" name="attendance_day_off" checked /> Working day
+                                                                </label>
+                                                                <label class="btn btn-light">
+                                                                  <input type="radio" value="No" name="attendance_day_off" /> Day Off
+                                                                </label>
+                                                              </div>
 
-<!-- <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">-->
-<!--<input type="radio" id="html" name="fav_language" value="HTML">-->
-<!--<label for="html">HTML</label><br>-->
-<!--<input type="radio" id="css" name="fav_language" value="CSS">-->
-<!--<label for="css">CSS</label><br>-->
-<!-- </div>-->
-</div>
+                                                            </div>
 
                                                   </div>
                                                   <div class="col-md-6">
-<!--                                                      <div class="dropdown d-inline-block ">-->
-<!--                                                          <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="mb-2 mr-2 dropdown-toggle btn btn-warning">Closing Reason</button>-->
-<!--                                                            <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-hover-warning dropdown-menu">-->
-<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Public Holiday</button>-->
-<!--                                                              <button type="button" tabindex="0" class="dropdown-item">School Holiday</button>-->
-<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Strike</button>-->
-<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Weekly Holiday</button>-->
-<!--                                                              <button type="button" tabindex="0" class="dropdown-item">Roads Closed</button>-->
-<!--                                                            </div>-->
-<!--                                                      </div>-->
-<!--                                                      <input name="close_reason" id="close_reason" type="text" class="form-control hidden" />-->
-
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
-                                                                      <select id="close_reason" class="btn-primary">
+                                                                      <select id="close_reason" class="btn-primary hidden">
+                                                                          <option value="">Select Reason</option>
                                                                           <option value="Public Holiday">Public Holiday</option>
                                                                           <option value="School Holiday">School Holiday</option>
                                                                           <option value="Strike">Strike</option>
@@ -143,21 +108,8 @@
                                                                           <option value="Roads Closed">Roads Closed</option>
                                                                       </select>
                                                                   </div>
-                                                                  <input name="" type="text" class="form-control hidden">
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
                                                               </div>
-
-
-<!--<div class="btn-group btn-group-toggle" data-toggle="buttons">-->
-  <!--<label class="btn btn-secondary active">-->
-    <!--<input type="radio" name="options" id="option1" autocomplete="off" checked> Active-->
-  <!--</label>-->
-  <!--<label class="btn btn-secondary">-->
-    <!--<input type="radio" name="options" id="option2" autocomplete="off"> Radio-->
-  <!--</label>-->
-  <!--<label class="btn btn-secondary">-->
-    <!--<input type="radio" name="options" id="option3" autocomplete="off"> Radio-->
-  <!--</label>-->
-<!--</div>-->
                                                   </div>
                                               </div>
                                           </div>
@@ -170,24 +122,22 @@
                                     </div>
 
 
-  <div class="col-md-8">
+            <div class="col-md-8">
 
-    <div class="main-card mb-3 card">
-      <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>Children</div>
-                                        <div class="card-body" style="height: 400px; overflow: auto;">
-                                            <div id="attendance_children">
+                <div class="main-card mb-3 card">
+                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>Children</div>
+                  <div class="card-body" style="height: 400px; overflow: auto;">
+                      <div id="attendance_children"></div>
+                  </div>
+                  <div class="d-block text-center card-footer"></div>
 
-                                            </div>
-                                        </div>
-<div class="d-block text-center card-footer">
-                                    </div>
+                </div>
 
-                                    </div>
-  </div>
+            </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=7"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=9"></script>
 
 {% endblock %}
