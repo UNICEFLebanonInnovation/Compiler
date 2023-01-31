@@ -8,13 +8,11 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 from student_registration.child.models import Child
-from student_registration.outreach.models import OutreachChild
 from student_registration.locations.models import Center
 from student_registration.schools.models import (
     School,
     PartnerOrganization
 )
-from student_registration.students.models import Student
 
 PACKAGE_TYPES = Choices(
     ('Core-Package', _('Core Package')),
@@ -949,6 +947,39 @@ class EducationAssessment(TimeStampedModel):
         null=True,
         verbose_name=_('Grade')
     )
+
+    @property
+    def arabic_improvement(self):
+        if self.pre_arabic_grade and self.post_arabic_grade:
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_arabic_grade) - float(self.pre_arabic_grade)) /
+                           float(self.pre_arabic_grade)) * 100.0, 2), '%')
+            except ZeroDivisionError:
+                return 0.0
+        return 0.0
+
+    @property
+    def math_improvement(self):
+        if self.pre_math_grade and self.post_math_grade:
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_math_grade) - float(self.pre_math_grade)) /
+                           float(self.pre_math_grade)) * 100.0, 2), '%')
+            except ZeroDivisionError:
+                return 0.0
+        return 0.0
+
+    @property
+    def language_improvement(self):
+        if self.pre_language_grade and self.post_language_grade:
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_language_grade) - float(self.pre_language_grade)) /
+                           float(self.pre_language_grade)) * 100.0, 2), '%')
+            except ZeroDivisionError:
+                return 0.0
+        return 0.0
 
     class Meta:
         ordering = ['id']
