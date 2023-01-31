@@ -166,37 +166,37 @@
            }];
 
     var children_per_programme_data = [{
-                           name: "CBECE",
+                           name: "BLN Level 1",
                            y: 233,
                            drilldown: "",
                            color: '#B66DFF'
                        },
                        {
-                           name: "BLN",
+                           name: "BLN Level 2",
                            y: 234,
                            drilldown: "",
                            color: '#480091'
                        },
                        {
-                           name: "RS",
+                           name: "YBLN",
                            y: 233,
                            drilldown: "",
                            color: '#FEB5DA'
                        },
                        {
-                           name: "YBLN",
+                           name: "YFNL",
                            y: 343,
                            drilldown: "",
                            color: '#FE6DB6'
                        },
                        {
-                           name: "PSS",
+                           name: "CBECE Level 3",
                            y: 545,
                            drilldown: "",
                            color: '#009292'
                        },
                        {
-                           name: "Digital component",
+                           name: "Retention Support",
                            y: 767,
                            drilldown: "",
                            color: '#074650'
@@ -530,6 +530,103 @@
                        color: '#A66999'
                    }];
 
+    var children_per_disability_data = [{
+                       name: "Walking",
+                       y: 233,
+                       color: '#01B8AA'
+                   },
+                   {
+                       name: "Seeing",
+                       y: 234,
+                       color: '#374649'
+                   },
+                   {
+                       name: "Hearing",
+                       y: 233,
+                       color: '#FD625E'
+                   },
+                   {
+                       name: "Speaking",
+                       y: 343,
+                       color: '#F2C80F'
+                   },
+                   {
+                       name: "Self Care",
+                       y: 545,
+                       color: '#5F6B6D'
+                   },
+                   {
+                       name: "Learning",
+                       y: 767,
+                       color: '#8AD4EB'
+                   },
+                   {
+                       name: "Interacting",
+                       y: 767,
+                       color: '#FE9666'
+                   },
+                   {
+                       name: "Other",
+                       y: 767,
+                       color: '#A66999'
+                   }];
+
+    var children_per_vulnerability_data = [{
+                           name: "Clear signs of neglect",
+                           y: 69,
+                           drilldown: "",
+                           color: '#01B8AA'
+                       },
+                       {
+                           name: "Clear signs of distress",
+                           y: 424,
+                           drilldown: "",
+                           color: '#FD625E'
+                       },
+                       {
+                           name: "Clear signs of physical maltreatment",
+                           y: 123,
+                           drilldown: "",
+                           color: '#F2C80F'
+                       }];
+
+    var children_volunteering_data = [{
+                           name: "Outreach",
+                           y: 233,
+                           drilldown: "",
+                           color: '#01B8AA'
+                       },
+                       {
+                           name: "Data entry",
+                           y: 424,
+                           drilldown: "",
+                           color: '#FD625E'
+                       },
+                       {
+                           name: "Admin work",
+                           y: 123,
+                           drilldown: "",
+                           color: '#F2C80F'
+                       },
+                       {
+                           name: "Empowerment and leadership",
+                           y: 123,
+                           drilldown: "",
+                           color: '#8AD4EB'
+                       },
+                       {
+                           name: "Awareness raising sessions",
+                           y: 123,
+                           drilldown: "",
+                           color: '#FE9666'
+                       },
+                       {
+                           name: "Other",
+                           y: 123,
+                           drilldown: "",
+                           color: '#A66999'
+                       }];
+
    var children_per_gender = create_pie_chart('children_per_gender', 'Gender', children_per_gender_data);
    var children_cash_support = create_pie_chart('children_cash_support', 'Support type', children_cash_support_data);
    var children_per_status = create_pie_chart('children_per_status', 'Support type', children_per_status_data);
@@ -537,6 +634,9 @@
    var children_per_programme = create_bar_chart('children_per_programme', children_per_programme_data, [])
    var children_per_nationality = create_bar_chart('children_per_nationality', children_per_nationality_data, children_per_nationality_data_drilldown)
    var children_per_source = create_bar_chart('children_per_source', children_per_source_data, [])
+   var children_per_disability = create_pie_chart('children_per_disability', 'Disability', children_per_disability_data)
+   var children_per_vulnerability = create_bar_chart('children_per_vulnerability', children_per_vulnerability_data, [])
+   var children_volunteering = create_bar_chart('children_volunteering', children_volunteering, [])
 
    function create_pie_chart(container, series_name, data) {
 
@@ -575,7 +675,16 @@
                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
                    },
                    showInLegend: true
-               }
+               },
+                series: {
+                    point: {
+                        events: {
+                            click: function () {
+                                reload_dashboard_data(container);
+                            }
+                        }
+                    }
+                }
            },
            legend: {
                align: 'right',
@@ -637,7 +746,14 @@
                        formatter: function() {
                          return formatNumber(this.point.y);
                        }
-                   }
+                   },
+                    point: {
+                        events: {
+                            click: function () {
+                                reload_dashboard_data(container);
+                            }
+                        }
+                    }
                }
            },
 
@@ -666,44 +782,83 @@ $(document).on('click',  '.filter-package-type', function(){
     $('.filter-package-type').removeClass('bg-light');
     $(this).addClass('bg-light');
 
-    children_per_gender.update({
-       series: [{
-           data: generate_new_data(children_per_gender_data)
-       }]
-    });
-
-    children_cash_support.update({
-       series: [{
-           data: generate_new_data(children_cash_support_data)
-       }]
-    });
-
-    children_per_status.update({
-       series: [{
-           data: generate_new_data(children_per_status_data)
-       }]
-    });
-
-    children_per_programme.update({
-       series: [{
-           data: generate_new_data(children_per_programme_data)
-       }]
-    });
-
-    children_per_nationality.update({
-       series: [{
-           data: generate_new_data(children_per_nationality_data)
-       }]
-    });
-
-    children_per_source.update({
-       series: [{
-           data: generate_new_data(children_per_source_data)
-       }]
-    });
-
+    reload_dashboard_data();
 });
 
+function reload_dashboard_data(exclude_container){
+
+    if(exclude_container != 'children_per_gender') {
+        children_per_gender.update({
+           series: [{
+               data: generate_new_data(children_per_gender_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_cash_support') {
+        children_cash_support.update({
+           series: [{
+               data: generate_new_data(children_cash_support_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_per_status') {
+        children_per_status.update({
+           series: [{
+               data: generate_new_data(children_per_status_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_per_programme') {
+        children_per_programme.update({
+           series: [{
+               data: generate_new_data(children_per_programme_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_per_nationality') {
+        children_per_nationality.update({
+           series: [{
+               data: generate_new_data(children_per_nationality_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_per_source') {
+        children_per_source.update({
+           series: [{
+               data: generate_new_data(children_per_source_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_per_disability') {
+        children_per_disability.update({
+           series: [{
+               data: generate_new_data(children_per_disability_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_per_vulnerability') {
+        children_per_vulnerability.update({
+           series: [{
+               data: generate_new_data(children_per_vulnerability_data)
+           }]
+        });
+    }
+
+    if(exclude_container != 'children_volunteering') {
+        children_volunteering.update({
+           series: [{
+               data: generate_new_data(children_volunteering_data)
+           }]
+        });
+    }
+}
 
 function generate_new_data(data){
 
@@ -716,3 +871,111 @@ function generate_new_data(data){
 
     return new_data;
 }
+
+
+function getPointCategoryName(point, dimension) {
+    var series = point.series,
+        isY = dimension === 'y',
+        axis = series[isY ? 'yAxis' : 'xAxis'];
+    return axis.categories[point[isY ? 'y' : 'x']];
+}
+
+Highcharts.chart('attendance', {
+
+    chart: {
+        type: 'heatmap',
+        marginTop: 40,
+        marginBottom: 80,
+        plotBorderWidth: 1
+    },
+
+
+    title: {
+        text: ''
+    },
+
+    xAxis: {
+        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    },
+
+    yAxis: {
+        categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        title: null,
+        reversed: true
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var ix = point.index + 1,
+                    xName = getPointCategoryName(point, 'x'),
+                    yName = getPointCategoryName(point, 'y'),
+                    val = point.value;
+                return ix + '. ' + xName + ' - ' + yName + ', ' + val + '.';
+            }
+        }
+    },
+
+    colorAxis: {
+        min: 0,
+        minColor: '#FFFFFF',
+        maxColor: '#FD625E'
+    },
+
+    legend: {
+        align: 'right',
+        layout: 'vertical',
+        margin: 0,
+        verticalAlign: 'top',
+        y: 25,
+        symbolHeight: 280
+    },
+
+    tooltip: {
+        formatter: function () {
+            return '<b>' + getPointCategoryName(this.point, 'x') + '</b> <br><b>' +
+                this.point.value + '</b> <br><b>' + getPointCategoryName(this.point, 'y') + '</b>';
+        }
+    },
+
+    series: [{
+        name: 'Attendances',
+        borderWidth: 1,
+        data: [
+        [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
+        [1, 0, 92], [1, 1, 58], [1, 2, 78], [1, 3, 117], [1, 4, 48],
+        [2, 0, 35], [2, 1, 15], [2, 2, 123], [2, 3, 64], [2, 4, 52],
+        [3, 0, 72], [3, 1, 132], [3, 2, 114], [3, 3, 19], [3, 4, 16],
+        [4, 0, 38], [4, 1, 5], [4, 2, 8], [4, 3, 117], [4, 4, 115],
+        [5, 0, 88], [5, 1, 32], [5, 2, 12], [5, 3, 6], [5, 4, 120],
+        [6, 0, 13], [6, 1, 44], [6, 2, 88], [6, 3, 98], [6, 4, 96],
+        [7, 0, 31], [7, 1, 1], [7, 2, 82], [7, 3, 32], [7, 4, 30],
+        [8, 0, 85], [8, 1, 97], [8, 2, 123], [8, 3, 64], [8, 4, 84],
+        [9, 0, 47], [9, 1, 114], [9, 2, 31], [9, 3, 48], [9, 4, 91],
+        [10, 0, 10], [10, 1, 19], [10, 2, 8], [10, 3, 24], [10, 4, 67],
+        [11, 0, 92], [11, 1, 58], [11, 2, 78], [11, 3, 117], [11, 4, 48],
+        ],
+        dataLabels: {
+            enabled: true,
+            color: '#000000'
+        }
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                yAxis: {
+                    labels: {
+                        formatter: function () {
+                            return this.value.charAt(0);
+                        }
+                    }
+                }
+            }
+        }]
+    }
+
+});
