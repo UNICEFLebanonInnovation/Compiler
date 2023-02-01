@@ -1,8 +1,6 @@
 
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
-var protocol = window.location.protocol;
-var host = protocol+window.location.host;
 
 $(document).ready(function() {
 
@@ -97,10 +95,6 @@ $(document).ready(function() {
     $(document).on('change', 'select#id_student_nationality, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
         reorganizeForm();
     });
-
-//    $(document).on('change', 'input#id_child_first_name, input#id_child_father_name, input#id_child_last_name', function () {
-//        outreach_child_search();
-//    });
 
     $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
         $('#search_loader').removeClass('hidden');
@@ -421,21 +415,6 @@ function fill_old_child_data(data)
     $('#nfe_search_loader').addClass('hidden');
 }
 
-// todo check this function
-function Uppercase(str){
-     var str_upper = str.charAt(0).toUpperCase() + str.slice(1);
-     return str_upper
-}
-
-// todo check this function
-function get_nationality_id(nationality_str){
-        if (nationality_str == 'syrian'){ return 1; }
-        else if(nationality_str == 'lebanese'){ return 5;}
-        else if(nationality_str == 'palestinian'){ return 4;}
-        else if(nationality_str == 'iraqi'){return 2;}
-        else if(nationality_str == 'stateless'){return 7;}
-        else if(nationality_str == 'other'){return 6;}
-}
 
 function isAddPage()
 {
