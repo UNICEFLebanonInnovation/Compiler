@@ -322,3 +322,29 @@ def create_attendance(data, center_id):
     except Exception as ex:
         print(ex.message)
         return False
+
+
+def attendance_record(attendance_date, center_id):
+    try:
+        record = {}
+        attendance = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).values(
+            'id',
+            'day_off',
+            'close_reason'
+        ).last()
+
+        if attendance:
+            attendance_id = attendance['id']
+            record['attendance_id'] = attendance_id
+            record['day_off'] = attendance['day_off']
+            record['close_reason'] = attendance['close_reason']
+            record['attendance_child'] = MSCCAttendanceChild.objects.filter(attendance_day_id=attendance_id).values(
+                'id',
+                'child_id',
+                'attended',
+                'absence_reason',
+                'absence_reason_other'
+            ).all()
+        return record
+    except Exception as ex:
+        return False

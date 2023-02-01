@@ -162,21 +162,3 @@ def child_attendance_history(child_id):
     except Exception as ex:
         print(ex.message)
         return []
-
-
-@register.simple_tag
-def attendance_exists(center_id, attendance_date):
-    try:
-        return MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).exists()
-    except Exception as ex:
-        return False
-
-
-@register.simple_tag
-def attendance_records(center_id, attendance_date):
-    try:
-
-       return MSCCAttendanceChild.objects.filter(attendance_day__center_id=center_id,
-                                                 attendance_day__attendance_date=attendance_date)
-    except Exception as ex:
-        return False

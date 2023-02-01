@@ -45,11 +45,13 @@ class LoadAttendanceChildren(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         center_id = self.request.GET.get('center_id')
+        attendance_date = '2023-01-01'
 
         instances = Registration.objects.filter(center_id=center_id)
-
+        attendances = attendance_record(attendance_date, center_id)
         return {
             'instances': instances,
+            'attendances': attendances
         }
 
 
