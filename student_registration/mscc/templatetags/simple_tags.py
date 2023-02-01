@@ -146,6 +146,7 @@ def child_attendance(child_id):
         print(ex.message)
         return []
 
+
 @register.simple_tag
 def child_attendance_history(child_id):
     try:
@@ -166,15 +167,16 @@ def child_attendance_history(child_id):
 @register.simple_tag
 def attendance_exists(center_id, attendance_date):
     try:
-        e = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).exists()
-        return e
+        return MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).exists()
     except Exception as ex:
         return False
+
 
 @register.simple_tag
 def attendance_records(center_id, attendance_date):
     try:
-       attendance_children = MSCCAttendanceChild.objects.filter(attendance_day__center_id=center_id, attendance_day__attendance_date=attendance_date)
-       return attendance_children
+
+       return MSCCAttendanceChild.objects.filter(attendance_day__center_id=center_id,
+                                                 attendance_day__attendance_date=attendance_date)
     except Exception as ex:
         return False
