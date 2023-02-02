@@ -47,13 +47,31 @@ class LoadAttendanceChildren(LoginRequiredMixin,
         center_id = self.request.GET.get('center_id')
         attendance_date = '2023-01-01'
 
-        instances = Registration.objects.filter(center_id=center_id)
-        attendances = attendance_record(attendance_date, center_id)
-        return {
-            'instances': instances,
-            'attendances': attendances
-        }
+        attendance = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).values(
+            'id',
+            'day_off',
+            'close_reason'
+        ).last()
 
+        if not attendance:
+            instances = load_child_registration_information(center_id)
+
+            return {
+                'instances': instances,
+                'attendance_id': 0,
+                'attendance_day_off': '',
+                'attendance_close_reason': ''
+            }
+        else:
+            attendance_id = attendance['id']
+            print(attendance_id)
+            instances = load_child_attendance_information(attendance_id)
+            return {
+                'instances': instances,
+                'attendance_id': attendance_id ,
+                'attendance_day_off': attendance['day_off'],
+                'attendance_close_reason': attendance['close_reason']
+            }
 
 def save_attendance_children(request):
     data = json.loads(request.body)

@@ -18,24 +18,25 @@
                                                           <img width="42" class="rounded-circle" src="{% static 'images/avatars/male.png' %}">
                                                         </div>
                                                         <div class="widget-content-left" style="width: 200px !important;">
-                                                            <input type="hidden" class="registry_id" name="registry_id[]" value="{{ item.id }}" />
-                                                            <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child.id }}" />
-                                                            <div class="widget-heading"><a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.id }}">{{ item.child.full_name }}</a></div>
-                                                            <div class="widget-subheading">{{ item.child.mother_fullname }}</div>
+                                                            <input type="hidden" class="registry_id" name="registry_id[]" value="{{ item.registry_id }}" />
+                                                            <input type="hidden" class="attendance_id" name="attendance_id[]" value="{{ item.attendance_id }}" />
+                                                            <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child_id }}" />
+                                                            <div class="widget-heading"><a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.registry_id }}">{{ item.child_fullname }}</a></div>
+                                                            <div class="widget-subheading">{{ item.child_mother_fullname }}</div>
                                                         </div>
                                                         <div class="widget-content-right" style="width: 200px !important;">
-                                                            <div class="widget-heading">{{ item.child.birthday }}</div>
-                                                            <div class="widget-subheading">{{ item.child.nationality.name }}</div>
+                                                            <div class="widget-heading">{{ item.child_birthday }}</div>
+                                                            <div class="widget-subheading">{{ item.child_nationality }}</div>
                                                         </div>
                                                         <div class="widget-content-right">
                                                             <div role="group" class="btn-group-sm btn-group">
 
                                                                 <div class="btn-group btn-group-toggle attendance_status" data-toggle="buttons">
-                                                                  <label class="btn btn-light active" itemscope="#reason_block_{{ item.id }}">
-                                                                    <input type="radio" class="status" name="attendance_status_{{ item.id }}" value="Yes" checked /> Attended
+                                                                  <label class="btn btn-light {% if item.attended == 'Yes'  %} active {% endif %} " itemscope="#reason_block_{{ item.child_id }}">
+                                                                    <input type="radio" class="status" name="attendance_status_{{ item.child_id }}" value="Yes" {% if item.attended == 'Yes'  %} checked {% endif %} /> Attended
                                                                   </label>
-                                                                  <label class="btn btn-light" itemscope="#reason_block_{{ item.id }}">
-                                                                    <input type="radio" class="status" name="attendance_status_{{ item.id }}" value="No" /> Absent
+                                                                  <label class="btn btn-light {% if item.attended == 'No'  %} active {% endif %} " itemscope="#reason_block_{{ item.child_id }}" >
+                                                                    <input type="radio" class="status" name="attendance_status_{{ item.child_id }}" value="No" {% if item.attended == 'No'  %} checked {% endif %} /> Absent
                                                                   </label>
                                                                 </div>
 
@@ -44,16 +45,15 @@
                                                     </div>
                                                         <div class="widget-content-wrapper">
                                                             <div class="widget-content-right">
-                                                              <div class="input-group hidden" id="reason_block_{{ item.id }}">
+                                                              <div class="input-group  {% if item.attended == 'Yes'  %} hidden {% endif %} " id="reason_block_{{ item.child_id }}">
                                                                   <div class="input-group-prepend">
-                                                                      <select id="absence_reason_{{ item.id }}" class="btn-primary absence_reason">
+                                                                      <select id="absence_reason_{{ item.child_id }}" class="btn-primary absence_reason">
                                                                           <option value="">Select Reason</option>
-                                                                          <option value="Sick">Sick</option>
-                                                                          <option value="Transportation">Transportation</option>
-                                                                          <option value="Other">Other</option>
+                                                                          <option value="Sick" {% if item.absence_reason == 'Sick'  %} selected {% endif %} >Sick</option>
+                                                                          <option value="Transportation" {% if item.absence_reason == 'Transportation'  %} selected {% endif %} >Transportation</option>
+                                                                          <option value="Other" {% if item.absence_reason == 'Other'  %}  selected {% endif %} >Other</option>
                                                                       </select>
-                                                                  </div>
-                                                                  <input id="absence_reason_other_{{ item.id }}" type="text" class="form-control absence_reason_other" placeholder="Absence Other reasons">
+                                                                  <input id="absence_reason_other_{{ item.child_id }}" type="text" class="form-control absence_reason_other" placeholder="Absence Other reasons" value="{{ item.absence_reason_other }}">
                                                               </div>
                                                             </div>
                                                         </div>
@@ -61,6 +61,7 @@
                                                 </div>
                                             </li>
   {% endfor %}
+
 </ul>
 <script>
     $('.attendance_status label').click(function(e) {
