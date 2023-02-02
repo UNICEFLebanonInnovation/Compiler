@@ -683,7 +683,8 @@ class YouthKitServiceForm(forms.ModelForm):
         instance.community_initiatives_specify = validated_data.get('community_initiatives_specify')
         instance.adolescent_attendance = validated_data.get('adolescent_attendance')
         instance.adolescent_dropout_reason = validated_data.get('adolescent_dropout_reason')
-        instance.adolescent_dropout_date = validated_data.get('adolescent_dropout_date')
+        if validated_data.get('adolescent_dropout_date'):
+            instance.adolescent_dropout_date = validated_data.get('adolescent_dropout_date')
         instance.modified_by = request.user
         instance.save()
 
