@@ -2,7 +2,6 @@
 from itertools import chain
 import datetime
 
-from datetime import datetime
 from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
 from student_registration.clm.models import (
@@ -127,7 +126,7 @@ def generate_education_history(registration_id, child_id, student_old_id):
 def get_outreach_child(outreach_id):
     initial = {}
     instance = OutreachChild.objects.get(id=outreach_id)
-    initial['child_outreach_id'] = instance.id
+    initial['child_outreach'] = instance.id
     initial['child_first_name'] = instance.first_name
     initial['child_father_name'] = instance.outreach_caregiver.father_name
     initial['child_last_name'] = instance.outreach_caregiver.last_name
@@ -268,7 +267,7 @@ def get_outreach_child(outreach_id):
 def get_old_child(student_id):
     initial = {}
     instance = Student.objects.get(id=student_id)
-    initial['student_old_id'] = instance.id
+    initial['student_old'] = instance.id
     initial['child_first_name'] = instance.first_name
     initial['child_father_name'] = instance.father_name
     initial['child_last_name'] = instance.last_name
@@ -306,6 +305,7 @@ def get_old_child(student_id):
 
 
 def create_attendance(data, center_id):
+    from datetime import datetime
     try:
         attendance, created = MSCCAttendance.objects.get_or_create(center_id=center_id,
                                                                    attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'))

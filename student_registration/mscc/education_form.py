@@ -448,7 +448,7 @@ class EducationServiceForm(forms.ModelForm):
     )
     registration_date = forms.DateField(
         label=_("Date of registration in the round"),
-        required=True
+        required=False
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -503,11 +503,13 @@ class EducationServiceForm(forms.ModelForm):
             instance = EducationService.objects.get(id=instance)
 
         instance.education_status = validated_data.get('education_status')
-        instance.dropout_date = validated_data.get('dropout_date')
+        if validated_data.get('dropout_date'):
+            instance.dropout_date = validated_data.get('dropout_date')
         instance.dropout_program = validated_data.get('dropout_program')
         instance.dropout_program_specify = validated_data.get('dropout_program_specify')
         instance.education_program = validated_data.get('education_program')
-        instance.registration_date = validated_data.get('registration_date')
+        if validated_data.get('registration_date'):
+            instance.registration_date = validated_data.get('registration_date')
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))

@@ -183,6 +183,32 @@
             <div class="app-header-right">
                 <div class="header-dots">
 
+                    <div class="dropdown">
+                        <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="p-0 mr-2 btn btn-link">
+                            <span class="icon-wrapper icon-wrapper-alt rounded-circle">
+                                <span class="icon-wrapper-bg bg-danger"></span>
+                                <i class="icon text-danger icon-anim-pulse ion-android-notifications"></i>
+                                <span class="badge badge-dot badge-dot-sm badge-danger">Notifications</span>
+                            </span>
+                        </button>
+                        <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu-xl rm-pointers dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(42px, 46px, 0px);">
+                            <div class="dropdown-menu-header mb-0">
+                                <div class="dropdown-menu-header-inner bg-deep-blue">
+                                    <div class="menu-header-image opacity-1"></div>
+                                    <div class="menu-header-content text-dark">
+                                        <h5 class="menu-header-title">Notifications</h5>
+                                        <h6 class="menu-header-subtitle">You have <b>0</b> unread messages</h6>
+                                    </div>
+                                </div>
+                            </div>
+                           <ul class="nav flex-column">
+                                <li class="nav-item-divider nav-item"></li>
+                                <li class="nav-item-btn text-center nav-item">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
 
                     <div class="dropdown">
                         <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="p-0 mr-2 btn btn-link">
@@ -196,7 +222,7 @@
                                 <div class="dropdown-menu-header-inner bg-plum-plate">
                                     <div class="menu-header-image"></div>
                                     <div class="menu-header-content text-white">
-                                        <h5 class="menu-header-title">CLM <sup>+</sup> Extra Modules</h5>
+                                        <h5 class="menu-header-title">CLM <sup>+</sup> Modules</h5>
                                         <h6 class="menu-header-subtitle"></h6>
                                     </div>
                                 </div>
@@ -204,11 +230,24 @@
                             <div class="grid-menu grid-menu-xl grid-menu-3col">
                                 <div class="no-gutters row">
                                     <div class="col-sm-6 col-xl-4">
+                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-home icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Home
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Dashboard
                                         </a>
                                     </div>
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'mscc:attendance' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="lnr-laptop-phone icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Attendance
+                                        </a>
+                                    </div>
+
                                     <!--<div class="col-sm-6 col-xl-4">-->
                                         <!--<a class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">-->
                                             <!--<i class="pe-7s-browser icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"> </i>-->

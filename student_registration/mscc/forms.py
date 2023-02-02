@@ -395,8 +395,8 @@ class MainForm(forms.ModelForm):
     )
     child_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
-    child_outreach_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
-    student_old_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+    child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
+    student_old = forms.IntegerField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     type = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -800,14 +800,14 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.center = request.user.center
-                if request.POST.get("child_outreach_id"):
-                    instance.child_outreach_id = request.POST.get("child_outreach_id")
-                if request.POST.get("student_old_id"):
-                    instance.student_old_id = request.POST.get("student_old_id")
+                if request.POST.get("child_outreach"):
+                    instance.child_outreach = request.POST.get("child_outreach")
+                if request.POST.get("student_old"):
+                    instance.student_old = request.POST.get("student_old")
                 instance.save()
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance)
-                generate_education_history(instance.id, instance.child_id, instance.student_old_id)
+                generate_education_history(instance.id, instance.child_id, instance.student_old)
 
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
@@ -819,8 +819,8 @@ class MainForm(forms.ModelForm):
         model = Registration
         fields = (
             # 'center',
-            'child_outreach_id',
-            'student_old_id',
+            'child_outreach',
+            'student_old',
             'child_first_name',
             'child_father_name',
             'child_last_name',
