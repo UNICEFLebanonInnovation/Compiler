@@ -87,22 +87,28 @@ $(document).ready(function() {
 
     $(document).on('click', '#load_attendance_children', function(e){
         e.preventDefault();
+        var attendance_date = $("#attendance_date").val();
+        var data = {
+            attendance_date: attendance_date,
+        };
 
         $('#attendance_children').empty("");
         $('#attendance_children').append("Loading...");
 
-        $.ajax({
-            type: "GET",
+       $.ajax({
+            type: "POST",
             url: $(this).attr('href'),
             cache: false,
+            headers: getHeader(),
             async: true,
-            dataType: 'html',
+            data: JSON.stringify(data),
+            dataType: 'json',
             success: function (response) {
                 $('#attendance_children').empty("");
-                $('#attendance_children').append(response);
-
+                $('#attendance_children').append(response.ChildrenView);
+                attendance_data(response.attendance_id,response.attendance_day_off,response.attendance_close_reason)
                 $('#save_attendance_children').removeClass('disabled');
-//                $('#load_attendance_children').addClass('disabled');
+//              $('#load_attendance_children').addClass('disabled');
             },
             error: function(response) {
                 console.log(response);
@@ -133,4 +139,10 @@ $(document).ready(function() {
         });
     });
 
+
 });
+
+
+function attendance_data(attendance_id,attendance_day_off, attendance_close_reason) {
+    $("#close_reason").val(attendance_close_reason);
+ }

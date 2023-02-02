@@ -14,6 +14,7 @@ from student_registration.clm.models import (
     Inclusion
 )
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
+from student_registration.mscc.models import Registration
 
 
 def to_array(fields, obj):
@@ -324,6 +325,7 @@ def create_attendance(data, center_id):
         print(ex.message)
         return False
 
+
 def load_child_attendance_information(attendance_id):
 
     try:
@@ -349,6 +351,7 @@ def load_child_attendance_information(attendance_id):
 
     except Exception as ex:
         return False
+
 
 def load_child_registration_information(center_id):
 
