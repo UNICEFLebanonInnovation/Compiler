@@ -49,6 +49,7 @@ def save_attendance_children(request):
 
 
 def LoadAttendanceChildren(request):
+    from datetime import datetime
     template_name = 'mscc/attendance_children.html'
     data = json.loads(request.body)
     center_id = request.GET.get('center_id')
