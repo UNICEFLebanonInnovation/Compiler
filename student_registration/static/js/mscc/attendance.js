@@ -91,7 +91,6 @@ $(document).ready(function() {
         var data = {
             attendance_date: attendance_date,
         };
-
         $('#attendance_children').empty("");
         $('#attendance_children').append("Loading...");
 
@@ -145,4 +144,13 @@ $(document).ready(function() {
 
 function attendance_data(attendance_id,attendance_day_off, attendance_close_reason) {
     $("#close_reason").val(attendance_close_reason);
- }
+    if (attendance_day_off=='Yes')
+    {
+
+    }
+    else
+    {
+
+    }
+  }
+

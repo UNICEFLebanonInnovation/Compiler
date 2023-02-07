@@ -119,13 +119,11 @@ class MainForm(forms.ModelForm):
         label=_('Child\'s Marital Status '),
         widget=forms.Select, required=True,
         choices=Child.MARITAL_STATUS,
-        initial='Single'
     )
     child_have_children = forms.ChoiceField(
         label=_("Does the child have children?"),
         widget=forms.Select, required=True,
         choices=Child.YES_NO,
-        initial='No'
     )
     child_children_number = forms.IntegerField(
         label=_('If yes, How many?'),
@@ -230,7 +228,6 @@ class MainForm(forms.ModelForm):
         label=_('Does the child participate in work?'),
         widget=forms.Select, required=True,
         choices=Registration.HAVE_LABOUR,
-        initial='no'
     )
     labour_type = forms.ChoiceField(
         label=_('What is the type of work?'),
@@ -246,7 +243,7 @@ class MainForm(forms.ModelForm):
         label=_('How many hours does this child work in a day?'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
-        initial = 0,
+        initial=0,
         min_value=0
     )
     labour_weekly_income = forms.ChoiceField(

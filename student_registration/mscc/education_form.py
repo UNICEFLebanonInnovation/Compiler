@@ -32,7 +32,6 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         label=_("Did the Child Undertake Arabic Language Development Assessment"),
         widget=forms.Select, required=True,
         choices=YES_NO,
-        initial='yes'
     )
     pre_modality_arabic = forms.ChoiceField(
         label=_("Modality"),
@@ -50,7 +49,6 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         label=_("Did the Child Undertake Foreign Language Development Assessment"),
         widget=forms.Select, required=True,
         choices=YES_NO,
-        initial='yes'
     )
     pre_modality_language = forms.ChoiceField(
         label=_("Modality"),
@@ -68,7 +66,6 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         label=_("Did the Child Undertake Cognitive Development - Mathematics test"),
         widget=forms.Select, required=True,
         choices=YES_NO,
-        initial='yes'
     )
     pre_modality_math = forms.ChoiceField(
         label=_("Modality"),
@@ -227,7 +224,6 @@ class EducationAssessmentForm(forms.ModelForm):
         label=_("Did the Child Undertake Arabic Language Development Assessment"),
         widget=forms.Select, required=True,
         choices=YES_NO,
-        initial='yes'
     )
     post_modality_arabic = forms.ChoiceField(
         label=_("Modality"),
@@ -239,13 +235,12 @@ class EducationAssessmentForm(forms.ModelForm):
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
-        initial = 0
+        initial=0
     )
     post_attended_language = forms.ChoiceField(
         label=_("Did the Child Undertake Foreign Language Development Assessment"),
         widget=forms.Select, required=True,
         choices=YES_NO,
-        initial='yes'
     )
     post_modality_language = forms.ChoiceField(
         label=_("Modality"),
@@ -257,13 +252,12 @@ class EducationAssessmentForm(forms.ModelForm):
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
-        initial = 0
+        initial=0
     )
     post_attended_math = forms.ChoiceField(
         label=_("Did the Child Undertake Cognitive Development - Mathematics test"),
         widget=forms.Select, required=True,
         choices=YES_NO,
-        initial='yes'
     )
     post_modality_math = forms.ChoiceField(
         label=_("Modality"),
@@ -275,7 +269,7 @@ class EducationAssessmentForm(forms.ModelForm):
         label=_('Grade'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
-        initial = 0
+        initial=0
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)

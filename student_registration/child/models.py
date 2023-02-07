@@ -31,10 +31,12 @@ class Child(TimeStampedModel):
         ('12', _('December')),
     )
     YES_NO = Choices(
+        ('', '----------'),
         ('Yes', _("Yes")),
         ('No', _("No"))
     )
     GENDER = Choices(
+        ('', '----------'),
         ('Male', _('Male')),
         ('Female', _('Female')),
     )
