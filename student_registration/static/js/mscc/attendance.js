@@ -8,9 +8,10 @@ $(document).ready(function() {
         setTimeout(
           function()
           {
+                console.log($('input[name=attendance_day_off]:checked').val());
                 var attendance_day_off = $('input[name=attendance_day_off]:checked').val();
 
-                if (attendance_day_off == 'No') {
+                if (attendance_day_off == 'Yes') {
                     $('#close_reason').removeClass('hidden');
                     $('#load_attendance_children').addClass('disabled');
                     $('#save_attendance_children').removeClass('disabled');
@@ -86,27 +87,21 @@ $(document).ready(function() {
 
     $(document).on('click', '#load_attendance_children', function(e){
         e.preventDefault();
-        var attendance_date = $("#attendance_date").val();
-        var data = {
-            attendance_date: attendance_date,
-        };
+
         $('#attendance_children').empty("");
         $('#attendance_children').append("Loading...");
 
        $.ajax({
-            type: "POST",
+            type: "GET",
             url: $(this).attr('href'),
             cache: false,
-            headers: getHeader(),
             async: true,
-            data: JSON.stringify(data),
-            dataType: 'json',
+            data: {'attendance_date': $("#attendance_date").val(), 'center_id': $('#center_id').val()},
+            dataType: 'html',
             success: function (response) {
                 $('#attendance_children').empty("");
-                $('#attendance_children').append(response.ChildrenView);
-                attendance_data(response.attendance_id,response.attendance_day_off,response.attendance_close_reason)
+                 $('#attendance_children').append(response);
                 $('#save_attendance_children').removeClass('disabled');
-//              $('#load_attendance_children').addClass('disabled');
             },
             error: function(response) {
                 console.log(response);
@@ -148,26 +143,3 @@ $(document).ready(function() {
     });
 
 });
-
-
-function attendance_data(attendance_id,attendance_day_off, attendance_close_reason) {
-    if (attendance_day_off=='Yes')
-    {
-        $("input[name=attendance_day_off][value='Yes']").prop("checked",true);
-        $('#attendanceDayYesLabel').addClass('active');
-        $('#attendanceDayNoLabel').removeClass('active')
-        $('#close_reason').addClass('hidden');
-        $('#load_attendance_children').removeClass('disabled');
-    }
-    else
-    {
-        $("input[name=attendance_day_off][value='No']").prop("checked",true);
-        $('#attendanceDayNoLabel').addClass('active');
-        $('#attendanceDayYesLabel').removeClass('active');
-        $('#close_reason').removeClass('hidden');
-        $('#load_attendance_children').addClass('disabled');
-        $('#save_attendance_children').removeClass('disabled');
-    }
-    $("#close_reason").val(attendance_close_reason);
-  }
-

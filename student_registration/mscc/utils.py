@@ -326,50 +326,48 @@ def create_attendance(data, center_id):
         return False
 
 
-def load_child_attendance_information(attendance_id):
+def load_child_attendance(center_id, attendance_date):
+    from datetime import datetime
+
+    attendance = MSCCAttendance.objects.filter(center_id=center_id,
+                                               attendance_date=datetime.strptime(attendance_date, '%m/%d/%Y')).last()
+    result = []
 
     try:
-        attendances = MSCCAttendanceChild.objects.filter(attendance_day_id=attendance_id).all()
-        result = []
+        if attendance:
+            attendances = MSCCAttendanceChild.objects.filter(attendance_day=attendance)
 
-        for attendance in attendances:
-            attendanceRecord = {}
-            attendanceRecord['attendance_id'] = attendance.id
-            attendanceRecord['registry_id'] = 0
-            attendanceRecord['child_id'] = attendance.child.id
-            attendanceRecord['child_fullname'] = attendance.child.full_name
-            attendanceRecord['child_mother_fullname'] = attendance.child.mother_fullname
-            attendanceRecord['child_birthday'] = attendance.child.birthday
-            attendanceRecord['child_nationality'] = attendance.child.nationality.name
-            attendanceRecord['attended'] = attendance.attended
-            attendanceRecord['absence_reason'] = attendance.absence_reason
-            attendanceRecord['absence_reason_other'] = attendance.absence_reason_other
+            for attendance in attendances:
+                attendance_record = {}
+                attendance_record['registry_id'] = 0
+                attendance_record['child_id'] = attendance.child.id
+                attendance_record['child_fullname'] = attendance.child.full_name
+                attendance_record['child_mother_fullname'] = attendance.child.mother_fullname
+                attendance_record['child_birthday'] = attendance.child.birthday
+                attendance_record['child_nationality'] = attendance.child.nationality.name
+                attendance_record['attended'] = attendance.attended
+                attendance_record['absence_reason'] = attendance.absence_reason
+                attendance_record['absence_reason_other'] = attendance.absence_reason_other
 
-            result.append(attendanceRecord)
+                result.append(attendance_record)
+        else:
+            registrations = Registration.objects.filter(center_id=center_id)
+
+            for registration_child in registrations:
+                registration_record = {}
+                registration_record['registry_id'] = registration_child.id
+                registration_record['child_id'] = registration_child.child.id
+                registration_record['child_fullname'] = registration_child.child.full_name
+                registration_record['child_mother_fullname'] = registration_child.child.mother_fullname
+                registration_record['child_birthday'] = registration_child.child.birthday
+                registration_record['child_nationality'] = registration_child.child.nationality.name
+                registration_record['attended'] = 'Yes'
+                registration_record['absence_reason'] = ''
+                registration_record['absence_reason_other'] = ''
+                result.append(registration_record)
 
         return result
 
     except Exception as ex:
-        return False
-
-
-def load_child_registration_information(center_id):
-
-    registration_children = Registration.objects.filter(center_id=center_id)
-    result = []
-
-    for registration_child in registration_children:
-        registrationRecord = {}
-        registrationRecord['attendance_id'] = ''
-        registrationRecord['registry_id'] = registration_child.id
-        registrationRecord['child_id'] = registration_child.child.id
-        registrationRecord['child_fullname'] = registration_child.child.full_name
-        registrationRecord['child_mother_fullname'] = registration_child.child.mother_fullname
-        registrationRecord['child_birthday'] = registration_child.child.birthday
-        registrationRecord['child_nationality'] = registration_child.child.nationality.name
-        registrationRecord['attended'] = ''
-        registrationRecord['absence_reason'] = ''
-        registrationRecord['absence_reason_other'] = ''
-        result.append(registrationRecord)
-
-    return result
+        print(ex.message)
+        return []
