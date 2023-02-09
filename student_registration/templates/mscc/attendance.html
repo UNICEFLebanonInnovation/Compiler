@@ -77,7 +77,7 @@
                                                               <i class="fa fa-calendar-alt"></i>
                                                           </div>
                                                       </div>
-                                                    <input type="text" class="form-control" data-toggle="datepicker" id="attendance_date"/>
+                                                    <input type="text" class="form-control" data-toggle="datepicker" id="attendance_date" value="{{ attendance_date }}"/>
                                                   </div>
 
                                           </div>
@@ -86,11 +86,11 @@
                                                             <div role="group" class="btn-group-sm btn-group">
 
                                                               <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
-                                                                <label id = "attendanceDayYesLabel" class="btn btn-light active">
-                                                                  <input type="radio" value="Yes" name="attendance_day_off" checked /> Working day
+                                                                <label class="btn btn-light {% if day_off == 'No' %}active{% endif %}">
+                                                                  <input type="radio" value="No" name="attendance_day_off" {% if day_off == 'No' %} checked{% endif %} /> Working day
                                                                 </label>
-                                                                <label  id = "attendanceDayNoLabel" class="btn btn-light">
-                                                                  <input type="radio" value="No" name="attendance_day_off" /> Day Off
+                                                                <label class="btn btn-light {% if day_off == 'Yes' %}active{% endif %}">
+                                                                  <input type="radio" value="Yes" name="attendance_day_off" {% if day_off == 'Yes' %} checked{% endif %} /> Day Off
                                                                 </label>
                                                               </div>
                                                             </div>
@@ -99,13 +99,13 @@
                                                   <div class="col-md-6">
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
-                                                                      <select id="close_reason" class="btn-primary hidden">
+                                                                      <select id="close_reason" class="btn-primary {% if close_reason == '' %}hidden{% endif %}">
                                                                           <option value="">Select Reason</option>
-                                                                          <option value="Public Holiday">Public Holiday</option>
-                                                                          <option value="School Holiday">School Holiday</option>
-                                                                          <option value="Strike">Strike</option>
-                                                                          <option value="Weekly Holiday">Weekly Holiday</option>
-                                                                          <option value="Roads Closed">Roads Closed</option>
+                                                                          <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>Public Holiday</option>
+                                                                          <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>School Holiday</option>
+                                                                          <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>Strike</option>
+                                                                          <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>Weekly Holiday</option>
+                                                                          <option value="Roads Closed" {% if close_reason == 'Roads Closed' %}selected{% endif %}>Roads Closed</option>
                                                                       </select>
                                                                   </div>
                                                         <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
@@ -138,6 +138,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=10"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=12"></script>
 
 {% endblock %}
