@@ -198,7 +198,7 @@ urlpatterns = [
     ),
     url(
         'Load-Attendance-Children/$',
-        view=attendance_views.LoadAttendanceChildren.as_view(),
+        view=attendance_views.LoadAttendanceChildren,
         name='load_attendance_children'
     ),
     url(

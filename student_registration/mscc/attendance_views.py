@@ -4,6 +4,9 @@ from __future__ import absolute_import, unicode_literals
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.template.loader import render_to_string
+
+
 
 
 from .models import Registration
@@ -38,25 +41,43 @@ class AttendanceView(LoginRequiredMixin,
     #         return self.form_invalid(form, attendance_child_formset)
 
 
-class LoadAttendanceChildren(LoginRequiredMixin,
-                             TemplateView):
-
-    template_name = 'mscc/attendance_children.html'
-
-    def get_context_data(self, **kwargs):
-        center_id = self.request.GET.get('center_id')
-        attendance_date = '2023-01-01'
-
-        instances = Registration.objects.filter(center_id=center_id)
-        attendances = attendance_record(attendance_date, center_id)
-        return {
-            'instances': instances,
-            'attendances': attendances
-        }
-
 
 def save_attendance_children(request):
     data = json.loads(request.body)
     result = create_attendance(data, request.GET.get('center_id'))
     return JsonResponse({'result': result})
+
+
+def LoadAttendanceChildren(request):
+    from datetime import datetime
+    template_name = 'mscc/attendance_children.html'
+    data = json.loads(request.body)
+    center_id = request.GET.get('center_id')
+    attendance_date = data["attendance_date"]
+
+    attendance = MSCCAttendance.objects.filter(center_id=center_id,
+                                               attendance_date=datetime.strptime(attendance_date, '%m/%d/%Y')).values(
+        'id',
+        'day_off',
+        'close_reason'
+    ).last()
+    if not attendance:
+        instances = load_child_registration_information(center_id)
+        attendance_id= 0,
+        attendance_day_off = ''
+        attendance_close_reason = ''
+    else:
+        attendance_id = attendance['id']
+        instances = load_child_attendance_information(attendance_id)
+        attendance_id = attendance_id
+        attendance_day_off = attendance['day_off']
+        attendance_close_reason =  attendance['close_reason']
+
+    templateData = {
+        'instances': instances,
+    }
+
+    html = render_to_string(template_name, templateData)
+
+    return JsonResponse({'ChildrenView': html, 'attendance_id': attendance_id, 'attendance_day_off': attendance_day_off, 'attendance_close_reason': attendance_close_reason})
 

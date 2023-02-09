@@ -519,13 +519,7 @@ function reorganizeForm()
 
     //  Labour
     var have_labour = $('select#id_have_labour').val();
-    if(have_labour != 'No'){
-        $('div#div_id_labour_type').removeClass('d-none');
-        $('#labour_details_1').removeClass('d-none');
-        $('#labour_details_2').removeClass('d-none');
-    }
-    else
-    {
+    if(have_labour == '' || have_labour == 'No'){
         $('div#div_id_labour_type').addClass('d-none');
         $('#labour_details_1').addClass('d-none');
         $('#labour_details_2').addClass('d-none');
@@ -533,6 +527,12 @@ function reorganizeForm()
         $('#id_labour_type_specify').val('')
         $('#id_labour_hours').val('')
         $('#id_labour_weekly_income').val('')
+    }
+    else
+    {
+        $('div#div_id_labour_type').removeClass('d-none');
+        $('#labour_details_1').removeClass('d-none');
+        $('#labour_details_2').removeClass('d-none');
     }
 
     var labour_type = $('select#id_labour_type').val();

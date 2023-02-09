@@ -29,6 +29,7 @@ PACKAGE_CATEGORIES = Choices(
 )
 
 YES_NO = Choices(
+    ('', '----------'),
     ('Yes', _("Yes")),
     ('No', _("No"))
 )
@@ -37,11 +38,13 @@ YES_NO = Choices(
 class Registration(TimeStampedModel):
 
     YES_NO = Choices(
+        ('', '----------'),
         ('Yes', _("Yes")),
         ('No', _("No"))
     )
 
     HAVE_LABOUR = Choices(
+        ('', '----------'),
             ('No', _('No')),
             ('Yes - Morning', _('Yes - Morning')),
             ('Yes - Afternoon', _('Yes - Afternoon')),
@@ -317,6 +320,7 @@ class Packages(models.Model):
 class InclusionService(TimeStampedModel):
 
     PARENTAL_ENGAGEMENT = Choices(
+        ('', '----------'),
         ('Mother Only', _('Mother Only')),
         ('Father Only', _('Father Only')),
         ('Both', _('Both')),
@@ -381,6 +385,7 @@ class DigitalService(models.Model):
 class PSSService(models.Model):
 
     LIVING_ARRANGEMENT = Choices(
+        ('', '----------'),
         ('Unaccompanied or Separated Child', _('Unaccompanied or Separated Child')),
         ('Living with single parent/caregiver', _('Living with single parent/caregiver')),
         ('Living with Mother/women-headed Household ', _('Living with Mother/women-headed Household')),
@@ -389,6 +394,7 @@ class PSSService(models.Model):
     )
 
     CHILD_VULNERABILITY = Choices(
+        ('', '----------'),
         ('Clear signs of neglect', _('Clear signs of neglect')),
         ('Clear signs of distress', _('Clear signs of distress')),
         ('Clear signs of physical maltreatment/damage and/or injuries',
@@ -396,6 +402,7 @@ class PSSService(models.Model):
     )
 
     OUT_SCHOOL_REASONS = Choices(
+        ('', '----------'),
         ('Fear of bullying, discrimination or violence at school or on the way to school',
          _('Fear of bullying, discrimination or violence at school or on the way to school')),
         ('The child needs to work', _('The child needs to work')),
@@ -477,6 +484,7 @@ class PSSService(models.Model):
 class HealthNutritionService(TimeStampedModel):
 
     DEVELOPMENT_DELAYS = Choices(
+        ('', '----------'),
         ('Mental', _('Mental')),
         ('Cognitive', _('Cognitive')),
         ('Neurological', _('Neurological')),
@@ -990,6 +998,7 @@ class EducationAssessment(TimeStampedModel):
 class EducationProgrammeAssessment(TimeStampedModel):
 
     PROGRAMME_TYPE = Choices(
+        ('', '----------'),
         ('BLN Level 1', _('BLN Level 1')),
         ('BLN Level 2', _('BLN Level 2')),
         ('YBLN', _('YBLN')),

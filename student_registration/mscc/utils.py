@@ -13,6 +13,7 @@ from student_registration.clm.models import (
     Inclusion
 )
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
+from student_registration.mscc.models import Registration
 
 
 def to_array(fields, obj):
@@ -317,6 +318,7 @@ def create_attendance(data, center_id):
                                                                                   child_id=child['child_id'])
             attendance_child.attended = child['attended']
             attendance_child.absence_reason = child['absence_reason']
+            attendance_child.absence_reason_other = child['absence_reason_other']
             attendance_child.save()
         return True
     except Exception as ex:
@@ -324,27 +326,50 @@ def create_attendance(data, center_id):
         return False
 
 
-def attendance_record(attendance_date, center_id):
-    try:
-        record = {}
-        attendance = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).values(
-            'id',
-            'day_off',
-            'close_reason'
-        ).last()
+def load_child_attendance_information(attendance_id):
 
-        if attendance:
-            attendance_id = attendance['id']
-            record['attendance_id'] = attendance_id
-            record['day_off'] = attendance['day_off']
-            record['close_reason'] = attendance['close_reason']
-            record['attendance_child'] = MSCCAttendanceChild.objects.filter(attendance_day_id=attendance_id).values(
-                'id',
-                'child_id',
-                'attended',
-                'absence_reason',
-                'absence_reason_other'
-            ).all()
-        return record
+    try:
+        attendances = MSCCAttendanceChild.objects.filter(attendance_day_id=attendance_id).all()
+        result = []
+
+        for attendance in attendances:
+            attendanceRecord = {}
+            attendanceRecord['attendance_id'] = attendance.id
+            attendanceRecord['registry_id'] = 0
+            attendanceRecord['child_id'] = attendance.child.id
+            attendanceRecord['child_fullname'] = attendance.child.full_name
+            attendanceRecord['child_mother_fullname'] = attendance.child.mother_fullname
+            attendanceRecord['child_birthday'] = attendance.child.birthday
+            attendanceRecord['child_nationality'] = attendance.child.nationality.name
+            attendanceRecord['attended'] = attendance.attended
+            attendanceRecord['absence_reason'] = attendance.absence_reason
+            attendanceRecord['absence_reason_other'] = attendance.absence_reason_other
+
+            result.append(attendanceRecord)
+
+        return result
+
     except Exception as ex:
         return False
+
+
+def load_child_registration_information(center_id):
+
+    registration_children = Registration.objects.filter(center_id=center_id)
+    result = []
+
+    for registration_child in registration_children:
+        registrationRecord = {}
+        registrationRecord['attendance_id'] = ''
+        registrationRecord['registry_id'] = registration_child.id
+        registrationRecord['child_id'] = registration_child.child.id
+        registrationRecord['child_fullname'] = registration_child.child.full_name
+        registrationRecord['child_mother_fullname'] = registration_child.child.mother_fullname
+        registrationRecord['child_birthday'] = registration_child.child.birthday
+        registrationRecord['child_nationality'] = registration_child.child.nationality.name
+        registrationRecord['attended'] = ''
+        registrationRecord['absence_reason'] = ''
+        registrationRecord['absence_reason_other'] = ''
+        result.append(registrationRecord)
+
+    return result
