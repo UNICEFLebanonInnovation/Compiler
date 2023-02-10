@@ -434,3 +434,13 @@ class ChildProfilePreview(LoginRequiredMixin,
         return {
             'instance': instance,
         }
+
+
+def ExportData(request):
+    parameter = request.GET.get('parameter', '')
+    resource = RegitsrationResource()
+
+    dataset = resource.export()
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="data.xls"'
+    return response

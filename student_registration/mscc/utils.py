@@ -1,6 +1,7 @@
 # -- coding: utf-8 --
 from itertools import chain
 import datetime
+from import_export import resources, fields
 
 from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
@@ -371,3 +372,94 @@ def load_child_attendance(center_id, attendance_date):
     except Exception as ex:
         print(ex.message)
         return []
+
+
+
+class RegitsrationResource(resources.ModelResource):
+    class Meta:
+        model = Registration
+        fields = (
+            'id',
+            'child__id',
+            'child_outreach',
+            'student_old',
+            'partner__name',
+            'type',
+            'center__name',
+            'center__governorate__name_en',
+            'center__caza__name_en',
+            'center__cadaster__name_en',
+            'child__id',
+            'child__number',
+            'child__first_name',
+            'child__father_name',
+            'child__last_name',
+            'child__mother_fullname',
+            'child__gender',
+            'child__nationality__name',
+            'child__nationality_other',
+            'child__birthday_year',
+            'child__birthday_month',
+            'child__birthday_day',
+            'child__p_code',
+            'child__address',
+            'child__disability',
+            'child__marital_status',
+            'child__have_children',
+            'child__children_number',
+            'source_of_identification',
+            'source_of_identification_specify',
+            'cash_support_programmes',
+            'child__father_educational_level',
+            'child__mother_educational_level',
+            'child__first_phone_owner',
+            'child__first_phone_number',
+            'child__first_phone_number_confirm',
+            'child__second_phone_owner',
+            'child__second_phone_number',
+            'child__second_phone_number_confirm',
+            'child__main_caregiver',
+            'child__main_caregiver_other',
+            'child__caregiver_first_name',
+            'child__caregiver_middle_name',
+            'child__caregiver_last_name',
+            'child__caregiver_mother_name',
+            'child__main_caregiver_nationality__name',
+            'child__main_caregiver_nationality_other',
+            'have_labour',
+            'labour_type',
+            'labour_type_specify',
+            'labour_hours',
+            'labour_weekly_income',
+            'child__id_type',
+            'child__case_number',
+            'child__case_number_confirm',
+            'child__parent_individual_case_number',
+            'child__parent_individual_case_number_confirm',
+            'child__individual_case_number',
+            'child__individual_case_number_confirm',
+            'child__recorded_number',
+            'child__recorded_number_confirm',
+            'child__parent_national_number',
+            'child__parent_national_number_confirm',
+            'child__national_number',
+            'child__national_number_confirm',
+            'child__parent_syrian_national_number',
+            'child__parent_syrian_national_number_confirm',
+            'child__syrian_national_number',
+            'child__syrian_national_number_confirm',
+            'child__parent_sop_national_number',
+            'child__parent_sop_national_number_confirm',
+            'child__sop_national_number',
+            'child__sop_national_number_confirm',
+            'child__parent_other_number',
+            'child__parent_other_number_confirm',
+            'child__other_number',
+            'child__other_number_confirm',
+            'registration_date',
+            'owner__username',
+            'modified_by__username',
+            'created',
+            'modified',
+        )
+        export_order = fields
