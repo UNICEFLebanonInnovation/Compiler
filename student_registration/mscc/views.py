@@ -434,3 +434,22 @@ class ChildProfilePreview(LoginRequiredMixin,
         return {
             'instance': instance,
         }
+
+
+def ExportData(request):
+    nationality = request.GET.get('nationality', '')
+
+    qs_registration = Registration.objects.filter(
+        center=request.user.center_id,
+        child__first_name__contains=request.GET.get('first_name', ''),
+        child__last_name__contains=request.GET.get('last_name', ''),
+        child__father_name__contains=request.GET.get('father_name', ''),
+        child__mother_fullname__contains=request.GET.get('mother_fullname', '')
+    )
+    if nationality is not None and nationality != '':
+        qs_registration.filter(child__nationality=nationality)
+    qs_registration.order_by('-id')
+    dataset = RegitsrationResource().export(qs_registration)
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="data.xls"'
+    return response

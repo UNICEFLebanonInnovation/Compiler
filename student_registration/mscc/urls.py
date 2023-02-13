@@ -16,11 +16,11 @@ urlpatterns = [
         view=views.MainEditView.as_view(),
         name='child_edit'
     ),
-    # url(
-    #     regex=r'^export/$',
-    #     view=views.ExportViewSet.as_view(),
-    #     name='export'
-    # ),
+    url(
+        regex=r'^export/$',
+        view=views.ExportData,
+        name='export'
+    ),
     url(
         regex=r'^List/$',
         view=views.MainListView.as_view(),
