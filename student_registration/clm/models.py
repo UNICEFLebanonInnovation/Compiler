@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import, division
 import datetime
 
@@ -1790,10 +1791,11 @@ class Bridging(CLM):
         ('yes', _("Yes")),
         ('no', _("No")),
     )
-    miss_school_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('miss_school_date')
+    RESIDENCE_TYPE = Choices(
+        ('', _('Residence Type')),
+        ('Informal settlement', _('Informal settlement - مخيم')),
+        ('House', _('House - منزل')),
+        ('Collective shelter', _('Collective shelter - مجمع سكني  ')),
     )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
@@ -1822,6 +1824,13 @@ class Bridging(CLM):
         ('english_arabic', _('English/Arabic')),
         ('french_arabic', _('French/Arabic'))
     )
+
+    child_outreach = models.IntegerField(blank=True, null=True)
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('miss_school_date')
+    )
     language = models.CharField(
         max_length=100,
         blank=True,
@@ -1840,6 +1849,13 @@ class Bridging(CLM):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Cycle')
+    )
+    residence_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=RESIDENCE_TYPE,
+        verbose_name=_('Residence Type')
     )
     referral = ArrayField(
         models.CharField(
@@ -2034,6 +2050,13 @@ class Bridging(CLM):
         blank=True,
         null=True,
         verbose_name=_('Please specify what has been discussed')
+    )
+    have_labour_single_selection = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child participate in work?')
     )
     def calculate_sore(self, stage):
         keys = [

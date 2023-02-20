@@ -270,6 +270,62 @@ $(document).ready(function() {
     };
 }
 
+    // search outreach students
+    if($(document).find('#id_search_Kobo_outreach_student').length == 1) {
+        $("#id_search_Kobo_outreach_student").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/clm/search-kobo-outreach-child/',
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                       var result = JSON.parse(data.result);
+                       if(!result.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(result);
+                        }
+                    }
+                });
+            },
+        minLength: 3,
+        select: function (event, ui) {
+            if(ui.item.error) {
+                return false;
+            }
+            get_child_data(ui.item.id)
+            return false;
+        }
+    })
+    .autocomplete("instance")._renderMenu = function (ul, items) {
+
+        var that = this;
+        $.each(items, function (index, item) {
+            that._renderItemData(ul, item);
+        });
+        $(ul).find("li:odd").addClass("odd");
+    };
+
+    $("#id_search_Kobo_outreach_student").autocomplete("instance")._renderItem = function (ul, item) {
+
+        if(item.error) {
+            return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+        }
+
+        var full_name = item.first_name+" "+item.outreach_caregiver__father_name+" "+item.outreach_caregiver__last_name;
+        var student_birthday = item.birthday_day+"/"+item.birthday_month+"/"+item.birthday_year;
+        return $("<li>")
+            .append("<div style='border: 1px solid;'>"
+                + "<b>Base Data:</b> " + full_name + " - " + item.outreach_caregiver__mother_full_name
+                + "<br/> <b>Gender - Birthday:</b> " + item.gender + " - " + student_birthday
+                + "</div>")
+            .appendTo(ul);
+    };
+}
+
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
 
@@ -300,7 +356,6 @@ $(document).ready(function() {
 
 
         if($(this).val() != 'Child have no ID'){
-
             return true;
         }
         if(confirm($(this).attr('translation'))) {
@@ -401,6 +456,7 @@ $(document).ready(function() {
         reorganizeForm();
 
     });
+
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -459,7 +515,6 @@ $(document).ready(function() {
     $(document).on('click', 'input[name=student_have_children]', function(){
         reorganizeForm();
     });
-
 
     $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
          verify_age_level();
@@ -542,11 +597,13 @@ $(document).ready(function() {
             $('#moving_date_block_'+itemscope).removeClass('d-none');
         }
     });
+
     $(document).on('click', '.cancel-moved-button', function(){
         var itemscope = $(this).attr('itemscope');
         $('#moving_date_block_'+itemscope).addClass('d-none');
         $('#moved_button_'+itemscope).removeClass('d-none');
     });
+
     $(document).on('click', '.save-moved-button', function(){
         var item = $(this);
         var itemscope = item.attr('itemscope');
@@ -565,11 +622,13 @@ $(document).ready(function() {
             $('#dropout_date_block_'+itemscope).removeClass('d-none');
         }
     });
+
     $(document).on('click', '.cancel-dropout-button', function(){
         var itemscope = $(this).attr('itemscope');
         $('#dropout_date_block_'+itemscope).addClass('d-none');
         $('#dropout_button_'+itemscope).removeClass('d-none');
     });
+
     $(document).on('click', '.save-dropout-button', function(){
         var item = $(this);
         var itemscope = item.attr('itemscope');
@@ -578,7 +637,6 @@ $(document).ready(function() {
             item.parents('tr').remove();
         }
     });
-
 
    $(document).on('click', '.justify-button', function(){
         var item = $(this);
@@ -600,6 +658,7 @@ $(document).ready(function() {
             patch_registration(item, callback());
         }
     });
+
     $(document).on('click', '.cancel-button', function(e){
         e.preventDefault();
         var item = $(this);
@@ -929,7 +988,6 @@ function isAddPage()
 }
 function reorganizeForm()
 {
-
     var new_registry = $('select#id_new_registry').val();
     var program_site = $('select#id_site').val();
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
@@ -1163,20 +1221,31 @@ function reorganizeForm()
         $('#registry_block').addClass('d-none');
         return true;
     }
-
-
     if(new_registry == 'no')
      // search_options
      {
-        $('#search_options_outreach').addClass('d-none');
+//      $('#search_options_outreach').addClass('d-none');
         $('#search_options_clm').removeClass('d-none');
+        $('#search_options_kobo_outreach').addClass('d-none');
      }
       else if(new_registry == 'yes')
      // search_options
      {
         $('#search_options_clm').addClass('d-none');
-        $('#search_options_outreach').removeClass('d-none');
+        $('#search_options_kobo_outreach').removeClass('d-none');
+//        $('#search_options_outreach').removeClass('d-none');
      }
+    var nationality = $('select#id_main_caregiver_nationality').val();
+    $('div#div_id_main_caregiver_nationality_other').addClass('d-none');
+    $('#span_main_caregiver_nationality_other').addClass('d-none');
+
+    if(nationality == 6){
+        $('div#div_id_main_caregiver_nationality_other').removeClass('d-none');
+        $('#span_main_caregiver_nationality_other').removeClass('d-none');
+    }
+    else {
+        $('#id_main_caregiver_nationality_other').val('');
+    }
     reorganize_pre_assessment();
 }
 
@@ -1734,6 +1803,43 @@ function load_schools(url)
             $("#id_school").html(data);
         }
     })
+}
+
+function get_child_data(outreach_id)
+{
+    $('#search_loader').removeClass('hidden');
+
+    $.ajax({
+        url: '/clm/outreach-child/',
+        data: { outreach_id: outreach_id},
+        cache: false,
+        async: true,
+        dataType: 'json',
+        success: function (response) {
+            fill_outreach_child_data(response);
+        },
+        error: function (response) {
+            console.log(response);
+        }
+    });
+}
+
+function fill_outreach_child_data(data)
+{
+    $(data).each(function(i, item) {
+        console.log(item);
+        {
+            $('#id_student_nationality').val(item['student_nationality']);
+            $('#id_main_caregiver').val(item['main_caregiver']);
+            $('#id_main_caregiver_nationality').val(item['main_caregiver_nationality']);
+            $('#id_id_type').val(item['id_type']);
+            $('#id_have_labour_single_selection').val(item['have_labour_single_selection']);
+            reorganizeForm();
+            Object.keys(item).forEach(key => {
+                $('#id_'+ key).val(item[key]);
+            });
+        }
+    });
 }
 
 

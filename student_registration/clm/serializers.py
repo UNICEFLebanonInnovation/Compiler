@@ -347,6 +347,8 @@ class BridgingSerializer(CLMSerializer):
         fields = CLMSerializer.Meta.fields + (
             # 'cycle',
             # 'referral',
+            'child_outreach',
+            'residence_type',
             'have_labour',
             'labours',
             'labour_hours',
@@ -552,8 +554,6 @@ class RSSerializer(CLMSerializer):
     class Meta:
         model = RS
         fields = CLMSerializer.Meta.fields + (
-
-
             # 'grade',
             # 'section',
 
@@ -902,7 +902,6 @@ class ABLN_FCSerializer(serializers.ModelSerializer):
 
 
 class BLN_FCSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = BLN_FC
         fields = (

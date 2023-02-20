@@ -245,6 +245,16 @@ urlpatterns = [
         name='search_clm_child'
     ),
     url(
+        'search-kobo-outreach-child/$',
+        views.search_kobo_outreach_child,
+        name='search_kobo_outreach_child'
+    ),
+    url(
+        'outreach-child/$',
+        views.outreach_child,
+        name='outreach_child'
+    ),
+    url(
         'search-clm-duplicate-registration/$',
         views.search_clm_duplicate_registration,
         name='search_clm_duplicate_registration'

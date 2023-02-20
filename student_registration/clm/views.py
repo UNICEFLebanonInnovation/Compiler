@@ -25,7 +25,7 @@ from django_tables2.export.views import ExportMixin
 
 from student_registration.backends.djqscsv import render_to_csv_response
 from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import Child
+from student_registration.outreach.models import Child, OutreachCaregiver, OutreachChild
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
@@ -119,7 +119,7 @@ from .serializers import (
     BridgingSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
-    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, bridging_build_xls_extraction
+    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, bridging_build_xls_extraction, get_outreach_child
 
 
 
@@ -3031,6 +3031,43 @@ def clm_child_list(model, term, terms, search_model):
     return qs
 
 
+def search_kobo_outreach_child(request):
+    from django.db.models.functions import Concat
+    from django.db.models import Value
+
+    term = request.GET.get('term', 0)
+    terms = request.GET.get('term', 0)
+    qs = {}
+    if terms:
+        if len(terms.split()) > 1:
+
+            qs = OutreachChild.objects.annotate(fullname=Concat('first_name', Value(' '),
+                                                        'outreach_caregiver__father_name', Value(' '),
+                                                        'outreach_caregiver__last_name')) \
+                .filter(fullname__icontains=terms) \
+                .values('id', 'first_name', 'outreach_caregiver__father_name',
+                        'outreach_caregiver__last_name', 'outreach_caregiver__mother_full_name',
+                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
+
+        else:
+            qs = OutreachChild.objects \
+                .filter(
+                Q(first_name=term) |
+                Q(outreach_caregiver__father_name=term) |
+                Q(outreach_caregiver__last_name=term)
+            ).values('id', 'first_name', 'outreach_caregiver__father_name',
+                        'outreach_caregiver__last_name', 'outreach_caregiver__mother_full_name',
+                        'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
+
+    return JsonResponse({'result': json.dumps(list(qs))})
+
+
+def outreach_child(request):
+    outreach_id = request.GET.get('outreach_id')
+    result = get_outreach_child(outreach_id)
+    return JsonResponse(result)
+
+
 class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
     template_name = 'clm/execs.html'
 
@@ -3610,6 +3647,8 @@ class BridgingEditView(LoginRequiredMixin,
                         data['arabic'] = p_test["Bridging_ASSESSMENT/arabic"]
                     if "Bridging_ASSESSMENT/english" in p_test:
                         data['english'] = p_test["Bridging_ASSESSMENT/english"]
+                    if "Bridging_ASSESSMENT/french" in p_test:
+                        data['french'] = p_test["Bridging_ASSESSMENT/french"]
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
                     if "Bridging_ASSESSMENT/artistic" in p_test:

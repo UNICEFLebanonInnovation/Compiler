@@ -135,6 +135,11 @@ class CommonForm(forms.ModelForm):
         widget=forms.TextInput,
         required=False
     )
+    search_Kobo_outreach_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
+    )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
@@ -6977,7 +6982,13 @@ class BridgingForm(CommonForm):
     )
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
-        required=True
+        required=False
+    )
+    residence_type = forms.ChoiceField(
+        label=_("Residence Type"),
+        widget=forms.Select, required=True,
+        choices=Bridging.RESIDENCE_TYPE,
+        initial='yes'
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
@@ -6992,7 +7003,7 @@ class BridgingForm(CommonForm):
     )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.filter(current_round_bridging=True), widget=forms.Select,
-        label=_('Round'),
+        label=_('Academic year'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
@@ -7307,21 +7318,26 @@ class BridgingForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
+    french = forms.FloatField(
+        label=_('French Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=True
+    )
     math = forms.FloatField(
         label=_('Math Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
-    social_emotional = forms.FloatField(
-        label=_('Social Emotional Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    artistic = forms.FloatField(
-        label=_('Artistic Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-        )
+    # social_emotional = forms.FloatField(
+    #     label=_('Social Emotional Results'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
+    # artistic = forms.FloatField(
+    #     label=_('Artistic Results'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    #     )
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
         widget=forms.Select, required=True,
@@ -7362,6 +7378,7 @@ class BridgingForm(CommonForm):
         required=True, to_field_name='id',
         # initial=0
     )
+    child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -7408,27 +7425,48 @@ class BridgingForm(CommonForm):
                 css_id='search_options_clm',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
+            # Fieldset(
+            #     None,
+            #     Div(
+            #         HTML('<span>A.1</span>'), css_class='block_tag'),
+            #     Div(
+            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+            #             'Search Outreach student') + '</h4>')
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default"></span>'),
+            #         Div('search_outreach_student', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<p>' + _(
+            #             'Search by the following keywords: child first name, father name, last name, or '
+            #             'child number') + '</p>'),
+            #     ),
+            #     css_id='search_options_outreach',
+            #     css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+            # ),
             Fieldset(
                 None,
                 Div(
                     HTML('<span>A.1</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search Outreach student') + '</h4>')
+                        'Search Kobo Outreach student') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default"></span>'),
-                    Div('search_outreach_student', css_class='col-md-3'),
+                    Div('search_Kobo_outreach_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<p>' + _(
-                        'Search by the following keywords: child first name, father name, last name, or '
-                        'child number') + '</p>'),
+                        'Search by the following keywords: child first name, father name, last name') + '</p>'),
                 ),
-                css_id='search_options_outreach',
+                css_id='search_options_kobo_outreach',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
+
             Fieldset(
                 None,
                 Div(
@@ -7466,9 +7504,10 @@ class BridgingForm(CommonForm):
                     HTML('<span class="badge badge-default">9</span>'),
                     Div('student_address', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">10</span>'),
-                    Div('registration_level', css_class='col-md-3'),
+                    Div('residence_type', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
+                    Div('registration_level', css_class='col-md-3'),
+                    Div('first_attendance_date', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -7797,22 +7836,27 @@ class BridgingForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_math">3</span>'),
+                    HTML('<span class="badge badge-default" id="span_french">3</span>'),
+                    Div('french', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_math">4</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
 
-                Div(
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4</span>'),
-                    Div('social_emotional', css_class='col-md-2'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default" id="span_artistic">5</span>'),
-                    Div('artistic', css_class='col-md-2'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default" id="span_social_emotional">5</span>'),
+                #     Div('social_emotional', css_class='col-md-2'),
+                #     css_class='row',
+                # ),
+                #
+                # Div(
+                #     HTML('<span class="badge badge-default" id="span_artistic">6</span>'),
+                #     Div('artistic', css_class='col-md-2'),
+                #     css_class='row',
+                # ),
                 css_class='bd-callout bd-callout-warning E_right_border'
             ),
             FormActions(
@@ -8015,32 +8059,19 @@ class BridgingForm(CommonForm):
         language = cleaned_data.get("language")
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
+        french = cleaned_data.get("french")
         math = cleaned_data.get("math")
-        social_emotional = cleaned_data.get("social_emotional")
-        artistic = cleaned_data.get("artistic")
+        # social_emotional = cleaned_data.get("social_emotional")
+        # artistic = cleaned_data.get("artistic")
 
-        if registration_level == 'level_one':
-            if arabic > 46:
-                self.add_error('arabic', 'This value is greater that 46')
-            if english > 36:
-                self.add_error('english', 'This value is greater that 36')
-            if math > 20:
-                self.add_error('math', 'This value is greater that 20')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
-        else:
-            if arabic > 56:
-                self.add_error('arabic', 'This value is greater that 56')
-            if english > 56:
-                self.add_error('english', 'This value is greater that 56')
-            if math > 30:
-                self.add_error('math', 'This value is greater that 30')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
+        if arabic > 404:
+            self.add_error('arabic', 'This value is greater that 404')
+        if english > 470:
+            self.add_error('english', 'This value is greater that 470')
+        if french > 184:
+            self.add_error('french', 'This value is greater that 184')
+        if math > 200:
+            self.add_error('math', 'This value is greater that 200')
 
 
     def save(self, request=None, instance=None, serializer=None):
@@ -8049,6 +8080,7 @@ class BridgingForm(CommonForm):
         instance.pre_test = {
             "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
             "Bridging_ASSESSMENT/english": request.POST.get('english'),
+            "Bridging_ASSESSMENT/french": request.POST.get('french'),
             "Bridging_ASSESSMENT/math": request.POST.get('math'),
             "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
             "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
@@ -8059,6 +8091,8 @@ class BridgingForm(CommonForm):
         model = Bridging
         fields = CommonForm.Meta.fields + (
             'first_attendance_date',
+            'child_outreach',
+            'residence_type',
             'student_birthday_year',
             'have_labour_single_selection',
             'labours_single_selection',
