@@ -8082,8 +8082,8 @@ class BridgingForm(CommonForm):
             "Bridging_ASSESSMENT/english": request.POST.get('english'),
             "Bridging_ASSESSMENT/french": request.POST.get('french'),
             "Bridging_ASSESSMENT/math": request.POST.get('math'),
-            "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
-            "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+            # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
+            # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
         }
         instance.save()
 
@@ -8953,7 +8953,7 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
         required=False
@@ -9797,7 +9797,7 @@ class BLNAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
         required=False
@@ -10664,7 +10664,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
         required=False
@@ -10707,21 +10707,16 @@ class BridgingAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+    french = forms.FloatField(
+        label=_('French Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
     math = forms.FloatField(
         label=_('Math Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    social_emotional = forms.FloatField(
-        label=_('Social Emotional Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    artistic = forms.FloatField(
-        label=_('Artistic Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-        )
     follow_up_type = forms.ChoiceField(
         label=_('Type of follow up'),
         widget=forms.Select, required=False,
@@ -10865,7 +10860,7 @@ class BridgingAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_barriers_single">1.1</span>'),
-                    Div('barriers_single', css_class='col-md-2'),
+                    Div('barriers_single', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id="span_barriers_other">1.2</span>'),
                     Div('barriers_other', css_class='col-md-2'),
                     css_class='row',
@@ -10940,18 +10935,13 @@ class BridgingAssessmentForm(forms.ModelForm):
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_math">16</span>'),
+                    HTML('<span class="badge badge-default" id="span_french">16</span>'),
+                    Div('french', css_class='col-md-3'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_math">17</span>'),
                     Div('math', css_class='col-md-3'),
-                    css_class='row grades',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_social_emotional">17</span>'),
-                    Div('social_emotional', css_class='col-md-3'),
-                    css_class='row grades',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_artistic">18</span>'),
-                    Div('artistic', css_class='col-md-3'),
                     css_class='row grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
@@ -10967,9 +10957,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         cleaned_data = super(BridgingAssessmentForm, self).clean()
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
+        french = cleaned_data.get("french")
         math = cleaned_data.get("math")
-        social_emotional = cleaned_data.get("social_emotional")
-        artistic = cleaned_data.get("artistic")
+        # social_emotional = cleaned_data.get("social_emotional")
+        # artistic = cleaned_data.get("artistic")
 
         learning_result = cleaned_data.get("learning_result")
         learning_result_other = cleaned_data.get("learning_result_other")
@@ -11014,37 +11005,24 @@ class BridgingAssessmentForm(forms.ModelForm):
         if test_done == 'yes':
             if arabic is None:
                 self.add_error('arabic', 'This field is required')
+            elif arabic > 404:
+                self.add_error('arabic', 'This value is greater that 404')
+
             if english is None:
                 self.add_error('english', 'This field is required')
+            elif english > 470:
+                self.add_error('english', 'This value is greater that 470')
+
+            if french is None:
+                self.add_error('french', 'This field is required')
+            elif french > 184:
+                self.add_error('french', 'This value is greater that 184')
+
             if math is None:
                 self.add_error('math', 'This field is required')
+            elif math > 200:
+                self.add_error('math', 'This value is greater that 200')
 
-            # grades Max Value validation
-            registration_level = cleaned_data.get("registration_level")
-            language = cleaned_data.get("language")
-
-            if registration_level == 'level_one':
-                if arabic > 46:
-                    self.add_error('arabic', 'This value is greater that 46')
-                if english > 36:
-                    self.add_error('english', 'This value is greater that 36')
-                if math > 20:
-                    self.add_error('math', 'This value is greater that 20')
-                if social_emotional > 24:
-                    self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 10:
-                    self.add_error('artistic', 'This value is greater that 10')
-            else:
-                if arabic > 56:
-                    self.add_error('arabic', 'This value is greater that 56')
-                if english > 56:
-                    self.add_error('english', 'This value is greater that 56')
-                if math > 30:
-                    self.add_error('math', 'This value is greater that 30')
-                if social_emotional > 24:
-                    self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 10:
-                    self.add_error('artistic', 'This value is greater that 10')
 
 
     def save(self, instance=None, request=None):
@@ -11056,9 +11034,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         instance.post_test = {
                 "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
                 "Bridging_ASSESSMENT/english": request.POST.get('english'),
+                "Bridging_ASSESSMENT/french": request.POST.get('french'),
                 "Bridging_ASSESSMENT/math": request.POST.get('math'),
-                "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
-                "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
+                # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+                # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
             }
 
         instance.save()
@@ -11486,7 +11465,7 @@ class CBECEAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme? '),
         choices= (
             ('', '----------'),
             ('Full time job to support family financially', _('Full time job to support family financially')),
@@ -13024,7 +13003,7 @@ class RSAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices= (
             ('', '----------'),
             ('Full time job to support family financially', _('Full time job to support family financially')),
