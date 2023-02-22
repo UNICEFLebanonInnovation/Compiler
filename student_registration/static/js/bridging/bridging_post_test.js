@@ -115,7 +115,6 @@ function reorganizeForm_post_assessment()
     var test_done = $('select#id_test_done').val();
     var community_Liaison_follow_up = $('select#id_community_Liaison_follow_up').val();
 
-
     var pss_session_attended = $('select#id_pss_session_attended').val();
     var covid_session_attended = $('select#id_covid_session_attended').val();
     var followup_session_attended = $('select#id_followup_session_attended').val();
@@ -135,8 +134,8 @@ function reorganizeForm_post_assessment()
     $('#span_barriers_single').addClass('d-none');
     $('div#div_id_barriers_other').addClass('d-none');
     $('#span_barriers_other').addClass('d-none');
-    $('#community_Liaison').removeClass('hide');
-    $('div.community_Liaison').removeClass('d-none');
+    $('#div_id_community_Liaison_follow_up').removeClass('d-none');
+    $('#span_community_Liaison_follow_up').removeClass('d-none');
 
     if(participation != 'no_absence'){
         $('#div_id_barriers_single').removeClass('d-none');
@@ -145,10 +144,18 @@ function reorganizeForm_post_assessment()
             $('div#div_id_barriers_other').removeClass('d-none');
             $('#span_barriers_other').removeClass('d-none');
         }
+        $('#div_id_community_Liaison_follow_up').removeClass('d-none');
+        $('#span_community_Liaison_follow_up').removeClass('d-none');
     }
     else{
-        $('div.community_Liaison').addClass('d-none');
-        $('#community_Liaison').addClass('hide');
+        $('#div_id_barriers_single').addClass('d-none');
+        $('#span_barriers_single').addClass('d-none');
+        $('div#div_id_barriers_other').addClass('d-none');
+        $('#span_barriers_other').addClass('d-none');
+        $('#div_id_community_Liaison_follow_up').addClass('d-none');
+        $('#span_community_Liaison_follow_up').addClass('d-none');
+        $('#span_community_liaison_specify').addClass('d-none');
+        $('div#div_id_community_liaison_specify').addClass('d-none');
     }
 
     $('#span_community_liaison_specify').addClass('d-none');
@@ -156,6 +163,11 @@ function reorganizeForm_post_assessment()
     if(community_Liaison_follow_up == 'yes'){
         $('#div_id_community_liaison_specify').removeClass('d-none');
         $('#span_community_liaison_specify').removeClass('d-none');
+    }
+    else
+    {
+        $('#span_community_liaison_specify').addClass('d-none');
+        $('div#div_id_community_liaison_specify').addClass('d-none');
     }
 
     // learning_result

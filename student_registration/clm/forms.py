@@ -1308,7 +1308,7 @@ class BLNForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -2633,7 +2633,7 @@ class ABLNForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -4061,7 +4061,7 @@ class RSForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/rs-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -5479,7 +5479,7 @@ class CBECEForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -6681,7 +6681,7 @@ class OutreachForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/outreach-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/outreach-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -7862,7 +7862,7 @@ class BridgingForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bridging-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -9553,7 +9553,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/abln-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -10411,7 +10411,7 @@ class BLNAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bln-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -10683,8 +10683,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     round_complete = forms.ChoiceField(
         label=_("Briding Round complete"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
-        initial='yes'
+        choices=CLM.YES_NO
     )
 
     basic_stationery = forms.ChoiceField(
@@ -10731,16 +10730,13 @@ class BridgingAssessmentForm(forms.ModelForm):
     child_health_examed = forms.ChoiceField(
         label=_("Did the child receive health exam"),
         widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=(('yes', _("Yes")), ('no', _("No")))
     )
     child_health_concern = forms.ChoiceField(
         label=_("Anything to worry about"),
         widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=CLM.YES_NO
     )
-
     registration_level = forms.ChoiceField(
         label=_("Registration level"),
         widget=forms.Select, required=False,
@@ -10755,26 +10751,22 @@ class BridgingAssessmentForm(forms.ModelForm):
     child_received_internet = forms.ChoiceField(
         label=_("child received internet"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=CLM.YES_NO
     )
     referal_health = forms.ChoiceField(
         label=_("referal health"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        choices=CLM.YES_NO
     )
     referal_wash = forms.ChoiceField(
         label=_("referal wash"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        choices=CLM.YES_NO
     )
     referal_other = forms.ChoiceField(
         label=_("referal other"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        choices=CLM.YES_NO
     )
     referal_other_specify = forms.CharField(
         label=_('Please specify'),
@@ -10807,8 +10799,7 @@ class BridgingAssessmentForm(forms.ModelForm):
             ('yes_akelius)', _("Yes (Akelius)")),
             ('yes_learning_passport)', _("Yes (Learning Passport)")),
             ('no', _("No"))
-        ),
-        initial='no'
+        )
     )
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -10866,7 +10857,7 @@ class BridgingAssessmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_community_Liaison_follow_up">2</span>'),
                     Div('community_Liaison_follow_up', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id="span_community_liaison_specify">2.1</span>'),
                     Div('community_liaison_specify', css_class='col-md-4'),
@@ -10948,8 +10939,10 @@ class BridgingAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bridging-list/" translation="' +
-                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML(
+                    '<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _(
+                        'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 
@@ -11372,8 +11365,10 @@ class BridgingFollowupForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bridging-list/" translation="' +
-                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML(
+                    '<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _(
+                        'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 
@@ -12144,7 +12139,7 @@ class CBECEAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -12699,7 +12694,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -13698,7 +13693,7 @@ class RSAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/rs-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -14934,7 +14929,7 @@ class ABLNFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/abln-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -15465,7 +15460,7 @@ class BLNFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bln-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -15989,7 +15984,7 @@ class RSFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/rs-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -16519,7 +16514,7 @@ class CBECEFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )

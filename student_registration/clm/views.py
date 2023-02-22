@@ -1264,7 +1264,7 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
                     if "Bridging_ASSESSMENT/english" in p_test:
                         data['english'] = p_test["Bridging_ASSESSMENT/english"]
                     if "Bridging_ASSESSMENT/french" in p_test:
-                        data['english'] = p_test["Bridging_ASSESSMENT/french"]
+                        data['french'] = p_test["Bridging_ASSESSMENT/french"]
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
                     # if "Bridging_ASSESSMENT/artistic" in p_test:
