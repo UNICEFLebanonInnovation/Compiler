@@ -702,7 +702,7 @@ class Teacher(Person):
     attach_type_1 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
-        related_name='+',
+        related_name='attach_type_1',
         verbose_name=_('Type')
     )
     attach_short_description_2 = models.CharField(
@@ -720,7 +720,7 @@ class Teacher(Person):
     attach_type_2 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
-        related_name='+',
+        related_name='attach_type_2',
         verbose_name=_('Type')
     )
     attach_short_description_3 = models.CharField(
@@ -738,7 +738,7 @@ class Teacher(Person):
     attach_type_3 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
-        related_name='+',
+        related_name='attach_type_3',
         verbose_name=_('Type')
     )
     attach_short_description_4 = models.CharField(
@@ -756,7 +756,7 @@ class Teacher(Person):
     attach_type_4 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
-        related_name='+',
+        related_name='attach_type_4',
         verbose_name=_('Type')
     )
     attach_short_description_5 = models.CharField(
@@ -774,6 +774,6 @@ class Teacher(Person):
     attach_type_5 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
-        related_name='+',
+        related_name='attach_type_5',
         verbose_name=_('Type')
     )

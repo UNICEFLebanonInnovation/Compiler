@@ -53,25 +53,30 @@ class Migration(migrations.Migration):
             name='attach_short_description_5',
             field=models.CharField(blank=True, max_length=255, null=True, verbose_name='Description'),
         ),
+        migrations.AlterField(
+            model_name='teacher',
+            name='attach_type_1',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='attach_type_1', to='students.AttachmentType', verbose_name='Type'),
+        ),
         migrations.AddField(
             model_name='teacher',
             name='attach_type_2',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='students.AttachmentType', verbose_name='Type'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='attach_type_2', to='students.AttachmentType', verbose_name='Type'),
         ),
         migrations.AddField(
             model_name='teacher',
             name='attach_type_3',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='students.AttachmentType', verbose_name='Type'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='attach_type_3', to='students.AttachmentType', verbose_name='Type'),
         ),
         migrations.AddField(
             model_name='teacher',
             name='attach_type_4',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='students.AttachmentType', verbose_name='Type'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='attach_type_4', to='students.AttachmentType', verbose_name='Type'),
         ),
         migrations.AddField(
             model_name='teacher',
             name='attach_type_5',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='students.AttachmentType', verbose_name='Type'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='attach_type_5', to='students.AttachmentType', verbose_name='Type'),
         ),
         migrations.AlterField(
             model_name='teacher',
