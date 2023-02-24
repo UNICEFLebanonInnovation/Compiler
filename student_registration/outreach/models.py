@@ -297,7 +297,7 @@ class OutreachCaregiver(models.Model):
     geolocation = models.CharField(max_length=200, blank=True, null=True)
     interview_date = models.CharField(max_length=200, blank=True, null=True)
     submitted_by = models.CharField(max_length=200, blank=True, null=True)
-    interview_comment = models.CharField(max_length=200, blank=True, null=True)
+    interview_comment = models.CharField(max_length=1000, blank=True, null=True)
     submission_status = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
@@ -354,7 +354,7 @@ class OutreachChild(models.Model):
     work_type = models.CharField(max_length=200, blank=True, null=True)
     work_type_other = models.CharField(max_length=200, blank=True, null=True)
     child_referral = models.CharField(max_length=200, blank=True, null=True)
-    child_notes = models.CharField(max_length=200, blank=True, null=True)
+    child_notes = models.CharField(max_length=1000, blank=True, null=True)
     class Meta:
         ordering = ['id']
         verbose_name = "Outreach Child"
