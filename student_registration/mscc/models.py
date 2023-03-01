@@ -492,6 +492,10 @@ class HealthNutritionService(TimeStampedModel):
     )
     AGE_EAT_SOLID_FOOD = Choices(
         ('', '----------'),
+        ('0 month', _('1 months')),
+        ('1 month', _('1 months')),
+        ('2 months', _('2 months')),
+        ('3 months', _('3 months')),
         ('4 months', _('4 months')),
         ('5 months', _('5 months')),
         ('6 months', _('6 months')),

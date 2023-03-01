@@ -26,6 +26,8 @@ $(document).ready(function() {
     $(document).on('click', '#save_attendance_children', function(e){
         e.preventDefault();
 
+        $('.app-drawer-overlay').removeClass('d-none');
+
         var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
         var attendance_date = $("#attendance_date").val();
         var close_reason = $("#close_reason").val();
@@ -72,6 +74,8 @@ $(document).ready(function() {
             dataType: 'json',
             success: function (response) {
                 if (response.result) {
+                    $('.app-drawer-overlay').addClass('d-none');
+                    $('#formSuccessModal').modal('show');
 //                    $('#attendance_children').empty("");
 //                    $('#save_attendance_children').addClass('disabled');
 //                    $('#load_attendance_children').removeClass('disabled');
@@ -80,6 +84,7 @@ $(document).ready(function() {
             },
             error: function(response) {
                 console.log(response);
+                $('.app-drawer-overlay').addClass('d-none');
             }
         });
 
@@ -90,6 +95,7 @@ $(document).ready(function() {
 
         $('#attendance_children').empty("");
         $('#attendance_children').append("Loading...");
+        $('.app-drawer-overlay').removeClass('d-none');
 
        $.ajax({
             type: "GET",
@@ -102,9 +108,11 @@ $(document).ready(function() {
                 $('#attendance_children').empty("");
                  $('#attendance_children').append(response);
                 $('#save_attendance_children').removeClass('disabled');
+                $('.app-drawer-overlay').addClass('d-none');
             },
             error: function(response) {
                 console.log(response);
+                $('.app-drawer-overlay').addClass('d-none');
             }
         });
     });
