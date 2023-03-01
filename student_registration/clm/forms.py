@@ -135,6 +135,11 @@ class CommonForm(forms.ModelForm):
         widget=forms.TextInput,
         required=False
     )
+    search_Kobo_outreach_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
+    )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
@@ -1303,7 +1308,7 @@ class BLNForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -2628,7 +2633,7 @@ class ABLNForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -4056,7 +4061,7 @@ class RSForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/rs-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -5474,7 +5479,7 @@ class CBECEForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -6676,7 +6681,7 @@ class OutreachForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/outreach-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/outreach-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -6977,7 +6982,13 @@ class BridgingForm(CommonForm):
     )
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
-        required=True
+        required=False
+    )
+    residence_type = forms.ChoiceField(
+        label=_("Residence Type"),
+        widget=forms.Select, required=True,
+        choices=Bridging.RESIDENCE_TYPE,
+        initial='yes'
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
@@ -6992,7 +7003,7 @@ class BridgingForm(CommonForm):
     )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.filter(current_round_bridging=True), widget=forms.Select,
-        label=_('Round'),
+        label=_('Academic year'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
@@ -7307,21 +7318,26 @@ class BridgingForm(CommonForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
+    french = forms.FloatField(
+        label=_('French Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=True
+    )
     math = forms.FloatField(
         label=_('Math Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
-    social_emotional = forms.FloatField(
-        label=_('Social Emotional Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    artistic = forms.FloatField(
-        label=_('Artistic Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-        )
+    # social_emotional = forms.FloatField(
+    #     label=_('Social Emotional Results'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
+    # artistic = forms.FloatField(
+    #     label=_('Artistic Results'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    #     )
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
         widget=forms.Select, required=True,
@@ -7362,6 +7378,7 @@ class BridgingForm(CommonForm):
         required=True, to_field_name='id',
         # initial=0
     )
+    child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -7408,27 +7425,48 @@ class BridgingForm(CommonForm):
                 css_id='search_options_clm',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
+            # Fieldset(
+            #     None,
+            #     Div(
+            #         HTML('<span>A.1</span>'), css_class='block_tag'),
+            #     Div(
+            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+            #             'Search Outreach student') + '</h4>')
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default"></span>'),
+            #         Div('search_outreach_student', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<p>' + _(
+            #             'Search by the following keywords: child first name, father name, last name, or '
+            #             'child number') + '</p>'),
+            #     ),
+            #     css_id='search_options_outreach',
+            #     css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+            # ),
             Fieldset(
                 None,
                 Div(
                     HTML('<span>A.1</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search Outreach student') + '</h4>')
+                        'Search Kobo Outreach student') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default"></span>'),
-                    Div('search_outreach_student', css_class='col-md-3'),
+                    Div('search_Kobo_outreach_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<p>' + _(
-                        'Search by the following keywords: child first name, father name, last name, or '
-                        'child number') + '</p>'),
+                        'Search by the following keywords: child first name, father name, last name') + '</p>'),
                 ),
-                css_id='search_options_outreach',
+                css_id='search_options_kobo_outreach',
                 css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
+
             Fieldset(
                 None,
                 Div(
@@ -7466,9 +7504,10 @@ class BridgingForm(CommonForm):
                     HTML('<span class="badge badge-default">9</span>'),
                     Div('student_address', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">10</span>'),
-                    Div('registration_level', css_class='col-md-3'),
+                    Div('residence_type', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
+                    Div('registration_level', css_class='col-md-3'),
+                    Div('first_attendance_date', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -7797,28 +7836,33 @@ class BridgingForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_math">3</span>'),
+                    HTML('<span class="badge badge-default" id="span_french">3</span>'),
+                    Div('french', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_math">4</span>'),
                     Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
 
-                Div(
-                    HTML('<span class="badge badge-default" id="span_social_emotional">4</span>'),
-                    Div('social_emotional', css_class='col-md-2'),
-                    css_class='row',
-                ),
-
-                Div(
-                    HTML('<span class="badge badge-default" id="span_artistic">5</span>'),
-                    Div('artistic', css_class='col-md-2'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default" id="span_social_emotional">5</span>'),
+                #     Div('social_emotional', css_class='col-md-2'),
+                #     css_class='row',
+                # ),
+                #
+                # Div(
+                #     HTML('<span class="badge badge-default" id="span_artistic">6</span>'),
+                #     Div('artistic', css_class='col-md-2'),
+                #     css_class='row',
+                # ),
                 css_class='bd-callout bd-callout-warning E_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bridging-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -8015,32 +8059,19 @@ class BridgingForm(CommonForm):
         language = cleaned_data.get("language")
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
+        french = cleaned_data.get("french")
         math = cleaned_data.get("math")
-        social_emotional = cleaned_data.get("social_emotional")
-        artistic = cleaned_data.get("artistic")
+        # social_emotional = cleaned_data.get("social_emotional")
+        # artistic = cleaned_data.get("artistic")
 
-        if registration_level == 'level_one':
-            if arabic > 46:
-                self.add_error('arabic', 'This value is greater that 46')
-            if english > 36:
-                self.add_error('english', 'This value is greater that 36')
-            if math > 20:
-                self.add_error('math', 'This value is greater that 20')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
-        else:
-            if arabic > 56:
-                self.add_error('arabic', 'This value is greater that 56')
-            if english > 56:
-                self.add_error('english', 'This value is greater that 56')
-            if math > 30:
-                self.add_error('math', 'This value is greater that 30')
-            if social_emotional > 24:
-                self.add_error('social_emotional', 'This value is greater that 24')
-            if artistic > 10:
-                self.add_error('artistic', 'This value is greater that 10')
+        if arabic > 404:
+            self.add_error('arabic', 'This value is greater that 404')
+        if english > 470:
+            self.add_error('english', 'This value is greater that 470')
+        if french > 184:
+            self.add_error('french', 'This value is greater that 184')
+        if math > 200:
+            self.add_error('math', 'This value is greater that 200')
 
 
     def save(self, request=None, instance=None, serializer=None):
@@ -8049,9 +8080,10 @@ class BridgingForm(CommonForm):
         instance.pre_test = {
             "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
             "Bridging_ASSESSMENT/english": request.POST.get('english'),
+            "Bridging_ASSESSMENT/french": request.POST.get('french'),
             "Bridging_ASSESSMENT/math": request.POST.get('math'),
-            "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
-            "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+            # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
+            # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
         }
         instance.save()
 
@@ -8059,6 +8091,8 @@ class BridgingForm(CommonForm):
         model = Bridging
         fields = CommonForm.Meta.fields + (
             'first_attendance_date',
+            'child_outreach',
+            'residence_type',
             'student_birthday_year',
             'have_labour_single_selection',
             'labours_single_selection',
@@ -8919,7 +8953,7 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
         required=False
@@ -9519,7 +9553,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/abln-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -9763,7 +9797,7 @@ class BLNAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
         required=False
@@ -10377,7 +10411,7 @@ class BLNAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bln-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -10630,7 +10664,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices=CLM.BARRIERS,
         widget=forms.Select,
         required=False
@@ -10649,8 +10683,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     round_complete = forms.ChoiceField(
         label=_("Briding Round complete"),
         widget=forms.Select, required=False,
-        choices=CLM.YES_NO,
-        initial='yes'
+        choices=CLM.YES_NO
     )
 
     basic_stationery = forms.ChoiceField(
@@ -10673,21 +10706,16 @@ class BridgingAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+    french = forms.FloatField(
+        label=_('French Results'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
     math = forms.FloatField(
         label=_('Math Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
-    social_emotional = forms.FloatField(
-        label=_('Social Emotional Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    artistic = forms.FloatField(
-        label=_('Artistic Results'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-        )
     follow_up_type = forms.ChoiceField(
         label=_('Type of follow up'),
         widget=forms.Select, required=False,
@@ -10702,16 +10730,13 @@ class BridgingAssessmentForm(forms.ModelForm):
     child_health_examed = forms.ChoiceField(
         label=_("Did the child receive health exam"),
         widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=(('yes', _("Yes")), ('no', _("No")))
     )
     child_health_concern = forms.ChoiceField(
         label=_("Anything to worry about"),
         widget=forms.Select, required=False,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=CLM.YES_NO
     )
-
     registration_level = forms.ChoiceField(
         label=_("Registration level"),
         widget=forms.Select, required=False,
@@ -10726,26 +10751,22 @@ class BridgingAssessmentForm(forms.ModelForm):
     child_received_internet = forms.ChoiceField(
         label=_("child received internet"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=CLM.YES_NO
     )
     referal_health = forms.ChoiceField(
         label=_("referal health"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        choices=CLM.YES_NO
     )
     referal_wash = forms.ChoiceField(
         label=_("referal wash"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        choices=CLM.YES_NO
     )
     referal_other = forms.ChoiceField(
         label=_("referal other"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        choices=CLM.YES_NO
     )
     referal_other_specify = forms.CharField(
         label=_('Please specify'),
@@ -10778,8 +10799,7 @@ class BridgingAssessmentForm(forms.ModelForm):
             ('yes_akelius)', _("Yes (Akelius)")),
             ('yes_learning_passport)', _("Yes (Learning Passport)")),
             ('no', _("No"))
-        ),
-        initial='no'
+        )
     )
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -10831,13 +10851,13 @@ class BridgingAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default" id="span_barriers_single">1.1</span>'),
-                    Div('barriers_single', css_class='col-md-2'),
+                    Div('barriers_single', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id="span_barriers_other">1.2</span>'),
                     Div('barriers_other', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge badge-default" id="span_community_Liaison_follow_up">2</span>'),
                     Div('community_Liaison_follow_up', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id="span_community_liaison_specify">2.1</span>'),
                     Div('community_liaison_specify', css_class='col-md-4'),
@@ -10906,26 +10926,23 @@ class BridgingAssessmentForm(forms.ModelForm):
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_math">16</span>'),
+                    HTML('<span class="badge badge-default" id="span_french">16</span>'),
+                    Div('french', css_class='col-md-3'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_math">17</span>'),
                     Div('math', css_class='col-md-3'),
-                    css_class='row grades',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_social_emotional">17</span>'),
-                    Div('social_emotional', css_class='col-md-3'),
-                    css_class='row grades',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default" id="span_artistic">18</span>'),
-                    Div('artistic', css_class='col-md-3'),
                     css_class='row grades',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bridging-list/" translation="' +
-                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML(
+                    '<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _(
+                        'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 
@@ -10933,9 +10950,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         cleaned_data = super(BridgingAssessmentForm, self).clean()
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
+        french = cleaned_data.get("french")
         math = cleaned_data.get("math")
-        social_emotional = cleaned_data.get("social_emotional")
-        artistic = cleaned_data.get("artistic")
+        # social_emotional = cleaned_data.get("social_emotional")
+        # artistic = cleaned_data.get("artistic")
 
         learning_result = cleaned_data.get("learning_result")
         learning_result_other = cleaned_data.get("learning_result_other")
@@ -10980,37 +10998,24 @@ class BridgingAssessmentForm(forms.ModelForm):
         if test_done == 'yes':
             if arabic is None:
                 self.add_error('arabic', 'This field is required')
+            elif arabic > 404:
+                self.add_error('arabic', 'This value is greater that 404')
+
             if english is None:
                 self.add_error('english', 'This field is required')
+            elif english > 470:
+                self.add_error('english', 'This value is greater that 470')
+
+            if french is None:
+                self.add_error('french', 'This field is required')
+            elif french > 184:
+                self.add_error('french', 'This value is greater that 184')
+
             if math is None:
                 self.add_error('math', 'This field is required')
+            elif math > 200:
+                self.add_error('math', 'This value is greater that 200')
 
-            # grades Max Value validation
-            registration_level = cleaned_data.get("registration_level")
-            language = cleaned_data.get("language")
-
-            if registration_level == 'level_one':
-                if arabic > 46:
-                    self.add_error('arabic', 'This value is greater that 46')
-                if english > 36:
-                    self.add_error('english', 'This value is greater that 36')
-                if math > 20:
-                    self.add_error('math', 'This value is greater that 20')
-                if social_emotional > 24:
-                    self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 10:
-                    self.add_error('artistic', 'This value is greater that 10')
-            else:
-                if arabic > 56:
-                    self.add_error('arabic', 'This value is greater that 56')
-                if english > 56:
-                    self.add_error('english', 'This value is greater that 56')
-                if math > 30:
-                    self.add_error('math', 'This value is greater that 30')
-                if social_emotional > 24:
-                    self.add_error('social_emotional', 'This value is greater that 24')
-                if artistic > 10:
-                    self.add_error('artistic', 'This value is greater that 10')
 
 
     def save(self, instance=None, request=None):
@@ -11022,9 +11027,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         instance.post_test = {
                 "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
                 "Bridging_ASSESSMENT/english": request.POST.get('english'),
+                "Bridging_ASSESSMENT/french": request.POST.get('french'),
                 "Bridging_ASSESSMENT/math": request.POST.get('math'),
-                "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
-                "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
+                # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+                # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
             }
 
         instance.save()
@@ -11359,8 +11365,10 @@ class BridgingFollowupForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bridging-list/" translation="' +
-                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML(
+                    '<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _(
+                        'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 
@@ -11452,7 +11460,7 @@ class CBECEAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme? '),
         choices= (
             ('', '----------'),
             ('Full time job to support family financially', _('Full time job to support family financially')),
@@ -12131,7 +12139,7 @@ class CBECEAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -12686,7 +12694,7 @@ class CBECEMidAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -12990,7 +12998,7 @@ class RSAssessmentForm(forms.ModelForm):
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
-                'of the child or drop out of programme? (Select more than one if applicable)'),
+                'of the child or drop out of programme?'),
         choices= (
             ('', '----------'),
             ('Full time job to support family financially', _('Full time job to support family financially')),
@@ -13685,7 +13693,7 @@ class RSAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/rs-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -14921,7 +14929,7 @@ class ABLNFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/abln-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -15452,7 +15460,7 @@ class BLNFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/bln-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -15976,7 +15984,7 @@ class RSFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/rs-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -16506,7 +16514,7 @@ class CBECEFCForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _(
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/cbece-list/" translation="' + _(
                     'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )

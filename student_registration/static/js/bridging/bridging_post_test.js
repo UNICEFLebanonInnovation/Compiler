@@ -58,34 +58,34 @@ $(document).ready(function(){
         }
     });
 
-    pageScripts();
+//    pageScripts();
 
-        /* Ajax page load settings */
-        $(document).on('pjax:end', pageScripts);
-        if (sessionStorage.getItem("pjax-enabled") === "0") {
-            return;
-        }
-
-        // Comment it to disable Ajax Page load
-        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
-
-        $(document).on('pjax:beforeReplace', function() {
-            $('.content-wrap').css('opacity', '0.1');
-            setTimeout(function() {
-                $('.content-wrap').fadeTo('100', '1');
-            }, 1);
-        });
+//        /* Ajax page load settings */
+//        $(document).on('pjax:end', pageScripts);
+//        if (sessionStorage.getItem("pjax-enabled") === "0") {
+//            return;
+//        }
+//
+//        // Comment it to disable Ajax Page load
+//        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
+//
+//        $(document).on('pjax:beforeReplace', function() {
+//            $('.content-wrap').css('opacity', '0.1');
+//            setTimeout(function() {
+//                $('.content-wrap').fadeTo('100', '1');
+//            }, 1);
+//        });
 });
 
-function pageScripts() {
-    /* Magnific Popup */
-    $('.image-link').magnificPopup({
-        type: 'image',
-        gallery: {
-            enabled: true
-        }
-    });
-}
+//function pageScripts() {
+//    /* Magnific Popup */
+//    $('.image-link').magnificPopup({
+//        type: 'image',
+//        gallery: {
+//            enabled: true
+//        }
+//    });
+//}
 
 function learning_result_next_level() {
     var registration_level = $('select#id_registration_level').val();
@@ -114,11 +114,6 @@ function reorganizeForm_post_assessment()
     var barriers_single = $('select#id_barriers_single').val();
     var test_done = $('select#id_test_done').val();
     var community_Liaison_follow_up = $('select#id_community_Liaison_follow_up').val();
-//    var follow_up_type = $('select#id_follow_up_type').val();
-//    var attended_arabic = $('select#id_attended_arabic').val();
-//    var attended_english = $('select#id_attended_english').val();
-//    var attended_math = $('select#id_attended_math').val();
-
 
     var pss_session_attended = $('select#id_pss_session_attended').val();
     var covid_session_attended = $('select#id_covid_session_attended').val();
@@ -139,16 +134,28 @@ function reorganizeForm_post_assessment()
     $('#span_barriers_single').addClass('d-none');
     $('div#div_id_barriers_other').addClass('d-none');
     $('#span_barriers_other').addClass('d-none');
-    $('#community_Liaison').removeClass('hide');
-    $('div.community_Liaison').removeClass('d-none');
+    $('#div_id_community_Liaison_follow_up').removeClass('d-none');
+    $('#span_community_Liaison_follow_up').removeClass('d-none');
 
     if(participation != 'no_absence'){
         $('#div_id_barriers_single').removeClass('d-none');
         $('#span_barriers_single').removeClass('d-none');
+        if (barriers_single =='other'){
+            $('div#div_id_barriers_other').removeClass('d-none');
+            $('#span_barriers_other').removeClass('d-none');
+        }
+        $('#div_id_community_Liaison_follow_up').removeClass('d-none');
+        $('#span_community_Liaison_follow_up').removeClass('d-none');
     }
     else{
-        $('div.community_Liaison').addClass('d-none');
-        $('#community_Liaison').addClass('hide');
+        $('#div_id_barriers_single').addClass('d-none');
+        $('#span_barriers_single').addClass('d-none');
+        $('div#div_id_barriers_other').addClass('d-none');
+        $('#span_barriers_other').addClass('d-none');
+        $('#div_id_community_Liaison_follow_up').addClass('d-none');
+        $('#span_community_Liaison_follow_up').addClass('d-none');
+        $('#span_community_liaison_specify').addClass('d-none');
+        $('div#div_id_community_liaison_specify').addClass('d-none');
     }
 
     $('#span_community_liaison_specify').addClass('d-none');
@@ -156,6 +163,11 @@ function reorganizeForm_post_assessment()
     if(community_Liaison_follow_up == 'yes'){
         $('#div_id_community_liaison_specify').removeClass('d-none');
         $('#span_community_liaison_specify').removeClass('d-none');
+    }
+    else
+    {
+        $('#span_community_liaison_specify').addClass('d-none');
+        $('div#div_id_community_liaison_specify').addClass('d-none');
     }
 
     // learning_result

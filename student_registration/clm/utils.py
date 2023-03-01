@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 import io
 import xlwt
 import csv
@@ -15,6 +16,7 @@ from datetime import datetime
 
 from .models import Bridging
 from student_registration.students.models import Person
+from student_registration.outreach.models import OutreachChild
 
 
 def is_allowed_create(programme):
@@ -2195,8 +2197,6 @@ def rs_build_xls_extraction(queryset_students, queryset_fc):
     for partner in rows_partners:
         partner_id = partner[0]
         partner_name = str(partner[1]).encode("utf8")
-        # print(partner_id)
-        # print(partner_name)
 
         ws_fc = wb.create_sheet('FC - ' + partner_name)
         # Sheet header, first row
@@ -2514,7 +2514,6 @@ def outreach_build_xls_extraction(queryset_students):
         'owner__username',
         'modified_by__username',
     )
-    print (rows.query)
     for row in rows:
         row_num_student += 1
         for col_num in range(len(row)):
@@ -3663,3 +3662,150 @@ class MemorySavingQuerysetIterator(object):
 
     def next(self):
         return self._generator.next()
+
+
+def get_outreach_child(outreach_id):
+    initial = {}
+    instance = OutreachChild.objects.get(id=outreach_id)
+    initial['child_outreach'] = instance.id
+    initial['student_first_name'] = instance.first_name
+    initial['student_father_name'] = instance.outreach_caregiver.father_name
+    initial['student_last_name'] = instance.outreach_caregiver.last_name
+    initial['student_mother_fullname'] = instance.outreach_caregiver.mother_full_name
+    initial['student_birthday_year'] = instance.birthday_year
+    initial['student_birthday_month'] = instance.birthday_month
+    initial['student_birthday_day'] = instance.birthday_day
+    initial['student_sex'] = instance.gender
+    nationality = instance.nationality
+
+   # TODO check nationality'palestinian'
+    # 3: for "فلسطينية  - من سوريا"
+    # 4: for "فلسطنية - من لبنان"
+    if nationality == 'syrian':
+        initial['student_nationality'] = 1
+    elif nationality == 'lebanese':
+        initial['student_nationality'] = 5
+    # elif nationality == 'palestinian':
+    #     initial['student_nationality'] = 4
+    elif nationality == 'iraqi':
+        initial['student_nationality'] = 2
+    elif nationality == 'stateless':
+        initial['student_nationality'] = 7
+    elif nationality == 'other':
+        initial['student_nationality'] = 6
+    initial['other_nationality'] = instance.nationality_other
+    initial['student_address'] = instance.outreach_caregiver.address
+
+    disability = instance.disability
+    if disability == 'no':
+        initial['disability'] = 1
+    elif disability == 'difficulty_seeing':
+        initial['disability'] = 6
+    elif disability == 'difficulty_interacting_with_others':
+        initial['disability'] = 9
+    elif disability == 'difficulty_speaking':
+        initial['disability'] = 5
+    elif disability == 'intellectual_disability':
+        initial['disability'] = 10
+    elif disability == 'difficulty_hearing':
+        initial['disability'] = 3
+    elif disability == 'learning_difficulties':
+        initial['disability'] = 8
+    elif disability == 'difficulty_walking_or_moving_hands':
+        initial['disability'] = 4
+
+    initial['student_family_status'] = instance.family_status
+
+    # TODO check nationality'palestinian'
+    # 3: for "فلسطينية  - من سوريا"
+    # 4: for "فلسطنية - من لبنان"
+    main_caregiver_nationality = instance.outreach_caregiver.caregiver_nationality
+    if main_caregiver_nationality == 'syrian':
+        initial['main_caregiver_nationality'] = 1
+    elif main_caregiver_nationality == 'lebanese':
+    #     initial['main_caregiver_nationality'] = 5
+    # elif main_caregiver_nationality == 'palestinian':
+        initial['main_caregiver_nationality'] = 4
+    elif main_caregiver_nationality == 'iraqi':
+        initial['main_caregiver_nationality'] = 2
+    elif main_caregiver_nationality == 'stateless':
+        initial['main_caregiver_nationality'] = 7
+    elif main_caregiver_nationality == 'other':
+        initial['main_caregiver_nationality'] = 6
+    initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
+
+    initial['have_labour_single_selection'] = instance.working_status
+    labour_type = instance.work_type
+    if labour_type == 'manufacturing_producing':
+        initial['labour_type'] = 'manufacturing'
+    elif labour_type == 'garage_mechanics_workshop':
+        initial['labour_type'] = ''
+    elif labour_type == 'construction_site':
+        initial['labour_type'] = 'building'
+    elif labour_type == 'shop_restaurant_bakery_barber':
+        initial['labour_type'] = 'retail_store'
+    elif labour_type == 'street_connected_work__begging__vending_':
+        initial['labour_type'] = 'begging'
+    elif labour_type == 'agriculture_animal_herding':
+        initial['labour_type'] = 'agriculture'
+    elif labour_type == 'others':
+        initial['labour_type'] = 'other_many_other'
+    else:
+        initial['labour_type'] = ''
+
+    initial['labours_other_specify'] = instance.work_type_other
+
+    initial['phone_number'] = instance.outreach_caregiver.primary_phone
+    initial['phone_number_confirm'] = instance.outreach_caregiver.primary_phone
+    initial['second_phone_number'] = instance.outreach_caregiver.secondary_phone
+    initial['second_phone_number_confirm'] = instance.outreach_caregiver.secondary_phone
+
+    main_caregiver = instance.outreach_caregiver.main_caregiver
+    if main_caregiver == u'الاب':
+        initial['main_caregiver'] = 'father'
+        initial['caretaker_first_name'] = instance.outreach_caregiver.father_name
+        initial['caretaker_last_name'] = instance.outreach_caregiver.last_name
+    else:
+        if main_caregiver == u'الام':
+            initial['main_caregiver'] = 'mother'
+        elif main_caregiver == u'اخر':
+            initial['main_caregiver'] = 'other'
+        initial['caretaker_first_name'] = instance.outreach_caregiver.caregiver_first_name
+        initial['caretaker_last_name'] = instance.outreach_caregiver.caregiver_last_name
+
+    initial['caretaker_middle_name'] = instance.outreach_caregiver.caregiver_father_name
+    initial['caretaker_mother_name'] = instance.outreach_caregiver.caregiver_mother_name
+
+    id_type = instance.outreach_caregiver.id_type
+    if id_type == 'unhcr_registered':
+        initial['id_type'] = 'UNHCR Registered'
+        initial['case_number'] = instance.outreach_caregiver.unhcr_case_number
+        initial['case_number_confirm'] = instance.outreach_caregiver.unhcr_case_number
+        initial['parent_individual_case_number'] = instance.outreach_caregiver.caregiver_unhcr_id
+        initial['parent_individual_case_number_confirm'] = instance.outreach_caregiver.caregiver_unhcr_id
+        initial['individual_case_number'] = instance.child_unhcr_number
+        initial['individual_case_number_confirm'] = instance.child_unhcr_number
+    elif id_type == 'unhcr_recorded':
+        initial['id_type'] = 'UNHCR Recorded'
+        initial['recorded_number'] = instance.outreach_caregiver.unhcr_barcode
+        initial['recorded_number_confirm'] = instance.outreach_caregiver.unhcr_barcode
+    elif id_type == 'syrian_id':
+        initial['id_type'] = 'Syrian national ID'
+        initial['parent_syrian_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['parent_syrian_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['syrian_national_number'] = instance.child_personal_id
+        initial['syrian_national_number_confirm'] = instance.child_personal_id
+    elif id_type == 'palestinian_id':
+        initial['id_type'] = 'Palestinian national ID'
+        initial['sop_parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['sop_parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['sop_national_number'] = instance.child_personal_id
+        initial['sop_national_number_confirm'] = instance.child_personal_id
+    elif id_type == 'lebanese_id':
+        initial['id_type'] = 'Lebanese national ID'
+        initial['parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['national_number'] = instance.child_personal_id
+        initial['national_number_confirm'] = instance.child_personal_id
+
+    return initial
