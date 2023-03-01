@@ -512,6 +512,11 @@ class Child(TimeStampedModel):
     def age(self):
         return self.get_age(self.birthday_year, self.birthday_month, self.birthday_day)
 
+    @property
+    def age_month(self):
+        full_age = self.calculate_age
+        return full_age[1]
+
     @staticmethod
     def get_age(birthday_year, birthday_month, birthday_day):
         if birthday_year and birthday_month and birthday_day:
@@ -521,6 +526,18 @@ class Child(TimeStampedModel):
         # if self.birthday_year:
         #     return int(self.CURRENT_YEAR)-int(self.birthday_year)
         return 0
+
+    @property
+    def calculate_age(self):
+
+        today = datetime.datetime.today()
+
+        age = today - datetime.datetime(int(self.birthday_year), int(self.birthday_month), int(self.birthday_day))
+        years = age.days // 365
+        months = (age.days - years * 365) // 30
+        days = age.days - years * 365 - months * 30
+
+        return years, months, days
 
     def save(self, **kwargs):
         # if self.phone:
