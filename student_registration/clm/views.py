@@ -126,7 +126,7 @@ from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction,
 class CLMView(LoginRequiredMixin,
               GroupRequiredMixin,
               TemplateView):
-    template_name = 'clm/index.html'
+    template_name = 'pages/home.old.html'
 
     group_required = [u"CLM"]
 
