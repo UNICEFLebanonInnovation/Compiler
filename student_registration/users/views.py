@@ -70,18 +70,10 @@ def login_success(request):
     Redirects users based on whether they are in the admins group
     """
 
-    return HttpResponseRedirect(reverse('mscc:list'))
-
-    # if request.user.groups.filter(name="HR").exists():
-    #     # user is an admin
-    #     return HttpResponseRedirect(reverse('staffs:hr_dashboard'))
-    # elif request.user.groups.filter(name="Security").exists():
-    #     # user is an admin
-    #     return HttpResponseRedirect(reverse('staffs:security_dashboard'))
-    # elif request.user.groups.filter(name="Operations").exists():
-    #     return HttpResponseRedirect(reverse('staffs:operations_person_list'))
-    # else:
-    #     return HttpResponseRedirect(reverse("home"))
+    if has_group(request.user, 'MSCC'):
+        return HttpResponseRedirect(reverse('mscc:list'))
+    else:
+        return HttpResponseRedirect(reverse('clm:index'))
 
 
 def home(request):
