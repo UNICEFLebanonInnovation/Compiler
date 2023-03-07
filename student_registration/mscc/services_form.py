@@ -312,60 +312,89 @@ class DigitalServiceForm(forms.ModelForm):
 
 
 class HealthNutritionServiceForm(forms.ModelForm):
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5 months
     baby_breastfed = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the baby being Breastfed?')
     )
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5 months
     infant_exclusively_breastfed = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
-        label=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?')
+        label=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?(only brest milk no other liquids even water)')
     )
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5 months
     eat_solid_food = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Did the child start to eat solid food?')
     )
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5 months
     age_eat_solid_food = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=HealthNutritionService.AGE_EAT_SOLID_FOOD,
         label=_('If yes, at which age ?')
     )
-    # Caregivers of children 0-2 - children 3-5 - children 5-18
-    child_vaccinated = forms.ChoiceField(
+    # Caregivers of children 0-5 months
+    immunization_record_screened = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
-        label=_('Is the child being vaccinated as per the National vaccination calendar?')
+        label=_('Child immunization record screened (to check the integrated ECD milestones Cards based on the age of the child- or the national immunization Calendar)')
     )
-    # Caregivers of children 0-2 - children 3-5
+    # Caregivers of children 0-5 months
+    vaccine_missing = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('Write the name of vaccine missing')
+    )
+    # Caregivers of children 0-5 months
+    muac_malnutrition_screening = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=HealthNutritionService.MUAC_SCREENING,
+        label=_('MUAC malnutrition screening')
+    )
+    # Caregivers of children 0-5 months
     development_delays_identified = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=HealthNutritionService.DEVELOPMENT_DELAYS,
-        label=_('Any mental , cognitive or neurological development delays is being identified?')
+        label=_('Any delays in the development milestones  is being identified? (please to check the Integrated ECD milestones Cards based on the age of the child)')
     )
-
-    # Caregivers of children 3-5 - children 5-18
+    # Caregivers of children 0-18 month
     eating_minimum_meals = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the child eating 3 minimum meals per day?')
     )
-    # Caregivers of children 3-5
+    # Caregivers of children 0-18 month
+    child_vaccinated = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Is the child being vaccinated as per the National vaccination calendar?')
+    )
+    # Caregivers of children 0-18 month
     positive_parenting = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
-    # Caregivers of children 5-18
+    # Caregivers of children 6-18
     respond_stressful_events = forms.CharField(
         required=False,
         widget=forms.TextInput,
         label=_('How children of different ages respond to and understand stressful and traumatic events?')
+    )
+    # Caregivers of children 6-18
+    physical_activity = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Is the child practicing physical activity at least twice a week')
+    )
+    # Caregivers of children 6-18
+    accessing_reproductive_health = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('In case of a child marriage to ask if the child is accessing in reproductive health services')
     )
     child_age = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -394,12 +423,27 @@ class HealthNutritionServiceForm(forms.ModelForm):
                 ),
                 Div(
                     Div('baby_breastfed', css_class='col-md-4'),
-                    Div('infant_exclusively_breastfed', css_class='col-md-8'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('infant_exclusively_breastfed', css_class='col-md-12'),
                     css_class='row card-body'
                 ),
                 Div(
                     Div('eat_solid_food', css_class='col-md-6'),
                     Div('age_eat_solid_food', css_class='col-md-6'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('immunization_record_screened', css_class='col-md-12'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('vaccine_missing', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('muac_malnutrition_screening', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -415,11 +459,19 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('development_delays_identified', css_class='col-md-8'),
+                    Div('development_delays_identified', css_class='col-md-12'),
                     css_class='row card-body'
                 ),
                 Div(
                     Div('respond_stressful_events', css_class='col-md-12'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('physical_activity', css_class='col-md-8'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    Div('accessing_reproductive_health', css_class='col-md-12'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
@@ -443,11 +495,16 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.infant_exclusively_breastfed = validated_data.get('infant_exclusively_breastfed')
         instance.eat_solid_food = validated_data.get('eat_solid_food')
         instance.age_eat_solid_food = validated_data.get('age_eat_solid_food')
+        instance.immunization_record_screened = validated_data.get('immunization_record_screened')
+        instance.vaccine_missing = validated_data.get('vaccine_missing')
+        instance.muac_malnutrition_screening = validated_data.get('muac_malnutrition_screening')
         instance.child_vaccinated = validated_data.get('child_vaccinated')
         instance.development_delays_identified = validated_data.get('development_delays_identified')
         instance.eating_minimum_meals = validated_data.get('eating_minimum_meals')
         instance.positive_parenting = validated_data.get('positive_parenting')
         instance.respond_stressful_events = validated_data.get('respond_stressful_events')
+        instance.physical_activity = validated_data.get('physical_activity')
+        instance.accessing_reproductive_health = validated_data.get('accessing_reproductive_health')
         instance.modified_by = request.user
         instance.save()
 
@@ -476,11 +533,16 @@ class HealthNutritionServiceForm(forms.ModelForm):
             'infant_exclusively_breastfed',
             'eat_solid_food',
             'age_eat_solid_food',
+            'immunization_record_screened',
+            'vaccine_missing',
+            'muac_malnutrition_screening',
             'child_vaccinated',
             'development_delays_identified',
             'eating_minimum_meals',
             'positive_parenting',
             'respond_stressful_events',
+            'physical_activity',
+            'accessing_reproductive_health'
         )
 
 

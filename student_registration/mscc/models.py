@@ -506,10 +506,10 @@ class HealthNutritionService(TimeStampedModel):
 
     DEVELOPMENT_DELAYS = Choices(
         ('', '----------'),
-        ('Mental', _('Mental')),
-        ('Cognitive', _('Cognitive')),
-        ('Neurological', _('Neurological')),
-        ('No', _('No')),
+        ('Social/Emotional', _('Social/Emotional')),
+        ('Language/Communication', _('Language/Communication')),
+        ('Cognitive (learning thinking, problem solving)', _('Cognitive (learning thinking, problem solving)')),
+        ('Movement/Physical development', _('Movement/Physical development')),
     )
     AGE_EAT_SOLID_FOOD = Choices(
         ('', '----------'),
@@ -539,12 +539,19 @@ class HealthNutritionService(TimeStampedModel):
         ('23 months', _('23 months')),
         ('24 months', _('24 months'))
     )
+    MUAC_SCREENING = Choices(
+        ('', '----------'),
+        ('MAM (MUAC >11.5 and <12.5 cm)', _('MAM (MUAC >11.5 and <12.5 cm)')),
+        ('SAM (MUAC <11.5 cm)', _('SAM (MUAC <11.5 cm)')),
+        ('SAM with Bilateral pitting oedema  (both feet puffy)', _('SAM with Bilateral pitting oedema  (both feet puffy)')),
+        ('At risk of malnutrition (MUAC 12.5-13.5 cm)', _('At risk of malnutrition (MUAC 12.5-13.5 cm)')),
+    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
         related_name='+',
     )
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5
     baby_breastfed = models.CharField(
         max_length=10,
         blank=True,
@@ -552,15 +559,15 @@ class HealthNutritionService(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Is the baby being Breastfed?')
     )
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5 months
     infant_exclusively_breastfed = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?')
+        verbose_name=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?(only brest milk no other liquids even water)')
     )
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5 months
     eat_solid_food = models.CharField(
         max_length=10,
         blank=True,
@@ -568,7 +575,7 @@ class HealthNutritionService(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Did the child start to eat solid food?')
     )
-    # Caregivers of children 0-2
+    # Caregivers of children 0-5 months
     age_eat_solid_food = models.CharField(
         max_length=50,
         blank=True,
@@ -576,24 +583,28 @@ class HealthNutritionService(TimeStampedModel):
         choices=AGE_EAT_SOLID_FOOD,
         verbose_name=_('If yes, at which age ?')
     )
-    # Caregivers of children 0-2 - children 3-5 - children 5-18
-    child_vaccinated = models.CharField(
+    # Caregivers of children 0-5 months
+    immunization_record_screened = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Is the child being vaccinated as per the National vaccination calendar?')
+        verbose_name=_('Child immunization record screened (to check the integrated ECD milestones Cards based on the age of the child- or the national immunization Calendar)')
     )
-    # Caregivers of children 0-2 - children 3-5
-    development_delays_identified = models.CharField(
-        max_length=50,
+    # Caregivers of children 0-5 months
+    vaccine_missing = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('write the name of vaccine missing')
+    )
+    # Caregivers of children 0-5 months
+    muac_malnutrition_screening = models.CharField(
+        max_length=100,
         blank=True,
         null=True,
-        choices=DEVELOPMENT_DELAYS,
-        verbose_name=_('Any mental , cognitive or neurological development delays is being identified?')
+        choices=MUAC_SCREENING,
+        verbose_name=_('MUAC malnutrition screening ')
     )
-
-    # Caregivers of children 3-5 - children 5-18
+    # Caregivers of children 0-18
     eating_minimum_meals = models.CharField(
         max_length=10,
         blank=True,
@@ -601,7 +612,15 @@ class HealthNutritionService(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Is the child eating 3 minimum meals per day?')
     )
-    # Caregivers of children 3-5
+    # Caregivers of children 0-18
+    child_vaccinated = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child being vaccinated as per the National vaccination calendar?')
+    )
+    # Caregivers of children 0-5
     positive_parenting = models.CharField(
         max_length=10,
         blank=True,
@@ -609,12 +628,35 @@ class HealthNutritionService(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
-    # Caregivers of children 5-18
+    # Caregivers of children 0-5
+    development_delays_identified = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=DEVELOPMENT_DELAYS,
+        verbose_name=_('Any delays in the development milestones  is being identified? (please to check the Integrated ECD milestones Cards based on the age of the child)')
+    )
+    # Caregivers of children 6-18
     respond_stressful_events = models.TextField(
         blank=True, null=True,
         verbose_name=_('How children of different ages respond to and understand stressful and traumatic events?')
     )
-
+    # Caregivers of children 6-18
+    physical_activity = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child practicing physical activity at least twice a week')
+    )
+    # Caregivers of children 6-18
+    accessing_reproductive_health = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('In case of a child marriage to ask if the child is accessing in reproductive health services')
+    )
     class Meta:
         ordering = ['id']
         verbose_name = "Health & Nutrition Service"

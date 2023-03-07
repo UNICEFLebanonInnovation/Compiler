@@ -144,10 +144,10 @@ class MainEditView(LoginRequiredMixin,
             data = MainSerializer(instance).data
             data['child_nationality'] = data['child_nationality_id'] if 'child_nationality_id' in data else ''
             data['child_disability'] = data['child_disability_id'] if 'child_disability_id' in data else ''
-            data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']
-            data['father_educational_level'] = data['father_educational_level_id']
-            data['mother_educational_level'] = data['mother_educational_level_id']
-            data['id_type'] = data['id_type_id']
+            data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']if 'main_caregiver_nationality_id' in data else ''
+            data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
+            data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
+            data['id_type'] = data['id_type_id']if 'id_type_id' in data else ''
             return MainForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
