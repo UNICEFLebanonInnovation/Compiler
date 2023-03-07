@@ -150,15 +150,9 @@ def child_attendance(child_id):
 @register.simple_tag
 def child_attendance_history(child_id):
     try:
-        attendance = child_attendance(child_id)
+        attendances = child_attendance(child_id)
 
-        #     'attendance': attendance,
-        #     'total_attendance': 100,
-        #     'total_absence': 9,
-        #     'month_absence': 3,
-        #     'total_working_days': 50,
-
-        return attendance
+        return attendances
     except Exception as ex:
         print(ex.message)
         return []

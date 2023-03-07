@@ -1291,8 +1291,9 @@ class FollowUpService(TimeStampedModel):
     )
     CAREGIVER = Choices(
         ('', '----------'),
-        ('Mother', _('Mother')),
-        ('Father', _('Father')),
+        ('Mother Only', _('Mother Only')),
+        ('Father Only', _('Father Only')),
+        ('Mother & Father', _('Mother & Father')),
         ('Other', _('Other')),
     )
 

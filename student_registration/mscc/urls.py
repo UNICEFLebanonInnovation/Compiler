@@ -206,5 +206,9 @@ urlpatterns = [
         view=attendance_views.save_attendance_children,
         name='save_attendance_children'
     ),
-
+    url(
+        'Attendance-Child/(?P<child>[\w.@+-]+)/$',
+        view=attendance_views.LoadAttendanceChild.as_view(),
+        name='attendance_child'
+    ),
 ]

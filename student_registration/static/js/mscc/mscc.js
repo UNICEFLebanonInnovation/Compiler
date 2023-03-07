@@ -50,6 +50,32 @@ $(document).ready(function() {
         });
     });
 
+    $(document).on('click', 'a.attendance_month', function(e){
+        console.log('ok');
+        e.preventDefault();
+
+//        $('#tab-faq-1').empty("");
+//        $('#tab-faq-1').append("Loading...");
+        $('.app-drawer-overlay').removeClass('d-none');
+
+       $.ajax({
+            type: "GET",
+            url: $(this).attr('data-href'),
+            cache: false,
+            async: true,
+            dataType: 'html',
+            success: function (response) {
+                $('#tab-faq-1').empty("");
+                $('#tab-faq-1').append(response);
+                $('.app-drawer-overlay').addClass('d-none');
+            },
+            error: function(response) {
+                console.log(response);
+                $('.app-drawer-overlay').addClass('d-none');
+            }
+        });
+    });
+
     $(document).on('change', 'select#id_source_of_identification', function(){
         reorganizeForm();
     });

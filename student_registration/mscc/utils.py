@@ -352,7 +352,7 @@ def load_child_attendance(center_id, attendance_date):
 
                 result.append(attendance_record)
         else:
-            registrations = Registration.objects.filter(center_id=center_id)
+            registrations = Registration.objects.filter(center_id=center_id, type='Core-Package')
 
             for registration_child in registrations:
                 registration_record = {}

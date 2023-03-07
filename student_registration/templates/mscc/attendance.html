@@ -100,7 +100,7 @@
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
                                                                       <select id="close_reason" class="btn-primary {% if close_reason == '' %}hidden{% endif %}">
-                                                                          <option value="">Select Reason</option>
+                                                                          <option value="">--- Select Closing Reason ---</option>
                                                                           <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>Public Holiday</option>
                                                                           <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>School Holiday</option>
                                                                           <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>Strike</option>
@@ -125,7 +125,7 @@
             <div class="col-md-8">
 
                 <div class="main-card mb-3 card">
-                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>Children</div>
+                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>Children Registered in Core-Package</div>
                   <div class="card-body" style="height: 400px; overflow: auto;">
                       <div id="attendance_children"></div>
                   </div>
@@ -138,6 +138,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=15"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=16"></script>
 
 {% endblock %}
