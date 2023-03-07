@@ -44,7 +44,7 @@ def outreach_import_data(request):
         record_value(caregiver, "primary_phone", record, "primary_phone")
         record_value(caregiver, "secondary_phone", record, "secondary_phone")
         record_value(caregiver, "father_name", record, "father_name")
-        record_value(caregiver, "mother_fullname", record, "mother_full_name")
+        record_value(caregiver, "mother_full_name", record, "mother_full_name")
         record_value(caregiver, "last_name", record, "last_name")
         record_value(caregiver, "main_caregiver", record, "main_caregiver")
         record_value(caregiver, "caregiver_nationality", record, "caregiver_nationality")
