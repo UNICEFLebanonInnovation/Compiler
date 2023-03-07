@@ -144,8 +144,14 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     cash_support_programmes = forms.MultipleChoiceField(
-        label=_('Cash support programmes that the child is already benefitting from.'),
+        label=_('Cash support programmes that the child is already benefiting from'),
         choices=Registration.CASH_SUPPORT_PROGRAMMES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    mscc_packages = forms.MultipleChoiceField(
+        label=_('Packages received/to be provided to child under MSCC'),
+        choices=Registration.MSCC_PACKAGES,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -461,6 +467,10 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('mscc_packages', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
                 css_id='step-1',
@@ -839,6 +849,7 @@ class MainForm(forms.ModelForm):
             'source_of_identification',
             'source_of_identification_specify',
             'cash_support_programmes',
+            'mscc_packages',
             'father_educational_level',
             'mother_educational_level',
             'first_phone_owner',

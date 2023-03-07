@@ -152,7 +152,7 @@
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
                                                 <div class="widget-content-left">
-                                                    <div class="widget-heading">Cash support programmes that the child is already benefitting from</div>
+                                                    <div class="widget-heading">Cash support programmes that the child is already benefiting from</div>
                                                     <div class="widget-subheading">
                                                       {% for prog in instance.cash_support_programmes %}
                                                         <div> {{prog}} </div>
@@ -165,6 +165,24 @@
                                             </div>
                                         </div>
                                     </li>
+                                    <li class="list-group-item">
+                                        <div class="widget-content p-0">
+                                            <div class="widget-content-wrapper">
+                                                <div class="widget-content-left">
+                                                    <div class="widget-heading">Packages received/to be provided to child under MSCC</div>
+                                                    <div class="widget-subheading">
+                                                      {% for item in instance.mscc_packages %}
+                                                        <div> {{item}} </div>
+                                                      {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <div class="widget-content-right">
+                                                    <div class="widget-numbers widget-numbers-sm text-info"><span></span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+
                                 </ul>
                             </div>
                         </div>

@@ -57,14 +57,15 @@ class Registration(TimeStampedModel):
             ('Manufacturing', _('Manufacturing')),
             ('Retail / Store', _('Retail / Store')),
             ('Begging', _('Begging')),
+            ('Mechanic shop', _('Mechanic shop')),
             ('Other services', _('Other services')),
     )
     LABOUR_INCOME = Choices(
             ('', '----------'),
-            ('10,000 LBP or less', _('10,000 LBP or less')),
-            ('11,000 to 25,000 LBP', _('11,000 to 25,000 LBP')),
-            ('26,000 to 50,000 LBP', _('26,000 to 50,000 LBP')),
-            ('More than 50,000 LBP', _('More than 50,000 LBP'))
+            ('99,000 LBP or less', _('99,000 LBP or less')),
+            ('From 100,000 to 299,000', _('From 100,000 to 299,000')),
+            ('From 300,000 to 499,000', _('From 300,000 to 499,000')),
+            ('From 500,000 and More', _('From 500,000 and More'))
     )
     IDENTIFICATION_SOURCE = Choices(
             ('', '----------'),
@@ -85,6 +86,15 @@ class Registration(TimeStampedModel):
             ('Education Cash assistance', _('Education Cash assistance')),
             ('UNHCR cash assistance', _('UNHCR cash assistance')),
             ('WFP cash assistance', _('WFP cash assistance')),
+    )
+    MSCC_PACKAGES = Choices(
+        ('Early Childhood  Development', _('Early Childhood  Development')),
+        ('Education', _('Education')),
+        ('Child Protection/Psychosocial support', _('Child Protection/Psychosocial support')),
+        ('Youth Empowerment and engagement', _('Youth Empowerment and engagement')),
+        ('Health and Nutrition', _('Health and Nutrition')),
+        ('Parental and Caregiver Support', _('Parental and Caregiver Support')),
+        ('Social Cash Assistance', _('Social Cash Assistance')),
     )
     center = models.ForeignKey(
         Center,
@@ -159,7 +169,18 @@ class Registration(TimeStampedModel):
         ),
         blank=True,
         null=True,
-        verbose_name=_('Cash support programmes that child is already benefitting from')
+        verbose_name=_('Cash support programmes that child is already benefiting from')
+    )
+    mscc_packages = ArrayField(
+        models.CharField(
+            choices=MSCC_PACKAGES,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Packages received/to be provided to child under MSCC')
     )
     type = models.CharField(
         max_length=100,
