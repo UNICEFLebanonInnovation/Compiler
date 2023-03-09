@@ -272,7 +272,7 @@ def get_old_child(student_id):
     initial['child_first_name'] = instance.first_name
     initial['child_father_name'] = instance.father_name
     initial['child_last_name'] = instance.last_name
-    initial['child_mother_full_name'] = instance.mother_fullname
+    initial['child_mother_fullname'] = instance.mother_fullname
     initial['child_birthday_year'] = instance.birthday_year
     initial['child_birthday_month'] = instance.birthday_month
     initial['child_birthday_day'] = instance.birthday_day

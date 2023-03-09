@@ -182,6 +182,11 @@ urlpatterns = [
         name='child_duplication_check'
     ),
     url(
+        'Quick-Search/$',
+        views.quick_search,
+        name='quick_search'
+    ),
+    url(
         'Find-Programme-Details/$',
         view=views.ProgrammeDetails.as_view(),
         name='find_programme_details'

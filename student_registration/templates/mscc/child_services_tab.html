@@ -37,13 +37,13 @@
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-4a" data-toggle="tab" href="#tab-animated-4a" aria-selected="true">
-                                                  <span>Diagnostic Assessment</span>
+                                                  <span>Diagnostic Assessment / Pre-test</span>
                                                 </a>
                                             </li>
 
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-5" data-toggle="tab" href="#tab-animated-5">
-                                                    <span>Education Assessment</span>
+                                                    <span>Education Assessment / Post-test</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
@@ -989,7 +989,8 @@
 
   <!--Follow-up / Caregivers Package	 -->
 {% get_service instance 'Caregivers Package' as result %}
-  {% if result %}
+  {% eligible_to_followup instance as result1 %}
+  {% if result and result1 %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'FollowUpService' instance as result %}
                                 <div class="mb-3 card">

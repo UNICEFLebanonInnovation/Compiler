@@ -930,7 +930,7 @@ class ReferralForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Referral.LEARNING_PATH,
     )
-    is_cbece = forms.CharField( required=False)
+    is_cbece = forms.CharField(required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -945,9 +945,10 @@ class ReferralForm(forms.ModelForm):
         if pk:
             form_action = reverse('mscc:referral_edit',
                                   kwargs={'registry': registry, 'pk': pk})
-        if is_cbece=='Yes':
+        if is_cbece == 'Yes':
            self.fields['referred_formal_education'].required = True
            self.fields['referred_school'].required = True
+
         self.fields['is_cbece'].initial = is_cbece
         self.helper = FormHelper()
         self.helper.form_show_labels = True

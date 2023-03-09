@@ -150,9 +150,40 @@ def child_attendance(child_id):
 @register.simple_tag
 def child_attendance_history(child_id):
     try:
-        attendances = child_attendance(child_id)
+        details = {}
+        from datetime import datetime
+        today = datetime.today()
 
-        return attendances
+        attendances = MSCCAttendanceChild.objects.filter(child_id=child_id)
+
+        details['ttl_days'] = attendances.count()
+        details['ttl_attended'] = attendances.filter(attended='Yes').count()
+        details['ttl_absence'] = attendances.filter(attended='No').count()
+        details['ttl_absence_month'] = attendances.filter(attended='No',
+                                                          attendance_day__attendance_date__month=today.month).count()
+        details['ttl_off'] = 0
+
+        return details
     except Exception as ex:
         print(ex.message)
         return []
+
+
+@register.simple_tag
+def eligible_to_followup(registry):
+
+    try:
+        disability = True if registry.child.disability else False
+        if disability:
+            return True
+
+        referral = service_data('Referral', register)
+        if referral and referral.referred_service == 'CP':
+            return True
+
+        if get_service(registry, 'PSS'):
+            return True
+
+        return False
+    except Exception as ex:
+        return False

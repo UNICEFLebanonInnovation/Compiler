@@ -65,12 +65,18 @@ class LoadAttendanceChild(LoginRequiredMixin,
     template_name = 'mscc/child_attendance_month.html'
 
     def get_context_data(self, **kwargs):
+        import calendar
 
         child_id = kwargs["child"]
         month = int(self.request.GET.get("month"))
 
-        instances = MSCCAttendanceChild.objects.filter(child_id=child_id, attendance_day__attendance_date__month=month)
+        instances = MSCCAttendanceChild.objects.filter(child_id=child_id,
+                                                       attendance_day__attendance_date__month=month)\
+            .order_by('attendance_day__attendance_date')
 
         return {
-            'instances': instances
+            'instances': instances,
+            'nbr_attended': instances.filter(attended='Yes').count(),
+            'nbr_absent': instances.filter(attended='No').count(),
+            'attendance_month': calendar.month_name[month]
         }

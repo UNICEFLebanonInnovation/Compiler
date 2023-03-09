@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from rest_framework import status
+from django.db.models import F, Q
 from django.core.urlresolvers import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -313,28 +314,66 @@ def old_child_search(request):
     last_name = request.GET.get('last_name')
 
     form_str = '{} {} {}'.format(first_name, father_name, last_name)
+
+    # filtered_results = Student.objects.filter(
+    #     birthday_year=birthday_year
+    # )
+    # if filtered_results.count() > 1000 and not birthday_month and not birthday_day:
+    #     return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
+    #                                              'month to get more accurate result'}})
+    #
+    # if birthday_month:
+    #     filtered_results = filtered_results.filter(
+    #         birthday_month=birthday_month
+    #     )
+    #
+    # if filtered_results.count() > 1000 and not birthday_day:
+    #     return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
+    #                                              'day to get more accurate result'}})
+    #
+    # if birthday_day:
+    #     filtered_results = filtered_results.filter(
+    #         birthday_day=birthday_day
+    #     )
+    #
+    # filtered_results = filtered_results.values(
+    #     'id',
+    #     'first_name',
+    #     'father_name',
+    #     'last_name',
+    #     'mother_fullname',
+    #     'sex',
+    #     'nationality__name',
+    #     'birthday_year',
+    #     'birthday_month',
+    #     'birthday_day',
+    # ).distinct()
+    #
+    # result_match = []
+    # for result in filtered_results:
+    #     result_str = '{} {} {}'.format(result['first_name'], result['father_name'],
+    #                                    result['last_name'])
+    #     fuzzy_match = fuzz.ratio(form_str, result_str)
+    #     if fuzzy_match > 70:
+    #         result['score'] = fuzzy_match
+    #         result['programmes'] = education_history_programmes(result['id'])
+    #         result_match.append(result)
+    #
+    # return JsonResponse({'result': result_match})
+
     filtered_results = Student.objects.filter(
         birthday_year=birthday_year
     )
-    if filtered_results.count() > 1000 and not birthday_month and not birthday_day:
-        return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
-                                                 'month to get more accurate result'}})
 
     if birthday_month:
         filtered_results = filtered_results.filter(
             birthday_month=birthday_month
         )
 
-    if filtered_results.count() > 1000 and not birthday_day:
-        return JsonResponse({'result': {'error': 'Too many records. Please select the Birthday '
-                                                 'day to get more accurate result'}})
-
-    if birthday_day:
-        filtered_results = filtered_results.filter(
-            birthday_day=birthday_day
-        )
-
-    filtered_results = filtered_results.values(
+    filtered_results = filtered_results.filter(
+        Q(first_name__contains=first_name, last_name__contains=last_name) |
+        Q(first_name__contains=first_name, father_name__contains=last_name)
+    ).values(
         'id',
         'first_name',
         'father_name',
@@ -401,6 +440,33 @@ def child_duplication_check(request):
             result_match.append(result)
 
     return JsonResponse({'result': result_match})
+
+
+def quick_search(request):
+    from django.db.models.functions import Concat
+    from django.db.models import Value
+
+    term = request.GET.get('term', 0).strip()
+    terms = request.GET.get('term', 0).strip()
+    qs = {}
+
+    if terms:
+        qs = Registration.objects.filter(center=request.user.center_id)
+        if len(terms.split()) > 1:
+            qs = qs.annotate(fullname=Concat('child__first_name', Value(' '), 'child__father_name',
+                                             Value(' '), 'child__last_name')) \
+                .filter(child__fullname__icontains=terms) \
+                .values('id', 'child__first_name', 'child__last_name',
+                        'child__father_name', 'child__mother_fullname').distinct()
+        else:
+            # for term in terms:
+            qs = qs.filter(
+                Q(child__first_name__icontains=term) |
+                Q(child__last_name__icontains=term))\
+                .values('id', 'child__first_name', 'child__last_name',
+                        'child__father_name', 'child__mother_fullname').distinct()
+
+    return JsonResponse({'result': json.dumps(list(qs))})
 
 
 class ProgrammeDetails(LoginRequiredMixin,
