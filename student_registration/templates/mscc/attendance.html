@@ -70,6 +70,7 @@
                                         <div class="card-body">
 
                                           <div class="form-group">
+                                              {% csrf_token %}
                                               <input type="hidden" value="{{ request.user.center.id }}" name="center_id" id="center_id" />
                                                   <div class="input-group">
                                                       <div class="input-group-prepend datepicker-trigger">
@@ -138,6 +139,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=16"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=17"></script>
 
 {% endblock %}
