@@ -13,7 +13,10 @@ function reorganizeForm()
     var caregivers_distress = $('select#id_caregivers_distress').val();
     if(caregivers_distress == 'Yes'){
         $('div#div_id_caregivers_additional_parenting').removeClass('d-none');
-        $('#id_caregivers_additional_parenting').addClass('error-field');
+        if ($('#id_caregivers_additional_parenting').val()== null || $('#id_caregivers_additional_parenting').val()=='')
+        {
+            $('#id_caregivers_additional_parenting').addClass('error-field');
+        }
     }
     else{
         $('#id_caregivers_additional_parenting').val('');
@@ -24,7 +27,10 @@ function reorganizeForm()
     var child_distress = $('select#id_child_distress').val();
     if(child_distress == 'Yes'){
         $('div#div_id_child_additional_parenting').removeClass('d-none');
-        $('#id_child_additional_parenting').addClass('error-field');
+        if ($('#id_child_additional_parenting').val()== null || $('#id_child_additional_parenting').val()=='')
+        {
+            $('#id_child_additional_parenting').addClass('error-field');
+        }
     }
     else{
         $('#id_child_additional_parenting').val('');

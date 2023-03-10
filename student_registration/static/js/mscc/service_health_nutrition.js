@@ -60,7 +60,10 @@ function reorganizeForm() {
         var baby_breastfed = $('select#id_baby_breastfed').val();
         if(baby_breastfed == 'Yes'){
             $('div#div_id_infant_exclusively_breastfed').removeClass('d-none');
-            $('#id_infant_exclusively_breastfed').addClass('error-field');
+            if ($('#id_infant_exclusively_breastfed').val()== null || $('#id_infant_exclusively_breastfed').val()=='')
+            {
+                $('#id_infant_exclusively_breastfed').addClass('error-field');
+            }
         }
         else{
             $('#id_infant_exclusively_breastfed').val('');
@@ -70,7 +73,10 @@ function reorganizeForm() {
         var eat_solid_food = $('select#id_eat_solid_food').val();
         if(eat_solid_food == 'Yes'){
             $('div#div_id_age_eat_solid_food').removeClass('d-none');
-            $('#id_age_eat_solid_food').addClass('error-field');
+            if ($('#id_age_eat_solid_food').val()== null || $('#id_age_eat_solid_food').val()=='')
+            {
+                $('#id_age_eat_solid_food').addClass('error-field');
+            }
         }
         else{
             $('#id_age_eat_solid_food').val('');
