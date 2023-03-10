@@ -182,6 +182,11 @@ urlpatterns = [
         name='child_duplication_check'
     ),
     url(
+        'Quick-Search/$',
+        views.quick_search,
+        name='quick_search'
+    ),
+    url(
         'Find-Programme-Details/$',
         view=views.ProgrammeDetails.as_view(),
         name='find_programme_details'
@@ -206,5 +211,9 @@ urlpatterns = [
         view=attendance_views.save_attendance_children,
         name='save_attendance_children'
     ),
-
+    url(
+        'Attendance-Child/(?P<child>[\w.@+-]+)/$',
+        view=attendance_views.LoadAttendanceChild.as_view(),
+        name='attendance_child'
+    ),
 ]

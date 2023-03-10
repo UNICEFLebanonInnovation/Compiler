@@ -114,6 +114,40 @@
   .hidden {
     display: none !important;
   }
+label.form-control-label {
+    font-weight: 600;
+    color: #6e6e6e;
+    }
+    .badge-form {
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      width: 30px;
+      height: 30px;
+    }
+.tabs-lg-alternate.card-header>.nav .nav-link {
+  padding: 1rem 0 !important;
+}
+.tabs-lg-alternate.card-header .widget-number {
+    font-size: 2rem;
+    font-weight: 200;
+}
+
+#quick-search-result  {
+    position: absolute;
+    top: 20px;
+}
+ul.ui-widget-content.ui-autocomplete {
+    top: 32px !important;
+    left: 0px !important;
+    width: 315px !important;
+    z-index: 9999 !important;
+    overflow: scroll !important;
+    min-height: 50px;
+    max-height: 300px;
+}
+
+}
     </style>
 </head>
 <body>
@@ -149,6 +183,25 @@
                 </button>
             </span>
         </div>    <div class="app-header__content">
+
+<div class="search-wrapper active">
+                    <div class="input-holder">
+                        <input type="text" class="search-input" name="quick-search" id="quick-search" placeholder="Type to search">
+<div id="search-loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="width: 100px;height: 50px;float: right !important;">
+                                                    <div class="loader">
+                                                        <div class="ball-beat">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                        <!--<button class="search-icon"><span></span></button>-->
+                    </div>
+                    <!--<button class="close"></button>-->
+                    <div id="quick-search-result"></div>
+                </div>
+
             <div class="app-header-left">
                 <ul class="header-megamenu nav">
 <li class="dropdown nav-item">
@@ -808,7 +861,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="{% static 'js/project.js' %}?v=1"></script>
+<script type="text/javascript" src="{% static 'js/project.js' %}?v=1"></script>
+<script type="text/javascript" src="{% static 'js/mscc/quick.search.js' %}?v=1"></script>
 
 {% block extra_js %}{% endblock %}
 
