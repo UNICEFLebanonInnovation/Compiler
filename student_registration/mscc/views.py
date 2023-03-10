@@ -53,9 +53,11 @@ class ProfileView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         instance = Registration.objects.get(id=self.kwargs['pk'])
         generate_services(instance.child.age, instance)
+        current_tab = self.request.GET.get('current_tab', 'info')
 
         return {
             'instance': instance,
+            'current_tab': current_tab
         }
 
 

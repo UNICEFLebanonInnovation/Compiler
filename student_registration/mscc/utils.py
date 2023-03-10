@@ -323,7 +323,7 @@ def create_attendance(data, center_id):
             attendance_child.save()
         return True
     except Exception as ex:
-        print(ex.message)
+        print(ex)
         return False
 
 
