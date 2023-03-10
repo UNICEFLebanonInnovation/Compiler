@@ -20,9 +20,16 @@ function reorganizeForm()
 
     if(attended_arabic == 'Yes'){
         $('div#div_id_pre_arabic_grade').removeClass('d-none');
-        $('#id_pre_arabic_grade').addClass('error-field');
+        if ($('#id_pre_arabic_grade').val()== null || $('#id_pre_arabic_grade').val()=='')
+        {
+            $('#id_pre_arabic_grade').addClass('error-field');
+        }
         $('div#div_id_pre_modality_arabic').removeClass('d-none');
-        $('#id_pre_modality_arabic').addClass('error-field');
+        if ($('#id_pre_modality_arabic').val()== null || $('#id_pre_modality_arabic').val()=='')
+        {
+            $('#id_pre_modality_arabic').addClass('error-field');
+        }
+
     }
     else{
         $('#id_pre_arabic_grade').val(0);
@@ -39,9 +46,15 @@ function reorganizeForm()
     // attended_foreign_language
     if(attended_foreign_language == 'Yes'){
         $('div#div_id_pre_language_grade').removeClass('d-none');
-        $('#id_pre_language_grade').addClass('error-field');
+        if ($('#id_pre_language_grade').val()== null || $('#id_pre_language_grade').val()=='')
+        {
+            $('#id_pre_language_grade').addClass('error-field');
+        }
         $('div#div_id_pre_modality_language').removeClass('d-none');
-        $('#id_pre_modality_language').addClass('error-field');
+        if ($('#id_pre_modality_language').val()== null || $('#id_pre_modality_language').val()=='')
+        {
+            $('#id_pre_modality_language').addClass('error-field');
+        }
 
     }
     else{
@@ -55,9 +68,15 @@ function reorganizeForm()
     // attended_math
     if(attended_math == 'Yes'){
         $('div#div_id_pre_math_grade').removeClass('d-none');
-        $('#id_pre_math_grade').addClass('error-field');
+        if ($('#id_pre_math_grade').val()== null || $('#id_pre_math_grade').val()=='')
+        {
+            $('#id_pre_math_grade').addClass('error-field');
+        }
         $('div#div_id_pre_modality_math').removeClass('d-none');
-        $('#id_pre_modality_math').addClass('error-field');
+        if ($('#id_pre_modality_math').val()== null || $('#id_pre_modality_math').val()=='')
+        {
+            $('#id_pre_modality_math').addClass('error-field');
+        }
     }
     else{
         $('#id_pre_math_grade').val(0);

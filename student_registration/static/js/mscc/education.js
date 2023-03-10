@@ -23,7 +23,11 @@ function reorganizeForm()
    var dropout_program = $('select#id_dropout_program').val();
     if(dropout_program == 'Other'){
         $('#div_id_dropout_program_specify').removeClass('d-none');
-        $('#id_dropout_program_specify').addClass('error-field');
+        if ($('#id_dropout_program_specify').val()== null || $('#id_dropout_program_specify').val()=='')
+        {
+            $('#id_dropout_program_specify').addClass('error-field');
+        }
+
     }
     else
     {

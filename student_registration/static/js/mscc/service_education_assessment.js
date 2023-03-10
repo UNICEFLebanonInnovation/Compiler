@@ -15,7 +15,10 @@ function reorganizeForm()
     var barriers = $('select#id_barriers').val();
     if(barriers == 'Other'){
         $('div#div_id_barriers_other').removeClass('d-none');
-        $('#id_barriers_other').addClass('error-field');
+        if ($('#id_barriers_other').val()== null || $('#id_barriers_other').val()=='')
+        {
+            $('#id_barriers_other').addClass('error-field');
+        }
     }
     else{
         $('#id_barriers_other').val('');
@@ -33,9 +36,15 @@ function reorganizeForm()
         // attended_arabic
         if(attended_arabic == 'Yes'){
             $('div#div_id_post_arabic_grade').removeClass('d-none');
-            $('#id_post_arabic_grade').addClass('error-field');
+            if ($('#id_post_arabic_grade').val()== null || $('#id_post_arabic_grade').val()=='')
+            {
+                $('#id_post_arabic_grade').addClass('error-field');
+            }
             $('div#div_id_post_modality_arabic').removeClass('d-none');
-            $('#id_post_modality_arabic').addClass('error-field');
+            if ($('#id_post_modality_arabic').val()== null || $('#id_post_modality_arabic').val()=='')
+            {
+                $('#id_post_modality_arabic').addClass('error-field');
+            }
         }
         else{
             $('#id_post_arabic_grade').val(0);
@@ -50,9 +59,15 @@ function reorganizeForm()
         // attended_foreign_language
         if(attended_foreign_language == 'Yes'){
             $('div#div_id_post_language_grade').removeClass('d-none');
-            $('#id_post_language_grade').addClass('error-field');
+            if ($('#id_post_language_grade').val()== null || $('#id_post_language_grade').val()=='')
+            {
+                $('#id_post_language_grade').addClass('error-field');
+            }
             $('div#div_id_post_modality_language').removeClass('d-none');
-            $('#id_post_modality_language').addClass('error-field');
+            if ($('#id_post_modality_language').val()== null || $('#id_post_modality_language').val()=='')
+            {
+                $('#id_post_modality_language').addClass('error-field');
+            }
 
         }
         else{
@@ -66,9 +81,15 @@ function reorganizeForm()
         // attended_math
         if(attended_math == 'Yes'){
             $('div#div_id_post_math_grade').removeClass('d-none');
-            $('#id_post_math_grade').addClass('error-field');
+            if ($('#id_post_math_grade').val()== null || $('#id_post_math_grade').val()=='')
+            {
+                $('#id_post_math_grade').addClass('error-field');
+            }
             $('div#div_id_post_modality_math').removeClass('d-none');
-            $('#id_post_modality_math').addClass('error-field');
+            if ($('#id_post_modality_math').val()== null || $('#id_post_modality_math').val()=='')
+            {
+                $('#id_post_modality_math').addClass('error-field');
+            }
         }
         else{
             $('#id_post_math_grade').val(0);

@@ -17,7 +17,10 @@ function reorganizeForm()
 
     if (undertake_post_diagnostic == 'Yes'){
         $('div#div_id_receive_passing_grade').removeClass('d-none');
-        $('#id_receive_passing_grade').addClass('error-field');
+        if ($('#id_receive_passing_grade').val()== null || $('#id_receive_passing_grade').val()=='')
+        {
+            $('#id_receive_passing_grade').addClass('error-field');
+        }
     }
     else{
         $('#id_receive_passing_grade').val('');
@@ -27,7 +30,10 @@ function reorganizeForm()
 
     if (participate_volunteering == 'Yes'){
         $('div#div_id_volunteering_opportunity').removeClass('d-none');
-        $('#id_volunteering_opportunity').addClass('error-field');
+        if ($('#id_volunteering_opportunity').val()== null || $('#id_volunteering_opportunity').val()=='')
+        {
+            $('#id_volunteering_opportunity').addClass('error-field');
+        }
     }
     else{
         $('#id_volunteering_opportunity').val('');
@@ -37,7 +43,10 @@ function reorganizeForm()
 
     if (compelete_yfs_course == 'Yes'){
         $('div#div_id_training_material').removeClass('d-none');
-        $('#id_training_material').addClass('error-field');
+        if ($('#id_training_material').val()== null || $('#id_training_material').val()=='')
+        {
+            $('#id_training_material').addClass('error-field');
+        }
     }
     else{
         $('#id_training_material').val('');
