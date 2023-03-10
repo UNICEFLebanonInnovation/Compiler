@@ -144,8 +144,14 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     cash_support_programmes = forms.MultipleChoiceField(
-        label=_('Cash support programmes that the child is already benefitting from.'),
+        label=_('Cash support programmes that the child is already benefiting from'),
         choices=Registration.CASH_SUPPORT_PROGRAMMES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    mscc_packages = forms.MultipleChoiceField(
+        label=_('Packages received/to be provided to child under MSCC'),
+        choices=Registration.MSCC_PACKAGES,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -461,6 +467,10 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    Div('mscc_packages', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
                 css_id='step-1',
@@ -839,6 +849,7 @@ class MainForm(forms.ModelForm):
             'source_of_identification',
             'source_of_identification_specify',
             'cash_support_programmes',
+            'mscc_packages',
             'father_educational_level',
             'mother_educational_level',
             'first_phone_owner',
@@ -919,7 +930,7 @@ class ReferralForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Referral.LEARNING_PATH,
     )
-    is_cbece = forms.CharField( required=False)
+    is_cbece = forms.CharField(required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -934,9 +945,10 @@ class ReferralForm(forms.ModelForm):
         if pk:
             form_action = reverse('mscc:referral_edit',
                                   kwargs={'registry': registry, 'pk': pk})
-        if is_cbece=='Yes':
+        if is_cbece == 'Yes':
            self.fields['referred_formal_education'].required = True
            self.fields['referred_school'].required = True
+
         self.fields['is_cbece'].initial = is_cbece
         self.helper = FormHelper()
         self.helper.form_show_labels = True

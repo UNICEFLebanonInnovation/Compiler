@@ -192,6 +192,7 @@ class MainSerializer(serializers.ModelSerializer):
             'source_of_identification',
             'source_of_identification_specify',
             'cash_support_programmes',
+            'mscc_packages',
             'father_educational_level',
             'father_educational_level_id',
             'mother_educational_level',

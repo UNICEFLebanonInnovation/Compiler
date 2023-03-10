@@ -15,6 +15,7 @@ $(document).ready(function() {
                     $('#close_reason').removeClass('hidden');
                     $('#load_attendance_children').addClass('disabled');
                     $('#save_attendance_children').removeClass('disabled');
+                    $('#attendance_children').empty("");
                 }else {
                     $('#close_reason').addClass('hidden');
                     $('#load_attendance_children').removeClass('disabled');

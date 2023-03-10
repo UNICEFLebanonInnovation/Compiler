@@ -490,7 +490,7 @@ class MSCCAttendanceChild(TimeStampedModel):
     attendance_day = models.ForeignKey(
         MSCCAttendance,
         blank=True, null=True,
-        related_name='+',
+        related_name='attendance_child',
     )
     child = models.ForeignKey(
         Child,
@@ -521,6 +521,10 @@ class MSCCAttendanceChild(TimeStampedModel):
     class Meta:
         ordering = ['id']
         verbose_name = "Child Attendance"
+
+    @property
+    def attendance_date(self):
+        return self.attendance_day.attendance_date.strftime("%d/%m/%Y")
 
     @property
     def child_name(self):

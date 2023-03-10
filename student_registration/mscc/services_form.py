@@ -271,7 +271,9 @@ class DigitalServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
                     Div('using_akelius', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
                     Div('using_lp', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
@@ -911,15 +913,15 @@ class FollowUpServiceForm(forms.ModelForm):
                     Div('caregiver_visit_number', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
-                css_id='step-1'
-            ),
-            Div(
                 Div(
                     Div('follow_up_result', css_class='col-md-4'),
                     Div('dropout_reason', css_class='col-md-4'),
                     Div('dropout_date', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
+                css_id='step-1'
+            ),
+            Div(
                 Div(
                     Div('parent_attended_meeting', css_class='col-md-6'),
                     css_class='row card-body'

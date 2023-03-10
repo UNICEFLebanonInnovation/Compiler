@@ -14,6 +14,7 @@ from crispy_forms.bootstrap import (
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from dal import autocomplete
 
+from student_registration.mscc.templatetags.simple_tags import get_service
 from .models import (
     EducationAssessment,
     EducationService,
@@ -453,6 +454,34 @@ class EducationServiceForm(forms.ModelForm):
         instance = kwargs.pop('instance', None)
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
+
+        service_bln = get_service(registry, 'BLN')
+        service_cbece = get_service(registry, 'CB-ECE')
+        service_rs = get_service(registry, 'RS')
+        service_ybln = get_service(registry, 'YBLN')
+        service_yfln = get_service(registry, 'YFNL')
+
+        if service_bln:
+            self.fields['education_program'].choices = (
+                ('BLN Level 1', _('BLN Level 1')),
+                ('BLN Level 2', _('BLN Level 2'))
+            )
+        if service_cbece:
+            self.fields['education_program'].choices = (
+                ('CBECE Level 3', _('CBECE Level 3')),
+            )
+        if service_rs:
+            self.fields['education_program'].choices = (
+                ('Retention Support', _('Retention Support')),
+            )
+        if service_ybln:
+            self.fields['education_program'].choices = (
+                ('YBLN', _('YBLN')),
+            )
+        if service_yfln:
+            self.fields['education_program'].choices = (
+                ('YFNL', _('YFNL')),
+            )
 
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry})
         if instance:
