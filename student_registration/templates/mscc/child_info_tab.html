@@ -443,6 +443,7 @@
                             </div>
 
   <!--Education history and current stituation-->
+  {% if instance.child_age > 2 %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationService' instance as result %}
                                 <div class="mb-3 card">
@@ -586,6 +587,7 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
 
 
 </div>
