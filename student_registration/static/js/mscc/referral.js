@@ -11,20 +11,6 @@ $(document).ready(function(){
 
 function reorganizeForm()
 {
-    var is_cbece = $('#id_is_cbece').val();
-    if (is_cbece == 'Yes'){
-        $('div#div_id_referred_formal_education').removeClass('d-none');
-
-        $('div#div_id_referred_school').removeClass('d-none');
-    }
-    else{
-        $('#id_referred_formal_education').val('');
-        $('div#div_id_referred_formal_education').addClass('d-none');
-
-        $('#id_referred_school').val('');
-        $('div#div_id_referred_school').addClass('d-none');
-    }
-
     var referred_service = $('select#id_referred_service').val();
     if(referred_service == 'Other'){
         $('div#div_id_referred_service_other').removeClass('d-none');
