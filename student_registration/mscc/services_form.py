@@ -91,12 +91,16 @@ class PSSServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('child_registered', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    Div('child_registered', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
                     Div('child_living_arrangement', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_vulnerability', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                    Div('child_vulnerability', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
                     Div('child_out_school_reasons', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
@@ -104,12 +108,14 @@ class PSSServiceForm(forms.ModelForm):
             ),
             Div(
                 Div(
-                    Div('caregivers_distress', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    Div('caregivers_distress', css_class='col-md-5'),
                     Div('caregivers_additional_parenting', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('child_distress', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                    Div('child_distress', css_class='col-md-5'),
                     Div('child_additional_parenting', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
@@ -201,7 +207,9 @@ class InclusionServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
                     Div('dropout', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
                     Div('parental_engagement', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
@@ -399,13 +407,11 @@ class HealthNutritionServiceForm(forms.ModelForm):
         label=_('In case of a child marriage to ask if the child is accessing in reproductive health services')
     )
     child_age = forms.CharField(widget=forms.HiddenInput, required=False)
-    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
-        age = kwargs.pop('age', None)
+        age = int(kwargs.pop('age', None))
 
         super(HealthNutritionServiceForm, self).__init__(*args, **kwargs)
 
@@ -417,72 +423,154 @@ class HealthNutritionServiceForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Div(
+        if age <= 5:
+            self.helper.layout = Layout(
                 Div(
-                    Div('child_age', css_class='col-md-4'),
-                    css_class='row card-body d-none'
-                ),
-                Div(
-                    Div('baby_breastfed', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('infant_exclusively_breastfed', css_class='col-md-12'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('eat_solid_food', css_class='col-md-6'),
-                    Div('age_eat_solid_food', css_class='col-md-6'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('immunization_record_screened', css_class='col-md-12'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('vaccine_missing', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('muac_malnutrition_screening', css_class='col-md-6'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('eating_minimum_meals', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('child_vaccinated', css_class='col-md-8'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('positive_parenting', css_class='col-md-9'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('development_delays_identified', css_class='col-md-12'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('respond_stressful_events', css_class='col-md-12'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('physical_activity', css_class='col-md-8'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    Div('accessing_reproductive_health', css_class='col-md-12'),
-                    css_class='row card-body'
-                ),
-                css_id='step-1'
-            ),
-            FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Div(
+                        Div('child_age', css_class='col-md-4'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                        Div('baby_breastfed', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        Div('infant_exclusively_breastfed', css_class='col-md-12'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                        Div('eat_solid_food', css_class='col-md-6'),
+                        Div('age_eat_solid_food', css_class='col-md-6'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                        Div('immunization_record_screened', css_class='col-md-11'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
+                        Div('vaccine_missing', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">5</span>'),
+                        Div('muac_malnutrition_screening', css_class='col-md-6'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">6</span>'),
+                        Div('eating_minimum_meals', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">7</span>'),
+                        Div('child_vaccinated', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">8</span>'),
+                        Div('positive_parenting', css_class='col-md-9'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">9</span>'),
+                        Div('development_delays_identified', css_class='col-md-11'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        Div('respond_stressful_events', css_class='col-md-12'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('physical_activity', css_class='col-md-8'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('accessing_reproductive_health', css_class='col-md-12'),
+                        css_class='row card-body d-none'
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    ),
+                    css_id='step-1'
+                )
             )
-        )
+        if 6 <= age <= 18:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        Div('child_age', css_class='col-md-4'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('baby_breastfed', css_class='col-md-4'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('infant_exclusively_breastfed', css_class='col-md-12'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('eat_solid_food', css_class='col-md-6'),
+                        Div('age_eat_solid_food', css_class='col-md-6'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('immunization_record_screened', css_class='col-md-12'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('vaccine_missing', css_class='col-md-4'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('muac_malnutrition_screening', css_class='col-md-6'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                        Div('eating_minimum_meals', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                        Div('child_vaccinated', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        Div('positive_parenting', css_class='col-md-9'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        Div('development_delays_identified', css_class='col-md-12'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                        Div('respond_stressful_events', css_class='col-md-11'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
+                        Div('physical_activity', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill badge-primary">5</span>'),
+                        Div('accessing_reproductive_health', css_class='col-md-11'),
+                        css_class='row card-body'
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    ),
+                    css_id='step-1'
+                )
+            )
 
     def save(self, request=None, instance=None, registry=None):
 
@@ -515,6 +603,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
         update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
 
         return instance
+
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def clean(self):
         cleaned_data = super(HealthNutritionServiceForm, self).clean()
@@ -662,12 +752,16 @@ class YouthKitServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('volunteering_experience', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    Div('volunteering_experience', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
                     Div('previous_community_initiative', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('enrollment_reason', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                    Div('enrollment_reason', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
                     Div('pre_tests_administered', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
@@ -675,42 +769,51 @@ class YouthKitServiceForm(forms.ModelForm):
             ),
             Div(
                 Div(
-                    Div('test_diagnostic_done', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    Div('test_diagnostic_done', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
                     Div('receive_passing_grade', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
                     Div('life_skills_completed', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
 
                 Div(
-                    Div('participate_volunteering', css_class='col-md-8'),
+                    HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
+                    Div('participate_volunteering', css_class='col-md-7'),
                     Div('volunteering_specify', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">5</span>'),
                     Div('social_course', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('yfs_course_completed', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill badge-primary">6</span>'),
+                    Div('yfs_course_completed', css_class='col-md-4'),
                     Div('training_material', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">7</span>'),
                     Div('future_path', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">8</span>'),
                     Div('participate_community_initiatives', css_class='col-md-6'),
-                    Div('community_initiatives_specify', css_class='col-md-6'),
+                    Div('community_initiatives_specify', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">9</span>'),
                     Div('adolescent_attendance', css_class='col-md-4'),
                     Div('adolescent_dropout_reason', css_class='col-md-4'),
-                    Div('adolescent_dropout_date', css_class='col-md-4'),
+                    Div('adolescent_dropout_date', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 FormActions(
@@ -867,7 +970,7 @@ class FollowUpServiceForm(forms.ModelForm):
     meeting_modality = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=FollowUpService.SESSION_MODALITY,
-        label=_('Please the modality used per each session')
+        label=_('Modality used per each session')
     )
     caregiver_attended = forms.ChoiceField(
         widget=forms.Select, required=False,
@@ -898,43 +1001,56 @@ class FollowUpServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
                     Div('follow_up_type', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_phone_call_number" >1.1</span>'),
                     Div('phone_call_number', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_house_visit_number">1.1</span>'),
                     Div('house_visit_number', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_caregiver_visit_number">1.1</span>'),
                     Div('caregiver_visit_number', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('follow_up_result', css_class='col-md-4'),
-                    Div('dropout_reason', css_class='col-md-4'),
-                    Div('dropout_date', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                    Div('follow_up_result', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_dropout_reason">2.1</span>'),
+                    Div('dropout_reason', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_dropout_date">2.2</span>'),
+                    Div('dropout_date', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
             ),
             Div(
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
                     Div('parent_attended_meeting', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
 
                 Div(
-                    Div('meeting_type', css_class='col-md-4'),
-                    Div('meeting_number', css_class='col-md-4'),
-                    Div('meeting_modality', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_meeting_type">1.1</span>'),
+                    Div('meeting_type', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_meeting_number">1.2</span>'),
+                    Div('meeting_number', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_meeting_modality">1.3</span>'),
+                    Div('meeting_modality', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_caregiver_attended">1.4</span>'),
                     Div('caregiver_attended', css_class='col-md-4'),
+                    HTML('<span class="badge-form badge-pill badge-primary" id="span_caregiver_attended_other">1.5</span>'),
                     Div('caregiver_attended_other', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
@@ -1115,37 +1231,45 @@ class YouthAssessmentForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Div('undertake_post_diagnostic', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    Div('undertake_post_diagnostic', css_class='col-md-5'),
                     Div('receive_passing_grade', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
                     Div('complete_life_skills', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
-                    Div('participate_volunteering', css_class='col-md-8'),
+                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                    Div('participate_volunteering', css_class='col-md-7'),
                     Div('volunteering_opportunity', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
                     Div('benefit_innovation_course', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">5</span>'),
                     Div('compelete_yfs_course', css_class='col-md-6'),
                     Div('training_material', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">6</span>'),
                     Div('future_path', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">7</span>'),
                     Div('participate_community_initiatives', css_class='col-md-8'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill badge-primary">8</span>'),
                     Div('attendance', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
