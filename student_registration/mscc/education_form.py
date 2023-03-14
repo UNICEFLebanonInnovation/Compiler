@@ -101,21 +101,21 @@ class DiagnosticAssessmentForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('pre_attended_arabic', css_class='col-md-6'),
                     Div('pre_modality_arabic', css_class='col-md-3'),
                     Div('pre_arabic_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('pre_attended_language', css_class='col-md-6'),
                     Div('pre_modality_language', css_class='col-md-3'),
                     Div('pre_language_grade', css_class='col-md-2'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('pre_attended_math', css_class='col-md-6'),
                     Div('pre_modality_math', css_class='col-md-3'),
                     Div('pre_math_grade', css_class='col-md-2'),
@@ -296,39 +296,39 @@ class EducationAssessmentForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('participation', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('barriers', css_class='col-md-8'),
                     Div('barriers_other', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('post_test_done', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('school_year_completed', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">5</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('post_attended_arabic', css_class='col-md-6'),
                     Div('post_modality_arabic', css_class='col-md-3 grd-arabic'),
                     Div('post_arabic_grade', css_class='col-md-2 grd-arabic'),
                     css_class='row grades card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">6</span>'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('post_attended_language', css_class='col-md-6'),
                     Div('post_modality_language', css_class='col-md-3'),
                     Div('post_language_grade', css_class='col-md-2'),
                     css_class='row grades card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">7</span>'),
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('post_attended_math', css_class='col-md-6'),
                     Div('post_modality_math', css_class='col-md-3'),
                     Div('post_math_grade', css_class='col-md-2'),
@@ -504,25 +504,25 @@ class EducationServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('education_status', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('dropout_date', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('dropout_program', css_class='col-md-6'),
                     Div('dropout_program_specify', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('education_program', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill badge-primary">5</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('registration_date', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
@@ -646,33 +646,32 @@ class EducationRSServiceForm(forms.ModelForm):
         self.helper.layout = Layout(
         Div(
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('school', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-
-                    HTML('<span class="badge-form badge-pill badge-primary">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('foreign_language_grade', css_class='col-md-3'),
 
-                    HTML('<span class="badge-form badge-pill badge-primary">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('arabic_grade', css_class='col-md-3'),
 
-                    HTML('<span class="badge-form badge-pill badge-primary">4</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('math_grade', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">5</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('sciences_grade', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill badge-primary">6</span>'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('shift', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill badge-primary">7</span>'),
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('grade_level', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill badge-primary">8</span>'),
+                    HTML('<span class="badge-form badge-pill">8</span>'),
                     Div('support_needed', css_class='col-md-3 multiple-choice'),
                     css_class='row card-body'
                 ),
