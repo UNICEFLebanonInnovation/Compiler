@@ -29,22 +29,26 @@ class CenterAdminForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     governorate = forms.ModelChoiceField(
-        queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
+        queryset=Location.objects.filter(parent__isnull=True),
+        widget=forms.Select,
         label=_('Governorate'),
         empty_label='-------',
-        required=True, to_field_name='id',
+        required=True,
+        to_field_name='id',
     )
     caza = forms.ModelChoiceField(
-        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        queryset=Location.objects.filter(parent__isnull=False, type=2),
+        widget=forms.Select,
         label=_('Caza'),
         empty_label='-------',
-        required=True, to_field_name='id',
+        required=True,
+        to_field_name='id',
     )
     cadaster = forms.ModelChoiceField(
-        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
-        label=_('Cadaster'),
-        empty_label='-------',
-        required=True, to_field_name='id',
+        required=True,
+        queryset=Location.objects.filter(parent__isnull=False, type=3),
+        widget=autocomplete.ModelSelect2(url='location_autocomplete'),
+        label=_('Cadaster')
     )
     p_code =  forms.CharField(
         label=_("P-Cod"),
