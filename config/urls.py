@@ -45,6 +45,7 @@ from student_registration.clm.inclusion_views import (
 
 from student_registration.locations.views import (
     LocationViewSet,
+    LocationAutocomplete
 )
 
 from student_registration.users.views import LoginRedirectView, home, login_success
@@ -109,6 +110,7 @@ urlpatterns = [
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
     url(r'login_success/$', login_success, name='login_success'),
     url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
+    url(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, admin.site.urls),

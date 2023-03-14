@@ -1309,20 +1309,10 @@ class FollowUpService(TimeStampedModel):
         choices=FOLLOW_UP_TYPE,
         verbose_name=_('In case of absence, type of Follow-up done')
     )
-    phone_call_number = models.IntegerField(
+    follow_up_number = models.IntegerField(
         blank=True,
         null=True,
-        verbose_name=_('Number of phone calls done')
-    )
-    house_visit_number = models.IntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('Number of home visits done')
-    )
-    caregiver_visit_number = models.IntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('Number of caregiver visits to center')
+        verbose_name=_('Number')
     )
     follow_up_result = models.CharField(
         max_length=100,

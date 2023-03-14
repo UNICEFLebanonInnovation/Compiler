@@ -11,6 +11,7 @@ from .models import (
     LocationType,
     Center
 )
+from .forms import CenterAdminForm
 
 
 class LocationResource(resources.ModelResource):
@@ -39,7 +40,37 @@ class LocationAdmin(ImportExportModelAdmin):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
 
+class CenterResource(resources.ModelResource):
+    class Meta:
+        model = Center
+        fields = (
+            'id',
+            'name',
+            'governorate',
+            'caza',
+            'cadaster',
+            'p_code',
+            'type',
+        )
+        export_order = ('name', )
+
+class CenterAdmin(ImportExportModelAdmin):
+    resource_class = CenterResource
+    form = CenterAdminForm
+    list_display = (
+            'id',
+            'name',
+            'governorate',
+            'caza',
+            'cadaster',
+            'p_code',
+            'type',
+    )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationType)
-admin.site.register(Center)
+admin.site.register(Center, CenterAdmin)

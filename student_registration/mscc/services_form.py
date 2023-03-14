@@ -919,20 +919,8 @@ class FollowUpServiceForm(forms.ModelForm):
         choices=FollowUpService.FOLLOW_UP_TYPE,
         label=_('In case of absence, type of Follow-up done')
     )
-    phone_call_number = forms.IntegerField(
-        label=_('Number of phone calls done'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        required=False,
-        min_value=0
-    )
-    house_visit_number = forms.IntegerField(
-        label=_('Number of home visits done'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        required=False,
-        min_value=0
-    )
-    caregiver_visit_number = forms.IntegerField(
-        label=_('Number of caregiver visits to center'),
+    follow_up_number = forms.IntegerField(
+        label=_('Number'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
         min_value=0
@@ -1003,26 +991,13 @@ class FollowUpServiceForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('follow_up_type', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-0 badge-pill" id="span_phone_call_number" ></span>'),
-                    Div('phone_call_number', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-0 badge-pill" id="span_house_visit_number"></span>'),
-                    Div('house_visit_number', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-0 badge-pill" id="span_caregiver_visit_number"></span>'),
-                    Div('caregiver_visit_number', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
                     HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('follow_up_result', css_class='col-md-3'),
+                    Div('follow_up_number', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('follow_up_result', css_class='col-md-4'),
                     HTML('<span class="badge-form-0 badge-pill" id="span_dropout_reason"></span>'),
                     Div('dropout_reason', css_class='col-md-3'),
                     HTML('<span class="badge-form-0 badge-pill" id="span_dropout_date"></span>'),
@@ -1049,9 +1024,9 @@ class FollowUpServiceForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-0 badge-pill" id="span_caregiver_attended"></span>'),
-                    Div('caregiver_attended', css_class='col-md-4'),
+                    Div('caregiver_attended', css_class='col-md-3'),
                     HTML('<span class="badge-form-0 badge-pill" id="span_caregiver_attended_other"></span>'),
-                    Div('caregiver_attended_other', css_class='col-md-4'),
+                    Div('caregiver_attended_other', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 FormActions(
@@ -1072,9 +1047,7 @@ class FollowUpServiceForm(forms.ModelForm):
             instance = FollowUpService.objects.get(id=instance)
 
         instance.follow_up_type = validated_data.get('follow_up_type')
-        instance.phone_call_number = validated_data.get('phone_call_number')
-        instance.house_visit_number = validated_data.get('house_visit_number')
-        instance.caregiver_visit_number = validated_data.get('caregiver_visit_number')
+        instance.follow_up_number = validated_data.get('follow_up_number')
         instance.follow_up_result = validated_data.get('follow_up_result')
         instance.dropout_reason = validated_data.get('dropout_reason')
         if validated_data.get('dropout_date'):
@@ -1096,18 +1069,6 @@ class FollowUpServiceForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(FollowUpServiceForm, self).clean()
-        follow_up_type = cleaned_data.get("follow_up_type")
-        phone_call_number = cleaned_data.get("phone_call_number")
-        house_visit_number = cleaned_data.get("house_visit_number")
-        caregiver_visit_number = cleaned_data.get("caregiver_visit_number")
-        if follow_up_type :
-            if follow_up_type == 'Phone call' and not phone_call_number:
-                self.add_error('phone_call_number', 'This field is required')
-            if follow_up_type == 'Home Visits' and not house_visit_number:
-                self.add_error('house_visit_number', 'This field is required')
-            if follow_up_type == 'Caregiver visited the center' and not caregiver_visit_number:
-                self.add_error('caregiver_visit_number', 'This field is required')
-
         follow_up_result = cleaned_data.get("follow_up_result")
         dropout_reason = cleaned_data.get("dropout_reason")
         dropout_date = cleaned_data.get("dropout_date")
@@ -1140,9 +1101,7 @@ class FollowUpServiceForm(forms.ModelForm):
         model = FollowUpService
         fields = (
             'follow_up_type',
-            'phone_call_number',
-            'house_visit_number',
-            'caregiver_visit_number',
+            'follow_up_number',
             'follow_up_result',
             'dropout_reason',
             'dropout_date',
