@@ -1045,40 +1045,23 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">In case of absence, type of Follow-up done</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">In case of absence, type of follow-up done</h4>
                                                                             <p>{{ result.follow_up_type }}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                {% if result.follow_up_type == 'Phone call' %}
-                                                                    <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of phone calls done</h4>
-                                                                                <p>{{ result.phone_call_number }}</p>
-                                                                            </div>
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Follow-up number</h4>
+                                                                            <p>{{ result.follow_up_number }}</p>
                                                                         </div>
                                                                     </div>
-                                                                {% elif result.follow_up_type == 'Home Visits' %}
-                                                                     <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of home visits done</h4>
-                                                                                <p>{{ result.house_visit_number }}</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                {% elif result.follow_up_type == 'Caregiver visited the center' %}
-                                                                     <div class="vertical-timeline-item vertical-timeline-element">
-                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of caregiver visits to center</h4>
-                                                                                <p>{{ result.caregiver_visit_number }}</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                {% endif %}
+                                                                </div>
+
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Result of follow up</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Result of follow-up</h4>
                                                                             <p>{{ result.follow_up_result }}</p>
                                                                         </div>
                                                                     </div>
