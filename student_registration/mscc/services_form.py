@@ -256,10 +256,72 @@ class DigitalServiceForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=YES_NO
     )
+    akelius_sessions_number = forms.IntegerField(
+        label=_('Number of sessions per week'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=0
+    )
+    akelius_access = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.ACCESS,
+        label=_('Access during')
+    )
+    akelius_child_equipped = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.YES_NO_OCCASIONALLY,
+        label=_('Is the child equipped at home to access the platforms (Based on Child and parents'' confirmation)')
+    )
+    akelius_change_literacy = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.NOTICING_CHANGE,
+        label=_('As a teacher, are you noticing a change in motivation & output about Literacy')
+    )
+    akelius_change_math = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.NOTICING_CHANGE,
+        label=_('As a teacher, are you noticing a change in motivation & output about Math')
+    )
+    akelius_change_learning = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.NOTICING_CHANGE,
+        label=_('As a teacher, are you noticing a change in attitude towards learning')
+    )
     using_lp = forms.ChoiceField(
         label=_("Is the child using Learning Passport?"),
         widget=forms.Select, required=True,
         choices=YES_NO
+    )
+    lp_sessions_number = forms.IntegerField(
+        label=_('Number of sessions per week'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=0
+    )
+    lp_access = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.ACCESS,
+        label=_('Access during')
+    )
+    lp_child_equipped = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.YES_NO_OCCASIONALLY,
+        label=_('Is the child equipped at home to access the platforms (Based on Child and parents'' confirmation)')
+    )
+    lp_change_literacy = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.NOTICING_CHANGE,
+        label=_('As a teacher, are you noticing a change in motivation & output about Literacy')
+    )
+    lp_change_math = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.NOTICING_CHANGE,
+        label=_('As a teacher, are you noticing a change in motivation & output about Math')
+    )
+    lp_change_learning = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=DigitalService.NOTICING_CHANGE,
+        label=_('As a teacher, are you noticing a change in attitude towards learning')
     )
 
     def __init__(self, *args, **kwargs):
@@ -280,18 +342,63 @@ class DigitalServiceForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('using_akelius', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('using_lp', css_class='col-md-4'),
+                    Div('using_akelius', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
-                css_id='step-1'
-            ),
-            FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('akelius_sessions_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('akelius_access', css_class='col-md-5'),
+                    css_class='row card-body akelius'
+                ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('akelius_child_equipped', css_class='col-md-5'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('akelius_change_literacy', css_class='col-md-5'),
+                    css_class='row card-body akelius'
+                ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('akelius_change_math', css_class='col-md-5 ak'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('akelius_change_learning', css_class='col-md-5 ak'),
+                    css_class='row card-body akelius'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('using_lp', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('lp_sessions_number', css_class='col-md-5'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('lp_access', css_class='col-md-5'),
+                    css_class='row card-body lp'
+                ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('lp_child_equipped', css_class='col-md-5'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('lp_change_literacy', css_class='col-md-5'),
+                    css_class='row card-body lp'
+                ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('lp_change_math', css_class='col-md-5'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('lp_change_learning', css_class='col-md-5'),
+                    css_class='row card-body lp'
+                ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    ),
+                    css_id='step-1'
+                )
             )
-        )
 
     def save(self, request=None, instance=None, registry=None):
 
@@ -303,7 +410,19 @@ class DigitalServiceForm(forms.ModelForm):
             instance = DigitalService.objects.get(id=instance)
 
         instance.using_akelius = validated_data.get('using_akelius')
+        instance.akelius_sessions_number = validated_data.get('akelius_sessions_number')
+        instance.akelius_access = validated_data.get('akelius_access')
+        instance.akelius_child_equipped = validated_data.get('akelius_child_equipped')
+        instance.akelius_change_literacy = validated_data.get('akelius_change_literacy')
+        instance.akelius_change_math = validated_data.get('akelius_change_math')
+        instance.akelius_change_learning = validated_data.get('akelius_change_learning')
         instance.using_lp = validated_data.get('using_lp')
+        instance.lp_sessions_number = validated_data.get('lp_sessions_number')
+        instance.lp_access = validated_data.get('lp_access')
+        instance.lp_child_equipped = validated_data.get('lp_child_equipped')
+        instance.lp_change_literacy = validated_data.get('lp_change_literacy')
+        instance.lp_change_math = validated_data.get('lp_change_math')
+        instance.lp_change_learning = validated_data.get('lp_change_learning')
         # instance.modified_by = request.user
         instance.save()
 
@@ -313,11 +432,68 @@ class DigitalServiceForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(DigitalServiceForm, self).clean()
+        # akelius
+        using_akelius = cleaned_data.get("akelius_sessions_number")
+        akelius_sessions_number = cleaned_data.get("akelius_sessions_number")
+        akelius_access = cleaned_data.get("akelius_access")
+        akelius_child_equipped = cleaned_data.get("akelius_child_equipped")
+        akelius_change_literacy = cleaned_data.get("akelius_change_literacy")
+        akelius_change_math = cleaned_data.get("akelius_change_math")
+        akelius_change_learning = cleaned_data.get("akelius_change_learning")
+        if using_akelius and using_akelius == 'Yes':
+            if not akelius_sessions_number:
+                self.add_error('akelius_sessions_number', 'This field is required')
+            if not akelius_access:
+                self.add_error('akelius_access', 'This field is required')
+            if not akelius_child_equipped:
+                self.add_error('akelius_child_equipped', 'This field is required')
+            if not akelius_change_literacy:
+                self.add_error('akelius_change_literacy', 'This field is required')
+            if not akelius_change_math:
+                self.add_error('akelius_change_math', 'This field is required')
+            if not akelius_change_learning:
+                self.add_error('akelius_change_learning', 'This field is required')
+        # lp
+        using_lp = cleaned_data.get("using_lp")
+        lp_sessions_number = cleaned_data.get("lp_sessions_number")
+        lp_access = cleaned_data.get("lp_access")
+        lp_child_equipped = cleaned_data.get("lp_child_equipped")
+        lp_change_literacy = cleaned_data.get("lp_change_literacy")
+        lp_change_math = cleaned_data.get("lp_change_math")
+        lp_change_learning = cleaned_data.get("lp_change_learning")
+        if using_lp and using_lp == 'Yes':
+            if not lp_sessions_number:
+                self.add_error('lp_sessions_number', 'This field is required')
+            if not lp_access:
+                self.add_error('lp_access', 'This field is required')
+            if not lp_child_equipped:
+                self.add_error('lp_child_equipped', 'This field is required')
+            if not lp_change_literacy:
+                self.add_error('lp_change_literacy', 'This field is required')
+            if not lp_change_math:
+                self.add_error('lp_change_math', 'This field is required')
+            if not lp_change_learning:
+                self.add_error('lp_change_learning', 'This field is required')
+
     class Meta:
         model = DigitalService
         fields = (
             'using_akelius',
+            'akelius_sessions_number',
+            'akelius_access',
+            'akelius_child_equipped',
+            'akelius_change_literacy',
+            'akelius_change_math',
+            'akelius_change_learning',
             'using_lp',
+            'lp_sessions_number',
+            'lp_access',
+            'lp_child_equipped',
+            'lp_change_literacy',
+            'lp_change_math',
+            'lp_change_learning',
         )
 
 
