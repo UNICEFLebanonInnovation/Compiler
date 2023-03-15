@@ -51,11 +51,11 @@ class CenterAdminForm(forms.ModelForm):
         label=_('Cadaster')
     )
     p_code =  forms.CharField(
-        label=_("P-Cod"),
+        label=_("P-Code"),
         widget=forms.TextInput, required=True
     )
     type = forms.ChoiceField(
-        label=_('Education status'),
+        label=_('Type'),
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
@@ -63,6 +63,7 @@ class CenterAdminForm(forms.ModelForm):
             ('Collective Settlement', _('Collective Settlement')),
             ('Informal Settlement', _('Informal Settlement')),
             ('Welfare Center', _('Welfare Center')),
+            ('Community Hub', _('Community Hub')),
         ),
         initial=''
     )
