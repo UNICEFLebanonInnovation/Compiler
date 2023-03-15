@@ -84,6 +84,7 @@ class Center(models.Model):
             ('Collective Settlement', _('Collective Settlement')),
             ('Informal Settlement', _('Informal Settlement')),
             ('Welfare Center', _('Welfare Center')),
+            ('Community Hub', _('Community Hub')),
         ),
         verbose_name=_('Type')
     )
