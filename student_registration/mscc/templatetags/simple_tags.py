@@ -27,6 +27,14 @@ def get_service(registry, service_name):
 
 
 @register.simple_tag
+def get_service_all(registry, model_name):
+    try:
+        model = apps.get_model('mscc', model_name)
+        return model.objects.filter(registration=registry)
+    except Exception as ex:
+        return False
+
+@register.simple_tag
 def get_services(registry):
     return ProvidedServices.objects.filter(registration=registry)
 
