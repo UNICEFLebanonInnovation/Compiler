@@ -376,7 +376,25 @@ class InclusionService(TimeStampedModel):
 
 
 class DigitalService(models.Model):
-
+    ACCESS = Choices(
+        ('', '----------'),
+        ('Class', _('Class')),
+        ('Home', _('Home')),
+        ('Class & Home', _('Class & Home')),
+    )
+    YES_NO_OCCASIONALLY = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No")),
+        ('Occasionally', _("Occasionally"))
+    )
+    NOTICING_CHANGE = Choices(
+        ('', '----------'),
+        ('Very Likely', _('Very Likely')),
+        ('Likely', _('Likely')),
+        ('Neutral', _('Neutral')),
+        ('Not really', _('Not really')),
+    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -389,12 +407,93 @@ class DigitalService(models.Model):
         choices=YES_NO,
         verbose_name=_('Is the child using Akelius?')
     )
+    akelius_sessions_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of sessions per week')
+    )
+    akelius_access = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=ACCESS,
+        verbose_name=_("Access during")
+    )
+    akelius_child_equipped = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO_OCCASIONALLY,
+        verbose_name=_('Is the child equipped at home to access the platforms (Based on Child and parents'' confirmation)')
+    )
+    akelius_change_literacy = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=NOTICING_CHANGE,
+        verbose_name=_("As a teacher, are you noticing a change in motivation & output about Literacy")
+    )
+    akelius_change_math = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=NOTICING_CHANGE,
+        verbose_name=_("As a teacher, are you noticing a change in motivation & output about Math")
+    )
+    akelius_change_learning = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=NOTICING_CHANGE,
+        verbose_name=_("As a teacher, are you noticing a change in attitude towards learning")
+    )
     using_lp = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
         verbose_name=_('Is the child using Learning Passport?')
+    )
+    lp_sessions_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of sessions per week')
+    )
+    lp_access = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=ACCESS,
+        verbose_name=_("Access during")
+    )
+    lp_child_equipped = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO_OCCASIONALLY,
+        verbose_name=_(
+            'Is the child equipped at home to access the platforms (Based on Child and parents'' confirmation)')
+    )
+    lp_change_literacy = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=NOTICING_CHANGE,
+        verbose_name=_("As a teacher, are you noticing a change in motivation & output about Literacy")
+    )
+    lp_change_math = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=NOTICING_CHANGE,
+        verbose_name=_("As a teacher, are you noticing a change in motivation & output about Math")
+    )
+    lp_change_learning = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        choices=NOTICING_CHANGE,
+        verbose_name=_("As a teacher, are you noticing a change in attitude towards learning")
     )
 
     class Meta:
