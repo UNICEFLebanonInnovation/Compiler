@@ -20,6 +20,7 @@ from .models import (
     InclusionService,
     DigitalService,
     HealthNutritionService,
+    HealthNutritionReferral,
     YouthKitService,
     FollowUpService,
     YouthAssessment,
@@ -409,21 +410,40 @@ class DigitalServiceForm(forms.ModelForm):
         else:
             instance = DigitalService.objects.get(id=instance)
 
-        instance.using_akelius = validated_data.get('using_akelius')
-        instance.akelius_sessions_number = validated_data.get('akelius_sessions_number')
-        instance.akelius_access = validated_data.get('akelius_access')
-        instance.akelius_child_equipped = validated_data.get('akelius_child_equipped')
-        instance.akelius_change_literacy = validated_data.get('akelius_change_literacy')
-        instance.akelius_change_math = validated_data.get('akelius_change_math')
-        instance.akelius_change_learning = validated_data.get('akelius_change_learning')
-        instance.using_lp = validated_data.get('using_lp')
-        instance.lp_sessions_number = validated_data.get('lp_sessions_number')
-        instance.lp_access = validated_data.get('lp_access')
-        instance.lp_child_equipped = validated_data.get('lp_child_equipped')
-        instance.lp_change_literacy = validated_data.get('lp_change_literacy')
-        instance.lp_change_math = validated_data.get('lp_change_math')
-        instance.lp_change_learning = validated_data.get('lp_change_learning')
-        # instance.modified_by = request.user
+        using_akelius = validated_data.get('using_akelius')
+        instance.using_akelius = using_akelius
+        if using_akelius == 'Yes':
+            instance.akelius_sessions_number = validated_data.get('akelius_sessions_number')
+            instance.akelius_access = validated_data.get('akelius_access')
+            instance.akelius_child_equipped = validated_data.get('akelius_child_equipped')
+            instance.akelius_change_literacy = validated_data.get('akelius_change_literacy')
+            instance.akelius_change_math = validated_data.get('akelius_change_math')
+            instance.akelius_change_learning = validated_data.get('akelius_change_learning')
+        else:
+            instance.akelius_sessions_number = ''
+            instance.akelius_access = ''
+            instance.akelius_child_equipped = ''
+            instance.akelius_change_literacy = ''
+            instance.akelius_change_math =''
+            instance.akelius_change_learning = ''
+
+        using_lp = validated_data.get('using_lp')
+        instance.using_lp = using_lp
+        if using_lp == 'Yes':
+            instance.lp_sessions_number = validated_data.get('lp_sessions_number')
+            instance.lp_access = validated_data.get('lp_access')
+            instance.lp_child_equipped = validated_data.get('lp_child_equipped')
+            instance.lp_change_literacy = validated_data.get('lp_change_literacy')
+            instance.lp_change_math = validated_data.get('lp_change_math')
+            instance.lp_change_learning = validated_data.get('lp_change_learning')
+        else:
+            instance.lp_sessions_number = ''
+            instance.lp_access = ''
+            instance.lp_child_equipped = ''
+            instance.lp_change_literacy = ''
+            instance.lp_change_math = ''
+            instance.lp_change_learning = ''
+
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -812,6 +832,218 @@ class HealthNutritionServiceForm(forms.ModelForm):
             'physical_activity',
             'accessing_reproductive_health'
         )
+
+
+class HealthNutritionReferralForm(forms.ModelForm):
+
+    referred_development_delays = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Was the child referred for any observed developmental delays as per the milestones cards to?')
+    )
+    development_delays = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=HealthNutritionReferral.DEVELOPMENT_DELAYS,
+        label=_('If yes, please select')
+    )
+    referred_malnutrition = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Was the child Referred for malnutrition treatment center?')
+    )
+    malnutrition_treatment_center = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=HealthNutritionReferral.MALNUTRITION_TREATMENT_CENTER,
+        label=_('If yes, please select')
+    )
+    referred_anc_pnc = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Was a Pregnant lactating women/child referred  for ANC and PNC follow up  and to receive MMS (multivitamins) to PHC?')
+    )
+    phc_center = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('Write the name of vaccine missing')
+    )
+    women_child_referred_iycf = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Was a Pregnant lactating women/child with challenges on breastfeeding referred to IYCF specialists?')
+    )
+    women_child_referred_organization = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('If yes (please add name of organization referred tor)')
+    )
+    infant_child_referred_iycf = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Was a Children aged 6months to 59months with challenges on infant and young child feeding practice referred to IYCF specialists and to receive Micronutrient supplements?')
+    )
+    infant_child_referred_organization = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('If yes (please add name of organization referred to)')
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(HealthNutritionReferralForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_health_nutrition_referral_add', kwargs={'registry': registry})
+        if instance:
+            form_action = reverse('mscc:service_health_nutrition_referral_edit', kwargs={'registry': registry, 'pk': instance})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('referred_development_delays', css_class='col-md-7'),
+                    Div('development_delays', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('referred_malnutrition', css_class='col-md-7'),
+                    Div('malnutrition_treatment_center', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('referred_anc_pnc', css_class='col-md-7'),
+                    Div('phc_center', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('women_child_referred_iycf', css_class='col-md-7'),
+                    Div('women_child_referred_organization', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    Div('infant_child_referred_iycf', css_class='col-md-7'),
+                    Div('infant_child_referred_organization', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                ),
+                css_id='step-1'
+            )
+        )
+
+    def save(self, request=None, instance=None, registry=None):
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = HealthNutritionReferral.objects.create(registration_id=registry)
+        else:
+            instance = HealthNutritionReferral.objects.get(id=instance)
+        # referred_development_delays
+        referred_development_delays= validated_data.get('referred_development_delays')
+        instance.referred_development_delays = referred_development_delays
+        if referred_development_delays == 'Yes':
+            instance.development_delays = validated_data.get('development_delays')
+        else:
+            instance.development_delays = ''
+
+        # referred_malnutrition
+        referred_malnutrition = validated_data.get('referred_malnutrition')
+        instance.referred_malnutrition = referred_malnutrition
+        if referred_malnutrition == 'Yes':
+            instance.malnutrition_treatment_center = validated_data.get('malnutrition_treatment_center')
+        else:
+            instance.malnutrition_treatment_center = ''
+
+        # referred_anc_pnc
+        referred_anc_pnc = validated_data.get('referred_anc_pnc')
+        instance.referred_anc_pnc = referred_anc_pnc
+        if referred_anc_pnc == 'Yes':
+            instance.phc_center = validated_data.get('phc_center')
+        else:
+            instance.phc_center = ''
+
+        # women_child_referred_iycf
+        women_child_referred_iycf = validated_data.get('women_child_referred_iycf')
+        instance.women_child_referred_iycf = women_child_referred_iycf
+        if women_child_referred_iycf == 'Yes':
+            instance.women_child_referred_organization = validated_data.get('women_child_referred_organization')
+        else:
+            instance.women_child_referred_organization = ''
+
+        # infant_child_referred_iycf
+        infant_child_referred_iycf = validated_data.get('infant_child_referred_iycf')
+        instance.infant_child_referred_iycf = infant_child_referred_iycf
+        if infant_child_referred_iycf == 'Yes':
+            instance.infant_child_referred_organization = validated_data.get('infant_child_referred_organization')
+        else:
+            instance.infant_child_referred_organization = ''
+
+        instance.modified_by = request.user
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='Health and Nutrition', service_id=instance.id)
+
+        return instance
+
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def clean(self):
+        cleaned_data = super(HealthNutritionReferralForm, self).clean()
+
+        referred_development_delays = cleaned_data.get("referred_development_delays")
+        development_delays = cleaned_data.get("development_delays")
+        if referred_development_delays and referred_development_delays == 'Yes' and not development_delays:
+            self.add_error('development_delays', 'This field is required')
+
+        referred_malnutrition = cleaned_data.get("referred_malnutrition")
+        malnutrition_treatment_center = cleaned_data.get("malnutrition_treatment_center")
+        if referred_malnutrition and referred_malnutrition == 'Yes' and not malnutrition_treatment_center:
+            self.add_error('malnutrition_treatment_center', 'This field is required')
+
+        referred_anc_pnc = cleaned_data.get("referred_anc_pnc")
+        phc_center = cleaned_data.get("phc_center")
+        if referred_anc_pnc and referred_anc_pnc == 'Yes' and not phc_center:
+            self.add_error('phc_center', 'This field is required')
+
+        women_child_referred_iycf = cleaned_data.get("women_child_referred_iycf")
+        women_child_referred_organization = cleaned_data.get("women_child_referred_organization")
+        if women_child_referred_iycf and women_child_referred_iycf == 'Yes' and not women_child_referred_organization:
+            self.add_error('women_child_referred_organization', 'This field is required')
+
+        infant_child_referred_iycf = cleaned_data.get("infant_child_referred_iycf")
+        infant_child_referred_organization = cleaned_data.get("infant_child_referred_organization")
+        if infant_child_referred_iycf and infant_child_referred_iycf == 'Yes' and not infant_child_referred_organization:
+            self.add_error('infant_child_referred_organization', 'This field is required')
+
+
+    class Meta:
+        model = HealthNutritionReferral
+        fields = (
+            'referred_development_delays',
+            'development_delays',
+            'referred_malnutrition',
+            'malnutrition_treatment_center',
+            'referred_anc_pnc',
+            'phc_center',
+            'women_child_referred_iycf',
+            'women_child_referred_organization',
+            'infant_child_referred_iycf',
+            'infant_child_referred_organization',
+        )
+
 
 
 class YouthKitServiceForm(forms.ModelForm):

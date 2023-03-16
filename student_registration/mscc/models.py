@@ -762,6 +762,98 @@ class HealthNutritionService(TimeStampedModel):
         verbose_name_plural = "Health & Nutrition Services"
 
 
+class HealthNutritionReferral(TimeStampedModel):
+
+    DEVELOPMENT_DELAYS = Choices(
+        ('', '----------'),
+        ('Primary Health care center', _('Primary Health care center')),
+        ('Dispensary', _('Dispensary')),
+        ('Hospital', _('Hospital')),
+        ('Private clinic', _('Private clinic')),
+        ('Organization', _('Organization')),
+    )
+    MALNUTRITION_TREATMENT_CENTER = Choices(
+        ('', '----------'),
+        ('MAM', _('MAM')),
+        ('SAM', _('SAM')),
+        ('At Risk of Malnutrition', _('At Risk of Malnutrition')),
+        ('To Supplementary Feeding PHCC', _('To Supplementary Feeding PHCC')),
+        ('To Treatment Center/ PHCC', _('To Treatment Center/ PHCC')),
+        ('To Hospital', _('To Hospital')),
+        ('To Organization', _('To Organization')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    referred_development_delays = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child Referred for any observed developmental delays as per the milestones cards to?')
+    )
+    development_delays = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=DEVELOPMENT_DELAYS,
+        verbose_name=_('if yes, please select')
+    )
+    referred_malnutrition = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was the child Referred for malnutrition treatment center?')
+    )
+    malnutrition_treatment_center = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=MALNUTRITION_TREATMENT_CENTER,
+        verbose_name=_('if yes, please select')
+    )
+    referred_anc_pnc = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was a Pregnant lactating women/child referred  for ANC and PNC follow up  and to receive MMS (multivitamins) to PHC?')
+    )
+    phc_center = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('If yes (please add name the PHC center)')
+    )
+    women_child_referred_iycf = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was a Pregnant lactating women/child with challenges on breastfeeding referred to IYCF specialists?')
+    )
+    women_child_referred_organization = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('If yes (please add name of organization referred tor)')
+    )
+    infant_child_referred_iycf = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was a Children aged 6months to 59months with challenges on infant and young child feeding practice refeered to IYCF specialists and to receive Micronutrient supplements?')
+    )
+    infant_child_referred_organization = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('If yes (please add name of organization referred to)')
+    )
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Health & Nutrition Referral"
+        verbose_name_plural = "Health & Nutrition Referrals"
+
+
 class EducationService(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(

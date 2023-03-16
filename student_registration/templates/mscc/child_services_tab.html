@@ -519,36 +519,57 @@
   <!--Health and Nutrition-->
 {% get_service instance 'Health & Nutrition' as result %}
   {% if result %}
+
 <div class="col-md-12 col-lg-6 col-xl-4">
-  {% service_data 'HealthNutritionService' instance as result %}
                                 <div class="mb-3 card">
+                                    <!--<div class="card-header-tab card-header">-->
+                                        <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
+                                            <!--<i class="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> </i>-->
+                                            <!--Details-->
+                                        <!--</div>-->
+                                    <!--</div>-->
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Health & Nutrition
-                                                      <div style="float:right;">
-                                                            {% if result %}
-                                                              <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child.age_month }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Data"><i class="pe-7s-pen"></i></a>
-                                                            {% else %}
-                                                              <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child.age_month }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Data"><i class="pe-7s-plus"></i></a>
-                                                            {% endif %}
-                                                      </div>
+
                                                     </h5>
+                                                    <!--<h6 class="menu-header-subtitle">-->
+                                                        <!--You have-->
+                                                        <!--<b class="text-info">21 </b>-->
+                                                        <!--unread messages-->
+                                                    <!--</h6>-->
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--<ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">-->
-                                            <!--<li class="nav-item">-->
-                                                <!--<a role="tab" class="nav-link active show" id="tab-c-15" data-toggle="tab" href="#tab-animated-15" aria-selected="true">-->
-                                                    <!--<span>Situation</span>-->
-                                                <!--</a>-->
-                                            <!--</li>-->
-                                        <!--</ul>-->
+                                        <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link active show" id="tab-c-22" data-toggle="tab" href="#tab-animated-22" aria-selected="true">
+                                                    <span>Assessment</span>
+                                                </a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a role="tab" class="nav-link" id="tab-c-23" data-toggle="tab" href="#tab-animated-23" aria-selected="true">
+                                                    <span>Referral</span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+
+                                        {% service_data 'HealthNutritionService' instance as result %}
                                         <div class="tab-content">
-                                            <div class="tab-pane active show" id="tab-animated-16" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 300px;">
+                                            <div class="tab-pane active show" id="tab-animated-22" role="tabpanel">
+                                               <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
+                                                    {% if result %}
+                                                        <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child.age_month }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Data"><i class="pe-7s-pen"></i></a>
+                                                    {% else %}
+                                                        <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child.age_month }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Data"><i class="pe-7s-plus"></i></a>
+                                                    {% endif %}
+                                               </div>
+                                                <div class="scroll-area-sm" style="height: 222px;">
                                                     <div class="scrollbar-container ps ps--active-y">
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
@@ -684,14 +705,106 @@
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
                                                 </div>
                                             </div>
+
+                                          {% service_data 'HealthNutritionReferral' instance as result %}
+                                            <div class="tab-pane" id="tab-animated-23" role="tabpanel">
+                                               <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
+                                                    {% if result %}
+                                                        <a href="/MSCC/Services/Health-Nutrition-Referral-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Referral"><i class="pe-7s-pen"></i></a>
+                                                    {% else %}
+                                                        <a href="/MSCC/Services/Health-Nutrition-Referral-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Referral"><i class="pe-7s-plus"></i></a>
+                                                    {% endif %}
+                                               </div>
+                                                <div class="scroll-area-sm" style="height: 222px;">
+                                                    <div class="scrollbar-container ps">
+                                                        <div class="p-3">
+                                                          <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                                                                    <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child Referred for development delays</h4>
+                                                                                <p>
+                                                                                  {% if result.referred_development_delays == 'No' %}
+                                                                                  {{ result.referred_development_delays }}
+                                                                                  {% else %}
+                                                                                  {{ result.referred_development_delays }} - {{ result.development_delays }}
+                                                                                  {% endif %}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child Referred for malnutrition treatment center</h4>
+                                                                                <p>
+                                                                                  {% if result.referred_malnutrition == 'No' %}
+                                                                                  {{ result.referred_malnutrition }}
+                                                                                  {% else %}
+                                                                                  {{ result.referred_malnutrition }} - {{ result.malnutrition_treatment_center }}
+                                                                                  {% endif %}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Pregnant lactating women/child referred  for ANC and PNC follow up  and to receive MMS (multivitamins) to PHC</h4>
+                                                                                <p>
+                                                                                  {% if result.referred_anc_pnc == 'No' %}
+                                                                                  {{ result.referred_anc_pnc }}
+                                                                                  {% else %}
+                                                                                  {{ result.referred_anc_pnc }} - PHC Center: {{ result.phc_center }}
+                                                                                  {% endif %}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                            </div>
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Pregnant lactating women/child with challenges on breastfeeding referred to IYCF specialists</h4>
+                                                                                <p>
+                                                                                  {% if result.women_child_referred_iycf == 'No' %}
+                                                                                  {{ result.women_child_referred_iycf }}
+                                                                                  {% else %}
+                                                                                  {{ result.women_child_referred_iycf }} - Organization: {{ result.women_child_referred_organization }}
+                                                                                  {% endif %}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                            </div>
+
+                                                            <div class="vertical-timeline-item vertical-timeline-element">
+                                                                        <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                            <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child Referred for any observed developmental delays</h4>
+                                                                                <p>
+                                                                                  {% if result.infant_child_referred_iycf == 'No' %}
+                                                                                  {{ result.infant_child_referred_iycf }}
+                                                                                  {% else %}
+                                                                                  {{ result.infant_child_referred_iycf }} - Organization: {{ result.infant_child_referred_organization }}
+                                                                                  {% endif %}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+                                                </div>
+                                            </div>
                                         </div>
+
                                         <ul class="nav flex-column">
                                             <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
+                                                <!--<button class="btn-shadow btn-wide btn-pill btn btn-dark">-->
+                                                    <!--<span class="badge badge-dot badge-dot-lg badge-info badge-pulse">Badge</span>-->
+                                                    <!--View All Messages-->
+                                                <!--</button>-->
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
+
 {% endif %}
 
   <!--Adolescents kit-->
