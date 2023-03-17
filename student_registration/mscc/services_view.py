@@ -22,7 +22,7 @@ class InclusionFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -59,7 +59,7 @@ class DigitalFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -96,7 +96,7 @@ class HealthNutritionFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -170,7 +170,7 @@ class PSSFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -207,7 +207,7 @@ class YouthKitServiceFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -244,7 +244,7 @@ class FollowUpFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -281,7 +281,7 @@ class YouthAssessmentFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""

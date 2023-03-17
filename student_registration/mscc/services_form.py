@@ -1330,8 +1330,8 @@ class FollowUpServiceForm(forms.ModelForm):
     follow_up_number = forms.IntegerField(
         label=_('Number'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        required=False,
-        min_value=0
+        required=True,
+        min_value=1
     )
     follow_up_result = forms.ChoiceField(
         widget=forms.Select, required=True,

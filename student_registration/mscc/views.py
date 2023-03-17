@@ -277,7 +277,7 @@ class ReferralFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""

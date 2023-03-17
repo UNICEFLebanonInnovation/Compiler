@@ -206,7 +206,9 @@
             </span>
         </div>    <div class="app-header__content">
 
+      {% if request.user.is_authenticated %}
 <div class="search-wrapper active">
+
                     <div class="input-holder">
                         <input type="text" class="search-input" name="quick-search" id="quick-search" placeholder="Type to search">
 <div id="search-loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="width: 100px;height: 50px;float: right !important;">
@@ -223,6 +225,7 @@
                     <!--<button class="close"></button>-->
                     <div id="quick-search-result"></div>
                 </div>
+  {% endif %}
 
             <div class="app-header-left">
                 <ul class="header-megamenu nav">
