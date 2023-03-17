@@ -107,6 +107,16 @@ urlpatterns = [
         name='service_health_nutrition_edit'
     ),
     url(
+        regex=r'^Services/Health-Nutrition-Referral-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.HealthNutritionReferralFormView.as_view(),
+        name='service_health_nutrition_referral_add'
+    ),
+    url(
+        regex=r'^Services/Health-Nutrition-Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.HealthNutritionReferralFormView.as_view(),
+        name='service_health_nutrition_referral_edit'
+    ),
+    url(
         regex=r'^Services/PSS-Add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.PSSFormView.as_view(),
         name='service_pss_add'
