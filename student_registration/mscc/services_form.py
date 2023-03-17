@@ -343,7 +343,7 @@ class DigitalServiceForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('using_akelius', css_class='col-md-3'),
+                    Div('using_akelius', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -369,7 +369,7 @@ class DigitalServiceForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('using_lp', css_class='col-md-3'),
+                    Div('using_lp', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
