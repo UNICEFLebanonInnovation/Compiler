@@ -518,90 +518,165 @@ class DigitalServiceForm(forms.ModelForm):
 
 
 class HealthNutritionServiceForm(forms.ModelForm):
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     baby_breastfed = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the baby being Breastfed?')
     )
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     infant_exclusively_breastfed = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('if yes, is it exclusively breastfeeding for infants between 0-6 months?(only brest milk no other liquids even water)')
     )
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     eat_solid_food = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Did the child start to eat solid food?')
     )
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     age_eat_solid_food = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=HealthNutritionService.AGE_EAT_SOLID_FOOD,
         label=_('If yes, at which age ?')
     )
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     immunization_record_screened = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Child immunization record screened (to check the integrated ECD milestones Cards based on the age of the child- or the national immunization Calendar)')
     )
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     vaccine_missing = forms.CharField(
         required=False,
         widget=forms.TextInput,
         label=_('Write the name of vaccine missing')
     )
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     muac_malnutrition_screening = forms.ChoiceField(
         widget=forms.Select, required=False,
-        choices=HealthNutritionService.MUAC_SCREENING,
+        choices=HealthNutritionService.MALNUTRITION_SCREENING,
         label=_('MUAC malnutrition screening')
     )
-    # Caregivers of children 0-5 months
+    # Caregivers of children 0-5 years
     development_delays_identified = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=HealthNutritionService.DEVELOPMENT_DELAYS,
         label=_('Any delays in the development milestones  is being identified? (please to check the Integrated ECD milestones Cards based on the age of the child)')
     )
-    # Caregivers of children 0-18 month
+    # Caregivers of children 0-18 years
     eating_minimum_meals = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the child eating 3 minimum meals per day?')
     )
-    # Caregivers of children 0-18 month
+    # Caregivers of children 0-18 years
     child_vaccinated = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the child being vaccinated as per the National vaccination calendar?')
     )
-    # Caregivers of children 0-18 month
+    # Caregivers of children 0-18 years
     positive_parenting = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Positive parenting and dealing with difficult children without the use of harsh punishment?')
     )
-    # Caregivers of children 6-18
+    # Caregivers of children 6-18 years
     respond_stressful_events = forms.CharField(
         required=False,
         widget=forms.TextInput,
         label=_('How children of different ages respond to and understand stressful and traumatic events?')
     )
-    # Caregivers of children 6-18
+    # Caregivers of children 6-18 years
     physical_activity = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('Is the child practicing physical activity at least twice a week')
     )
-    # Caregivers of children 6-18
+    # Caregivers of children 6-18 years
     accessing_reproductive_health = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=YES_NO,
         label=_('In case of a child marriage to ask if the child is accessing in reproductive health services')
     )
+    # Counselling and sessions
+    # Caregivers of children 0-5 years
+    caregiver_counselling = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Did the caregiver receive one on one counselling?')
+    )
+    # Caregivers of children 0-5 years
+    counselling_date = forms.DateField(
+        label=_("Session date"),
+        required=False
+    )
+    # Caregivers of children 0-5 years
+    next_counselling_date = forms.DateField(
+        label=_("Next session date"),
+        required=False
+    )
+    # Caregivers of children 0-5 years
+    caregiver_ecd_counselling = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Did the caregiver attended ECD group counselling?')
+    )
+    # Caregivers of children 0-5 years
+    ecd_counselling_date = forms.DateField(
+        label=_("Session date"),
+        required=False
+    )
+    # Caregivers of children 0-5 years
+    next_ecd_counselling_date = forms.DateField(
+        label=_("Next session date"),
+        required=False
+    )
+    # Caregivers of children 0-5 years
+    child_screened_malnutrition = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Was the child screened for malnutrition using MUAC tapes?')
+    )
+    # Caregivers of children 0-5 years
+    child_malnutrition_screening = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=HealthNutritionService.MALNUTRITION_SCREENING,
+        label=_('MUAC malnutrition screening')
+    )
+    # Caregivers of children 0-5 years
+    child_immunization_screened = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Was the child immunization record screened')
+    )
+    # Caregivers of children 0-5 years
+    missing_vaccine = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('Please mention if any vaccine is missing')
+    )
+    # Caregivers of children 6-18 years
+    attended_health_nutrition_session = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Children attended health and nutrition session')
+    )
+    # Caregivers of children 6-18 years
+    health_nutrition_session_title = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label=_('Title of the session')
+    )
+    # Caregivers of children 0-5 years
+    health_nutrition_session_date = forms.DateField(
+        label=_("Date of the session"),
+        required=False
+    )
+
     child_age = forms.CharField(widget=forms.HiddenInput, required=False)
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -619,26 +694,28 @@ class HealthNutritionServiceForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
         if age <= 5:
             self.helper.layout = Layout(
                 Div(
                     Div(
-                        Div('child_age', css_class='col-md-4'),
+                        Div('child_age', css_class='col-md-6'),
                         css_class='row card-body d-none'
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('baby_breastfed', css_class='col-md-4'),
+                        Div('baby_breastfed', css_class='col-md-6'),
                         css_class='row card-body'
                     ),
                     Div(
-                        Div('infant_exclusively_breastfed', css_class='col-md-12'),
+                        HTML('<span class="badge-form-0 badge-pill"></span>'),
+                        Div('infant_exclusively_breastfed', css_class='col-md-11'),
                         css_class='row card-body'
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">2</span>'),
                         Div('eat_solid_food', css_class='col-md-6'),
-                        Div('age_eat_solid_food', css_class='col-md-6'),
+                        Div('age_eat_solid_food', css_class='col-md-5'),
                         css_class='row card-body'
                     ),
                     Div(
@@ -648,7 +725,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('vaccine_missing', css_class='col-md-4'),
+                        Div('vaccine_missing', css_class='col-md-6'),
                         css_class='row card-body'
                     ),
                     Div(
@@ -658,7 +735,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">6</span>'),
-                        Div('eating_minimum_meals', css_class='col-md-5'),
+                        Div('eating_minimum_meals', css_class='col-md-6'),
                         css_class='row card-body'
                     ),
                     Div(
@@ -677,7 +754,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
                         css_class='row card-body'
                     ),
                     Div(
-                        Div('respond_stressful_events', css_class='col-md-12'),
+                        Div('respond_stressful_events', css_class='col-md-11'),
                         css_class='row card-body d-none'
                     ),
                     Div(
@@ -688,11 +765,55 @@ class HealthNutritionServiceForm(forms.ModelForm):
                         Div('accessing_reproductive_health', css_class='col-md-12'),
                         css_class='row card-body d-none'
                     ),
+                    css_id='step-1'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('caregiver_counselling', css_class='col-md-6'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-0 badge-pill"></span>'),
+                        Div('counselling_date', css_class='col-md-3'),
+                        Div('next_counselling_date', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('caregiver_ecd_counselling', css_class='col-md-6'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-0 badge-pill"></span>'),
+                        Div('ecd_counselling_date', css_class='col-md-3'),
+                        Div('next_ecd_counselling_date', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('child_screened_malnutrition', css_class='col-md-6'),
+                        Div('child_malnutrition_screening', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('child_immunization_screened', css_class='col-md-6'),
+                        Div('missing_vaccine', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('attended_health_nutrition_session', css_class='col-md-4'),
+                        Div('health_nutrition_session_title', css_class='col-md-3'),
+                        Div('health_nutrition_session_date', css_class='col-md-3'),
+                        css_class='row card-body d-none'
+                    ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     ),
-                    css_id='step-1'
+                    css_id='step-2',
                 )
             )
         if 6 <= age <= 18:
@@ -729,12 +850,12 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('eating_minimum_meals', css_class='col-md-5'),
+                        Div('eating_minimum_meals', css_class='col-md-9'),
                         css_class='row card-body'
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('child_vaccinated', css_class='col-md-8'),
+                        Div('child_vaccinated', css_class='col-md-9'),
                         css_class='row card-body'
                     ),
                     Div(
@@ -742,29 +863,69 @@ class HealthNutritionServiceForm(forms.ModelForm):
                         css_class='row card-body d-none'
                     ),
                     Div(
-                        Div('development_delays_identified', css_class='col-md-12'),
+                        Div('development_delays_identified', css_class='col-md-8'),
                         css_class='row card-body d-none'
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('respond_stressful_events', css_class='col-md-11'),
+                        Div('respond_stressful_events', css_class='col-md-9'),
                         css_class='row card-body'
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('physical_activity', css_class='col-md-8'),
+                        Div('physical_activity', css_class='col-md-9'),
                         css_class='row card-body'
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">5</span>'),
-                        Div('accessing_reproductive_health', css_class='col-md-11'),
+                        Div('accessing_reproductive_health', css_class='col-md-9'),
+                        css_class='row card-body'
+                    ),
+                    css_id='step-1'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('caregiver_counselling', css_class='col-md-4'),
+                        Div('counselling_date', css_class='col-md-3'),
+                        Div('next_counselling_date', css_class='col-md-3'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('caregiver_ecd_counselling', css_class='col-md-4'),
+                        Div('ecd_counselling_date', css_class='col-md-3'),
+                        Div('next_ecd_counselling_date', css_class='col-md-3'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('child_screened_malnutrition', css_class='col-md-4'),
+                        Div('child_malnutrition_screening', css_class='col-md-6'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('child_immunization_screened', css_class='col-md-4'),
+                        Div('missing_vaccine', css_class='col-md-6'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('attended_health_nutrition_session', css_class='col-md-6'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-0 badge-pill"></span>'),
+                        Div('health_nutrition_session_title', css_class='col-md-3'),
+                        Div('health_nutrition_session_date', css_class='col-md-3'),
                         css_class='row card-body'
                     ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     ),
-                    css_id='step-1'
+                    css_id='step-2',
                 )
             )
 
@@ -791,6 +952,55 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.respond_stressful_events = validated_data.get('respond_stressful_events')
         instance.physical_activity = validated_data.get('physical_activity')
         instance.accessing_reproductive_health = validated_data.get('accessing_reproductive_health')
+
+        # caregiver_counselling
+        caregiver_counselling = validated_data.get('caregiver_counselling')
+        instance.caregiver_counselling = caregiver_counselling
+        if caregiver_counselling == 'Yes':
+            instance.counselling_date = validated_data.get('counselling_date')
+            instance.next_counselling_date = validated_data.get('next_counselling_date')
+        else:
+            instance.counselling_date = ''
+            instance.next_counselling_date = ''
+
+
+        # caregiver_ecd_counselling
+        caregiver_ecd_counselling = validated_data.get('caregiver_ecd_counselling')
+        instance.caregiver_ecd_counselling = caregiver_ecd_counselling
+        if caregiver_ecd_counselling == 'Yes':
+            instance.ecd_counselling_date = validated_data.get('ecd_counselling_date')
+            instance.next_ecd_counselling_date = validated_data.get('next_ecd_counselling_date')
+        else:
+            instance.ecd_counselling_date = ''
+            instance.next_ecd_counselling_date = ''
+
+        # child_screened_malnutrition
+        child_screened_malnutrition = validated_data.get('child_screened_malnutrition')
+        instance.child_screened_malnutrition = child_screened_malnutrition
+        if child_screened_malnutrition == 'Yes':
+            instance.child_malnutrition_screening = validated_data.get('child_malnutrition_screening')
+        else:
+            instance.child_malnutrition_screening = ''
+
+
+        # child_immunization_screened
+        child_immunization_screened = validated_data.get('child_immunization_screened')
+        instance.child_immunization_screened = child_immunization_screened
+        if child_immunization_screened == 'Yes':
+            instance.missing_vaccine = validated_data.get('missing_vaccine')
+        else:
+            instance.missing_vaccine = ''
+
+        # attended_health_nutrition_session
+        attended_health_nutrition_session = validated_data.get('attended_health_nutrition_session')
+        instance.attended_health_nutrition_session = attended_health_nutrition_session
+        if attended_health_nutrition_session == 'Yes':
+            instance.health_nutrition_session_title = validated_data.get('health_nutrition_session_title')
+            instance.health_nutrition_session_date = validated_data.get('health_nutrition_session_date')
+        else:
+            instance.health_nutrition_session_title = ''
+            instance.health_nutrition_session_date = ''
+
         instance.modified_by = request.user
         instance.save()
 
@@ -814,6 +1024,44 @@ class HealthNutritionServiceForm(forms.ModelForm):
         if eat_solid_food and eat_solid_food == 'Yes' and not age_eat_solid_food:
             self.add_error('age_eat_solid_food', 'This field is required')
 
+        caregiver_counselling = cleaned_data.get("caregiver_counselling")
+        counselling_date = cleaned_data.get("counselling_date")
+        next_counselling_date = cleaned_data.get("next_counselling_date")
+        if caregiver_counselling and caregiver_counselling == 'Yes':
+            if not counselling_date:
+                self.add_error('counselling_date', 'This field is required')
+            if not next_counselling_date:
+                self.add_error('next_counselling_date', 'This field is required')
+
+        caregiver_ecd_counselling = cleaned_data.get("caregiver_counselling")
+        ecd_counselling_date = cleaned_data.get("ecd_counselling_date")
+        next_ecd_counselling_date = cleaned_data.get("next_ecd_counselling_date")
+        if caregiver_ecd_counselling and caregiver_ecd_counselling == 'Yes':
+            if not ecd_counselling_date:
+                self.add_error('ecd_counselling_date', 'This field is required')
+            if not next_ecd_counselling_date:
+                self.add_error('next_ecd_counselling_date', 'This field is required')
+
+
+        child_screened_malnutrition = cleaned_data.get("child_screened_malnutrition")
+        child_malnutrition_screening = cleaned_data.get("child_malnutrition_screening")
+        if child_screened_malnutrition and child_screened_malnutrition == 'Yes' and not child_malnutrition_screening:
+            self.add_error('child_malnutrition_screening', 'This field is required')
+
+        child_immunization_screened = cleaned_data.get("child_immunization_screened")
+        missing_vaccine = cleaned_data.get("missing_vaccine")
+        if child_immunization_screened and child_immunization_screened == 'Yes' and not missing_vaccine:
+            self.add_error('missing_vaccine', 'This field is required')
+
+        attended_health_nutrition_session = cleaned_data.get("attended_health_nutrition_session")
+        health_nutrition_session_title = cleaned_data.get("health_nutrition_session_title")
+        health_nutrition_session_date = cleaned_data.get("health_nutrition_session_date")
+        if attended_health_nutrition_session and attended_health_nutrition_session == 'Yes':
+            if not health_nutrition_session_title:
+                self.add_error('health_nutrition_session_title', 'This field is required')
+            if not health_nutrition_session_date:
+                self.add_error('health_nutrition_session_date', 'This field is required')
+
     class Meta:
         model = HealthNutritionService
         fields = (
@@ -830,7 +1078,20 @@ class HealthNutritionServiceForm(forms.ModelForm):
             'positive_parenting',
             'respond_stressful_events',
             'physical_activity',
-            'accessing_reproductive_health'
+            'accessing_reproductive_health',
+            'caregiver_counselling'  ,
+            'counselling_date',
+            'next_counselling_date'  ,
+            'caregiver_ecd_counselling',
+            'ecd_counselling_date'  ,
+            'next_ecd_counselling_date' ,
+            'child_screened_malnutrition' ,
+            'child_malnutrition_screening',
+            'child_immunization_screened' ,
+            'missing_vaccine'  ,
+            'attended_health_nutrition_session' ,
+            'health_nutrition_session_title'  ,
+            'health_nutrition_session_date'
         )
 
 
@@ -1088,8 +1349,7 @@ class YouthKitServiceForm(forms.ModelForm):
     participate_volunteering = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=YES_NO,
-        label=_('Did the adolescent participate in any volunteering '
-                       'opportunity during the course of the program?')
+        label=_('Did the adolescent participate in any volunteering opportunity during the course of the program?')
     )
     volunteering_specify = forms.ChoiceField(
         widget=forms.Select, required=False,
