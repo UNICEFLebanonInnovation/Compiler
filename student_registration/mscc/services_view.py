@@ -309,3 +309,18 @@ class YouthAssessmentFormView(LoginRequiredMixin,
         return super(YouthAssessmentFormView, self).form_valid(form)
 
 
+class FollowUpViewAll(LoginRequiredMixin,
+                      TemplateView):
+
+    template_name = 'mscc/service_follow_up_all.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.mscc.templatetags.simple_tags import get_service_all
+
+        registry = self.kwargs['registry']
+        instances = get_service_all(registry, 'FollowUpService')
+
+        return {
+            'registry': registry,
+            'instances': instances
+        }

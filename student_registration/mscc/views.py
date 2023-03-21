@@ -504,7 +504,7 @@ class ChildProfilePreview(LoginRequiredMixin,
         }
 
 
-def ExportData(request):
+def export_data(request):
     nationality = request.GET.get('nationality', '')
 
     qs_registration = Registration.objects.filter(
