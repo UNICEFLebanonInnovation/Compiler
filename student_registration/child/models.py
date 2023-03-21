@@ -528,6 +528,13 @@ class Child(TimeStampedModel):
         else:
             return str(full_age[1]) + " months"
 
+    @property
+    def age_year(self):
+        full_age = self.calculate_age
+        if full_age[0]:
+            return full_age[0]
+        else: return 0
+
     @staticmethod
     def get_age(birthday_year, birthday_month, birthday_day):
         if birthday_year and birthday_month and birthday_day:
