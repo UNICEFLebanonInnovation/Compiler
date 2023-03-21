@@ -569,9 +569,9 @@
                                             <div class="tab-pane active show" id="tab-animated-22" role="tabpanel">
                                                <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                        <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child.age_year }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Data"><i class="pe-7s-pen"></i></a>
+                                                        <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child.age }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Data"><i class="pe-7s-pen"></i></a>
                                                     {% else %}
-                                                        <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child.age_year }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Data"><i class="pe-7s-plus"></i></a>
+                                                        <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child.age }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Data"><i class="pe-7s-plus"></i></a>
                                                     {% endif %}
                                                </div>
                                                 <div class="scroll-area-sm" style="height: 222px;">
@@ -579,7 +579,7 @@
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <!--Caregivers of children 0-6-->
-                                                              {% if instance.child.age_year <= 5 %}
+                                                              {% if instance.child.age <= 5 %}
                                                                   <div class="vertical-timeline-item vertical-timeline-element">
                                                                       <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                           <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the baby being Breastfed?</h4>
@@ -664,7 +664,7 @@
                                                                       </div>
                                                                   </div>
 
-                                                              {% elif instance.child.age_year >= 6 and instance.child.age_year <= 18 %}
+                                                              {% elif instance.child.age >= 6 and instance.child.age <= 18 %}
 
                                                                     <div class="vertical-timeline-item vertical-timeline-element">
                                                                         <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -715,9 +715,9 @@
                                             <div class="tab-pane" id="tab-animated-23" role="tabpanel">
                                                <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                        <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child.age_year }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Session"><i class="pe-7s-pen"></i></a>
+                                                        <a href="/MSCC/Services/Health-Nutrition-Edit/{{ instance.id }}/{{ instance.child.age }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Health & Nutrition Session"><i class="pe-7s-pen"></i></a>
                                                     {% else %}
-                                                        <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child.age_year }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Session"><i class="pe-7s-plus"></i></a>
+                                                        <a href="/MSCC/Services/Health-Nutrition-Add/{{ instance.id }}/{{ instance.child.age }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Health & Nutrition Session"><i class="pe-7s-plus"></i></a>
                                                     {% endif %}
                                                </div>
                                                 <div class="scroll-area-sm" style="height: 222px;">
@@ -727,7 +727,7 @@
 
                                                           <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
-                                                            {% if instance.child.age_year <= 5  %}
+                                                            {% if instance.child.age <= 5  %}
 
                                                              <div class="vertical-timeline-item vertical-timeline-element">
                                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -772,7 +772,7 @@
                                                                 </div>
 
 
-                                                            {% elif instance.child.age_year >= 7 and instance.child.age_year <= 18 %}
+                                                            {% elif instance.child.age >= 7 and instance.child.age <= 18 %}
 
                                                             <div class="vertical-timeline-item vertical-timeline-element">
                                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
