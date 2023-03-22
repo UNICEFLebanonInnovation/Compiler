@@ -1321,7 +1321,9 @@
                                         <div class="tab-content">
                                             <div class="tab-pane active show" id="tab-animated-13" role="tabpanel">
                                               <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
+                                                  {% if result %}
                                                   <a href="/MSCC/Services/Follow-Up-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Caregivers Package Data"><i class="pe-7s-pen"></i></a>
+                                                  {% endif %}
                                               </div>
                                                 <div class="scroll-area-sm" style="{% if results|length > 1 %}height: 190px;{% else %}height: 222px;{% endif %}">
                                                     <div class="scrollbar-container ps ps--active-y">
