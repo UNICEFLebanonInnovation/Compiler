@@ -106,12 +106,12 @@
         {% get_service_info services record 'Health and Nutrition' as result %}
         {% if result %}
           {% if result.service_id %}
-              <a type="button" href="/MSCC/Services/Health-Nutrition-Edit/{{ record.id }}/{{ result.child.age_month }}/{{ result.service_id }}/" tabindex="0" class="dropdown-item">
+              <a type="button" href="/MSCC/Services/Health-Nutrition-Edit/{{ record.id }}/{{ result.child.age }}/{{ result.service_id }}/" tabindex="0" class="dropdown-item">
                 <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
                 Health and Nutrition
               </a>
           {% else %}
-            <a type="button" href="/MSCC/Services/Health-Nutrition-Add/{{ record.id }}/{{ result.child.age_month }}/" tabindex="0" class="dropdown-item">
+            <a type="button" href="/MSCC/Services/Health-Nutrition-Add/{{ record.id }}/{{ result.child.age }}/" tabindex="0" class="dropdown-item">
               <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-add-circle"> </i></button>
               Health and Nutrition
             </a>
