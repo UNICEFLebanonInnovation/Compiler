@@ -64,7 +64,8 @@ from .models import (
     GeneralQuestionnaire,
     Center,
     Outreach,
-    Bridging
+    Bridging,
+    Inclusion
 )
 from student_registration.schools.models import (
     School,
@@ -2973,6 +2974,8 @@ def search_clm_child(request):
         model = Outreach
     elif clm_type == 'Bridging':
         model = Bridging
+    elif clm_type == 'Inclusion':
+        model = Inclusion
 
     search_model = clm_type
 
