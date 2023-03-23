@@ -164,9 +164,6 @@ class InclusionForm(forms.ModelForm):
             ('other', _('Other')),
         )
     )
-    student_id = forms.CharField(widget=forms.HiddenInput, required=False)
-    enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
-
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         widget=forms.TextInput(attrs={'autocomplete': 'false'}),
@@ -399,7 +396,6 @@ class InclusionForm(forms.ModelForm):
         required=False,
         label=_('RIMS Case Number')
     )
-
     caretaker_birthday_year = forms.ChoiceField(
         label=_("Caretaker birthday year"),
         widget=forms.Select, required=True,
@@ -416,16 +412,33 @@ class InclusionForm(forms.ModelForm):
         choices=DAYS
     )
 
-
+    search_clm_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
+    )
+    student_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
+    new_registry = forms.ChoiceField(
+        label=_("First time registered Inclusion?"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(InclusionForm, self).__init__(*args, **kwargs)
-
+        display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:inclusion_add')
+        self.fields['clm_type'].initial = 'Inclusion'
+        self.fields['new_registry'].initial = 'yes'
 
         if instance:
+            display_registry = ' d-none'
             form_action = reverse('clm:inclusion_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
@@ -435,9 +448,30 @@ class InclusionForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
+                    HTML('<span>A.1</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search CLM student') + '</h4>')
+                ),
+                Div(
+                    'clm_type',
                     'student_id',
                     'enrollment_id',
+                    'partner_name',
+                    css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('search_clm_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<p>' + _(
+                        'Search by the following keywords: child first name, father name, last name, '
+                        'child number or partner internal number') + '</p>'),
+                ),
+                css_id='search_options_clm',
+                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
                 None,
@@ -447,21 +481,24 @@ class InclusionForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
+
                     HTML('<span class="badge badge-default">1</span>'),
+                    Div('new_registry', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('round', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('cadaster', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
+                    Div('cadaster', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('location', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -735,15 +772,6 @@ class InclusionForm(forms.ModelForm):
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
 
-            Fieldset(
-                None,
-                Div(
-                    HTML('<span>E</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Comments') + '</h4>')
-                ),
-                css_class='bd-callout bd-callout-warning child_data E_right_border'
-            ),
 
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),

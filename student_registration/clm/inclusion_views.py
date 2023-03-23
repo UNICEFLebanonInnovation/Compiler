@@ -63,6 +63,28 @@ class InclusionAddView(LoginRequiredMixin,
         else :
             return InclusionForm(None, instance=None, request=self.request, initial=self.get_initial())
 
+    def get_initial(self):
+            initial = super(InclusionAddView, self).get_initial()
+            data = {
+                'new_registry': self.request.GET.get('new_registry', ''),
+                'student_outreached': self.request.GET.get('student_outreached', ''),
+                'have_barcode': self.request.GET.get('have_barcode', '')
+            }
+            if self.request.GET.get('enrollment_id'):
+                instance = Inclusion.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = InclusionSerializer(instance).data
+                data['student_nationality'] = data['student_nationality_id']
+                data['learning_result'] = ''
+
+            if data:
+                data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+                data['student_outreached'] = self.request.GET.get('student_outreached', '')
+                data['have_barcode'] = self.request.GET.get('have_barcode', '')
+            initial = data
+
+            return initial
+
+
 
 class InclusionEditView(LoginRequiredMixin,
                         GroupRequiredMixin,
