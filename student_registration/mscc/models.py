@@ -956,7 +956,9 @@ class EducationService(TimeStampedModel):
          _('Was registered in non formal program and was referred to MSCC')),
         ('Was registered in non formal program but didn\'t continue',
          _('Was registered in non formal program but didn\'t continue')),
-        ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programse')),
+        ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),
+        ('Wad Registered in Formal Education but not attending',
+         _('Was Registered in Formal Education but not attending')),
         ('No', _('No')),
     )
     DROPOUT_PROGRAM = Choices(
@@ -971,10 +973,17 @@ class EducationService(TimeStampedModel):
         ('', '----------'),
         ('BLN Level 1', _('BLN Level 1')),
         ('BLN Level 2', _('BLN Level 2')),
+        ('BLN Level 2', _('BLN Level 3')),
+        ('ABLN Level 1', _('ABLN Level 1')),
+        ('ABLN Level 2', _('ABLN Level 2')),
         ('YBLN', _('YBLN')),
         ('YFNL', _('YFNL')),
+        ('CBECE Level 1', _('CBECE Level 1')),
+        ('CBECE Level 2', _('CBECE Level 2')),
         ('CBECE Level 3', _('CBECE Level 3')),
-        ('Retention Support', _('Retention Support')),
+        ('RS Grade 7', _('RS Grade 7')),
+        ('RS Grade 8', _('RS Grade 8')),
+        ('RS Grade 9', _('RS Grade 9')),
     )
     registration = models.ForeignKey(
         Registration,
@@ -1346,15 +1355,6 @@ class EducationAssessment(TimeStampedModel):
 
 class EducationProgrammeAssessment(TimeStampedModel):
 
-    PROGRAMME_TYPE = Choices(
-        ('', '----------'),
-        ('BLN Level 1', _('BLN Level 1')),
-        ('BLN Level 2', _('BLN Level 2')),
-        ('YBLN', _('YBLN')),
-        ('YFNL', _('YFNL')),
-        ('CBECE Level 3', _('CBECE Level 3')),
-        ('Retention Support', _('Retention Support')),
-    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -1366,7 +1366,6 @@ class EducationProgrammeAssessment(TimeStampedModel):
         max_length=100,
         blank=True,
         null=True,
-        choices=PROGRAMME_TYPE,
         verbose_name=_('Education Programme Type')
     )
 

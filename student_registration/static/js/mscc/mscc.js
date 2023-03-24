@@ -27,6 +27,29 @@ $(document).ready(function() {
         });
     });
 
+    $('.show-view-all').click(function(e){
+        e.preventDefault();
+
+        $('#programme-body-content').empty("");
+        $('#programme-body-content').append("Loading...");
+        $('#programmeModal').modal('show');
+
+        $.ajax({
+            type: "GET",
+            url: $(this).attr('href'),
+            cache: false,
+            async: true,
+            dataType: 'html',
+            success: function (response) {
+                $('#programme-body-content').empty("");
+                $('#programme-body-content').append(response);
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+    });
+
     $('.attendance_month').click(function(e){
         e.preventDefault();
 

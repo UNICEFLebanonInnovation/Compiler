@@ -18,7 +18,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^export/$',
-        view=views.ExportData,
+        view=views.export_data,
         name='export'
     ),
     url(
@@ -225,5 +225,10 @@ urlpatterns = [
         'Attendance-Child/(?P<child>[\w.@+-]+)/$',
         view=attendance_views.LoadAttendanceChild.as_view(),
         name='attendance_child'
+    ),
+    url(
+        regex=r'^Services/Follow-Up-View-ALl/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.FollowUpViewAll.as_view(),
+        name='service_follow_up_view_all'
     ),
 ]
