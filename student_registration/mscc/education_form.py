@@ -466,6 +466,7 @@ class EducationServiceForm(forms.ModelForm):
         super(EducationServiceForm, self).__init__(*args, **kwargs)
 
         service_bln = get_service(registry, 'BLN')
+        service_abln = get_service(registry, 'ABLN')
         service_cbece = get_service(registry, 'CB-ECE')
         service_rs = get_service(registry, 'RS')
         service_ybln = get_service(registry, 'YBLN')
@@ -474,15 +475,24 @@ class EducationServiceForm(forms.ModelForm):
         if service_bln:
             self.fields['education_program'].choices = (
                 ('BLN Level 1', _('BLN Level 1')),
-                ('BLN Level 2', _('BLN Level 2'))
+                ('BLN Level 2', _('BLN Level 2')),
+                ('BLN Level 3', _('BLN Level 3')),
             )
         if service_cbece:
             self.fields['education_program'].choices = (
+                ('CBECE Level 2', _('CBECE Level 2')),
                 ('CBECE Level 3', _('CBECE Level 3')),
+            )
+        if service_abln:
+            self.fields['education_program'].choices = (
+                ('ABLN Level 1', _('ABLN Level 1')),
+                ('ABLN Level 2', _('ABLN Level 2')),
             )
         if service_rs:
             self.fields['education_program'].choices = (
-                ('Retention Support', _('Retention Support')),
+                ('RS Grade 7', _('RS Grade 7')),
+                ('RS Grade 8', _('RS Grade 8')),
+                ('RS Grade 9', _('RS Grade 9')),
             )
         if service_ybln:
             self.fields['education_program'].choices = (
