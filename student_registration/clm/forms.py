@@ -1601,7 +1601,7 @@ class BLNForm(CommonForm):
                 self.add_error('arabic', 'This value is greater that 56')
             if english > 58:
                 self.add_error('english', 'This value is greater that 58')
-            if math > 30:
+            if math > 32:
                 self.add_error('math', 'This value is greater that 30')
             if social_emotional > 24:
                 self.add_error('social_emotional', 'This value is greater that 24')
@@ -3567,12 +3567,12 @@ class RSForm(CommonForm):
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
-            ('1', _('1')),
-            ('2', _('2')),
-            ('3', _('3')),
-            ('4', _('4')),
-            ('5', _('5')),
-            ('6', _('6')),
+            # ('1', _('1')),
+            # ('2', _('2')),
+            # ('3', _('3')),
+            # ('4', _('4')),
+            # ('5', _('5')),
+            # ('6', _('6')),
             ('7', _('7')),
             ('8', _('8')),
             ('9', _('9')),
@@ -4347,11 +4347,11 @@ class RSForm(CommonForm):
 
         # grades Max Value validation
         if grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
-            if arabic > 60:
+            if arabic > 20:
                 self.add_error('arabic', 'This value is greater that 60')
-            if english > 40:
+            if english > 20:
                 self.add_error('english', 'This value is greater that 40')
-            if math > 60:
+            if math > 20:
                 self.add_error('math', 'This value is greater that 60')
             if biology > 20:
                 self.add_error('biology', 'This value is greater that 20')
@@ -4485,8 +4485,8 @@ class RSForm(CommonForm):
 class CBECEForm(CommonForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
-        # ('level_two', _('Level two')),
-        ('level_three', _('Level three'))
+        ('level_two', _('Level two')),
+        # ('level_three', _('Level three'))
     )
 
     YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 8, Person.CURRENT_YEAR - 3)))
@@ -4592,7 +4592,6 @@ class CBECEForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-
 
     have_labour_single_selection = forms.ChoiceField(
         label=_('Does the child participate in work?'),
@@ -5773,34 +5772,30 @@ class CBECEForm(CommonForm):
 
         #grades Max Value validation
         registration_level = cleaned_data.get("registration_level")
-        arabic = cleaned_data.get("arabic")
-        english = cleaned_data.get("english")
+        language = cleaned_data.get("language")
         math = cleaned_data.get("math")
+        science = cleaned_data.get("science")
         social_emotional = cleaned_data.get("social_emotional")
         psychomotor = cleaned_data.get("psychomotor")
-        science = cleaned_data.get("science")
         artistic = cleaned_data.get("artistic")
 
+
         if registration_level == 'level_two':
-            if arabic > 48:
+            if language > 66:
                 self.add_error('arabic', 'This value is greater that 48')
-            if english > 48:
-                self.add_error('english', 'This value is greater that 48')
-            if math > 44:
+            if math > 48:
                 self.add_error('math', 'This value is greater that 44')
-            if social_emotional > 40:
-                self.add_error('social_emotional', 'This value is greater that 40')
-            if psychomotor > 34:
-                self.add_error('psychomotor', 'This value is greater that 34')
             if science > 36:
                 self.add_error('science', 'This value is greater that 36')
-            if artistic > 12:
+            if social_emotional > 34:
+                self.add_error('social_emotional', 'This value is greater that 40')
+            if psychomotor > 40:
+                self.add_error('psychomotor', 'This value is greater that 34')
+            if artistic > 14:
                 self.add_error('artistic', 'This value is greater that 12')
         else:
-            if arabic > 74:
-                self.add_error('arabic', 'This value is greater that 74')
-            if english > 74:
-                self.add_error('english', 'This value is greater that 74')
+            if language > 74:
+                self.add_error('language', 'This value is greater that 74')
             if math > 50:
                 self.add_error('math', 'This value is greater that 50')
             if social_emotional > 40:
@@ -10518,7 +10513,7 @@ class BLNAssessmentForm(forms.ModelForm):
                     self.add_error('arabic', 'This value is greater that 56')
                 if english > 58:
                     self.add_error('english', 'This value is greater that 58')
-                if math > 30:
+                if math > 32:
                     self.add_error('math', 'This value is greater that 30')
                 if social_emotional > 24:
                     self.add_error('social_emotional', 'This value is greater that 24')
@@ -11419,7 +11414,7 @@ class CBECEAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
         ('level_two', _('Level two')),
-        ('level_three', _('Level three'))
+        # ('level_three', _('Level three'))
     )
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
@@ -12249,27 +12244,29 @@ class CBECEAssessmentForm(forms.ModelForm):
 
             # grades Max Value validation
             registration_level = cleaned_data.get("registration_level")
+            language = cleaned_data.get("language")
+            math = cleaned_data.get("math")
+            science = cleaned_data.get("science")
+            social_emotional = cleaned_data.get("social_emotional")
+            psychomotor = cleaned_data.get("psychomotor")
+            artistic = cleaned_data.get("artistic")
 
             if registration_level == 'level_two':
-                if arabic > 48:
+                if language > 66:
                     self.add_error('arabic', 'This value is greater that 48')
-                if english > 48:
-                    self.add_error('english', 'This value is greater that 48')
-                if math > 44:
+                if math > 48:
                     self.add_error('math', 'This value is greater that 44')
-                if social_emotional > 40:
-                    self.add_error('social_emotional', 'This value is greater that 40')
-                if psychomotor > 34:
-                    self.add_error('psychomotor', 'This value is greater that 34')
                 if science > 36:
                     self.add_error('science', 'This value is greater that 36')
-                if artistic > 12:
+                if social_emotional > 34:
+                    self.add_error('social_emotional', 'This value is greater that 40')
+                if psychomotor > 40:
+                    self.add_error('psychomotor', 'This value is greater that 34')
+                if artistic > 14:
                     self.add_error('artistic', 'This value is greater that 12')
             else:
-                if arabic > 74:
-                    self.add_error('arabic', 'This value is greater that 74')
-                if english > 74:
-                    self.add_error('english', 'This value is greater that 74')
+                if language > 74:
+                    self.add_error('language', 'This value is greater that 74')
                 if math > 50:
                     self.add_error('math', 'This value is greater that 50')
                 if social_emotional > 40:
@@ -13363,12 +13360,12 @@ class RSAssessmentForm(forms.ModelForm):
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
-            ('1', _('1')),
-            ('2', _('2')),
-            ('3', _('3')),
-            ('4', _('4')),
-            ('5', _('5')),
-            ('6', _('6')),
+            # ('1', _('1')),
+            # ('2', _('2')),
+            # ('3', _('3')),
+            # ('4', _('4')),
+            # ('5', _('5')),
+            # ('6', _('6')),
             ('7', _('7')),
             ('8', _('8')),
             ('9', _('9')),
@@ -13807,11 +13804,11 @@ class RSAssessmentForm(forms.ModelForm):
             # grades Max Value validation
             if grade_registration == '7' or grade_registration == '8' or grade_registration == '9':
 
-                if arabic > 60:
+                if arabic > 20:
                     self.add_error('arabic', 'This value is greater that 60')
-                if english > 40:
+                if english > 20:
                     self.add_error('english', 'This value is greater that 40')
-                if math > 60:
+                if math > 20:
                     self.add_error('math', 'This value is greater that 60')
                 if biology > 20:
                     self.add_error('biology', 'This value is greater that 20')
