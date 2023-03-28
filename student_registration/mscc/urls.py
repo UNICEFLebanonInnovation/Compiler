@@ -231,4 +231,15 @@ urlpatterns = [
         view=services_view.FollowUpViewAll.as_view(),
         name='service_follow_up_view_all'
     ),
+    url(
+        regex=r'^Services/Education-Grading-Add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
+        view=education_view.EducationGradingFormView.as_view(),
+        name='service_education_grading_add'
+    ),
+    url(
+        regex=r'^Services/Education-Grading-Edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.EducationGradingFormView.as_view(),
+        name='service_education_grading_edit'
+    ),
+
 ]
