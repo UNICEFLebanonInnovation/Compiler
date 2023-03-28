@@ -203,13 +203,13 @@ class EducationGradingFormView(LoginRequiredMixin,
                                         programme_type=programme_type,pre_post=pre_post, request=self.request)
         else:
             if instance:
-                data = to_array(EducationGradingForm.Meta.fields, EducationProgrammeAssessment.objects.get(id=instance))
+                grade_data = EducationProgrammeAssessment.objects.get(id=instance)
                 if pre_post:
                     p_test = {}
-                    if pre_post == 'pre' and 'pre_test' in data:
-                        p_test = data['pre_test']
-                    if pre_post == 'post' and 'post_test' in data:
-                        p_test = data['post_test']
+                    if pre_post == 'pre':
+                        p_test = grade_data.pre_test
+                    if pre_post == 'post':
+                        p_test = grade_data.post_test
                     if p_test:
                         if "arabic_grade" in p_test:
                             data['arabic_grade'] = p_test["arabic_grade"]

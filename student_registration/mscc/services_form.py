@@ -24,6 +24,7 @@ from .models import (
     YouthKitService,
     FollowUpService,
     YouthAssessment,
+    YouthReferral,
     YES_NO
 )
 
@@ -1935,7 +1936,6 @@ class YouthAssessmentForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
-        update_service(registry_id=registry, service_name='Caregivers Package', service_id=instance.id)
 
         return instance
 
@@ -1970,5 +1970,79 @@ class YouthAssessmentForm(forms.ModelForm):
             'future_path',
             'participate_community_initiatives',
             'attendance'
+        )
+
+
+class YouthReferralForm(forms.ModelForm):
+
+    refer_tvet = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Did the partner refer youth who are above 18 to the TVET centers')
+    )
+    refer_innovation = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Did the partner refer youth who are above 18 to the  innovation hubs GIL?')
+    )
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(YouthReferralForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_youth_referral_add', kwargs={'registry': registry})
+        if instance:
+            form_action = reverse('mscc:service_youth_referral_edit', kwargs={'registry': registry, 'pk': instance})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('refer_tvet', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('refer_innovation', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                ),
+                css_id='step-1',
+            )
+        )
+
+    def save(self, request=None, instance=None, registry=None):
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = YouthReferral.objects.create(registration_id=registry)
+        else:
+            instance = YouthReferral.objects.get(id=instance)
+
+        instance.refer_tvet = validated_data.get('refer_tvet')
+        instance.refer_innovation = validated_data.get('refer_innovation')
+        instance.modified_by = request.user
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = YouthReferral
+        fields = (
+            'refer_tvet',
+            'refer_innovation',
         )
 

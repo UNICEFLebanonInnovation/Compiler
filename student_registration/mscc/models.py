@@ -1846,3 +1846,30 @@ class YouthAssessment(TimeStampedModel):
         verbose_name = "Youth Assessment"
         verbose_name_plural = "Youth Assessments"
 
+
+class YouthReferral(TimeStampedModel):
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    refer_tvet = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the partner refer youth who are above 18 to the TVET centers')
+    )
+    refer_innovation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the partner refer youth who are above 18 to the  innovation hubs GIL?')
+    )
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Youth Referral"
+        verbose_name_plural = "Youth Referrals"
+
