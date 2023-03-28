@@ -189,21 +189,27 @@ class EducationGradingFormView(LoginRequiredMixin,
             kwargs['form'] = self.get_form()
             kwargs['registry'] = self.kwargs['registry']
             kwargs['programme_type'] = self.kwargs['programme_type']
+            kwargs['pre_post'] = self.kwargs['pre_post'] if 'pre_post' in self.kwargs else None
         return super(EducationGradingFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         programme_type = self.kwargs['programme_type']
+        pre_post = self.kwargs['pre_post'] if 'pre_post' in self.kwargs else None
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         data = {}
         if self.request.method == "POST":
-            return EducationGradingForm(self.request.POST, instance=instance, registry=registry, programme_type=programme_type,
-                                           request=self.request)
+            return EducationGradingForm(self.request.POST, instance=instance, registry=registry,
+                                        programme_type=programme_type, request=self.request)
         else:
             if instance:
                 data = to_array(EducationGradingForm.Meta.fields, EducationProgrammeAssessment.objects.get(id=instance))
-                if 'pre_test' in data:
-                    p_test = data['pre_test']
+                if pre_post:
+                    p_test = {}
+                    if pre_post == 'pre' and 'pre_test' in data:
+                        p_test = data['pre_test']
+                    if pre_post == 'post' and 'post_test' in data:
+                        p_test = data['post_test']
                     if p_test:
                         if "arabic_grade" in p_test:
                             data['arabic_grade'] = p_test["arabic_grade"]
@@ -225,12 +231,14 @@ class EducationGradingFormView(LoginRequiredMixin,
                             data['artistic_grade'] = p_test["artistic_grade"]
                         if "psychomotor_grade" in p_test:
                             data['psychomotor_grade'] = p_test["psychomotor_grade"]
-                return EducationGradingForm(data, registry=registry, programme_type=programme_type, instance=instance, request=self.request)
-            return EducationGradingForm(registry=registry, programme_type=programme_type,instance=instance, request=self.request)
+                return EducationGradingForm(data, registry=registry, programme_type=programme_type,pre_post=pre_post, instance=instance, request=self.request)
+            return EducationGradingForm(registry=registry, programme_type=programme_type, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
         programme_type = self.kwargs['programme_type']
-        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        form.save(request=self.request, registry=registry,  programme_type=programme_type,instance=instance)
+        pre_post = self.kwargs['pre_post'] if 'pre_post' in self.kwargs else None
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None 
+        form.save(request=self.request, registry=registry,  programme_type=programme_type, pre_post=pre_post,
+                  instance=instance)
         return super(EducationGradingFormView, self).form_valid(form)

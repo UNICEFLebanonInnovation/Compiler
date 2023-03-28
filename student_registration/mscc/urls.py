@@ -237,7 +237,7 @@ urlpatterns = [
         name='service_education_grading_add'
     ),
     url(
-        regex=r'^Services/Education-Grading-Edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Services/Education-Grading-Edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationGradingFormView.as_view(),
         name='service_education_grading_edit'
     ),

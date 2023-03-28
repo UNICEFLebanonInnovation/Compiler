@@ -801,11 +801,13 @@ class EducationGradingForm(forms.ModelForm):
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
     pre_test = forms.CharField(max_length=1024, widget=forms.HiddenInput, required=False)
+    post_test = forms.CharField(max_length=1024, widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         programme_type = kwargs.pop('programme_type', None)
+        pre_post = kwargs.pop('pre_post', None)
         instance = kwargs.pop('instance', None)
 
         super(EducationGradingForm, self).__init__(*args, **kwargs)
@@ -814,7 +816,7 @@ class EducationGradingForm(forms.ModelForm):
                                   kwargs={'registry': registry, 'programme_type': programme_type})
         if instance:
             form_action = reverse('mscc:service_education_grading_edit',
-                                  kwargs={'registry': registry, 'programme_type': programme_type, 'pk': instance})
+                                  kwargs={'registry': registry, 'programme_type': programme_type,'pre_post': pre_post, 'pk': instance})
 
         if programme_type == "BLN Level 1":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development Grade', 48)
@@ -1065,16 +1067,19 @@ class EducationGradingForm(forms.ModelForm):
                 ),
             )
 
-    def save(self, request=None, instance=None, registry=None, programme_type= None):
-
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
         validated_data = request.POST
-
         if not instance:
             instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
+            instance.pre_test = request.POST
         else:
             instance = EducationProgrammeAssessment.objects.get(id=instance)
+            if pre_post == "pre":
+                instance.pre_test = request.POST
+            if pre_post == "post":
+                instance.post_test = request.POST
+
         instance.programme_type = programme_type
-        instance.pre_test = request.POST
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -1085,6 +1090,7 @@ class EducationGradingForm(forms.ModelForm):
         model = EducationProgrammeAssessment
         fields = (
             'pre_test',
+            'post_test',
             'programme_type',
         )
 
@@ -1092,4 +1098,5 @@ class EducationGradingForm(forms.ModelForm):
 def field_init(field, label_name, max_number):
     field.label = label_name +' / '+ str(max_number)
     field.widget.attrs['max'] = max_number
+    field.required = True
 
