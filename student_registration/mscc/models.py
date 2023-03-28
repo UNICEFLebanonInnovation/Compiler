@@ -973,7 +973,7 @@ class EducationService(TimeStampedModel):
         ('', '----------'),
         ('BLN Level 1', _('BLN Level 1')),
         ('BLN Level 2', _('BLN Level 2')),
-        ('BLN Level 2', _('BLN Level 3')),
+        ('BLN Level 3', _('BLN Level 3')),
         ('ABLN Level 1', _('ABLN Level 1')),
         ('ABLN Level 2', _('ABLN Level 2')),
         ('YBLN', _('YBLN')),

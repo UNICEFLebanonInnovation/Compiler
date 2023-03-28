@@ -15,7 +15,7 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 
-from .models import EducationAssessment, Registration
+from .models import EducationAssessment, Registration, EducationProgrammeAssessment
 from .education_form import *
 from .utils import *
 
@@ -170,3 +170,67 @@ class EducationRSServiceFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry, instance=instance)
         return super(EducationRSServiceFormView, self).form_valid(form)
+
+
+class EducationGradingFormView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  FormView):
+    template_name = 'mscc/service_education_grading_form.html'
+    form_class = EducationGradingForm
+    success_url = ''
+    group_required = [u"MSCC"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+            kwargs['registry'] = self.kwargs['registry']
+            kwargs['programme_type'] = self.kwargs['programme_type']
+        return super(EducationGradingFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        programme_type = self.kwargs['programme_type']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
+        if self.request.method == "POST":
+            return EducationGradingForm(self.request.POST, instance=instance, registry=registry, programme_type=programme_type,
+                                           request=self.request)
+        else:
+            if instance:
+                data = to_array(EducationGradingForm.Meta.fields, EducationProgrammeAssessment.objects.get(id=instance))
+                if 'pre_test' in data:
+                    p_test = data['pre_test']
+                    if p_test:
+                        if "arabic_grade" in p_test:
+                            data['arabic_grade'] = p_test["arabic_grade"]
+                        if "language_grade" in p_test:
+                            data['language_grade'] = p_test["language_grade"]
+                        if "math_grade" in p_test:
+                            data['math_grade'] = p_test["math_grade"]
+                        if "science_grade" in p_test:
+                            data['science_grade'] = p_test["science_grade"]
+                        if "biology_grade" in p_test:
+                            data['biology_grade'] = p_test["biology_grade"]
+                        if "chemistry_grade" in p_test:
+                            data['chemistry_grade'] = p_test["chemistry_grade"]
+                        if "physics_grade" in p_test:
+                            data['physics_grade'] = p_test["physics_grade"]
+                        if "social_emotional_grade" in p_test:
+                            data['social_emotional_grade'] = p_test["social_emotional_grade"]
+                        if "artistic_grade" in p_test:
+                            data['artistic_grade'] = p_test["artistic_grade"]
+                        if "psychomotor_grade" in p_test:
+                            data['psychomotor_grade'] = p_test["psychomotor_grade"]
+                return EducationGradingForm(data, registry=registry, programme_type=programme_type, instance=instance, request=self.request)
+            return EducationGradingForm(registry=registry, programme_type=programme_type,instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        programme_type = self.kwargs['programme_type']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry,  programme_type=programme_type,instance=instance)
+        return super(EducationGradingFormView, self).form_valid(form)

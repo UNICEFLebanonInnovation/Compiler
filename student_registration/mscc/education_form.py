@@ -19,6 +19,7 @@ from .models import (
     EducationAssessment,
     EducationService,
     EducationRSService,
+    EducationProgrammeAssessment,
     YES_NO
 )
 from student_registration.schools.models import (
@@ -474,7 +475,7 @@ class EducationServiceForm(forms.ModelForm):
 
         if service_bln:
             self.fields['education_program'].choices = (
-                ('BLN Level 1', _('BLN Level 1')),
+                # ('BLN Level 1', _('BLN Level 1')),
                 ('BLN Level 2', _('BLN Level 2')),
                 ('BLN Level 3', _('BLN Level 3')),
             )
@@ -733,3 +734,362 @@ class EducationRSServiceForm(forms.ModelForm):
             'grade_level',
             'support_needed',
         )
+
+
+class EducationGradingForm(forms.ModelForm):
+
+    arabic_grade = forms.IntegerField(
+        label=_('Arabic Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    language_grade = forms.IntegerField(
+        label=_('Foreign Language Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    math_grade = forms.IntegerField(
+        label=_('Mathematics Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    science_grade = forms.IntegerField(
+        label=_('Sciences Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    biology_grade = forms.IntegerField(
+        label=_('Biology Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    chemistry_grade = forms.IntegerField(
+        label=_('Chemistry Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    physics_grade = forms.IntegerField(
+        label=_('Physics Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    social_emotional_grade = forms.IntegerField(
+        label=_('Social-Emotional Development Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    artistic_grade = forms.IntegerField(
+        label=_('Artistic Development Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    psychomotor_grade = forms.IntegerField(
+        label=_('Psychomotor Development Grade'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    pre_test = forms.CharField(max_length=1024, widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        programme_type = kwargs.pop('programme_type', None)
+        instance = kwargs.pop('instance', None)
+
+        super(EducationGradingForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_education_grading_add',
+                                  kwargs={'registry': registry, 'programme_type': programme_type})
+        if instance:
+            form_action = reverse('mscc:service_education_grading_edit',
+                                  kwargs={'registry': registry, 'programme_type': programme_type, 'pk': instance})
+
+        if programme_type == "BLN Level 1":
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development Grade', 48)
+            field_init(self.fields['language_grade'], 'Foreign Language Development Grade', 40)
+            field_init(self.fields['math_grade'], 'Mathematics Grade', 18)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development Grade', 24)
+            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 10)
+            self.fields['science_grade'].widget = self.fields['science_grade'].hidden_widget()
+            self.fields['biology_grade'].widget = self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].widget = self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].widget = self.fields['physics_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].widget = self.fields['psychomotor_grade'].hidden_widget()
+
+        if programme_type == "BLN Level 2":
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development Grade', 56)
+            field_init(self.fields['language_grade'], 'Foreign Language Development Grade', 58)
+            field_init(self.fields['math_grade'], 'Mathematics Grade', 32)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development Grade', 24)
+            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 10)
+            self.fields['science_grade'].hidden_widget()
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].hidden_widget()
+
+        if programme_type == "BLN Level 3":
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development Grade', 60)
+            field_init(self.fields['language_grade'], 'Foreign Language Development Grade', 62)
+            field_init(self.fields['math_grade'], 'Mathematics Grade', 32)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development Grade', 24)
+            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 10)
+            self.fields['science_grade'].hidden_widget()
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].hidden_widget()
+
+        if programme_type == "ABLN Level 1":
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development Grade', 46)
+            field_init(self.fields['math_grade'], 'Mathematics Grade', 20)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development Grade', 24)
+            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 10)
+            self.fields['language_grade'].hidden_widget()
+            self.fields['science_grade'].hidden_widget()
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].hidden_widget()
+
+        if programme_type == "ABLN Level 2":
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development Grade', 56)
+            field_init(self.fields['math_grade'], 'Mathematics Grade', 36)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development Grade', 24)
+            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 10)
+            self.fields['language_grade'].hidden_widget()
+            self.fields['science_grade'].hidden_widget()
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].hidden_widget()
+
+        if programme_type == "CBECE Level 2":
+            field_init(self.fields['language_grade'], 'Language Development Grade', 66)
+            field_init(self.fields['math_grade'], 'Cognitive Development - Mathematics Grade', 48)
+            field_init(self.fields['science_grade'], 'Cognitive Development - Science Grade', 36)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development Grade', 34)
+            field_init(self.fields['psychomotor_grade'], 'Psychomotor Development Grade', 40)
+            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 14)
+            self.fields['arabic_grade'].hidden_widget()
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+
+        if programme_type == "CBECE Level 3":
+            field_init(self.fields['language_grade'], 'Language Development Grade', 74)
+            field_init(self.fields['math_grade'], 'Cognitive Development - Mathematics Grade', 50)
+            field_init(self.fields['science_grade'], 'Cognitive Development - Science Grade', 34)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development Grade', 40)
+            field_init(self.fields['psychomotor_grade'], 'Psychomotor Development Grade', 42)
+            field_init(self.fields['artistic_grade'], 'Artistic Development Grade', 16)
+            self.fields['arabic_grade'].hidden_widget()
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language Grade', 20)
+            field_init(self.fields['language_grade'], 'Foreign Language Grade', 20)
+            field_init(self.fields['math_grade'], 'Mathematics Grade', 20)
+            field_init(self.fields['biology_grade'], 'Biology Grade', 20)
+            field_init(self.fields['chemistry_grade'], 'Chemistry Grade', 20)
+            field_init(self.fields['physics_grade'], 'Physics Grade', 20)
+            self.fields['science_grade'].hidden_widget()
+            self.fields['social_emotional_grade'].hidden_widget()
+            self.fields['psychomotor_grade'].hidden_widget()
+            self.fields['artistic_grade'].hidden_widget()
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        if programme_type in ["BLN Level 1", "BLN Level 2", "BLN Level 3"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('social_emotional_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('artistic_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+        if programme_type in ["ABLN Level 1", "ABLN Level 2"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('social_emotional_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('artistic_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+        if programme_type in ["CBECE Level 2", "CBECE Level 3"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('science_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('social_emotional_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('psychomotor_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('artistic_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('biology_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('chemistry_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('physics_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+
+    def save(self, request=None, instance=None, registry=None, programme_type= None):
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
+        else:
+            instance = EducationProgrammeAssessment.objects.get(id=instance)
+        instance.programme_type = programme_type
+        instance.pre_test = request.POST
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = EducationProgrammeAssessment
+        fields = (
+            'pre_test',
+            'programme_type',
+        )
+
+
+def field_init(field, label_name, max_number):
+    field.label = label_name +' / '+ str(max_number)
+    field.widget.attrs['max'] = max_number
+
