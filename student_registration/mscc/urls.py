@@ -157,6 +157,16 @@ urlpatterns = [
         name='service_youth_assessment_edit'
     ),
     url(
+        regex=r'^Services/Youth-Referral-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.YouthReferralFormView.as_view(),
+        name='service_youth_referral_add'
+    ),
+    url(
+        regex=r'^Services/Youth-Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.YouthReferralFormView.as_view(),
+        name='service_youth_referral_edit'
+    ),
+    url(
         'Outreach-Child-Search/$',
         views.outreach_child_search,
         name='outreach_child_search'
