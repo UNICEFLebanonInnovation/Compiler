@@ -800,8 +800,6 @@ class EducationGradingForm(forms.ModelForm):
     )
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
-    pre_test = forms.CharField(max_length=1024, widget=forms.HiddenInput, required=False)
-    post_test = forms.CharField(max_length=1024, widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1068,9 +1066,6 @@ class EducationGradingForm(forms.ModelForm):
             )
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
-        print '-----------------------------------------'
-        print pre_post
-        print request.POST
         validated_data = request.POST
         if not instance:
             instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
@@ -1092,8 +1087,6 @@ class EducationGradingForm(forms.ModelForm):
     class Meta:
         model = EducationProgrammeAssessment
         fields = (
-            'pre_test',
-            'post_test',
             'programme_type',
         )
 
