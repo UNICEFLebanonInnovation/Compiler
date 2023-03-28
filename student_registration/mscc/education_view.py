@@ -200,7 +200,7 @@ class EducationGradingFormView(LoginRequiredMixin,
         data = {}
         if self.request.method == "POST":
             return EducationGradingForm(self.request.POST, instance=instance, registry=registry,
-                                        programme_type=programme_type, request=self.request)
+                                        programme_type=programme_type,pre_post=pre_post, request=self.request)
         else:
             if instance:
                 data = to_array(EducationGradingForm.Meta.fields, EducationProgrammeAssessment.objects.get(id=instance))
@@ -232,13 +232,13 @@ class EducationGradingFormView(LoginRequiredMixin,
                         if "psychomotor_grade" in p_test:
                             data['psychomotor_grade'] = p_test["psychomotor_grade"]
                 return EducationGradingForm(data, registry=registry, programme_type=programme_type,pre_post=pre_post, instance=instance, request=self.request)
-            return EducationGradingForm(registry=registry, programme_type=programme_type, instance=instance, request=self.request)
+            return EducationGradingForm(registry=registry, programme_type=programme_type, pre_post=pre_post, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
         programme_type = self.kwargs['programme_type']
         pre_post = self.kwargs['pre_post'] if 'pre_post' in self.kwargs else None
-        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None 
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry,  programme_type=programme_type, pre_post=pre_post,
                   instance=instance)
         return super(EducationGradingFormView, self).form_valid(form)

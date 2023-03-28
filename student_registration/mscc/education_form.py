@@ -1068,6 +1068,9 @@ class EducationGradingForm(forms.ModelForm):
             )
 
     def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        print '-----------------------------------------'
+        print pre_post
+        print request.POST
         validated_data = request.POST
         if not instance:
             instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
