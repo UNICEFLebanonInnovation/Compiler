@@ -25,7 +25,7 @@
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">{{ result1.education_program }}</h5>
+                                                    <h5 class="menu-header-title">{{ result1.education_program }} - Assessment</h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
                                                         <!--<b class="text-info">21 </b>-->
@@ -37,13 +37,13 @@
                                         <ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link mb-2 mr-2 active show" id="tab-c-4a" data-toggle="tab" href="#tab-animated-4a" aria-selected="true">
-                                                  <span>Diagnostic Assessment / Pre-test</span>
+                                                  <span>Diagnostic / Pre-test</span>
                                                 </a>
                                             </li>
 
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-5" data-toggle="tab" href="#tab-animated-5">
-                                                    <span>Education Assessment / Post-test</span>
+                                                    <span>Education / Post-test</span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
@@ -253,6 +253,10 @@
                             </div>
 {% endif %}
 
+{% service_data 'EducationService' instance as result1 %}
+{% have_service_category 'Education' instance as result2 %}
+
+  {% if result1 and result2 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
@@ -268,7 +272,7 @@
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">{{ result1.education_program }}</h5>
+                                                    <h5 class="menu-header-title">{{ result1.education_program }} - Garding</h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
                                                         <!--<b class="text-info">21 </b>-->
@@ -984,7 +988,7 @@
                                     </div>
                                 </div>
                             </div>
-
+{% endif %}
 
   <!--RS-->
 {% get_service instance 'RS' as result %}
@@ -2363,7 +2367,7 @@
                                         <div class="tab-content">
 
                                             <div class="tab-pane active show" id="tab-animated-25" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 300px;">
+                                                <div class="scroll-area-sm" style="height: 222px;">
                                                        <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                           {% if result %}
                                                               <a href="/MSCC/Services/Youth-Assessment-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Assessment Data"><i class="pe-7s-pen"></i></a>
@@ -2460,7 +2464,7 @@
                                             </div>
                                         </div>
                                             <div class="tab-pane" id="tab-animated-28" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 300px;">
+                                                <div class="scroll-area-sm" style="height: 222px;">
 
                                                   <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                           {% if result1 %}

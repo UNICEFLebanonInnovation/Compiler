@@ -1811,7 +1811,7 @@ class YouthAssessment(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent compelete the YFS course?')
+        verbose_name=_('Did the adolescent complete the YFS course?')
     )
     training_material = models.CharField(
         max_length=50,
