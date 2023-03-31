@@ -618,6 +618,14 @@ class Teacher(Person):
         ('french', _('French'))
     )
     GRADE_LEVEL = Choices(
+        ('Grade 1', _('Grade 1')),
+        ('Grade 2', _('Grade 2')),
+        ('Grade 3', _('Grade 3')),
+        ('Grade 4', _('Grade 4')),
+        ('Grade 5', _('Grade 5')),
+        ('Grade 6', _('Grade 6')),
+    )
+    TEACHER_ASSIGNMENT = Choices(
         ('full_time', _('Full time')),
         ('part_time_mix_private', _('Part time, Mix private')),
         ('part_time_sbp_only', _('Part time, SBP only')),
@@ -663,15 +671,17 @@ class Teacher(Person):
         null=True,
         verbose_name=_('Grade level')
     )
-    training = models.ForeignKey(
-        Training,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Topics of teacher training')
+    teacher_assignment = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=TEACHER_ASSIGNMENT,
+        verbose_name=_('Teacher Assignment')
     )
     trainings = models.ManyToManyField(
         Training,
-        blank=True
+        blank=True,
+        verbose_name=_('Topics of teacher training')
     )
     training_sessions_attended = models.IntegerField(
         blank=True,
@@ -685,6 +695,10 @@ class Teacher(Person):
         null=True,
         choices=YES_NO,
         verbose_name=_('Extra coaching')
+    )
+    extra_coaching_specify = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Please specify')
     )
     attach_short_description_1 = models.CharField(
         max_length=255,

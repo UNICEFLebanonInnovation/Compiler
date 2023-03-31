@@ -604,8 +604,9 @@ class MainAttendanceCreateView(LoginRequiredMixin, CreateView):
                 school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
             if school > 0 and registration_level != '':
-                queryset = Bridging.objects.filter(partner=self.request.user.partner_id,
-                                                   round__current_year=True,
+                queryset = Bridging.objects.filter(
+                    partner=self.request.user.partner_id,
+                                                   round__current_round_bridging=True,
                                                    school=school,
                                                    registration_level=registration_level)
                 queryset = queryset.order_by('-id')

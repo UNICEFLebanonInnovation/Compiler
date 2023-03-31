@@ -475,8 +475,6 @@ class School(TimeStampedModel):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
 
 
 class EducationLevel(models.Model):
