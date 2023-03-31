@@ -2058,6 +2058,12 @@ class Bridging(CLM):
         choices=YES_NO,
         verbose_name=_('Does the child participate in work?')
     )
+    consent_parents = models.FileField(
+        upload_to='uploads/student',
+        blank=True,
+        null=True,
+        verbose_name=_('Consent from parents'),
+    )
     def calculate_sore(self, stage):
         keys = [
             'Bridging_ASSESSMENT/arabic',

@@ -57,8 +57,10 @@ from .serializers import (
     CBECE_FCSerializer,
     GeneralQuestionnaireSerializer,
     OutreachSerializer,
-    BridgingSerializer
+    BridgingSerializer,
 )
+
+from django.forms.widgets import ClearableFileInput
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
@@ -119,6 +121,8 @@ REGISTRATION_LEVEL = (
 
 )
 
+class CustomClearableFileInput(ClearableFileInput):
+    template_name = 'students/clearable_file_input.html'
 
 class CommonForm(forms.ModelForm):
 
@@ -7378,6 +7382,11 @@ class BridgingForm(CommonForm):
         required=True, to_field_name='id',
         # initial=0
     )
+    consent_parents = forms.FileField(
+        label=_("Consent from parents"),
+        required=False,
+        widget=CustomClearableFileInput
+    )
     child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -7827,22 +7836,22 @@ class BridgingForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default" id="span_arabic">1</span>'),
-                    Div('arabic', css_class='col-md-2'),
+                    Div('arabic', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default" id="span_english">2</span>'),
-                    Div('english', css_class='col-md-2'),
+                    Div('english', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default" id="span_french">3</span>'),
-                    Div('french', css_class='col-md-2'),
+                    Div('french', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default" id="span_math">4</span>'),
-                    Div('math', css_class='col-md-2'),
+                    Div('math', css_class='col-md-3'),
                     css_class='row',
                 ),
 
@@ -7858,6 +7867,21 @@ class BridgingForm(CommonForm):
                 #     css_class='row',
                 # ),
                 css_class='bd-callout bd-callout-warning E_right_border'
+            ),
+
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>F</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Consent') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('consent_parents', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning F_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -8077,13 +8101,12 @@ class BridgingForm(CommonForm):
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
         instance.save()
+        instance.consent_parents = request.FILES.get('consent_parents', False)
         instance.pre_test = {
             "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
             "Bridging_ASSESSMENT/english": request.POST.get('english'),
             "Bridging_ASSESSMENT/french": request.POST.get('french'),
-            "Bridging_ASSESSMENT/math": request.POST.get('math'),
-            # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
-            # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+            "Bridging_ASSESSMENT/math": request.POST.get('math')
         }
         instance.save()
 
@@ -8152,7 +8175,8 @@ class BridgingForm(CommonForm):
             'other_caregiver_relationship',
             'labour_weekly_income',
             'source_of_transportation',
-            'student_p_code'
+            'student_p_code',
+            'consent_parents'
         )
 
     class Media:
