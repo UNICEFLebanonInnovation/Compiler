@@ -41,6 +41,7 @@ class SchoolSerializer(serializers.ModelSerializer):
             'school_digital_capacity',
             'is_first_shift',
             'weekend',
+            'working_days',
             'academic_year_start',
             'academic_year_end',
             'owner',

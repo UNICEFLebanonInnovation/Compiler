@@ -52,6 +52,16 @@ class School(TimeStampedModel):
         ('yes', _("Yes")),
         ('no', _("No")),
     )
+    DAYS_OF_THE_WEEK = Choices(
+        ('Monday', _('Monday')),
+        ('Tuesday', _('Tuesday')),
+        ('Wednesday', _('Wednesday')),
+        ('Thursday', _('Thursday')),
+        ('Friday', _('Friday')),
+        ('Saturday', _('Saturday')),
+        ('Sunday', _('Friday')),
+    )
+
     number = models.CharField(
         max_length=45,
         unique=True,
@@ -195,6 +205,17 @@ class School(TimeStampedModel):
             ('Saturday', _('Saturday')),
         ),
         verbose_name=_('School weekends')
+    )
+    working_days = ArrayField(
+        models.CharField(
+            choices=DAYS_OF_THE_WEEK,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Working Days')
     )
 
     academic_year_start = models.DateField(

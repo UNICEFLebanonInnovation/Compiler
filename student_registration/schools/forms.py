@@ -3313,11 +3313,11 @@ class SchoolForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=School.YES_NO
     )
-    weekend = forms.ChoiceField(
-        label=_("School weekends"),
-        widget=forms.Select, required=True,
-        choices=(('Friday', _("Friday")), ('Saturday', _("Saturday"))),
-        initial='no'
+    working_days = forms.MultipleChoiceField(
+        label=_('Please indicate modality'),
+        choices=School.DAYS_OF_THE_WEEK,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     academic_year_start = forms.DateField(
         label=_("School year start date"),
@@ -3452,7 +3452,7 @@ class SchoolForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('is_first_shift', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('weekend', css_class='col-md-3'),
+                    Div('working_days', css_class='col-md-2  multiple-checbkoxes'),
                     css_class='row',
                 ),
                 Div(
@@ -3533,7 +3533,7 @@ class SchoolForm(forms.ModelForm):
             'internet_available',
             'school_digital_capacity',
             'is_first_shift',
-            'weekend',
+            'working_days',
             'academic_year_start',
             'academic_year_end',
         )
