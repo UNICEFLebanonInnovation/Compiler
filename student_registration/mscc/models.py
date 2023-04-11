@@ -1362,6 +1362,7 @@ class EducationProgrammeAssessment(TimeStampedModel):
     )
     pre_test = JSONField(blank=True, null=True)
     post_test = JSONField(blank=True, null=True)
+    school_test = JSONField(blank=True, null=True)
     programme_type = models.CharField(
         max_length=100,
         blank=True,

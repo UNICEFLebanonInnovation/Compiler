@@ -4,18 +4,8 @@ from __future__ import absolute_import, unicode_literals
 import json
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-
-from rest_framework import status
-from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
-from django_filters.views import FilterView
-from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
-from django_tables2.export.views import ExportMixin
-
-
-from .models import EducationAssessment, Registration, EducationProgrammeAssessment
 from .education_form import *
 from .utils import *
 
@@ -204,33 +194,10 @@ class EducationGradingFormView(LoginRequiredMixin,
         else:
             if instance:
                 grade_data = EducationProgrammeAssessment.objects.get(id=instance)
-                if pre_post:
-                    p_test = {}
-                    if pre_post == 'pre':
-                        p_test = grade_data.pre_test
-                    if pre_post == 'post':
-                        p_test = grade_data.post_test
-                    if p_test:
-                        if "arabic_grade" in p_test:
-                            data['arabic_grade'] = p_test["arabic_grade"]
-                        if "language_grade" in p_test:
-                            data['language_grade'] = p_test["language_grade"]
-                        if "math_grade" in p_test:
-                            data['math_grade'] = p_test["math_grade"]
-                        if "science_grade" in p_test:
-                            data['science_grade'] = p_test["science_grade"]
-                        if "biology_grade" in p_test:
-                            data['biology_grade'] = p_test["biology_grade"]
-                        if "chemistry_grade" in p_test:
-                            data['chemistry_grade'] = p_test["chemistry_grade"]
-                        if "physics_grade" in p_test:
-                            data['physics_grade'] = p_test["physics_grade"]
-                        if "social_emotional_grade" in p_test:
-                            data['social_emotional_grade'] = p_test["social_emotional_grade"]
-                        if "artistic_grade" in p_test:
-                            data['artistic_grade'] = p_test["artistic_grade"]
-                        if "psychomotor_grade" in p_test:
-                            data['psychomotor_grade'] = p_test["psychomotor_grade"]
+                if pre_post == 'pre':
+                    data = grade_data.pre_test
+                if pre_post == 'post':
+                    data = grade_data.post_test
                 return EducationGradingForm(data, registry=registry, programme_type=programme_type,pre_post=pre_post, instance=instance, request=self.request)
             return EducationGradingForm(registry=registry, programme_type=programme_type, pre_post=pre_post, instance=instance, request=self.request)
 
@@ -242,3 +209,39 @@ class EducationGradingFormView(LoginRequiredMixin,
         form.save(request=self.request, registry=registry,  programme_type=programme_type, pre_post=pre_post,
                   instance=instance)
         return super(EducationGradingFormView, self).form_valid(form)
+
+
+class EducationSchoolGradingFormView(LoginRequiredMixin,
+                                     GroupRequiredMixin,
+                                     FormView):
+    template_name = 'mscc/service_school_grading_form.html'
+    form_class = EducationSchoolGradingForm
+    success_url = ''
+    group_required = [u"MSCC"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+            kwargs['registry'] = self.kwargs['registry']
+        return super(EducationSchoolGradingFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        if self.request.method == "POST":
+            return EducationSchoolGradingForm(self.request.POST, instance=instance, registry=registry,
+                                              request=self.request)
+        else:
+            grade_data = EducationProgrammeAssessment.objects.get(id=instance)
+            data = grade_data.school_test
+            return EducationSchoolGradingForm(data, registry=registry, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, instance=instance)
+        return super(EducationSchoolGradingFormView, self).form_valid(form)

@@ -195,3 +195,21 @@ def eligible_to_followup(registry):
         return False
     except Exception as ex:
         return False
+
+
+@register.simple_tag
+def grading_improvement(instance, field):
+    if not instance:
+        return 0
+    if not instance.pre_test or not instance.post_test:
+        return 0
+    pre_value = instance.pre_test[field] if field in instance.pre_test else 0
+    post_value = instance.post_test[field] if field in instance.post_test else 0
+    if pre_value and post_value:
+        try:
+            return '{}{}'.format(
+                round(((float(post_value) - float(pre_value)) /
+                       float(pre_value)) * 100.0, 2), '%')
+        except ZeroDivisionError:
+            return 0.0
+    return 0.0

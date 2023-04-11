@@ -251,5 +251,10 @@ urlpatterns = [
         view=education_view.EducationGradingFormView.as_view(),
         name='service_education_grading_edit'
     ),
+    url(
+        regex=r'^Services/Education-School-Grading/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.EducationSchoolGradingFormView.as_view(),
+        name='service_school_grading'
+    ),
 
 ]
