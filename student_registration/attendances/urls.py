@@ -41,7 +41,7 @@ urlpatterns = [
         name='attendance_absence'
     ),
     url(
-        regex=r'^absence-export/(?P<number_of_absences>[\w.@+-]+)/$',
+        regex=r'^absence-export/(?P<number_of_absences>[\w.@+-]+)/(?P<total_days>[\w.@+-]+)/(?P<from_date>[\w.@+-]+)/(?P<to_date>[\w.@+-]+)/$',
         view=views.absence_export,
         name='absence_export'
     ),

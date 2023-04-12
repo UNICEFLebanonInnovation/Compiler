@@ -146,20 +146,20 @@ class MainAttendanceForm(forms.ModelForm):
                         css_class='button-group'
                     )
         )
-        if partner_id > 0:
-            queryset = School.objects.filter(is_first_shift='yes',
-                                             id__in=PartnerOrganization
-                                             .objects
-                                             .filter(id=partner_id)
-                                             .values_list('schools', flat=True))
-            self.fields['school'] = forms.ModelChoiceField(
-                queryset=queryset,
-                widget=forms.Select,
-                label=_('School Name'),
-                empty_label='-------',
-                required=True, to_field_name='id',
-                initial=0
-            )
+        # if partner_id > 0:
+        #     queryset = School.objects.filter(is_first_shift='yes',
+        #                                      id__in=PartnerOrganization
+        #                                      .objects
+        #                                      .filter(id=partner_id)
+        #                                      .values_list('schools', flat=True))
+        #     self.fields['school'] = forms.ModelChoiceField(
+        #         queryset=queryset,
+        #         widget=forms.Select,
+        #         label=_('School Name'),
+        #         empty_label='-------',
+        #         required=True, to_field_name='id',
+        #         initial=0
+        #     )
 
         # if saveStage:
         #     self.fields['school'].widget.attrs['disabled'] = 'disabled'
@@ -252,7 +252,10 @@ class AttendanceStudentForm(forms.ModelForm):
 
 
 class AttendanceAbsenceForm(forms.Form):
-    absence_days = forms.IntegerField(required=True)
+    absence_days = forms.IntegerField(label=_('Consecutive Absence Days'), required=True )
+    total_days = forms.IntegerField(label=_('Total Absence Days'), required=True)
+    from_date = forms.DateField(label=_('From Date'),initial=date.today,widget=DatePickerInput)
+    to_date = forms.DateField(label=_('To Date'),initial=date.today,widget=DatePickerInput)
 
     def __init__(self, *args, **kwargs):
         super(AttendanceAbsenceForm, self).__init__(*args, **kwargs)
@@ -265,6 +268,12 @@ class AttendanceAbsenceForm(forms.Form):
                 ),
                 Div(
                     Div('absence_days', css_class='col-md-3 form-group'),
+                    Div('total_days', css_class='col-md-3 form-group'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('from_date', css_class='col-md-3 form-group'),
+                    Div('to_date', css_class='col-md-3 form-group'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'

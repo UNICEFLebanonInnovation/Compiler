@@ -3314,7 +3314,7 @@ class SchoolForm(forms.ModelForm):
         choices=School.YES_NO
     )
     working_days = forms.MultipleChoiceField(
-        label=_('Please indicate modality'),
+        label=_('Please indicate working days'),
         choices=School.DAYS_OF_THE_WEEK,
         widget=forms.CheckboxSelectMultiple,
         required=False

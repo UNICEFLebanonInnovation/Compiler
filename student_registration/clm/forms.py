@@ -196,7 +196,7 @@ class CommonForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     student_sex = forms.ChoiceField(
-        label=_("Sex"),
+        label=_("Gender"),
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
