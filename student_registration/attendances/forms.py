@@ -254,8 +254,6 @@ class AttendanceStudentForm(forms.ModelForm):
 class AttendanceAbsenceForm(forms.Form):
     absence_days = forms.IntegerField(label=_('Consecutive Absence Days'), required=True )
     total_days = forms.IntegerField(label=_('Total Absence Days'), required=True)
-    from_date = forms.DateField(label=_('From Date'),initial=date.today,widget=DatePickerInput)
-    to_date = forms.DateField(label=_('To Date'),initial=date.today,widget=DatePickerInput)
 
     def __init__(self, *args, **kwargs):
         super(AttendanceAbsenceForm, self).__init__(*args, **kwargs)
@@ -269,11 +267,6 @@ class AttendanceAbsenceForm(forms.Form):
                 Div(
                     Div('absence_days', css_class='col-md-3 form-group'),
                     Div('total_days', css_class='col-md-3 form-group'),
-                    css_class='row',
-                ),
-                Div(
-                    Div('from_date', css_class='col-md-3 form-group'),
-                    Div('to_date', css_class='col-md-3 form-group'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'

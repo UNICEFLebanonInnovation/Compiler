@@ -1028,7 +1028,7 @@ class AttendanceAbsenceView(FormView):
         return super(AttendanceAbsenceView, self).form_valid(form)
 
 
-def absence_export(request,number_of_absences, total_days, from_date, to_date):
+def absence_export(request,number_of_absences, total_days):
 
     number_of_consecutive_absences = int(number_of_absences)
     number_of_total_absence = int(total_days)
@@ -1039,8 +1039,7 @@ def absence_export(request,number_of_absences, total_days, from_date, to_date):
 
 
     consecutive_absent_students =  CLMStudentAbsences.objects.filter(consecutive_absence_days__gte=number_of_consecutive_absences,
-                                                                     absence_starting_date__gte=from_date,
-                                                                     absence_ending_date__lte=to_date)\
+                                                                     round_id=round_id)\
                                    .order_by('student_id','absence_starting_date').all()
 
     buffer = io.BytesIO()
@@ -1099,6 +1098,4 @@ def absence_export(request,number_of_absences, total_days, from_date, to_date):
     response['Content-Disposition'] = 'attachment; filename="Absence.xls"'
 
     return response
-
-
 
