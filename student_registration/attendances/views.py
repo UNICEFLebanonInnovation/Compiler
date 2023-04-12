@@ -46,7 +46,7 @@ from student_registration.backends.tasks import export_attendance
 from student_registration.users.utils import force_default_language
 from .utils import find_attendances, fill_attendancedt
 # calculate_absentees
-from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences
+from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
 from student_registration.students.models import Student
 from student_registration.clm.models import Bridging
 from student_registration.schools.models import CLMRound
@@ -678,7 +678,8 @@ class MainAttendanceCreateView(LoginRequiredMixin, CreateView):
             attendance_student.save()
             student_id = student_form.cleaned_data['student_id']
             registration = Bridging.objects.filter(student_id=student_id, round_id=current_round.id).first()
-            update_student_absences(student_id, current_round, registration)
+            update_student_consecutive_absences(student_id, current_round, registration)
+            update_student_total_attandance(student_id, current_round, registration)
 
         messages.success(self.request, 'The attendance information was saved')
         return super(MainAttendanceCreateView, self).form_valid(form)
@@ -776,7 +777,8 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
             attendance_student.save()
             student_id = student_form.cleaned_data['id'].id
             registration = Bridging.objects.filter(student_id=student_id, round_id=current_round.id).first()
-            update_student_absences(student_id, current_round, registration)
+            update_student_consecutive_absences(student_id, current_round, registration)
+            update_student_total_attandance(student_id, current_round, registration)
         messages.success(self.request, 'The attendance information was saved')
         return super(MainAttendanceUpdateView, self).form_valid(form)
 
@@ -827,7 +829,8 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         )
         return attendance_student_inline_formset(parameters)
 
-def update_student_absences(student_id,current_round, registration):
+
+def update_student_consecutive_absences(student_id,current_round, registration):
 
     student_absences = CLMAttendanceStudent.objects.filter(
         attended='no',
@@ -973,6 +976,46 @@ class StudentConsecutiveAbsenceTracking:
         days_off = current_student_absence.days_off
 
         return (day_name not in working_day_names) or (current_absence_date in days_off)
+
+
+def update_student_total_attandance(student_id,current_round, registration):
+
+    total_absence_days = CLMAttendanceStudent.objects.filter(
+        attended='no',
+        attendance_day__attendance_date__range=(current_round.start_date_bridging, current_round.end_date_bridging),
+        student_id=student_id
+    ).order_by('student__id', 'attendance_day__attendance_date').count()
+    total_attendance_days = CLMAttendanceStudent.objects.filter(
+        attended='yes',
+        attendance_day__attendance_date__range=(current_round.start_date_bridging, current_round.end_date_bridging),
+        student_id=student_id
+    ).order_by('student__id', 'attendance_day__attendance_date').count()
+
+    student_id = student_id
+    round_id = current_round.id
+    registration = registration
+
+    absence_exists = CLMStudentTotalAttendance.objects.filter(student_id=student_id, round_id=round_id).exists()
+
+    if absence_exists:
+        absence = CLMStudentTotalAttendance.objects.filter(student_id=student_id, round_id=round_id).first()
+    else:
+
+        absence = CLMStudentTotalAttendance(round_id=round_id,
+                                         student_id=student_id,
+                                         registration_id=registration.id,
+                                         student_first_name=registration.student.first_name,
+                                         student_father_name=registration.student.father_name,
+                                         student_last_name=registration.student.last_name,
+                                         school_name=registration.school.name,
+                                         registation_level=registration.registration_level
+                                         )
+
+    absence.update_absence_statisics(total_absence_days)
+    absence.update_attendance_statisics(total_attendance_days)
+
+    absence.save()
+
 
 # TODO: modify to read form the new model CLMStudentAbsences, and CLMStudentTotalAbsence
 

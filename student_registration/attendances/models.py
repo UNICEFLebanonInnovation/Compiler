@@ -474,7 +474,7 @@ class CLMStudentAbsences(TimeStampedModel):
         verbose_name = "Student Absences"
 
 
-class CLMStudentTotalAbsence(TimeStampedModel):
+class CLMStudentTotalAttendance(TimeStampedModel):
 
     student_id = models.IntegerField(blank=True, null=True)
     registration_id = models.IntegerField(blank=True, null=True)
@@ -504,8 +504,18 @@ class CLMStudentTotalAbsence(TimeStampedModel):
         blank=True,
         null=True,
     )
+
+    total_attendance_days = models.IntegerField(blank=True, null=True)
+
     total_absence_days = models.IntegerField(blank=True, null=True)
 
+
+    def update_attendance_statisics(self, total_absence_days):
+        self.total_attendance_days = total_absence_days
+
+
+    def update_absence_statisics(self, total_absence_days):
+        self.total_absence_days = total_absence_days
 
     class Meta:
         ordering = ['id']
