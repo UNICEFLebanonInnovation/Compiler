@@ -466,7 +466,6 @@ class CLMStudentAbsences(TimeStampedModel):
     def update_absence_statisics(self, consecutive_absences, ending_date, consecutive_dates):
         self.consecutive_absence_days= consecutive_absences
         self.absence_dates= consecutive_dates
-        # json.dumps(consecutive_dates, indent=4, sort_keys=True, default=str)
         self.absence_ending_date= ending_date
 
     class Meta:
