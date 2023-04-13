@@ -717,7 +717,8 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
     group_required = [u"CLM_ATTENDANCE"]
 
     def get_success_url(self):
-        return reverse('attendances:main_attendance_edit', args=[self.kwargs['pk']])
+        return reverse('attendances:main_attendance')
+        # return reverse('attendances:main_attendance_edit', args=[self.kwargs['pk']])
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -730,8 +731,9 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         attendance_id = self.kwargs['pk']
         instance = CLMAttendance.objects.get(id=attendance_id)
         update_disabled = True
+
         partner_id = self.request.user.partner.id
-        messages.success(self.request, 'There is already an attendance record for this date.')
+        # messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
             form = MainAttendanceForm(self.request.POST, instance=instance,
@@ -801,7 +803,7 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
                 'student_name': line.student.full_name,
                 'attended': line.attended,
                 'absence_reason': line.absence_reason,
-                'absence_reason': line.absence_reason_other
+                'absence_reason_other': line.absence_reason_other
             }
             data.append(student)
         return self.get_initial_student_formset(data)
@@ -1037,10 +1039,27 @@ def absence_export(request,number_of_absences, total_days):
     current_round = current_round.get(current_round_bridging=True)
     round_id = current_round.id
 
+    consecutive_student_id = CLMStudentAbsences.objects.filter(
+        consecutive_absence_days__gte=number_of_consecutive_absences,
+        round_id=round_id) \
+        .values_list('student_id', flat=True)
+    total_student_id = CLMStudentTotalAttendance.objects.filter(
+        total_absence_days__gte=number_of_consecutive_absences,
+        round_id=round_id) \
+        .values_list('student_id', flat=True)
 
-    consecutive_absent_students =  CLMStudentAbsences.objects.filter(consecutive_absence_days__gte=number_of_consecutive_absences,
-                                                                     round_id=round_id)\
+    consecutive_student_list = list(consecutive_student_id)
+    total_student_list = list(total_student_id)
+
+    student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
+    student_ids = list(set(student_ids))
+
+
+    consecutive_absent_students =  CLMStudentAbsences.objects.filter(student_id__in= student_ids)\
                                    .order_by('student_id','absence_starting_date').all()
+
+
+
 
     buffer = io.BytesIO()
 
@@ -1098,4 +1117,3 @@ def absence_export(request,number_of_absences, total_days):
     response['Content-Disposition'] = 'attachment; filename="Absence.xls"'
 
     return response
-

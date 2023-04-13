@@ -97,7 +97,9 @@ class MainAttendanceForm(forms.ModelForm):
 
         if update_disabled:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
-            submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
+            # submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
+            submit_button = Submit('save', _('Save'), css_class='col-md-2')
+
         elif saveStage:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
             submit_button = Submit('save', _('Save'), css_class='col-md-2')
@@ -178,19 +180,24 @@ class MainAttendanceForm(forms.ModelForm):
             registration_level = cleaned_data.get("registration_level")
             day_off = cleaned_data.get("day_off")
 
-            if school != '' and registration_level != '' and attendance_date != '' and day_off != '':
-                num_results = CLMAttendance.objects.filter(school=school,
-                                                           registration_level=registration_level,
-                                                           attendance_date=attendance_date,
-                                                           ).count()
-                if num_results > 0:
-                    self.add_error('attendance_date', "There is already an attendance record for this date.")
+            # if school != '' and registration_level != '' and attendance_date != '' and day_off != '':
+            #     num_results = CLMAttendance.objects.filter(school=school,
+            #                                                registration_level=registration_level,
+            #                                                attendance_date=attendance_date,
+            #                                                ).count()
+            #     if num_results > 0:
+            #         self.add_error('attendance_date', "There is already an attendance record for this date.")
             if attendance_date != '':
                 current_date = datetime.today().date()
                 two_weeks_ago = current_date - timedelta(days=14)
                 if not ((attendance_date <= current_date)
                         and (attendance_date >= two_weeks_ago)):
                     self.add_error('attendance_date', "Attendance date is not valid.")
+                day_name = attendance_date.strftime("%A")
+                working_day_names = School.objects.filter(id=school.id).values_list('working_days', flat=True).first()
+                if day_name not in working_day_names:
+                    self.add_error('attendance_date', "Attendance date is not valid. This is not a working day for this school.")
+
 
     class Meta:
         model = CLMAttendance
