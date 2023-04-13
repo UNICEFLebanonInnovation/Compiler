@@ -147,18 +147,17 @@ class TeacherForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    training = forms.ModelChoiceField(
-        queryset=Training.objects.all(),
+    teacher_assignment = forms.ChoiceField(
+        label=_('Teacher Assignment'),
         widget=forms.Select,
-        label=_('Topics of teacher training'),
         required=False,
-        to_field_name='id',
-        initial=0
+        choices=Teacher.TEACHER_ASSIGNMENT,
     )
     trainings = forms.ModelMultipleChoiceField(
         queryset=Training.objects.all(),
         widget=forms.CheckboxSelectMultiple,
-        required=False
+        required=False,
+        label=_('Topics of teacher training'),
     )
     training_sessions_attended = forms.IntegerField(
         label=_('Number of teacher training sessions (attended)'),
@@ -169,6 +168,10 @@ class TeacherForm(forms.ModelForm):
         widget=forms.Select,
         required=False,
         choices=Teacher.YES_NO,
+    )
+    extra_coaching_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
     )
     attach_short_description_1 = forms.CharField(
         label=_("Description"),
@@ -295,17 +298,27 @@ class TeacherForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">8</span>'),
                     Div('subject_provided', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
-                    Div('grade_level', css_class='col-md-3 multiple-choice'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('grade_level', css_class='col-md-3 multiple-choice'),
                     HTML('<span class="badge badge-default">10</span>'),
+                    Div('teacher_assignment', css_class='col-md-3 multiple-choice'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('trainings', css_class='col-md-3 multiple-choice'),
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('training_sessions_attended', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">13</span>'),
                     Div('extra_coaching', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_extra_coaching_specify">13.1</span>'),
+                    Div('extra_coaching_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
@@ -389,9 +402,11 @@ class TeacherForm(forms.ModelForm):
             'email',
             'subject_provided',
             'grade_level',
+            'teacher_assignment',
             'trainings',
             'training_sessions_attended',
             'extra_coaching',
+            'extra_coaching_specify',
             'attach_short_description_1',
             'attach_file_1',
             'attach_type_1',

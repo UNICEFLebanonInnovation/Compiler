@@ -43,6 +43,20 @@ $(document).ready(function() {
         }
     });
 
+    $(document).on('change', 'select#id_extra_coaching', function () {
+        extra_coaching = $('#id_extra_coaching').val();
+        if (extra_coaching == 'yes') {
+            $('#div_id_extra_coaching_specify').removeClass('d-none');
+            $('#span_extra_coaching_specify').removeClass('d-none');
+        }
+        else
+         {
+            $('#span_extra_coaching_specify').addClass('d-none');
+            $('#id_extra_coaching_specify').val('');
+            $('#div_id_extra_coaching_specify').addClass('d-none');
+        }
+    });
+
     pageScripts();
 
     /* Ajax page load settings */

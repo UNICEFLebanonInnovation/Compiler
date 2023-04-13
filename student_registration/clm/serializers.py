@@ -439,7 +439,9 @@ class BridgingSerializer(CLMSerializer):
             'receiving_transportation_support',
             'using_digital_platform',
             'school_contacted_caretaker',
-            'discussion_topic'
+            'discussion_topic',
+            'consent_parents'
+
         )
 
 

@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.postgres.fields import JSONField, ArrayField
+import json
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -424,6 +425,100 @@ class CLMAttendanceStudent(TimeStampedModel):
         if self.student:
             return self.student.full_name
         return ''
+
+
+class CLMStudentAbsences(TimeStampedModel):
+
+    student_id = models.IntegerField(blank=True, null=True)
+    registration_id = models.IntegerField(blank=True, null=True)
+    round_id = models.IntegerField(blank=True, null=True)
+    student_first_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    student_father_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    student_last_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    school_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    registation_level = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    absence_starting_date = models.DateField(blank=True, null=True)
+    absence_ending_date = models.DateField(blank=True, null=True)
+    absence_dates = JSONField(blank=True, null=True)
+    consecutive_absence_days = models.IntegerField(blank=True, null=True)
+
+
+    def update_absence_statisics(self, consecutive_absences, ending_date, consecutive_dates):
+        self.consecutive_absence_days= consecutive_absences
+        self.absence_dates= consecutive_dates
+        self.absence_ending_date= ending_date
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Student Absences"
+
+
+class CLMStudentTotalAttendance(TimeStampedModel):
+
+    student_id = models.IntegerField(blank=True, null=True)
+    registration_id = models.IntegerField(blank=True, null=True)
+    round_id = models.IntegerField(blank=True, null=True)
+    student_first_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    student_father_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    student_last_name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    school_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    registation_level = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+
+    total_attendance_days = models.IntegerField(blank=True, null=True)
+
+    total_absence_days = models.IntegerField(blank=True, null=True)
+
+
+    def update_attendance_statisics(self, total_absence_days):
+        self.total_attendance_days = total_absence_days
+
+
+    def update_absence_statisics(self, total_absence_days):
+        self.total_absence_days = total_absence_days
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Student Total Absence"
 
 
 class MSCCAttendance(TimeStampedModel):

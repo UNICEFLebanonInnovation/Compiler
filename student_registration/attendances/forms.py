@@ -97,7 +97,9 @@ class MainAttendanceForm(forms.ModelForm):
 
         if update_disabled:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
-            submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
+            # submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
+            submit_button = Submit('save', _('Save'), css_class='col-md-2')
+
         elif saveStage:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
             submit_button = Submit('save', _('Save'), css_class='col-md-2')
@@ -146,20 +148,20 @@ class MainAttendanceForm(forms.ModelForm):
                         css_class='button-group'
                     )
         )
-        if partner_id > 0:
-            queryset = School.objects.filter(is_first_shift='yes',
-                                             id__in=PartnerOrganization
-                                             .objects
-                                             .filter(id=partner_id)
-                                             .values_list('schools', flat=True))
-            self.fields['school'] = forms.ModelChoiceField(
-                queryset=queryset,
-                widget=forms.Select,
-                label=_('School Name'),
-                empty_label='-------',
-                required=True, to_field_name='id',
-                initial=0
-            )
+        # if partner_id > 0:
+        #     queryset = School.objects.filter(is_first_shift='yes',
+        #                                      id__in=PartnerOrganization
+        #                                      .objects
+        #                                      .filter(id=partner_id)
+        #                                      .values_list('schools', flat=True))
+        #     self.fields['school'] = forms.ModelChoiceField(
+        #         queryset=queryset,
+        #         widget=forms.Select,
+        #         label=_('School Name'),
+        #         empty_label='-------',
+        #         required=True, to_field_name='id',
+        #         initial=0
+        #     )
 
         # if saveStage:
         #     self.fields['school'].widget.attrs['disabled'] = 'disabled'
@@ -178,19 +180,24 @@ class MainAttendanceForm(forms.ModelForm):
             registration_level = cleaned_data.get("registration_level")
             day_off = cleaned_data.get("day_off")
 
-            if school != '' and registration_level != '' and attendance_date != '' and day_off != '':
-                num_results = CLMAttendance.objects.filter(school=school,
-                                                           registration_level=registration_level,
-                                                           attendance_date=attendance_date,
-                                                           ).count()
-                if num_results > 0:
-                    self.add_error('attendance_date', "There is already an attendance record for this date.")
+            # if school != '' and registration_level != '' and attendance_date != '' and day_off != '':
+            #     num_results = CLMAttendance.objects.filter(school=school,
+            #                                                registration_level=registration_level,
+            #                                                attendance_date=attendance_date,
+            #                                                ).count()
+            #     if num_results > 0:
+            #         self.add_error('attendance_date', "There is already an attendance record for this date.")
             if attendance_date != '':
                 current_date = datetime.today().date()
                 two_weeks_ago = current_date - timedelta(days=14)
                 if not ((attendance_date <= current_date)
                         and (attendance_date >= two_weeks_ago)):
                     self.add_error('attendance_date', "Attendance date is not valid.")
+                day_name = attendance_date.strftime("%A")
+                working_day_names = School.objects.filter(id=school.id).values_list('working_days', flat=True).first()
+                if day_name not in working_day_names:
+                    self.add_error('attendance_date', "Attendance date is not valid. This is not a working day for this school.")
+
 
     class Meta:
         model = CLMAttendance
@@ -252,7 +259,8 @@ class AttendanceStudentForm(forms.ModelForm):
 
 
 class AttendanceAbsenceForm(forms.Form):
-    absence_days = forms.IntegerField(required=True)
+    absence_days = forms.IntegerField(label=_('Consecutive Absence Days'), required=True )
+    total_days = forms.IntegerField(label=_('Total Absence Days'), required=True)
 
     def __init__(self, *args, **kwargs):
         super(AttendanceAbsenceForm, self).__init__(*args, **kwargs)
@@ -265,6 +273,7 @@ class AttendanceAbsenceForm(forms.Form):
                 ),
                 Div(
                     Div('absence_days', css_class='col-md-3 form-group'),
+                    Div('total_days', css_class='col-md-3 form-group'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'

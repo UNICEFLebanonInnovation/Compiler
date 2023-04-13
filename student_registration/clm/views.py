@@ -3570,6 +3570,11 @@ class BridgingAddView(LoginRequiredMixin,
                 data = CBECESerializer(instance).data
                 data['student_nationality'] = data['student_nationality_id']
                 data['learning_result'] = ''
+            else:
+                instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = BridgingSerializer(instance).data
+                data['student_nationality'] = data['student_nationality_id']
+                data['learning_result'] = ''
         else:
             if self.request.GET.get('enrollment_id'):
                 instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
@@ -3596,12 +3601,12 @@ class BridgingAddView(LoginRequiredMixin,
         return initial
 
     def form_valid(self, form):
-        form.save(self.request)
+        form.save(request=self.request)
         return super(BridgingAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            return BridgingForm(self.request.POST, instance=None, request=self.request)
+            return BridgingForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
         else:
             return BridgingForm(None, instance=None, request=self.request, initial=self.get_initial())
 
@@ -3641,7 +3646,7 @@ class BridgingEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Bridging.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            return BridgingForm(self.request.POST, instance=instance, request=self.request)
+            return BridgingForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
         else:
             data = BridgingSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
@@ -3656,10 +3661,6 @@ class BridgingEditView(LoginRequiredMixin,
                         data['french'] = p_test["Bridging_ASSESSMENT/french"]
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
-                    if "Bridging_ASSESSMENT/artistic" in p_test:
-                        data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
-                    if "Bridging_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["Bridging_ASSESSMENT/social_emotional"]
 
             return BridgingForm(data, instance=instance, request=self.request)
 

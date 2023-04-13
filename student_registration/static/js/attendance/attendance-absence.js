@@ -14,9 +14,9 @@ function initialise_absence_form()
 
 function absence_export() {
     var number_of_absences = $('#id_absence_days').val();
-    if (number_of_absences !='' ) {
-
-       url = '/attendances/absence-export/'+number_of_absences;
+    var total_days = $('#id_total_days').val();
+    if (number_of_absences !='' && total_days !='' ) {
+       url = '/attendances/absence-export/'+number_of_absences+ '/'+ total_days;
        download(url);
 
     }
