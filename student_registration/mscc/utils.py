@@ -39,6 +39,17 @@ def generate_services(child_age, registry):
         instance.save()
 
 
+def regenerate_services(child_age, registry):
+    from .templatetags.simple_tags import service_data
+    from .models import ProvidedServices
+
+    ProvidedServices.objects.filter(registration=registry).delete()
+    generate_services(child_age, registry)
+    service = service_data('EducationService', registry)
+    service.education_program = ""
+    service.save()
+
+
 def update_service(service_name, registry_id, service_id):
     from .models import ProvidedServices
     ProvidedServices.objects.filter(registration_id=registry_id,
@@ -374,8 +385,7 @@ def load_child_attendance(center_id, attendance_date):
         return []
 
 
-
-class RegitsrationResource(resources.ModelResource):
+class RegistrationResource(resources.ModelResource):
     class Meta:
         model = Registration
         fields = (

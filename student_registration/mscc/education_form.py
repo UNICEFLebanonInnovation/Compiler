@@ -11,7 +11,7 @@ from crispy_forms.bootstrap import (
     FormActions,
     InlineCheckboxes
 )
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 from dal import autocomplete
 
 from student_registration.mscc.templatetags.simple_tags import get_service
@@ -125,6 +125,8 @@ class DiagnosticAssessmentForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1'
             ),
@@ -338,6 +340,8 @@ class EducationAssessmentForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1'
             ),
@@ -539,9 +543,11 @@ class EducationServiceForm(forms.ModelForm):
                 ),
                 css_id='step-1'
             ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+            FormActions(
+                Submit('save', 'Save',
+                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
             ),
         )
 
@@ -644,6 +650,8 @@ class EducationRSServiceForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
         )
 
@@ -943,6 +951,8 @@ class EducationGradingForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 ),
@@ -985,6 +995,8 @@ class EducationGradingForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 ),
@@ -1039,6 +1051,8 @@ class EducationGradingForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 ),
@@ -1088,6 +1102,8 @@ class EducationGradingForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 ),
@@ -1198,6 +1214,8 @@ class EducationSchoolGradingForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1'
             ),

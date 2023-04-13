@@ -84,7 +84,7 @@
 {% service_data 'EducationService' instance as result1 %}
 {% have_service_category 'Education' instance as result2 %}
 
-  {% if result1 and result2 %}
+  {% if result1 and result2 and result1.education_program %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 

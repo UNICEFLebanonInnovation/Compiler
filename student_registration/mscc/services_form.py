@@ -11,7 +11,7 @@ from crispy_forms.bootstrap import (
     FormActions,
     InlineCheckboxes
 )
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 from dal import autocomplete
 
 from .utils import update_service
@@ -124,6 +124,8 @@ class PSSServiceForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-2'
             )
@@ -220,6 +222,8 @@ class InclusionServiceForm(forms.ModelForm):
             FormActions(
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
             )
         )
 
@@ -397,6 +401,8 @@ class DigitalServiceForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 )
@@ -814,6 +820,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-2',
                 )
@@ -926,6 +934,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-2',
                 )
@@ -1199,6 +1209,8 @@ class HealthNutritionReferralForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1'
             )
@@ -1489,6 +1501,8 @@ class YouthKitServiceForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-2',
             )
@@ -1702,6 +1716,8 @@ class FollowUpServiceForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-2',
             )
@@ -1905,6 +1921,8 @@ class YouthAssessmentForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1',
             )
@@ -2016,6 +2034,8 @@ class YouthReferralForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1',
             )

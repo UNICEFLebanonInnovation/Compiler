@@ -11,7 +11,7 @@ from crispy_forms.bootstrap import (
     FormActions,
     InlineCheckboxes
 )
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 from dal import autocomplete
 
 from student_registration.students.models import (
@@ -30,7 +30,7 @@ from .models import (
 from student_registration.schools.models import (
     School
 )
-from .utils import generate_services, generate_education_history
+from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service
 
@@ -656,6 +656,9 @@ class MainForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+
                 ),
                 css_id='step-3',
             ),
@@ -849,9 +852,15 @@ class MainForm(forms.ModelForm):
         if instance:
             serializer = MainSerializer(instance, data=request.POST)
             if serializer.is_valid():
+                old_dob_year = instance.child.birthday_year
+                old_dob_month = instance.child.birthday_month
+                old_dob_age = instance.child_age
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                if (old_dob_year <> instance.child.birthday_year or old_dob_month <> instance.child.birthday_month) \
+                    and old_dob_age <> instance.child_age:
+                    regenerate_services(instance.child.age, instance)
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
@@ -1044,6 +1053,8 @@ class ReferralForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
         )
         if is_cbece == 'No':
@@ -1080,6 +1091,8 @@ class ReferralForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
         )
 
