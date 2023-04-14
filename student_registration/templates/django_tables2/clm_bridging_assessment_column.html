@@ -1,0 +1,11 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% if record.total_absent_days >= 10 %}
+    <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary" disabled>
+{% else %}
+      <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary">
+{% endif %}
+        <i class="icon-synch-sign icon-white"></i>
+        {% trans "Post-Assessment" %}
+      </a>
