@@ -235,7 +235,7 @@ class AttendanceStudentForm(forms.ModelForm):
         super(AttendanceStudentForm, self).__init__(*args, **kwargs)
         self.fields['student_name'].widget.attrs['readonly'] = True
         fields_keyorder = ['id','student_name', 'attended', 'absence_reason', 'absence_reason_other', 'student_id']
-        if self.fields.has_key('keyOrder'):
+        if 'keyOrder' in self.fields:
             self.fields.keyOrder = fields_keyorder
         else:
             self.fields = OrderedDict((k, self.fields[k]) for k in fields_keyorder)
