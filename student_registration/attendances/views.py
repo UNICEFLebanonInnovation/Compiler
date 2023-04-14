@@ -606,13 +606,13 @@ class MainAttendanceCreateView(LoginRequiredMixin, CreateView):
             if school is not None:
                 school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
-            if school > 0 and registration_level != '':
-                queryset = Bridging.objects.filter(
-                    partner=self.request.user.partner_id,
-                                                   round__current_round_bridging=True,
-                                                   school=school,
-                                                   registration_level=registration_level)
-                queryset = queryset.order_by('-id')
+                if school > 0 and registration_level != '':
+                    queryset = Bridging.objects.filter(
+                        partner=self.request.user.partner_id,
+                                                       round__current_round_bridging=True,
+                                                       school=school,
+                                                       registration_level=registration_level)
+                    queryset = queryset.order_by('-id')
             data = []
             for line in queryset:
                 student = {
@@ -1115,60 +1115,3 @@ def absence_export(request,number_of_absences, total_days):
     response['Content-Disposition'] = 'attachment; filename="Absence.xls"'
 
     return response
-
-def test_calculate_student_absences(request):
-
-    number_of_consecutive_absences = 5
-    number_of_total_absence = 10
-
-    current_round = CLMRound.objects.all()
-    current_round = current_round.get(current_round_bridging=True)
-    round_id = current_round.id
-
-    consecutive_student_id = CLMStudentAbsences.objects.filter(
-        consecutive_absence_days__gte=number_of_consecutive_absences,
-        round_id=round_id) \
-        .values_list('student_id', flat=True)
-    total_student_id = CLMStudentTotalAttendance.objects.filter(
-        total_absence_days__gte=number_of_consecutive_absences,
-        round_id=round_id) \
-        .values_list('student_id', flat=True)
-
-    consecutive_student_list = list(consecutive_student_id)
-    total_student_list = list(total_student_id)
-
-    student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
-    student_ids = list(set(student_ids))
-
-    for r in student_ids:
-        print r
-
-    # start_date =date(2013,4,28)
-    # end_date = date(2013,4,28)
-    # consecutive_dates = []
-    # delta = datetime.timedelta(days=1)
-    #
-    # print "Ammended start date"
-    # print start_date
-    # print "Ammended start date"
-    # print start_date
-    #
-    # while start_date <= end_date:
-    #     if not is_date_off_weekend(start_date, ):
-    #         consecutive_dates.append(str(start_date))
-    #         print "Ammended start date"
-    #         print start_date
-    #         print(consecutive_dates)
-    #     start_date += delta
-
-    html = "<html><body>Absence Data Calculated</body></html>"
-    return HttpResponse(html)
-
-def is_date_off_weekend(current_absence_date):
-
-    day_name = current_absence_date.strftime("%A")
-    days_off = CLMAttendance.objects.order_by('attendance_date').values_list('attendance_date', flat=True)
-    working_day_names = School.objects.filter(id=651).values_list('working_days', flat=True).first()
-
-    return (day_name not in working_day_names) or (current_absence_date in days_off)
-
