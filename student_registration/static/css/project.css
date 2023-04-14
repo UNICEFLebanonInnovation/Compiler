@@ -763,3 +763,13 @@ h1, h2, h3, h4, h5, div, span, p, label {
   height: auto;
   display: inline-block;
 }
+
+td:has(span.special) {
+  background: red;
+  text-align:center;
+
+}
+
+td:has(span.normal) {
+  text-align:center;
+}

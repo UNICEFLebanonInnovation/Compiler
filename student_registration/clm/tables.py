@@ -504,19 +504,22 @@ class OutreachTable(CommonTable):
 class BridgingTable(CommonTable):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
-                                        template_name='django_tables2/clm_edit_column.html',
+                                        template_name='django_tables2/clm_bridging_edit_column.html',
                                         attrs={'url': '/clm/bridging-edit/', 'programme': 'Bridging'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-                                          template_name='django_tables2/clm_delete_column.html',
+                                          template_name='django_tables2/clm_bridging_delete_column.html',
                                           attrs={'url': '/api/clm-bridging/', 'programme': 'Bridging'})
 
     post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
-                                                   template_name='django_tables2/clm_assessment_column.html',
+                                                   template_name='django_tables2/clm_bridging_assessment_column.html',
                                                    attrs={'url': '/clm/bridging-post-assessment/', 'programme': 'Bridging'})
 
     followup_column = tables.TemplateColumn(verbose_name=_('Follow up'), orderable=False,
-                                                   template_name='django_tables2/clm_followup_column.html',
+                                                   template_name='django_tables2/clm_bridging_followup_column.html',
                                                    attrs={'url': '/clm/bridging-followup/', 'programme': 'Bridging'})
+
+    clm_absence_column = tables.TemplateColumn(verbose_name=_('Absence'), orderable=False,
+                                                    template_name='django_tables2/clm_absence_column.html')
     class Meta:
         model = Bridging
         fields = (
@@ -524,6 +527,9 @@ class BridgingTable(CommonTable):
             'delete_column',
             'post_assessment_column',
             'followup_column',
+            'clm_absence_column',
+            'school.name',
+            'registration_level',
             'round',
             'governorate',
             'district',

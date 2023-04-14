@@ -2155,18 +2155,32 @@ class Bridging(CLM):
         return 0
 
     @property
-    def absent_days(self):
-        return Bridging.get_absent_days(self.student, self.round.start_date_bridging, self.round.end_date_bridging)
+    def total_absent_days(self):
+        return Bridging.get_total_absent_days(self.student.id, self.round.id)
 
     @staticmethod
-    def get_absent_days(student_id, start_date, end_date):
-        from student_registration.attendances.models import CLMAttendanceStudent
-        if student_id and start_date and end_date:
-            return CLMAttendanceStudent.objects.filter(student=student_id,
-                                                       attended='no',
-                                                       attendance_day__attendance_date__range=(start_date, end_date)
-                                                       ).count()
-        return 0
+    def get_total_absent_days(student_id, round_id):
+        result = 0
+        from student_registration.attendances.models import CLMStudentTotalAttendance
+        if student_id and round_id:
+            attendance_days = CLMStudentTotalAttendance.objects.filter(student_id=student_id, round_id=round_id).first()
+            if attendance_days:
+                result = attendance_days.total_absence_days
+        return result
+
+    @property
+    def more_than_five_consecutive_absence(self):
+        return Bridging.get_more_than_five_consecutive_absence(self.student.id, self.round.id)
+
+    @staticmethod
+    def get_more_than_five_consecutive_absence(student_id, round_id):
+        result = False
+        from student_registration.attendances.models import CLMStudentAbsences
+        if student_id and round_id:
+            attendance_days = CLMStudentAbsences.objects.filter(student_id=student_id, round_id=round_id, consecutive_absence_days__gte=5).exists()
+            if attendance_days:
+                result = True
+        return result
 
     @property
     def period_out_school(self):

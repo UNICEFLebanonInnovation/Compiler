@@ -606,13 +606,13 @@ class MainAttendanceCreateView(LoginRequiredMixin, CreateView):
             if school is not None:
                 school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
-            if school > 0 and registration_level != '':
-                queryset = Bridging.objects.filter(
-                    partner=self.request.user.partner_id,
-                                                   round__current_round_bridging=True,
-                                                   school=school,
-                                                   registration_level=registration_level)
-                queryset = queryset.order_by('-id')
+                if school > 0 and registration_level != '':
+                    queryset = Bridging.objects.filter(
+                        partner=self.request.user.partner_id,
+                                                       round__current_round_bridging=True,
+                                                       school=school,
+                                                       registration_level=registration_level)
+                    queryset = queryset.order_by('-id')
             data = []
             for line in queryset:
                 student = {
@@ -1018,8 +1018,6 @@ def update_student_total_attandance(student_id,current_round, registration):
 
     absence.save()
 
-
-# TODO: modify to read form the new model CLMStudentAbsences, and CLMStudentTotalAttendance
 
 class AttendanceAbsenceView(FormView):
     template_name = 'attendances/attendance_Absence_form.html'
