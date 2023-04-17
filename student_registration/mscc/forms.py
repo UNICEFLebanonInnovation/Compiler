@@ -858,8 +858,7 @@ class MainForm(forms.ModelForm):
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
-                if (old_dob_year <> instance.child.birthday_year or old_dob_month <> instance.child.birthday_month) \
-                    and old_dob_age <> instance.child_age:
+                if (old_dob_year != instance.child.birthday_year or old_dob_month != instance.child.birthday_month) and old_dob_age != instance.child_age:
                     regenerate_services(instance.child.age, instance)
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
