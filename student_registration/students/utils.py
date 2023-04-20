@@ -71,7 +71,6 @@ def generate_id(
         return result
 
     except Exception as exp:
-        print(exp.message)  #TODO: use logging instead
         return ''
 
 
@@ -88,7 +87,6 @@ def is_allowed_create(programme):
             return False
 
     except Exception as ex:
-        print(ex.message)
         return False
 
 
@@ -106,7 +104,6 @@ def is_allowed_edit(programme):
             return False
 
     except Exception as ex:
-        print(ex.message)
         return False
 
 
