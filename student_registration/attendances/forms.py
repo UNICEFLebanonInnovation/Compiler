@@ -195,8 +195,9 @@ class MainAttendanceForm(forms.ModelForm):
                     self.add_error('attendance_date', "Attendance date is not valid.")
                 day_name = attendance_date.strftime("%A")
                 working_day_names = School.objects.filter(id=school.id).values_list('working_days', flat=True).first()
-                if day_name not in working_day_names:
-                    self.add_error('attendance_date', "Attendance date is not valid. This is not a working day for this school.")
+                if day_name is not None and working_day_names is not None:
+                    if day_name not in working_day_names:
+                        self.add_error('attendance_date', "Attendance date is not valid. This is not a working day for this school.")
 
 
     class Meta:

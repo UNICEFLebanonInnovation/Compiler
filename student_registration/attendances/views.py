@@ -840,36 +840,37 @@ def update_student_consecutive_absences(student_id,current_round, registration):
         student_id=student_id
     ).order_by('student__id', 'attendance_day__attendance_date').all()
 
+    days_off = []
     if student_absences:
         school = student_absences[0].attendance_day.school.id
         registration_level = student_absences[0].attendance_day.registration_level
-    days_off = CLMAttendance.objects.filter(day_off='yes', registration_level = registration_level, school= school ,
-                                                attendance_date__range=(current_round.start_date_bridging, current_round.end_date_bridging)
-                                            ).order_by('attendance_date').values_list('attendance_date', flat=True)
+        days_off = CLMAttendance.objects.filter(day_off='yes', registration_level = registration_level, school= school ,
+                                                    attendance_date__range=(current_round.start_date_bridging, current_round.end_date_bridging)
+                                                ).order_by('attendance_date').values_list('attendance_date', flat=True)
 
 
 
 
-    working_day_names = School.objects.filter(id=school).values_list('working_days', flat=True).first()
+        working_day_names = School.objects.filter(id=school).values_list('working_days', flat=True).first()
 
-    current_student_absence = StudentConsecutiveAbsenceTracking()
+        current_student_absence = StudentConsecutiveAbsenceTracking()
 
-    current_student_absence.initialise(student_id,current_round,registration,working_day_names,days_off)
+        current_student_absence.initialise(student_id,current_round,registration,working_day_names,days_off)
 
-    for row in student_absences:
+        for row in student_absences:
 
-        absence_date = row.attendance_day.attendance_date
-        current_student_absence.check_update_absence_date(absence_date)
+            absence_date = row.attendance_day.attendance_date
+            current_student_absence.check_update_absence_date(absence_date)
 
-    current_student_absence.check_add_absence_record()
+        current_student_absence.check_add_absence_record()
 
-    CLMStudentAbsences.objects.filter\
-    (\
-        student_id=student_id,round_id=current_round.id,\
-        absence_starting_date__range = (current_round.start_date_bridging, current_round.end_date_bridging) \
-    )\
-    .exclude(absence_starting_date__in=current_student_absence.absence_dates)\
-    .delete()
+        CLMStudentAbsences.objects.filter\
+        (\
+            student_id=student_id,round_id=current_round.id,\
+            absence_starting_date__range = (current_round.start_date_bridging, current_round.end_date_bridging) \
+        )\
+        .exclude(absence_starting_date__in=current_student_absence.absence_dates)\
+        .delete()
 
 
 class StudentConsecutiveAbsenceTracking:
