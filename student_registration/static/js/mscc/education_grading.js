@@ -20,5 +20,6 @@ function reorganizeForm()
         $('.grade-field').removeClass('d-none');
     }else{
         $('.grade-field').addClass('d-none');
+        $('.grade-field').find('input').val(0);
     }
 }

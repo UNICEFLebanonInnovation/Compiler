@@ -113,7 +113,7 @@ class MainForm(forms.ModelForm):
     child_disability = forms.ModelChoiceField(
         label=_("Does the child have any disability or special need?"),
         queryset=Disability.objects.all(), widget=forms.Select,
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     child_marital_status = forms.ChoiceField(
         label=_('Child\'s Marital Status '),
@@ -133,7 +133,7 @@ class MainForm(forms.ModelForm):
         min_value=0
     )
     source_of_identification = forms.ChoiceField(
-        label=_("Source of referral of the child to MSCC"),
+        label=_("Source of referral of the child to Makani"),
         widget=forms.Select,
         required=True,
         choices=Registration.IDENTIFICATION_SOURCE,
@@ -149,12 +149,12 @@ class MainForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    mscc_packages = forms.MultipleChoiceField(
-        label=_('Packages received/to be provided to child under MSCC'),
-        choices=Registration.MSCC_PACKAGES,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+    # mscc_packages = forms.MultipleChoiceField(
+    #     label=_('Packages received/to be provided to child under Makani'),
+    #     choices=Registration.MSCC_PACKAGES,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=False
+    # )
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         label=_('What is the father\'s educational level?'),
@@ -484,11 +484,11 @@ class MainForm(forms.ModelForm):
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('mscc_packages', css_class='col-md-9 multiple-choice'),
-                    css_class='row card-body',
-                ),
+                # Div(
+                #     HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                #     Div('mscc_packages', css_class='col-md-9 multiple-choice'),
+                #     css_class='row card-body',
+                # ),
                 css_id='step-1',
             ),
             Div(
@@ -914,7 +914,7 @@ class MainForm(forms.ModelForm):
             'source_of_identification',
             'source_of_identification_specify',
             'cash_support_programmes',
-            'mscc_packages',
+            # 'mscc_packages',
             'father_educational_level',
             'mother_educational_level',
             'first_phone_owner',

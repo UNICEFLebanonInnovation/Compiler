@@ -898,7 +898,7 @@ class EducationGradingForm(forms.ModelForm):
             badge_css = 'badge-form-2'
             grade_field_css = 'grade-field'
             display_post_fields_css = ''
-            display_pre_fields_css = 'd-none'
+            display_pre_fields_css = ' d-none'
             self.fields['participation'].required = True
             self.fields['barriers'].required = True
             self.fields['post_test_done'].required = True

@@ -46,8 +46,9 @@ def regenerate_services(child_age, registry):
     ProvidedServices.objects.filter(registration=registry).delete()
     generate_services(child_age, registry)
     service = service_data('EducationService', registry)
-    service.education_program = ""
-    service.save()
+    if service:
+        service.education_program = ""
+        service.save()
 
 
 def update_service(service_name, registry_id, service_id):
@@ -288,7 +289,7 @@ def get_old_child(student_id):
     initial['child_birthday_month'] = instance.birthday_month
     initial['child_birthday_day'] = instance.birthday_day
     initial['child_gender'] = instance.sex
-    initial['child_nationality'] = instance.nationality.id
+    initial['child_nationality'] = instance.nationality.id if instance.nationality else 0
     initial['child_marital_status'] = instance.family_status
 
     # initial['id_type'] = instance.outreach_caregiver.id_type
