@@ -104,9 +104,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'console': {
-            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
         },
     },
     'loggers': {
@@ -120,11 +118,6 @@ LOGGING = {
         'handlers': ['console', ],
         'level': 'INFO'
     },
-    "formatters": {
-    "verbose": {
-        "format": "%(levelname)-8s - %(message)s"
-    }
-}
 }
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
