@@ -3697,24 +3697,45 @@ def get_outreach_child(outreach_id):
     initial['student_address'] = instance.outreach_caregiver.address
 
     disability = instance.disability
-    if disability == 'no':
-        initial['disability'] = 1
-    elif disability == 'difficulty_seeing':
-        initial['disability'] = 6
-    elif disability == 'difficulty_interacting_with_others':
-        initial['disability'] = 9
-    elif disability == 'difficulty_speaking':
-        initial['disability'] = 5
-    elif disability == 'intellectual_disability':
-        initial['disability'] = 10
-    elif disability == 'difficulty_hearing':
-        initial['disability'] = 3
-    elif disability == 'learning_difficulties':
-        initial['disability'] = 8
-    elif disability == 'difficulty_walking_or_moving_hands':
-        initial['disability'] = 4
 
-    initial['student_family_status'] = instance.family_status
+    # 1	"No"
+    if disability == 'no' or disability == 'No':
+        initial['disability'] = 1
+    # 2	"Other Difficulties"
+    elif disability == 'Other':
+        initial['disability'] = 2
+    # 3	"Difficulty hearing"
+    elif disability == 'Difficulty hearing' or disability == 'difficulty_hearing':
+        initial['disability'] = 3
+    # 4	"Difficulty walking or moving hands"
+    elif disability == 'difficulty_walking_or_moving_hands' or disability == 'Difficulty walking or moving hands':
+        initial['disability'] = 4
+    # 5	"Difficulty Speaking"
+    elif disability == 'Difficulty Speaking' or disability == 'difficulty_speaking':
+        initial['disability'] = 5
+    # 6	"Difficulty seeing"
+    elif disability == 'Difficulty seeing' or 'difficulty_seeing':
+        initial['disability'] = 6
+    # 7	"Difficulty with Self-Care"
+    # 8	"Learning Difficulties"
+    elif disability == 'learning_difficulties' or disability == 'Learning Difficulties':
+        initial['disability'] = 8
+    # 9	"Difficulty interacting with others"
+    elif disability == 'difficulty_interacting_with_others' or disability == 'Difficulty interacting with others':
+        initial['disability'] = 9
+    # 10	"Intellectual Disability"
+    elif disability == 'intellectual_disability' or disability == 'Intellectual Disability':
+        initial['disability'] = 10
+    initial['disability_other'] = instance.disability_other
+
+    family_status = instance.family_status.capitalize()
+    if family_status == 'Widow':
+        initial['student_family_status'] = 'widower'
+    elif family_status == 'Separated':
+        initial['student_family_status'] = 'divorced'
+    else:
+        initial['student_family_status'] = family_status
+
 
     # TODO check nationality'palestinian'
     # 3: for "فلسطينية  - من سوريا"
@@ -3777,7 +3798,7 @@ def get_outreach_child(outreach_id):
     initial['caretaker_mother_name'] = instance.outreach_caregiver.caregiver_mother_name
 
     id_type = instance.outreach_caregiver.id_type
-    if id_type == 'unhcr_registered':
+    if id_type == 'unhcr_registered' or id_type == 'UNHCR registered':
         initial['id_type'] = 'UNHCR Registered'
         initial['case_number'] = instance.outreach_caregiver.unhcr_case_number
         initial['case_number_confirm'] = instance.outreach_caregiver.unhcr_case_number
@@ -3785,27 +3806,54 @@ def get_outreach_child(outreach_id):
         initial['parent_individual_case_number_confirm'] = instance.outreach_caregiver.caregiver_unhcr_id
         initial['individual_case_number'] = instance.child_unhcr_number
         initial['individual_case_number_confirm'] = instance.child_unhcr_number
-    elif id_type == 'unhcr_recorded':
+    elif id_type == 'unhcr_recorded' or id_type == 'UNHCR recorded':
         initial['id_type'] = 'UNHCR Recorded'
         initial['recorded_number'] = instance.outreach_caregiver.unhcr_barcode
         initial['recorded_number_confirm'] = instance.outreach_caregiver.unhcr_barcode
-    elif id_type == 'syrian_id':
+    elif id_type == 'syrian_id' or id_type == 'Syrian ID':
         initial['id_type'] = 'Syrian national ID'
         initial['parent_syrian_national_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['parent_syrian_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
         initial['syrian_national_number'] = instance.child_personal_id
         initial['syrian_national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'palestinian_id':
+    elif id_type == 'palestinian_id' or id_type == 'Palestinian ID':
         initial['id_type'] = 'Palestinian national ID'
         initial['sop_parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['sop_parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
         initial['sop_national_number'] = instance.child_personal_id
         initial['sop_national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'lebanese_id':
+    elif id_type == 'lebanese_id' or id_type == 'Lebanese ID':
         initial['id_type'] = 'Lebanese national ID'
         initial['parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
         initial['national_number'] = instance.child_personal_id
         initial['national_number_confirm'] = instance.child_personal_id
+    elif id_type == 'No_papers' or id_type == 'No papers':
+        initial['id_type'] = 'Other nationality'
+        initial['parent_other_number'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['parent_other_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+    elif id_type == 'other_nationality_id' or id_type == 'Other Nationality ID':
+        initial['id_type'] = 'Child have no ID'
+
+    # TO DO: Awaiting feedback
+    # education_status = instance.education_status
+    # if education_status == 'never_been_engaged_in_any_type_of_learni' or education_status == 'Never been engaged in any type of learning':
+    #     initial['education_status'] = 'No Registered in any school before'
+    # # elif education_status == '':
+    # #     initial['education_status'] = 'Was registered in BLN program'
+    # # elif education_status == 'Previously_enrolled_in_Non-formal_educat' \
+    # #     or education_status == 'Previously enrolled in formal education has been out of school for 1 to 2 years'\
+    # #     or education_status == 'Previously enrolled in Non-formal education has been out of school for 1 to 2 years'\
+    # #     or education_status == 'Previously enrolled in Non-formal education has been out of school for more than 2 years'\
+    # #     or education_status == 'was_enrolled_in_non_formal_education_but':
+    # #     initial['education_status'] = 'Was registered in formal school and didnt continue'
+    # elif education_status == 'was_enrolled_in_formal_education_but_did' \
+    #     or education_status == 'Previously enrolled in formal education has been out of school for 1 year'\
+    #     or education_status == 'Previously enrolled in formal education has been out of school for more than 2 years'\
+    #     or education_status == 'previously_enrolled_in_formal_'\
+    #     or education_status == 'Previously_enrolled_in_formal_education_':
+    #     initial['labour_type'] = 'Was registered in formal school and didnt continue'
+    # else:
+    #     initial['education_status'] = ''
 
     return initial
