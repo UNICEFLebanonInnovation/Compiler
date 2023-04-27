@@ -617,13 +617,13 @@ class Teacher(Person):
         ('english', _('English')),
         ('french', _('French'))
     )
-    GRADE_LEVEL = Choices(
-        ('Grade 1', _('Grade 1')),
-        ('Grade 2', _('Grade 2')),
-        ('Grade 3', _('Grade 3')),
-        ('Grade 4', _('Grade 4')),
-        ('Grade 5', _('Grade 5')),
-        ('Grade 6', _('Grade 6')),
+    REGISTRATION_LEVEL = (
+        ('Level one', _('Level one')),
+        ('Level two', _('Level two')),
+        ('Level three', _('Level three')),
+        ('Level four', _('Level four')),
+        ('Level five', _('Level five')),
+        ('Level six', _('Level six'))
     )
     TEACHER_ASSIGNMENT = Choices(
         ('full_time', _('Full time')),
@@ -660,10 +660,10 @@ class Teacher(Person):
         choices=SUBJECT_PROVIDED,
         verbose_name=_('Subject provided')
     )
-    grade_level = ArrayField(
+    registration_level = ArrayField(
         models.CharField(
-            choices=GRADE_LEVEL,
-            max_length=50,
+            choices=REGISTRATION_LEVEL,
+            max_length=200,
             blank=True,
             null=True,
         ),

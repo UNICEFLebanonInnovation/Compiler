@@ -97,7 +97,7 @@ class TeacherSerializer(serializers.ModelSerializer):
             'school',
             'email',
             'subject_provided',
-            'grade_level',
+            'registration_level',
             'teacher_assignment',
             'trainings',
             'training_sessions_attended',

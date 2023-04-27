@@ -452,7 +452,7 @@ $(document).ready(function() {
          family_status_single();
     });
 
-    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
+    $(document).on('change', 'select#id_student_nationality, select#id_language, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
         reorganizeForm();
 
     });
@@ -995,6 +995,7 @@ function reorganizeForm()
     var id_type = $('select#id_id_type').val();
     var nationality = $('select#id_student_nationality').val();
     var education_status = $('select#id_education_status').val();
+    var language  = $('select#id_language').val();
     var family_status = $('select#id_student_family_status').val();
     var have_children = $('input[name=student_have_children]:checked').val();
     var have_labour = $('select#id_have_labour_single_selection').val();
@@ -1046,11 +1047,36 @@ function reorganizeForm()
     $('#span_other_nationality').removeClass('d-none');
     }
     // id_education_status
-    $('div#div_id_miss_school_date').addClass('d-none');
-    $('#span_miss_school_date').addClass('d-none');
-    if(education_status == 'enrolled in formal education but did not continue' || education_status == 'enrolled in non formal education but did not continue'|| education_status == 'enrolled in BLN' || education_status == 'enrolled in ABLN' || education_status == 'enrolled in CBECE' || education_status == 'No Registered in any school before' || education_status == 'Was registered in BLN program' || education_status == 'Was registered in formal school and didnt continue' || education_status == 'Was registered in CBECE program' || education_status == 'Was registered in ALP program and didnt continue'){
+    if(education_status == 'Was registered in formal school and didnt continue'){
         $('#div_id_miss_school_date').removeClass('d-none');
         $('#span_miss_school_date').removeClass('d-none');
+    }
+    else
+    {
+    $('div#div_id_miss_school_date').addClass('d-none');
+    $('#span_miss_school_date').addClass('d-none');
+    }
+
+    //    id_language
+    if (language == 'english_arabic')
+    {
+        $('#div_id_english').removeClass('d-none');
+        $('#span_english').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_english').addClass('d-none');
+        $('#span_english').addClass('d-none');
+    }
+    if (language == 'french_arabic')
+    {
+        $('#div_id_french').removeClass('d-none');
+        $('#span_french').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_french').addClass('d-none');
+        $('#span_french').addClass('d-none');
     }
 
     // id_covid_message

@@ -3180,15 +3180,6 @@ class Classroom_Form_cprep(forms.ModelForm):
 
 
 class SchoolForm(forms.ModelForm):
-    REGISTRATION_LEVEL = (
-        ('', '----------'),
-        ('level_one', _('Level one')),
-        ('level_two', _('Level two')),
-        ('level_three', _('Level three')),
-        ('level_four', _('Level four')),
-        ('level_five', _('Level five')),
-        ('level_six', _('Level six'))
-    )
     number = forms.IntegerField(
         label=_('School CERD Number'),
         widget=forms.TextInput, required=False
@@ -3240,10 +3231,11 @@ class SchoolForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 12})),
         min_value=0, required=True
     )
-    grade_level = forms.ChoiceField(
-        label=_("Registration level"),
-        widget=forms.Select, required=True,
-        choices=REGISTRATION_LEVEL
+    registration_level = forms.MultipleChoiceField(
+        label=_('Registration level'),
+        choices=School.REGISTRATION_LEVEL,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
     school_capacity = forms.IntegerField(
         label=_('School capacity'),
@@ -3389,7 +3381,7 @@ class SchoolForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('grade_level', css_class='col-md-3'),
+                    Div('registration_level', css_class='col-md-3  multiple-checbkoxes'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('school_capacity', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
@@ -3516,7 +3508,7 @@ class SchoolForm(forms.ModelForm):
             'cadaster',
             'longitude',
             'latitude',
-            'grade_level',
+            'registration_level',
             'school_capacity',
             'empty_building',
             'number_children',

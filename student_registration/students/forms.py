@@ -97,7 +97,7 @@ class CustomClearableFileInput(ClearableFileInput):
 
 class TeacherForm(forms.ModelForm):
     school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
+        queryset=School.objects.filter(is_first_shift='yes').order_by('-id'), widget=forms.Select,
         label=_('School'),
         empty_label='-------',
         required=False, to_field_name='id',
@@ -141,9 +141,9 @@ class TeacherForm(forms.ModelForm):
         required=False,
         choices=Teacher.SUBJECT_PROVIDED,
     )
-    grade_level = forms.MultipleChoiceField(
+    registration_level = forms.MultipleChoiceField(
         label=_('Grade level'),
-        choices=Teacher.GRADE_LEVEL,
+        choices=Teacher.REGISTRATION_LEVEL,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -302,7 +302,7 @@ class TeacherForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">9</span>'),
-                    Div('grade_level', css_class='col-md-3 multiple-choice'),
+                    Div('registration_level', css_class='col-md-3 multiple-choice'),
                     HTML('<span class="badge badge-default">10</span>'),
                     Div('teacher_assignment', css_class='col-md-3 multiple-choice'),
                     css_class='row',
@@ -401,7 +401,7 @@ class TeacherForm(forms.ModelForm):
             'school',
             'email',
             'subject_provided',
-            'grade_level',
+            'registration_level',
             'teacher_assignment',
             'trainings',
             'training_sessions_attended',
