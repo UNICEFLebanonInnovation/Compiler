@@ -23,7 +23,7 @@ class SchoolSerializer(serializers.ModelSerializer):
             'cadaster',
             'longitude',
             'latitude',
-            'grade_level',
+            'registration_level',
             'school_capacity',
             'empty_building',
             'number_children',

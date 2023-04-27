@@ -40,13 +40,12 @@ class PublicHolidays(models.Model):
 
 class School(TimeStampedModel):
     REGISTRATION_LEVEL = (
-        ('', '----------'),
-        ('level_one', _('Level one')),
-        ('level_two', _('Level two')),
-        ('level_three', _('Level three')),
-        ('level_four', _('Level four')),
-        ('level_five', _('Level five')),
-        ('level_six', _('Level six'))
+        ('Level one', _('Level one')),
+        ('Level two', _('Level two')),
+        ('Level three', _('Level three')),
+        ('Level four', _('Level four')),
+        ('Level five', _('Level five')),
+        ('Level six', _('Level six'))
     )
     YES_NO = Choices(
         ('yes', _("Yes")),
@@ -114,11 +113,15 @@ class School(TimeStampedModel):
         null=True,
         verbose_name=_('School GPS (latitude)')
     )
-    grade_level = models.CharField(
-        max_length=100,
+    registration_level = ArrayField(
+        models.CharField(
+            choices=REGISTRATION_LEVEL,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices=REGISTRATION_LEVEL,
         verbose_name=_('Grade level')
     )
     school_capacity = models.IntegerField(
