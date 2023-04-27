@@ -859,7 +859,7 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.save()
                 if (old_dob_year != instance.child.birthday_year or old_dob_month != instance.child.birthday_month) and old_dob_age != instance.child_age:
-                    regenerate_services(instance.child.age, instance)
+                    regenerate_services(instance.child.age, instance, request.user)
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
@@ -878,7 +878,7 @@ class MainForm(forms.ModelForm):
                     instance.student_old = request.POST.get("student_old")
                 instance.save()
                 request.session['instance_id'] = instance.id
-                generate_services(instance.child.age, instance)
+                generate_services(instance.child.age, instance, request.user)
                 generate_education_history(instance.id, instance.child_id, instance.student_old)
 
                 messages.success(request, _('Your data has been sent successfully to the server'))

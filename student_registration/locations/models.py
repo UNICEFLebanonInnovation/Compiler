@@ -4,6 +4,7 @@ from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.utils.translation import ugettext as _
 
 
@@ -87,6 +88,23 @@ class Center(models.Model):
             ('Community Hub', _('Community Hub')),
         ),
         verbose_name=_('Type')
+    )
+    provided_packages = ArrayField(
+        models.CharField(
+            choices=Choices(
+                ('Education', 'Education'),
+                ('Youth', 'Youth'),
+                ('Health & Nutrition', 'Health & Nutrition'),
+                ('Child Protection', 'Child Protection'),
+                ('Social Protection', 'Social Protection'),
+            ),
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Provided Services')
     )
 
     class Meta:

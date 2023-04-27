@@ -26,10 +26,13 @@ def to_array(fields, obj):
     return data
 
 
-def generate_services(child_age, registry):
+def generate_services(child_age, registry, user=None):
     from .models import ProvidedServices, Packages
+    from student_registration.users.templatetags.custom_tags import has_group
 
     packages = Packages.objects.filter(type=registry.type, age=child_age)
+    if user and has_group(user, 'MSCC_YOUTH'):
+        packages = packages.filter(category="Youth")
 
     for package in packages.all():
         instance, created = ProvidedServices.objects.get_or_create(name=package.name,
@@ -39,12 +42,12 @@ def generate_services(child_age, registry):
         instance.save()
 
 
-def regenerate_services(child_age, registry):
+def regenerate_services(child_age, registry, user=None):
     from .templatetags.simple_tags import service_data
     from .models import ProvidedServices
 
     ProvidedServices.objects.filter(registration=registry).delete()
-    generate_services(child_age, registry)
+    generate_services(child_age, registry, user)
     service = service_data('EducationService', registry)
     if service:
         service.education_program = ""
