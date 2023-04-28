@@ -615,7 +615,7 @@ class Teacher(Person):
         ('arabic', _('Arabic')),
         ('math', _('Math')),
         ('english', _('English')),
-        ('french', _('French'))
+        ('french', _('French')),
     )
     REGISTRATION_LEVEL = (
         ('Level one', _('Level one')),
@@ -626,9 +626,8 @@ class Teacher(Person):
         ('Level six', _('Level six'))
     )
     TEACHER_ASSIGNMENT = Choices(
-        ('full_time', _('Full time')),
-        ('part_time_mix_private', _('Part time, Mix private')),
-        ('part_time_sbp_only', _('Part time, SBP only')),
+        ('Dirasa only', _('Dirasa only')),
+        ('Private and Dirasa', _('Private and Dirasa')),
     )
     YES_NO = Choices(
         ('', '----------'),
@@ -653,12 +652,23 @@ class Teacher(Person):
         null=True,
         verbose_name=_('Phone number')
     )
-    subject_provided = models.CharField(
-        max_length=100,
+    subjects_provided = ArrayField(
+        models.CharField(
+            choices=SUBJECT_PROVIDED,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices=SUBJECT_PROVIDED,
-        verbose_name=_('Subject provided')
+        verbose_name=_('Subjects provided')
+    )
+    school_pss_counsellor = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the teacher considered as a school counsellor/PSS counsellor')
     )
     registration_level = ArrayField(
         models.CharField(
@@ -669,7 +679,7 @@ class Teacher(Person):
         ),
         blank=True,
         null=True,
-        verbose_name=_('Grade level')
+        verbose_name=_('Dirasa Grade level')
     )
     teacher_assignment = models.CharField(
         max_length=100,
@@ -677,6 +687,14 @@ class Teacher(Person):
         null=True,
         choices=TEACHER_ASSIGNMENT,
         verbose_name=_('Teacher Assignment')
+    )
+    teaching_hours_private_school = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of teaching hours in private school')
+    )
+    teaching_hours_dirasa = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of teaching hours in Dirasa')
     )
     trainings = models.ManyToManyField(
         Training,

@@ -100,23 +100,23 @@ class TeacherForm(forms.ModelForm):
         queryset=School.objects.filter(is_first_shift='yes').order_by('-id'), widget=forms.Select,
         label=_('School'),
         empty_label='-------',
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         initial=0
     )
     first_name = forms.CharField(
         label=_("First name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     father_name = forms.CharField(
         label=_("Father name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     last_name = forms.CharField(
         label=_("Last name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     sex = forms.ChoiceField(
-        label=_("Sex"),
+        label=_("Gender"),
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
@@ -127,7 +127,7 @@ class TeacherForm(forms.ModelForm):
     primary_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=False,
+        required=True,
         label=_('Main Phone number')
     )
     email = forms.RegexField(
@@ -135,17 +135,23 @@ class TeacherForm(forms.ModelForm):
         required=False,
         label=_('Email')
     )
-    subject_provided = forms.ChoiceField(
-        label=_('Subject provided'),
-        widget=forms.Select,
-        required=False,
+    subjects_provided = forms.MultipleChoiceField(
+        label=_('Subjects provided'),
         choices=Teacher.SUBJECT_PROVIDED,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    school_pss_counsellor = forms.ChoiceField(
+        label=_('Is the teacher considered as a school counsellor/PSS counsellor'),
+        widget=forms.Select,
+        required=True,
+        choices=Teacher.YES_NO,
     )
     registration_level = forms.MultipleChoiceField(
         label=_('Grade level'),
         choices=Teacher.REGISTRATION_LEVEL,
         widget=forms.CheckboxSelectMultiple,
-        required=False
+        required=True
     )
     teacher_assignment = forms.ChoiceField(
         label=_('Teacher Assignment'),
@@ -153,10 +159,18 @@ class TeacherForm(forms.ModelForm):
         required=False,
         choices=Teacher.TEACHER_ASSIGNMENT,
     )
+    teaching_hours_private_school = forms.IntegerField(
+        label=_('Number of teaching hours in private school'),
+        widget=forms.TextInput, required=False
+    )
+    teaching_hours_dirasa = forms.IntegerField(
+        label=_('Number of teaching hours in Dirasa'),
+        widget=forms.TextInput, required=False
+    )
     trainings = forms.ModelMultipleChoiceField(
         queryset=Training.objects.all(),
         widget=forms.CheckboxSelectMultiple,
-        required=False,
+        required=True,
         label=_('Topics of teacher training'),
     )
     training_sessions_attended = forms.IntegerField(
@@ -166,7 +180,7 @@ class TeacherForm(forms.ModelForm):
     extra_coaching = forms.ChoiceField(
         label=_('Extra coaching'),
         widget=forms.Select,
-        required=False,
+        required=True,
         choices=Teacher.YES_NO,
     )
     extra_coaching_specify = forms.CharField(
@@ -297,27 +311,36 @@ class TeacherForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">8</span>'),
-                    Div('subject_provided', css_class='col-md-3'),
+                    Div('school_pss_counsellor', css_class='col-md-4 multiple-choice'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">9</span>'),
-                    Div('registration_level', css_class='col-md-3 multiple-choice'),
+                    Div('subjects_provided', css_class='col-md-3 multiple-choice'),
                     HTML('<span class="badge badge-default">10</span>'),
-                    Div('teacher_assignment', css_class='col-md-3 multiple-choice'),
+                    Div('registration_level', css_class='col-md-3 multiple-choice'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('trainings', css_class='col-md-3 multiple-choice'),
+                    Div('teacher_assignment', css_class='col-md-3 multiple-choice'),
+                    HTML('<span class="badge badge-default" id="span_teaching_hours_private_school">11.1</span>'),
+                    Div('teaching_hours_private_school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_teaching_hours_dirasa">11.2</span>'),
+                    Div('teaching_hours_dirasa', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">12</span>'),
+                    Div('trainings', css_class='col-md-3 multiple-choice'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('training_sessions_attended', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('extra_coaching', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_extra_coaching_specify">13.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_extra_coaching_specify">14.1</span>'),
                     Div('extra_coaching_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -389,6 +412,25 @@ class TeacherForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
         return instance
 
+    def clean(self):
+        cleaned_data = super(TeacherForm, self).clean()
+        teacher_assignment = cleaned_data.get("teacher_assignment")
+        teaching_hours_private_school = cleaned_data.get("teaching_hours_private_school")
+        teaching_hours_dirasa = cleaned_data.get("teaching_hours_dirasa")
+        if teacher_assignment == 'Private and Dirasa':
+            if not teaching_hours_private_school:
+                self.add_error('teaching_hours_private_school', 'This field is required')
+            if not teaching_hours_dirasa:
+                self.add_error('teaching_hours_dirasa', 'This field is required')
+
+        extra_coaching = cleaned_data.get("extra_coaching")
+        extra_coaching_specify = cleaned_data.get("extra_coaching")
+
+        if extra_coaching == 'Yes':
+            if not extra_coaching_specify:
+                self.add_error('extra_coaching_specify', 'This field is required')
+
+
     class Meta:
         model = Teacher
         fields = (
@@ -400,9 +442,12 @@ class TeacherForm(forms.ModelForm):
             'primary_phone_number',
             'school',
             'email',
-            'subject_provided',
+            'subjects_provided',
+            'school_pss_counsellor',
             'registration_level',
             'teacher_assignment',
+            'teaching_hours_private_school',
+            'teaching_hours_dirasa',
             'trainings',
             'training_sessions_attended',
             'extra_coaching',

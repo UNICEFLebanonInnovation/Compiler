@@ -48,6 +48,7 @@ class School(TimeStampedModel):
         ('Level six', _('Level six'))
     )
     YES_NO = Choices(
+        ('', '----------'),
         ('yes', _("Yes")),
         ('no', _("No")),
     )
@@ -137,7 +138,7 @@ class School(TimeStampedModel):
     )
     number_children = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Total Number of children enrolled (excluding SBP)')
+        verbose_name=_('Total Number of children enrolled (excluding Dirasa)')
     )
     number_children_male = models.IntegerField(
         blank=True, null=True,
@@ -157,23 +158,23 @@ class School(TimeStampedModel):
     )
     number_children_sbp = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Total Number of children enrolled (SBP only)')
+        verbose_name=_('Total Number of children enrolled (Dirasa only)')
     )
     number_children_male_sbp = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Total Number of children enrolled (male, SBP only)')
+        verbose_name=_('Total Number of children enrolled (male, Dirasa only)')
     )
     number_children_female_sbp = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Total Number of children enrolled (female, SBP only)')
+        verbose_name=_('Total Number of children enrolled (female, Dirasa only)')
     )
     number_children_lebanese_sbp = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Total Number of children enrolled (Lebanese, SBP only)')
+        verbose_name=_('Total Number of children enrolled (Lebanese, Dirasa only)')
     )
     number_children_non_lebanese_sbp = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Total Number of children enrolled (non Lebanese, SBP only)')
+        verbose_name=_('Total Number of children enrolled (non Lebanese, Dirasa only)')
     )
     CWD_accessible = models.CharField(
         max_length=10,
@@ -230,6 +231,21 @@ class School(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('School year end date')
+    )
+    receive_supplies = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did the school receive school supplies/stationery')
+    )
+    number_dirasa_children_disability = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total number of Children With Disability (Dirasa only)')
+    )
+    number_total_children_disability = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total number of Children With Disability (Excluding Dirasa)')
     )
     academic_year_exam_end = models.DateField(
         blank=True,
@@ -498,7 +514,6 @@ class School(TimeStampedModel):
 
     def __str__(self):
         return self.name
-
 
 
 class EducationLevel(models.Model):
@@ -849,6 +864,10 @@ class class_section(TimeStampedModel):
 
 
 class Evaluation(TimeStampedModel):
+    YES_NO = Choices(
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
     school = models.ForeignKey(
         School,
         blank=False, null=True,
@@ -883,10 +902,7 @@ class Evaluation(TimeStampedModel):
     implemented_de = models.CharField(
         blank=True,  default='no',
         max_length=3,
-        choices=Choices(
-            ('yes', _('Yes')),
-            ('no', _('No')),
-        ),
+        choices=YES_NO,
         verbose_name=_('Have you implemented distance education ?')
     )
     reasons_no_de = models.TextField(
@@ -913,10 +929,7 @@ class Evaluation(TimeStampedModel):
     implemented_de_2 = models.CharField(
         blank=True,  default='no',
         max_length=3,
-        choices=Choices(
-            ('yes', _('Yes')),
-            ('no', _('No')),
-        ),
+        choices=YES_NO,
         verbose_name=_('Have you implemented distance education ?')
     )
     reasons_no_de_2 = models.TextField(
@@ -943,10 +956,7 @@ class Evaluation(TimeStampedModel):
     implemented_de_3 = models.CharField(
         blank=True,  default='no',
         max_length=3,
-        choices=Choices(
-            ('yes', _('Yes')),
-            ('no', _('No')),
-        ),
+        choices=YES_NO,
         verbose_name=_('Have you implemented distance education ?')
     )
     reasons_no_de_3 = models.TextField(
@@ -2414,10 +2424,7 @@ class Evaluation(TimeStampedModel):
     implemented_de_9 = models.CharField(
         blank=True,  default='no',
         max_length=3,
-        choices=Choices(
-            ('yes', _('Yes')),
-            ('no', _('No')),
-        ),
+        choices=YES_NO,
         verbose_name=_('Have you implemented distance education ?')
     )
     reasons_no_de_9 = models.TextField(
@@ -2444,10 +2451,7 @@ class Evaluation(TimeStampedModel):
     implemented_de_prep = models.CharField(
         blank=True,  default='no',
         max_length=3,
-        choices=Choices(
-            ('yes', _('Yes')),
-            ('no', _('No')),
-        ),
+        choices=YES_NO,
         verbose_name=_('Have you implemented distance education ?')
     )
     reasons_no_de_prep = models.TextField(
