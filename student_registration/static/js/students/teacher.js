@@ -17,6 +17,7 @@ $(window).load(function () {
 
 $(document).ready(function() {
 
+    organize_form();
     if($(document).find('#id_academic_year_start').length == 1) {
         $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"});
     }
@@ -43,18 +44,8 @@ $(document).ready(function() {
         }
     });
 
-    $(document).on('change', 'select#id_extra_coaching', function () {
-        extra_coaching = $('#id_extra_coaching').val();
-        if (extra_coaching == 'yes') {
-            $('#div_id_extra_coaching_specify').removeClass('d-none');
-            $('#span_extra_coaching_specify').removeClass('d-none');
-        }
-        else
-         {
-            $('#span_extra_coaching_specify').addClass('d-none');
-            $('#id_extra_coaching_specify').val('');
-            $('#div_id_extra_coaching_specify').addClass('d-none');
-        }
+    $(document).on('change', 'select#id_extra_coaching, select#id_teacher_assignment', function () {
+        organize_form();
     });
 
     pageScripts();
@@ -75,6 +66,7 @@ $(document).ready(function() {
     });
 });
 
+
 function pageScripts() {
     /* Magnific Popup */
     $('.image-link').magnificPopup({
@@ -83,6 +75,40 @@ function pageScripts() {
             enabled: true
         }
     });
+}
+
+function organize_form() {
+    extra_coaching = $('#id_extra_coaching').val();
+    if (extra_coaching == 'yes') {
+        $('#div_id_extra_coaching_specify').removeClass('d-none');
+        $('#span_extra_coaching_specify').removeClass('d-none');
+    }
+    else
+     {
+        $('#span_extra_coaching_specify').addClass('d-none');
+        $('#id_extra_coaching_specify').val('');
+        $('#div_id_extra_coaching_specify').addClass('d-none');
+    }
+
+    teacher_assignment = $('#id_teacher_assignment').val();
+    if (teacher_assignment == 'Private and Dirasa') {
+        $('#div_id_teaching_hours_private_school').removeClass('d-none');
+        $('#span_teaching_hours_private_school').removeClass('d-none');
+
+        $('#div_id_teaching_hours_dirasa').removeClass('d-none');
+        $('#span_teaching_hours_dirasa').removeClass('d-none');
+    }
+    else
+     {
+        $('#span_teaching_hours_private_school').addClass('d-none');
+        $('#id_teaching_hours_private_school').val('');
+        $('#div_id_teaching_hours_private_school').addClass('d-none');
+
+
+        $('#span_teaching_hours_dirasa').addClass('d-none');
+        $('#id_teaching_hours_dirasa').val('');
+        $('#div_id_teaching_hours_dirasa').addClass('d-none');
+    }
 }
 
 function urlParam(name){

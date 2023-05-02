@@ -1792,13 +1792,13 @@ class Bridging(CLM):
         ('no', _("No")),
     )
     RESIDENCE_TYPE = Choices(
-        ('', _('Residence Type')),
+        ('', _('----------')),
         ('Informal settlement', _('Informal settlement - مخيم')),
         ('House', _('House - منزل')),
         ('Collective shelter', _('Collective shelter - مجمع سكني  ')),
     )
     LEARNING_RESULT = Choices(
-        ('', _('Learning result')),
+        ('', _('----------')),
         ('graduated_to_Bridging_next_level', _('Graduated to the next level SBP')),
         ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level SBP')),
         ('referred_public_school', _('Referred to public school')),

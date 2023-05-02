@@ -3247,7 +3247,7 @@ class SchoolForm(forms.ModelForm):
         choices=School.YES_NO
     )
     number_children = forms.IntegerField(
-        label=_('Total Number of children enrolled (excluding SBP)'),
+        label=_('Total Number of children enrolled (excluding Dirasa)'),
         widget=forms.TextInput, required=False
     )
     number_children_male = forms.IntegerField(
@@ -3267,23 +3267,23 @@ class SchoolForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     number_children_sbp = forms.IntegerField(
-        label=_('Total Number of children enrolled (SBP only)'),
+        label=_('Total Number of children enrolled (Dirasa only)'),
         widget=forms.TextInput, required=False
     )
     number_children_male_sbp = forms.IntegerField(
-        label=_('Total Number of children enrolled (male, SBP only)'),
+        label=_('Total Number of children enrolled (male, Dirasa only)'),
         widget=forms.TextInput, required=False
     )
     number_children_female_sbp = forms.IntegerField(
-        label=_('Total Number of children enrolled (female, SBP only)'),
+        label=_('Total Number of children enrolled (female, Dirasa only)'),
         widget=forms.TextInput, required=False
     )
     number_children_lebanese_sbp = forms.IntegerField(
-        label=_('Total Number of children enrolled (Lebanese, SBP only)'),
+        label=_('Total Number of children enrolled (Lebanese, Dirasa only)'),
         widget=forms.TextInput, required=False
     )
     number_children_non_lebanese_sbp = forms.IntegerField(
-        label=_('Total Number of children enrolled (non Lebanese, SBP only)'),
+        label=_('Total Number of children enrolled (non Lebanese, Dirasa only)'),
         widget=forms.TextInput, required=False
     )
     CWD_accessible = forms.ChoiceField(
@@ -3312,12 +3312,25 @@ class SchoolForm(forms.ModelForm):
         required=False
     )
     academic_year_start = forms.DateField(
-        label=_("School year start date"),
+        label=_("Dirasa Start Date"),
         required=True
     )
     academic_year_end = forms.DateField(
-        label=_("School year end date"),
+        label=_("Dirasa End Date"),
         required=True
+    )
+    receive_supplies = forms.ChoiceField(
+        label=_("Did the school receive school supplies/stationery?"),
+        widget=forms.Select, required=True,
+        choices=School.YES_NO
+    )
+    number_dirasa_children_disability = forms.IntegerField(
+        label=_('Total number of Children With Disability (Dirasa only)'),
+        widget=forms.TextInput, required=False
+    )
+    number_total_children_disability = forms.IntegerField(
+        label=_('Total number of Children With Disability (Excluding Dirasa)'),
+        widget=forms.TextInput, required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -3429,28 +3442,39 @@ class SchoolForm(forms.ModelForm):
                     Div('school_digital_capacity', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">17</span>'),
+                    Div('receive_supplies', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">18</span>'),
+                    Div('number_dirasa_children_disability', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">19</span>'),
+                    Div('number_total_children_disability', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning B_right_border'
             ),
             Fieldset(
                 None,
-                # Div(
-                #     HTML('<h4 id="alternatives-to-hidden-labels">' +
-                #          _('Current academic year') + ' ' + current_education_year.name + '</h4>')
-                # ),
+                Div(HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
                 ),
                 Div(
+                    Div('is_first_shift', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('is_first_shift', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('working_days', css_class='col-md-2  multiple-checbkoxes'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('academic_year_start', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('academic_year_end', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -3528,4 +3552,7 @@ class SchoolForm(forms.ModelForm):
             'working_days',
             'academic_year_start',
             'academic_year_end',
+            'receive_supplies',
+            'number_dirasa_children_disability',
+            'number_total_children_disability',
         )
