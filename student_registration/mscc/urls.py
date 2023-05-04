@@ -252,9 +252,28 @@ urlpatterns = [
         name='service_education_grading_edit'
     ),
     url(
+        regex=r'^Services/Youth-Scoring-Add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
+        view=education_view.YouthScoringFormView.as_view(),
+        name='service_youth_scoring_add'
+    ),
+    url(
+        regex=r'^Services/Youth-Scoring-Edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=education_view.YouthScoringFormView.as_view(),
+        name='service_youth_scoring_edit'
+    ),
+    url(
         regex=r'^Services/Education-School-Grading/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationSchoolGradingFormView.as_view(),
         name='service_school_grading'
     ),
-
+    url(
+        regex=r'^Services/Recreational-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.RecreationalFormView.as_view(),
+        name='service_recreational_add'
+    ),
+    url(
+        regex=r'^Services/Recreational-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.RecreationalFormView.as_view(),
+        name='service_recreational_edit'
+    ),
 ]

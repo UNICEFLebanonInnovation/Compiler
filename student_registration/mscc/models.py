@@ -976,8 +976,10 @@ class EducationService(TimeStampedModel):
         ('BLN Level 3', _('BLN Level 3')),
         ('ABLN Level 1', _('ABLN Level 1')),
         ('ABLN Level 2', _('ABLN Level 2')),
-        ('YBLN', _('YBLN')),
-        ('YFNL', _('YFNL')),
+        ('YBLN Level 1', _('YBLN Level 1')),
+        ('YBLN Level 2', _('YBLN Level 2')),
+        ('YFNL Level 1', _('YFNL Level 1')),
+        ('YFNL Level 2', _('YFNL Level 2')),
         ('CBECE Level 1', _('CBECE Level 1')),
         ('CBECE Level 2', _('CBECE Level 2')),
         ('CBECE Level 3', _('CBECE Level 3')),
@@ -1033,6 +1035,7 @@ class EducationService(TimeStampedModel):
         verbose_name_plural = "Education Services"
 
 
+# @todo to be reviewed
 class EducationRSService(TimeStampedModel):
 
     REGISTRATION_LEVEL = Choices(
@@ -1122,6 +1125,7 @@ class EducationRSService(TimeStampedModel):
         verbose_name_plural = "Education RS Services"
 
 
+# @todo to be removed
 class EducationAssessment(TimeStampedModel):
     MODALITY = Choices(
         ('', '----------'),
@@ -1874,3 +1878,17 @@ class YouthReferral(TimeStampedModel):
         verbose_name = "Youth Referral"
         verbose_name_plural = "Youth Referrals"
 
+
+class Recreational(TimeStampedModel):
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    assessment = JSONField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Recreational"
+        verbose_name_plural = "Recreational"

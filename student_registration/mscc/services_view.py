@@ -361,3 +361,41 @@ class FollowUpViewAll(LoginRequiredMixin,
             'registry': registry,
             'instances': instances
         }
+
+
+class RecreationalFormView(LoginRequiredMixin,
+                           GroupRequiredMixin,
+                           FormView):
+    template_name = 'mscc/service_recreational_form.html'
+    form_class = RecreationalForm
+    success_url = ''
+    group_required = [u"MSCC"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+            kwargs['registry'] = self.kwargs['registry']
+        return super(RecreationalFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
+        if self.request.method == "POST":
+            return RecreationalForm(self.request.POST, instance=instance, registry=registry, request=self.request)
+        else:
+            if instance:
+                assessment_data = Recreational.objects.get(id=instance)
+                data = assessment_data.assessment
+                return RecreationalForm(data, registry=registry, instance=instance, request=self.request)
+            return RecreationalForm(registry=registry, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(RecreationalFormView, self).form_valid(form)

@@ -501,7 +501,8 @@ class EducationServiceForm(forms.ModelForm):
             )
         if service_ybln:
             self.fields['education_program'].choices = (
-                ('YBLN', _('YBLN')),
+                ('YBLN Level 1', _('YBLN Level 1')),
+                ('YBLN Level 2', _('YBLN Level 2')),
             )
         if service_yfln:
             self.fields['education_program'].choices = (
@@ -1097,6 +1098,179 @@ class EducationGradingForm(forms.ModelForm):
                         Div('chemistry_grade', css_class='col-md-4'),
                         HTML('<span class="'+badge_css+' badge-pill">'+str(6+ctr)+'</span>'),
                         Div('physics_grade', css_class='col-md-4'),
+                        css_class='row card-body '+ grade_field_css + display_pre_fields_css
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        if not instance:
+            instance = EducationProgrammeAssessment.objects.create(registration_id=registry)
+            instance.pre_test = request.POST
+        else:
+            instance = EducationProgrammeAssessment.objects.get(id=instance)
+            if pre_post == "pre":
+                instance.pre_test = request.POST
+            if pre_post == "post":
+                instance.post_test = request.POST
+
+        instance.programme_type = programme_type
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = EducationProgrammeAssessment
+        fields = (
+            'programme_type',
+        )
+
+
+class YouthScoringForm(forms.ModelForm):
+
+    participation = forms.ChoiceField(
+        label=_("Child Level of participation / Absence"),
+        widget=forms.Select, required=False,
+        choices=EducationAssessment.PARTICIPATION
+    )
+    barriers = forms.ChoiceField(
+        label=_('The main barriers affecting the child\'s '
+                'daily attendance/participation, performance, or causing drop-out'),
+        widget=forms.Select, required=False,
+        choices=EducationAssessment.BARRIERS
+    )
+    barriers_other = forms.CharField(
+        label=_('If Other, Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    post_test_done = forms.ChoiceField(
+        label=_('Did the child undertake the Post tests?'),
+        widget=forms.Select, required=False,
+        choices=YES_NO
+    )
+    school_year_completed = forms.ChoiceField(
+        label=_('Did the child fully complete the school year?'),
+        widget=forms.Select, required=False,
+        choices=YES_NO
+    )
+
+    arabic_grade = forms.IntegerField(
+        label=_('Arabic'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    language_grade = forms.IntegerField(
+        label=_('Foreign Language'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    math_grade = forms.IntegerField(
+        label=_('Mathematics'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    life_skills = forms.IntegerField(
+        label=_('Life Skills'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        initial=0
+    )
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    programme_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        programme_type = kwargs.pop('programme_type', None)
+        pre_post = kwargs.pop('pre_post', 'pre')
+        instance = kwargs.pop('instance', None)
+
+        super(YouthScoringForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_youth_scoring_add',
+                                  kwargs={'registry': registry, 'programme_type': programme_type})
+        if instance:
+            form_action = reverse('mscc:service_youth_scoring_edit',
+                                  kwargs={'registry': registry, 'programme_type': programme_type,'pre_post': pre_post,
+                                          'pk': instance})
+
+        if programme_type == "YBLN Level 1":
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 12)
+            field_init(self.fields['language_grade'], 'Foreign Language Development', 0)
+            field_init(self.fields['math_grade'], 'Mathematics', 15)
+            field_init(self.fields['life_skills'], 'Life Skills Development', 12)
+
+        if programme_type == "YBLN Level 2":
+            field_init(self.fields['arabic_grade'], 'Arabic Language Development', 12)
+            field_init(self.fields['language_grade'], 'Foreign Language Development', 12)
+            field_init(self.fields['math_grade'], 'Mathematics', 21)
+            field_init(self.fields['life_skills'], 'Life Skills Development', 12)
+
+        display_post_fields_css = 'd-none'
+        display_pre_fields_css = ''
+        badge_css = 'badge-form'
+        grade_field_css = ''
+        ctr = 0
+        if pre_post == 'post':
+            ctr = 4
+            badge_css = 'badge-form-2'
+            grade_field_css = 'grade-field'
+            display_post_fields_css = ''
+            display_pre_fields_css = ' d-none'
+            self.fields['participation'].required = True
+            self.fields['barriers'].required = True
+            self.fields['post_test_done'].required = True
+            self.fields['school_year_completed'].required = True
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        if programme_type in ["YBLN Level 1", "YBLN Level 2"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participation', css_class='col-md-4'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('barriers', css_class='col-md-8'),
+                        Div('barriers_other', css_class='col-md-3'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('post_test_done', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('school_year_completed', css_class='col-md-5'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">'+str(1+ctr)+'</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">'+str(2+ctr)+'</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body '+ grade_field_css + display_pre_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">'+str(3+ctr)+'</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">'+str(4+ctr)+'</span>'),
+                        Div('life_skills', css_class='col-md-4'),
                         css_class='row card-body '+ grade_field_css + display_pre_fields_css
                     ),
                     FormActions(
