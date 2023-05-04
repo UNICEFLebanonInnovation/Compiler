@@ -2128,7 +2128,7 @@ class RecreationalForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<h3>What Recreational activities did the child attend:</h3>'),
-                    css_class='row card-body'
+                    css_class='row card-body mb-5'
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
