@@ -371,7 +371,6 @@ class School(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
@@ -514,6 +513,157 @@ class School(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+
+class Club(TimeStampedModel):
+    CLUB_TYPE = Choices(
+        ('', '----------'),
+        ('yes', _("Yes")),
+        ('no', _("No")),
+    )
+    school = models.ForeignKey(
+        School,
+        verbose_name=_('school'),
+        related_name='+',
+    )
+    club_name = models.CharField(
+        max_length=50,
+        blank=True, null=True,
+        verbose_name=_('Club Name')
+    )
+    number_clubs = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of Clubs')
+    )
+    club_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=CLUB_TYPE,
+        verbose_name=_('Club Type')
+    )
+    number_children = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of Children in Each')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
+
+
+class Meeting(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        verbose_name=_('school'),
+        related_name='+',
+    )
+    meeting_name = models.CharField(
+        max_length=50,
+        blank=True, null=True,
+        verbose_name=_('Meeting Name')
+    )
+    meeting_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Meeting Date')
+    )
+    number_participants = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of Participants')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
+
+
+class CommunityInitiative(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        verbose_name=_('school'),
+        related_name='+',
+    )
+    community_group_name = models.CharField(
+        max_length=150,
+        blank=True, null=True,
+        verbose_name=_('Community Group Name')
+    )
+    number_initiatives = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of Initiatives')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
+
+
+class HealthVisit(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        verbose_name=_('school'),
+        related_name='+',
+    )
+    focal_point_name = models.CharField(
+        max_length=50,
+        blank=True, null=True,
+        verbose_name=_('Health Focal Point Name')
+    )
+    number_visits = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of Visits')
+    )
+    date_first_visit = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of First Visit')
+    )
+    date_last_visit = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date of Last Visit')
+    )
+    summary = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Summary')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
 
 
 class EducationLevel(models.Model):

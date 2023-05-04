@@ -2189,7 +2189,6 @@ class CBECEAddView(LoginRequiredMixin,
         return super(CBECEAddView, self).form_valid(form)
 
     def get_form(self, form_class=None):
-
         if self.request.method == "POST":
             return CBECEForm(self.request.POST, instance=None, request=self.request)
         else:

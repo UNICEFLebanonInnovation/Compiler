@@ -22,22 +22,28 @@ from .models import (
     PublicDocument,
     PartnerOrganization,
     Evaluation,
-    Location
+    Location,
+    Club,
+    Meeting,
+    CommunityInitiative,
+    HealthVisit
 )
 
 from .serializers import (
     SchoolSerializer,
     ClassRoomSerializer,
-    SectionSerializer,
+    SectionSerializer
 )
 from .tables import (
     BootstrapTable,
-    SchoolTable
+    SchoolTable,
+    ClubTable
 )
 from .filters import (
     SchoolFilter
 )
-from .forms import ProfileForm,SchoolForm,  PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
+from .forms import ProfileForm,SchoolForm, ClubForm,   \
+    PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
     Classroom_Form_c4, Classroom_Form_c5, Classroom_Form_c6, Classroom_Form_c7, Classroom_Form_c8, \
     Classroom_Form_c9, Classroom_Form_cprep
 from .utils import is_allowed_create, is_allowed_edit
@@ -597,3 +603,70 @@ class SchoolEditView(LoginRequiredMixin,
         instance = School.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(SchoolEditView, self).form_valid(form)
+
+
+class ClubListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+
+    table_class = ClubTable
+    model = Club
+    template_name = 'schools/club_list.html'
+    table = BootstrapTable(Club.objects.all(), order_by='id')
+    group_required = [u"CLM_Bridging"]
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        school_id = int(self.kwargs['school_id'])
+        return Club.objects.filter(school_id=school_id).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        kwargs['school_id']  = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        print "-----------------------------"
+        print kwargs['school_id']
+        return super(ClubListView, self).get_context_data(**kwargs)
+
+
+
+
+class ClubFormView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+    template_name = 'schools/club_form.html'
+    form_class = ClubForm
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return '/schools/club-list/' + school_id
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+            kwargs['school_id']  = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return super(ClubFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
+        if self.request.method == "POST":
+            return ClubForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
+        else:
+            if pk:
+                instance = Club.objects.get(id=pk)
+
+                return ClubForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
+            return ClubForm(school_id=school_id, pk=pk, request=self.request)
+
+    def form_valid(self, form):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, school_id=school_id, instance=instance)
+        return super(ClubFormView, self).form_valid(form)
+
