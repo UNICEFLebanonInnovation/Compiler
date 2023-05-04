@@ -26,10 +26,13 @@ def to_array(fields, obj):
     return data
 
 
-def generate_services(child_age, registry):
+def generate_services(child_age, registry, user=None):
     from .models import ProvidedServices, Packages
+    from student_registration.users.templatetags.custom_tags import has_group
 
     packages = Packages.objects.filter(type=registry.type, age=child_age)
+    if user and has_group(user, 'MSCC_YOUTH'):
+        packages = packages.filter(category="Youth")
 
     for package in packages.all():
         instance, created = ProvidedServices.objects.get_or_create(name=package.name,
@@ -37,6 +40,18 @@ def generate_services(child_age, registry):
                                                                    type=package.type,
                                                                    category=package.category)
         instance.save()
+
+
+def regenerate_services(child_age, registry, user=None):
+    from .templatetags.simple_tags import service_data
+    from .models import ProvidedServices
+
+    ProvidedServices.objects.filter(registration=registry).delete()
+    generate_services(child_age, registry, user)
+    service = service_data('EducationService', registry)
+    if service:
+        service.education_program = ""
+        service.save()
 
 
 def update_service(service_name, registry_id, service_id):
@@ -277,7 +292,7 @@ def get_old_child(student_id):
     initial['child_birthday_month'] = instance.birthday_month
     initial['child_birthday_day'] = instance.birthday_day
     initial['child_gender'] = instance.sex
-    initial['child_nationality'] = instance.nationality.id
+    initial['child_nationality'] = instance.nationality.id if instance.nationality else 0
     initial['child_marital_status'] = instance.family_status
 
     # initial['id_type'] = instance.outreach_caregiver.id_type
@@ -374,8 +389,7 @@ def load_child_attendance(center_id, attendance_date):
         return []
 
 
-
-class RegitsrationResource(resources.ModelResource):
+class RegistrationResource(resources.ModelResource):
     class Meta:
         model = Registration
         fields = (

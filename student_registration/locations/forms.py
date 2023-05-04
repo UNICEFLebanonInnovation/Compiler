@@ -11,9 +11,7 @@ from crispy_forms.bootstrap import (
     FormActions,
     InlineCheckboxes
 )
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from dal import autocomplete
-
 
 
 from student_registration.locations.models import Location
@@ -24,7 +22,7 @@ from .models import (
 
 
 class CenterAdminForm(forms.ModelForm):
-    name =  forms.CharField(
+    name = forms.CharField(
         label=_("Center name"),
         widget=forms.TextInput, required=True
     )
@@ -67,6 +65,18 @@ class CenterAdminForm(forms.ModelForm):
         ),
         initial=''
     )
+    provided_packages = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=(
+                ('Education', 'Education'),
+                ('Youth', 'Youth'),
+                ('Health & Nutrition', 'Health & Nutrition'),
+                ('Child Protection', 'Child Protection'),
+                ('Social Protection', 'Social Protection'),
+            ),
+    )
+
     def __init__(self, *args, **kwargs):
         super(CenterAdminForm, self).__init__(*args, **kwargs)
 

@@ -517,7 +517,7 @@ def export_data(request):
     if nationality is not None and nationality != '':
         qs_registration.filter(child__nationality=nationality)
     qs_registration.order_by('-id')
-    dataset = RegitsrationResource().export(qs_registration)
+    dataset = RegistrationResource().export(qs_registration)
     response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename="data.xls"'
     return response

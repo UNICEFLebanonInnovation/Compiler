@@ -625,12 +625,8 @@ class ClubListView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
-        kwargs['school_id']  = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
-        print "-----------------------------"
-        print kwargs['school_id']
+        kwargs['school_id'] = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
         return super(ClubListView, self).get_context_data(**kwargs)
-
-
 
 
 class ClubFormView(LoginRequiredMixin,

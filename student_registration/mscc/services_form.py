@@ -11,8 +11,7 @@ from crispy_forms.bootstrap import (
     FormActions,
     InlineCheckboxes
 )
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
-from dal import autocomplete
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 
 from .utils import update_service
 from .models import (
@@ -25,8 +24,10 @@ from .models import (
     FollowUpService,
     YouthAssessment,
     YouthReferral,
+    Recreational,
     YES_NO
 )
+
 
 class PSSServiceForm(forms.ModelForm):
 
@@ -124,6 +125,8 @@ class PSSServiceForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-2'
             )
@@ -220,6 +223,8 @@ class InclusionServiceForm(forms.ModelForm):
             FormActions(
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                Reset('reset', 'Reset',
+                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
             )
         )
 
@@ -397,6 +402,8 @@ class DigitalServiceForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-1'
                 )
@@ -814,6 +821,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-2',
                 )
@@ -926,6 +935,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-2',
                 )
@@ -1199,6 +1210,8 @@ class HealthNutritionReferralForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1'
             )
@@ -1306,7 +1319,6 @@ class HealthNutritionReferralForm(forms.ModelForm):
             'infant_child_referred_iycf',
             'infant_child_referred_organization',
         )
-
 
 
 class YouthKitServiceForm(forms.ModelForm):
@@ -1489,6 +1501,8 @@ class YouthKitServiceForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-2',
             )
@@ -1702,6 +1716,8 @@ class FollowUpServiceForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-2',
             )
@@ -1905,6 +1921,8 @@ class YouthAssessmentForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1',
             )
@@ -2016,6 +2034,8 @@ class YouthReferralForm(forms.ModelForm):
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
                 css_id='step-1',
             )
@@ -2046,3 +2066,111 @@ class YouthReferralForm(forms.ModelForm):
             'refer_innovation',
         )
 
+
+class RecreationalForm(forms.ModelForm):
+    sports = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Sports for Development Programmes')
+    )
+    sports_nbr_sessions = forms.IntegerField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+        required=False,
+        label="Number of sessions attended",
+        initial=0
+    )
+    qudwa = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Qudwa initiatives')
+    )
+    qudwa_nbr_sessions = forms.IntegerField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+        required=False,
+        label="Number of sessions attended",
+        initial=0
+    )
+    community_events = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('No', 'No'),
+            ('Theater plays', 'Theater plays'),
+            ('Arts', 'Arts'),
+            ('Music', 'Music'),
+            ('Others', 'Others')
+        ),
+        label=_('Community Events')
+    )
+    community_events_nbr_sessions = forms.IntegerField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+        required=False,
+        label="Number of sessions attended",
+        initial=0
+    )
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(RecreationalForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_recreational_add', kwargs={'registry': registry})
+        if instance:
+            form_action = reverse('mscc:service_recreational_edit', kwargs={'registry': registry, 'pk': instance})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    HTML('<h3>What Recreational activities did the child attend:</h3>'),
+                    css_class='row card-body mb-5'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('sports', css_class='col-md-4'),
+                    Div('sports_nbr_sessions', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('qudwa', css_class='col-md-4'),
+                    Div('qudwa_nbr_sessions', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('community_events', css_class='col-md-4'),
+                    Div('community_events_nbr_sessions', css_class='col-md-4'),
+                    css_class='row card-body'
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            ),
+        )
+
+    def save(self, request=None, instance=None, registry=None):
+        if not instance:
+            instance = Recreational.objects.create(registration_id=registry)
+        else:
+            instance = Recreational.objects.get(id=instance)
+
+        instance.assessment = request.POST
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = Recreational
+        fields = ()
