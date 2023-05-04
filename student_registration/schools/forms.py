@@ -10,7 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder
 
-from .models import School, PartnerOrganization, EducationYear, Evaluation, Location
+from .models import School, PartnerOrganization, EducationYear, Evaluation, Location, Club, Meeting, CommunityInitiative, HealthVisit
 from .serializers import SchoolSerializer
 
 class ProfileForm(forms.ModelForm):
@@ -3556,3 +3556,104 @@ class SchoolForm(forms.ModelForm):
             'number_dirasa_children_disability',
             'number_total_children_disability',
         )
+
+
+class ClubForm(forms.ModelForm):
+
+    club_name = forms.CharField(
+        label=_("Club name"),
+        widget=forms.TextInput, required=True
+    )
+    number_clubs = forms.IntegerField(
+        label=_('Number of Clubs'),
+        widget=forms.TextInput, required=False
+    )
+    club_type = forms.ChoiceField(
+        label=_("Club Type"),
+        widget=forms.Select, required=True,
+        choices=Club.CLUB_TYPE,
+        initial='yes'
+    )
+    number_children = forms.IntegerField(
+        label=_('Number of Children in Each'),
+        widget=forms.TextInput, required=False
+    )
+
+    school_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+
+    def __init__(self, *args, **kwargs):
+
+        self.request = kwargs.pop('request', None)
+        school_id = kwargs.pop('school_id', None)
+        pk = kwargs.pop('pk', None)
+
+
+
+        super(ClubForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('schools:club_add', kwargs={'school_id': school_id})
+        if pk:
+            form_action = reverse('schools:club_edit',
+                                  kwargs={'pk': pk})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Club information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('club_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('number_clubs', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('club_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('number_children', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/club-list/' + school_id + '" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def save(self, request=None, instance=None, school_id=None):
+        validated_data = request.POST
+
+        if not instance:
+            instance = Club.objects.create(school_id=school_id)
+        else:
+            instance = Club.objects.get(id=instance)
+
+        instance.club_name = validated_data.get('club_name')
+        instance.number_clubs = validated_data.get('number_clubs')
+        instance.club_type = validated_data.get('club_type')
+        instance.number_children = validated_data.get('number_children')
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = Club
+        fields = (
+            'club_name',
+            'number_clubs',
+            'club_type',
+            'number_children'
+        )
+
