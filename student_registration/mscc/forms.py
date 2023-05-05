@@ -132,6 +132,10 @@ class MainForm(forms.ModelForm):
         initial=0,
         min_value=0
     )
+    child_fe_unique_id = forms.ChoiceField(
+        label=_('Formal Education unique student ID'),
+        widget=forms.TextInput, required=False,
+    )
     source_of_identification = forms.ChoiceField(
         label=_("Source of referral of the child to Makani"),
         widget=forms.Select,
@@ -212,7 +216,6 @@ class MainForm(forms.ModelForm):
         label=_('If Other, Please specify'),
         widget=forms.TextInput, required=False
     )
-
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
         widget=forms.TextInput, required=True
@@ -225,7 +228,6 @@ class MainForm(forms.ModelForm):
         label=_("Caregiver Last Name"),
         widget=forms.TextInput, required=True
     )
-
     caregiver_mother_name = forms.CharField(
         label=_("Caretaker Mother\'s Full Name"),
         widget=forms.TextInput, required=True
@@ -460,35 +462,32 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('child_disability', css_class='col-md-5'),
-                    css_class='row card-body',
-                ),
-                Div(
+                    Div('child_disability', css_class='col-md-4'),
                     HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('child_marital_status', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('child_have_children', css_class='col-md-3', css_id='child_have_children'),
-                    HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('child_children_number', css_class='col-md-3'),
+                    Div('child_fe_unique_id', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                    Div('child_marital_status', css_class='col-md-4'),
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('child_have_children', css_class='col-md-4', css_id='child_have_children'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('child_children_number', css_class='col-md-4'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('source_of_identification', css_class='col-md-7'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('source_of_identification_specify', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
-                # Div(
-                #     HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                #     Div('mscc_packages', css_class='col-md-9 multiple-choice'),
-                #     css_class='row card-body',
-                # ),
                 css_id='step-1',
             ),
             Div(
@@ -657,7 +656,7 @@ class MainForm(forms.ModelForm):
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                     Reset('reset', 'Reset',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
 
                 ),
                 css_id='step-3',
@@ -913,6 +912,7 @@ class MainForm(forms.ModelForm):
             'child_children_number',
             'source_of_identification',
             'source_of_identification_specify',
+            'child_fe_unique_id',
             'cash_support_programmes',
             # 'mscc_packages',
             'father_educational_level',

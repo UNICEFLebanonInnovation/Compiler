@@ -164,6 +164,12 @@ class Child(TimeStampedModel):
         choices=((x, x) for x in range(0, 20)),
         verbose_name=_('If yes, how many?')
     )
+    fe_unique_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Formal Education unique student ID')
+    )
     number = models.CharField(max_length=45, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,

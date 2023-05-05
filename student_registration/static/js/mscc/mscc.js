@@ -100,6 +100,10 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
+    $(document).on('change', 'select#child_nationality', function(){
+        reorganizeForm();
+    });
+
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
 
@@ -473,14 +477,19 @@ function isAddPage()
 function reorganizeForm()
 {
 //    Child Nationality
-   var child_nationality = $('select#id_child_nationality').val();
+    var child_nationality = $('select#id_child_nationality').val();
     $('div#div_id_child_nationality_other').addClass('d-none');
+
     if(child_nationality == 6){
         $('#div_id_child_nationality_other').removeClass('d-none');
-    }
-    else
-    {
+    }else{
         $('#id_child_nationality_other').val('');
+    }
+
+    if(child_nationality == 5 && $('#id_type').val() == 'Walk-in-In-School'){
+        $('#div_child_fe_unique_id').removeClass('d-none');
+    }else{
+        $('#div_child_fe_unique_id').addClass('d-none');
     }
 
 //    Child have children
@@ -505,7 +514,7 @@ function reorganizeForm()
     }
 
 //    Main Caregiver
-   var main_caregiver = $('select#id_main_caregiver').val();
+    var main_caregiver = $('select#id_main_caregiver').val();
     $('div#div_id_main_caregiver_other').addClass('d-none');
     if(main_caregiver == 'Other'){
         $('#div_id_main_caregiver_other').removeClass('d-none');
