@@ -528,6 +528,7 @@ class ClubType(models.Model):
     def __str__(self):
         return self.name
 
+
 class Club(TimeStampedModel):
     school = models.ForeignKey(
         School,

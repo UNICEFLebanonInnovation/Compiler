@@ -1,0 +1,16 @@
+{% load staticfiles i18n %}
+{% if column.attrs.url %}
+   <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info">
+      <i class="icon-synch-sign icon-white"></i>
+      {% trans "List" %}
+ </a>
+  <a href="{{ '/schools/health-visit-add/' }}{{ record.id }}" class="btn btn-primary">
+              <i class="icon-plus-sign icon-white"></i>
+              {%  trans "Add" %}
+  </a>
+{% else %}
+    {% trans "Not allowed" %}
+{% endif %}
+
+
+

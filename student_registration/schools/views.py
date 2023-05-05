@@ -37,12 +37,16 @@ from .serializers import (
 from .tables import (
     BootstrapTable,
     SchoolTable,
-    ClubTable
+    ClubTable,
+    MeetingTable,
+    CommunityInitiativeTable,
+    HealthVisitTable
+
 )
 from .filters import (
     SchoolFilter
 )
-from .forms import ProfileForm,SchoolForm, ClubForm,   \
+from .forms import ProfileForm,SchoolForm, ClubForm, MeetingForm, CommunityInitiativeForm , HealthVisitForm,  \
     PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
     Classroom_Form_c4, Classroom_Form_c5, Classroom_Form_c6, Classroom_Form_c7, Classroom_Form_c8, \
     Classroom_Form_c9, Classroom_Form_cprep
@@ -665,4 +669,193 @@ class ClubFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, school_id=school_id, instance=instance)
         return super(ClubFormView, self).form_valid(form)
+
+
+class MeetingListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+
+    table_class = MeetingTable
+    model = Meeting
+    template_name = 'schools/meeting_list.html'
+    table = BootstrapTable(Meeting.objects.all(), order_by='id')
+    group_required = [u"CLM_Bridging"]
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        school_id = int(self.kwargs['school_id'])
+        return Meeting.objects.filter(school_id=school_id).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        kwargs['school_id'] = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return super(MeetingListView, self).get_context_data(**kwargs)
+
+
+class MeetingFormView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+    template_name = 'schools/meeting_form.html'
+    form_class = MeetingForm
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return '/schools/meeting-list/' + school_id
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+            kwargs['school_id']  = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return super(MeetingFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
+        if self.request.method == "POST":
+            return MeetingForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
+        else:
+            if pk:
+                instance = Meeting.objects.get(id=pk)
+
+                return MeetingForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
+            return MeetingForm(school_id=school_id, pk=pk, request=self.request)
+
+    def form_valid(self, form):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, school_id=school_id, instance=instance)
+        return super(MeetingFormView, self).form_valid(form)
+
+
+class CommunityInitiativeListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+
+    table_class = CommunityInitiativeTable
+    model = CommunityInitiative
+    template_name = 'schools/community_initiative_list.html'
+    table = BootstrapTable(CommunityInitiative.objects.all(), order_by='id')
+    group_required = [u"CLM_Bridging"]
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        school_id = int(self.kwargs['school_id'])
+        return CommunityInitiative.objects.filter(school_id=school_id).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        kwargs['school_id'] = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return super(CommunityInitiativeListView, self).get_context_data(**kwargs)
+
+
+class CommunityInitiativeFormView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+    template_name = 'schools/community_initiative_form.html'
+    form_class = CommunityInitiativeForm
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return '/schools/community-initiative-list/' + school_id
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+            kwargs['school_id']  = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return super(CommunityInitiativeFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
+        if self.request.method == "POST":
+            return CommunityInitiativeForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
+        else:
+            if pk:
+                instance = CommunityInitiative.objects.get(id=pk)
+
+                return CommunityInitiativeForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
+            return CommunityInitiativeForm(school_id=school_id, pk=pk, request=self.request)
+
+    def form_valid(self, form):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, school_id=school_id, instance=instance)
+        return super(CommunityInitiativeFormView, self).form_valid(form)
+
+
+
+
+
+class HealthVisitListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+
+    table_class = HealthVisitTable
+    model = HealthVisit
+    template_name = 'schools/health_visit_list.html'
+    table = BootstrapTable(HealthVisit.objects.all(), order_by='id')
+    group_required = [u"CLM_Bridging"]
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        school_id = int(self.kwargs['school_id'])
+        return HealthVisit.objects.filter(school_id=school_id).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        kwargs['school_id'] = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return super(HealthVisitListView, self).get_context_data(**kwargs)
+
+
+class HealthVisitFormView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+    template_name = 'schools/health_visit_form.html'
+    form_class = HealthVisitForm
+    group_required = [u"CLM_Bridging"]
+
+    def get_success_url(self):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return '/schools/health-visit-list/' + school_id
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+            kwargs['school_id']  = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        return super(HealthVisitFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        pk = self.kwargs['pk'] if 'pk' in self.kwargs else None
+
+        if self.request.method == "POST":
+            return HealthVisitForm(self.request.POST, pk=pk, school_id=school_id, request=self.request)
+        else:
+            if pk:
+                instance = HealthVisit.objects.get(id=pk)
+
+                return HealthVisitForm(instance=instance, school_id=school_id, pk=pk, request=self.request)
+            return HealthVisitForm(school_id=school_id, pk=pk, request=self.request)
+
+    def form_valid(self, form):
+        school_id = self.kwargs['school_id'] if 'school_id' in self.kwargs else None
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, school_id=school_id, instance=instance)
+        return super(HealthVisitFormView, self).form_valid(form)
 

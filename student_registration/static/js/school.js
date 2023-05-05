@@ -24,6 +24,18 @@ $(document).ready(function() {
         $('#id_academic_year_end').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+     if($(document).find('#id_meeting_date').length == 1) {
+        $('#id_meeting_date').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+     if($(document).find('#id_date_first_visit').length == 1) {
+        $('#id_date_first_visit').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+     if($(document).find('#id_date_last_visit').length == 1) {
+        $('#id_date_last_visit').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
     $(document).on('click', '.justify-button', function(){
         var item = $(this);
         var itemscope = item.attr('itemscope');
