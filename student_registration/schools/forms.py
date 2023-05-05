@@ -10,7 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder
 
-from .models import School, PartnerOrganization, EducationYear, Evaluation, Location, Club, Meeting, CommunityInitiative, HealthVisit
+from .models import School, PartnerOrganization, EducationYear, Evaluation, Location, Club, ClubType,  Meeting, CommunityInitiative, HealthVisit
 from .serializers import SchoolSerializer
 
 class ProfileForm(forms.ModelForm):
@@ -3568,14 +3568,15 @@ class ClubForm(forms.ModelForm):
         label=_('Number of Clubs'),
         widget=forms.TextInput, required=False
     )
-    club_type = forms.ChoiceField(
-        label=_("Club Type"),
-        widget=forms.Select, required=True,
-        choices=Club.CLUB_TYPE,
-        initial='yes'
+    club_type = forms.ModelChoiceField(
+        queryset=ClubType.objects.all(), widget=forms.Select,
+        label=_('Club Type'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+        initial=0
     )
     number_children = forms.IntegerField(
-        label=_('Number of Children in Each'),
+        label=_('Total Number of Children'),
         widget=forms.TextInput, required=False
     )
 
@@ -3588,14 +3589,12 @@ class ClubForm(forms.ModelForm):
         school_id = kwargs.pop('school_id', None)
         pk = kwargs.pop('pk', None)
 
-
-
         super(ClubForm, self).__init__(*args, **kwargs)
 
         form_action = reverse('schools:club_add', kwargs={'school_id': school_id})
         if pk:
             form_action = reverse('schools:club_edit',
-                                  kwargs={'pk': pk})
+                                  kwargs={'school_id': school_id, 'pk': pk})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -3622,12 +3621,13 @@ class ClubForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
+
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/schools/club-list/' + school_id + '" translation="' + _(
                     'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
-            )
+                )
         )
 
     def save(self, request=None, instance=None, school_id=None):
@@ -3640,7 +3640,7 @@ class ClubForm(forms.ModelForm):
 
         instance.club_name = validated_data.get('club_name')
         instance.number_clubs = validated_data.get('number_clubs')
-        instance.club_type = validated_data.get('club_type')
+        instance.club_type_id = validated_data.get('club_type')
         instance.number_children = validated_data.get('number_children')
         instance.save()
 

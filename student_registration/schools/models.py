@@ -515,12 +515,20 @@ class School(TimeStampedModel):
         return self.name
 
 
+class ClubType(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Club Type"
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
 class Club(TimeStampedModel):
-    CLUB_TYPE = Choices(
-        ('', '----------'),
-        ('yes', _("Yes")),
-        ('no', _("No")),
-    )
     school = models.ForeignKey(
         School,
         verbose_name=_('school'),
@@ -535,16 +543,15 @@ class Club(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Number of Clubs')
     )
-    club_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=CLUB_TYPE,
+    club_type = models.ForeignKey(
+        ClubType,
+        blank=True, null=True,
+        related_name='+',
         verbose_name=_('Club Type')
     )
     number_children = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Number of Children in Each')
+        verbose_name=_('Total Number of Children')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,

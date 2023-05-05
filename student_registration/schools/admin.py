@@ -25,6 +25,7 @@ from .models import (
     Evaluation,
     PublicHolidays,
     Schl_Subject,
+    ClubType
 )
 from student_registration.locations.models import Location
 
@@ -145,6 +146,20 @@ class SchoolResource(resources.ModelResource):
 
     def dehydrate_attendances_days_alp_open(self, obj):
         return obj.total_attendances_days_alp_open
+
+
+class ClubTypeResource(resources.ModelResource):
+    class Meta:
+        model = ClubType
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = ('name', )
+
+
+class ClubTypeAdmin(ImportExportModelAdmin):
+    resource_class = ClubTypeResource
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -824,3 +839,4 @@ admin.site.register(Coordinator)
 admin.site.register(Schl_Subject)
 admin.site.register(Evaluation, EvaluationAdmin)
 admin.site.register(PublicHolidays)
+admin.site.register(ClubType, ClubTypeAdmin)

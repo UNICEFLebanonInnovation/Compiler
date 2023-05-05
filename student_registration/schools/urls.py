@@ -107,7 +107,7 @@ urlpatterns = [
         name='club_add'
     ),
     url(
-        regex=r'^club-edit/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^club-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.ClubFormView.as_view(),
         name='club_edit'
     ),
