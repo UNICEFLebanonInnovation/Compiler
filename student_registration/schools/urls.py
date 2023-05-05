@@ -112,6 +112,51 @@ urlpatterns = [
         name='club_edit'
     ),
     url(
+        regex=r'^meeting-list/(?P<school_id>[\w.@+-]+)/$',
+        view=views.MeetingListView.as_view(),
+        name='meeting_list'
+    ),
+    url(
+        regex=r'^meeting-add/(?P<school_id>[\w.@+-]+)/$',
+        view=views.MeetingFormView.as_view(),
+        name='meeting_add'
+    ),
+    url(
+        regex=r'^meeting-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=views.MeetingFormView.as_view(),
+        name='meeting_edit'
+    ),
+    url(
+        regex=r'^community-initiative-list/(?P<school_id>[\w.@+-]+)/$',
+        view=views.CommunityInitiativeListView.as_view(),
+        name='community_initiative_list'
+    ),
+    url(
+        regex=r'^community-initiative-add/(?P<school_id>[\w.@+-]+)/$',
+        view=views.CommunityInitiativeFormView.as_view(),
+        name='community_initiative_add'
+    ),
+    url(
+        regex=r'^community-initiative-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=views.CommunityInitiativeFormView.as_view(),
+        name='community_initiative_edit'
+    ),
+    url(
+        regex=r'^health-visit-list/(?P<school_id>[\w.@+-]+)/$',
+        view=views.HealthVisitListView.as_view(),
+        name='health_visit_list'
+    ),
+    url(
+        regex=r'^health-visit-add/(?P<school_id>[\w.@+-]+)/$',
+        view=views.HealthVisitFormView.as_view(),
+        name='health_visit_add'
+    ),
+    url(
+        regex=r'^health-visit-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=views.HealthVisitFormView.as_view(),
+        name='health_visit_edit'
+    ),
+    url(
         'load-districts/$',
         views.load_districts,
         name='load_districts'

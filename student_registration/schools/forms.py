@@ -3635,6 +3635,7 @@ class ClubForm(forms.ModelForm):
 
         if not instance:
             instance = Club.objects.create(school_id=school_id)
+            instance.owner = request.user
         else:
             instance = Club.objects.get(id=instance)
 
@@ -3642,6 +3643,7 @@ class ClubForm(forms.ModelForm):
         instance.number_clubs = validated_data.get('number_clubs')
         instance.club_type_id = validated_data.get('club_type')
         instance.number_children = validated_data.get('number_children')
+        instance.modified_by = request.user
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -3657,3 +3659,278 @@ class ClubForm(forms.ModelForm):
             'number_children'
         )
 
+
+class MeetingForm(forms.ModelForm):
+
+    meeting_name = forms.CharField(
+        label=_("Meeting Name"),
+        widget=forms.TextInput, required=True
+    )
+    meeting_date = forms.DateField(
+        label=_('Meeting Date'),
+        widget=forms.TextInput,
+        required=True
+    )
+    number_participants = forms.IntegerField(
+        label=_('Number of Participants'),
+        widget=forms.TextInput, required=False
+    )
+    school_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+
+    def __init__(self, *args, **kwargs):
+
+        self.request = kwargs.pop('request', None)
+        school_id = kwargs.pop('school_id', None)
+        pk = kwargs.pop('pk', None)
+
+        super(MeetingForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('schools:meeting_add', kwargs={'school_id': school_id})
+        if pk:
+            form_action = reverse('schools:meeting_edit',
+                                  kwargs={'school_id': school_id, 'pk': pk})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Meeting Infromation') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('meeting_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('meeting_date', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('number_participants', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/meeting-list/' + school_id + '" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+                )
+        )
+
+    def save(self, request=None, instance=None, school_id=None):
+        validated_data = request.POST
+
+        if not instance:
+            instance = Meeting.objects.create(school_id=school_id)
+            instance.owner = request.user
+        else:
+            instance = Meeting.objects.get(id=instance)
+
+        instance.meeting_name = validated_data.get('meeting_name')
+        instance.meeting_date = validated_data.get('meeting_date')
+        instance.number_participants = validated_data.get('number_participants')
+        instance.modified_by = request.user
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = Meeting
+        fields = (
+            'meeting_name',
+            'meeting_date',
+            'number_participants'
+        )
+
+
+class CommunityInitiativeForm(forms.ModelForm):
+
+    community_group_name = forms.CharField(
+        label=_("Community Group Name"),
+        widget=forms.TextInput, required=True
+    )
+    number_initiatives = forms.IntegerField(
+        label=_('Number of Initiatives'),
+        widget=forms.TextInput, required=False
+    )
+    school_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+
+    def __init__(self, *args, **kwargs):
+
+        self.request = kwargs.pop('request', None)
+        school_id = kwargs.pop('school_id', None)
+        pk = kwargs.pop('pk', None)
+
+        super(CommunityInitiativeForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('schools:community_initiative_add', kwargs={'school_id': school_id})
+        if pk:
+            form_action = reverse('schools:community_initiative_edit',
+                                  kwargs={'school_id': school_id, 'pk': pk})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Club information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('community_group_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('number_initiatives', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/community-initiative-list/' + school_id + '" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+                )
+        )
+
+    def save(self, request=None, instance=None, school_id=None):
+        validated_data = request.POST
+
+        if not instance:
+            instance = CommunityInitiative.objects.create(school_id=school_id)
+            instance.owner = request.user
+        else:
+            instance = CommunityInitiative.objects.get(id=instance)
+
+        instance.community_group_name = validated_data.get('community_group_name')
+        instance.number_initiatives = validated_data.get('number_initiatives')
+        instance.modified_by = request.user
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = CommunityInitiative
+        fields = (
+            'community_group_name',
+            'number_initiatives',
+        )
+
+class HealthVisitForm(forms.ModelForm):
+    focal_point_name = forms.CharField(
+        label=_("Health Focal Point Name"),
+        widget=forms.TextInput, required=True
+    )
+    number_visits = forms.IntegerField(
+        label=_('Number of Visits'),
+        widget=forms.TextInput, required=False
+    )
+    date_first_visit = forms.DateField(
+        label=_('Date of First Visit'),
+        widget=forms.TextInput,
+        required=True
+    )
+    date_last_visit = forms.DateField(
+        label=_('Date of Last Visit'),
+        widget=forms.TextInput,
+        required=True
+    )
+    summary = forms.CharField(
+        label=_('Summary'),
+        widget=forms.Textarea, required=False
+    )
+    school_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+
+    def __init__(self, *args, **kwargs):
+
+        self.request = kwargs.pop('request', None)
+        school_id = kwargs.pop('school_id', None)
+        pk = kwargs.pop('pk', None)
+
+        super(HealthVisitForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('schools:health_visit_add', kwargs={'school_id': school_id})
+        if pk:
+            form_action = reverse('schools:health_visit_edit',
+                                  kwargs={'school_id': school_id, 'pk': pk})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Health Visit information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('focal_point_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('number_visits', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('date_first_visit', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('date_last_visit', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('summary', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/health-visit-list/' + school_id + '" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+                )
+        )
+
+    def save(self, request=None, instance=None, school_id=None):
+        validated_data = request.POST
+
+        if not instance:
+            instance = HealthVisit.objects.create(school_id=school_id)
+            instance.owner = request.user
+        else:
+            instance = HealthVisit.objects.get(id=instance)
+
+        instance.focal_point_name = validated_data.get('focal_point_name')
+        instance.number_visits = validated_data.get('number_visits')
+        instance.date_first_visit = validated_data.get('date_first_visit')
+        instance.date_last_visit = validated_data.get('date_last_visit')
+        instance.summary = validated_data.get('summary')
+        instance.modified_by = request.user
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = HealthVisit
+        fields = (
+            'focal_point_name',
+            'number_visits',
+            'date_first_visit',
+            'date_last_visit',
+            'summary'
+        )
