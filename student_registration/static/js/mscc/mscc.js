@@ -100,10 +100,6 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#child_nationality', function(){
-        reorganizeForm();
-    });
-
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
 
@@ -487,9 +483,10 @@ function reorganizeForm()
     }
 
     if(child_nationality == 5 && $('#id_type').val() == 'Walk-in-In-School'){
-        $('#div_child_fe_unique_id').removeClass('d-none');
+        $('#child_fe_unique_id_block').removeClass('d-none');
     }else{
-        $('#div_child_fe_unique_id').addClass('d-none');
+        $('#child_fe_unique_id_block').addClass('d-none');
+        $('#id_child_fe_unique_id').val('');
     }
 
 //    Child have children
