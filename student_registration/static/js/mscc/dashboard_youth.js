@@ -166,40 +166,28 @@
            }];
 
     var children_per_programme_data = [{
-                           name: "BLN Level 1",
+                           name: "YBLN Level 1",
                            y: 233,
                            drilldown: "",
                            color: '#B66DFF'
                        },
                        {
-                           name: "BLN Level 2",
+                           name: "YBLN Level 2",
                            y: 234,
                            drilldown: "",
                            color: '#480091'
                        },
                        {
-                           name: "YBLN",
-                           y: 233,
-                           drilldown: "",
-                           color: '#FEB5DA'
-                       },
-                       {
-                           name: "YFNL",
+                           name: "YFS Level 1",
                            y: 343,
                            drilldown: "",
                            color: '#FE6DB6'
                        },
                        {
-                           name: "CBECE Level 3",
-                           y: 545,
+                           name: "YFS Level 2",
+                           y: 343,
                            drilldown: "",
-                           color: '#009292'
-                       },
-                       {
-                           name: "Retention Support",
-                           y: 767,
-                           drilldown: "",
-                           color: '#074650'
+                           color: '#FE6DB6'
                        }];
     var children_per_nationality_data = [
                    {

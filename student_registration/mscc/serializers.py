@@ -80,6 +80,7 @@ class MainSerializer(serializers.ModelSerializer):
     child_disability_id = serializers.CharField(source='child.disability.id', read_only=True)
     child_p_code = serializers.CharField(source='child.p_code', required=False)
     child_id_number = serializers.CharField(source='child.id_number', required=False)
+    child_fe_unique_id = serializers.CharField(source='child.fe_unique_id', required=False)
     child_marital_status = serializers.CharField(source='child.marital_status', required=False)
     child_have_children = serializers.CharField(source='child.have_children', required=False)
     child_children_number = serializers.CharField(source='child.children_number', required=False)
@@ -191,6 +192,7 @@ class MainSerializer(serializers.ModelSerializer):
             'child_children_number',
             'source_of_identification',
             'source_of_identification_specify',
+            'child_fe_unique_id',
             'cash_support_programmes',
             'mscc_packages',
             'father_educational_level',

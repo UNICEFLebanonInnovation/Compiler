@@ -32,6 +32,11 @@ urlpatterns = [
         name='dashboard'
     ),
     url(
+        regex=r'^Dashboard-Youth/$',
+        view=views.DashboardYouthView.as_view(),
+        name='dashboard_youth'
+    ),
+    url(
         regex=r'^Services/Education-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationAssessmentFormView.as_view(),
         name='service_education_assessment_add'

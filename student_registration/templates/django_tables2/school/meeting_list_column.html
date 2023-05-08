@@ -1,13 +1,16 @@
 {% load staticfiles i18n %}
 {% if column.attrs.url %}
-   <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info">
-      <i class="icon-synch-sign icon-white"></i>
-      {% trans "List" %}
- </a>
-  <a href="{{ '/schools/meeting-add/' }}{{ record.id }}" class="btn btn-primary">
-              <i class="icon-plus-sign icon-white"></i>
-              {%  trans "Add" %}
+<div style="width: 100px;">
+
+  <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary col-icon">
+    <i class="fa fa-list"></i>
   </a>
+
+  <a href="/schools/meeting-add/{{ record.id }}" class="btn btn-success col-icon">
+    <i class="fa fa-plus"></i>
+  </a>
+
+</div>
 {% else %}
     {% trans "Not allowed" %}
 {% endif %}

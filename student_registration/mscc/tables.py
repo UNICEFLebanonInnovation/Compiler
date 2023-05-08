@@ -63,3 +63,27 @@ class MainTable(CommonTable):
             # 'caza',
             # 'cadaster',
         )
+
+
+class YouthMainTable(CommonTable):
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                          template_name='django_tables2/mscc/action_column.html')
+    class Meta:
+        model = Registration
+        fields = (
+            'action_column',
+            'child.number',
+            'child.first_name',
+            'child.father_name',
+            'child.last_name',
+            'child.mother_fullname',
+            'child.gender',
+            'child_age',
+            'child_birthday',
+            'child.nationality',
+            # 'center',
+            # 'center_type',
+            # 'governorate',
+            # 'caza',
+            # 'cadaster',
+        )

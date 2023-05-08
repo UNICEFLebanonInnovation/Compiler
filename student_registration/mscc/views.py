@@ -25,6 +25,7 @@ from .filters import (
 from .tables import (
     BootstrapTable,
     MainTable,
+    YouthMainTable,
 )
 from .models import (
     Registration,
@@ -44,6 +45,7 @@ from .serializers import (
 from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 class ProfileView(LoginRequiredMixin,
@@ -79,6 +81,28 @@ class DashboardView(LoginRequiredMixin,
             'total_corepackage': instances.filter(type='Core-Package').count(),
             'total_woosc': instances.filter(type='Walk-in-OOSC').count(),
             'total_wshl': instances.filter(type='Walk-in-In-School').count(),
+            'centers': centers,
+            'governorates': governorates,
+            'partners': partners
+        }
+
+
+class DashboardYouthView(LoginRequiredMixin,
+                         TemplateView):
+    template_name = 'mscc/dashboard_youth.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.locations.models import Center, Location
+        from student_registration.clm.models import PartnerOrganization
+
+        instances = Registration.objects.all()
+        centers = Center.objects.all()
+        governorates = Location.objects.filter(type_id=1)
+        partners = PartnerOrganization.objects.all()
+
+        return {
+            'total': instances.count(),
+            'total_corepackage': instances.filter(type='Core-Package').count(),
             'centers': centers,
             'governorates': governorates,
             'partners': partners
@@ -177,6 +201,15 @@ class MainListView(LoginRequiredMixin,
     def get_queryset(self):
         # return Registration.objects.all().order_by('-id')
         return Registration.objects.filter(center=self.request.user.center_id).order_by('-id')
+
+    def get_table_class(self):
+
+        """
+        Return the class to use for the table.
+        """
+        if not has_group(self.request.user, 'MSCC_FULL'):
+            return YouthMainTable
+        return self.table_class
 
 
 class MainViewSet(mixins.RetrieveModelMixin,
