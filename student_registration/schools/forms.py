@@ -3626,6 +3626,8 @@ class ClubForm(forms.ModelForm):
                 Submit('save', _('Save'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/schools/club-list/' + school_id + '" translation="' + _(
                     'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
                 css_class='button-group'
                 )
         )
@@ -3716,6 +3718,8 @@ class MeetingForm(forms.ModelForm):
                 Submit('save', _('Save'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/schools/meeting-list/' + school_id + '" translation="' + _(
                     'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
                 css_class='button-group'
                 )
         )
@@ -3797,6 +3801,8 @@ class CommunityInitiativeForm(forms.ModelForm):
                 Submit('save', _('Save'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/schools/community-initiative-list/' + school_id + '" translation="' + _(
                     'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
                 css_class='button-group'
                 )
         )
@@ -3900,6 +3906,8 @@ class HealthVisitForm(forms.ModelForm):
                 Submit('save', _('Save'), css_class='col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/schools/health-visit-list/' + school_id + '" translation="' + _(
                     'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
+                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
                 css_class='button-group'
                 )
         )

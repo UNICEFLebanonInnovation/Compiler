@@ -126,7 +126,7 @@ class CommunityInitiativeTable(CommonTable):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit Meeting'), orderable=False,
                                         template_name='django_tables2/school/community_initiative_edit_column.html',
-                                        attrs={'url': '/schools/community_initiative-edit/', 'programme': 'Bridging'})
+                                        attrs={'url': '/schools/community-initiative-edit/', 'programme': 'Bridging'})
 
     class Meta:
         model = CommunityInitiative
