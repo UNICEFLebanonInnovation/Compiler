@@ -65,7 +65,7 @@
           type="text/css" media="screen"/>
     <link href="{% static 'custom/2.2.0/css/colors/default.css' %}" id="color-styles" property='stylesheet'
           rel="stylesheet" type="text/css" media="screen"/>
-    <link href="{% static 'css/project.css' %}?v=8" rel="stylesheet">
+    <link href="{% static 'css/project.css' %}?v=9" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"-->
           <!--integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"-->
           <!--crossorigin="anonymous">-->
@@ -76,6 +76,14 @@
             crossorigin="anonymous"></script>
     {% block extra_head %}
     {% endblock %}
+  <style>
+    .col-icon i.fa {
+      color: #fff !important;
+    }
+    .col-icon i:before {
+      color: #fff !important;
+    }
+  </style>
 </head>
 
 <body id="olivia" class="boxed" style="max-width: 95%;">
@@ -139,7 +147,7 @@
       {% block main_content %}
       {% endblock main_content %}
 
-  <div class="" dir="rtl" style="position: relative;width: 100%; background-color: #f7f7f7; padding-top: 15px;">
+  <div class="" style="position: relative;width: 100%; background-color: #f7f7f7; padding-top: 15px;">
     {% block content-full-page %}
     {% endblock content-full-page %}
   </div>

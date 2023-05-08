@@ -217,8 +217,8 @@
   margin-top: 3px;
   width: auto;
   height: 22px;
-  float: right;
-  margin-right: 10px;
+  float: left;
+  margin-left: 10px;
 }
 
 .bd-callout {
@@ -226,12 +226,12 @@
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
   border: 1px solid #eee;
-  border-right-width: .25rem;
+  border-left-width: .25rem;
   border-radius: .25rem;
 }
 
 .bd-callout-warning {
-  border-right -color: #f0ad4e;
+  border-left-color: #f0ad4e;
 }
 
 .bd-callout-warning h4 {
@@ -447,15 +447,15 @@ tr.odd {
 }
 
 .inline-form .col-md-4 {
-  float: right;
+  float: left;
 }
 
 .inline-form .col-md-3 {
-  float: right;
+  float: left;
 }
 
 .inline-form .col-md-2 {
-  float: right;
+  float: left;
 }
 
 section.inline-form.inner-section {
@@ -629,7 +629,7 @@ section.inline-form .btn-actions .btn {
 }
 
 .red_right_border {
-  border-right: 7px solid blue;
+  border-left: 7px solid blue;
 }
 
 .red_right_border:hover {
@@ -637,36 +637,36 @@ section.inline-form .btn-actions .btn {
 }
 
 .orange_right_border {
-  border-right: 7px solid orange;
+  border-left: 7px solid orange;
 }
 
 .A_right_border {
-  border-right: 7px solid #68B0AB;
+  border-left: 7px solid #68B0AB;
 }
 
 .B_right_border {
-  border-right: 7px solid #99d19c;
+  border-left: 7px solid #99d19c;
 }
 
 .C_right_border {
-  border-right: 7px solid #8c7aa9;
+  border-left: 7px solid #8c7aa9;
 }
 
 .D_right_border {
-  border-right: 7px solid #7192be;
+  border-left: 7px solid #7192be;
 }
 
 .E_right_border {
-  border-right: 7px solid #ffe599;
+  border-left: 7px solid #ffe599;
 }
 
 .F_right_border {
-  border-right: 7px solid #ffe599;
+  border-left: 7px solid #ffe599;
 }
 
 fieldset.bd-callout {
   position: relative;
-  margin-right: 50px;
+  margin-left: 50px;
 }
 
 div.block_tag {
@@ -730,7 +730,7 @@ form .button-group {
 
 form .button-group input, form .button-group a {
   display: block;
-  float: right;
+  float: left;
   margin-left: 50px;
 }
 

@@ -87,6 +87,28 @@ class DashboardView(LoginRequiredMixin,
         }
 
 
+class DashboardYouthView(LoginRequiredMixin,
+                         TemplateView):
+    template_name = 'mscc/dashboard_youth.html'
+
+    def get_context_data(self, **kwargs):
+        from student_registration.locations.models import Center, Location
+        from student_registration.clm.models import PartnerOrganization
+
+        instances = Registration.objects.all()
+        centers = Center.objects.all()
+        governorates = Location.objects.filter(type_id=1)
+        partners = PartnerOrganization.objects.all()
+
+        return {
+            'total': instances.count(),
+            'total_corepackage': instances.filter(type='Core-Package').count(),
+            'centers': centers,
+            'governorates': governorates,
+            'partners': partners
+        }
+
+
 class MainAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
