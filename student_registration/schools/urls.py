@@ -171,4 +171,9 @@ urlpatterns = [
         views.load_schools,
         name='load_schools'
     ),
+    url(
+        regex=r'^school-export/$',
+        view=views.school_export_data,
+        name='school_export'
+    ),
 ]

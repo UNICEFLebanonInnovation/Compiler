@@ -2533,6 +2533,7 @@ def outreach_build_xls_extraction(queryset_students):
 def bridging_build_xls_extraction(queryset_students):
     from student_registration.schools.models import CLMRound
     current_round = CLMRound.objects.get(current_round_bridging=True)
+    round_id = current_round.id
     round_start_date = current_round.start_date_bridging
     round_end_date = current_round.end_date_bridging
 
@@ -2714,6 +2715,7 @@ def bridging_build_xls_extraction(queryset_students):
         'School',
         'The language supported in the program',
         'Student Address',
+        'Residence Type',
         'Registration level',
         'first attendance date',
         'ID number',
@@ -2791,11 +2793,12 @@ def bridging_build_xls_extraction(queryset_students):
         'Child weekly income',
         'pre test arabic',
         'pre test english',
+        'pre test french',
         'pre test math',
         'post test arabic',
         'post test english',
+        'post test french',
         'post test math',
-        'The language supported in the program',
         'Level of participation / Absence',
         'The main barriers affecting the daily attendance and performance of the child or drop out of',
         'Please specify',
@@ -2844,19 +2847,22 @@ def bridging_build_xls_extraction(queryset_students):
         'modified_by',
         'Attendance Days',
         'Absent Days',
-        'Period Out School'
+        # 'Period Out School'
     ]
 
     qs = queryset_students.extra(select={
         'pre_test_arabic': "pre_test->>'Bridging_ASSESSMENT/arabic'",
         'pre_test_english': "pre_test->>'Bridging_ASSESSMENT/english'",
+        'pre_test_french': "pre_test->>'Bridging_ASSESSMENT/french'",
         'pre_test_math': "pre_test->>'Bridging_ASSESSMENT/math'",
         'post_test_arabic': "post_test->>'Bridging_ASSESSMENT/arabic'",
         'post_test_english': "post_test->>'Bridging_ASSESSMENT/english'",
+        'post_test_french': "post_test->>'Bridging_ASSESSMENT/french'",
         'post_test_math': "post_test->>'Bridging_ASSESSMENT/math'",
     })
 
     rows = qs.order_by('id').values_list(
+
         'id',
         'student_id',
         'new_registry',
@@ -2869,6 +2875,7 @@ def bridging_build_xls_extraction(queryset_students):
         'school__name',
         'language',
         'student__address',
+        'residence_type',
         'registration_level',
         'first_attendance_date',
         'student__id_number',
@@ -2883,9 +2890,6 @@ def bridging_build_xls_extraction(queryset_students):
         'student__birthday_day',
         'student__birthday_month',
         'student__birthday_year',
-        'student__p_code',
-        'disability__name_en',
-        'education_status',
         'miss_school_date',
         'internal_number',
         'source_of_identification',
@@ -2946,11 +2950,12 @@ def bridging_build_xls_extraction(queryset_students):
         'labour_weekly_income',
         'pre_test_arabic',
         'pre_test_english',
+        'pre_test_french',
         'pre_test_math',
         'post_test_arabic',
         'post_test_english',
+        'post_test_french',
         'post_test_math',
-        'language',
         'participation',
         'barriers_single',
         'barriers_other',
@@ -3007,9 +3012,9 @@ def bridging_build_xls_extraction(queryset_students):
         age = Person.get_age(year, month, day)
         student_id = row[columns.index("Student ID")]
         attendance_days = Bridging.get_attendance_days(student_id, round_start_date, round_end_date)
-        absent_days = Bridging.get_absent_days(student_id, round_start_date, round_end_date)
+        absent_days = Bridging.get_total_absent_days(student_id, round_id)
         miss_school_date = row[columns.index("Miss school date")]
-        period_out_school = Bridging.get_period_out_school(student_id, miss_school_date, round_start_date)
+        # period_out_school = Bridging.get_period_out_school(student_id, miss_school_date, round_start_date)
 
         for col_num in range(len(row)):
             if col_num == columns.index("Birthday - year"):
@@ -3021,8 +3026,8 @@ def bridging_build_xls_extraction(queryset_students):
                 ws.write(row_num_student, col_num, row[col_num], font_style)
 
         ws.write(row_num_student, col_num + 2, attendance_days, font_style)
-        ws.write(row_num_student, col_num + 3, absent_days, font_style)
-        ws.write(row_num_student, col_num + 4, period_out_school, font_style)
+        # ws.write(row_num_student, col_num + 3, absent_days, font_style)
+        # ws.write(row_num_student, col_num + 4, period_out_school, font_style)
 
     wb_student.save(buffer)
 

@@ -1,7 +1,8 @@
 import io
 import xlwt
 import csv
-from datetime import date
+from datetime import date , datetime
+from import_export import resources, fields
 from django.http import HttpResponse, FileResponse
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color
@@ -12,7 +13,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from datetime import datetime
+from models import (
+    School,
+    Club,
+    Meeting,
+    CommunityInitiative,
+    HealthVisit
+)
 
 
 def is_allowed_create(programme):
@@ -87,3 +94,52 @@ class MemorySavingQuerysetIterator(object):
 
     def next(self):
         return self._generator.next()
+
+
+class SchoolResource(resources.ModelResource):
+    class Meta:
+        model = School
+        fields = (
+            'id',
+
+            'id',
+            'number',
+            'name',
+            'director_name',
+            'land_phone_number',
+            'email',
+            'governorate__name',
+            'district__name',
+            'cadaster__name',
+            'longitude',
+            'latitude',
+            'registration_level',
+            'school_capacity',
+            'empty_building',
+            'number_children',
+            'number_children_male',
+            'number_children_female',
+            'number_children_lebanese',
+            'number_children_non_lebanese',
+            'number_children_sbp',
+            'number_children_male_sbp',
+            'number_children_female_sbp',
+            'number_children_lebanese_sbp',
+            'number_children_non_lebanese_sbp',
+            'CWD_accessible',
+            'internet_available',
+            'school_digital_capacity',
+            'is_first_shift',
+            'working_days',
+            'academic_year_start',
+            'academic_year_end',
+            'receive_supplies',
+            'number_dirasa_children_disability',
+            'number_total_children_disability',
+            'owner__username',
+            'modified_by__username',
+            'created',
+            'modified',
+        )
+        export_order = fields
+
