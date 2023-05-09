@@ -568,7 +568,8 @@ class ExportView(LoginRequiredMixin, ListView):
         return response
 
 
-class MainAttendanceCreateView(LoginRequiredMixin, CreateView):
+
+class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateView, RequestConfig):
     form_class = MainAttendanceForm
     template_name = 'attendances/main_attendance_form.html'
     group_required = [u"CLM_ATTENDANCE"]

@@ -616,6 +616,7 @@ class Teacher(Person):
         ('math', _('Math')),
         ('english', _('English')),
         ('french', _('French')),
+        ('PSS / Counsellor', _('PSS / Counsellor')),
     )
     REGISTRATION_LEVEL = (
         ('Level one', _('Level one')),
@@ -662,13 +663,6 @@ class Teacher(Person):
         blank=True,
         null=True,
         verbose_name=_('Subjects provided')
-    )
-    school_pss_counsellor = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Is the teacher considered as a school counsellor/PSS counsellor')
     )
     registration_level = ArrayField(
         models.CharField(

@@ -59,7 +59,7 @@ class School(TimeStampedModel):
         ('Thursday', _('Thursday')),
         ('Friday', _('Friday')),
         ('Saturday', _('Saturday')),
-        ('Sunday', _('Friday')),
+        ('Sunday', _('Sunday')),
     )
 
     number = models.CharField(

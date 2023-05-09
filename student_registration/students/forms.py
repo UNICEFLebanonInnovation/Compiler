@@ -141,12 +141,6 @@ class TeacherForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
-    school_pss_counsellor = forms.ChoiceField(
-        label=_('Is the teacher considered as a school counsellor/PSS counsellor'),
-        widget=forms.Select,
-        required=True,
-        choices=Teacher.YES_NO,
-    )
     registration_level = forms.MultipleChoiceField(
         label=_('Grade level'),
         choices=Teacher.REGISTRATION_LEVEL,
@@ -311,36 +305,31 @@ class TeacherForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">8</span>'),
-                    Div('school_pss_counsellor', css_class='col-md-4 multiple-choice'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">9</span>'),
                     Div('subjects_provided', css_class='col-md-3 multiple-choice'),
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('registration_level', css_class='col-md-3 multiple-choice'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('teacher_assignment', css_class='col-md-3 multiple-choice'),
-                    HTML('<span class="badge badge-default" id="span_teaching_hours_private_school">11.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_teaching_hours_private_school">10.1</span>'),
                     Div('teaching_hours_private_school', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_teaching_hours_dirasa">11.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_teaching_hours_dirasa">10.2</span>'),
                     Div('teaching_hours_dirasa', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('trainings', css_class='col-md-3 multiple-choice'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('training_sessions_attended', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('extra_coaching', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_extra_coaching_specify">14.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_extra_coaching_specify">13.1</span>'),
                     Div('extra_coaching_specify', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -443,7 +432,6 @@ class TeacherForm(forms.ModelForm):
             'school',
             'email',
             'subjects_provided',
-            'school_pss_counsellor',
             'registration_level',
             'teacher_assignment',
             'teaching_hours_private_school',

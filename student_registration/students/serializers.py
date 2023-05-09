@@ -97,7 +97,6 @@ class TeacherSerializer(serializers.ModelSerializer):
             'school',
             'email',
             'subjects_provided',
-            'school_pss_counsellor',
             'registration_level',
             'teacher_assignment',
             'teaching_hours_private_school',

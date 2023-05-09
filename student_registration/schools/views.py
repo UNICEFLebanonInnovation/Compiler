@@ -50,7 +50,7 @@ from .forms import ProfileForm,SchoolForm, ClubForm, MeetingForm, CommunityIniti
     PartnerForm, EvaluationForm,Classroom_Form, Classroom_Form_c1, Classroom_Form_c3,\
     Classroom_Form_c4, Classroom_Form_c5, Classroom_Form_c6, Classroom_Form_c7, Classroom_Form_c8, \
     Classroom_Form_c9, Classroom_Form_cprep
-from .utils import is_allowed_create, is_allowed_edit
+from .utils import *
 
 from django.forms import modelformset_factory, formset_factory, inlineformset_factory, forms
 from django.shortcuts import render, redirect
@@ -858,4 +858,13 @@ class HealthVisitFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, school_id=school_id, instance=instance)
         return super(HealthVisitFormView, self).form_valid(form)
+
+
+def school_export_data(request):
+    qs_school = School.objects.filter(is_first_shift='yes').order_by('-id')
+    qs_school.order_by('-id')
+    dataset = SchoolResource().export(qs_school)
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="school_data.xls"'
+    return response
 
