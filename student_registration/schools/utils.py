@@ -6,20 +6,18 @@ from import_export import resources, fields
 from django.http import HttpResponse, FileResponse
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color
-
-import copy
-
-import logging
-
-logger = logging.getLogger(__name__)
-
-from models import (
+from .models import (
     School,
     Club,
     Meeting,
     CommunityInitiative,
     HealthVisit
 )
+import copy
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def is_allowed_create(programme):
