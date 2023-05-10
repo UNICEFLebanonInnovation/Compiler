@@ -263,3 +263,13 @@ class TeacherEditView(LoginRequiredMixin,
         instance = Teacher.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(TeacherEditView, self).form_valid(form)
+
+
+def teacher_export_data(request):
+    from .export import TeacherResource
+    qs_teacher = Teacher.objects.all().order_by('-id')
+    qs_teacher.order_by('-id')
+    dataset = TeacherResource().export(qs_teacher)
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="teacher_data.xls"'
+    return response

@@ -21,6 +21,11 @@ urlpatterns = [
         view=views.TeacherEditView.as_view(),
         name='teacher_edit'
     ),
+    url(
+        regex=r'^teacher-export/$',
+        view=views.teacher_export_data,
+        name='teacher_export'
+    ),
 
 ]
 

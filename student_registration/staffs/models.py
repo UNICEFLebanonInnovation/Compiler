@@ -5,7 +5,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from student_registration.locations.models import Location
 from model_utils import Choices
-from student_registration.students.utils import generate_id
 from student_registration.students.models import Nationality
 # Create your models here.
 import django.utils.timezone
