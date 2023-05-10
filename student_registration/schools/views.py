@@ -868,3 +868,16 @@ def school_export_data(request):
     response['Content-Disposition'] = 'attachment; filename="school_data.xls"'
     return response
 
+
+
+class school_export_data(LoginRequiredMixin, ListView):
+    qs_school = School.objects.filter(is_first_shift='yes').order_by('-id')
+    qs_club = Club.objects.all().order_by('-id')
+    qs_meeting = Meeting.objects.all().order_by('-id')
+    qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
+    qs_health_visit = HealthVisit.objects.all().order_by('-id')
+
+
+    def get(self, request, *args, **kwargs):
+        return school_build_xls_extraction(self.qs_school, self.qs_club, self.qs_meeting, self.qs_community_initiative, self.qs_health_visit)
+
