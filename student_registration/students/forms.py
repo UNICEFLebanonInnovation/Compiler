@@ -396,10 +396,30 @@ class TeacherForm(forms.ModelForm):
             )
         )
 
+
     def save(self, request=None, instance=None):
-        instance = super(TeacherForm, self).save()
-        messages.success(request, _('Your data has been sent successfully to the server'))
+        if instance:
+            serializer = TeacherSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+            serializer = TeacherSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.owner = request.user
+                instance.modified_by = request.user
+                instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
         return instance
+
 
     def clean(self):
         cleaned_data = super(TeacherForm, self).clean()

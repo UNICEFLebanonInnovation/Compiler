@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
+from django.conf import settings
 from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -802,4 +803,15 @@ class Teacher(Person):
         blank=True, null=True,
         related_name='attach_type_5',
         verbose_name=_('Type')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
     )
