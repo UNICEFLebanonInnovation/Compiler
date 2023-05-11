@@ -477,3 +477,18 @@ class RegistrationResource(resources.ModelResource):
             'modified',
         )
         export_order = fields
+
+
+def load_dashboard_data(param, grouping):
+    from django.db import connection
+
+    cursor = connection.cursor()
+    cursor.execute(
+        "SELECT count(mr.id), "+grouping+" "
+        "FROM public.mscc_registration mr, public.child_child cc "
+        "WHERE mr.child_id = cc.id "+param+" "
+        "GROUP By "+grouping
+    )
+
+    rows = cursor.fetchall()
+    return rows

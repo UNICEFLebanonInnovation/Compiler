@@ -82,6 +82,7 @@ class Registration(TimeStampedModel):
             ('Other Sources', _('Other Sources')),
     )
     CASH_SUPPORT_PROGRAMMES = Choices(
+            ('None', _('None')),
             ('Haddi', _('Haddi')),
             ('Education Cash assistance', _('Education Cash assistance')),
             ('UNHCR cash assistance', _('UNHCR cash assistance')),

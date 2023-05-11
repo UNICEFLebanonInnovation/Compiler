@@ -108,7 +108,7 @@ class MainForm(forms.ModelForm):
     )
     child_address = forms.CharField(
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     child_disability = forms.ModelChoiceField(
         label=_("Does the child have any disability or special need?"),
@@ -151,7 +151,7 @@ class MainForm(forms.ModelForm):
         label=_('Cash support programmes that the child is already benefiting from'),
         choices=Registration.CASH_SUPPORT_PROGRAMMES,
         widget=forms.CheckboxSelectMultiple,
-        required=False
+        required=True
     )
     # mscc_packages = forms.MultipleChoiceField(
     #     label=_('Packages received/to be provided to child under Makani'),
