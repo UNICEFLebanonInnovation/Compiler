@@ -27,7 +27,7 @@ def generate_2ndshift_unique_number(offset=0):
             print(student.number, student.id)  #TODO: use logging instead
             student.save()
         except Exception as ex:
-            print(ex.message)
+            print(ex)
             continue
 
 
@@ -53,7 +53,7 @@ def generate_alp_unique_number():
             print(student.number, student.id)
             student.save()
         except Exception as ex:
-            print(ex.message)
+            print(ex)
             continue
 
 

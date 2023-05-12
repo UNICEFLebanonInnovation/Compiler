@@ -385,7 +385,7 @@ def load_child_attendance(center_id, attendance_date):
         return result
 
     except Exception as ex:
-        print(ex.message)
+        print(ex)
         return []
 
 

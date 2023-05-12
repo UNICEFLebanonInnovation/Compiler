@@ -26,7 +26,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'Enrollment instance': ex.message})
+            raise serializers.ValidationError({'Enrollment instance': ex})
 
         return instance
 
