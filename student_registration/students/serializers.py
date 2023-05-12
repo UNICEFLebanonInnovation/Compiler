@@ -32,7 +32,7 @@ class StudentSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'Student instance': ex.message})
+            raise serializers.ValidationError({'Student instance': ex})
 
         return instance
 

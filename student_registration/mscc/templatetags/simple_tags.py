@@ -141,7 +141,7 @@ def get_educations_data(obj):
             })
         return educations
     except Exception as ex:
-        print(ex.message)
+        print(ex)
         return []
 
 
@@ -151,7 +151,7 @@ def child_attendance(child_id):
         return MSCCAttendanceChild.objects.filter(child_id=child_id)
 
     except Exception as ex:
-        print(ex.message)
+        print(ex)
         return []
 
 
@@ -173,7 +173,7 @@ def child_attendance_history(child_id):
 
         return details
     except Exception as ex:
-        print(ex.message)
+        print(ex)
         return []
 
 

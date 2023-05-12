@@ -35,7 +35,7 @@ def create_instance(validated_data):
         instance.save()
 
     except Exception as ex:
-        raise serializers.ValidationError({'Enrollment instance': ex.message})
+        raise serializers.ValidationError({'Enrollment instance': ex})
 
     return instance
 
@@ -59,7 +59,7 @@ def update_instance(instance, validated_data):
         instance.save()
 
     except Exception as ex:
-        raise serializers.ValidationError({'Enrollment instance': ex.message})
+        raise serializers.ValidationError({'Enrollment instance': ex})
 
     return instance
 

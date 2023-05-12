@@ -30,7 +30,7 @@ def push_cadaster_data(file_name, base_url, token, protocol='HTTPS'):
 
         except Exception as ex:
             print("---------------")
-            print("error: ", ex.message)
+            print("error: ", ex)
             print(json.dumps(data, cls=DjangoJSONEncoder))
             print("---------------")
             continue

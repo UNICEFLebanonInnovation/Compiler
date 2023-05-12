@@ -69,7 +69,7 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
                               data=assessment)
                 except Exception as ex:
                     print("---------------")
-                    print("error: ", ex.message)
+                    print("error: ", ex)
                     print(json.dumps(assessment, cls=DjangoJSONEncoder))
                     print("---------------")
                     pass
@@ -88,14 +88,14 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
                               data=assessment)
                 except Exception as ex:
                     print("---------------")
-                    print("error: ", ex.message)
+                    print("error: ", ex)
                     print(json.dumps(assessment, cls=DjangoJSONEncoder))
                     print("---------------")
                     pass
 
             except Exception as ex:
                 print("---------------")
-                print("error: ", ex.message)
+                print("error: ", ex)
                 print(json.dumps(data, cls=DjangoJSONEncoder))
                 print("---------------")
                 continue

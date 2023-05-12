@@ -18,7 +18,7 @@ class ChildSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'Child instance': ex.message})
+            raise serializers.ValidationError({'Child instance': ex})
 
         return instance
 

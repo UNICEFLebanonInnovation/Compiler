@@ -20,7 +20,7 @@ class LocationSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'Location instance': ex.message})
+            raise serializers.ValidationError({'Location instance': ex})
 
         return instance
 

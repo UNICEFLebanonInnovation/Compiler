@@ -33,7 +33,7 @@ def is_allowed_create(programme):
             return False
 
     except Exception as ex:
-        print(ex.message)
+        print(ex)
         return False
 
 
@@ -51,7 +51,7 @@ def is_allowed_edit(programme):
             return False
 
     except Exception as ex:
-        print(ex.message)
+        print(ex)
         return False
 
 
