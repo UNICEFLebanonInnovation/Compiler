@@ -109,7 +109,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'student_registration.lockout_middleware.StudentLockoutMiddleware',
+    # 'student_registration.lockout_middleware.StudentLockoutMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -151,7 +151,7 @@ EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.s
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = [
-    ("""UNICEF Lebanon Innovation""", 'jcranwellward@unicef.org'),
+    ("""UNICEF Lebanon Innovation""", 'achamseddine@unicef.org'),
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -186,28 +186,28 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'Asia/Beirut'
 
-LANGUAGE_COOKIE_NAME = 'default_language'
+# LANGUAGE_COOKIE_NAME = 'default_language'
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
 # LANGUAGE_CODE = 'ar-ar'
 
-LANGUAGES = (
-    ('ar-ar', 'arabic'),
-    ('en-us', 'english'),
+# LANGUAGES = (
+#     ('ar-ar', 'arabic'),
+#     ('en-us', 'english'),
     # ('fr-fr', 'french'),
-)
+# )
 
 # LANGUAGES_BIDI = ["ar-ar"]
-LANGUAGES_BIDI = ["en-us"]
+# LANGUAGES_BIDI = ["en-us"]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
-USE_I18N = True
+USE_I18N = False
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = True
+USE_L10N = False
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = False
@@ -401,7 +401,7 @@ SWAGGER_SETTINGS = {
 
 # Django Suit configuration
 SUIT_CONFIG = {
-    'ADMIN_NAME': 'CLM',
+    'ADMIN_NAME': 'MAKANI',
     'CONFIRM_UNSAVED_CHANGES': False,
 
     'MENU': (
@@ -428,6 +428,7 @@ SUIT_CONFIG = {
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
         {'app': 'clm', 'label': 'CLM', 'icon': 'icon-th-list'},
+        {'app': 'mscc', 'label': 'MAKANI', 'icon': 'icon-th-list'},
         # {'label': 'ALP', 'icon': 'icon-th-list', 'models': (
         #     'alp.CurrentRound',
         #     'alp.CurrentOutreach',
