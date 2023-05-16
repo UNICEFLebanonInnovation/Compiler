@@ -14,6 +14,7 @@ from .models import (
     Referral,
     Disability,
     BLN,
+    Bridging,
     ABLN,
     RS,
     CBECE,
@@ -174,6 +175,38 @@ class BLNAdmin(ImportExportModelAdmin):
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
+
+
+class BridgingAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'student',
+        'governorate',
+        'district',
+        'partner',
+        'created',
+        'modified',
+    )
+    list_filter = (
+        'round',
+        'governorate',
+        'district',
+        'partner',
+        'student__sex',
+        'student__nationality',
+        'disability',
+        'student__family_status',
+        'student__have_children',
+        'have_labour',
+        'created',
+        'modified',
+    )
+    search_fields = (
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+    )
 
 
 class RSResource(resources.ModelResource):
@@ -1001,6 +1034,7 @@ admin.site.register(Center, CenterAdmin)
 admin.site.register(Referral)
 admin.site.register(Disability, DisabilityAdmin)
 admin.site.register(BLN, BLNAdmin)
+admin.site.register(Bridging, BridgingAdmin)
 admin.site.register(ABLN, ABLNAdmin)
 admin.site.register(RS, RSAdmin)
 admin.site.register(CBECE, CBECEAdmin)
