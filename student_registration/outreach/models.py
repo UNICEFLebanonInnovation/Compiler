@@ -366,3 +366,11 @@ class OutreachChild(models.Model):
     def __unicode__(self):
         return self.first_name
 
+    @property
+    def full_name(self):
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.outreach_caregiver.father_name,
+            self.outreach_caregiver.last_name,
+        )
+

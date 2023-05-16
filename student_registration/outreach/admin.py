@@ -4,7 +4,7 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
-from .models import HouseHold, Child, OutreachYear, OutreachChild
+from .models import HouseHold, Child, OutreachYear, OutreachChild, OutreachCaregiver
 
 
 class HouseHoldResource(resources.ModelResource):
@@ -40,37 +40,19 @@ class HouseHoldAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
-class ChildResource(resources.ModelResource):
-    class Meta:
-        model = Child
-
-
-class ChildAdmin(ImportExportModelAdmin):
-    resource_class = Child
+class OutreachChildAdmin(admin.ModelAdmin):
     list_display = (
-        'form_id',
-        'barcode_subset',
-        'first_name',
-        'father_name',
-        'last_name',
-        'mother_fullname',
-        'birthday',
+        'full_name',
+        'date_of_birth',
         'nationality',
     )
-    search_fields = (
-        'form_id',
-        'barcode_subset',
-    )
     list_filter = (
-        'p_code',
+        'outreach_caregiver__form_id',
+    )
+    search_fields = (
+        'first_name',
+        'outreach_caregiver__father_name',
+        'outreach_caregiver__last_name',
     )
 
-    def get_export_formats(self):
-        from student_registration.users.utils import get_default_export_formats
-        return get_default_export_formats()
-
-
-# admin.site.register(HouseHold, HouseHoldAdmin)
-# admin.site.register(Child, ChildAdmin)
-# admin.site.register(OutreachYear)
-admin.site.register(OutreachChild)
+admin.site.register(OutreachChild, OutreachChildAdmin)

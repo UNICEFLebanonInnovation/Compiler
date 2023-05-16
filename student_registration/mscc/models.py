@@ -958,7 +958,7 @@ class EducationService(TimeStampedModel):
         ('Was registered in non formal program but didn\'t continue',
          _('Was registered in non formal program but didn\'t continue')),
         ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),
-        ('Wad Registered in Formal Education but not attending',
+        ('Was Registered in Formal Education but not attending',
          _('Was Registered in Formal Education but not attending')),
         ('No', _('No')),
     )
