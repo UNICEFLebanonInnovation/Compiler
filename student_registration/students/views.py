@@ -175,7 +175,11 @@ class TeacherListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-
+        school_id = 0
+        if self.request.user.school:
+            school_id = self.request.user.school.id
+        if school_id > 0:
+            return Teacher.objects.filter(school_id=school_id)
         return Teacher.objects.order_by('-id')
 
 

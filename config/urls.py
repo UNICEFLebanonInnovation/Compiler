@@ -26,6 +26,7 @@ from student_registration.schools.views import (
     SchoolViewSet,
     ClassRoomViewSet,
     SectionViewSet,
+    SchoolAutocomplete
 )
 from student_registration.clm.views import (
     BLNViewSet,
@@ -110,6 +111,7 @@ urlpatterns = [
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
     url(r'login_success/$', login_success, name='login_success'),
     url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
+    url(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
     url(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}

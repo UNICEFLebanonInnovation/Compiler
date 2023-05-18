@@ -5,9 +5,6 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
-from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
-from student_registration.child.models import Child
-from student_registration.outreach.models import OutreachCaregiver, OutreachChild
 
 from .models import *
 
@@ -372,6 +369,54 @@ class ReferralAdmin(admin.ModelAdmin):
     )
 
 
+class YouthAssessmentAdmin(admin.ModelAdmin):
+    list_display = (
+        'registration',
+        'undertake_post_diagnostic',
+        'receive_passing_grade',
+        'complete_life_skills',
+        'participate_volunteering',
+        'volunteering_opportunity',
+        'benefit_innovation_course',
+        'compelete_yfs_course',
+        'training_material',
+        'future_path',
+        'participate_community_initiatives',
+        'attendance'
+    )
+
+    search_fields = (
+        'registration__child__first_name',
+        'registration__child__father_name',
+        'registration__child__last_name',
+    )
+
+
+class YouthReferralAdmin(admin.ModelAdmin):
+    list_display = (
+        'registration',
+        'refer_tvet',
+        'refer_innovation'
+    )
+
+    search_fields = (
+        'registration__child__first_name',
+        'registration__child__father_name',
+        'registration__child__last_name',
+    )
+
+class RecreationalAdmin(admin.ModelAdmin):
+    list_display = (
+        'registration',
+    )
+
+    search_fields = (
+        'registration__child__first_name',
+        'registration__child__father_name',
+        'registration__child__last_name',
+    )
+
+
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(EducationHistory, EducationHistoryAdmin)
 admin.site.register(ProvidedServices, ProvidedServicesAdmin)
@@ -387,8 +432,6 @@ admin.site.register(EducationProgrammeAssessment, EducationProgrammeAssessmentAd
 admin.site.register(YouthKitService, YouthKitServiceAdmin)
 admin.site.register(FollowUpService, FollowUpServiceAdmin)
 admin.site.register(Referral, ReferralAdmin)
-# admin.site.register(YouthAssessment)
-# admin.site.register(YouthReferral)
-# admin.site.register(Recreational)
-# admin.site.register(MSCCAttendance)
-# admin.site.register(MSCCAttendanceChild)
+admin.site.register(YouthAssessment, YouthAssessmentAdmin)
+admin.site.register(YouthReferral, YouthReferralAdmin)
+admin.site.register(Recreational, RecreationalAdmin)

@@ -9,6 +9,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import Group
 from .models import User
+from .forms import UserAdminForm
 
 
 class UserResource(resources.ModelResource):
@@ -28,6 +29,7 @@ class UserResource(resources.ModelResource):
 
 class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
     resource_class = UserResource
+    form = UserAdminForm
 
     filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools', 'regions')
     list_display = (

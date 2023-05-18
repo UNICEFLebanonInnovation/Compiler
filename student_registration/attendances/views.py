@@ -15,10 +15,12 @@ import copy
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, CreateView
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q, Sum, Avg, F, Func, When
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib import messages
 from django_filters.views import FilterView
 from django_tables2.export.views import ExportMixin
+from dal import autocomplete
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
@@ -624,6 +626,9 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
 
         kwargs['partner_id'] = self.request.user.partner.id
+        kwargs['user_school_id'] = self.request.user.school.id
+
+
 
         if ('school' in self.request.GET) and ('registration_level' in self.request.GET)\
            or\

@@ -350,7 +350,7 @@ class CLMAttendance(TimeStampedModel):
 
     class Meta:
         ordering = ['attendance_date']
-        verbose_name = "Attendances by School by Day"
+        verbose_name = "CLM Attendances by School by Day"
 
     def __unicode__(self):
         return self.school.__unicode__()
@@ -404,7 +404,7 @@ class CLMAttendanceStudent(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Student Attendance"
+        verbose_name = "CLM Student Attendance"
 
     @property
     def student_name(self):
@@ -470,7 +470,7 @@ class CLMStudentAbsences(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Student Absences"
+        verbose_name = "CLM Student Absences"
 
 
 class CLMStudentTotalAttendance(TimeStampedModel):
@@ -518,7 +518,7 @@ class CLMStudentTotalAttendance(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Student Total Absence"
+        verbose_name = "CLM Student Total Attendance"
 
 
 class MSCCAttendance(TimeStampedModel):
@@ -563,7 +563,7 @@ class MSCCAttendance(TimeStampedModel):
 
     class Meta:
         ordering = ['attendance_date']
-        verbose_name = "Attendances by Day"
+        verbose_name = "MSCC Attendances by Day"
 
     def __str__(self):
         return '{} - {}'.format(self.center, self.attendance_date)
@@ -615,7 +615,7 @@ class MSCCAttendanceChild(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Child Attendance"
+        verbose_name = "MSCC Child Attendance"
 
     @property
     def attendance_date(self):
@@ -646,3 +646,4 @@ class MSCCAttendanceChild(TimeStampedModel):
 
     def __unicode__(self):
         return '{} - {}'.format(self.child, self.attendance_day)
+

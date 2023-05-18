@@ -3685,6 +3685,13 @@ class BridgingListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+        school_id = 0
+        if self.request.user.school:
+            school_id = self.request.user.school.id
+        if school_id > 0:
+            return Bridging.objects.filter(partner=self.request.user.partner_id,
+                                           school=school_id,
+                                           round__current_year=True).order_by('-id')
 
         return Bridging.objects.filter(partner=self.request.user.partner_id,
                                        round__current_year=True).order_by('-id')
