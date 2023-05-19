@@ -94,6 +94,7 @@ class MainAttendanceForm(forms.ModelForm):
         saveStage = kwargs.pop('saveStage', None)
         update_disabled = kwargs.pop('update_disabled', False)
         partner_id = kwargs.pop('partner_id', None)
+        school_id = kwargs.pop('user_school_id', None)
 
         if update_disabled:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
@@ -148,6 +149,15 @@ class MainAttendanceForm(forms.ModelForm):
                         css_class='button-group'
                     )
         )
+
+        if school_id > 0:
+            queryset = School.objects.filter(id=school_id)
+            self.fields['school'] = forms.ModelChoiceField(
+                queryset=queryset, widget=forms.Select,
+                label=_('School Name'),
+                empty_label='-------',
+                required=True, to_field_name='id',
+            )
         # if partner_id > 0:
         #     queryset = School.objects.filter(is_first_shift='yes',
         #                                      id__in=PartnerOrganization
@@ -286,3 +296,17 @@ class AttendanceAbsenceForm(forms.Form):
                 css_class='button-group'
             )
         )
+
+class CLMAttendanceAdminForm(forms.ModelForm):
+
+    school = forms.ModelChoiceField(
+        queryset=School.objects.filter(is_first_shift='yes'),
+        widget=autocomplete.ModelSelect2(url='school_autocomplete')
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CLMAttendanceAdminForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = CLMAttendance
+        fields = '__all__'

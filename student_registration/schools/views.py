@@ -519,6 +519,11 @@ class SchoolListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
+        school_id = 0
+        if self.request.user.school:
+            school_id = self.request.user.school.id
+        if school_id > 0:
+            return School.objects.filter(id=school_id)
 
         return School.objects.filter(is_first_shift='yes').order_by('-id')
 
@@ -881,3 +886,17 @@ class school_export_data(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         return school_build_xls_extraction(self.qs_school, self.qs_club, self.qs_meeting, self.qs_community_initiative, self.qs_health_visit)
 
+
+class SchoolAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return School.objects.none()
+
+        qs = School.objects.all()
+
+        if self.q:
+            qs = School.objects.filter(
+                Q(number__istartswith=self.q) | Q(name__istartswith=self.q)
+            )
+
+        return qs

@@ -7890,6 +7890,21 @@ class BridgingForm(CommonForm):
                 css_class='button-group'
             )
         )
+        school_id = 0
+        if instance:
+            if instance.owner.school:
+                school_id = instance.owner.school.id
+        else:
+            if self.request.user.school:
+                school_id = self.request.user.school.id
+        if school_id > 0:
+            queryset = School.objects.filter(id=school_id)
+            self.fields['school'] = forms.ModelChoiceField(
+                queryset=queryset, widget=forms.Select,
+                label=_('School Name'),
+                empty_label='-------',
+                required=True, to_field_name='id',
+            )
 
     def clean(self):
         cleaned_data = super(BridgingForm, self).clean()
@@ -10705,7 +10720,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
 
     round_complete = forms.ChoiceField(
-        label=_("Briding Round complete"),
+        label=_("Dirasa Round complete"),
         widget=forms.Select, required=False,
         choices=CLM.YES_NO
     )
