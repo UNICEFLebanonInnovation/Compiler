@@ -626,7 +626,10 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
 
         kwargs['partner_id'] = self.request.user.partner.id
-        kwargs['user_school_id'] = self.request.user.school.id
+        school_id = 0
+        if self.request.user.school:
+            school_id = self.request.user.school.id
+        kwargs['user_school_id'] = school_id
 
 
 

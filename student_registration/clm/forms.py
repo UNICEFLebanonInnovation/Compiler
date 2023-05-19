@@ -10720,7 +10720,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     )
 
     round_complete = forms.ChoiceField(
-        label=_("Briding Round complete"),
+        label=_("Dirasa Round complete"),
         widget=forms.Select, required=False,
         choices=CLM.YES_NO
     )

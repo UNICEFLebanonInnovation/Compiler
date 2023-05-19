@@ -27,7 +27,8 @@ class UserAdminForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_first_shift='yes'),
-        widget=autocomplete.ModelSelect2(url='school_autocomplete')
+        widget=autocomplete.ModelSelect2(url='school_autocomplete'),
+        required=False
     )
 
     def __init__(self, *args, **kwargs):
