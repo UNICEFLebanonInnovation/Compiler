@@ -227,6 +227,29 @@ function reorganizeForm_post_assessment()
 
         $('div.grades').addClass('d-none');
         $('#grades').addClass('hide');
+
+    //    id_language
+    var language  = $('select#id_language').val();
+    if (language == 'english_arabic')
+    {
+        $('#div_id_english').removeClass('d-none');
+        $('#span_english').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_english').addClass('d-none');
+        $('#span_english').addClass('d-none');
+    }
+    if (language == 'french_arabic')
+    {
+        $('#div_id_french').removeClass('d-none');
+        $('#span_french').removeClass('d-none');
+    }
+    else
+    {
+        $('#div_id_french').addClass('d-none');
+        $('#span_french').addClass('d-none');
+    }
     }
 
     learning_result_next_level();
