@@ -3302,8 +3302,9 @@ class SchoolForm(forms.ModelForm):
     )
     is_first_shift = forms.ChoiceField(
         label=_("School is 1st shift?"),
-        widget=forms.Select, required=True,
-        choices=School.YES_NO
+        widget=forms.Select, required=False,
+        choices=School.YES_NO,
+        initial= 'yes'
     )
     working_days = forms.MultipleChoiceField(
         label=_('Please indicate working days'),

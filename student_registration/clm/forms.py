@@ -7320,12 +7320,12 @@ class BridgingForm(CommonForm):
     english = forms.FloatField(
         label=_('English Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=True
+        min_value=0, required=False
     )
     french = forms.FloatField(
         label=_('French Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=True
+        min_value=0, required=False
     )
     math = forms.FloatField(
         label=_('Math Results'),
@@ -8105,10 +8105,16 @@ class BridgingForm(CommonForm):
 
         if arabic > 404:
             self.add_error('arabic', 'This value is greater that 404')
-        if english > 470:
-            self.add_error('english', 'This value is greater that 470')
-        if french > 184:
-            self.add_error('french', 'This value is greater that 184')
+        if language == 'english_arabic':
+            if english is None:
+                self.add_error('english', 'This field is required')
+            elif english > 470:
+                self.add_error('english', 'This value is greater that 470')
+        if language == 'french_arabic':
+            if french is None:
+                self.add_error('french', 'This field is required')
+            elif french > 184:
+                self.add_error('french', 'This value is greater that 184')
         if math > 200:
             self.add_error('math', 'This value is greater that 200')
 
@@ -10987,6 +10993,7 @@ class BridgingAssessmentForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(BridgingAssessmentForm, self).clean()
+        language = cleaned_data.get("language")
         arabic = cleaned_data.get("arabic")
         english = cleaned_data.get("english")
         french = cleaned_data.get("french")
@@ -11040,15 +11047,16 @@ class BridgingAssessmentForm(forms.ModelForm):
             elif arabic > 404:
                 self.add_error('arabic', 'This value is greater that 404')
 
-            if english is None:
-                self.add_error('english', 'This field is required')
-            elif english > 470:
-                self.add_error('english', 'This value is greater that 470')
-
-            if french is None:
-                self.add_error('french', 'This field is required')
-            elif french > 184:
-                self.add_error('french', 'This value is greater that 184')
+            if language == 'english_arabic':
+                if english is None:
+                    self.add_error('english', 'This field is required')
+                elif english > 470:
+                    self.add_error('english', 'This value is greater that 470')
+            if language == 'french_arabic':
+                if french is None:
+                    self.add_error('french', 'This field is required')
+                elif french > 184:
+                    self.add_error('french', 'This value is greater that 184')
 
             if math is None:
                 self.add_error('math', 'This field is required')
