@@ -12,18 +12,20 @@ from crispy_forms.bootstrap import (
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from dal import autocomplete
+from django.contrib.auth.forms import (
+    AdminPasswordChangeForm, UserChangeForm, UserCreationForm,
+)
 from student_registration.users.models import (
     User
 )
 from student_registration.schools.models import (
     School,
 )
-
 from collections import OrderedDict
 from django.template.loader import render_to_string
 
 
-class UserAdminForm(forms.ModelForm):
+class UserAdminForm(UserChangeForm):
 
     school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_first_shift='yes'),
