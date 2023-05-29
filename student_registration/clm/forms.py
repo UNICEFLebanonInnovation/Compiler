@@ -7968,7 +7968,7 @@ class BridgingForm(CommonForm):
             if not labours_other_specify:
                 self.add_error('labours_other_specify', 'This field is required')
 
-        if education_status == 'Not Registered in any school before':
+        if education_status == 'Was registered in formal school and didnt continue':
             if not miss_school_date:
                 self.add_error('miss_school_date', 'This field is required')
         if student_nationality.id == 6:
