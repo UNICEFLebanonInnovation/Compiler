@@ -7082,7 +7082,7 @@ class BridgingForm(CommonForm):
         label=_('Education status'),
         widget=forms.Select, required=True,
         choices=(
-            ('No Registered in any school before', _('No Registered in any school before')),
+            ('No Registered in any school before', _('Not Registered in any school before')),
             ('Was registered in BLN program', _('Was registered in BLN program')),
             ('Was registered in formal school and didnt continue',
              _('Was registered in formal school and didnt continue')),
@@ -7968,7 +7968,7 @@ class BridgingForm(CommonForm):
             if not labours_other_specify:
                 self.add_error('labours_other_specify', 'This field is required')
 
-        if education_status != 'No Registered in any school before':
+        if education_status == 'Not Registered in any school before':
             if not miss_school_date:
                 self.add_error('miss_school_date', 'This field is required')
         if student_nationality.id == 6:
