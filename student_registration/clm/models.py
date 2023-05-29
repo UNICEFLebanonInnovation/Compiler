@@ -1992,7 +1992,7 @@ class Bridging(CLM):
         null=True,
         choices=Choices(
             ('', '----------'),
-            ('No Registered in any school before', _('No Registered in any school before')),
+            ('No Registered in any school before', _('Not Registered in any school before')),
             ('Was registered in BLN program', _('Was registered in BLN program')),
             ('Was registered in formal school and didnt continue',
              _('Was registered in formal school and didnt continue')),
