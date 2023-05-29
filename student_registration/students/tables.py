@@ -33,7 +33,7 @@ class CommonTable(tables.Table):
 
 class TeacherTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit school'), orderable=False,
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit teacher'), orderable=False,
                                         template_name='django_tables2/teacher_edit_column.html',
                                         attrs={'url': '/students/teacher-edit/', 'programme': 'Bridging'})
     #
