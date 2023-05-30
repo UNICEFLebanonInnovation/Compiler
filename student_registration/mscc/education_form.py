@@ -479,27 +479,19 @@ class EducationServiceForm(forms.ModelForm):
 
         choices = list()
         if service_bln:
-            self.fields['education_program'].choices = (
-                ('BLN Level 1', _('BLN Level 1')),
-                ('BLN Level 2', _('BLN Level 2')),
-                ('BLN Level 3', _('BLN Level 3')),
-            )
+            choices.append(('BLN Level 1', _('BLN Level 1')))
+            choices.append(('BLN Level 2', _('BLN Level 2')))
+            choices.append(('BLN Level 3', _('BLN Level 3')))
         if service_cbece:
-            self.fields['education_program'].choices = (
-                ('CBECE Level 2', _('CBECE Level 2')),
-                ('CBECE Level 3', _('CBECE Level 3')),
-            )
+            choices.append(('CBECE Level 2', _('CBECE Level 2')))
+            choices.append(('CBECE Level 3', _('CBECE Level 3')))
         if service_abln:
-            self.fields['education_program'].choices = (
-                ('ABLN Level 1', _('ABLN Level 1')),
-                ('ABLN Level 2', _('ABLN Level 2')),
-            )
+            choices.append(('ABLN Level 1', _('ABLN Level 1')))
+            choices.append(('ABLN Level 2', _('ABLN Level 2')))
         if service_rs:
-            self.fields['education_program'].choices = (
-                ('RS Grade 7', _('RS Grade 7')),
-                ('RS Grade 8', _('RS Grade 8')),
-                ('RS Grade 9', _('RS Grade 9')),
-            )
+            choices.append(('RS Grade 7', _('RS Grade 7')))
+            choices.append(('RS Grade 8', _('RS Grade 8')))
+            choices.append(('RS Grade 9', _('RS Grade 9')))
         if service_ybln:
             choices.append(('YBLN Level 1', _('YBLN Level 1')))
             choices.append(('YBLN Level 2', _('YBLN Level 2')))

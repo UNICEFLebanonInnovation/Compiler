@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.5
 
 # SSH support on Azure
 ENV SSH_PASSWD "root:Docker!"
