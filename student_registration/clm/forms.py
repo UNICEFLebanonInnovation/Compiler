@@ -7364,20 +7364,20 @@ class BridgingForm(CommonForm):
 
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
-        label=_('School Governorate'),
+        label=_('Child Governorate'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
     district = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
-        label=_('School District'),
+        label=_('Child District'),
         empty_label='-------',
         required=True, to_field_name='id',
         # initial=0
     )
     cadaster = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
-        label=_('School Cadaster'),
+        label=_('Child Cadaster'),
         empty_label='-------',
         required=True, to_field_name='id',
         # initial=0

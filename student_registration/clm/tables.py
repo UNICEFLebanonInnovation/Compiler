@@ -547,6 +547,5 @@ class BridgingTable(CommonTable):
             'modified_by',
             'created',
             'modified',
-            'comments',
         )
 
