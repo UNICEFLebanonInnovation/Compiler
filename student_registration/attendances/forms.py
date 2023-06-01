@@ -150,7 +150,7 @@ class MainAttendanceForm(forms.ModelForm):
                     )
         )
 
-        if school_id > 0:
+        if school_id and school_id > 0:
             queryset = School.objects.filter(id=school_id)
             self.fields['school'] = forms.ModelChoiceField(
                 queryset=queryset, widget=forms.Select,
