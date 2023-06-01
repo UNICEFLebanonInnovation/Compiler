@@ -487,20 +487,26 @@ class Update_Class_cprep(UpdateView):
 
 
 def load_districts(request):
-    id_governorate = request.GET.get('id_governorate')
-    cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
+    cities = []
+    if request.GET.get('id_governorate'):
+        id_governorate = request.GET.get('id_governorate')
+        cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
     return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
 
 
 def load_cadasters(request):
-    id_district = request.GET.get('id_district')
-    cities = Location.objects.filter(parent_id=id_district).order_by('name')
+    cities = []
+    if request.GET.get('id_district'):
+        id_district = request.GET.get('id_district')
+        cities = Location.objects.filter(parent_id=id_district).order_by('name')
     return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
 
 
 def load_schools(request):
-    id_governorate = request.GET.get('id_governorate')
-    schools = School.objects.filter(location_id=id_governorate).order_by('name')
+    schools = []
+    if request.GET.get('id_governorate'):
+        id_governorate = request.GET.get('id_governorate')
+        schools = School.objects.filter(location_id=id_governorate).order_by('name')
     return render(request, 'clm/school_dropdown_list_options.html', {'schools': schools})
 
 
