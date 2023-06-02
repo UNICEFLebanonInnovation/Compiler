@@ -269,7 +269,7 @@
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-phone-handset text-dark"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Primary phone number</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Household's/Relatives Secondary phone number</h4>
                                                                             <p> {{instance.child.second_phone_number}}</p></div>
                                                                     </div>
                                                                 </div>
@@ -279,8 +279,13 @@
                                                                             <p> {{instance.child.second_phone_owner}}</p></div>
                                                                     </div>
                                                                 </div>
-
-
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Number of children under 18</h4>
+                                                                              <p> {{instance.child.children_number_under18}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child's primary caretaker</h4>
@@ -378,6 +383,15 @@
                                                             </div>
                                                         </div>
 
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-map-marker text-info"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Living Arrangement</h4>
+                                                                    <p> {{ instance.child.living_arrangement }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
 
                                                         </div>
@@ -398,7 +412,7 @@
                                                             </div>
                                                         </div>
 
-                                                        {% if instance.have_labour == 'Yes' %}
+                                                        {% if instance.have_labour != 'No' %}
                                                         <div class="vertical-timeline-item vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Type of Labor</h4>
@@ -418,6 +432,18 @@
                                                             <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">How much does the child get paid per week?</h4>
                                                                      <p>{{ instance.labour_weekly_income }} </p></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="vertical-timeline-item vertical-timeline-element">
+                                                            <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-alternate"><i class="pe-7s-news-paper text-alternate"></i></div></span>
+                                                                <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Work condition that the child is exposed to</h4>
+                                                                  <div class="widget-subheading">
+                                                                        {% for prog in instance.labour_condition %}
+                                                                          <div> {{prog}} </div>
+                                                                        {% endfor %}
+                                                                  </div>
+
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         {% endif %}

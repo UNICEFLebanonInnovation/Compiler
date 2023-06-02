@@ -110,6 +110,11 @@ class MainForm(forms.ModelForm):
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
         widget=forms.TextInput, required=False
     )
+    child_living_arrangement = forms.ChoiceField(
+        label=_("Living Arrangement"),
+        widget=forms.Select, required=True,
+        choices=Child.LIVING_ARRANGEMENT
+    )
     child_disability = forms.ModelChoiceField(
         label=_("Does the child have any disability or special need?"),
         queryset=Disability.objects.all(), widget=forms.Select,
@@ -216,6 +221,13 @@ class MainForm(forms.ModelForm):
         label=_('If Other, Please specify'),
         widget=forms.TextInput, required=False
     )
+    children_number_under18 = forms.IntegerField(
+        label=_('Number of children under 18'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=True,
+        initial=0,
+        min_value=0
+    )
     caregiver_first_name = forms.CharField(
         label=_("Caregiver First Name"),
         widget=forms.TextInput, required=True
@@ -248,7 +260,7 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     labour_hours = forms.IntegerField(
-        label=_('How many hours does this child work in a day?'),
+        label=_('How many hours does this child work in a week?'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
         initial=0,
@@ -259,6 +271,12 @@ class MainForm(forms.ModelForm):
         widget=forms.Select,
         choices=Registration.LABOUR_INCOME,
         initial='',
+        required=False
+    )
+    labour_condition=forms.MultipleChoiceField(
+        label=_('What is the work condition that the child is exposed to?'),
+        choices=Registration.LABOUR_CONDITION,
+        widget=forms.CheckboxSelectMultiple,
         required=False
     )
     id_type = forms.ModelChoiceField(
@@ -462,32 +480,34 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                    Div('child_living_arrangement', css_class='col-md-4'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('child_disability', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('child_marital_status', css_class='col-md-4'),
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                    Div('child_marital_status', css_class='col-md-4'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('child_have_children', css_class='col-md-4', css_id='child_have_children'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('child_children_number', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('source_of_identification', css_class='col-md-7'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('source_of_identification_specify', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('child_fe_unique_id', css_class='col-md-4'),
                     css_class='row card-body d-none', id='child_fe_unique_id_block'
                 ),
@@ -521,31 +541,36 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('main_caregiver', css_class='col-md-5'),
-                    HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('main_caregiver_other', css_class='col-md-6'),
+                    Div('children_number_under18', css_class='col-md-5'),
                     css_class='row card-body',
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('caregiver_first_name', css_class='col-md-3'),
+                    Div('main_caregiver', css_class='col-md-5'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('main_caregiver_other', css_class='col-md-4'),
+                    css_class='row card-body',
+                ),
+                Div(
                     HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('caregiver_middle_name', css_class='col-md-3'),
+                    Div('caregiver_first_name', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                    Div('caregiver_middle_name', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('caregiver_last_name', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('caregiver_mother_name', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                    Div('caregiver_mother_name', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('main_caregiver_nationality_other', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('id_type', css_class='col-md-6'),
                     css_class='row card-body',
                 ),
@@ -655,6 +680,13 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                     id='labour_details_2'
                 ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('labour_condition', css_class='col-md-7 multiple-choice'),
+                    css_class='row card-body',
+                    id='labour_details_3'
+                ),
+                #
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -826,6 +858,7 @@ class MainForm(forms.ModelForm):
         labour_type_specify = cleaned_data.get("labour_type_specify")
         labour_hours = cleaned_data.get("labour_hours")
         labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        labour_condition = cleaned_data.get("labour_condition")
 
         if have_labour != 'No':
             if not labour_type:
@@ -836,6 +869,8 @@ class MainForm(forms.ModelForm):
                 self.add_error('labour_hours', 'This field is required')
             if not labour_weekly_income:
                 self.add_error('labour_weekly_income', 'This field is required')
+            if not labour_condition:
+                self.add_error('labour_condition', 'This field is required')
 
         first_phone_number = cleaned_data.get("first_phone_number")
         first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
@@ -909,6 +944,7 @@ class MainForm(forms.ModelForm):
             'main_caregiver_nationality_other',
             'child_p_code',
             'child_address',
+            'child_living_arrangement',
             'child_disability',
             'child_marital_status',
             'child_have_children',
@@ -928,6 +964,7 @@ class MainForm(forms.ModelForm):
             'second_phone_number_confirm',
             'main_caregiver',
             'main_caregiver_other',
+            'children_number_under18',
             'caregiver_first_name',
             'caregiver_middle_name',
             'caregiver_last_name',
@@ -937,6 +974,7 @@ class MainForm(forms.ModelForm):
             'labour_type_specify',
             'labour_hours',
             'labour_weekly_income',
+            'labour_condition',
             'id_type',
             'case_number',
             'case_number_confirm',

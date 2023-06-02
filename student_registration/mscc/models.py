@@ -48,15 +48,21 @@ class Registration(TimeStampedModel):
             ('No', _('No')),
             ('Yes - Morning', _('Yes - Morning')),
             ('Yes - Afternoon', _('Yes - Afternoon')),
-            ('Yes - All day', _('Yes - All day')),
+            ('Yes - Full Day', _('Yes - Full day')),
+            ('Yes - Night Shift', _('Yes - Night Shift')),
+            ('Yes - Morning & Night Shift', _('Yes - Morning & Night Shift')),
+            ('Yes - Afternoon & Night Shift', _('Yes - Afternoon & Night Shift')),
+            ('Yes - Full Day & Night Shift', _('Yes - Full Day & Night Shift')),
     )
     LABOURS = Choices(
             ('', '----------'),
             ('Agriculture', _('Agriculture')),
-            ('Building', _('Building')),
+            ('Construction', _('Construction')),
             ('Manufacturing', _('Manufacturing')),
             ('Retail / Store', _('Retail / Store')),
-            ('Begging', _('Begging')),
+            ('Street Connected Work - includes vending and begging', _('Street Connected Work - includes vending and begging')),
+            ('Household chores (includes domestic works and caring for siblings or their caregivers)',
+             _('Household chores (includes domestic works and caring for siblings or their caregivers)')),
             ('Mechanic shop', _('Mechanic shop')),
             ('Other services', _('Other services')),
     )
@@ -66,6 +72,13 @@ class Registration(TimeStampedModel):
             ('From 100,000 to 299,000', _('From 100,000 to 299,000')),
             ('From 300,000 to 499,000', _('From 300,000 to 499,000')),
             ('From 500,000 and More', _('From 500,000 and More'))
+    )
+    LABOUR_CONDITION = Choices(
+            ('Carry heavy loads', _('Carry heavy loads')),
+            ('Works in extreme cold, heat or humidity', _('Works in extreme cold, heat or humidity')),
+            ('Exposed to dust, fume or gas', _('Exposed to dust, fume or gas')),
+            ('Maneuvers dangerous tools such as knives or operating heavy machinery', _('Maneuvers dangerous tools such as knives or operating heavy machinery')),
+            ('Required to work with chemicals, such as pesticides, glues and similar, or explosives', _('Required to work with chemicals, such as pesticides, glues and similar, or explosives')),
     )
     IDENTIFICATION_SOURCE = Choices(
             ('', '----------'),
@@ -141,7 +154,8 @@ class Registration(TimeStampedModel):
     labour_hours = models.IntegerField(
         blank=True,
         null=True,
-        verbose_name=_('How many hours does this child work in a day?')
+        default= 0,
+        verbose_name=_('Number of working hours/week ')
     )
     labour_weekly_income = models.CharField(
         max_length=100,
@@ -149,6 +163,17 @@ class Registration(TimeStampedModel):
         null=True,
         choices=LABOUR_INCOME,
         verbose_name=_('What is the income of the child per week?')
+    )
+    labour_condition = ArrayField(
+        models.CharField(
+            choices=LABOUR_CONDITION,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('What is the work condition that the child is exposed to?')
     )
     source_of_identification = models.CharField(
         max_length=100,

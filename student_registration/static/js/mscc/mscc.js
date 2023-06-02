@@ -575,16 +575,19 @@ function reorganizeForm()
         $('div#div_id_labour_type').addClass('d-none');
         $('#labour_details_1').addClass('d-none');
         $('#labour_details_2').addClass('d-none');
+        $('#labour_details_3').addClass('d-none');
         $('#id_labour_type').val('')
         $('#id_labour_type_specify').val('')
         $('#id_labour_hours').val('')
         $('#id_labour_weekly_income').val('')
+        $('#labour_condition').val('')
     }
     else
     {
         $('div#div_id_labour_type').removeClass('d-none');
         $('#labour_details_1').removeClass('d-none');
         $('#labour_details_2').removeClass('d-none');
+        $('#labour_details_3').removeClass('d-none');
     }
 
     var labour_type = $('select#id_labour_type').val();

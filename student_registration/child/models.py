@@ -62,6 +62,14 @@ class Child(TimeStampedModel):
         ('Shawish', _('Shawish')),
     )
 
+    LIVING_ARRANGEMENT = Choices(
+        ('', '----------'),
+        ('Unaccompanied', _('Unaccompanied')),
+        ('Separated', _('Separated')),
+        ('Living with one caregivers', _('Living with one caregivers')),
+        ('Child headed household ', _('Child headed household ')),
+    )
+
     first_name = models.CharField(
         max_length=64,
         db_index=True,
@@ -137,6 +145,13 @@ class Child(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Registered child Home Address')
+    )
+    living_arrangement = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=LIVING_ARRANGEMENT,
+        verbose_name=_('Child’s Living Arrangement')
     )
     disability = models.ForeignKey(
         Disability,
@@ -381,6 +396,13 @@ class Child(TimeStampedModel):
     main_caregiver_other = models.TextField(
         blank=True, null=True,
         verbose_name=_('Please specify')
+    )
+    children_number_under18 = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        default= 0,
+        verbose_name=_('Number of children (under 18) living in the household')
     )
     caregiver_first_name = models.CharField(
         max_length=500,

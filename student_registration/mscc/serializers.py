@@ -76,6 +76,7 @@ class MainSerializer(serializers.ModelSerializer):
     child_nationality_id = serializers.CharField(source='child.nationality.id', read_only=True)
     child_nationality_other = serializers.CharField(source='child.nationality_other', required=False)
     child_address = serializers.CharField(source='child.address', required=False)
+    child_living_arrangement = serializers.CharField(source='child.living_arrangement', required=False)
     child_disability = serializers.CharField(source='child.disability', required=False)
     child_disability_id = serializers.CharField(source='child.disability.id', read_only=True)
     child_p_code = serializers.CharField(source='child.p_code', required=False)
@@ -134,6 +135,7 @@ class MainSerializer(serializers.ModelSerializer):
     second_phone_number_confirm = serializers.CharField(source='child.second_phone_number_confirm', required=False)
     main_caregiver = serializers.CharField(source='child.main_caregiver', required=False)
     main_caregiver_other = serializers.CharField(source='child.main_caregiver_other', required=False)
+    children_number_under18 = serializers.CharField(source='child.children_number_under18', required=False)
     caregiver_first_name = serializers.CharField(source='child.caregiver_first_name', required=False)
     caregiver_middle_name = serializers.CharField(source='child.caregiver_middle_name', required=False)
     caregiver_last_name = serializers.CharField(source='child.caregiver_last_name', required=False)
@@ -185,6 +187,7 @@ class MainSerializer(serializers.ModelSerializer):
             'child_p_code',
             'child_id_number',
             'child_address',
+            'child_living_arrangement',
             'child_disability',
             'child_disability_id',
             'child_marital_status',
@@ -207,6 +210,7 @@ class MainSerializer(serializers.ModelSerializer):
             'second_phone_number_confirm',
             'main_caregiver',
             'main_caregiver_other',
+            'children_number_under18',
             'caregiver_first_name',
             'caregiver_middle_name',
             'caregiver_last_name',
@@ -216,6 +220,7 @@ class MainSerializer(serializers.ModelSerializer):
             'labour_type_specify',
             'labour_hours',
             'labour_weekly_income',
+            'labour_condition',
             'id_type',
             'id_type_id',
             'case_number',
