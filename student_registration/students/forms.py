@@ -398,7 +398,7 @@ class TeacherForm(forms.ModelForm):
         school_id = 0
         if self.request.user.school:
             school_id = self.request.user.school.id
-        if school_id > 0:
+        if school_id and school_id > 0:
             queryset = School.objects.filter(id=school_id)
             self.fields['school'] = forms.ModelChoiceField(
                 queryset=queryset, widget=forms.Select,
