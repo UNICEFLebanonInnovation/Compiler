@@ -175,7 +175,7 @@ CACHES = {
 #     }
 # }
 
-INSTALLED_APPS += ['lockout', ]
+# INSTALLED_APPS += ['lockout', ]
 
 # Sentry Configuration
 SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='')
