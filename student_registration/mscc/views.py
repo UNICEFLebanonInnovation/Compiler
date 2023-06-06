@@ -6,6 +6,7 @@ import json
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from openpyxl import Workbook
 
 from rest_framework import status
 from django.db.models import F, Q
@@ -538,19 +539,46 @@ class ChildProfilePreview(LoginRequiredMixin,
 
 
 def export_data(request):
+    from django.db import connection
+    cursor = connection.cursor()
+
+    center = request.user.center_id
+    first_name = request.GET.get('first_name', '')
+    last_name = request.GET.get('last_name', '')
+    father_name = request.GET.get('father_name', '')
+    mother_fullname = request.GET.get('mother_fullname', '')
     nationality = request.GET.get('nationality', '')
 
-    qs_registration = Registration.objects.filter(
-        center=request.user.center_id,
-        child__first_name__contains=request.GET.get('first_name', ''),
-        child__last_name__contains=request.GET.get('last_name', ''),
-        child__father_name__contains=request.GET.get('father_name', ''),
-        child__mother_fullname__contains=request.GET.get('mother_fullname', '')
-    )
-    if nationality is not None and nationality != '':
-        qs_registration.filter(child__nationality=nationality)
-    qs_registration.order_by('-id')
-    dataset = RegistrationResource().export(qs_registration)
-    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="data.xls"'
+    vw_str = 'SELECT * FROM vw_mscc_data where center_id = ' + str(center)
+    if first_name != '':
+        vw_str += " and child_first_name LIKE '" + first_name + "%'"
+    if last_name != '':
+        vw_str += " and child_father_name LIKE '" + last_name + "%'"
+    if father_name != '':
+        vw_str += " and child_last_name LIKE '" + father_name + "%'"
+    if mother_fullname != '':
+        vw_str += " and mother_fullname LIKE '" + mother_fullname + "%'"
+    if nationality != '':
+        vw_str += " and student_nationality_id = " + nationality
+
+    cursor.execute(vw_str)
+    data = cursor.fetchall()
+
+    headers = [col[0] for col in cursor.description]
+
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.append(headers)
+
+    for row in data:
+        encoded_row = [value.encode('utf-8') if isinstance(value, unicode) else value for value in row]
+        worksheet.append(encoded_row)
+
+    # Set the appropriate response headers for Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+
+    # Save the workbook to the response
+    workbook.save(response)
+
     return response
