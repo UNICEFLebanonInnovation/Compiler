@@ -571,7 +571,7 @@ def export_data(request):
     worksheet.append(headers)
 
     for row in data:
-        encoded_row = [value.encode('utf-8') if isinstance(value, unicode) else value for value in row]
+        encoded_row = [value.encode('utf-8') if isinstance(value, str) else value for value in row]
         worksheet.append(encoded_row)
 
     # Set the appropriate response headers for Excel file
