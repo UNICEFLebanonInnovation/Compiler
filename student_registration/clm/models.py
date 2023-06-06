@@ -238,9 +238,9 @@ class CLM(TimeStampedModel):
     )
     HAVE_LABOUR = Choices(
         ('no', _('No')),
-        ('yes_morning', _('Yes - Morning')),
-        ('yes_afternoon', _('Yes - Afternoon')),
-        ('yes_all_day', _('Yes - All day')),
+        ('Yes - Morning', _('Yes - Morning')),
+        ('Yes - Afternoon', _('Yes - Afternoon')),
+        ('Yes - All day', _('Yes - All day')),
     )
     LABOURS = Choices(
         ('', '----------'),
@@ -2055,7 +2055,7 @@ class Bridging(CLM):
         max_length=100,
         blank=True,
         null=True,
-        choices=YES_NO,
+        choices=CLM.HAVE_LABOUR,
         verbose_name=_('Does the child participate in work?')
     )
     consent_parents = models.FileField(

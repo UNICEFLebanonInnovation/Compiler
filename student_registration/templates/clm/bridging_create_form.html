@@ -53,10 +53,8 @@
     <script>
       var url_districts = "{% url 'clm:load_districts' %}";
       var url_cadasters = "{% url 'clm:load_cadasters' %}";
-      var url_schools = "{% url 'clm:load_schools' %}";
 
       $("#id_governorate").change(function () {
-          load_schools(url_schools);
           load_districts(url_districts);
           load_cadasters(url_cadasters);
       });

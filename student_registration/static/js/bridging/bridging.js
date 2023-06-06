@@ -1817,20 +1817,6 @@ function load_cadasters(url)
     })
 }
 
-function load_schools(url)
-{
-    var value = $("#id_governorate").val();
-    $.ajax({
-        url: url,
-        data: {
-            'id_governorate': value
-        },
-        success: function (data) {
-            $("#id_school").html(data);
-        }
-    })
-}
-
 function get_child_data(outreach_id)
 {
     $('#search_loader').removeClass('hidden');
