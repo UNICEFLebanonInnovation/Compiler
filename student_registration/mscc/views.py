@@ -541,15 +541,18 @@ class ChildProfilePreview(LoginRequiredMixin,
 def export_data(request):
     from django.db import connection
     cursor = connection.cursor()
-
-    center = request.user.center_id
+    center_id = 0
+    if request.user.center_id:
+        center_id = request.user.center_id
     first_name = request.GET.get('first_name', '')
     last_name = request.GET.get('last_name', '')
     father_name = request.GET.get('father_name', '')
     mother_fullname = request.GET.get('mother_fullname', '')
     nationality = request.GET.get('nationality', '')
 
-    vw_str = 'SELECT * FROM vw_mscc_data where center_id = ' + str(center)
+    vw_str = 'SELECT * FROM vw_mscc_data where id>0'
+    if center_id > 0:
+        vw_str += " and center_id = " + str(center_id)
     if first_name != '':
         vw_str += " and child_first_name LIKE '" + first_name + "%'"
     if last_name != '':
@@ -561,6 +564,7 @@ def export_data(request):
     if nationality != '':
         vw_str += " and student_nationality_id = " + nationality
 
+
     cursor.execute(vw_str)
     data = cursor.fetchall()
 
@@ -571,8 +575,7 @@ def export_data(request):
     worksheet.append(headers)
 
     for row in data:
-        encoded_row = [value.encode('utf-8') if isinstance(value, str) else value for value in row]
-        worksheet.append(encoded_row)
+        worksheet.append(row)
 
     # Set the appropriate response headers for Excel file
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
