@@ -19,7 +19,7 @@ import datetime
 
 
 def outreach_import_data(request):
-    last_loaded_identifier = HouseHold.objects.aggregate(Max('u_id'))['u_id__max']
+    last_loaded_identifier = OutreachCaregiver.objects.aggregate(Max('u_id'))['u_id__max']
     if last_loaded_identifier is None:
         last_loaded_identifier = 0
     # last_loaded_identifier = 0
