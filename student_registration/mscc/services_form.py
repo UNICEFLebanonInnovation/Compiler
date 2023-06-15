@@ -428,7 +428,7 @@ class DigitalServiceForm(forms.ModelForm):
             instance.akelius_change_math = validated_data.get('akelius_change_math')
             instance.akelius_change_learning = validated_data.get('akelius_change_learning')
         else:
-            instance.akelius_sessions_number = ''
+            instance.akelius_sessions_number = 0
             instance.akelius_access = ''
             instance.akelius_child_equipped = ''
             instance.akelius_change_literacy = ''
@@ -445,7 +445,7 @@ class DigitalServiceForm(forms.ModelForm):
             instance.lp_change_math = validated_data.get('lp_change_math')
             instance.lp_change_learning = validated_data.get('lp_change_learning')
         else:
-            instance.lp_sessions_number = ''
+            instance.lp_sessions_number = 0
             instance.lp_access = ''
             instance.lp_child_equipped = ''
             instance.lp_change_literacy = ''
@@ -973,9 +973,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
             instance.counselling_date = validated_data.get('counselling_date')
             instance.next_counselling_date = validated_data.get('next_counselling_date')
         else:
-            instance.counselling_date = ''
-            instance.next_counselling_date = ''
-
+            instance.counselling_date = None
+            instance.next_counselling_date =None
 
         # caregiver_ecd_counselling
         caregiver_ecd_counselling = validated_data.get('caregiver_ecd_counselling')
@@ -984,8 +983,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
             instance.ecd_counselling_date = validated_data.get('ecd_counselling_date')
             instance.next_ecd_counselling_date = validated_data.get('next_ecd_counselling_date')
         else:
-            instance.ecd_counselling_date = ''
-            instance.next_ecd_counselling_date = ''
+            instance.ecd_counselling_date = None
+            instance.next_ecd_counselling_date = None
 
         # child_screened_malnutrition
         child_screened_malnutrition = validated_data.get('child_screened_malnutrition')
@@ -1012,7 +1011,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
             instance.health_nutrition_session_date = validated_data.get('health_nutrition_session_date')
         else:
             instance.health_nutrition_session_title = ''
-            instance.health_nutrition_session_date = ''
+            instance.health_nutrition_session_date = None
 
         instance.modified_by = request.user
         instance.save()

@@ -400,7 +400,6 @@ class Child(TimeStampedModel):
     children_number_under18 = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 20)),
         default= 0,
         verbose_name=_('Number of children (under 18) living in the household')
     )

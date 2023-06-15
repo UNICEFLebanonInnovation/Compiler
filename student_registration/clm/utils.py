@@ -2563,6 +2563,7 @@ def bridging_build_xls_extraction(queryset_students):
         'School',
         'The language supported in the program',
         'Student Address',
+        'Residence Type',
         'Registration level',
         'first attendance date',
         'ID number',
@@ -2641,158 +2642,6 @@ def bridging_build_xls_extraction(queryset_students):
         'Child weekly income',
         'pre test arabic',
         'pre test english',
-        'pre test math',
-        'post test arabic',
-        'post test english',
-        'post test math',
-        'The language supported in the program',
-        'Level of participation / Absence',
-        'The main barriers affecting the daily attendance and performance of the child or drop out of',
-        'Please specify',
-        'Was the community Liaison at school level involved in follow up on child absence or drop out?',
-        'specify',
-        'Post test has been done',
-        'round_complete',
-        'Is the child receiving social assistance?',
-        'Is the Child Receiving Transportation Support?',
-        'Is the Child Using a digital platform (Akelius or  Learning Passport)',
-        'Did the child receive basic stationery?',
-        'Did the child benefit from the PSS kit?',
-        'cp_referral',
-        'referal_wash',
-        'referal_health',
-        'referal_other',
-        'child_received_printout',
-        'child_received_internet',
-        'Based on the overall score, what is the recommended learning path?',
-        'Please specify',
-        'Please enter the number phone calls',
-        'Phone call Result of follow up',
-        'Please enter the number of house visits',
-        'House VisitvResult of follow up',
-        'Please enter the number of family visit',
-        'Familiy Visit Result of follow up',
-        'Parent attended visits',
-        'pss session attended',
-        'pss session modality',
-        'pss session number',
-        'pss parent attended',
-        'pss parent attended other',
-        'Attended covid Session?',
-        'Please indicate modality',
-        'Please enter the number of sessions',
-        'Parent who attended the parents meeting',
-        'Please specify',
-        'Attended followup Session',
-        'Please indicate modality',
-        'Please enter the number of sessions',
-        'Parent who attended the parents meeting',
-        'Please specify',
-        'Have the child caretakers been contacted by the School Community Laison',
-        'Please specify what has been discussed',
-        'owner',
-        'modified_by',
-        'Attendance Days',
-        'Absent Days',
-        'Period Out School'
-    ]
-
-    for col_num in range(len(columns_titles)):
-        ws.write(row_num_student, col_num, columns_titles[col_num], font_style)
-
-    # Sheet body, remaining rows
-    font_style = xlwt.XFStyle()
-    columns = [
-        'enrollment ID',
-        'Student ID',
-        'First time registered?',
-        'Partner',
-        'CLM Round',
-        'Round start date',
-        'Governorate',
-        'District',
-        'Cadaster',
-        'School',
-        'The language supported in the program',
-        'Student Address',
-        'Residence Type',
-        'Registration level',
-        'first attendance date',
-        'ID number',
-        'unique number',
-        'First name',
-        'Father name',
-        'Last name',
-        'Mother fullname',
-        'Gender',
-        'Student Nationality',
-        'Student Nationality Specify',
-        'Birthday - day',
-        'Birthday - month',
-        'Birthday - year',
-        'P-Code If a child lives in a tent / Brax in a random camp',
-        'Does the child have any disability or special need?',
-        'Education status',
-        'Miss school date',
-        'Internal number',
-        'Source of Identification',
-        'Source of Identification Specify',
-        'RIMS  case number',
-        'Source of Transportation',
-        'What is the educational level of the mother?',
-        'What is the educational level of the father?',
-        'Phone number',
-        'Phone number confirm',
-        'phone owner',
-        'Second Phone number',
-        'Second Phone number confirm',
-        'Second phone owner',
-        'Main Caregiver',
-        'other caregiver relationship',
-        'main caregiver nationality',
-        'main caregiver nationality Other ',
-        'Caretaker first name',
-        'Caretaker middle name',
-        'Caretaker last name',
-        'Caretaker mother name',
-        'caretaker birthday year',
-        'caretaker birthday month',
-        'caretaker birthday day',
-        'ID Type',
-        'UNHCR case number',
-        'UNHCR case number confirm',
-        'Parent individual ID',
-        'Parent individual ID confirm',
-        'Child individual ID',
-        'Child individual ID confirm',
-        'UNHCR recorded barcode',
-        'UNHCR recorded barcode confirm',
-        'Parent Lebanese ID number',
-        'Parent Lebanese ID number confirm',
-        'Child Lebanese ID number',
-        'Child Lebanese ID number confirm',
-        'Parent Syrian ID number',
-        'Parent Syrian ID number confirm',
-        'Child Syrian ID number',
-        'Child Syrian ID number confirm',
-        'Parent Palestinian ID number',
-        'Parent Palestinian ID number confirm',
-        'Child Palestinian ID number',
-        'Child Palestinian ID number confirm',
-        'ID number of the Caretaker',
-        'ID number of the Caretaker confirm',
-        'ID number of the child',
-        'ID number of the child confirm',
-        'What is the family status of the child?',
-        'Does the child have children?',
-        'Child number of children',
-        'Does the child participate in work?',
-        'What is the type of work?',
-        'Please specify',
-        'How many hours does this child work in a day?',
-        'Child weekly income',
-        'pre test arabic',
-        'pre test english',
         'pre test french',
         'pre test math',
         'post test arabic',
@@ -2800,6 +2649,7 @@ def bridging_build_xls_extraction(queryset_students):
         'post test french',
         'post test math',
         'Level of participation / Absence',
+        'The language supported in the program',
         'The main barriers affecting the daily attendance and performance of the child or drop out of',
         'Please specify',
         'Was the community Liaison at school level involved in follow up on child absence or drop out?',
@@ -2846,9 +2696,15 @@ def bridging_build_xls_extraction(queryset_students):
         'owner',
         'modified_by',
         'Attendance Days',
-        'Absent Days',
+        # 'Absent Days',
         # 'Period Out School'
     ]
+
+    for col_num in range(len(columns_titles)):
+        ws.write(row_num_student, col_num, columns_titles[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
 
     qs = queryset_students.extra(select={
         'pre_test_arabic': "pre_test->>'Bridging_ASSESSMENT/arabic'",
@@ -2862,7 +2718,6 @@ def bridging_build_xls_extraction(queryset_students):
     })
 
     rows = qs.order_by('id').values_list(
-
         'id',
         'student_id',
         'new_registry',
@@ -2890,6 +2745,9 @@ def bridging_build_xls_extraction(queryset_students):
         'student__birthday_day',
         'student__birthday_month',
         'student__birthday_year',
+        'student__p_code',
+        'disability',
+        'education_status',
         'miss_school_date',
         'internal_number',
         'source_of_identification',
@@ -2957,6 +2815,7 @@ def bridging_build_xls_extraction(queryset_students):
         'post_test_french',
         'post_test_math',
         'participation',
+        'language',
         'barriers_single',
         'barriers_other',
         'community_Liaison_follow_up',
@@ -3006,21 +2865,21 @@ def bridging_build_xls_extraction(queryset_students):
 
     for row in rows:
         row_num_student += 1
-        year = row[columns.index("Birthday - year")]
-        month = row[columns.index("Birthday - month")]
-        day = row[columns.index("Birthday - day")]
+        year = row[columns_titles.index("Birthday - year")]
+        month = row[columns_titles.index("Birthday - month")]
+        day = row[columns_titles.index("Birthday - day")]
         age = Person.get_age(year, month, day)
-        student_id = row[columns.index("Student ID")]
-        attendance_days = Bridging.get_attendance_days(student_id, round_start_date, round_end_date)
+        student_id = row[columns_titles.index("Student ID")]
+        attendance_days = str(Bridging.get_attendance_days(student_id, round_start_date, round_end_date))
         absent_days = Bridging.get_total_absent_days(student_id, round_id)
-        miss_school_date = row[columns.index("Miss school date")]
+        miss_school_date = row[columns_titles.index("Miss school date")]
         # period_out_school = Bridging.get_period_out_school(student_id, miss_school_date, round_start_date)
 
         for col_num in range(len(row)):
-            if col_num == columns.index("Birthday - year"):
+            if col_num == columns_titles.index("Birthday - year"):
                 ws.write(row_num_student, col_num, row[col_num], font_style)
                 ws.write(row_num_student, col_num + 1, age, font_style)
-            elif col_num > columns.index("Birthday - year"):
+            elif col_num > columns_titles.index("Birthday - year"):
                 ws.write(row_num_student, col_num + 1, row[col_num], font_style)
             else:
                 ws.write(row_num_student, col_num, row[col_num], font_style)
