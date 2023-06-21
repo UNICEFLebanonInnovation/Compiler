@@ -20,6 +20,12 @@ def get_service_info(services, registry, service_name):
 
 
 @register.simple_tag
+def get_child_fullname(registry):
+    reg = Registration.objects.filter( id=registry).last()
+    return reg.child_fullname
+
+
+@register.simple_tag
 def get_service(registry, service_name):
     if type(registry) == 'int':
         return ProvidedServices.objects.filter(name=service_name, registration_id=registry).last()

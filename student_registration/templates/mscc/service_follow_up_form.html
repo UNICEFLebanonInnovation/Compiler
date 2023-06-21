@@ -4,6 +4,7 @@
 {% load static %}
 {% load bootstrap3 %}
 {% load util_tags %}
+{% load simple_tags %}
 {% bootstrap_css %}
 
 {% block extra_head %}
@@ -33,7 +34,10 @@
                                   </a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="/MSCC/Child-Profile/{{ registry }}/?current_tab=services">Child Profile</a>
+                                    <a href="/MSCC/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname  registry %}</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                     Caregivers Package
                               </li>
                           </ol>
                       </nav>
