@@ -1013,6 +1013,15 @@ class EducationService(TimeStampedModel):
         ('RS Grade 8', _('RS Grade 8')),
         ('RS Grade 9', _('RS Grade 9')),
     )
+    CLASS_SECTION = Choices(
+        ('', '----------'),
+        ('a', _('a')),
+        ('b', _('b')),
+        ('c', _('c')),
+        ('d', _('d')),
+        ('e', _('e')),
+        ('f', _('f')),
+    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -1047,6 +1056,13 @@ class EducationService(TimeStampedModel):
         null=True,
         choices=EDUCATION_PROGRAM,
         verbose_name=_('Education Program')
+    )
+    class_section = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CLASS_SECTION,
+        verbose_name=_('Class Section')
     )
     # @todo not sure about this field
     registration_date = models.DateField(

@@ -456,6 +456,11 @@ class EducationServiceForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=EducationService.EDUCATION_PROGRAM,
     )
+    class_section = forms.ChoiceField(
+        label=_("Class Section"),
+        widget=forms.Select, required=True,
+        choices=EducationService.CLASS_SECTION,
+    )
     registration_date = forms.DateField(
         label=_("Date of registration in the round"),
         required=False
@@ -529,9 +534,11 @@ class EducationServiceForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('education_program', css_class='col-md-4'),
+                    Div('education_program', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('registration_date', css_class='col-md-4'),
+                    Div('class_section', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('registration_date', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
@@ -559,6 +566,7 @@ class EducationServiceForm(forms.ModelForm):
         instance.dropout_program = validated_data.get('dropout_program')
         instance.dropout_program_specify = validated_data.get('dropout_program_specify')
         instance.education_program = validated_data.get('education_program')
+        instance.class_section = validated_data.get('class_section')
         if validated_data.get('registration_date'):
             instance.registration_date = validated_data.get('registration_date')
         instance.save()
@@ -581,6 +589,7 @@ class EducationServiceForm(forms.ModelForm):
             'dropout_program',
             'dropout_program_specify',
             'education_program',
+            'class_section',
             'registration_date',
         )
 
