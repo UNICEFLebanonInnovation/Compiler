@@ -1015,12 +1015,12 @@ class EducationService(TimeStampedModel):
     )
     CLASS_SECTION = Choices(
         ('', '----------'),
-        ('a', _('a')),
-        ('b', _('b')),
-        ('c', _('c')),
-        ('d', _('d')),
-        ('e', _('e')),
-        ('f', _('f')),
+        ('A', _('A')),
+        ('B', _('B')),
+        ('C', _('C')),
+        ('D', _('D')),
+        ('E', _('E')),
+        ('F', _('F')),
     )
     registration = models.ForeignKey(
         Registration,

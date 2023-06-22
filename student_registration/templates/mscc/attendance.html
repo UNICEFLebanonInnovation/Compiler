@@ -82,7 +82,41 @@
                                                   </div>
 
                                           </div>
-                                              <div class="form-row">
+
+                                          <div class="form-row">
+                                                <div class="col-md-6 ">
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="education_programme" class="btn-primary">
+                                                                          <option value="">--- Select Education Program ---</option>
+                                                                          {% for item in education_program %}
+                                                                            {% if item != '' %}
+                                                                              <option value="{{ item }}" {% if education_programme == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                            {% endif %}
+                                                                          {% endfor %}
+                                                                      </select>
+                                                                  </div>
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                              </div>
+                                                  </div>
+
+                                                  <div class="col-md-6">
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="class_section" class="btn-primary">
+                                                                          <option value="">--- Select Class Section ---</option>
+                                                                           {% for item in class_section %}
+                                                                              {% if item != '' %}
+                                                                                <option value="{{ item }}" {% if class_section == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                              {% endif %}
+                                                                            {% endfor %}
+                                                                      </select>
+                                                                  </div>
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                              </div>
+                                                  </div>
+                                              </div>
+                                          <div class="form-row">
                                                   <div class="col-md-6">
                                                             <div role="group" class="btn-group-sm btn-group">
 

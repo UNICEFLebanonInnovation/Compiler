@@ -103,7 +103,12 @@ $(document).ready(function() {
             url: $(this).attr('href'),
             cache: false,
             async: true,
-            data: {'attendance_date': $("#attendance_date").val(), 'center_id': $('#center_id').val()},
+            data: {
+                'attendance_date': $("#attendance_date").val(),
+                'center_id': $('#center_id').val(),
+                'education_programme': $('#education_programme').val(),
+                'class_section': $('#class_section').val()
+            },
             dataType: 'html',
             success: function (response) {
                 $('#attendance_children').empty("");

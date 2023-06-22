@@ -1,6 +1,8 @@
 # -- coding: utf-8 --
 from itertools import chain
 import datetime
+
+from django.db.models import Exists, OuterRef
 from import_export import resources, fields
 
 from student_registration.outreach.models import OutreachChild
@@ -14,7 +16,7 @@ from student_registration.clm.models import (
     Inclusion
 )
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
-from student_registration.mscc.models import Registration
+from student_registration.mscc.models import Registration, EducationService
 
 
 def to_array(fields, obj):
@@ -342,11 +344,14 @@ def create_attendance(data, center_id):
         return False
 
 
-def load_child_attendance(center_id, attendance_date):
+def load_child_attendance(center_id, attendance_date, education_programme, class_section):
     from datetime import datetime
 
-    attendance = MSCCAttendance.objects.filter(center_id=center_id,
-                                               attendance_date=datetime.strptime(attendance_date, '%m/%d/%Y')).last()
+    if attendance_date is not None:
+        attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
+
+        attendance = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).last()
+
     result = []
 
     try:
@@ -367,7 +372,19 @@ def load_child_attendance(center_id, attendance_date):
 
                 result.append(attendance_record)
         else:
-            registrations = Registration.objects.filter(center_id=center_id, type='Core-Package')
+            registrations = Registration.objects.filter(
+                center_id=center_id,
+                type='Core-Package',
+            ).annotate(
+                has_education_service=Exists(
+                    EducationService.objects.filter(
+                        registration_id=OuterRef('pk'),
+                        education_program=education_programme,
+                        class_section=class_section
+                    )
+                )
+            ).filter(has_education_service=True)
+
 
             for registration_child in registrations:
                 registration_record = {}
