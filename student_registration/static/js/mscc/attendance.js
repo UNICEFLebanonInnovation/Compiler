@@ -31,6 +31,8 @@ $(document).ready(function() {
 
         var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
         var attendance_date = $("#attendance_date").val();
+        var education_program = $("#education_program").val();
+        var class_section = $("#class_section").val();
         var close_reason = $("#close_reason").val();
         children_attendance = [];
 
@@ -62,6 +64,8 @@ $(document).ready(function() {
            "attendance_date": attendance_date,
            "attendance_day_off": attendance_day_off,
            "close_reason": close_reason,
+           "education_program": education_program,
+           "class_section": class_section,
            "children_attendance": children_attendance
         };
 
@@ -106,7 +110,7 @@ $(document).ready(function() {
             data: {
                 'attendance_date': $("#attendance_date").val(),
                 'center_id': $('#center_id').val(),
-                'education_programme': $('#education_programme').val(),
+                'education_program': $('#education_program').val(),
                 'class_section': $('#class_section').val()
             },
             dataType: 'html',

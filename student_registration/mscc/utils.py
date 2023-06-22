@@ -324,9 +324,15 @@ def get_old_child(student_id):
 
 def create_attendance(data, center_id):
     from datetime import datetime
+
+    education_program = data["education_program"]
+    class_section = data["class_section"]
     try:
         attendance, created = MSCCAttendance.objects.get_or_create(center_id=center_id,
-                                                                   attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'))
+                                                                   attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'),
+                                                                   education_program=education_program,
+                                                                   class_section=class_section
+                                                                   )
         attendance.day_off = data["attendance_day_off"]
         attendance.close_reason = data["close_reason"]
         attendance.save()
@@ -344,13 +350,17 @@ def create_attendance(data, center_id):
         return False
 
 
-def load_child_attendance(center_id, attendance_date, education_programme, class_section):
+def load_child_attendance(center_id, attendance_date, education_program, class_section):
     from datetime import datetime
 
     if attendance_date is not None:
         attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
 
-        attendance = MSCCAttendance.objects.filter(center_id=center_id, attendance_date=attendance_date).last()
+        attendance = MSCCAttendance.objects.filter(center_id=center_id,
+                                                   attendance_date=attendance_date,
+                                                   education_program=education_program,
+                                                   class_section=class_section
+                                                   ).last()
 
     result = []
 
@@ -379,7 +389,7 @@ def load_child_attendance(center_id, attendance_date, education_programme, class
                 has_education_service=Exists(
                     EducationService.objects.filter(
                         registration_id=OuterRef('pk'),
-                        education_program=education_programme,
+                        education_program=education_program,
                         class_section=class_section
                     )
                 )

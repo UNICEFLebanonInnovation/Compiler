@@ -87,11 +87,11 @@
                                                 <div class="col-md-6 ">
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
-                                                                      <select id="education_programme" class="btn-primary">
+                                                                      <select id="education_program" class="btn-primary">
                                                                           <option value="">--- Select Education Program ---</option>
                                                                           {% for item in education_program %}
                                                                             {% if item != '' %}
-                                                                              <option value="{{ item }}" {% if education_programme == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                              <option value="{{ item }}" {% if education_program == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
                                                                             {% endif %}
                                                                           {% endfor %}
                                                                       </select>

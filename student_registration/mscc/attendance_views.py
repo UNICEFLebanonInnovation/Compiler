@@ -67,10 +67,10 @@ class LoadAttendanceChildren(LoginRequiredMixin,
 
         center_id = self.request.GET.get("center_id")
         attendance_date = self.request.GET.get("attendance_date")
-        education_programme = self.request.GET.get("education_programme")
+        education_program = self.request.GET.get("education_program")
         class_section = self.request.GET.get("class_section")
 
-        instances = load_child_attendance(center_id, attendance_date, education_programme, class_section)
+        instances = load_child_attendance(center_id, attendance_date, education_program, class_section)
 
         return {
             'instances': instances

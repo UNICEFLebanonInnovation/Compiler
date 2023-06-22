@@ -541,6 +541,21 @@ class MSCCAttendance(TimeStampedModel):
         related_name='+',
         verbose_name=_('Center')
     )
+    education_program = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=CLOSE_REASON,
+        verbose_name=_('Education Program')
+    )
+    class_section = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CLOSE_REASON,
+        verbose_name=_('Class Section')
+    )
+
     attendance_date = models.DateField(
         blank=True,
         null=True,
