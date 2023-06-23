@@ -68,10 +68,11 @@ class Registration(TimeStampedModel):
     )
     LABOUR_INCOME = Choices(
             ('', '----------'),
-            ('99,000 LBP or less', _('99,000 LBP or less')),
-            ('From 100,000 to 299,000', _('From 100,000 to 299,000')),
-            ('From 300,000 to 499,000', _('From 300,000 to 499,000')),
-            ('From 500,000 and More', _('From 500,000 and More'))
+            ('5 USD or Less', _('5 USD or Less')),
+            ('5-20 USD', _('5-20 USD')),
+            ('20-50 USD', _('20-50 USD')),
+            ('50-100 USD', _('50-100 USD')),
+            ('More than 100 USD', _('More than 100 USD')),
     )
     LABOUR_CONDITION = Choices(
             ('Carry heavy loads', _('Carry heavy loads')),
