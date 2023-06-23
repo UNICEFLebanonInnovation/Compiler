@@ -9,6 +9,7 @@ Production Configurations
 - Use opbeat for error reporting
 
 """
+
 from __future__ import absolute_import, unicode_literals
 import logging
 
@@ -240,7 +241,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 
 # Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 20  # equivalent to 20 minutes
+AUTO_LOGOUT_DELAY = 30  # equivalent to 30 minutes
 CSRF_USE_SESSIONS = True
 
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
