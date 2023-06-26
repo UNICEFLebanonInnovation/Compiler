@@ -620,7 +620,8 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             for line in queryset:
                 student = {
                     'student_id': line.student.id,
-                    'student_name': line.student.full_name
+                    'student_name': line.student.full_name,
+                    'attended': 'yes'
                 }
                 data.append(student)
             kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)

@@ -3310,7 +3310,7 @@ class SchoolForm(forms.ModelForm):
         label=_('Please indicate working days'),
         choices=School.DAYS_OF_THE_WEEK,
         widget=forms.CheckboxSelectMultiple,
-        required=False
+        required=True
     )
     academic_year_start = forms.DateField(
         label=_("Dirasa Start Date"),
