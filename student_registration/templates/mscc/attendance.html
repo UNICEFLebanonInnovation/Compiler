@@ -83,12 +83,12 @@
 
                                           </div>
 
-                                          <div class="form-row">
+                                          <div class="form-row" style="padding-bottom: 20px;">
                                                 <div class="col-md-6 ">
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
                                                                       <select id="education_program" class="btn-primary">
-                                                                          <option value="">--- Select Education Program ---</option>
+                                                                          <option value="">Education Program</option>
                                                                           {% for item in education_program %}
                                                                             {% if item != '' %}
                                                                               <option value="{{ item }}" {% if education_program == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
@@ -104,7 +104,7 @@
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
                                                                       <select id="class_section" class="btn-primary">
-                                                                          <option value="">--- Select Class Section ---</option>
+                                                                          <option value="">Section</option>
                                                                            {% for item in class_section %}
                                                                               {% if item != '' %}
                                                                                 <option value="{{ item }}" {% if class_section == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
@@ -135,7 +135,7 @@
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
                                                                       <select id="close_reason" class="btn-primary {% if close_reason == '' %}hidden{% endif %}">
-                                                                          <option value="">--- Select Closing Reason ---</option>
+                                                                          <option value="">Closing Reason</option>
                                                                           <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>Public Holiday</option>
                                                                           <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>School Holiday</option>
                                                                           <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>Strike</option>
