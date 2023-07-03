@@ -74,6 +74,18 @@ class PSSServiceForm(forms.ModelForm):
         label=_('If yes, do you need additional support '
                        'for taking care or better dealing with your children?')
     )
+    child_know_seek_help = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Does the child know where to seek help or support in case he is exposed to violence, abuse, or exploitation?')
+    )
+
+    child_protection_concern = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=PSSService.PROTECTION_CONCERN,
+        label=_('Does the facilitator identify any child protection concern or has the caregiver expressed any of the below signs on their children?')
+
+    )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -122,6 +134,13 @@ class PSSServiceForm(forms.ModelForm):
                     Div('child_additional_parenting', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('child_know_seek_help', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('child_protection_concern', css_class='col-md-6'),
+                    css_class='row card-body'
+                ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -146,6 +165,8 @@ class PSSServiceForm(forms.ModelForm):
         instance.caregivers_additional_parenting = validated_data.get('caregivers_additional_parenting')
         instance.child_distress = validated_data.get('child_distress')
         instance.child_additional_parenting = validated_data.get('child_additional_parenting')
+        instance.child_know_seek_help = validated_data.get('child_know_seek_help')
+        instance.child_protection_concern = validated_data.get('child_protection_concern')
         instance.modified_by = request.user
         instance.save()
 
@@ -178,6 +199,8 @@ class PSSServiceForm(forms.ModelForm):
             'caregivers_additional_parenting',
             'child_distress',
             'child_additional_parenting',
+            'child_know_seek_help',
+            'child_protection_concern'
         )
 
 
@@ -1653,6 +1676,17 @@ class FollowUpServiceForm(forms.ModelForm):
         widget=forms.TextInput,
         label=_('If Other, Please specify')
     )
+    pfss_sessions = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Did they undertake FPSS sessions')
+    )
+    pfss_sessions_number = forms.IntegerField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+        required=False,
+        label="Number of sessions attended",
+        initial=0
+    )
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -1712,6 +1746,13 @@ class FollowUpServiceForm(forms.ModelForm):
                     Div('caregiver_attended_other', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('pfss_sessions', css_class='col-md-3'),
+                    HTML('<span class="badge-form-0 badge-pill" id="span_caregiver_attended_other"></span>'),
+                    Div('pfss_sessions_number', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -1743,6 +1784,8 @@ class FollowUpServiceForm(forms.ModelForm):
         instance.meeting_modality = validated_data.get('meeting_modality')
         instance.caregiver_attended = validated_data.get('caregiver_attended')
         instance.caregiver_attended_other = validated_data.get('caregiver_attended_other')
+        instance.pfss_sessions = validated_data.get('pfss_sessions')
+        instance.pfss_sessions_number = validated_data.get('pfss_sessions_number')
         instance.modified_by = request.user
         instance.save()
 
@@ -1782,6 +1825,13 @@ class FollowUpServiceForm(forms.ModelForm):
                 self.add_error('caregiver_attended_other', 'This field is required')
 
 
+        pfss_sessions = cleaned_data.get("pfss_sessions")
+        pfss_sessions_number = cleaned_data.get("pfss_sessions_number")
+        if pfss_sessions and pfss_sessions == 'Yes':
+            if not pfss_sessions_number:
+                self.add_error('pfss_sessions_number', 'This field is required')
+
+
     class Meta:
         model = FollowUpService
         fields = (
@@ -1796,6 +1846,8 @@ class FollowUpServiceForm(forms.ModelForm):
             'meeting_modality',
             'caregiver_attended',
             'caregiver_attended_other',
+            'pfss_sessions',
+            'pfss_sessions_number'
         )
 
 

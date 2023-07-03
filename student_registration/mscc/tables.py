@@ -57,6 +57,7 @@ class MainTable(CommonTable):
             'child_age',
             'child_birthday',
             'child.nationality',
+            'partner_unique_number',
             # 'center',
             # 'center_type',
             # 'governorate',

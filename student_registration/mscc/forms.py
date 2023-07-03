@@ -141,6 +141,10 @@ class MainForm(forms.ModelForm):
         label=_('Formal Education unique student ID'),
         widget=forms.TextInput, required=False,
     )
+    partner_unique_number = forms.CharField(
+        label=_('Partner unique child number'),
+        widget=forms.TextInput, required=True
+    )
     source_of_identification = forms.ChoiceField(
         label=_("Source of referral of the child to Makani"),
         widget=forms.Select,
@@ -496,18 +500,23 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('partner_unique_number', css_class='col-md-7'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('source_of_identification', css_class='col-md-7'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('source_of_identification_specify', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
                     Div('child_fe_unique_id', css_class='col-md-4'),
                     css_class='row card-body d-none', id='child_fe_unique_id_block'
                 ),
@@ -949,6 +958,7 @@ class MainForm(forms.ModelForm):
             'child_marital_status',
             'child_have_children',
             'child_children_number',
+            'partner_unique_number',
             'source_of_identification',
             'source_of_identification_specify',
             'child_fe_unique_id',

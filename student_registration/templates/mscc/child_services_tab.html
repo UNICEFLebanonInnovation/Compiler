@@ -2668,6 +2668,20 @@
                                                                 </div>
                                                             </div>
                                                         {% endif %}
+                                                           <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                    <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child know where to seek help in case he is exposed to violence, abuse, or exploitation</h4>
+                                                                        <p>{{ result.child_know_seek_help }} </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                           <div class="vertical-timeline-item vertical-timeline-element">
+                                                                <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                    <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Facilitator identify any child protection concern or the caregiver expressed any of the below signs on their children</h4>
+                                                                        <p>{{ result.child_protection_concern }} </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
 
 
@@ -2838,6 +2852,18 @@
                                                               </div>
                                                           </div>
                                                       {% endif %}
+                                                       <div class="vertical-timeline-item vertical-timeline-element">
+                                                              <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                  <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">FPSS sessions</h4>
+                                                                    {% if result.pfss_sessions == 'Yes'  %}
+                                                                        <p>{{ result.pfss_sessions }} - {{result.pfss_sessions_number}}</p>
+                                                                    {% else %}
+                                                                        <p>{{ result.pfss_sessions }}</p>
+                                                                    {% endif %}
+                                                                  </div>
+                                                              </div>
+                                                       </div>
+
 
                                                     </div>
 

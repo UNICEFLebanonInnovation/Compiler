@@ -193,6 +193,7 @@ class MainSerializer(serializers.ModelSerializer):
             'child_marital_status',
             'child_have_children',
             'child_children_number',
+            'partner_unique_number',
             'source_of_identification',
             'source_of_identification_specify',
             'child_fe_unique_id',

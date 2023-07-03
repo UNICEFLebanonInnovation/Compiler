@@ -7,7 +7,7 @@ $(document).ready(function(){
         $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
-    $(document).on('change', 'select#id_follow_up_type, select#id_follow_up_result, select#id_parent_attended_meeting, select#id_caregiver_attended' , function(){
+    $(document).on('change', 'select#id_follow_up_type, select#id_follow_up_result, select#id_parent_attended_meeting, select#id_caregiver_attended, select#id_pfss_sessions' , function(){
        reorganizeForm();
     });
 });
@@ -15,6 +15,14 @@ $(document).ready(function(){
 
 function reorganizeForm()
 {
+//  pfss_sessions
+    var pfss_sessions =  $('select#id_pfss_sessions').val();
+    $('div#div_id_pfss_sessions_number').addClass('d-none');
+    if(pfss_sessions == 'Yes'){
+        $('#div_id_pfss_sessions_number').removeClass('d-none');
+    }else{
+        $('#id_pfss_sessions_number').val('');
+    }
 //    Dropout
     var follow_up_result = $('select#id_follow_up_result').val();
     if (follow_up_result == 'Dropout/No Interest'){

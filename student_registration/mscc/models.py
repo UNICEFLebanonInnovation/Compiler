@@ -233,6 +233,12 @@ class Registration(TimeStampedModel):
         null=True,
         verbose_name=_('Registration date')
     )
+    partner_unique_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Partner unique child number')
+    )
 
     @property
     def child_fullname(self):
@@ -557,7 +563,16 @@ class PSSService(models.Model):
          _('The child needs to stay at home to support the family with chores')),
         ('Disability', _('Disability')),
     )
-
+    PROTECTION_CONCERN = Choices(
+        ('', '----------'),
+        ('Nightmares', _('Nightmares')),
+        ('Regressions', _('Regressions')),
+        ('Distress', _('Distress')),
+        ('Suicidal ideation', _('Suicidal ideation')),
+        ('Bedwetting', _('Bedwetting')),
+        ('Anger issues', _('Anger issues')),
+        ('Isolation', _('Isolation')),
+    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -621,7 +636,20 @@ class PSSService(models.Model):
         verbose_name=_('If yes, do you need additional support '
                        'for taking care or better dealing with your children?')
     )
-
+    child_know_seek_help = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child know where to seek help or support in case he is exposed to violence, abuse, or exploitation?')
+    )
+    child_protection_concern = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PROTECTION_CONCERN,
+        verbose_name=_('Does the facilitator identify any child protection concern or has the caregiver expressed any of the below signs on their children?')
+    )
     class Meta:
         ordering = ['id']
         verbose_name = "PSS Service"
@@ -1696,7 +1724,19 @@ class FollowUpService(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Please specify')
     )
-
+    pfss_sessions = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Did they undertake FPSS sessions')
+    )
+    pfss_sessions_number = models.IntegerField(
+        blank=True,
+        null=True,
+        default= 0,
+        verbose_name=_('Number number of sessions')
+    )
     class Meta:
         ordering = ['id']
         verbose_name = "Follow Up Service"
