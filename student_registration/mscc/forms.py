@@ -143,7 +143,7 @@ class MainForm(forms.ModelForm):
     )
     partner_unique_number = forms.CharField(
         label=_('Partner unique child number'),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     source_of_identification = forms.ChoiceField(
         label=_("Source of referral of the child to Makani"),

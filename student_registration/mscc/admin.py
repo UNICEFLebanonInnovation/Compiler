@@ -250,8 +250,6 @@ class EducationServiceAdmin(admin.ModelAdmin):
         'registration',
         'education_status',
         'dropout_date',
-        'dropout_program',
-        'dropout_program_specify',
         'education_program',
     )
     list_filter = (

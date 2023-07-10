@@ -10,30 +10,30 @@ $(document).ready(function() {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
-    $(document).on('change', '#id_dropout_program', function(){
+    $(document).on('change', '#id_education_status', function(){
         reorganizeForm();
     });
 
 });
 
-// todo do we still need this function?
 function reorganizeForm()
 {
-//    Dropout Program
-   var dropout_program = $('select#id_dropout_program').val();
-    if(dropout_program == 'Other'){
-        $('#div_id_dropout_program_specify').removeClass('d-none');
-        if ($('#id_dropout_program_specify').val()== null || $('#id_dropout_program_specify').val()=='')
-        {
-            $('#id_dropout_program_specify').addClass('error-field');
-        }
+//    Education Status
+   var education_status = $('select#id_education_status').val();
 
+    $('div#div_id_dropout_date').addClass('d-none');
+    $('#span_dropout_date').addClass('d-none');
+
+    if(education_status == 'Currently registered in Formal Education school but not attending'){
+        $('#div_id_dropout_date').removeClass('d-none');
+        $('#span_dropout_date').removeClass('d-none');
+        $('#id_dropout_date').addClass('error-field');
     }
     else
     {
-        $('div#div_id_dropout_program_specify').addClass('d-none');
-        $('#id_dropout_program_specify').removeClass('error-field');
-        $('#id_dropout_program_specify').val('');
+        $('div#div_id_dropout_date').addClass('d-none');
+        $('#id_dropout_date').removeClass('error-field');
+        $('#id_dropout_date').val('');
     }
 }
 

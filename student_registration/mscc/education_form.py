@@ -442,15 +442,6 @@ class EducationServiceForm(forms.ModelForm):
         label=_("Please Specify dropout date from school"),
         required=False
     )
-    dropout_program = forms.ChoiceField(
-        label=_("Dropout Program"),
-        widget=forms.Select, required=False,
-        choices=EducationService.DROPOUT_PROGRAM,
-    )
-    dropout_program_specify = forms.CharField(
-        label=_('Please specify'),
-        widget=forms.TextInput, required=False
-    )
     education_program = forms.ChoiceField(
         label=_("Education Program"),
         widget=forms.Select, required=True,
@@ -472,6 +463,7 @@ class EducationServiceForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
+        package_type = kwargs.pop('package_type', None)
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
 
@@ -506,10 +498,26 @@ class EducationServiceForm(forms.ModelForm):
 
         self.fields['education_program'].choices = choices
 
-        form_action = reverse('mscc:service_education_add', kwargs={'registry': registry})
+        choices_education_status = list()
+        if package_type == 'Walk-in-In-School':
+            choices_education_status.append(('', _('----------')))
+            choices_education_status.append(('Currently registered in Formal Education school', _('Currently registered in Formal Education school')))
+            choices_education_status.append(('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')))
+        else:
+            choices_education_status.append(('', _('----------')))
+            choices_education_status.append(('Never registered in any formal school before', _('Never registered in any formal school before')))
+            choices_education_status.append(('Was registered in formal school but didn\'t continue', _('Was registered in formal school but didn\'t continue')))
+            choices_education_status.append(('Was registered in non formal program and was referred to MSCC', _('Was registered in non formal program and was referred to MSCC')))
+            choices_education_status.append(('Was registered in non formal program but didn\'t continue', _('Was registered in non formal program but didn\'t continue')))
+            choices_education_status.append(('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')))
+            choices_education_status.append(('Was Registered in Formal Education but not attending', _('Was Registered in Formal Education but not attending')))
+            choices_education_status.append(('No', _('No')))
+        self.fields['education_status'].choices = choices_education_status
+
+        form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:
             form_action = reverse('mscc:service_education_edit',
-                                  kwargs={'registry': registry, 'pk': instance})
+                                  kwargs={'registry': registry, 'package_type': package_type, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -518,26 +526,17 @@ class EducationServiceForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('education_status', css_class='col-md-9'),
+                    Div('education_status', css_class='col-md-6'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('dropout_date', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('dropout_date', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('dropout_program', css_class='col-md-6'),
-                    Div('dropout_program_specify', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('education_program', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('class_section', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">6</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('registration_date', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
@@ -551,7 +550,7 @@ class EducationServiceForm(forms.ModelForm):
             ),
         )
 
-    def save(self, request=None, instance=None, registry=None):
+    def save(self, request=None, instance=None, registry=None, package_type=None):
 
         validated_data = request.POST
 
@@ -563,8 +562,6 @@ class EducationServiceForm(forms.ModelForm):
         instance.education_status = validated_data.get('education_status')
         if validated_data.get('dropout_date'):
             instance.dropout_date = validated_data.get('dropout_date')
-        instance.dropout_program = validated_data.get('dropout_program')
-        instance.dropout_program_specify = validated_data.get('dropout_program_specify')
         instance.education_program = validated_data.get('education_program')
         instance.class_section = validated_data.get('class_section')
         if validated_data.get('registration_date'):
@@ -575,19 +572,11 @@ class EducationServiceForm(forms.ModelForm):
 
         return instance
 
-    def clean(self):
-        cleaned_data = super(EducationServiceForm, self).clean()
-        dropout_program = cleaned_data.get("dropout_program")
-        dropout_program_specify = cleaned_data.get("dropout_program_specify")
-        if dropout_program and dropout_program == 'Other' and not dropout_program_specify:
-            self.add_error('dropout_program_specify', 'This field is required')
     class Meta:
         model = EducationService
         fields = (
             'education_status',
             'dropout_date',
-            'dropout_program',
-            'dropout_program_specify',
             'education_program',
             'class_section',
             'registration_date',

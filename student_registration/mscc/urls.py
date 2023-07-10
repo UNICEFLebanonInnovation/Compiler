@@ -57,12 +57,12 @@ urlpatterns = [
         name='service_diagnostic_assessment_edit'
     ),
     url(
-        regex=r'^Services/Education-Add/(?P<registry>[\w.@+-]+)/$',
+        regex=r'^Services/Education-Add/(?P<registry>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_add'
     ),
     url(
-        regex=r'^Services/Education-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        regex=r'^Services/Education-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_edit'
     ),

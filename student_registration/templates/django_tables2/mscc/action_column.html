@@ -46,12 +46,12 @@
 
 {% service_data 'EducationService' record as result %}
       {% if result %}
-        <a type="button" href="/MSCC/Services/Education-Edit/{{ record.id }}/{{ result.id }}/" tabindex="0" class="dropdown-item">
+        <a type="button" href="/MSCC/Services/Education-Edit/{{ record.id }}/{{ result.id }}/{{ record.type }}/" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
           Education Situation
         </a>
       {% else %}
-        <a type="button" href="/MSCC/Services/Education-Add/{{ record.id }}/" tabindex="0" class="dropdown-item">
+        <a type="button" href="/MSCC/Services/Education-Add/{{ record.id }}/{{ record.type }}/" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-success"><i class="ion-android-checkmark-circle"> </i></button>
           Education Situation
         </a>

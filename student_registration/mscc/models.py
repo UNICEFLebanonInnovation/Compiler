@@ -1014,6 +1014,8 @@ class EducationService(TimeStampedModel):
         ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),
         ('Was Registered in Formal Education but not attending',
          _('Was Registered in Formal Education but not attending')),
+        ('Currently registered in Formal Education school', _('Currently registered in Formal Education school')),
+        ('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')),
         ('No', _('No')),
     )
     DROPOUT_PROGRAM = Choices(
@@ -1067,17 +1069,6 @@ class EducationService(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Please Specify dropout date from school')
-    )
-    dropout_program = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        choices=DROPOUT_PROGRAM,
-        verbose_name=_('Dropout Program')
-    )
-    dropout_program_specify = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('please specify')
     )
     education_program = models.CharField(
         max_length=200,

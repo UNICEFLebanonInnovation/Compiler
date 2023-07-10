@@ -501,9 +501,9 @@
                                                     <h5 class="menu-header-title">Education
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Education-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos."><i class="pe-7s-pen"></i></a>
+                                                              <a href="/MSCC/Services/Education-Edit/{{ instance.id }}/{{ result.id }}/{{ instance.type }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos."><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Education-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos."><i class="pe-7s-plus"></i></a>
+                                                              <a href="/MSCC/Services/Education-Add/{{ instance.id }}/{{ instance.type }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos."><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
