@@ -201,7 +201,6 @@ function reorganizeForm_post_assessment()
     $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").show();
     $("#id_learning_result option[value=" + 'referred_to_bln' + "]").show();
     //    id_language
-    alert(language);
     if (language == 'english_arabic')
     {
         $('#div_id_english').removeClass('d-none');
