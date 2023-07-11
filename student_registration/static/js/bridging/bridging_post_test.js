@@ -113,6 +113,8 @@ function reorganizeForm_post_assessment()
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
     var test_done = $('select#id_test_done').val();
+    var language  = $('select#id_language').val();
+
     var community_Liaison_follow_up = $('select#id_community_Liaison_follow_up').val();
 
     var pss_session_attended = $('select#id_pss_session_attended').val();
@@ -198,38 +200,8 @@ function reorganizeForm_post_assessment()
     $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").show();
     $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").show();
     $("#id_learning_result option[value=" + 'referred_to_bln' + "]").show();
-    }
-    else
-    {
-        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
-        $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
-        $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_alp' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_public_school' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_bln' + "]").hide();
-
-
-        $('select#id_round_complete').val("");
-
-        // grades
-//        $('#id_arabic').val('');
-//        $('select#id_attended_arabic').val("no");
-//        $('select#id_modality_arabic').val("");
-//        $('#id_english').val('');
-//        $('select#id_attended_english').val("no");
-//        $('select#id_modality_english').val("");
-//        $('#id_math').val('');
-//        $('select#id_attended_math').val("no");
-//        $('select#id_modality_math').val("");
-
-
-        $('div.grades').addClass('d-none');
-        $('#grades').addClass('hide');
-
     //    id_language
-    var language  = $('select#id_language').val();
+    alert(language);
     if (language == 'english_arabic')
     {
         $('#div_id_english').removeClass('d-none');
@@ -250,6 +222,29 @@ function reorganizeForm_post_assessment()
         $('#div_id_french').addClass('d-none');
         $('#span_french').addClass('d-none');
     }
+    }
+    else
+    {
+        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
+        $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
+        $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_alp' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_public_school' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").hide();
+        $("#id_learning_result option[value=" + 'referred_to_bln' + "]").hide();
+
+
+        $('select#id_round_complete').val("");
+
+        // grades
+        $('#id_arabic').val('');
+        $('#id_english').val('');
+        $('#id_french').val('');
+        $('#id_math').val('');
+
+        $('div.grades').addClass('d-none');
+        $('#grades').addClass('hide');
     }
 
     learning_result_next_level();

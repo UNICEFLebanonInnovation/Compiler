@@ -179,10 +179,12 @@ class Person(TimeStampedModel):
 
     STUDENT_INCOME = Choices(
         ('', '----------'),
-        ('thousand_or_less', _('10,000 LBP or less')),
-        ('eleven_thousand_to_twenty_five', _('11,000 to 25,000 LBP')),
-        ('twenty_six_thousand_to_fifty', _('26,000 to 50,000 LBP')),
-        ('more_than_fifty', _('More than 50,000 LBP')),
+        ('5 USD or Less', _('5 USD or Less')),
+        ('5-20 USD', _('5-20 USD')),
+        ('20-50 USD', _('20-50 USD')),
+        ('50-100 USD', _('50-100 USD')),
+        ('More than 100 USD', _('More than 100 USD')),
+
     )
 
     first_name = models.CharField(

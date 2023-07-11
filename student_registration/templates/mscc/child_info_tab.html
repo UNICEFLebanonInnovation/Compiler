@@ -543,7 +543,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
+                                                                {% if result.education_status == 'Currently registered in Formal Education school but not attending' %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout date from school</h4>
@@ -551,18 +551,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Dropout Programme</h4>
-                                                                          {% if result.dropout_program == 'Other'  %}
-                                                                              <p> {{result.dropout_program}} - {{result.dropout_program_specify}}</p>
-                                                                          {% else %}
-                                                                              <p> {{result.dropout_program}}</p>
-                                                                          {% endif %}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                {% endif %}
 
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
