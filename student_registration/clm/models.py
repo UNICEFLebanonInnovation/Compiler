@@ -1246,25 +1246,25 @@ class CLM(TimeStampedModel):
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker First Name')
+        verbose_name=_('Caregiver First Name')
     )
     caretaker_middle_name = models.CharField(
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Middle Name')
+        verbose_name=_('Caregiver Middle Name')
     )
     caretaker_last_name = models.CharField(
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Last Name')
+        verbose_name=_('Caregiver Last Name')
     )
     caretaker_mother_name = models.CharField(
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Mother Name')
+        verbose_name=_('Caregiver Mother Name')
     )
     caretaker_birthday_year = models.CharField(
         max_length=4,
@@ -1272,7 +1272,7 @@ class CLM(TimeStampedModel):
         null=True,
         default=0,
         choices=((str(x), x) for x in range(1940, CURRENT_YEAR - 18)),
-        verbose_name=_('Caretaker birthday year')
+        verbose_name=_('Caregiver birthday year')
     )
     caretaker_birthday_month = models.CharField(
         max_length=2,
@@ -1280,7 +1280,7 @@ class CLM(TimeStampedModel):
         null=True,
         default=0,
         choices=MONTHS,
-        verbose_name=_('Caretaker birthday month')
+        verbose_name=_('Caregiver birthday month')
     )
     caretaker_birthday_day = models.CharField(
         max_length=2,
@@ -1288,7 +1288,7 @@ class CLM(TimeStampedModel):
         null=True,
         default=0,
         choices=((str(x), x) for x in range(1, 32)),
-        verbose_name=_('Caretaker birthday day')
+        verbose_name=_('Caregiver birthday day')
     )
 
     cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
@@ -2043,7 +2043,7 @@ class Bridging(CLM):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Have the child caretakers been contacted by the School Community Laison')
+        verbose_name=_('Have the child caregivers been contacted by the School Community Laison')
     )
     discussion_topic = models.CharField(
         max_length=500,
@@ -4202,25 +4202,25 @@ class Inclusion(TimeStampedModel):
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker First Name')
+        verbose_name=_('Caregiver First Name')
     )
     caretaker_middle_name = models.CharField(
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Middle Name')
+        verbose_name=_('Caregiver Middle Name')
     )
     caretaker_last_name = models.CharField(
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Last Name')
+        verbose_name=_('Caregiver Last Name')
     )
     caretaker_mother_name = models.CharField(
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Mother Name')
+        verbose_name=_('Caregiver Mother Name')
     )
     caretaker_birthday_year = models.CharField(
         max_length=4,
@@ -4228,7 +4228,7 @@ class Inclusion(TimeStampedModel):
         null=True,
         default=0,
         choices=((str(x), x) for x in range(1940, CURRENT_YEAR - 18)),
-        verbose_name=_('Caretaker birthday year')
+        verbose_name=_('Caregiver birthday year')
     )
     caretaker_birthday_month = models.CharField(
         max_length=2,
@@ -4236,7 +4236,7 @@ class Inclusion(TimeStampedModel):
         null=True,
         default=0,
         choices=MONTHS,
-        verbose_name=_('Caretaker birthday month')
+        verbose_name=_('Caregiver birthday month')
     )
     caretaker_birthday_day = models.CharField(
         max_length=2,
@@ -4244,7 +4244,7 @@ class Inclusion(TimeStampedModel):
         null=True,
         default=0,
         choices=((str(x), x) for x in range(1, 32)),
-        verbose_name=_('Caretaker birthday day')
+        verbose_name=_('Caregiver birthday day')
     )
 
     referral_programme_type_1 = models.CharField(

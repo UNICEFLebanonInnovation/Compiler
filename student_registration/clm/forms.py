@@ -268,17 +268,17 @@ class CommonForm(forms.ModelForm):
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     caretaker_birthday_year = forms.ChoiceField(
-        label=_("Caretaker birthday year"),
+        label=_("Caregiver birthday year"),
         widget=forms.Select, required=True,
         choices = YEARS_CT,
     )
     caretaker_birthday_month = forms.ChoiceField(
-        label=_("Caretaker birthday month"),
+        label=_("Caregiver birthday month"),
         widget=forms.Select, required=True,
         choices=MONTHS
     )
     caretaker_birthday_day = forms.ChoiceField(
-        label=_("Caretaker birthday day"),
+        label=_("Caregiver birthday day"),
         widget=forms.Select, required=True,
         choices=DAYS
     )
@@ -547,7 +547,7 @@ class BLNForm(CommonForm):
         label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
-        label=_("ID type of the caretaker"),
+        label=_("ID type of the Caregiver"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=True,
         choices=(
@@ -579,14 +579,14 @@ class BLNForm(CommonForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
@@ -649,42 +649,42 @@ class BLNForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker')
+        label=_('Lebanese ID number of the Caregiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker')
+        label=_('Confirm Lebanese ID number of the Caregiver')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the Caretaker (Mandatory)')
+        label=_('National ID number of the Caregiver (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+        label=_('Confirm National ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Palestinian ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
     )
 
     parent_other_number = forms.CharField(
         required=False,
-        label=_('ID number of the Caretaker (Mandatory)')
+        label=_('ID number of the Caregiver (Mandatory)')
     )
     parent_other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the Caretaker (Mandatory)')
+        label=_('Confirm ID number of the Caregiver (Mandatory)')
     )
     other_number = forms.CharField(
         required=False,
@@ -1864,7 +1864,7 @@ class ABLNForm(CommonForm):
         label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
-        label=_("ID type of the caretaker"),
+        label=_("ID type of the Caregiver"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=True,
         choices=(
@@ -1896,14 +1896,14 @@ class ABLNForm(CommonForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
@@ -1966,48 +1966,48 @@ class ABLNForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker')
+        label=_('Lebanese ID number of the Caregiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker')
+        label=_('Confirm Lebanese ID number of the Caregiver')
     )
     parent_national_number = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker')
+        label=_('Lebanese ID number of the Caregiver')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the Caretaker (Mandatory)')
+        label=_('National ID number of the Caregiver (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+        label=_('Confirm National ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Palestinian ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
     )
 
     parent_other_number = forms.CharField(
         required=False,
-        label=_('ID number of the Caretaker (Mandatory)')
+        label=_('ID number of the Caregiver (Mandatory)')
     )
     parent_other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the Caretaker (Mandatory)')
+        label=_('Confirm ID number of the Caregiver (Mandatory)')
     )
     other_number = forms.CharField(
         required=False,
@@ -3225,7 +3225,7 @@ class RSForm(CommonForm):
         label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
-        label=_("ID type of the caretaker"),
+        label=_("ID type of the Caregiver"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=False,
         choices=(
@@ -3257,14 +3257,14 @@ class RSForm(CommonForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
@@ -3327,42 +3327,42 @@ class RSForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker')
+        label=_('Lebanese ID number of the Caregiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker')
+        label=_('Confirm Lebanese ID number of the Caregiver')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the Caretaker (Mandatory)')
+        label=_('National ID number of the Caregiver (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+        label=_('Confirm National ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Palestinian ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
     )
 
     parent_other_number = forms.CharField(
         required=False,
-        label=_('ID number of the Caretaker (Mandatory)')
+        label=_('ID number of the Caregiver (Mandatory)')
     )
     parent_other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the Caretaker (Mandatory)')
+        label=_('Confirm ID number of the Caregiver (Mandatory)')
     )
     other_number = forms.CharField(
         required=False,
@@ -4667,7 +4667,7 @@ class CBECEForm(CommonForm):
         label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
-        label=_("ID type of the caretaker"),
+        label=_("ID type of the Caregiver"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=False,
         choices=(
@@ -4699,14 +4699,14 @@ class CBECEForm(CommonForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
@@ -4768,42 +4768,42 @@ class CBECEForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker')
+        label=_('Lebanese ID number of the Caregiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker')
+        label=_('Confirm Lebanese ID number of the Caregiver')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the Caretaker (Mandatory)')
+        label=_('National ID number of the Caregiver (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+        label=_('Confirm National ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Palestinian ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
     )
 
     parent_other_number = forms.CharField(
         required=False,
-        label=_('ID number of the Caretaker (Mandatory)')
+        label=_('ID number of the Caregiver (Mandatory)')
     )
     parent_other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the Caretaker (Mandatory)')
+        label=_('Confirm ID number of the Caregiver (Mandatory)')
     )
     other_number = forms.CharField(
         required=False,
@@ -6036,7 +6036,7 @@ class OutreachForm(CommonForm):
         label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
-        label=_("ID type of the caretaker"),
+        label=_("ID type of the Caregiver"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=True,
         choices=(
@@ -6068,14 +6068,14 @@ class OutreachForm(CommonForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
@@ -6138,42 +6138,42 @@ class OutreachForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker')
+        label=_('Lebanese ID number of the Caregiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker')
+        label=_('Confirm Lebanese ID number of the Caregiver')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the Caretaker (Mandatory)')
+        label=_('National ID number of the Caregiver (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+        label=_('Confirm National ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Palestinian ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
     )
 
     parent_other_number = forms.CharField(
         required=False,
-        label=_('ID number of the Caretaker (Mandatory)')
+        label=_('ID number of the Caregiver (Mandatory)')
     )
     parent_other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the Caretaker (Mandatory)')
+        label=_('Confirm ID number of the Caregiver (Mandatory)')
     )
     other_number = forms.CharField(
         required=False,
@@ -7123,7 +7123,7 @@ class BridgingForm(CommonForm):
         label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
-        label=_("ID type of the caregiver"),
+        label=_("ID type of the Caregiver"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=True,
         choices=(
@@ -7225,42 +7225,42 @@ class BridgingForm(CommonForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caregiver')
+        label=_('Lebanese ID number of the Caregiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caregiver')
+        label=_('Confirm Lebanese ID number of the Caregiver')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the caregiver (Mandatory)')
+        label=_('National ID number of the Caregiver (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the caregiver (Mandatory)')
+        label=_('Confirm National ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Palestinian ID number of the caregiver (Mandatory)')
+        label=_('Palestinian ID number of the Caregiver (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm Palestinian ID number of the caregiver (Mandatory)')
+        label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
     )
 
     parent_other_number = forms.CharField(
         required=False,
-        label=_('ID number of the caregiver (Mandatory)')
+        label=_('ID number of the Caregiver (Mandatory)')
     )
     parent_other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the caregiver (Mandatory)')
+        label=_('Confirm ID number of the Caregiver (Mandatory)')
     )
     other_number = forms.CharField(
         required=False,
@@ -11263,7 +11263,7 @@ class BridgingFollowupForm(forms.ModelForm):
         widget=forms.TextInput, required=False
     )
     school_contacted_caretaker = forms.ChoiceField(
-        label=_("Have the child caretakers been contacted by the School Community Laison"),
+        label=_("Have the child caregivers been contacted by the School Community Laison"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No")))
     )
