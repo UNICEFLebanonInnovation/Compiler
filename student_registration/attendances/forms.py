@@ -146,6 +146,9 @@ class MainAttendanceForm(forms.ModelForm):
                         HTML('<div class="space"></div>'),
                         HTML('<a class="btn btn-success" onclick="openAbsencePage();" translation="' + _(
                             'Export Absentee Report') + '">' + _('Export Absentee Report') + '</a>'),
+                        HTML('<a class="btn btn-success" onclick="attendance_export();" translation="' + _(
+                            'Export Attendances') + '">' + _('Export Attendances') + '</a>'),
+                        # Button('ExportAttendances', _('Export Attendances'), css_class='col-md-2 btn btn-success'),
                         css_class='button-group'
                     )
         )
@@ -180,15 +183,15 @@ class MainAttendanceForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainAttendanceForm, self).clean()
         attendance_date = cleaned_data.get('attendance_date')
+        day_off = cleaned_data.get("day_off")
 
         # Make sure filters are provided
-        if cleaned_data.get('day_off') == 'yes' and cleaned_data.get('close_reason') == '':
+        if day_off == 'yes' and cleaned_data.get('close_reason') == '':
             self.add_error('close_reason', "The reason should be specified.")
 
         if self.instance.id is None:
             school = cleaned_data.get("school")
             registration_level = cleaned_data.get("registration_level")
-            day_off = cleaned_data.get("day_off")
 
             # if school != '' and registration_level != '' and attendance_date != '' and day_off != '':
             #     num_results = CLMAttendance.objects.filter(school=school,
@@ -197,12 +200,13 @@ class MainAttendanceForm(forms.ModelForm):
             #                                                ).count()
             #     if num_results > 0:
             #         self.add_error('attendance_date', "There is already an attendance record for this date.")
-            if attendance_date != '':
+            if attendance_date != '' and day_off != '' and day_off == 'no':
                 # current_date = datetime.today().date()
                 # two_weeks_ago = current_date - timedelta(days=14)
                 # if not ((attendance_date <= current_date)
                 #         and (attendance_date >= two_weeks_ago)):
                 #     self.add_error('attendance_date', "Attendance date is not valid.")
+
                 day_name = attendance_date.strftime("%A")
                 working_day_names = School.objects.filter(id=school.id).values_list('working_days', flat=True).first()
                 if day_name is not None and working_day_names is not None:

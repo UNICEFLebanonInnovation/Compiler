@@ -1053,7 +1053,7 @@ def absence_export(request,number_of_absences, total_days):
         round_id=round_id) \
         .values_list('student_id', flat=True)
     total_student_id = CLMStudentTotalAttendance.objects.filter(
-        total_absence_days__gte=number_of_consecutive_absences,
+        total_absence_days__gte=number_of_total_absence,
         round_id=round_id) \
         .values_list('student_id', flat=True)
 
@@ -1124,5 +1124,222 @@ def absence_export(request,number_of_absences, total_days):
     buffer.seek(0)
     response = FileResponse(buffer, content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename="Absence.xls"'
+
+    return response
+
+
+def attendance_export1(request):
+
+    current_round = CLMRound.objects.all()
+    current_round = current_round.get(current_round_bridging=True)
+    round_id = current_round.id
+
+    buffer = io.BytesIO()
+
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    ws_total_attendance = wb_student.add_sheet('Total Attendance')
+
+    # Sheet header, first row
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    total_attendance = CLMStudentTotalAttendance.objects.filter(round_id=round_id).order_by('student_id').all()
+
+    # Sheet header, first row
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    total_attendance_columns = [
+        'Student First Name',
+        'Student Father Name',
+        'Student Last Name',
+        'School',
+        'Registation Level',
+        'Total Attendance Days',
+        'Total Absence Days',
+    ]
+
+    for col_num in range(len(total_attendance_columns)):
+        ws_total_attendance.write(0, col_num, total_attendance_columns[col_num], font_style)
+
+    row_num_student = 0
+    font_style = xlwt.XFStyle()
+    for row in total_attendance:
+        row_num_student += 1
+        ws_total_attendance.write(row_num_student, 0, row.student_first_name, font_style)
+        ws_total_attendance.write(row_num_student, 1, row.student_father_name, font_style)
+        ws_total_attendance.write(row_num_student, 2, row.student_last_name, font_style)
+        ws_total_attendance.write(row_num_student, 3, row.school_name, font_style)
+        ws_total_attendance.write(row_num_student, 4, row.registation_level, font_style)
+        ws_total_attendance.write(row_num_student, 5, row.total_attendance_days, font_style)
+        ws_total_attendance.write(row_num_student, 6, row.total_absence_days, font_style)
+
+
+
+    consecutive_student_id = CLMStudentAbsences.objects.filter(round_id=round_id).values_list('student_id', flat=True)
+    total_student_id = CLMStudentTotalAttendance.objects.filter(round_id=round_id).values_list('student_id', flat=True)
+
+    consecutive_student_list = list(consecutive_student_id)
+    total_student_list = list(total_student_id)
+
+    student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
+    student_ids = list(set(student_ids))
+
+
+    consecutive_absent_students =  CLMStudentAbsences.objects.filter(student_id__in= student_ids)\
+                                   .order_by('student_id','absence_starting_date').all()
+
+
+
+    consecutive_absences_columns = [
+        'Student First Name',
+        'Student Father Name',
+        'Student Last Name',
+        'School',
+        'Registation Level',
+        'Number of Consecutive Absences',
+        'Consecutive Absences From',
+        'Consecutive Absences To',
+        'Absence Dates',
+        'Total Attendance Days',
+        'Total Absence Days',
+    ]
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    ws_consecutive_absences = wb_student.add_sheet('Consecutive Absences')
+    for col_num in range(len(consecutive_absences_columns)):
+        ws_consecutive_absences.write(0, col_num, consecutive_absences_columns[col_num], font_style)
+
+    row_num_student = 0
+    font_style = xlwt.XFStyle()
+    for row in consecutive_absent_students:
+        row_num_student += 1
+        ws_consecutive_absences.write(row_num_student, 0, row.student_first_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 1, row.student_father_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 2, row.student_last_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 3, row.school_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 4, row.registation_level,font_style)
+        ws_consecutive_absences.write(row_num_student, 5, row.consecutive_absence_days,font_style)
+        ws_consecutive_absences.write(row_num_student, 6, row.absence_starting_date,font_style)
+        ws_consecutive_absences.write(row_num_student, 7, row.absence_ending_date,font_style)
+        ws_consecutive_absences.write(row_num_student, 8, row.absence_dates,font_style)
+
+        student_id= row.student_id
+        total_absent_students = CLMStudentTotalAttendance.objects\
+            .filter(student_id=student_id, round_id=round_id).last()
+
+        ws_consecutive_absences.write(row_num_student, 9, total_absent_students.total_attendance_days,font_style)
+        ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_absence_days,font_style)
+
+    wb_student.save(buffer)
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    response = FileResponse(buffer, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Attendance.xls"'
+
+    return response
+
+def attendance_export(request):
+    current_round = CLMRound.objects.all()
+    current_round = current_round.get(current_round_bridging=True)
+    round_id = current_round.id
+
+    buffer = io.BytesIO()
+
+    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
+    ws_total_attendance = wb_student.add_sheet('Total Attendance')
+
+    # Sheet header, first row
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    total_attendance = CLMStudentTotalAttendance.objects.filter(round_id=round_id).order_by('student_id').all()
+
+    # Sheet header, first row
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    total_attendance_columns = [
+        'Student First Name',
+        'Student Father Name',
+        'Student Last Name',
+        'School',
+        'Registation Level',
+        'Total Attendance Days',
+        'Total Absence Days',
+    ]
+
+    for col_num in range(len(total_attendance_columns)):
+        ws_total_attendance.write(0, col_num, total_attendance_columns[col_num], font_style)
+
+    row_num_student = 0
+    font_style = xlwt.XFStyle()
+    for row in total_attendance:
+        row_num_student += 1
+        ws_total_attendance.write(row_num_student, 0, row.student_first_name, font_style)
+        ws_total_attendance.write(row_num_student, 1, row.student_father_name, font_style)
+        ws_total_attendance.write(row_num_student, 2, row.student_last_name, font_style)
+        ws_total_attendance.write(row_num_student, 3, row.school_name, font_style)
+        ws_total_attendance.write(row_num_student, 4, row.registation_level, font_style)
+        ws_total_attendance.write(row_num_student, 5, row.total_attendance_days, font_style)
+        ws_total_attendance.write(row_num_student, 6, row.total_absence_days, font_style)
+
+    consecutive_student_id = CLMStudentAbsences.objects.filter(round_id=round_id).values_list('student_id', flat=True)
+    total_student_id = CLMStudentTotalAttendance.objects.filter(round_id=round_id).values_list('student_id', flat=True)
+
+    consecutive_student_list = list(consecutive_student_id)
+    total_student_list = list(total_student_id)
+
+    student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
+    student_ids = list(set(student_ids))
+
+    consecutive_absent_students =  CLMStudentAbsences.objects.filter(student_id__in= student_ids)\
+                                   .order_by('student_id','absence_starting_date').all()
+
+    consecutive_absences_columns = [
+        'Student First Name',
+        'Student Father Name',
+        'Student Last Name',
+        'School',
+        'Registation Level',
+        'Number of Consecutive Absences',
+        'Consecutive Absences From',
+        'Consecutive Absences To',
+        'Absence Dates',
+        'Total Attendance Days',
+        'Total Absence Days',
+    ]
+
+    ws_consecutive_absences = wb_student.add_sheet('Consecutive Absences')
+    for col_num in range(len(consecutive_absences_columns)):
+        ws_consecutive_absences.write(0, col_num, consecutive_absences_columns[col_num], font_style)
+
+    row_num_student = 0
+    font_style = xlwt.XFStyle()
+    for row in consecutive_absent_students:
+        row_num_student += 1
+        ws_consecutive_absences.write(row_num_student, 0, row.student_first_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 1, row.student_father_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 2, row.student_last_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 3, row.school_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 4, row.registation_level,font_style)
+        ws_consecutive_absences.write(row_num_student, 5, row.consecutive_absence_days,font_style)
+        ws_consecutive_absences.write(row_num_student, 6, row.absence_starting_date,font_style)
+        ws_consecutive_absences.write(row_num_student, 7, row.absence_ending_date,font_style)
+        ws_consecutive_absences.write(row_num_student, 8, row.absence_dates,font_style)
+
+        student_id= row.student_id
+        total_absent_students = CLMStudentTotalAttendance.objects\
+            .filter(student_id=student_id, round_id=round_id).last()
+
+        ws_consecutive_absences.write(row_num_student, 9, total_absent_students.total_attendance_days,font_style)
+        ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_absence_days,font_style)
+
+
+
+    wb_student.save(buffer)
+
+    buffer.seek(0)
+    response = FileResponse(buffer, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Attendance.xls"'
 
     return response

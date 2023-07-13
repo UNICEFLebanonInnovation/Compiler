@@ -45,6 +45,11 @@ urlpatterns = [
         view=views.absence_export,
         name='absence_export'
     ),
+    url(
+        regex=r'^attendance-export/$',
+        view=views.attendance_export,
+        name='attendance_export'
+    ),
 
 
 

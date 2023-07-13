@@ -2746,7 +2746,7 @@ def bridging_build_xls_extraction(queryset_students):
         'student__birthday_month',
         'student__birthday_year',
         'student__p_code',
-        'disability',
+        'disability__name',
         'education_status',
         'miss_school_date',
         'internal_number',

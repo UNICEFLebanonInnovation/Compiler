@@ -27,6 +27,12 @@ function absence_export() {
 
 }
 
+function attendance_export() {
+       url = '/attendances/attendance-export/';
+       download(url);
+}
+
+
 function download(link) {
   var element = document.createElement('a');
   element.setAttribute('href', link);
