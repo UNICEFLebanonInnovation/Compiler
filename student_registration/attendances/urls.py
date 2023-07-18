@@ -40,15 +40,27 @@ urlpatterns = [
         view=views.AttendanceAbsenceView.as_view(),
         name='attendance_absence'
     ),
+
     url(
         regex=r'^absence-export/(?P<number_of_absences>[\w.@+-]+)/(?P<total_days>[\w.@+-]+)/$',
         view=views.absence_export,
         name='absence_export'
     ),
+
     url(
         regex=r'^attendance-export/$',
         view=views.attendance_export,
         name='attendance_export'
+    ),
+    url(
+        regex=r'^total-attendance-export/$',
+        view=views.total_attendance_export,
+        name='total_attendance_export'
+    ),
+    url(
+        regex=r'^consecutive-attendance-export/$',
+        view=views.consecutive_absence_export,
+        name='consecutive_attendance_export'
     ),
 
 

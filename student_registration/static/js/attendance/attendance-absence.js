@@ -31,6 +31,14 @@ function attendance_export() {
        url = '/attendances/attendance-export/';
        download(url);
 }
+function total_attendance_export() {
+       url = '/attendances/total-attendance-export/';
+       download(url);
+}
+function consecutive_absence_export() {
+       url = '/attendances/consecutive-attendance-export/';
+       download(url);
+}
 
 
 function download(link) {

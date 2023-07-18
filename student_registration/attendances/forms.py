@@ -144,11 +144,14 @@ class MainAttendanceForm(forms.ModelForm):
                         HTML('<div class="space"></div>'),
                         submit_button,
                         HTML('<div class="space"></div>'),
-                        HTML('<a class="btn btn-success" onclick="openAbsencePage();" translation="' + _(
-                            'Export Absentee Report') + '">' + _('Export Absentee Report') + '</a>'),
                         HTML('<a class="btn btn-success" onclick="attendance_export();" translation="' + _(
-                            'Export Attendances') + '">' + _('Export Attendances') + '</a>'),
-                        # Button('ExportAttendances', _('Export Attendances'), css_class='col-md-2 btn btn-success'),
+                            'Export Raw Attendance') + '">' + _('Export Raw Attendance') + '</a>'),
+                        HTML('<a class="btn btn-success" onclick="total_attendance_export();" translation="' + _(
+                            'Export Total Attendances') + '">' + _('Export Total Attendances') + '</a>'),
+                        HTML('<a class="btn btn-success" onclick="consecutive_absence_export();" translation="' + _(
+                            'Export Consecutive Absence') + '">' + _('Export Consecutive Absence') + '</a>'),
+                        # HTML('<a class="btn btn-success" onclick="openAbsencePage();" translation="' + _(
+                        #     'Export Absentee Report') + '">' + _('Export Absentee Report') + '</a>'),
                         css_class='button-group'
                     )
         )
