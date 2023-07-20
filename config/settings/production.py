@@ -252,3 +252,7 @@ CSRF_COOKIE_AGE = None
 # ------------------------------------------------------------------------------
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Maximum number of GET/POST parameters that will be read before a
+# SuspiciousOperation (TooManyFieldsSent) is raised.
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000

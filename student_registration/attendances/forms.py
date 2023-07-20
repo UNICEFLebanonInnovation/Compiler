@@ -82,6 +82,7 @@ class MainAttendanceForm(forms.ModelForm):
         widget=forms.Select, required=False,
         choices=CLMAttendance.CLOSE_REASON
     )
+    round_id = forms.IntegerField(widget=HiddenInput(), required=False)
 
     def render_attendance_students(self, request, context):
         template_name = "attendances/attendance_students.html"
@@ -95,6 +96,7 @@ class MainAttendanceForm(forms.ModelForm):
         update_disabled = kwargs.pop('update_disabled', False)
         partner_id = kwargs.pop('partner_id', None)
         school_id = kwargs.pop('user_school_id', None)
+        round_id = kwargs.pop('round_id', None)
 
         if update_disabled:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
@@ -124,6 +126,10 @@ class MainAttendanceForm(forms.ModelForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Attendance') + '</h4>')
 
+                ),
+                Div(
+                    Div('round_id', css_class='col-md-3 d-none'),
+                    css_class='row',
                 ),
                 Div(
                     Div('attendance_date', css_class='col-md-3 form-group'),
@@ -164,6 +170,10 @@ class MainAttendanceForm(forms.ModelForm):
                 empty_label='-------',
                 required=True, to_field_name='id',
             )
+
+        if round_id and round_id > 0:
+            self.fields['round_id'].initial = round_id
+
         # if partner_id > 0:
         #     queryset = School.objects.filter(is_first_shift='yes',
         #                                      id__in=PartnerOrganization
@@ -224,7 +234,8 @@ class MainAttendanceForm(forms.ModelForm):
             'school',
             'registration_level',
             'day_off',
-            'close_reason')
+            'close_reason',
+            'round_id')
 
 
 class AttendanceStudentForm(forms.ModelForm):

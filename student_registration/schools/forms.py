@@ -3513,6 +3513,9 @@ class SchoolForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.save()
                 request.session['instance_id'] = instance.id
+                partner = request.user.partner
+                partner.schools.add(instance)
+                partner.save()
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)

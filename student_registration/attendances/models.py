@@ -315,6 +315,7 @@ class CLMAttendance(TimeStampedModel):
         ('weekly_holiday', _('Weekly Holiday')),
         ('roads_closed', _('Roads Closed')),
     )
+    round_id = models.IntegerField(blank=True, null=True)
     school = models.ForeignKey(
         School,
         blank=False, null=True,
@@ -432,6 +433,8 @@ class CLMStudentAbsences(TimeStampedModel):
     student_id = models.IntegerField(blank=True, null=True)
     registration_id = models.IntegerField(blank=True, null=True)
     round_id = models.IntegerField(blank=True, null=True)
+    partner_id = models.IntegerField(blank=True, null=True)
+    school_id = models.IntegerField(blank=True, null=True)
     student_first_name = models.CharField(
         max_length=50,
         blank=True,
@@ -478,6 +481,8 @@ class CLMStudentTotalAttendance(TimeStampedModel):
     student_id = models.IntegerField(blank=True, null=True)
     registration_id = models.IntegerField(blank=True, null=True)
     round_id = models.IntegerField(blank=True, null=True)
+    partner_id = models.IntegerField(blank=True, null=True)
+    school_id = models.IntegerField(blank=True, null=True)
     student_first_name = models.CharField(
         max_length=50,
         blank=True,

@@ -838,7 +838,7 @@ class PartnerOrganization(models.Model):
         verbose_name=_('CB-ECE current round')
     )
 
-    schools = models.ManyToManyField(School, blank=True)
+    schools = models.ManyToManyField(School,related_name='partner_schools', blank=True)
 
     class Meta:
         ordering = ['name']
