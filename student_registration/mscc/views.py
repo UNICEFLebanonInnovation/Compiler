@@ -560,9 +560,9 @@ def export_data(request):
     if father_name != '':
         vw_mscc_data_str += " AND child_last_name LIKE '" + father_name + "%'"
     if mother_fullname != '':
-        vw_mscc_data_str += " AND mother_fullname LIKE '" + mother_fullname + "%'"
+        vw_mscc_data_str += " AND child_mother_fullname LIKE '" + mother_fullname + "%'"
     if nationality != '':
-        vw_mscc_data_str += " AND student_nationality_id = " + nationality
+        vw_mscc_data_str += " AND child_nationality_id = " + nationality
 
     cursor.execute(vw_mscc_data_str)
     data = cursor.fetchall()
