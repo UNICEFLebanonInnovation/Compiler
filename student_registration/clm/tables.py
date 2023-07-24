@@ -520,6 +520,10 @@ class BridgingTable(CommonTable):
 
     clm_absence_column = tables.TemplateColumn(verbose_name=_('Absence'), orderable=False,
                                                     template_name='django_tables2/clm_absence_column.html')
+
+    clm_max_consecutive_column = tables.TemplateColumn(verbose_name=_('Max Consecutive'), orderable=False,
+                                               template_name='django_tables2/clm_max_consecutive_column.html')
+
     class Meta:
         model = Bridging
         fields = (
@@ -528,6 +532,7 @@ class BridgingTable(CommonTable):
             'post_assessment_column',
             'followup_column',
             'clm_absence_column',
+            'clm_max_consecutive_column',
             'school.name',
             'registration_level',
             'round',

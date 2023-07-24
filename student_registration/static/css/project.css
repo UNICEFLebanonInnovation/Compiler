@@ -769,7 +769,17 @@ td:has(span.special) {
   text-align:center;
 
 }
-
 td:has(span.normal) {
   text-align:center;
+}
+
+td:has(span.danger) {
+  background: #d92550;
+  text-align:center;
+
+}
+td:has(span.warning) {
+  background: #f7b924;
+  text-align:center;
+
 }

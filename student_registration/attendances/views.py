@@ -626,7 +626,8 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
                 data.append(student)
             kwargs['attendance_student_formset'] = self.get_initial_student_formset(data)
 
-        kwargs['partner_id'] = self.request.user.partner.id
+        if self.request.user.partner:
+            kwargs['partner_id'] = self.request.user.partner.id
         school_id = 0
         if self.request.user.school:
             school_id = self.request.user.school.id
@@ -746,7 +747,9 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         attendance_id = self.kwargs['pk']
         instance = CLMAttendance.objects.get(id=attendance_id)
         update_disabled = True
-        partner_id = self.request.user.partner.id
+        partner_id = 0
+        if self.request.user.partner:
+            partner_id = self.request.user.partner.id
         # messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
@@ -1149,13 +1152,14 @@ def attendance_export(request):
 
     vw_data_str = "select * from vw_bridging_attendance WHERE round_id = " + str(round_id) + " "
 
-    if request.user.partner_id:
-        partner_id = request.user.partner_id
-        vw_data_str += "AND partner_id = " + str(partner_id) + " "
+    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if request.user.partner_id:
+            partner_id = request.user.partner_id
+            vw_data_str += "AND partner_id = " + str(partner_id) + " "
 
-    if request.user.school_id:
-        school_id = request.user.school_id
-        vw_data_str += "AND school_id = " + str(school_id) + " "
+        if request.user.school_id:
+            school_id = request.user.school_id
+            vw_data_str += "AND school_id = " + str(school_id) + " "
     cursor.execute(vw_data_str)
     data = cursor.fetchall()
 
@@ -1278,6 +1282,7 @@ def consecutive_absence_export(request):
 
     row_num_student = 0
     for row in consecutive_absent_students:
+        print(row)
         row_num_student += 1
         ws_consecutive_absences.write(row_num_student, 0, row.student_first_name,font_style)
         ws_consecutive_absences.write(row_num_student, 1, row.student_father_name,font_style)
@@ -1292,9 +1297,9 @@ def consecutive_absence_export(request):
         student_id= row.student_id
         total_absent_students = CLMStudentTotalAttendance.objects\
             .filter(student_id=student_id, round_id=round_id).last()
-
-        ws_consecutive_absences.write(row_num_student, 9, total_absent_students.total_attendance_days,font_style)
-        ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_absence_days,font_style)
+        if total_absent_students:
+            ws_consecutive_absences.write(row_num_student, 9, total_absent_students.total_attendance_days,font_style)
+            ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_absence_days,font_style)
 
 
 

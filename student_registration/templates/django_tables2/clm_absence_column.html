@@ -2,7 +2,7 @@
 {% load util_tags %}
 
 {% if record.total_absent_days >= 10 and record.more_than_five_consecutive_absence %}
-  <span class="label success special" style = "color:black;font-size:12pt">{{record.total_absent_days}}</span>
+  <span class="label success danger" style = "color:black;font-size:12pt">{{record.total_absent_days}}</span>
 {% else %}
   <span class="label normal" style = "color:black;font-size:12pt">{{record.total_absent_days}}</span>
 {% endif %}

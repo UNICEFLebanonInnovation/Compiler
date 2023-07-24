@@ -2169,6 +2169,27 @@ class Bridging(CLM):
         return result
 
     @property
+    def max_consecutive_absence(self):
+        return Bridging.get_max_consecutive_absence(self.student.id, self.round.id)
+
+    @staticmethod
+    def get_max_consecutive_absence(student_id, round_id):
+        result = 0
+        from django.db.models import Max
+        from student_registration.attendances.models import CLMStudentAbsences
+
+        if student_id and round_id:
+            max_consecutive_absence_days = CLMStudentAbsences.objects.filter(
+                student_id=student_id,
+                round_id=round_id
+            ).aggregate(max_consecutive=Max('consecutive_absence_days'))
+            max_value = max_consecutive_absence_days.get('max_consecutive')
+            if max_value is not None:
+                result = max_value
+
+        return result
+
+    @property
     def more_than_five_consecutive_absence(self):
         return Bridging.get_more_than_five_consecutive_absence(self.student.id, self.round.id)
 
