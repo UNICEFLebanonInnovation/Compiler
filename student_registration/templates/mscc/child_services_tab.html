@@ -115,9 +115,11 @@
                                                   <span>Pre Grading</span>
                                                 </a>
                                             </li>
+                                          {% if result1.education_program in 'RS Grade 7, RS Grade 8, RS Grade 9' and instance.type == 'Walk-in-In-School' %}
+                                          {% else %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-12" data-toggle="tab" href="#tab-animated-12">
-                                                    <span>Post Grading</span>
+                                                    <span>Post Grading </span>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
@@ -125,6 +127,7 @@
                                                     <span>Improvement</span>
                                                 </a>
                                             </li>
+                                            {% endif %}
                                             {% if result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9' %}
                                             <li class="nav-item">
                                                 <a role="tab" class="nav-link" id="tab-c-16" data-toggle="tab" href="#tab-animated-16">

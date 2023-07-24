@@ -503,16 +503,7 @@ class EducationServiceForm(forms.ModelForm):
             choices_education_status.append(('', _('----------')))
             choices_education_status.append(('Currently registered in Formal Education school', _('Currently registered in Formal Education school')))
             choices_education_status.append(('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')))
-        else:
-            choices_education_status.append(('', _('----------')))
-            choices_education_status.append(('Never registered in any formal school before', _('Never registered in any formal school before')))
-            choices_education_status.append(('Was registered in formal school but didn\'t continue', _('Was registered in formal school but didn\'t continue')))
-            choices_education_status.append(('Was registered in non formal program and was referred to MSCC', _('Was registered in non formal program and was referred to MSCC')))
-            choices_education_status.append(('Was registered in non formal program but didn\'t continue', _('Was registered in non formal program but didn\'t continue')))
-            choices_education_status.append(('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')))
-            choices_education_status.append(('Was Registered in Formal Education but not attending', _('Was Registered in Formal Education but not attending')))
-            choices_education_status.append(('No', _('No')))
-        self.fields['education_status'].choices = choices_education_status
+            self.fields['education_status'].choices = choices_education_status
 
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:
