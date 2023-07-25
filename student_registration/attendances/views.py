@@ -633,6 +633,8 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             school_id = self.request.user.school.id
         kwargs['user_school_id'] = school_id
 
+        kwargs['clm_bridging_all'] = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+
         round_id = 0
         current_round = CLMRound.objects.all()
         current_round = current_round.get(current_round_bridging=True)
