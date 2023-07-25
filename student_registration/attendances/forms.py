@@ -171,18 +171,12 @@ class MainAttendanceForm(forms.ModelForm):
             round_id = current_round.id
         self.fields['round_id'].initial = round_id
 
-        print('clm_bridging_allclm_bridging_allclm_bridging_allclm_bridging_allclm_bridging_allclm_bridging_all')
-        print(clm_bridging_all)
         queryset = School.objects.filter(is_first_shift='yes').all()
         if not clm_bridging_all:
             if school_id and school_id > 0:
-                print ('----------------school_id----------------------')
-                print(school_id)
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id and partner_id > 0:
-                print ('----------------partner_id----------------------')
-                print(partner_id)
                 queryset = School.objects.filter(is_first_shift='yes',
                                                  id__in=PartnerOrganization
                                                  .objects
