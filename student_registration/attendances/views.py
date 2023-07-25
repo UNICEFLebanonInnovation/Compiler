@@ -1160,6 +1160,9 @@ def attendance_export(request):
         if request.user.school_id:
             school_id = request.user.school_id
             vw_data_str += "AND school_id = " + str(school_id) + " "
+
+
+    vw_data_str += "ORDER BY attendance_date "
     cursor.execute(vw_data_str)
     data = cursor.fetchall()
 
@@ -1201,6 +1204,15 @@ def total_attendance_export(request):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
     total_attendance = CLMStudentTotalAttendance.objects.filter(round_id=round_id).order_by('student_id').all()
+
+    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if request.user.partner_id:
+            partner_id = request.user.partner_id
+            total_attendance = total_attendance.filter(partner_id=partner_id)
+
+        if request.user.school_id:
+            school_id = request.user.school_id
+            total_attendance = total_attendance.filter(school_id=school_id)
 
     total_attendance_columns = [
         'Student First Name',
@@ -1250,8 +1262,23 @@ def consecutive_absence_export(request):
     font_style.font.bold = True
 
     # Consecutive and Total Attendance
-    consecutive_student_id = CLMStudentAbsences.objects.filter(round_id=round_id).values_list('student_id', flat=True)
-    total_student_id = CLMStudentTotalAttendance.objects.filter(round_id=round_id).values_list('student_id', flat=True)
+    consecutive_student = CLMStudentAbsences.objects.filter(round_id=round_id)
+    total_student = CLMStudentTotalAttendance.objects.filter(round_id=round_id)
+
+    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if request.user.partner_id:
+            partner_id = request.user.partner_id
+            consecutive_student = consecutive_student.filter(partner_id=partner_id)
+            total_student = total_student.filter(partner_id=partner_id)
+
+        if request.user.school_id:
+            school_id = request.user.school_id
+            consecutive_student = consecutive_student.filter(school_id=school_id)
+            total_student = total_student.filter(school_id=school_id)
+
+    consecutive_student_id = consecutive_student.values_list('student_id', flat=True)
+    total_student_id = total_student.values_list('student_id', flat=True)
+
 
     consecutive_student_list = list(consecutive_student_id)
     total_student_list = list(total_student_id)
@@ -1282,7 +1309,6 @@ def consecutive_absence_export(request):
 
     row_num_student = 0
     for row in consecutive_absent_students:
-        print(row)
         row_num_student += 1
         ws_consecutive_absences.write(row_num_student, 0, row.student_first_name,font_style)
         ws_consecutive_absences.write(row_num_student, 1, row.student_father_name,font_style)
@@ -1292,8 +1318,9 @@ def consecutive_absence_export(request):
         ws_consecutive_absences.write(row_num_student, 5, row.consecutive_absence_days,font_style)
         ws_consecutive_absences.write(row_num_student, 6, row.absence_starting_date,font_style)
         ws_consecutive_absences.write(row_num_student, 7, row.absence_ending_date,font_style)
-        ws_consecutive_absences.write(row_num_student, 8, row.absence_dates,font_style)
-
+        # convert list row.absence_dates
+        absence_dates = ', '.join(row.absence_dates)
+        ws_consecutive_absences.write(row_num_student, 8, absence_dates,font_style)
         student_id= row.student_id
         total_absent_students = CLMStudentTotalAttendance.objects\
             .filter(student_id=student_id, round_id=round_id).last()

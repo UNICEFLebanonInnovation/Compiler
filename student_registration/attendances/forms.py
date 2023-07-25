@@ -17,7 +17,8 @@ from .models import CLMAttendance,CLMAttendanceStudent
 from student_registration.clm.models import Bridging
 from student_registration.schools.models import (
     School,
-    PartnerOrganization
+    PartnerOrganization,
+    CLMRound
 )
 
 from collections import OrderedDict
@@ -171,8 +172,12 @@ class MainAttendanceForm(forms.ModelForm):
                 required=True, to_field_name='id',
             )
 
-        if round_id and round_id > 0:
-            self.fields['round_id'].initial = round_id
+        round_id = 0
+        current_round = CLMRound.objects.all()
+        current_round = current_round.get(current_round_bridging=True)
+        if current_round:
+            round_id = current_round.id
+        self.fields['round_id'].initial = round_id
 
         # if partner_id > 0:
         #     queryset = School.objects.filter(is_first_shift='yes',
