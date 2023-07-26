@@ -15,7 +15,7 @@ import copy
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, CreateView
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, Sum, Avg, F, Func, When
+from django.db.models import Q, Sum, Avg, F, Func, When ,OuterRef, Subquery
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib import messages
 from django_filters.views import FilterView
@@ -750,18 +750,25 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         instance = CLMAttendance.objects.get(id=attendance_id)
         update_disabled = True
         partner_id = 0
+        user_school_id = 0
         if self.request.user.partner:
             partner_id = self.request.user.partner.id
+        if self.request.user.school:
+            user_school_id = self.request.user.school.id
+
+        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         # messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
             form = MainAttendanceForm(self.request.POST, instance=instance,
                                       attendance_student_formset=self.get_student_formset(self.request.POST)
-                                      , saveStage=True, update_disabled=update_disabled, partner_id = partner_id)
+                                      , saveStage=True, update_disabled=update_disabled,
+                                      partner_id=partner_id, user_school_id=user_school_id, clm_bridging_all=clm_bridging_all)
         else:
             form = MainAttendanceForm(instance=instance,
                                       attendance_student_formset=self.get_formset(attendance_id),
-                                      saveStage=True, update_disabled=update_disabled, partner_id = partner_id)
+                                      saveStage=True, update_disabled=update_disabled,
+                                      partner_id=partner_id, user_school_id=user_school_id, clm_bridging_all=clm_bridging_all)
 
         form.helper.form_action = reverse('attendances:main_attendance_edit', args=[attendance_id])
 
@@ -1216,10 +1223,20 @@ def total_attendance_export(request):
             school_id = request.user.school_id
             total_attendance = total_attendance.filter(school_id=school_id)
 
+    student_numbers_subquery = Student.objects.filter(
+        id=OuterRef('student_id'),
+    ).values('number')[:1]
+
+    total_attendance = total_attendance.annotate(
+        number=Subquery(student_numbers_subquery)
+    ).order_by('student_id')
+
+
     total_attendance_columns = [
         'Student First Name',
         'Student Father Name',
         'Student Last Name',
+        'Student Number',
         'School',
         'Registation Level',
         'Total Attendance Days',
@@ -1235,10 +1252,11 @@ def total_attendance_export(request):
         ws_total_attendance.write(row_num_student, 0, row.student_first_name, font_style)
         ws_total_attendance.write(row_num_student, 1, row.student_father_name, font_style)
         ws_total_attendance.write(row_num_student, 2, row.student_last_name, font_style)
-        ws_total_attendance.write(row_num_student, 3, row.school_name, font_style)
-        ws_total_attendance.write(row_num_student, 4, row.registation_level, font_style)
-        ws_total_attendance.write(row_num_student, 5, row.total_attendance_days, font_style)
-        ws_total_attendance.write(row_num_student, 6, row.total_absence_days, font_style)
+        ws_total_attendance.write(row_num_student, 3, row.number, font_style)
+        ws_total_attendance.write(row_num_student, 4, row.school_name, font_style)
+        ws_total_attendance.write(row_num_student, 5, row.registation_level, font_style)
+        ws_total_attendance.write(row_num_student, 6, row.total_attendance_days, font_style)
+        ws_total_attendance.write(row_num_student, 7, row.total_absence_days, font_style)
 
     wb_student.save(buffer)
 
@@ -1288,13 +1306,21 @@ def consecutive_absence_export(request):
     student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
     student_ids = list(set(student_ids))
 
-    consecutive_absent_students =  CLMStudentAbsences.objects.filter(student_id__in= student_ids)\
-                                   .order_by('student_id','absence_starting_date').all()
+    consecutive_absent_students = CLMStudentAbsences.objects.filter(student_id__in= student_ids).all()
+
+    student_numbers_subquery = Student.objects.filter(
+        id=OuterRef('student_id'),
+    ).values('number')[:1]
+
+    consecutive_absent_students = consecutive_absent_students.annotate(
+        number=Subquery(student_numbers_subquery)
+    ).order_by('student_id','absence_starting_date')
 
     consecutive_absences_columns = [
         'Student First Name',
         'Student Father Name',
         'Student Last Name',
+        'Student Number',
         'School',
         'Registation Level',
         'Number of Consecutive Absences',
@@ -1315,20 +1341,21 @@ def consecutive_absence_export(request):
         ws_consecutive_absences.write(row_num_student, 0, row.student_first_name,font_style)
         ws_consecutive_absences.write(row_num_student, 1, row.student_father_name,font_style)
         ws_consecutive_absences.write(row_num_student, 2, row.student_last_name,font_style)
-        ws_consecutive_absences.write(row_num_student, 3, row.school_name,font_style)
-        ws_consecutive_absences.write(row_num_student, 4, row.registation_level,font_style)
-        ws_consecutive_absences.write(row_num_student, 5, row.consecutive_absence_days,font_style)
-        ws_consecutive_absences.write(row_num_student, 6, row.absence_starting_date,font_style)
-        ws_consecutive_absences.write(row_num_student, 7, row.absence_ending_date,font_style)
+        ws_consecutive_absences.write(row_num_student, 3, row.number,font_style)
+        ws_consecutive_absences.write(row_num_student, 4, row.school_name,font_style)
+        ws_consecutive_absences.write(row_num_student, 5, row.registation_level,font_style)
+        ws_consecutive_absences.write(row_num_student, 6, row.consecutive_absence_days,font_style)
+        ws_consecutive_absences.write(row_num_student, 7, row.absence_starting_date,font_style)
+        ws_consecutive_absences.write(row_num_student, 8, row.absence_ending_date,font_style)
         # convert list row.absence_dates
         absence_dates = ', '.join(row.absence_dates)
-        ws_consecutive_absences.write(row_num_student, 8, absence_dates,font_style)
+        ws_consecutive_absences.write(row_num_student, 9, absence_dates,font_style)
         student_id= row.student_id
         total_absent_students = CLMStudentTotalAttendance.objects\
             .filter(student_id=student_id, round_id=round_id).last()
         if total_absent_students:
-            ws_consecutive_absences.write(row_num_student, 9, total_absent_students.total_attendance_days,font_style)
-            ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_absence_days,font_style)
+            ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_attendance_days,font_style)
+            ws_consecutive_absences.write(row_num_student, 11, total_absent_students.total_absence_days,font_style)
 
 
 

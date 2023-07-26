@@ -99,8 +99,12 @@ class MainAttendanceForm(forms.ModelForm):
         school_id = kwargs.pop('user_school_id', None)
         round_id = kwargs.pop('round_id', None)
         clm_bridging_all= kwargs.pop('clm_bridging_all', None)
+        # can view only: clm_bridging_all, and partner focal point , no school asigned
+        if clm_bridging_all or school_id == 0 :
+            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info')
+            submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
 
-        if update_disabled:
+        elif update_disabled:
             load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
             # submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
             submit_button = Submit('save', _('Save'), css_class='col-md-2')
