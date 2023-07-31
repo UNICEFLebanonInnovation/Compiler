@@ -344,7 +344,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^bridging-export/$',
-        view=views.BridgingExportViewSet.as_view(),
+        view=views.bridging_export_data,
         name='bridging_export'
     ),
     url(

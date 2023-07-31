@@ -441,7 +441,6 @@ class BridgingSerializer(CLMSerializer):
             'school_contacted_caretaker',
             'discussion_topic',
             'consent_parents'
-
         )
 
 

@@ -6,6 +6,7 @@ import json
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from openpyxl import Workbook
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -120,8 +121,7 @@ from .serializers import (
     BridgingSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
-    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, bridging_build_xls_extraction, get_outreach_child
-
+    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, get_outreach_child
 
 
 class CLMView(LoginRequiredMixin,
@@ -3703,17 +3703,40 @@ class BridgingListView(LoginRequiredMixin,
                                        round__current_year=True).order_by('-id')
 
 
-class BridgingExportViewSet(LoginRequiredMixin, ListView):
-    current_round = CLMRound.objects.filter(current_year=True)
-    qs_students = Bridging.objects.filter(round__in=current_round)
+def bridging_export_data(request):
 
-    def get_queryset_students(self):
-        if not self.request.user.is_staff:
-            return self.qs_students.filter(partner=self.request.user.partner)
-        return self.qs_students
+    from django.db import connection
+    cursor = connection.cursor()
+    vw_mscc_data_str = 'SELECT * FROM vw_bridging_data WHERE id > 0'
 
-    def get(self, request, *args, **kwargs):
-        return bridging_build_xls_extraction(self.get_queryset_students())
+    if not request.user.is_staff and request.user.partner:
+        vw_mscc_data_str += " AND partner_id =" + str(request.user.partner.id)
+
+
+    cursor.execute(vw_mscc_data_str)
+    data = cursor.fetchall()
+
+    headers = [col[0] for col in cursor.description]
+
+    workbook = Workbook()
+    worksheet_all_data = workbook.create_sheet("All Data")
+    worksheet_all_data.append(headers)
+
+    for row in data:
+        worksheet_all_data.append(row)
+
+    default_sheet = workbook.get_sheet_by_name('Sheet')
+    workbook.remove(default_sheet)
+
+    # Set the appropriate response headers for the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+
+    # Save the workbook to the response
+    workbook.save(response) 
+
+    return response
+
 
 
 class BridgingPage(LoginRequiredMixin,

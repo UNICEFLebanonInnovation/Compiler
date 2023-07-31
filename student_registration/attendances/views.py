@@ -37,7 +37,8 @@ from student_registration.schools.models import (
     School,
     Section,
     ClassRoom,
-    EducationLevel
+    EducationLevel,
+    PartnerOrganization
 )
 from student_registration.enrollments.models import (
     Enrollment,
@@ -1215,14 +1216,15 @@ def total_attendance_export(request):
     total_attendance = CLMStudentTotalAttendance.objects.filter(round_id=round_id).order_by('student_id').all()
 
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
-        if request.user.partner_id:
-            partner_id = request.user.partner_id
-            total_attendance = total_attendance.filter(partner_id=partner_id)
-
         if request.user.school_id:
             school_id = request.user.school_id
             total_attendance = total_attendance.filter(school_id=school_id)
-
+        elif request.user.partner_id:
+            partner_id = request.user.partner_id
+            total_attendance = total_attendance.filter(school_id__in=PartnerOrganization
+                                             .objects
+                                             .filter(id=partner_id)
+                                             .values_list('schools', flat=True))
     student_numbers_subquery = Student.objects.filter(
         id=OuterRef('student_id'),
     ).values('number')[:1]
@@ -1257,6 +1259,7 @@ def total_attendance_export(request):
         ws_total_attendance.write(row_num_student, 5, row.registation_level, font_style)
         ws_total_attendance.write(row_num_student, 6, row.total_attendance_days, font_style)
         ws_total_attendance.write(row_num_student, 7, row.total_absence_days, font_style)
+        ws_total_attendance.write(row_num_student, 8, row.student_id, font_style)
 
     wb_student.save(buffer)
 
@@ -1288,8 +1291,15 @@ def consecutive_absence_export(request):
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
         if request.user.partner_id:
             partner_id = request.user.partner_id
-            consecutive_student = consecutive_student.filter(partner_id=partner_id)
-            total_student = total_student.filter(partner_id=partner_id)
+            consecutive_student = consecutive_student.filter(school_id__in=PartnerOrganization
+                                             .objects
+                                             .filter(id=partner_id)
+                                             .values_list('schools', flat=True))
+
+            total_student = total_student.filter(school_id__in=PartnerOrganization
+                                             .objects
+                                             .filter(id=partner_id)
+                                             .values_list('schools', flat=True))
 
         if request.user.school_id:
             school_id = request.user.school_id
