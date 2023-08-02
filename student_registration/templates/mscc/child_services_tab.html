@@ -7,7 +7,9 @@
 
   <!--RS-->
 {% get_service instance 'RS' as result %}
-  {% if result %}
+  {% service_data 'EducationService' instance as result1 %}
+  {% if result and result1.education_program  in 'RS Grade 7, RS Grade 8, RS Grade 9' %}
+
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationRSService' instance as result %}
                                 <div class="mb-3 card">

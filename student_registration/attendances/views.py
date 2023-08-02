@@ -610,7 +610,8 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             if school is not None:
                 school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
-                if school > 0 and registration_level != '':
+                day_off = self.request.GET.get('day_off', '')
+                if school > 0 and registration_level != '' and day_off == 'no':
                     queryset = Bridging.objects.filter(
                         partner=self.request.user.partner_id,
                                                        round__current_round_bridging=True,

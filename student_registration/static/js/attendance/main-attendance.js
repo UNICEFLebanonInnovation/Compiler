@@ -6,26 +6,49 @@ $(document).ready(
             $('#id_attendance_date').datepicker({dateFormat: "yy-mm-dd"});
         }
 
+//      show reason if day_off is yes
+        day_off = $("#id_day_off").val();
+        if (day_off == 'yes') {
+            $('div#div_id_close_reason').removeClass('d-none');
+            $('#submit-id-save').attr('disabled', false);
+            $('#button-id-loadstudentsbutton').attr('disabled',true);
+
+        }
+        else
+        {
+        $('div#div_id_close_reason').addClass('d-none');
+        }
 
 //      Default Setting: close_reason is hidden
-        $('div#div_id_close_reason').addClass('d-none');
         $(document).on('change', 'select#id_day_off', function () {
+            $('div#div_id_close_reason').addClass('d-none');
             day_off = $("#id_day_off").val();
             if (day_off == 'yes') {
                 $('div#div_id_close_reason').removeClass('d-none');
                 $('#submit-id-save').attr('disabled', false);
+                $('#button-id-loadstudentsbutton').attr('disabled',true);
             }
             else {
                 $('div#div_id_close_reason').addClass('d-none');
-                loadButtonDisabled = $('#button-id-loadstudentsbutton').attr('disabled');
-                $('#submit-id-save').attr('disabled', (!loadButtonDisabled));
-
+                $('#button-id-loadstudentsbutton').attr('disabled',false);
+                $('#submit-id-save').attr('disabled', true);
             }
         });
+
+//        $(document).on('change', 'select#id_close_reason', function () {
+//            close_reason = $("#id_close_reason").val();
+//            loadButtonDisabled = $('#button-id-loadstudentsbutton').attr('disabled');
+//            var table = document.querySelector('.table');
+//            table_have_rows = table && table.rows.length > 0
+//
+//            if (close_reason != '' &&  loadButtonDisabled && table_have_rows) {
+//            }
+//        });
 
         $(document).on('change', 'select#id_school, select#id_registration_level ' , function () {
             filter_changed();
         });
+
 
 
 //        $("#id_attendance_date").on("change", function() {
@@ -52,51 +75,56 @@ $(document).ready(
 //        });
 
 
-        $("#button-id-loadstudentsbutton").click
-        (
-         function ()
-         {
-            schoolID = $("#id_school").val();
-            registrationLevel = $("#id_registration_level").val();
-            day_off = $("#id_day_off").val();
-            attendance_date = $("#id_attendance_date").val();
-            if (schoolID>0 && registrationLevel!='' )
+
+      $("#button-id-loadstudentsbutton").click(function() {
+          load_students();
+      });
+
+
+
+   }
+);
+
+function load_students()
+ {
+    schoolID = $("#id_school").val();
+    registrationLevel = $("#id_registration_level").val();
+    day_off = $("#id_day_off").val();
+    attendance_date = $("#id_attendance_date").val();
+    if (schoolID>0 && registrationLevel!='' )
+    {
+        if(day_off=='yes')
+        {
+            close_reason = $("#id_close_reason").val();
+            if (close_reason!='')
             {
-                if(day_off=='yes')
-                {
-                    close_reason = $("#id_close_reason").val();
-                    if (close_reason!='')
-                    {
-                        window.location = window.location.origin
-                        + "/attendances/main-attendance/?attendance_date="+attendance_date.toString()
-                        +"&school="+schoolID.toString()
-                        +"&registration_level="+registrationLevel.toString()
-                        +"&day_off="+day_off.toString()
-                    }
-                    else
-                    {
-                        alert("Please specify the reason for day off");
-                    }
-                }
-                else
-                {
-                    window.location = window.location.origin
-                    + "/attendances/main-attendance/?attendance_date="+attendance_date.toString()
-                    +"&school="+schoolID.toString()
-                    +"&registration_level="+registrationLevel.toString()
-                    +"&day_off="+day_off.toString()
-                    ;
-                }
+                window.location = window.location.origin
+                + "/attendances/main-attendance/?attendance_date="+attendance_date.toString()
+                +"&school="+schoolID.toString()
+                +"&registration_level="+registrationLevel.toString()
+                +"&day_off="+day_off.toString()
             }
             else
             {
-                alert("School and Registration Level are mandatory")
+                alert("Please specify the reason for day off");
             }
+        }
+        else
+        {
+            window.location = window.location.origin
+            + "/attendances/main-attendance/?attendance_date="+attendance_date.toString()
+            +"&school="+schoolID.toString()
+            +"&registration_level="+registrationLevel.toString()
+            +"&day_off="+day_off.toString()
+            ;
+        }
+    }
+    else
+    {
+        alert("School and Registration Level are mandatory")
+    }
 
-         }
-      );
-   }
-);
+ }
 
 function filter_changed()
 {
@@ -104,8 +132,9 @@ function filter_changed()
     if (loadButtonDisabled){
         $('#submit-id-save').attr('disabled', (loadButtonDisabled));
         $('#button-id-loadstudentsbutton').attr('disabled', (!loadButtonDisabled));
-    }
 }
+}
+
 function disableHoliday(date) {
     var string = $.datepicker.formatDate('yy-mm-dd', date);
 
