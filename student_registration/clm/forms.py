@@ -563,14 +563,14 @@ class BLNForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
@@ -1880,14 +1880,14 @@ class ABLNForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
@@ -3241,14 +3241,14 @@ class RSForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
@@ -4683,14 +4683,14 @@ class CBECEForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
@@ -6052,14 +6052,14 @@ class OutreachForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
@@ -7139,14 +7139,14 @@ class BridgingForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
