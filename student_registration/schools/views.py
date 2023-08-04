@@ -525,13 +525,31 @@ class SchoolListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        school_id = 0
-        if self.request.user.school:
-            school_id = self.request.user.school.id
-        if school_id > 0:
-            return School.objects.filter(id=school_id)
 
-        return School.objects.filter(is_first_shift='yes').order_by('-id')
+        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = self.request.user.is_staff
+
+        queryset = School.objects.filter(is_first_shift='yes').all()
+
+        if not clm_bridging_all and not is_staff and self.request.user.partner:
+            school_id = 0
+            if self.request.user.school:
+                school_id = self.request.user.school.id
+            partner_id = self.request.user.partner_id
+
+            if school_id and school_id > 0:
+                queryset = School.objects.filter(id=school_id)
+
+            elif partner_id > 0:
+                queryset = School.objects.filter(is_first_shift='yes',
+                                                 id__in=PartnerOrganization
+                                                 .objects
+                                                 .filter(id=partner_id)
+                                                 .values_list('schools', flat=True))
+            else:
+                queryset =queryset.none()
+
+        return queryset
 
 
 class SchoolAddView(LoginRequiredMixin,

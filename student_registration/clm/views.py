@@ -3689,29 +3689,7 @@ class BridgingListView(LoginRequiredMixin,
 
     filterset_class = BridgingFilter
 
-    def get_queryset(self):
-        force_default_language(self.request)
 
-        clm_bridging_all= self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-        is_staff = self.request.user.is_staff
-
-
-
-        if not clm_bridging_all and not is_staff and self.request.user.partner:
-            school_id = 0
-            if self.request.user.school:
-                school_id = self.request.user.school.id
-            if school_id > 0:
-                return Bridging.objects.filter(partner=self.request.user.partner_id,
-                                               school=school_id,
-                                               round__current_year=True).order_by('-id')
-            else:
-                return Bridging.objects.filter(partner=self.request.user.partner_id,
-                                       round__current_year=True).order_by('-id')
-        elif clm_bridging_all or is_staff :
-            return Bridging.objects.filter(round__current_year=True).order_by('-id')
-        else:
-            return Bridging.objects.none()
 
 
 def bridging_export_data(request):
