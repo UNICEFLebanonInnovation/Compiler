@@ -3691,29 +3691,54 @@ class BridgingListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        school_id = 0
-        if self.request.user.school:
-            school_id = self.request.user.school.id
-        if school_id > 0:
-            return Bridging.objects.filter(partner=self.request.user.partner_id,
-                                           school=school_id,
-                                           round__current_year=True).order_by('-id')
 
-        return Bridging.objects.filter(partner=self.request.user.partner_id,
+        clm_bridging_all= self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = self.request.user.is_staff
+
+
+
+        if not clm_bridging_all and not is_staff and self.request.user.partner:
+            school_id = 0
+            if self.request.user.school:
+                school_id = self.request.user.school.id
+            if school_id > 0:
+                return Bridging.objects.filter(partner=self.request.user.partner_id,
+                                               school=school_id,
+                                               round__current_year=True).order_by('-id')
+            else:
+                return Bridging.objects.filter(partner=self.request.user.partner_id,
                                        round__current_year=True).order_by('-id')
+        elif clm_bridging_all or is_staff :
+            return Bridging.objects.filter(round__current_year=True).order_by('-id')
+        else:
+            return Bridging.objects.none()
 
 
 def bridging_export_data(request):
-
     from django.db import connection
     cursor = connection.cursor()
-    vw_mscc_data_str = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+    vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
 
-    if not request.user.is_staff and request.user.partner:
-        vw_mscc_data_str += " AND partner_id =" + str(request.user.partner.id)
+    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+    is_staff = request.user.is_staff
+
+    if not clm_bridging_all and not is_staff and request.user.partner:
+        school_id = 0
+        partner_id = request.user.partner_id
+
+        vw_bridging_data += " AND partner_id =" + str(partner_id)
+
+        if request.user.school:
+            school_id = request.user.school.id
+        if school_id > 0:
+            vw_bridging_data += " AND school_id =" + str(school_id)
 
 
-    cursor.execute(vw_mscc_data_str)
+    elif not clm_bridging_all and not is_staff and not request.user.partner:
+        vw_bridging_data += " AND id = 0 "
+
+
+    cursor.execute(vw_bridging_data)
     data = cursor.fetchall()
 
     headers = [col[0] for col in cursor.description]
@@ -3733,7 +3758,7 @@ def bridging_export_data(request):
     response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
 
     # Save the workbook to the response
-    workbook.save(response) 
+    workbook.save(response)
 
     return response
 

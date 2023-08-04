@@ -1,7 +1,7 @@
 {% load staticfiles i18n %}
 {% load util_tags %}
 {% if record.owner.id == request.user.id %}
-    {% if record.total_absent_days >= 10 %}
+    {% if record.total_absent_days >= 40 and record.more_than_ten_consecutive_absence %}
         <button class="btn btn-danger delete-button " disabled >
             <i class="icon-trash icon-white"></i>
             {% trans "Delete" %}

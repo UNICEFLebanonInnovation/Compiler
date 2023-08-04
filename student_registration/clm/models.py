@@ -2190,11 +2190,11 @@ class Bridging(CLM):
         return result
 
     @property
-    def more_than_five_consecutive_absence(self):
-        return Bridging.get_more_than_five_consecutive_absence(self.student.id, self.round.id)
+    def more_than_ten_consecutive_absence(self):
+        return Bridging.get_more_than_ten_consecutive_absence(self.student.id, self.round.id)
 
     @staticmethod
-    def get_more_than_five_consecutive_absence(student_id, round_id):
+    def get_more_than_ten_consecutive_absence(student_id, round_id):
         result = False
         from student_registration.attendances.models import CLMStudentAbsences
         if student_id and round_id:
