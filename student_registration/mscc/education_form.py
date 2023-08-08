@@ -542,7 +542,7 @@ class EducationServiceForm(forms.ModelForm):
         )
 
     def save(self, request=None, instance=None, registry=None, package_type=None):
-
+        from datetime import datetime
         validated_data = request.POST
 
         if not instance:
@@ -551,12 +551,16 @@ class EducationServiceForm(forms.ModelForm):
             instance = EducationService.objects.get(id=instance)
 
         instance.education_status = validated_data.get('education_status')
-        if validated_data.get('dropout_date'):
-            instance.dropout_date = validated_data.get('dropout_date')
+        dropout_date_str = validated_data.get('dropout_date')
+        if dropout_date_str:
+            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
+            instance.dropout_date = dropout_date
         instance.education_program = validated_data.get('education_program')
         instance.class_section = validated_data.get('class_section')
-        if validated_data.get('registration_date'):
-            instance.registration_date = validated_data.get('registration_date')
+        registration_date_str = validated_data.get('registration_date')
+        if registration_date_str:
+            registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
+            instance.registration_date = registration_date
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))

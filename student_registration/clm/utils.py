@@ -70,12 +70,6 @@ def is_allowed_create(programme):
                 return True
             return False
 
-        if programme == 'MSCC':
-            current_round = current_round.get(current_round_mscc=True)
-            if current_round.start_date_mscc < current < current_round.end_date_mscc:
-                return True
-            return False
-
 
     except Exception as ex:
         print(ex)

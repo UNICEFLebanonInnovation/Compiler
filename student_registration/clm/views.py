@@ -5,6 +5,7 @@ import json
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
 
@@ -3095,71 +3096,72 @@ def search_clm_duplicate_registration(request):
     from django.db.models import Value
 
     body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
+    if body_unicode:
+        body = json.loads(body_unicode)
 
-    search_by = body['search_by']
-    round_id = body['round_id']
-    clm_type = body['clm_type']
-    student_id = body['student_id']
-    student_first_name = body['student_first_name']
-    student_father_name = body['student_father_name']
-    student_last_name = body['student_last_name']
-    student_mother_fullname = body['student_mother_fullname']
-    phone_number = body['phone_number']
-    id_type = body['id_type']
-    case_number = body['case_number']
-    recorded_number = body['recorded_number']
-    parent_syrian_national_number = body['parent_syrian_national_number']
-    parent_sop_national_number = body['parent_sop_national_number']
-    parent_national_number = body['parent_national_number']
-    parent_other_number = body['parent_other_number']
+        search_by = body['search_by']
+        round_id = body['round_id']
+        clm_type = body['clm_type']
+        student_id = body['student_id']
+        student_first_name = body['student_first_name']
+        student_father_name = body['student_father_name']
+        student_last_name = body['student_last_name']
+        student_mother_fullname = body['student_mother_fullname']
+        phone_number = body['phone_number']
+        id_type = body['id_type']
+        case_number = body['case_number']
+        recorded_number = body['recorded_number']
+        parent_syrian_national_number = body['parent_syrian_national_number']
+        parent_sop_national_number = body['parent_sop_national_number']
+        parent_national_number = body['parent_national_number']
+        parent_other_number = body['parent_other_number']
 
 
-    model = BLN
-    if clm_type == 'BLN':
         model = BLN
-    if clm_type == 'RS':
-        model = RS
-    elif clm_type == 'ABLN':
-        model = ABLN
-    elif clm_type == 'CBECE':
-        model = CBECE
-    elif clm_type == 'Outreach':
-        model = Outreach
-    elif clm_type == 'Bridging':
-        model = Bridging
+        if clm_type == 'BLN':
+            model = BLN
+        if clm_type == 'RS':
+            model = RS
+        elif clm_type == 'ABLN':
+            model = ABLN
+        elif clm_type == 'CBECE':
+            model = CBECE
+        elif clm_type == 'Outreach':
+            model = Outreach
+        elif clm_type == 'Bridging':
+            model = Bridging
 
-    str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                      student_father_name,student_last_name,student_mother_fullname
-                                      , phone_number, case_number, recorded_number,
-                                      parent_syrian_national_number, parent_sop_national_number, parent_national_number,
-                                      parent_other_number)
-
-    if str_partner_name != '':
-        return JsonResponse({'result': str_partner_name})
-    elif clm_type == 'BLN':
-        model = ABLN
         str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                          student_father_name,student_last_name,student_mother_fullname,
-                                           phone_number, case_number, recorded_number,
-                                          parent_syrian_national_number, parent_sop_national_number,
-                                          parent_national_number,
+                                          student_father_name,student_last_name,student_mother_fullname
+                                          , phone_number, case_number, recorded_number,
+                                          parent_syrian_national_number, parent_sop_national_number, parent_national_number,
                                           parent_other_number)
 
         if str_partner_name != '':
             return JsonResponse({'result': str_partner_name})
-    elif clm_type == 'ABLN':
-        model = BLN
-        str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                          student_father_name,student_last_name,student_mother_fullname,
-                                           phone_number, case_number, recorded_number,
-                                          parent_syrian_national_number, parent_sop_national_number,
-                                          parent_national_number,
-                                          parent_other_number)
+        elif clm_type == 'BLN':
+            model = ABLN
+            str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                              student_father_name,student_last_name,student_mother_fullname,
+                                               phone_number, case_number, recorded_number,
+                                              parent_syrian_national_number, parent_sop_national_number,
+                                              parent_national_number,
+                                              parent_other_number)
 
-        if str_partner_name != '':
+            if str_partner_name != '':
+                return JsonResponse({'result': str_partner_name})
+        elif clm_type == 'ABLN':
+            model = BLN
+            str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+                                              student_father_name,student_last_name,student_mother_fullname,
+                                               phone_number, case_number, recorded_number,
+                                              parent_syrian_national_number, parent_sop_national_number,
+                                              parent_national_number,
+                                              parent_other_number)
 
-            return JsonResponse({'result': str_partner_name})
+            if str_partner_name != '':
+
+                return JsonResponse({'result': str_partner_name})
 
     return JsonResponse({'result': ''})
 
@@ -3691,7 +3693,7 @@ class BridgingListView(LoginRequiredMixin,
 
 
 
-
+@login_required(login_url='/users/login')
 def bridging_export_data(request):
     from django.db import connection
     cursor = connection.cursor()
@@ -3714,7 +3716,6 @@ def bridging_export_data(request):
 
     elif not clm_bridging_all and not is_staff and not request.user.partner:
         vw_bridging_data += " AND id = 0 "
-
 
     cursor.execute(vw_bridging_data)
     data = cursor.fetchall()

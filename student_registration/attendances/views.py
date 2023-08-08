@@ -26,6 +26,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.shortcuts import redirect
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework import status
@@ -1063,7 +1064,7 @@ class AttendanceAbsenceView(FormView):
     def form_valid(self, form):
         return super(AttendanceAbsenceView, self).form_valid(form)
 
-
+@login_required(login_url='/users/login')
 def absence_export(request,number_of_absences, total_days):
 
     number_of_consecutive_absences = int(number_of_absences)
@@ -1152,7 +1153,7 @@ def absence_export(request,number_of_absences, total_days):
 
     return response
 
-
+@login_required(login_url='/users/login')
 def attendance_export(request):
     current_round = CLMRound.objects.all()
     current_round = current_round.get(current_round_bridging=True)
@@ -1198,7 +1199,7 @@ def attendance_export(request):
 
     return response
 
-
+@login_required(login_url='/users/login')
 def total_attendance_export(request):
     current_round = CLMRound.objects.all()
     current_round = current_round.get(current_round_bridging=True)
@@ -1270,7 +1271,7 @@ def total_attendance_export(request):
 
     return response
 
-
+@login_required(login_url='/users/login')
 def consecutive_absence_export(request):
     current_round = CLMRound.objects.all()
     current_round = current_round.get(current_round_bridging=True)
