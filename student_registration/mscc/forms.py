@@ -137,6 +137,21 @@ class MainForm(forms.ModelForm):
         initial=0,
         min_value=0
     )
+    child_have_sibling = forms.ChoiceField(
+        label=_("Does the child have siblings?"),
+        widget=forms.Select, required=True,
+        choices=Child.YES_NO,
+    )
+    child_siblings_have_disability = forms.ChoiceField(
+        label=_("Does any of the siblings have a disability?"),
+        widget=forms.Select, required=True,
+        choices=Child.YES_NO,
+    )
+    child_mother_pregnant_expecting = forms.ChoiceField(
+        label=_("Is the mother pregnant or expecting?"),
+        widget=forms.Select, required=True,
+        choices=Child.YES_NO,
+    )
     child_fe_unique_id = forms.ChoiceField(
         label=_('Formal Education unique student ID'),
         widget=forms.TextInput, required=False,
@@ -500,23 +515,32 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('child_have_sibling', css_class='col-md-4'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('child_siblings_have_disability', css_class='col-md-4', css_id='child_have_children'),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    Div('child_mother_pregnant_expecting', css_class='col-md-4'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('partner_unique_number', css_class='col-md-7'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
                     Div('source_of_identification', css_class='col-md-7'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
                     Div('source_of_identification_specify', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">21</span>'),
                     Div('child_fe_unique_id', css_class='col-md-4'),
                     css_class='row card-body d-none', id='child_fe_unique_id_block'
                 ),
@@ -719,6 +743,11 @@ class MainForm(forms.ModelForm):
         child_children_number = cleaned_data.get("child_children_number")
         if child_have_children == "Yes" and not child_children_number:
             self.add_error('child_children_number', 'This field is required')
+
+        child_have_sibling = cleaned_data.get("child_have_sibling")
+        child_siblings_have_disability = cleaned_data.get("child_siblings_have_disability")
+        if child_have_sibling == "Yes" and not child_siblings_have_disability:
+            self.add_error('child_siblings_have_disability', 'This field is required')
 
         source_of_identification = cleaned_data.get("source_of_identification")
         source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
@@ -958,6 +987,9 @@ class MainForm(forms.ModelForm):
             'child_marital_status',
             'child_have_children',
             'child_children_number',
+            'child_have_sibling',
+            'child_siblings_have_disability',
+            'child_mother_pregnant_expecting',
             'partner_unique_number',
             'source_of_identification',
             'source_of_identification_specify',

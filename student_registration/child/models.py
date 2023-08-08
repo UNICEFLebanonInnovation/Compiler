@@ -67,6 +67,7 @@ class Child(TimeStampedModel):
         ('Unaccompanied', _('Unaccompanied')),
         ('Separated', _('Separated')),
         ('Living with one caregivers', _('Living with one caregivers')),
+        ('Living with caregivers', _('Living with caregivers')),
         ('Child headed household ', _('Child headed household ')),
     )
 
@@ -178,6 +179,27 @@ class Child(TimeStampedModel):
         null=True,
         choices=((x, x) for x in range(0, 20)),
         verbose_name=_('If yes, how many?')
+    )
+    have_sibling = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the child have siblings?')
+    )
+    siblings_have_disability = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does any of the siblings have a disability?')
+    )
+    mother_pregnant_expecting = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the mother pregnant or expecting?')
     )
     fe_unique_id = models.CharField(
         max_length=100,

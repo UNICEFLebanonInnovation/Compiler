@@ -1900,7 +1900,7 @@ class YouthAssessment(TimeStampedModel):
         verbose_name=_('What training material was provided?')
     )
     future_path = models.CharField(
-        max_length=50,
+        max_length=200,
         blank=True,
         null=True,
         choices=FUTURE_PATH,

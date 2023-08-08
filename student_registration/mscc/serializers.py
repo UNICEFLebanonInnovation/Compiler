@@ -84,7 +84,10 @@ class MainSerializer(serializers.ModelSerializer):
     child_fe_unique_id = serializers.CharField(source='child.fe_unique_id', required=False)
     child_marital_status = serializers.CharField(source='child.marital_status', required=False)
     child_have_children = serializers.CharField(source='child.have_children', required=False)
-    child_children_number = serializers.CharField(source='child.children_number', required=False)
+    child_children_number = serializers.CharField(source='child.have_children', required=False)
+    child_have_sibling = serializers.CharField(source='child.have_sibling', required=False)
+    child_siblings_have_disability = serializers.CharField(source='child.siblings_have_disability', required=False)
+    child_mother_pregnant_expecting = serializers.CharField(source='child.mother_pregnant_expecting', required=False)
     main_caregiver_nationality = serializers.CharField(source='child.main_caregiver_nationality', required=False)
     main_caregiver_nationality_id = serializers.CharField(source='child.main_caregiver_nationality.id', required=False)
     main_caregiver_nationality_other = serializers.CharField(source='child.main_caregiver_nationality_other',
@@ -193,6 +196,9 @@ class MainSerializer(serializers.ModelSerializer):
             'child_marital_status',
             'child_have_children',
             'child_children_number',
+            'child_have_sibling',
+            'child_siblings_have_disability',
+            'child_mother_pregnant_expecting',
             'partner_unique_number',
             'source_of_identification',
             'source_of_identification_specify',
