@@ -183,11 +183,16 @@ class TeacherListView(LoginRequiredMixin,
 
         queryset = Teacher.objects.all()
 
-        if not clm_bridging_all and not is_staff and self.request.user.partner:
+        if clm_bridging_all or is_staff:
+            queryset = Teacher.objects.all()
+        else :
             school_id = 0
+            partner_id = 0
+
             if self.request.user.school:
                 school_id = self.request.user.school.id
-            partner_id = self.request.user.partner_id
+            if self.request.user.partner_id:
+                partner_id = self.request.user.partner_id
 
             if school_id and school_id > 0:
                 queryset = Teacher.objects.filter(school_id=school_id)

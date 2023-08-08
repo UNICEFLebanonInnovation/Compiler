@@ -7891,20 +7891,36 @@ class BridgingForm(CommonForm):
             )
         )
         school_id = 0
-        if instance:
-            if instance.owner.school:
-                school_id = instance.owner.school.id
-        else:
-            if self.request.user.school:
-                school_id = self.request.user.school.id
-        if school_id and school_id > 0:
-            queryset = School.objects.filter(id=school_id)
-            self.fields['school'] = forms.ModelChoiceField(
-                queryset=queryset, widget=forms.Select,
-                label=_('School Name'),
-                empty_label='-------',
-                required=True, to_field_name='id',
-            )
+        partner_id = 0
+        clm_bridging_all = False
+
+        if self.request.user.school:
+            school_id = self.request.user.school.id
+        if self.request.user.partner_id:
+            partner_id = self.request.user.partner_id
+        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+
+        queryset = School.objects.filter(is_first_shift='yes').all()
+
+        if not clm_bridging_all:
+            if school_id and school_id > 0:
+                queryset = School.objects.filter(id=school_id)
+
+            elif partner_id and partner_id > 0:
+                queryset = School.objects.filter(is_first_shift='yes',
+                                                 id__in=PartnerOrganization
+                                                 .objects
+                                                 .filter(id=partner_id)
+                                                 .values_list('schools', flat=True))
+            else:
+                queryset =queryset.none()
+
+        self.fields['school'] = forms.ModelChoiceField(
+            queryset=queryset, widget=forms.Select,
+            label=_('School Name'),
+            empty_label='-------',
+            required=True, to_field_name='id',
+        )
 
     def clean(self):
         cleaned_data = super(BridgingForm, self).clean()
