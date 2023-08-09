@@ -144,7 +144,7 @@ class MainForm(forms.ModelForm):
     )
     child_siblings_have_disability = forms.ChoiceField(
         label=_("Does any of the siblings have a disability?"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=Child.YES_NO,
     )
     child_mother_pregnant_expecting = forms.ChoiceField(
@@ -517,7 +517,10 @@ class MainForm(forms.ModelForm):
                     HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('child_have_sibling', css_class='col-md-4'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('child_siblings_have_disability', css_class='col-md-4', css_id='child_have_children'),
+                    Div('child_siblings_have_disability', css_class='col-md-4', css_id='child_siblings_have_disability'),
+                    css_class='row card-body',
+                ),
+                Div(
                     HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('child_mother_pregnant_expecting', css_class='col-md-4'),
                     css_class='row card-body',

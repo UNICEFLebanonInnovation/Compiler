@@ -135,7 +135,7 @@ $(document).ready(function() {
     });
     reorganizeForm();
 
-    $(document).on('change', 'select#id_child_have_children, select#id_child_nationality, select#id_main_caregiver, select#id_main_caregiver_nationality, select#id_have_labour, select#id_labour_type', function(){
+    $(document).on('change', 'select#id_child_have_children, select#id_child_nationality, select#id_main_caregiver, select#id_main_caregiver_nationality, select#id_have_labour, select#id_labour_type, select#id_child_have_sibling', function(){
          reorganizeForm();
     });
     $(document).on('change', 'select#id_student_nationality, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
@@ -498,6 +498,17 @@ function reorganizeForm()
     else{
         $('div#div_id_child_children_number').addClass('d-none');
         $('#id_child_children_number').val('');
+    }
+
+    //child_have_sibling
+    var child_have_sibling = $('select#id_child_have_sibling').val();
+
+    if(child_have_sibling =='Yes'){
+        $('div#div_id_child_siblings_have_disability').removeClass('d-none');
+    }
+    else{
+        $('div#div_id_child_siblings_have_disability').addClass('d-none');
+        $('#id_child_siblings_have_disability').val('');
     }
 
 //   Source of Identification
