@@ -142,13 +142,19 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
+    $(document).on('change', 'select#id_child_first_name, select#id_child_father_name, select#id_child_last_name, select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
         $('#search_loader').removeClass('hidden');
         $('#nfe_search_loader').removeClass('hidden');
 
-        outreach_child_search();
-        old_child_search();
-        child_duplication_check();
+        var first_name = $('#id_child_first_name').val();
+        var father_name = $('#id_child_father_name').val();
+        var last_name = $('#id_child_last_name').val();
+        if ( first_name!= '' && father_name!= '' && last_name!= '')
+        {
+            outreach_child_search();
+            old_child_search();
+            child_duplication_check();
+        }
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){

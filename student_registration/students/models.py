@@ -620,6 +620,8 @@ class Teacher(Person):
         ('english', _('English')),
         ('french', _('French')),
         ('PSS / Counsellor', _('PSS / Counsellor')),
+        ('Physical Education', _('Physical Education')),
+        ('Art', _('Art')),
     )
     REGISTRATION_LEVEL = (
         ('Level one', _('Level one')),

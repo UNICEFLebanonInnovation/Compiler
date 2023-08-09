@@ -57,12 +57,15 @@ class MainTable(CommonTable):
             'child_age',
             'child_birthday',
             'child.nationality',
+            'education_program',
             'partner_unique_number',
             # 'center',
             # 'center_type',
             # 'governorate',
             # 'caza',
             # 'cadaster',
+            'owner',
+            'modified_by'
         )
 
 

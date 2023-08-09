@@ -252,6 +252,14 @@ class Registration(TimeStampedModel):
             return self.child.age
         return 0
 
+    @property
+    def education_program(self):
+        result = ''
+        program = self.education_service.all().first()
+        if program:
+            result = program.education_program
+        return  result
+
     def get_absolute_url(self):
         return '/MSCC/Child-Profile/%d/' % self.pk
 
@@ -1056,7 +1064,7 @@ class EducationService(TimeStampedModel):
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
-        related_name='+',
+        related_name='education_service',
     )
     education_status = models.CharField(
         max_length=200,

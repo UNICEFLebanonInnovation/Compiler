@@ -201,7 +201,7 @@ class MainListView(LoginRequiredMixin,
 
     def get_queryset(self):
         # return Registration.objects.all().order_by('-id')
-        return Registration.objects.filter(center=self.request.user.center_id).order_by('-id')
+        return Registration.objects.filter(center=self.request.user.center_id, deleted=False).order_by('-id')
 
     def get_table_class(self):
 
@@ -550,7 +550,7 @@ def export_data(request):
     mother_fullname = request.GET.get('mother_fullname', '')
     nationality = request.GET.get('nationality', '')
 
-    vw_mscc_data_str = 'SELECT * FROM vw_mscc_data WHERE id > 0'
+    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false' "
     if center_id > 0:
         vw_mscc_data_str += " AND center_id = " + str(center_id)
     if first_name != '':
