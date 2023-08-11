@@ -200,7 +200,6 @@ class MainListView(LoginRequiredMixin,
     filterset_class = MainFilter
 
     def get_queryset(self):
-        # return Registration.objects.all().order_by('-id')
         return Registration.objects.filter(center=self.request.user.center_id, deleted=False).order_by('-id')
 
     def get_table_class(self):
@@ -550,19 +549,25 @@ def export_data(request):
     mother_fullname = request.GET.get('mother_fullname', '')
     nationality = request.GET.get('nationality', '')
 
-    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false' "
+    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false' AND center_id >0   "
     if center_id > 0:
         vw_mscc_data_str += " AND center_id = " + str(center_id)
     if first_name != '':
-        vw_mscc_data_str += " AND child_first_name LIKE '" + first_name + "%'"
-    if last_name != '':
-        vw_mscc_data_str += " AND child_father_name LIKE '" + last_name + "%'"
+        vw_mscc_data_str += " AND child_first_name LIKE '%" + first_name + "%'"
     if father_name != '':
-        vw_mscc_data_str += " AND child_last_name LIKE '" + father_name + "%'"
+        vw_mscc_data_str += " AND child_father_name LIKE '%" + father_name + "%'"
+    if last_name != '':
+        vw_mscc_data_str += " AND child_last_name LIKE '%" + last_name + "%'"
     if mother_fullname != '':
-        vw_mscc_data_str += " AND child_mother_fullname LIKE '" + mother_fullname + "%'"
+        vw_mscc_data_str += " AND child_mother_fullname LIKE '%" + mother_fullname + "%'"
     if nationality != '':
         vw_mscc_data_str += " AND child_nationality_id = " + nationality
+
+
+
+
+
+
 
     cursor.execute(vw_mscc_data_str)
     data = cursor.fetchall()
@@ -577,18 +582,19 @@ def export_data(request):
         worksheet_all_data.append(row)
 
     registration_ids = [row[0] for row in data]
-    followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
-        ','.join(map(str, registration_ids)))
-    cursor.execute(followup_service_data_str)
-    followup_service_data = cursor.fetchall()
+    if registration_ids:
+        followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
+            ','.join(map(str, registration_ids)))
+        cursor.execute(followup_service_data_str)
+        followup_service_data = cursor.fetchall()
 
-    headers = [col[0] for col in cursor.description]
-    worksheet_followup = workbook.create_sheet("Followup Service Data")
+        headers = [col[0] for col in cursor.description]
+        worksheet_followup = workbook.create_sheet("Followup Service Data")
 
-    worksheet_followup.append(headers)
+        worksheet_followup.append(headers)
 
-    for row in followup_service_data:
-        worksheet_followup.append(row)
+        for row in followup_service_data:
+            worksheet_followup.append(row)
 
     default_sheet = workbook.get_sheet_by_name('Sheet')
     workbook.remove(default_sheet)

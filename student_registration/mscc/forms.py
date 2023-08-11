@@ -223,13 +223,13 @@ class MainForm(forms.ModelForm):
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
-        label=_('Primary phone number')
+        label=_('Secondary phone number')
     )
     second_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
-        label=_('Confirm primary phone number')
+        label=_('Confirm secondary phone number')
     )
     main_caregiver = forms.ChoiceField(
         label=_("Who is the Child\'s primary caregiver?"),

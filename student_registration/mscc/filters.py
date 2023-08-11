@@ -1,6 +1,11 @@
 from django.utils.translation import ugettext as _
 
-from django_filters import FilterSet, ModelChoiceFilter
+from django_filters import (
+    FilterSet,
+    ModelChoiceFilter,
+    ChoiceFilter,
+    CharFilter
+)
 
 from student_registration.locations.models import Center, Location
 from student_registration.students.models import Nationality
@@ -9,27 +14,17 @@ from .models import (
 )
 
 
-class CommonFilter(FilterSet):
-    # round = ModelChoiceFilter(queryset=CLMRound.objects.all(), empty_label=_('Round'))
-    # governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
-    # center = ModelChoiceFilter(queryset=Center.objects.filter(), empty_label=_('Center'))
-    child__nationality = ModelChoiceFilter(queryset=Nationality.objects.all(), empty_label=_('Nationality'))
-    # disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
+class MainFilter(FilterSet):
+    child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
+                                .order_by('name').distinct(), empty_label='Nationality')
 
-
-class MainFilter(CommonFilter):
+    child__first_name = CharFilter(lookup_expr='icontains' )
+    child__father_name = CharFilter(lookup_expr='icontains')
+    child__last_name = CharFilter(lookup_expr='icontains')
+    child__mother_fullname = CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = Registration
-        fields = {
-            # 'child__id_number': ['contains'],
-            # 'child__number': ['contains'],
-            'child__first_name': ['contains'],
-            'child__father_name': ['contains'],
-            'child__last_name': ['contains'],
-            'child__mother_fullname': ['contains'],
-            'child__nationality': ['exact'],
-            # 'center__governorate': ['exact'],
-            # 'center': ['exact'],
-        }
+        fields = [
+        ]
 
