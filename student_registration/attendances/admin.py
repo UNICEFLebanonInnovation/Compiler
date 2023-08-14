@@ -679,6 +679,12 @@ class CLMAttendanceAdmin(admin.ModelAdmin):
         'attendance_date',
         'day_off'
     )
+    search_fields = (
+        'school__name',
+        'school__number',
+        'registration_level',
+        'attendance_date'
+    )
 
 
 class CLMAttendanceStudentAdmin(admin.ModelAdmin):

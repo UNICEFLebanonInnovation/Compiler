@@ -614,11 +614,10 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
                 day_off = self.request.GET.get('day_off', '')
                 if school > 0 and registration_level != '' and day_off == 'no':
                     queryset = Bridging.objects.filter(
-                        partner=self.request.user.partner_id,
                                                        round__current_round_bridging=True,
                                                        school=school,
                                                        registration_level=registration_level)
-                    queryset = queryset.order_by('-id')
+                    queryset = queryset.order_by('student__first_name', 'student__father_name', 'student__last_name')
             data = []
             for line in queryset:
                 student = {
@@ -666,6 +665,10 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             return self.form_valid(form, attendance_student_formset)
         else:
             return self.form_invalid(form, attendance_student_formset)
+
+
+
+
 
     def get(self, request, *args, **kwargs):
         attendance_date = self.request.GET.get('attendance_date', '')
@@ -822,7 +825,7 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_formset(self, attendance_id):
         queryset = CLMAttendanceStudent.objects.filter(attendance_day__id=attendance_id)
-        queryset = queryset.order_by('-id')
+        queryset = queryset.order_by('student__first_name', 'student__father_name', 'student__last_name')
 
         data = []
         for line in queryset:
