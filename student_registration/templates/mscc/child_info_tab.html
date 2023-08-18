@@ -348,6 +348,26 @@
                                                                         </div>
                                                                     </div>
                                                                </div>
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Have siblings?</h4>
+                                                                          {{ instance.child.have_sibling }}
+                                                                          <br>
+                                                                          {% if instance.child.have_sibling == "Yes" %}
+                                                                              Any of the siblings have a disability?: {{ instance.child.siblings_have_disability }}
+                                                                          {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                               </div>
+
+                                                              <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-dark"><i class="lnr-users text-dark"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Is the mother pregnant or expecting?</h4>
+                                                                          {{ instance.child.mother_pregnant_expecting }}
+                                                                        </div>
+                                                                    </div>
+                                                               </div>
+
                                                             </div>
                                                         </div>
                                                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
@@ -482,7 +502,7 @@
                                 </div>
                             </div>
 
-  <!--Education history and current stituation-->
+  <!--Education history and current situation -->
   {% if instance.child_age > 2 %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationService' instance as result %}
@@ -553,6 +573,7 @@
                                                                 </div>
                                                                 {% endif %}
 
+                                                                {%  if result.education_program %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Education programme in Makani</h4>
@@ -576,6 +597,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                {% endif %}
 
                                                             </div>
                                                         </div>

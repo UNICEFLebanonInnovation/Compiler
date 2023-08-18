@@ -150,6 +150,7 @@ class PSSServiceForm(forms.ModelForm):
                 css_id='step-2'
             )
         )
+
     def save(self, request=None, instance=None, registry=None):
         validated_data = request.POST
 
@@ -1076,7 +1077,6 @@ class HealthNutritionServiceForm(forms.ModelForm):
                 self.add_error('ecd_counselling_date', 'This field is required')
             if not next_ecd_counselling_date:
                 self.add_error('next_ecd_counselling_date', 'This field is required')
-
 
         child_screened_malnutrition = cleaned_data.get("child_screened_malnutrition")
         child_malnutrition_screening = cleaned_data.get("child_malnutrition_screening")

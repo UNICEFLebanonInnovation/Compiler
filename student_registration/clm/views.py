@@ -25,13 +25,10 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from student_registration.backends.djqscsv import render_to_csv_response
 from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import Child, OutreachCaregiver, OutreachChild
+from student_registration.outreach.models import Child, OutreachChild
 from student_registration.outreach.serializers import ChildSerializer
-from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
-from student_registration.students.models import Person
 from .filters import (
     BLNFilter,
     ABLNFilter,
@@ -64,18 +61,13 @@ from .models import (
     CBECE_FC,
     RS_FC,
     GeneralQuestionnaire,
-    Center,
     Outreach,
     Bridging,
     Inclusion
 )
 from student_registration.schools.models import (
     School,
-    Section,
-    ClassRoom,
     CLMRound,
-    EducationalLevel,
-    PartnerOrganization,
 )
 from .forms import (
     BLNForm,
@@ -118,11 +110,11 @@ from .serializers import (
     RS_FCSerializer,
     GeneralQuestionnaireSerializer,
     OutreachSerializer,
-    CBECEExportSerializer,
     BridgingSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
     cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction, get_outreach_child
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 class CLMView(LoginRequiredMixin,
@@ -3691,6 +3683,16 @@ class BridgingListView(LoginRequiredMixin,
 
     filterset_class = BridgingFilter
 
+    def get_queryset(self):
+        qs = Bridging.objects.all()
+        if not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and self.request.user.partner:
+            qs = qs.filter(partner_id=self.request.user.partner_id)
+            if self.request.user.school:
+                qs = qs.filter(school_id=self.request.user.school_id)
+        elif not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and not self.request.user.partner:
+            qs = qs.none()
+
+        return qs
 
 
 @login_required(login_url='/users/login')
@@ -3712,7 +3714,6 @@ def bridging_export_data(request):
             school_id = request.user.school.id
         if school_id > 0:
             vw_bridging_data += " AND school_id =" + str(school_id)
-
 
     elif not clm_bridging_all and not is_staff and not request.user.partner:
         vw_bridging_data += " AND id = 0 "
@@ -3742,7 +3743,6 @@ def bridging_export_data(request):
     return response
 
 
-
 class BridgingPage(LoginRequiredMixin,
-                       TemplateView):
+                   TemplateView):
         template_name = 'clm/bridging.html'

@@ -29,19 +29,22 @@ def to_array(fields, obj):
 
 
 def generate_services(child_age, registry, user=None):
-    from .models import ProvidedServices, Packages
-    from student_registration.users.templatetags.custom_tags import has_group
+    try:
+        from .models import ProvidedServices, Packages
+        from student_registration.users.templatetags.custom_tags import has_group
 
-    packages = Packages.objects.filter(type=registry.type, age=child_age)
-    if user and has_group(user, 'MSCC_YOUTH'):
-        packages = packages.filter(category="Youth")
+        packages = Packages.objects.filter(type=registry.type, age=child_age)
+        if user and has_group(user, 'MSCC_YOUTH'):
+            packages = packages.filter(category="Youth")
 
-    for package in packages.all():
-        instance, created = ProvidedServices.objects.get_or_create(name=package.name,
-                                                                   registration=registry,
-                                                                   type=package.type,
-                                                                   category=package.category)
-        instance.save()
+        for package in packages.all():
+            instance, created = ProvidedServices.objects.get_or_create(name=package.name,
+                                                                       registration=registry,
+                                                                       type=package.type,
+                                                                       category=package.category)
+            instance.save()
+    except Exception as ex:
+        return False
 
 
 def regenerate_services(child_age, registry, user=None):
@@ -353,6 +356,8 @@ def create_attendance(data, center_id):
 def load_child_attendance(center_id, attendance_date, education_program, class_section):
     from datetime import datetime
 
+    attendance = None
+
     if attendance_date is not None:
         attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
 
@@ -427,9 +432,9 @@ class RegistrationResource(resources.ModelResource):
             'partner__name',
             'type',
             'center__name',
-            'center__governorate__name_en',
-            'center__caza__name_en',
-            'center__cadaster__name_en',
+            'center__governorate__name',
+            'center__caza__name',
+            'center__cadaster__name',
             'child__id',
             'child__number',
             'child__first_name',

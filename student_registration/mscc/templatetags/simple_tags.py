@@ -81,6 +81,27 @@ def have_service_category(category, obj):
 
 
 @register.simple_tag
+def have_education_programme(programme_type):
+    try:
+        programmes = ['BLN Level 1', 'BLN Level 2', 'BLN Level 3' 'ABLN Level 1', 'ABLN Level 2',
+                      'CBECE Level 1', 'CBECE Level 2', 'CBECE Level 3', 'RS Grade 7', 'RS Grade 8', 'RS Grade 9']
+        if programme_type in programmes:
+            return True
+    except Exception as ex:
+        return False
+
+
+@register.simple_tag
+def have_youth_programme(programme_type):
+    try:
+        programmes = ['YBLN Level 1', 'YBLN Level 2', 'YFS Level 1', 'YFS Level 2']
+        if programme_type in programmes:
+            return True
+    except Exception as ex:
+        return False
+
+
+@register.simple_tag
 def service_data(model_name, obj):
     try:
         model = apps.get_model('mscc', model_name)

@@ -258,7 +258,7 @@ class Registration(TimeStampedModel):
         program = self.education_service.all().first()
         if program:
             result = program.education_program
-        return  result
+        return result
 
     def get_absolute_url(self):
         return '/MSCC/Child-Profile/%d/' % self.pk
@@ -1052,6 +1052,12 @@ class EducationService(TimeStampedModel):
         ('RS Grade 8', _('RS Grade 8')),
         ('RS Grade 9', _('RS Grade 9')),
     )
+    YOUTH_PROGRAM = Choices(
+        ('YBLN Level 1', _('YBLN Level 1')),
+        ('YBLN Level 2', _('YBLN Level 2')),
+        ('YFS Level 1', _('YFS Level 1')),
+        ('YFS Level 2', _('YFS Level 2')),
+    )
     CLASS_SECTION = Choices(
         ('', '----------'),
         ('A', _('A')),
@@ -1060,6 +1066,13 @@ class EducationService(TimeStampedModel):
         ('D', _('D')),
         ('E', _('E')),
         ('F', _('F')),
+        ('G', _('G')),
+        ('H', _('H')),
+        ('I', _('I')),
+        ('J', _('J')),
+        ('K', _('K')),
+        ('L', _('L')),
+        ('M', _('M')),
     )
     registration = models.ForeignKey(
         Registration,

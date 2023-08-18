@@ -29,7 +29,7 @@
     <meta name="msapplication-TileImage" content="{% static 'images/favicons/ms-icon-144x144.png' %}">
     <meta name="theme-color" content="#ffffff">
 
-    <title>CLM | {% block head_title %}{% endblock %}</title>
+      <title>CLM | {% block head_title %}{% endblock %}</title>
 
     <meta name="description"
           content="Gridus vCard HTML Template is the professional responsive personal website template, based on the latest Bootstrap 3">
@@ -101,7 +101,7 @@
                 <ul id="nav" class="row nopadding cd-side-navigation">
                     <li class="col-xs-4 col-sm-3 nopadding menuitem ui-menu-color01" data-animation-duration="1000"
                         data-animation-delay="100">
-                        <a href="/" class="hvr-sweep-to-bottom"><i class="flaticon-insignia"></i><span>{% trans 'home' %}</span></a>
+                        <a href="{% url 'clm:bridging_list' %}" class="hvr-sweep-to-bottom"><i class="flaticon-insignia"></i><span>{% trans 'home' %}</span></a>
                     </li>
                   {% if request.user.is_authenticated %}
                     <li class="col-xs-4 col-sm-3 nopadding menuitem ui-menu-color02" data-animation-duration="1000"

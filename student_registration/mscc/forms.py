@@ -305,53 +305,53 @@ class MainForm(forms.ModelForm):
         required=True, to_field_name='id'
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)||(LB1)(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')
@@ -538,7 +538,7 @@ class MainForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    HTML('<span class="badge-form-3 badge-pill">20</span>'),
                     Div('cash_support_programmes', css_class='col-md-9 multiple-choice'),
                     css_class='row card-body',
                 ),
@@ -1097,8 +1097,8 @@ class ReferralForm(forms.ModelForm):
             form_action = reverse('mscc:referral_edit',
                                   kwargs={'registry': registry, 'pk': pk})
         if is_cbece == 'Yes':
-           self.fields['referred_formal_education'].required = True
-           self.fields['referred_school'].required = True
+            self.fields['referred_formal_education'].required = True
+            self.fields['referred_school'].required = True
 
         self.fields['is_cbece'].initial = is_cbece
         self.helper = FormHelper()

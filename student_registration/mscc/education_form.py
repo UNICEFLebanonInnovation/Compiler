@@ -346,6 +346,7 @@ class EducationAssessmentForm(forms.ModelForm):
                 css_id='step-1'
             ),
         )
+
     def save(self, request=None, instance=None, registry=None):
 
         validated_data = request.POST
@@ -501,9 +502,18 @@ class EducationServiceForm(forms.ModelForm):
         choices_education_status = list()
         if package_type == 'Walk-in-In-School':
             choices_education_status.append(('', _('----------')))
-            choices_education_status.append(('Currently registered in Formal Education school', _('Currently registered in Formal Education school')))
-            choices_education_status.append(('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')))
+            choices_education_status.append(('Currently registered in Formal Education school',
+                                             _('Currently registered in Formal Education school')))
+            choices_education_status.append(('Currently registered in Formal Education school but not attending',
+                                             _('Currently registered in Formal Education school but not attending')))
             self.fields['education_status'].choices = choices_education_status
+
+        display_edu_section = ''
+        if package_type != 'Core-Package':
+            display_edu_section = ' d-none'
+            self.fields['education_program'].required = False
+            self.fields['class_section'].required = False
+            self.fields['registration_date'].required = False
 
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:
@@ -519,7 +529,7 @@ class EducationServiceForm(forms.ModelForm):
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('education_status', css_class='col-md-6'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('dropout_date', css_class='col-md-3'),
+                    Div('dropout_date', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -529,7 +539,7 @@ class EducationServiceForm(forms.ModelForm):
                     Div('class_section', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('registration_date', css_class='col-md-3'),
-                    css_class='row card-body'
+                    css_class='row card-body'+display_edu_section
                 ),
                 css_id='step-1'
             ),

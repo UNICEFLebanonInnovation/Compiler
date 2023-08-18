@@ -563,12 +563,6 @@ def export_data(request):
     if nationality != '':
         vw_mscc_data_str += " AND child_nationality_id = " + nationality
 
-
-
-
-
-
-
     cursor.execute(vw_mscc_data_str)
     data = cursor.fetchall()
 

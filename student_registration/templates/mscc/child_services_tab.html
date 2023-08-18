@@ -85,9 +85,9 @@
   <!-- Education -->
 {% service_data 'EducationService' instance as result1 %}
 {% have_service_category 'Education' instance as result2 %}
+{% have_education_programme result1.education_program as result3 %}
 
-  {% if result1 and result2 and result1.education_program and "BLN" in result1.education_program or "ABLN" in result1.education_program or "RS" in result1.education_program  or "CBECE" in result1.education_program%}
-
+  {% if result1 and result2 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
@@ -1347,8 +1347,9 @@
   <!-- Youth -->
 {% service_data 'EducationService' instance as result1 %}
 {% have_service_category 'Youth' instance as result2 %}
+{% have_youth_programme result1.education_program as result3 %}
 
-  {% if result1 and result2 and result1.education_program and "YBLN" in result1.education_program or "YFS" in result1.education_program %}
+  {% if result1 and result2 and result1.education_program and result3 %}
   {% service_data 'EducationProgrammeAssessment' instance as result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
