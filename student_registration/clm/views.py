@@ -2782,6 +2782,7 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
+
 class BridgingViewSet(mixins.RetrieveModelMixin,
                  mixins.ListModelMixin,
                  mixins.CreateModelMixin,

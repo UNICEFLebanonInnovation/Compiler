@@ -17,6 +17,12 @@ from student_registration.attendances.views import (
     AbsenteeViewSet,
     AttendancesExportViewSet,
 )
+from student_registration.clm.api_views import (
+    BridgingListViewSet,
+    SchoolListViewSet,
+    TeacherListViewSet,
+    AttendanceListViewSet
+)
 from student_registration.students.views import (
     StudentViewSet,
     StudentSearchViewSet,
@@ -76,6 +82,11 @@ api = routers.SimpleRouter()
 # api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 # api.register(r'absentees', AbsenteeViewSet, base_name='absentees')
 # api.register(r'export-attendances', AttendancesExportViewSet, base_name='export_attendances')
+
+api.register(r'dirasa/list', BridgingListViewSet, base_name='dirasa-list')
+api.register(r'dirasa/schools', SchoolListViewSet, base_name='dirasa-schools')
+api.register(r'dirasa/teachers', TeacherListViewSet, base_name='dirasa-teachers')
+api.register(r'dirasa/attendances', AttendanceListViewSet, base_name='dirasa-attendances')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'students-search', StudentSearchViewSet, base_name='students-search')

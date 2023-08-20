@@ -185,7 +185,7 @@ class TeacherListView(LoginRequiredMixin,
 
         if clm_bridging_all or is_staff:
             queryset = Teacher.objects.all()
-        else :
+        else:
             school_id = 0
             partner_id = 0
 
@@ -206,6 +206,7 @@ class TeacherListView(LoginRequiredMixin,
                 queryset = queryset.none()
 
         return queryset
+
 
 class TeacherAddView(LoginRequiredMixin,
                  GroupRequiredMixin,

@@ -666,10 +666,6 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
         else:
             return self.form_invalid(form, attendance_student_formset)
 
-
-
-
-
     def get(self, request, *args, **kwargs):
         attendance_date = self.request.GET.get('attendance_date', '')
         school = self.request.GET.get('school', '')
@@ -974,7 +970,6 @@ class StudentConsecutiveAbsenceTracking:
         absence.update_absence_statisics(current_student_absence.absence_days, current_student_absence.absence_ending_date, current_student_absence.consecutive_dates)
         absence.save()
 
-
     def check_update_absence_date(current_student_absence,absence_date):
 
         if current_student_absence.absence_starting_date is None:
@@ -1067,6 +1062,7 @@ class AttendanceAbsenceView(FormView):
     def form_valid(self, form):
         return super(AttendanceAbsenceView, self).form_valid(form)
 
+
 @login_required(login_url='/users/login')
 def absence_export(request,number_of_absences, total_days):
 
@@ -1092,12 +1088,8 @@ def absence_export(request,number_of_absences, total_days):
     student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
     student_ids = list(set(student_ids))
 
-
-    consecutive_absent_students =  CLMStudentAbsences.objects.filter(student_id__in= student_ids)\
+    consecutive_absent_students = CLMStudentAbsences.objects.filter(student_id__in= student_ids)\
                                    .order_by('student_id','absence_starting_date').all()
-
-
-
 
     buffer = io.BytesIO()
 
@@ -1156,6 +1148,7 @@ def absence_export(request,number_of_absences, total_days):
 
     return response
 
+
 @login_required(login_url='/users/login')
 def attendance_export(request):
     current_round = CLMRound.objects.all()
@@ -1175,7 +1168,6 @@ def attendance_export(request):
         if request.user.school_id:
             school_id = request.user.school_id
             vw_data_str += "AND school_id = " + str(school_id) + " "
-
 
     vw_data_str += "ORDER BY attendance_date "
     cursor.execute(vw_data_str)
@@ -1201,6 +1193,7 @@ def attendance_export(request):
     workbook.save(response)
 
     return response
+
 
 @login_required(login_url='/users/login')
 def total_attendance_export(request):
@@ -1274,6 +1267,7 @@ def total_attendance_export(request):
 
     return response
 
+
 @login_required(login_url='/users/login')
 def consecutive_absence_export(request):
     current_round = CLMRound.objects.all()
@@ -1283,7 +1277,6 @@ def consecutive_absence_export(request):
     buffer = io.BytesIO()
 
     wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
-
 
     # Sheet header, first row
     font_style = xlwt.XFStyle()
@@ -1371,8 +1364,6 @@ def consecutive_absence_export(request):
         if total_absent_students:
             ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_attendance_days,font_style)
             ws_consecutive_absences.write(row_num_student, 11, total_absent_students.total_absence_days,font_style)
-
-
 
     wb_student.save(buffer)
 
