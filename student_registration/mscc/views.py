@@ -549,9 +549,9 @@ def export_data(request):
     mother_fullname = request.GET.get('mother_fullname', '')
     nationality = request.GET.get('nationality', '')
 
-    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false' AND center_id >0   "
-    if center_id > 0:
-        vw_mscc_data_str += " AND center_id = " + str(center_id)
+    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false'  "
+    # if center_id > 0:
+    vw_mscc_data_str += " AND center_id = " + str(center_id)
     if first_name != '':
         vw_mscc_data_str += " AND child_first_name LIKE '%" + first_name + "%'"
     if father_name != '':
