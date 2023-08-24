@@ -17,6 +17,11 @@ urlpatterns = [
         name='child_edit'
     ),
     url(
+        regex=r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.MainMarkDeleteView,
+        name='child_mark_deleted'
+    ),
+    url(
         regex=r'^export/$',
         view=views.export_data,
         name='export'

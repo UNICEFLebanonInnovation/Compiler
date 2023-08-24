@@ -19,4 +19,34 @@ $(document).ready(function() {
             "_blank")
     });
 
+    $( ".delete-student" ).on( "click", function(e) {
+
+        e.preventDefault();
+
+        var buttonId = $(this).attr("id");
+        var registrationId = $(this).data("registration-id");
+        var parentTR = $(this).closest('tr');
+
+        var confirmed = confirm("Are you sure you want to delete this student?");
+        requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
+        if (confirmed) {
+            $.ajax({
+                url: "/MSCC/Child-Mark-Delete/" + registrationId + "/",
+                type: "GET",
+                headers: requestHeaders,
+                success: function(data) {
+                    console.log(parentTR.html());
+                    parentTR.remove();
+                },
+                error: function(error) {
+                    // Handle error if needed
+                }
+            });
+        } else {
+            console.log("User canceled marking as deleted for student with ID: " + studentId);
+        }
+    } );
 });
+

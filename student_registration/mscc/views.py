@@ -17,7 +17,6 @@ from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
-
 from fuzzywuzzy import fuzz
 
 from .filters import (
@@ -182,6 +181,20 @@ class MainEditView(LoginRequiredMixin,
         instance = Registration.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(MainEditView, self).form_valid(form)
+
+
+def MainMarkDeleteView(request, pk):
+    if request.user.is_authenticated:
+        try:
+            registration = Registration.objects.get(id=pk)
+            registration.deleted = True
+            registration.save()
+            result = {"isSuccessful": True}
+        except Registration.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
 
 class MainListView(LoginRequiredMixin,
