@@ -65,6 +65,9 @@ class Registration(TimeStampedModel):
              _('Household chores (includes domestic works and caring for siblings or their caregivers)')),
             ('Mechanic shop', _('Mechanic shop')),
             ('Other services', _('Other services')),
+            ('Domestic work at other houses', _('Domestic work at other houses')),
+            ('In street connected work', _('In street connected work')),
+            ('Money exchange', _('Money exchange')),
     )
     LABOUR_INCOME = Choices(
             ('', '----------'),
@@ -80,6 +83,9 @@ class Registration(TimeStampedModel):
             ('Exposed to dust, fume or gas', _('Exposed to dust, fume or gas')),
             ('Maneuvers dangerous tools such as knives or operating heavy machinery', _('Maneuvers dangerous tools such as knives or operating heavy machinery')),
             ('Required to work with chemicals, such as pesticides, glues and similar, or explosives', _('Required to work with chemicals, such as pesticides, glues and similar, or explosives')),
+            ('Stating exposed to fumes (including argile and cigarettes)  and gas', _('Stating exposed to fumes (including argile and cigarettes)  and gas')),
+            ('Loud noise or vibration', _('Loud noise or vibration')),
+            ('Exposed to any other work condition that are bad for his/her health and safety', _('Exposed to any other work condition that are bad for his/her health and safety')),
     )
     IDENTIFICATION_SOURCE = Choices(
             ('', '----------'),

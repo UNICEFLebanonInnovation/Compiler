@@ -68,7 +68,8 @@ class Child(TimeStampedModel):
         ('Separated', _('Separated')),
         ('Living with one caregivers', _('Living with one caregivers')),
         ('Living with caregivers', _('Living with caregivers')),
-        ('Child headed household ', _('Child headed household ')),
+        ('Child headed household ', _('Child headed household')),
+        ('Married and living with extended family', _('Married and living with extended family')),
     )
 
     first_name = models.CharField(
@@ -166,6 +167,13 @@ class Child(TimeStampedModel):
         null=True,
         choices=MARITAL_STATUS,
         verbose_name=_('Child’s Marital Status')
+    )
+    pregnant_expecting_children = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child pregnant or expecting children?')
     )
     have_children = models.CharField(
         max_length=50,

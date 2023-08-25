@@ -125,6 +125,11 @@ class MainForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Child.MARITAL_STATUS,
     )
+    child_pregnant_expecting_children = forms.ChoiceField(
+        label=_("Is the child pregnant or expecting children?"),
+        widget=forms.Select, required=False,
+        choices=Child.YES_NO,
+    )
     child_have_children = forms.ChoiceField(
         label=_("Does the child have children"),
         widget=forms.Select, required=True,
@@ -507,6 +512,11 @@ class MainForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('child_marital_status', css_class='col-md-4'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('child_pregnant_expecting_children', css_class='col-md-4'),
+                    css_class='row card-body',
+                ),
+                Div(
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('child_have_children', css_class='col-md-4', css_id='child_have_children'),
                     HTML('<span class="badge-form-0 badge-pill"></span>'),
@@ -736,6 +746,12 @@ class MainForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
+
+        child_gender = cleaned_data.get("child_gender")
+        child_pregnant_expecting_children = cleaned_data.get("child_pregnant_expecting_children")
+        if child_gender and not child_pregnant_expecting_children:
+            self.add_error('child_pregnant_expecting_children', 'This field is required')
+
 
         child_nationality = cleaned_data.get("child_nationality")
         child_nationality_other = cleaned_data.get("child_nationality_other")
@@ -988,6 +1004,7 @@ class MainForm(forms.ModelForm):
             'child_living_arrangement',
             'child_disability',
             'child_marital_status',
+            'child_pregnant_expecting_children',
             'child_have_children',
             'child_children_number',
             'child_have_sibling',

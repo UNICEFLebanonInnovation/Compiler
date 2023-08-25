@@ -105,6 +105,10 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
+    $(document).on('change', 'select#id_child_gender', function(){
+        reorganizeForm();
+    });
+
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
 
@@ -483,6 +487,17 @@ function isAddPage()
 
 function reorganizeForm()
 {
+//  child_gender
+    var child_gender = $('select#id_child_gender').val();
+
+    if(child_gender =='Female'){
+        $('div#div_id_child_pregnant_expecting_children').removeClass('d-none');
+    }
+    else{
+        $('div#div_id_child_pregnant_expecting_children').addClass('d-none');
+        $('#id_child_pregnant_expecting_children').val('');
+    }
+
 //    Child Nationality
     var child_nationality = $('select#id_child_nationality').val();
     $('div#div_id_child_nationality_other').addClass('d-none');
