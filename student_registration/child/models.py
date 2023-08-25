@@ -447,7 +447,7 @@ class Child(TimeStampedModel):
         max_length=500,
         blank=False,
         null=True,
-        verbose_name=_('Caretaker Mother\'s Full Name')
+        verbose_name=_('Caregiver  Mother Full Name')
     )
     main_caregiver_nationality = models.ForeignKey(
         Nationality,
@@ -516,7 +516,7 @@ class Child(TimeStampedModel):
         # 6	"Other nationality"
         elif self.id_type.id == 6:
             return  self.other_number
-        # 7 "Child have no ID"
+        # 7 "Caregiver has no ID"
         else:
             return self.id_type.id
 
@@ -540,7 +540,7 @@ class Child(TimeStampedModel):
         # 6	"Other nationality"
         elif self.id_type.id == 6:
             return  self.parent_other_number
-        # 7 "Child have no ID"
+        # 7 "Caregiver has no ID"
         else:
             return self.id_type.id
 

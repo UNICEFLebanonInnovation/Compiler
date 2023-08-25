@@ -260,7 +260,7 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     caregiver_mother_name = forms.CharField(
-        label=_("Caretaker Mother\'s Full Name"),
+        label=_("Caregiver Mother Full Name"),
         widget=forms.TextInput, required=True
     )
     have_labour = forms.ChoiceField(

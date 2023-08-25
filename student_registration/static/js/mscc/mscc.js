@@ -132,7 +132,7 @@ $(document).ready(function() {
         $('#id_parent_other_number_confirm').val('');
         $('#id_other_number').val('');
         $('#id_other_number_confirm').val('');
-//        Child have no ID = 7
+//        Caregiver has no ID = 7
         if($(this).val() != 7){
             return true;
         }
@@ -564,7 +564,7 @@ function reorganizeForm()
     4	"Palestinian national ID"
     5	"Lebanese national ID"
     6	"Other nationality"
-    7	"Child have no ID" */
+    7	"Caregiver has no ID" */
 
     $('div.child_id').addClass('d-none');
     if(id_type == 1){

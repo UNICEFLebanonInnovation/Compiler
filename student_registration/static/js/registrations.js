@@ -298,7 +298,7 @@ $(document).ready(function() {
         $('#id_other_number_confirm').val('');
 
 
-        if($(this).val() != 'Child have no ID'){
+        if($(this).val() != 'Caregiver has no ID'){
 
             return true;
         }
