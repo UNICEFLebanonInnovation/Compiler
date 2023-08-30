@@ -43,19 +43,25 @@
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.name }} - {{ request.user.center.type }}
                                                 </li>
+
+
                                             </ol>
                                         </nav>
                                     </div>
                                 </div>
                             </div>
                         <div class="page-title-actions"></div>
-
                         </div>
 </div>
 
+<div class="row">
+{% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
+                        <div class="alert alert-danger fade show" role="alert"> You dont have a center assigned please contact the administrator</div>
+{% endif %}
 
-                    <div class="row">
-{% if request.user|has_group:"MSCC_FULL" %}
+</div>
+<div class="row">
+{% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
                         <div class="col-md-6 col-lg-3">
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
                                 <div class="widget-chat-wrapper-outer">

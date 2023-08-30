@@ -213,7 +213,18 @@ class MainListView(LoginRequiredMixin,
     filterset_class = MainFilter
 
     def get_queryset(self):
-        return Registration.objects.filter(center=self.request.user.center_id, deleted=False).order_by('-id')
+        user = self.request.user
+        center_id = user.center_id
+        partner_id = user.partner_id
+
+        if has_group(user, 'MSCC_UNICEF'):
+            return Registration.objects.filter(deleted=False).order_by('-id')
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            return Registration.objects.filter(partner=partner_id, deleted=False).order_by('-id')
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            return Registration.objects.filter(center=center_id, deleted=False).order_by('-id')
+
+        return Registration.objects.none()
 
     def get_table_class(self):
 
@@ -553,9 +564,10 @@ class ChildProfilePreview(LoginRequiredMixin,
 def export_data(request):
     from django.db import connection
     cursor = connection.cursor()
-    center_id = 0
-    if request.user.center_id:
-        center_id = request.user.center_id
+    user = request.user
+    center_id = user.center_id
+    partner_id = user.partner_id
+
     first_name = request.GET.get('first_name', '')
     last_name = request.GET.get('last_name', '')
     father_name = request.GET.get('father_name', '')
@@ -563,8 +575,17 @@ def export_data(request):
     nationality = request.GET.get('nationality', '')
 
     vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false'  "
-    # if center_id > 0:
-    vw_mscc_data_str += " AND center_id = " + str(center_id)
+
+    if has_group(user, 'MSCC_UNICEF'):
+        vw_mscc_data_str += " AND id>0 "
+    elif has_group(user, 'MSCC_PARTNER') and partner_id:
+        vw_mscc_data_str += " AND partner_id = " + str(partner_id)
+    elif has_group(user, 'MSCC_CENTER') and center_id:
+        vw_mscc_data_str += " AND center_id = " + str(center_id)
+    else:
+        # return empty
+        vw_mscc_data_str += " AND id=0 "
+
     if first_name != '':
         vw_mscc_data_str += " AND child_first_name LIKE '%" + first_name + "%'"
     if father_name != '':
@@ -575,6 +596,7 @@ def export_data(request):
         vw_mscc_data_str += " AND child_mother_fullname LIKE '%" + mother_fullname + "%'"
     if nationality != '':
         vw_mscc_data_str += " AND child_nationality_id = " + nationality
+
 
     cursor.execute(vw_mscc_data_str)
     data = cursor.fetchall()

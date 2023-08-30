@@ -48,6 +48,13 @@ class Child(TimeStampedModel):
         ('Widowed', _('Widowed')),
         ('Single', _('Single')),
     )
+
+    HAVE_CHILDREN = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No")),
+        ('Child pregnant or expecting children', _('Child pregnant or expecting children')),
+    )
     MAIN_CAREGIVER = Choices(
         ('', '----------'),
         ('Mother', _('Mother')),
@@ -168,18 +175,11 @@ class Child(TimeStampedModel):
         choices=MARITAL_STATUS,
         verbose_name=_('Child’s Marital Status')
     )
-    pregnant_expecting_children = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-        verbose_name=_('Is the child pregnant or expecting children?')
-    )
     have_children = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=YES_NO,
+        choices=HAVE_CHILDREN,
         verbose_name=_('Does the child have children?')
     )
     children_number = models.IntegerField(
@@ -526,7 +526,7 @@ class Child(TimeStampedModel):
             return  self.other_number
         # 7 "Caregiver has no ID"
         else:
-            return self.id_type.id
+            return ""
 
     @property
     def caregiver_id_number(self):
@@ -550,7 +550,7 @@ class Child(TimeStampedModel):
             return  self.parent_other_number
         # 7 "Caregiver has no ID"
         else:
-            return self.id_type.id
+            return ""
 
     def nationality_name(self):
         if self.nationality:

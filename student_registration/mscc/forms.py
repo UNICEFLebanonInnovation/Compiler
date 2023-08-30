@@ -125,15 +125,10 @@ class MainForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Child.MARITAL_STATUS,
     )
-    child_pregnant_expecting_children = forms.ChoiceField(
-        label=_("Is the child pregnant or expecting children?"),
-        widget=forms.Select, required=False,
-        choices=Child.YES_NO,
-    )
     child_have_children = forms.ChoiceField(
         label=_("Does the child have children"),
         widget=forms.Select, required=True,
-        choices=Child.YES_NO,
+        choices=Child.HAVE_CHILDREN,
     )
     child_children_number = forms.IntegerField(
         label=_('If yes, How many?'),
@@ -326,14 +321,14 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Cargiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+            'Confirm Cargiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1))-[0-9]{8}$',
@@ -395,42 +390,42 @@ class MainForm(forms.ModelForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the caretaker')
+        label=_('Lebanese ID number of the Cargiver')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the caretaker')
+        label=_('Confirm Lebanese ID number of the Cargiver')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the Caretaker (Mandatory)')
+        label=_('National ID number of the Cargiver (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+        label=_('Confirm National ID number of the Cargiver (Mandatory)')
     )
     parent_sop_national_number = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Palestinian ID number of the Cargiver (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
         # regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+        label=_('Confirm Palestinian ID number of the Cargiver (Mandatory)')
     )
 
     parent_other_number = forms.CharField(
         required=False,
-        label=_('ID number of the Caretaker (Mandatory)')
+        label=_('ID number of the Cargiver (Mandatory)')
     )
     parent_other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the Caretaker (Mandatory)')
+        label=_('Confirm ID number of the Cargiver (Mandatory)')
     )
     other_number = forms.CharField(
         required=False,
@@ -512,8 +507,6 @@ class MainForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('child_marital_status', css_class='col-md-4'),
-                    HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('child_pregnant_expecting_children', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -746,11 +739,6 @@ class MainForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
-
-        child_gender = cleaned_data.get("child_gender")
-        child_pregnant_expecting_children = cleaned_data.get("child_pregnant_expecting_children")
-        if child_gender and not child_pregnant_expecting_children:
-            self.add_error('child_pregnant_expecting_children', 'This field is required')
 
 
         child_nationality = cleaned_data.get("child_nationality")
@@ -1004,7 +992,6 @@ class MainForm(forms.ModelForm):
             'child_living_arrangement',
             'child_disability',
             'child_marital_status',
-            'child_pregnant_expecting_children',
             'child_have_children',
             'child_children_number',
             'child_have_sibling',

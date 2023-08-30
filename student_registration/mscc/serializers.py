@@ -83,7 +83,6 @@ class MainSerializer(serializers.ModelSerializer):
     child_id_number = serializers.CharField(source='child.id_number', required=False)
     child_fe_unique_id = serializers.CharField(source='child.fe_unique_id', required=False)
     child_marital_status = serializers.CharField(source='child.marital_status', required=False)
-    child_pregnant_expecting_children = serializers.CharField(source='child.pregnant_expecting_children', required=False)
     child_have_children = serializers.CharField(source='child.have_children', required=False)
     child_children_number = serializers.CharField(source='child.children_number', required=False)
     child_have_sibling = serializers.CharField(source='child.have_sibling', required=False)
@@ -195,7 +194,6 @@ class MainSerializer(serializers.ModelSerializer):
             'child_disability',
             'child_disability_id',
             'child_marital_status',
-            'child_pregnant_expecting_children',
             'child_have_children',
             'child_children_number',
             'child_have_sibling',

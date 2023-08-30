@@ -42,7 +42,6 @@ class ChildSerializer(serializers.ModelSerializer):
             'living_arrangement',
             'disability',
             'marital_status',
-            'pregnant_expecting_children',
             'have_children',
             'children_number',
             'have_sibling',

@@ -10,12 +10,14 @@
         <a type="button" href="/MSCC/Child-Profile/{{ record.id }}/" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-contact btn-icon-wrapper"> </i></button>
           {% trans "View Profile" %}</a>
+       {% if user|has_group:"MSCC_CENTER" and  user.center %}
         <a type="button" href="/MSCC/Child-Edit/{{ record.id }}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
           {% trans "Edit" %}</a>
         <a type="button" href="" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
           <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-delete btn-icon-wrapper"> </i></button>
           {% trans "Delete" %}</a>
+      {% endif %}
 
 <div tabindex="-1" class="dropdown-divider"></div>
 

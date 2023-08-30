@@ -491,7 +491,9 @@ function reorganizeForm()
     var child_gender = $('select#id_child_gender').val();
 
     if(child_gender =='Female'){
-        $('div#div_id_child_pregnant_expecting_children').removeClass('d-none');
+        $("#id_child_have_children").append('<option value="Child pregnant or expecting children">Child pregnant or expecting children</option>');
+    } else {
+        $("#id_child_have_children option[value='Child pregnant or expecting children']").remove();
     }
     else{
         $('div#div_id_child_pregnant_expecting_children').addClass('d-none');
