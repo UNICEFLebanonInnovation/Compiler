@@ -664,6 +664,7 @@ class PSSService(models.Model):
         choices=PROTECTION_CONCERN,
         verbose_name=_('Does the facilitator identify any child protection concern or has the caregiver expressed any of the below signs on their children?')
     )
+
     class Meta:
         ordering = ['id']
         verbose_name = "PSS Service"
@@ -1008,6 +1009,7 @@ class HealthNutritionReferral(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('If yes (please add name of organization referred to)')
     )
+
     class Meta:
         ordering = ['id']
         verbose_name = "Health & Nutrition Referral"

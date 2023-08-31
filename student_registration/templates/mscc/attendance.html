@@ -60,6 +60,12 @@
 </div>
 
 <div class="row">
+{% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
+  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
+{% endif %}
+</div>
+
+<div class="row">
 <div class="col-md-4">
                                     <div class="main-card mb-3 card">
                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
@@ -80,7 +86,6 @@
                                                       </div>
                                                     <input type="text" class="form-control" data-toggle="datepicker" id="attendance_date" value="{{ attendance_date }}"/>
                                                   </div>
-
                                           </div>
 
                                           <div class="form-row" style="padding-bottom: 20px;">
@@ -151,7 +156,9 @@
 
                                         <div class="d-block text-right card-footer">
                                             <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
+{% if request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
                                             <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+{% endif %}
                                         </div>
                                       </div>
                                     </div>

@@ -56,10 +56,10 @@
 
 <div class="row">
 {% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
-                        <div class="alert alert-danger fade show" role="alert"> You dont have a center assigned please contact the administrator</div>
+  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
 {% endif %}
-
 </div>
+
 <div class="row">
 {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
                         <div class="col-md-6 col-lg-3">
@@ -177,6 +177,7 @@
                             </div>
                         </div>
 {% endif %}
+{% if request.user|has_group:"MSCC_CENTER" and request.user.center.id or request.user|has_group:"MSCC_PARTNER" %}
                         <div class="col-md-6 col-lg-3">
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
                                 <div class="widget-chat-wrapper-outer">
@@ -205,6 +206,7 @@
                                 </div>
                             </div>
                         </div>
+{% endif %}
 
                           <!--<div class="col-md-6 col-lg-3">-->
                               <!--<div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">-->

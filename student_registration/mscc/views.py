@@ -20,12 +20,15 @@ from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 
 from .filters import (
-    MainFilter
+    MainFilter,
+    FullFilter
 )
 from .tables import (
     BootstrapTable,
     MainTable,
     YouthMainTable,
+    FullTable,
+    PartnerTable,
 )
 from .models import (
     Registration,
@@ -40,7 +43,6 @@ from .forms import (
 from .serializers import (
     MainSerializer
 )
-
 
 from .utils import *
 
@@ -115,7 +117,7 @@ class MainAddView(LoginRequiredMixin,
     template_name = 'mscc/main_form.html'
     form_class = MainForm
     success_url = '/MSCC/List/'
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
@@ -152,7 +154,7 @@ class MainEditView(LoginRequiredMixin,
     template_name = 'mscc/main_form.html'
     form_class = MainForm
     success_url = '/MSCC/List/'
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return reverse('mscc:child_profile', kwargs={'pk': self.request.session.get('instance_id')})
@@ -231,9 +233,26 @@ class MainListView(LoginRequiredMixin,
         """
         Return the class to use for the table.
         """
+        if has_group(self.request.user, 'MSCC_UNICEF'):
+            return FullTable
+        elif has_group(self.request.user, 'MSCC_PARTNER'):
+            return PartnerTable
+        elif has_group(self.request.user, 'MSCC_CENTER'):
+            return self.table_class
+
         if not has_group(self.request.user, 'MSCC_FULL'):
             return YouthMainTable
         return self.table_class
+
+    def get_filterset_class(self):
+        if has_group(self.request.user, 'MSCC_UNICEF'):
+            return FullFilter
+        elif has_group(self.request.user, 'MSCC_PARTNER'):
+            return self.filterset_class
+        elif has_group(self.request.user, 'MSCC_CENTER'):
+            return self.filterset_class
+
+        return self.filterset_class
 
 
 class MainViewSet(mixins.RetrieveModelMixin,
@@ -331,7 +350,7 @@ class ReferralFormView(LoginRequiredMixin,
     template_name = 'mscc/referral_form.html'
     form_class = ReferralForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))

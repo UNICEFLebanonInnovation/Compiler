@@ -48,7 +48,7 @@ class CenterAdminForm(forms.ModelForm):
         widget=autocomplete.ModelSelect2(url='location_autocomplete'),
         label=_('Cadaster')
     )
-    p_code =  forms.CharField(
+    p_code = forms.CharField(
         label=_("P-Code"),
         widget=forms.TextInput, required=True
     )

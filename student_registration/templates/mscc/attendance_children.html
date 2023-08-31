@@ -54,10 +54,11 @@
                                                                           <option value="Other" {% if item.absence_reason == 'Other'  %}  selected {% endif %} >Other</option>
                                                                       </select>
                                                                   <input id="absence_reason_other_{{ item.child_id }}" type="text" class="form-control absence_reason_other" placeholder="Absence Other reasons" value="{{ item.absence_reason_other }}">
+                                                                </div>
                                                               </div>
                                                             </div>
-                                                        </div>
 
+                                                        </div>
                                                 </div>
                                             </li>
   {% endfor %}

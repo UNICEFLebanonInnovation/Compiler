@@ -19,7 +19,7 @@ class InclusionFormView(LoginRequiredMixin,
     template_name = 'mscc/service_inclusion_form.html'
     form_class = InclusionServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -56,7 +56,7 @@ class DigitalFormView(LoginRequiredMixin,
     template_name = 'mscc/service_digital_form.html'
     form_class = DigitalServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -93,7 +93,7 @@ class HealthNutritionFormView(LoginRequiredMixin,
     template_name = 'mscc/service_health_nutrition_form.html'
     form_class = HealthNutritionServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -124,13 +124,14 @@ class HealthNutritionFormView(LoginRequiredMixin,
         form.save(request=self.request, registry=registry, instance=instance)
         return super(HealthNutritionFormView, self).form_valid(form)
 
+
 class HealthNutritionReferralFormView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
     template_name = 'mscc/service_health_nutrition_referral_form.html'
     form_class = HealthNutritionReferralForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/'.format(str(self.kwargs['registry']))
@@ -167,7 +168,7 @@ class PSSFormView(LoginRequiredMixin,
     template_name = 'mscc/service_pss_form.html'
     form_class = PSSServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -204,7 +205,7 @@ class YouthKitServiceFormView(LoginRequiredMixin,
     template_name = 'mscc/service_youth_kit_form.html'
     form_class = YouthKitServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -241,7 +242,7 @@ class FollowUpFormView(LoginRequiredMixin,
     template_name = 'mscc/service_follow_up_form.html'
     form_class = FollowUpServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -278,7 +279,7 @@ class YouthAssessmentFormView(LoginRequiredMixin,
     template_name = 'mscc/service_youth_assessment_form.html'
     form_class = YouthAssessmentForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -315,7 +316,7 @@ class YouthReferralFormView(LoginRequiredMixin,
     template_name = 'mscc/service_youth_referral_form.html'
     form_class = YouthReferralForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -369,7 +370,7 @@ class RecreationalFormView(LoginRequiredMixin,
     template_name = 'mscc/service_recreational_form.html'
     form_class = RecreationalForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))

@@ -740,7 +740,6 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
-
         child_nationality = cleaned_data.get("child_nationality")
         child_nationality_other = cleaned_data.get("child_nationality_other")
         if child_nationality and child_nationality.id == 6 and not child_nationality_other:

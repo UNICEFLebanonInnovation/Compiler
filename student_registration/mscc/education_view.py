@@ -16,7 +16,7 @@ class EducationAssessmentFormView(LoginRequiredMixin,
     template_name = 'mscc/service_education_assessment_form.html'
     form_class = EducationAssessmentForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -55,7 +55,7 @@ class DiagnosticAssessmentFormView(LoginRequiredMixin,
     template_name = 'mscc/service_diagnostic_assessment_form.html'
     form_class = DiagnosticAssessmentForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -93,7 +93,7 @@ class EducationServiceFormView(LoginRequiredMixin,
     template_name = 'mscc/service_education_service_form.html'
     form_class = EducationServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -134,7 +134,7 @@ class EducationRSServiceFormView(LoginRequiredMixin,
     template_name = 'mscc/service_education_rs_service_form.html'
     form_class = EducationRSServiceForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -171,7 +171,7 @@ class EducationGradingFormView(LoginRequiredMixin,
     template_name = 'mscc/service_education_grading_form.html'
     form_class = EducationGradingForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -220,7 +220,7 @@ class YouthScoringFormView(LoginRequiredMixin,
     template_name = 'mscc/service_youth_scoring_form.html'
     form_class = YouthScoringForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
@@ -271,7 +271,7 @@ class EducationSchoolGradingFormView(LoginRequiredMixin,
     template_name = 'mscc/service_school_grading_form.html'
     form_class = EducationSchoolGradingForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
