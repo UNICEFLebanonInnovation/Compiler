@@ -492,12 +492,10 @@ function reorganizeForm()
 
     if(child_gender =='Female'){
         $("#id_child_have_children").append('<option value="Child pregnant or expecting children">Child pregnant or expecting children</option>');
-    } else {
-        $("#id_child_have_children option[value='Child pregnant or expecting children']").remove();
     }
-    else{
-        $('div#div_id_child_pregnant_expecting_children').addClass('d-none');
-        $('#id_child_pregnant_expecting_children').val('');
+    else
+     {
+        $("#id_child_have_children option[value='Child pregnant or expecting children']").remove();
     }
 
 //    Child Nationality
@@ -506,13 +504,15 @@ function reorganizeForm()
 
     if(child_nationality == 6){
         $('#div_id_child_nationality_other').removeClass('d-none');
-    }else{
+    }
+    else{
         $('#id_child_nationality_other').val('');
     }
 
     if(child_nationality == 5 && $('#id_type').val() == 'Walk-in-In-School'){
         $('#child_fe_unique_id_block').removeClass('d-none');
-    }else{
+    }
+    else{
         $('#child_fe_unique_id_block').addClass('d-none');
         $('#id_child_fe_unique_id').val('');
     }
