@@ -33,6 +33,7 @@ from student_registration.schools.models import (
 from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service
+import datetime
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
 DAYS.insert(0, ('', '---------'))
@@ -739,6 +740,15 @@ class MainForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
+
+        # check if date is valid
+        year = int(cleaned_data.get("child_birthday_year"))
+        month = int(cleaned_data.get("child_birthday_month"))
+        day = int(cleaned_data.get("child_birthday_day"))
+        try:
+            datetime.datetime(year, month, day)
+        except ValueError:
+            self.add_error('child_birthday_year', 'The date is not valid.')
 
         child_nationality = cleaned_data.get("child_nationality")
         child_nationality_other = cleaned_data.get("child_nationality_other")

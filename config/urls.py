@@ -27,6 +27,7 @@ from student_registration.students.views import (
     StudentViewSet,
     StudentSearchViewSet,
     StudentAutocomplete,
+    TeacherViewSet
 )
 from student_registration.schools.views import (
     SchoolViewSet,
@@ -101,6 +102,7 @@ api.register(r'^clm-abln/(?P<id>\d+)/$', ABLNViewSet, base_name='clm-abln-partia
 api.register(r'clm-rs', RSViewSet, base_name='clm-rs')
 api.register(r'clm-cbece', CBECEViewSet, base_name='clm-cbece')
 api.register(r'clm-bridging', BridgingViewSet, base_name='clm-bridging')
+api.register(r'teacher', TeacherViewSet, base_name='teacher')
 api.register(r'^clm-cbece/(?P<id>\d+)/$', CBECEViewSet, base_name='clm-cbece-partial')
 api.register(r'clm-inclusion', InclusionViewSet, base_name='clm-inclusion')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')

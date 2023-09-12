@@ -64,6 +64,7 @@ from django.forms.widgets import ClearableFileInput
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
+import datetime
 YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-20, Person.CURRENT_YEAR-2)))
 YEARS.insert(0, ('', '---------'))
 
@@ -7924,6 +7925,15 @@ class BridgingForm(CommonForm):
 
     def clean(self):
         cleaned_data = super(BridgingForm, self).clean()
+
+        # check if date is valid
+        year = int(cleaned_data.get("student_birthday_year"))
+        month = int(cleaned_data.get("student_birthday_month"))
+        day = int(cleaned_data.get("student_birthday_day"))
+        try:
+            datetime.datetime(year, month, day)
+        except ValueError:
+            self.add_error('student_birthday_year', 'The date is not valid.')
 
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
