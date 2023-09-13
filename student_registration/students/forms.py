@@ -429,10 +429,11 @@ class TeacherForm(forms.ModelForm):
             required=True, to_field_name='id',
         )
 
-
-    def save(self, request=None, instance=None):
+    def save1(self, request=None, instance=None, serializer=None):
         if instance:
-            serializer = TeacherSerializer(instance, data=request.POST)
+            data = request.POST.copy()
+            data.update(request.FILES)
+            serializer = TeacherSerializer(instance, data=data)
             if serializer.is_valid():
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
@@ -441,18 +442,87 @@ class TeacherForm(forms.ModelForm):
             else:
                 messages.warning(request, serializer.errors)
         else:
-            serializer = TeacherSerializer(data=request.POST)
+            data = request.POST.copy()
+            data.update(request.FILES)
+            serializer = TeacherSerializer(data=data)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.save()
+                request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
 
-        return instance
 
+    def save(self, request=None, instance=None, serializer=None):
+        if instance:
+            data = request.POST.copy()
+            data.update(request.FILES)
+            serializer = TeacherSerializer(instance, data=data)
+            if serializer.is_valid():
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+
+                new_file_1 = request.FILES.get('attach_file_1', False)
+                if new_file_1:
+                    instance.attach_file_1 = new_file_1
+
+                new_file_2 = request.FILES.get('attach_file_2', False)
+                if new_file_2:
+                    instance.attach_file_2 = new_file_2
+
+                new_file_3 = request.FILES.get('attach_file_3', False)
+                if new_file_3:
+                    instance.attach_file_3 = new_file_3
+
+                new_file_4 = request.FILES.get('attach_file_4', False)
+                if new_file_4:
+                    instance.attach_file_4 = new_file_4
+
+                new_file_5 = request.FILES.get('attach_file_5', False)
+                if new_file_5:
+                    instance.attach_file_5 = new_file_5
+
+                instance.modified_by = request.user
+                instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+            data = request.POST.copy()
+            data.update(request.FILES)
+            serializer = TeacherSerializer(data=data)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+
+                new_file_1 = request.FILES.get('attach_file_1', False)
+                if new_file_1:
+                    instance.attach_file_1 = new_file_1
+
+                new_file_2 = request.FILES.get('attach_file_2', False)
+                if new_file_2:
+                    instance.attach_file_2 = new_file_2
+
+                new_file_3 = request.FILES.get('attach_file_3', False)
+                if new_file_3:
+                    instance.attach_file_3 = new_file_3
+
+                new_file_4 = request.FILES.get('attach_file_4', False)
+                if new_file_4:
+                    instance.attach_file_4 = new_file_4
+
+                new_file_5 = request.FILES.get('attach_file_5', False)
+                if new_file_5:
+                    instance.attach_file_5 = new_file_5
+
+                instance.owner = request.user
+                instance.modified_by = request.user
+                instance.save()
+                request.session['instance_id'] = instance.id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     def clean(self):
         cleaned_data = super(TeacherForm, self).clean()

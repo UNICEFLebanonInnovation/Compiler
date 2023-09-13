@@ -8148,7 +8148,9 @@ class BridgingForm(CommonForm):
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
         instance.save()
-        instance.consent_parents = request.FILES.get('consent_parents', False)
+        consent_parents = request.FILES.get('consent_parents', False)
+        if consent_parents:
+            instance.consent_parents = consent_parents
         instance.pre_test = {
             "Bridging_ASSESSMENT/arabic": request.POST.get('arabic'),
             "Bridging_ASSESSMENT/english": request.POST.get('english'),
