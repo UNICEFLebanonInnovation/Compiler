@@ -29,125 +29,6 @@ from .models import (
 )
 from student_registration.locations.models import Location
 
-
-class SchoolResource(resources.ModelResource):
-    district = fields.Field(column_name='District')
-    governorate = fields.Field(column_name='Governorate')
-    total_registered_2ndshift = fields.Field(column_name='Total registered 2nd-shift')
-    total_registered_2ndshift_male = fields.Field(column_name='Total registered 2nd-shift - Male')
-    total_registered_2ndshift_female = fields.Field(column_name='Total registered 2nd-shift - Female')
-    total_registered_alp = fields.Field(column_name='Total registered ALP')
-    total_registered_alp_male = fields.Field(column_name='Total registered ALP - Male')
-    total_registered_alp_female = fields.Field(column_name='Total registered ALP - Female')
-    attendances_days_2ndshift = fields.Field(column_name='Attendances days 2nd shift')
-    attendances_days_2ndshift_open = fields.Field(column_name='Attendances days 2nd shift when school is open')
-    attendances_days_alp = fields.Field(column_name='Attendances days ALP')
-    total_attendances_days_alp = fields.Field(column_name='Total Attendances days ALP')
-    attendances_days_alp_open = fields.Field(column_name='Attendances days ALP when school is open')
-    total_attendances_days_alp_open = fields.Field(column_name='Total Attendances days ALP when school is open')
-    total_attendances_days_2ndshift = fields.Field(column_name='Total attendance days in 2ndshift')
-    total_attendances_days_2ndshift_open = fields.Field(column_name='Total attendance days in 2ndshift is open')
-
-    class Meta:
-        model = School
-        fields = (
-            'id',
-            'name',
-            'number',
-            'district',
-            'governorate',
-            'director_name',
-            'land_phone_number',
-            'fax_number',
-            'director_phone_number',
-            'email',
-            'certified_foreign_language',
-            'comments',
-            'working_days',
-            'it_name',
-            'it_phone_number',
-            #'field_coordinator_name',
-            'coordinator',
-            'total_registered_2ndshift',
-            'total_registered_2ndshift_male',
-            'total_registered_2ndshift_female',
-            'total_registered_alp',
-            'total_registered_alp_male',
-            'total_registered_alp_female',
-            'academic_year_start',
-            'academic_year_end',
-            'academic_year_exam_end',
-            'attendance_range',
-            'attendance_from_beginning',
-            'is_alp',
-            'number_students_alp',
-            'is_2nd_shift',
-            'number_students_2nd_shift',
-            'attendances_days_2ndshift',
-            'attendances_days_2ndshift_open',
-            'attendances_days_alp',
-            'attendances_days_alp_open',
-            'total_attendances_days_2ndshift',
-            'total_attendances_days_alp',
-            'total_attendances_days_alp_open',
-            'total_attendances_days_2ndshift_open',
-            'is_closed',
-        )
-        export_order = fields
-
-    def dehydrate_district(self, obj):
-        if obj.location:
-            return obj.location.name
-        return ''
-
-    def dehydrate_governorate(self, obj):
-        if obj.location and obj.location.parent:
-            return obj.location.parent.name
-        return ''
-
-    def dehydrate_total_registered_2ndshift(self, obj):
-        return obj.total_registered
-
-    def dehydrate_total_attendances_days_2ndshif(self, obj):
-        return obj.total_attendances_days_2ndshif
-
-    def dehydrate_total_attendances_days_alp(self, obj):
-        return obj.total_attendances_days_alp
-
-    def dehydrate_total_attendances_days_alp_open(self, obj):
-        return obj.total_attendances_days_alp_open
-
-    def dehydrate_total_attendances_days_2ndshift_open(self, obj):
-        return obj.total_attendances_days_2ndshift_open
-
-    def dehydrate_total_registered_2ndshift_male(self, obj):
-        return obj.total_registered_2ndshift_male
-
-    def dehydrate_total_registered_2ndshift_female(self, obj):
-        return obj.total_registered_2ndshift_female
-
-    def dehydrate_total_registered_alp(self, obj):
-        return obj.total_registered_alp
-
-    def dehydrate_total_registered_alp_male(self, obj):
-        return obj.total_registered_alp_male
-
-    def dehydrate_total_registered_alp_female(self, obj):
-        return obj.total_registered_alp_female
-
-    def dehydrate_attendances_days_2ndshift(self, obj):
-        return obj.total_attendances_days_2ndshift
-
-    def dehydrate_attendances_days_2ndshift_open(self, obj):
-        return obj.total_attendances_days_2ndshift_open
-
-    def dehydrate_attendances_days_alp(self, obj):
-        return obj.total_attendances_days_alp
-
-    def dehydrate_attendances_days_alp_open(self, obj):
-        return obj.total_attendances_days_alp_open
-
-
 class ClubTypeResource(resources.ModelResource):
     class Meta:
         model = ClubType
@@ -228,106 +109,6 @@ class SchoolTypeFilter(admin.SimpleListFilter):
         if self.value() == 'both':
             return queryset.filter(is_alp=True, is_2nd_shift=True)
 
-
-class SchoolAdmin(ImportExportModelAdmin):
-    resource_class = SchoolResource
-
-    fields = (
-        'name',
-        'number',
-        'attendance_range',
-        'attendance_from_beginning',
-        'is_alp',
-        'number_students_alp',
-        'is_2nd_shift',
-        'number_students_2nd_shift',
-        'location',
-        'director_name',
-        'land_phone_number',
-        'fax_number',
-        'director_phone_number',
-        'email',
-        'certified_foreign_language',
-        'comments',
-        'working_days',
-        'it_name',
-        'it_phone_number',
-        'coordinator',
-        'academic_year_start',
-        'academic_year_end',
-        'academic_year_exam_end',
-        'is_closed',
-        #'total_attendances_days_2ndshift',
-        #'total_attendances_days_2ndshift_open',
-        #'total_attendances_days_alp',
-        #'total_attendances_days_alp_open',
-    )
-    list_display = (
-        'name',
-        'number',
-        'location',
-        'is_2nd_shift',
-        'number_students_2nd_shift',
-        'total_registered_2ndshift',
-        'is_alp',
-        'number_students_alp',
-        'total_registered_alp',
-        'attendance_range',
-        'attendance_from_beginning',
-        'working_days',
-        'academic_year_start',
-        'total_attendances_days_2ndshift',
-        'total_attendances_days_2ndshift_open',
-        'total_attendances_days_alp',
-        'total_attendances_days_alp_open',
-        'is_closed',
-    )
-    search_fields = (
-        'name',
-        'number',
-    )
-    list_filter = (
-        SchoolTypeFilter,
-        GovernorateFilter,
-        'location',
-        'attendance_range',
-        'attendance_from_beginning',
-        'is_alp',
-        'is_2nd_shift',
-        'working_days',
-        'is_closed',
-    )
-    date_hierarchy = 'academic_year_start'
-
-    actions = ('open_attendance_90_days', 'open_attendance_60_days',
-               'open_attendance_30_days', 'open_attendance_20_days',
-               'open_attendance_10_days', 'open_attendance_from_beginning',
-               'close_attendance_from_beginning', )
-
-    def open_attendance_90_days(self, request, queryset):
-        queryset.update(attendance_range=90)
-
-    def open_attendance_60_days(self, request, queryset):
-        queryset.update(attendance_range=60)
-
-    def open_attendance_30_days(self, request, queryset):
-        queryset.update(attendance_range=30)
-
-    def open_attendance_20_days(self, request, queryset):
-        queryset.update(attendance_range=20)
-
-    def open_attendance_10_days(self, request, queryset):
-        queryset.update(attendance_range=10)
-
-    def open_attendance_from_beginning(self, request, queryset):
-        queryset.update(attendance_from_beginning=True)
-
-    def close_attendance_from_beginning(self, request, queryset):
-        queryset.update(attendance_from_beginning=False)
-
-    def get_export_formats(self):
-        from student_registration.users.utils import get_default_export_formats
-        return get_default_export_formats()
 
 
 class EducationLevelResource(resources.ModelResource):
@@ -819,9 +600,161 @@ class EvaluationAdmin(ImportExportModelAdmin):
         )
 
 
-
 class EducationalLevelAdmin(ImportExportModelAdmin):
     resource_class = EducationalLevelResource
+
+
+class SchoolResource(resources.ModelResource):
+    district = fields.Field(column_name='District')
+    governorate = fields.Field(column_name='Governorate')
+
+    class Meta:
+        model = School
+        fields = (
+            'id',
+            'number',
+            'name',
+            'director_name',
+            'land_phone_number',
+            'email',
+            'governorate',
+            'district',
+            'cadaster',
+            'longitude',
+            'latitude',
+            'registration_level',
+            'school_capacity',
+            'empty_building',
+            'number_children',
+            'number_children_male',
+            'number_children_female',
+            'number_children_lebanese',
+            'number_children_non_lebanese',
+            'number_children_sbp',
+            'number_children_male_sbp',
+            'number_children_female_sbp',
+            'number_children_lebanese_sbp',
+            'number_children_non_lebanese_sbp',
+            'CWD_accessible',
+            'internet_available',
+            'school_digital_capacity',
+            'is_first_shift',
+            'working_days',
+            'academic_year_start',
+            'academic_year_end',
+            'receive_supplies',
+            'number_dirasa_children_disability',
+            'number_total_children_disability',
+            'is_closed',
+        )
+        export_order = fields
+
+    # def dehydrate_district(self, obj):
+    #     if obj.location:
+    #         return obj.location.name
+    #     return ''
+    #
+    # def dehydrate_governorate(self, obj):
+    #     if obj.location and obj.location.parent:
+    #         return obj.location.parent.name
+    #     return ''
+
+
+class SchoolAdmin(ImportExportModelAdmin):
+    resource_class = SchoolResource
+
+    fields = (
+            'number',
+            'name',
+            'director_name',
+            'land_phone_number',
+            'email',
+            'governorate',
+            'district',
+            'cadaster',
+            'longitude',
+            'latitude',
+            'registration_level',
+            'school_capacity',
+            'empty_building',
+            'number_children',
+            'number_children_male',
+            'number_children_female',
+            'number_children_lebanese',
+            'number_children_non_lebanese',
+            'number_children_sbp',
+            'number_children_male_sbp',
+            'number_children_female_sbp',
+            'number_children_lebanese_sbp',
+            'number_children_non_lebanese_sbp',
+            'CWD_accessible',
+            'internet_available',
+            'school_digital_capacity',
+            'is_first_shift',
+            'working_days',
+            'academic_year_start',
+            'academic_year_end',
+            'receive_supplies',
+            'number_dirasa_children_disability',
+            'number_total_children_disability',
+    )
+    list_display = (
+         'id',
+            'number',
+            'name',
+            'director_name',
+            'land_phone_number',
+            'email',
+            'governorate',
+            'district',
+    )
+    search_fields = (
+        'name',
+        'number',
+    )
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    # actions = []
+    # list_filter = (
+    #     GovernorateFilter,
+    #     'location',
+    #     'is_closed',
+    # )
+    # date_hierarchy = 'academic_year_start'
+
+    # actions = ('open_attendance_90_days', 'open_attendance_60_days',
+    #            'open_attendance_30_days', 'open_attendance_20_days',
+    #            'open_attendance_10_days', 'open_attendance_from_beginning',
+    #            'close_attendance_from_beginning', )
+
+    # def open_attendance_90_days(self, request, queryset):
+    #     queryset.update(attendance_range=90)
+    #
+    # def open_attendance_60_days(self, request, queryset):
+    #     queryset.update(attendance_range=60)
+    #
+    # def open_attendance_30_days(self, request, queryset):
+    #     queryset.update(attendance_range=30)
+    #
+    # def open_attendance_20_days(self, request, queryset):
+    #     queryset.update(attendance_range=20)
+    #
+    # def open_attendance_10_days(self, request, queryset):
+    #     queryset.update(attendance_range=10)
+    #
+    # def open_attendance_from_beginning(self, request, queryset):
+    #     queryset.update(attendance_from_beginning=True)
+    #
+    # def close_attendance_from_beginning(self, request, queryset):
+    #     queryset.update(attendance_from_beginning=False)
+
+    # def get_export_formats(self):
+    #     from student_registration.users.utils import get_default_export_formats
+    #     return get_default_export_formats()
+
+
 admin.site.register(School, SchoolAdmin)
 admin.site.register(EducationLevel, EducationLevelAdmin)
 admin.site.register(ClassLevel, ClassLevelAdmin)

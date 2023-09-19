@@ -22,7 +22,7 @@ from .models import (
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
-    School,
+    # School,
     ClassRoom,
     EducationLevel,
     EducationYear,
@@ -200,22 +200,22 @@ class ALPhaseFilter(admin.SimpleListFilter):
             return queryset.filter(
                 alp_enrollment__owner__in=users,
             )
-        if self.value() and self.value() == 'pretest':
-            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
-            return queryset.filter(
-                alp_enrollment__owner__in=not_schools,
-                alp_enrollment__level__isnull=False,
-                alp_enrollment__assigned_to_level__isnull=False,
-            )
-        if self.value() and self.value() == 'current':
-            return queryset.filter(
-                alp_enrollment__registered_in_level__isnull=False,
-            )
-        if self.value() and self.value() == 'posttest':
-            return queryset.filter(
-                alp_enrollment__registered_in_level__isnull=False,
-                alp_enrollment__refer_to_level__isnull=False,
-            )
+        # if self.value() and self.value() == 'pretest':
+        #     not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
+        #     return queryset.filter(
+        #         alp_enrollment__owner__in=not_schools,
+        #         alp_enrollment__level__isnull=False,
+        #         alp_enrollment__assigned_to_level__isnull=False,
+        #     )
+        # if self.value() and self.value() == 'current':
+        #     return queryset.filter(
+        #         alp_enrollment__registered_in_level__isnull=False,
+        #     )
+        # if self.value() and self.value() == 'posttest':
+        #     return queryset.filter(
+        #         alp_enrollment__registered_in_level__isnull=False,
+        #         alp_enrollment__refer_to_level__isnull=False,
+        #     )
         return queryset
 
 

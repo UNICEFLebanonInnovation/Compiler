@@ -589,12 +589,13 @@ class EducationServiceForm(forms.ModelForm):
 
 
 class EducationRSServiceForm(forms.ModelForm):
-
     school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
+        queryset=School.objects.all(),
+        widget=autocomplete.ModelSelect2(url='school_autocomplete'),
         label=_('Name of public School'),
         empty_label='-------',
-        required=True, to_field_name='id',
+        required=True,
+        to_field_name='id',
     )
     shift = forms.ChoiceField(
         label=_("First or Second shift schools"),
