@@ -22,7 +22,7 @@ from .models import (
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
-    # School,
+    School,
     ClassRoom,
     EducationLevel,
     EducationYear,
