@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+from django.conf import settings
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
@@ -49,7 +50,31 @@ class Location(MPTTModel):
         ordering = ['name']
 
 
-class Center(models.Model):
+class Center(TimeStampedModel):
+    TYPE = Choices(
+        ('Municipality', _('Municipality')),
+        ('Collective Settlement', _('Collective Settlement')),
+        ('Informal Settlement', _('Informal Settlement')),
+        ('Welfare Center', _('Welfare Center')),
+        ('Community Hub', _('Community Hub')),
+    )
+    PROVIDED_PACKAGES = Choices(
+        ('Education', 'Education'),
+        ('Youth', 'Youth'),
+        ('Health & Nutrition', 'Health & Nutrition'),
+        ('Child Protection', 'Child Protection'),
+        ('Social Protection', 'Social Protection'),
+    )
+    EDUCATION_PROGRAM = Choices(
+        ('BLN', 'BLN'),
+        ('ABLN', 'ABLN'),
+        ('RS', 'RS'),
+        ('CBECE', 'CBECE')
+    )
+    YOUTH_PROGRAM = Choices(
+        ('YBLN', 'YBLN'),
+        ('YFS', 'YFS')
+    )
 
     name = models.CharField(max_length=100)
     governorate = models.ForeignKey(
@@ -70,35 +95,41 @@ class Center(models.Model):
         related_name='+',
         verbose_name=_('Cadaster')
     )
-    p_code = models.CharField(
+    longitude = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name=_('Center GPS (longitude)')
+    )
+    latitude = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name=_('Center GPS (latitude)')
+    )
+    manager_name = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('P-Code')
+        verbose_name=_('Center Manager name')
     )
+    phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number')
+    )
+    email = models.EmailField(blank=True, max_length=254, verbose_name='Email')
+
     type = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        choices=Choices(
-            ('Municipality', _('Municipality')),
-            ('Collective Settlement', _('Collective Settlement')),
-            ('Informal Settlement', _('Informal Settlement')),
-            ('Welfare Center', _('Welfare Center')),
-            ('Community Hub', _('Community Hub')),
-        ),
+        choices=TYPE,
         verbose_name=_('Type')
     )
     provided_packages = ArrayField(
         models.CharField(
-            choices=Choices(
-                ('Education', 'Education'),
-                ('Youth', 'Youth'),
-                ('Health & Nutrition', 'Health & Nutrition'),
-                ('Child Protection', 'Child Protection'),
-                ('Social Protection', 'Social Protection'),
-            ),
-            max_length=100,
+            choices=PROVIDED_PACKAGES,
+            max_length=200,
             blank=True,
             null=True,
         ),
@@ -106,7 +137,51 @@ class Center(models.Model):
         null=True,
         verbose_name=_('Provided Services')
     )
-
+    education_programs = ArrayField(
+        models.CharField(
+            choices=EDUCATION_PROGRAM,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Education Program')
+    )
+    youth_programs = ArrayField(
+        models.CharField(
+            choices=YOUTH_PROGRAM,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Youth Program')
+    )
+    admin_staff_number = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 300)),
+        verbose_name=_('Number of Admin staff in the centers')
+    )
+    p_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('P-Code')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
     class Meta:
         ordering = ['name']
         verbose_name = "Center"
