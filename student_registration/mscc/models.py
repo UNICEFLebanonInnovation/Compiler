@@ -1783,6 +1783,7 @@ class Referral(TimeStampedModel):
         ('Referred to TVET', _('Referred to TVET')),
         ('Drop out', _('Drop out')),
         ('Referred to YBLN', _('Referred to YBLN')),
+        ('Referred to CBECE Higher Level in next school year', _('Referred to CBECE Higher Level in next school year')),
     )
 
     registration = models.ForeignKey(

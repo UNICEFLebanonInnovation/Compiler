@@ -32,7 +32,7 @@ from student_registration.schools.models import (
 )
 from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
-from student_registration.mscc.templatetags.simple_tags import get_service
+from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
 import datetime
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -1112,6 +1112,21 @@ class ReferralForm(forms.ModelForm):
         if is_cbece == 'Yes':
             self.fields['referred_formal_education'].required = True
             self.fields['referred_school'].required = True
+
+        education_program = get_education_service(registry)
+        choices = list()
+        choices.append(('Transition to Dirasa', _('Transition to Dirasa')))
+        choices.append(('Repeat same level in next  school year', _('Repeat same level in next  school year')))
+        choices.append(('Progress to FE', _('Progress to FE')))
+        choices.append(('Referred to Specialized Education', _('Referred to Specialized Education')))
+        choices.append(('Referred to TVET', _('Referred to TVET')))
+        choices.append(('Drop out', _('Drop out')))
+        choices.append(('Referred to YBLN', _('Referred to YBLN')))
+
+        if education_program == "CBECE Level 2":
+            choices.append(('Referred to CBECE Higher Level in next school year', _('Referred to CBECE Higher Level in next school year')))
+
+        self.fields['recommended_learning_path'].choices = choices
 
         self.fields['is_cbece'].initial = is_cbece
         self.helper = FormHelper()
