@@ -429,33 +429,6 @@ class TeacherForm(forms.ModelForm):
             required=True, to_field_name='id',
         )
 
-    def save1(self, request=None, instance=None, serializer=None):
-        if instance:
-            data = request.POST.copy()
-            data.update(request.FILES)
-            serializer = TeacherSerializer(instance, data=data)
-            if serializer.is_valid():
-                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
-                instance.modified_by = request.user
-                instance.save()
-                messages.success(request, _('Your data has been sent successfully to the server'))
-            else:
-                messages.warning(request, serializer.errors)
-        else:
-            data = request.POST.copy()
-            data.update(request.FILES)
-            serializer = TeacherSerializer(data=data)
-            if serializer.is_valid():
-                instance = serializer.create(validated_data=serializer.validated_data)
-                instance.owner = request.user
-                instance.modified_by = request.user
-                instance.save()
-                request.session['instance_id'] = instance.id
-                messages.success(request, _('Your data has been sent successfully to the server'))
-            else:
-                messages.warning(request, serializer.errors)
-
-
     def save(self, request=None, instance=None, serializer=None):
         if instance:
             data = request.POST.copy()
