@@ -359,7 +359,7 @@ class ReferralFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(ReferralFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):

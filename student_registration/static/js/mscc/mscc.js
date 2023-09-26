@@ -4,10 +4,6 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
 
 $(document).ready(function() {
 
-    $("#submit-id-save").click(function(e){
-        $(this).prop('disabled', true);
-        $('form').submit();
-    });
 
     $('.show-progarmme-details').click(function(e){
         e.preventDefault();

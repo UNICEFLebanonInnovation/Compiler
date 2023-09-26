@@ -28,7 +28,7 @@ class InclusionFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(InclusionFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -65,7 +65,7 @@ class DigitalFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(DigitalFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -102,7 +102,7 @@ class HealthNutritionFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(HealthNutritionFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -110,6 +110,7 @@ class HealthNutritionFormView(LoginRequiredMixin,
         age = self.kwargs['age']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         data = {}
+        print self.kwargs
         if self.request.method == "POST":
             return HealthNutritionServiceForm(self.request.POST, instance=instance, registry=registry, age=age, request=self.request)
         else:
@@ -140,7 +141,7 @@ class HealthNutritionReferralFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(HealthNutritionReferralFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -177,7 +178,7 @@ class PSSFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(PSSFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -214,7 +215,7 @@ class YouthKitServiceFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(YouthKitServiceFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -251,7 +252,7 @@ class FollowUpFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(FollowUpFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -288,7 +289,7 @@ class YouthAssessmentFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(YouthAssessmentFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -325,7 +326,7 @@ class YouthReferralFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(YouthReferralFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -379,7 +380,7 @@ class RecreationalFormView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['registry'] = self.kwargs['registry']
+        kwargs['registry'] = self.kwargs['registry']
         return super(RecreationalFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):

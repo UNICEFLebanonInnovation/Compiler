@@ -721,7 +721,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry, 'age': age})
         if instance:
-            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry,'age': age, 'pk': instance})
+            form_action = reverse('mscc:service_health_nutrition_edit', kwargs={'registry': registry, 'age': age, 'pk': instance})
 
         self.fields['child_age'].initial = age
         self.helper = FormHelper()
@@ -998,7 +998,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
             instance.next_counselling_date = validated_data.get('next_counselling_date')
         else:
             instance.counselling_date = None
-            instance.next_counselling_date =None
+            instance.next_counselling_date = None
 
         # caregiver_ecd_counselling
         caregiver_ecd_counselling = validated_data.get('caregiver_ecd_counselling')
@@ -1050,6 +1050,8 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(HealthNutritionServiceForm, self).clean()
+        print('------------------------------------cleaned data----------')
+        print cleaned_data
         baby_breastfed = cleaned_data.get("baby_breastfed")
         infant_exclusively_breastfed = cleaned_data.get("infant_exclusively_breastfed")
         if baby_breastfed and baby_breastfed == 'Yes' and not infant_exclusively_breastfed:
@@ -1062,10 +1064,15 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         caregiver_counselling = cleaned_data.get("caregiver_counselling")
         counselling_date = cleaned_data.get("counselling_date")
-        next_counselling_date = cleaned_data.get("next_counselling_date")
+        next_counselling_date = cleaned_data.get("next_counselling_date", None)
+        print('-------------------------caregiver_counselling-------------------------')
+        print(caregiver_counselling)
         if caregiver_counselling and caregiver_counselling == 'Yes':
             if not counselling_date:
                 self.add_error('counselling_date', 'This field is required')
+
+            print('-------------------------next_counselling_date-------------------------')
+            print(next_counselling_date)
             if not next_counselling_date:
                 self.add_error('next_counselling_date', 'This field is required')
 
@@ -1114,12 +1121,12 @@ class HealthNutritionServiceForm(forms.ModelForm):
             'respond_stressful_events',
             'physical_activity',
             'accessing_reproductive_health',
-            'caregiver_counselling'  ,
+            'caregiver_counselling',
             'counselling_date',
-            'next_counselling_date'  ,
+            'next_counselling_date',
             'caregiver_ecd_counselling',
-            'ecd_counselling_date'  ,
-            'next_ecd_counselling_date' ,
+            'ecd_counselling_date',
+            'next_ecd_counselling_date',
             'child_screened_malnutrition' ,
             'child_malnutrition_screening',
             'child_immunization_screened' ,
@@ -1629,7 +1636,8 @@ class FollowUpServiceForm(forms.ModelForm):
         label=_('Number'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=True,
-        min_value=1
+        min_value=1,
+        initial=1
     )
     follow_up_result = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -1659,7 +1667,8 @@ class FollowUpServiceForm(forms.ModelForm):
         label=_('Number of sessions attended'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         required=False,
-        min_value=0
+        min_value=0,
+        initial=0
     )
     meeting_modality = forms.ChoiceField(
         widget=forms.Select, required=False,
@@ -1685,6 +1694,7 @@ class FollowUpServiceForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
         required=False,
         label="Number of sessions attended",
+        min_value=0,
         initial=0
     )
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -1773,19 +1783,31 @@ class FollowUpServiceForm(forms.ModelForm):
             instance = FollowUpService.objects.get(id=instance)
 
         instance.follow_up_type = validated_data.get('follow_up_type')
-        instance.follow_up_number = validated_data.get('follow_up_number')
+        if validated_data.get('follow_up_number'):
+            instance.follow_up_number = validated_data.get('follow_up_number')
+        else:
+            instance.follow_up_number = 1
         instance.follow_up_result = validated_data.get('follow_up_result')
         instance.dropout_reason = validated_data.get('dropout_reason')
         if validated_data.get('dropout_date'):
             instance.dropout_date = validated_data.get('dropout_date')
         instance.parent_attended_meeting = validated_data.get('parent_attended_meeting')
         instance.meeting_type = validated_data.get('meeting_type')
-        instance.meeting_number = validated_data.get('meeting_number')
+
+        if validated_data.get('meeting_number'):
+            instance.meeting_number = validated_data.get('meeting_number')
+        else:
+            instance.meeting_number = 0
+
+        instance.meeting_number = int(validated_data.get('meeting_number'))
         instance.meeting_modality = validated_data.get('meeting_modality')
         instance.caregiver_attended = validated_data.get('caregiver_attended')
         instance.caregiver_attended_other = validated_data.get('caregiver_attended_other')
         instance.pfss_sessions = validated_data.get('pfss_sessions')
-        instance.pfss_sessions_number = validated_data.get('pfss_sessions_number')
+        if validated_data.get('pfss_sessions_number'):
+            instance.pfss_sessions_number = validated_data.get('pfss_sessions_number')
+        else:
+            instance.pfss_sessions_number = 0
         instance.modified_by = request.user
         instance.save()
 
@@ -1815,7 +1837,7 @@ class FollowUpServiceForm(forms.ModelForm):
         if parent_attended_meeting and parent_attended_meeting == 'Yes':
             if not meeting_type:
                 self.add_error('meeting_type', 'This field is required')
-            if not meeting_number:
+            if not meeting_number or meeting_number == 0:
                 self.add_error('meeting_number', 'This field is required')
             if not meeting_modality:
                 self.add_error('meeting_modality', 'This field is required')
@@ -1828,7 +1850,7 @@ class FollowUpServiceForm(forms.ModelForm):
         pfss_sessions = cleaned_data.get("pfss_sessions")
         pfss_sessions_number = cleaned_data.get("pfss_sessions_number")
         if pfss_sessions and pfss_sessions == 'Yes':
-            if not pfss_sessions_number:
+            if not pfss_sessions_number or pfss_sessions_number == 0:
                 self.add_error('pfss_sessions_number', 'This field is required')
 
 

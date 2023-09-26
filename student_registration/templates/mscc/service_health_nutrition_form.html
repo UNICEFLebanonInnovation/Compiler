@@ -34,7 +34,7 @@
                                   </a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="/MSCC/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname  registry %}</a>
+                                    <a href="/MSCC/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
                                      Health and Nutrition
@@ -92,5 +92,6 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/service_health_nutrition.js' %}?v=6"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
 
 {% endblock %}

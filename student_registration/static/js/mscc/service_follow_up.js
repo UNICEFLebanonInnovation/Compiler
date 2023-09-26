@@ -20,9 +20,15 @@ function reorganizeForm()
     $('div#div_id_pfss_sessions_number').addClass('d-none');
     if(pfss_sessions == 'Yes'){
         $('#div_id_pfss_sessions_number').removeClass('d-none');
+        if ($('#id_pfss_sessions_number').val() == null || $('#id_pfss_sessions_number').val()=='' || $('#id_pfss_sessions_number').val()=='0')
+        {
+            $('#id_pfss_sessions_number').addClass('error-field');
+        }
     }else{
-        $('#id_pfss_sessions_number').val('');
+        $('#id_pfss_sessions_number').val(0);
     }
+
+
 //    Dropout
     var follow_up_result = $('select#id_follow_up_result').val();
     if (follow_up_result == 'Dropout/No Interest'){
