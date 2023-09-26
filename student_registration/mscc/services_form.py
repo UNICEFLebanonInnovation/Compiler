@@ -1050,8 +1050,6 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(HealthNutritionServiceForm, self).clean()
-        print('------------------------------------cleaned data----------')
-        print cleaned_data
         baby_breastfed = cleaned_data.get("baby_breastfed")
         infant_exclusively_breastfed = cleaned_data.get("infant_exclusively_breastfed")
         if baby_breastfed and baby_breastfed == 'Yes' and not infant_exclusively_breastfed:
@@ -1065,14 +1063,10 @@ class HealthNutritionServiceForm(forms.ModelForm):
         caregiver_counselling = cleaned_data.get("caregiver_counselling")
         counselling_date = cleaned_data.get("counselling_date")
         next_counselling_date = cleaned_data.get("next_counselling_date", None)
-        print('-------------------------caregiver_counselling-------------------------')
-        print(caregiver_counselling)
         if caregiver_counselling and caregiver_counselling == 'Yes':
             if not counselling_date:
                 self.add_error('counselling_date', 'This field is required')
 
-            print('-------------------------next_counselling_date-------------------------')
-            print(next_counselling_date)
             if not next_counselling_date:
                 self.add_error('next_counselling_date', 'This field is required')
 
