@@ -110,7 +110,6 @@ class HealthNutritionFormView(LoginRequiredMixin,
         age = self.kwargs['age']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         data = {}
-        print self.kwargs
         if self.request.method == "POST":
             return HealthNutritionServiceForm(self.request.POST, instance=instance, registry=registry, age=age, request=self.request)
         else:
