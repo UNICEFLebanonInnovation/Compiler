@@ -1210,7 +1210,6 @@ class ReferralForm(forms.ModelForm):
         )
 
     def save(self, request=None, instance=None, registry=None):
-        from .utils import update_service
 
         validated_data = request.POST
 
