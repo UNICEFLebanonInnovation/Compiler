@@ -35,37 +35,5 @@ class LocationSerializer(serializers.ModelSerializer):
 
         )
 
-class CenterSerializer(serializers.ModelSerializer):
-
-    # owner_name = serializers.CharField(source='owner.username', read_only=True)
-    # modified_by_name = serializers.CharField(source='modified_by.username', read_only=True)
-
-    class Meta:
-        model = Center
-        fields = (
-            'id',
-            'name',
-            # 'governorate',
-            # 'caza',
-            # 'cadaster',
-            # 'longitude',
-            # 'latitude',
-            # 'manager_name',
-            # 'phone_number',
-            # 'email',
-            # 'type',
-            # 'provided_packages',
-            # 'education_programs',
-            # 'youth_programs',
-            # 'admin_staff_number',
-            # 'owner',
-            # 'owner_name',
-            # 'modified_by',
-            # 'modified_by_name',
-            # 'created',
-            # 'modified',
-        )
-
-
 
 

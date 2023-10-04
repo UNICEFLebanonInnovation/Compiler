@@ -36,7 +36,6 @@ from .forms import (
     CenterForm
 )
 from .serializers import (
-    CenterSerializer,
     LocationSerializer
 )
 from .filters import (
@@ -70,7 +69,10 @@ class CenterFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        return reverse('locations:list')
+        if has_group(self.request.user, 'MSCC_CENTER'):
+            return reverse('mscc:list')
+        else:
+            return reverse('locations:center_list')
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -104,7 +106,7 @@ class CenterListView(LoginRequiredMixin,
 
     table_class = CenterTable
     model = Center
-    template_name = 'location/list.html'
+    template_name = 'location/center_list.html'
     table = BootstrapTable(Center.objects.all(), order_by='id')
     group_required = [u"MSCC"]
 

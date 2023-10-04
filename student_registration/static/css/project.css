@@ -783,3 +783,7 @@ td:has(span.warning) {
   text-align:center;
 
 }
+.disabled-input .input {
+  opacity: 0.5;
+  pointer-events: none;
+}

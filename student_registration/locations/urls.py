@@ -16,8 +16,8 @@ urlpatterns = [
         name='center_edit'
     ),
     url(
-        regex=r'^List/$',
+        regex=r'^Center-List/$',
         view=views.CenterListView.as_view(),
-        name='list'
+        name='center_list'
     ),
 ]

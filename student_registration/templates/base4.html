@@ -65,6 +65,11 @@
         height: 33px;
         float: left;
     }
+    form .disabled-input .textinput {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
     form .radio {
         float: left;
         width: 400px;
@@ -350,6 +355,25 @@
                                             Attendance
                                         </a>
                                     </div>
+                                    {% if request.user|has_group:"MSCC_CENTER"  %}
+                                    {% if request.user.center_id %}
+                                      <div class="col-sm-6 col-xl-4">
+                                          <a href="{% url 'locations:center_edit' request.user.center_id %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                              <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                              Center
+                                          </a>
+
+                                      </div>
+                                    {% endif %}
+                                    {% else %}
+                                      <div class="col-sm-6 col-xl-4">
+                                          <a href="{% url 'locations:center_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                              <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                              Center
+                                          </a>
+                                      </div>
+                                    {% endif %}
+
 
                                     <!--<div class="col-sm-6 col-xl-4">-->
                                         <!--<a class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">-->
