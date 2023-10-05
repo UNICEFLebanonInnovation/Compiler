@@ -293,54 +293,6 @@ class CenterForm(forms.ModelForm):
                 ),
             )
 
-    #
-    # def clean(self):
-    #     cleaned_data = super(CenterForm, self).clean()
-    #
-    #     #
-    #     # child_nationality = cleaned_data.get("child_nationality")
-    #     # child_nationality_other = cleaned_data.get("child_nationality_other")
-    #     # if child_nationality and child_nationality.id == 6 and not child_nationality_other:
-    #     #     self.add_error('child_nationality_other', 'This field is required')
-    #
-    #     # child_have_children = cleaned_data.get("child_have_children")
-    #     # child_children_number = cleaned_data.get("child_children_number")
-    #     # if child_have_children == "Yes" and not child_children_number:
-    #     #     self.add_error('child_children_number', 'This field is required')
-    #     #
-    #     # child_have_sibling = cleaned_data.get("child_have_sibling")
-    #     # child_siblings_have_disability = cleaned_data.get("child_siblings_have_disability")
-    #     # if child_have_sibling == "Yes" and not child_siblings_have_disability:
-    #     #     self.add_error('child_siblings_have_disability', 'This field is required')
-    #     #
-    #     # source_of_identification = cleaned_data.get("source_of_identification")
-    #     # source_of_identification_specify = cleaned_data.get("source_of_identification_specify")
-    #     # if source_of_identification == 'Other Sources' and not source_of_identification_specify:
-    #     #     self.add_error('source_of_identification_specify', 'This field is required')
-    #     #
-    #     # main_caregiver = cleaned_data.get("main_caregiver")
-    #     # main_caregiver_other = cleaned_data.get("main_caregiver_other")
-    #     # if main_caregiver == 'Other' and not main_caregiver_other:
-    #     #     self.add_error('main_caregiver_other', 'This field is required')
-    #     #
-    #     # main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
-    #     # main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
-    #     # if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
-    #     #     self.add_error('main_caregiver_nationality_other', 'This field is required')
-    #     #
-    #     #
-    #     # first_phone_number = cleaned_data.get("first_phone_number")
-    #     # first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
-    #     # second_phone_number = cleaned_data.get("second_phone_number")
-    #     # second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
-    #     #
-    #     # if first_phone_number != first_phone_number_confirm:
-    #     #     msg = "The phone numbers are not matched"
-    #     #     self.add_error('first_phone_number_confirm', msg)
-    #     # if second_phone_number != second_phone_number_confirm:
-    #     #     msg = "The phone numbers are not matched"
-    #     #     self.add_error('second_phone_number_confirm', msg)
-    #
 
     def save(self, request=None, instance=None):
         validated_data = request.POST

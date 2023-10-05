@@ -84,7 +84,18 @@
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/location/center.js' %}?v=5"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/location/center.js' %}?v=7"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+    <script>
+      var url_districts = "{% url 'clm:load_districts' %}";
+      var url_cadasters = "{% url 'clm:load_cadasters' %}";
 
+      $("#id_governorate").change(function () {
+          load_districts(url_districts);
+          load_cadasters(url_cadasters);
+      });
+      $("#id_caza").change(function () {
+          load_cadasters(url_cadasters);
+      });
+    </script>
 {% endblock %}
