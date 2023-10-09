@@ -60,6 +60,20 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
+class ProfileView(LoginRequiredMixin,
+                  TemplateView):
+    template_name = 'location/center_profile.html'
+
+    def get_context_data(self, **kwargs):
+        instance = Center.objects.get(id=self.kwargs['pk'])
+        current_tab = self.request.GET.get('current_tab', 'info')
+
+        return {
+            'instance': instance,
+            'current_tab': current_tab
+        }
+
+
 class CenterFormView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
@@ -69,10 +83,18 @@ class CenterFormView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_success_url(self):
-        if has_group(self.request.user, 'MSCC_CENTER'):
-            return reverse('mscc:list')
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return reverse('locations:center_profile', kwargs={'pk': pk})
         else:
-            return reverse('locations:center_list')
+            return reverse('mscc:list')
+
+        # if has_group(self.request.user, 'MSCC_CENTER'):
+        #     return reverse('mscc:list')
+        # else:
+        #     return reverse('locations:center_list')
+
+
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""

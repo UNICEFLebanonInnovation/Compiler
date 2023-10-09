@@ -75,6 +75,11 @@ class Center(TimeStampedModel):
         ('YBLN', 'YBLN'),
         ('YFS', 'YFS')
     )
+    YES_NO = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No"))
+    )
 
     name = models.CharField(max_length=100)
     governorate = models.ForeignKey(
@@ -165,6 +170,13 @@ class Center(TimeStampedModel):
         choices=((x, x) for x in range(0, 300)),
         verbose_name=_('Number of Admin staff in the centers')
     )
+    cwd_accessible = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the center accessible for CWD ?')
+    )
     p_code = models.CharField(
         max_length=50,
         blank=True,
@@ -182,13 +194,55 @@ class Center(TimeStampedModel):
         related_name='+',
         verbose_name=_('Modified by'),
     )
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Center"
-        verbose_name_plural = "Centers"
+    @property
+    def total_children(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id).count()
+
+    @property
+    def total_male(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id, child__gender='Male').count()
+
+    @property
+    def total_female(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id, child__gender='Female').count()
+
+    @property
+    def total_disability(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id).exclude(child__disability__name_en='No').count()
+
+    @property
+    def total_disability_male(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id,child__gender='Male').exclude(child__disability__name_en='No').count()
+
+    @property
+    def total_disability_female(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id,child__gender='Female').exclude(child__disability__name_en='No').count()
+
+
+    @property
+    def total_lebanese(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id,child__nationality__code='LEB').count()
+
+    @property
+    def total_non_lebanese(self):
+        from student_registration.mscc.models import Registration
+        return Registration.objects.filter(center=self.id).exclude(child__nationality__code='LEB').count()
 
     def __str__(self):
         return self.name
 
     def __unicode__(self):
         return self.name
+
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Center"
+        verbose_name_plural = "Centers"

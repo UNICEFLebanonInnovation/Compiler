@@ -20,4 +20,9 @@ urlpatterns = [
         view=views.CenterListView.as_view(),
         name='center_list'
     ),
+    url(
+        regex=r'^Center-Profile/(?P<pk>[\w.@+-]+)/$',
+        view=views.ProfileView.as_view(),
+        name='center_profile'
+    ),
 ]

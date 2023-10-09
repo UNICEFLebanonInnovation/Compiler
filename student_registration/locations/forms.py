@@ -159,6 +159,11 @@ class CenterForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         choices=Center.YOUTH_PROGRAM
     )
+    cwd_accessible = forms.ChoiceField(
+        label=_("Is the center accessible for CWD ?"),
+        widget=forms.Select, required=False,
+        choices=Center.YES_NO,
+    )
     admin_staff_number = forms.IntegerField(
         label=_('Number of Admin staff in the center'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -179,120 +184,70 @@ class CenterForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        if mscc_center_user:
-            self.helper.layout = Layout(
+        self.helper.layout = Layout(
+            Div(
                 Div(
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('name', css_class='col-md-3 disabled-input'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('governorate', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('caza', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('cadaster', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-
-                        HTML('<span class="badge-form badge-pill">5</span>'),
-                        Div('longitude', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">6</span>'),
-                        Div('latitude', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">7</span>'),
-                        Div('manager_name', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">8</span>'),
-                        Div('phone_number', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">9</span>'),
-                        Div('email', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                        Div('type', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                        Div('provided_packages', css_class='col-md-3  multiple-choice'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                        Div('education_programs', css_class='col-md-3  multiple-choice'),
-                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                        Div('youth_programs', css_class='col-md-3  multiple-choice'),
-                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                        Div('admin_staff_number', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    FormActions(
-                        Submit('save', 'Save',
-                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                        Reset('reset', 'Reset',
-                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-
-                    ),
-                    css_id='step-1',
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('name', css_class='col-md-3 disabled-input'),
+                    css_class='row card-body',
                 ),
-            )
-        else:
-            self.helper.layout = Layout(
                 Div(
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('name', css_class='col-md-3 disabled-input'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('governorate', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('caza', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('cadaster', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-
-                        HTML('<span class="badge-form badge-pill">5</span>'),
-                        Div('longitude', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">6</span>'),
-                        Div('latitude', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">7</span>'),
-                        Div('manager_name', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">8</span>'),
-                        Div('phone_number', css_class='col-md-3'),
-                        HTML('<span class="badge-form badge-pill">9</span>'),
-                        Div('email', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                        Div('type', css_class='col-md-3'),
-                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                        Div('provided_packages', css_class='col-md-3  multiple-choice'),
-                        css_class='row card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                        Div('education_programs', css_class='col-md-3  multiple-choice'),
-                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                        Div('youth_programs', css_class='col-md-3  multiple-choice'),
-                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                        Div('admin_staff_number', css_class='col-md-3'),
-                        css_class='row card-body',
-                    ),
-                    css_id='step-1',
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('caza', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('cadaster', css_class='col-md-3'),
+                    css_class='row card-body',
                 ),
-            )
+                Div(
 
+                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    Div('longitude', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('latitude', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">7</span>'),
+                    Div('manager_name', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    Div('phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('email', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                    Div('type', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                    Div('provided_packages', css_class='col-md-3  multiple-choice'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                    Div('education_programs', css_class='col-md-3  multiple-choice'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                    Div('youth_programs', css_class='col-md-3  multiple-choice'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                    Div('cwd_accessible', css_class='col-md-3  multiple-choice'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('admin_staff_number', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+
+                ),
+                css_id='step-1',
+            ),
+        )
 
     def save(self, request=None, instance=None):
         validated_data = request.POST
@@ -303,7 +258,6 @@ class CenterForm(forms.ModelForm):
             instance = Center.objects.get(id=instance)
 
 
-        # instance.name = validated_data.get('name')
         instance.governorate_id = validated_data.get('governorate')
         instance.caza_id = validated_data.get('caza')
         instance.cadaster_id = validated_data.get('cadaster')
@@ -316,6 +270,7 @@ class CenterForm(forms.ModelForm):
         instance.provided_packages = validated_data.getlist('provided_packages')
         instance.education_programs = validated_data.getlist('education_programs')
         instance.youth_programs = validated_data.getlist('youth_programs')
+        instance.cwd_accessible = validated_data.getlist('cwd_accessible')
         instance.admin_staff_number = validated_data.get('admin_staff_number')
         instance.modified_by = request.user
 
@@ -339,8 +294,9 @@ class CenterForm(forms.ModelForm):
             'provided_packages',
             'education_programs',
             'youth_programs',
+            'cwd_accessible',
             'admin_staff_number',
-            'admin_staff_number',
+
         )
 
 
