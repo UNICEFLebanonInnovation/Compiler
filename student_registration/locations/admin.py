@@ -52,6 +52,7 @@ class CenterResource(resources.ModelResource):
             'cadaster',
             'p_code',
             'type',
+            'partner'
         )
         export_order = ('name', )
 
@@ -67,6 +68,7 @@ class CenterAdmin(ImportExportModelAdmin):
             'cadaster',
             'p_code',
             'type',
+            'partner'
     )
 
     def get_export_formats(self):

@@ -3,7 +3,6 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
-from student_registration.locations.models import Location
 from model_utils import Choices
 from student_registration.students.models import Nationality
 # Create your models here.
@@ -63,6 +62,7 @@ class University(models.Model):
 
 
 class Staffs(models.Model):
+    from student_registration.locations.models import Location
     EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
     EDUCATION_YEARS.append(('na', 'N/A'))
     TYPEOFEMP = Choices(

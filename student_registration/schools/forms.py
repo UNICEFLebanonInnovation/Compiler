@@ -10,7 +10,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder
 
-from .models import School, PartnerOrganization, EducationYear, Evaluation, Location, Club, ClubType,  Meeting, CommunityInitiative, HealthVisit
+from .models import School, PartnerOrganization, EducationYear, Evaluation, Club, ClubType,  Meeting, CommunityInitiative, HealthVisit
+from student_registration.locations.models import Location
 from .serializers import SchoolSerializer
 
 class ProfileForm(forms.ModelForm):

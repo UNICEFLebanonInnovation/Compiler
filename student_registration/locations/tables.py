@@ -14,14 +14,14 @@ class BootstrapTable(tables.Table):
 
 
 class CenterTable(tables.Table):
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit'), orderable=False,
-                                        template_name='django_tables2/location/center_edit_column.html',
-                                        attrs={'url': '/locations/Center-Edit/'})
+    profile_column = tables.TemplateColumn(verbose_name=_('Edit'), orderable=False,
+                                        template_name='django_tables2/location/center_profile_column.html',
+                                        attrs={'url': '/locations/Center-Profile/'})
     class Meta:
         model = Center
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
+            'profile_column',
             'name',
             'governorate',
             'caza',

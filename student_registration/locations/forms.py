@@ -20,9 +20,7 @@ from dal import autocomplete
 from student_registration.locations.models import Location
 from .models import (
     Center,
-
 )
-
 
 class CenterAdminForm(forms.ModelForm):
     name = forms.CharField(
@@ -233,7 +231,7 @@ class CenterForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('cwd_accessible', css_class='col-md-3  multiple-choice'),
+                    Div('cwd_accessible', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('admin_staff_number', css_class='col-md-3'),
                     css_class='row card-body',
@@ -270,7 +268,7 @@ class CenterForm(forms.ModelForm):
         instance.provided_packages = validated_data.getlist('provided_packages')
         instance.education_programs = validated_data.getlist('education_programs')
         instance.youth_programs = validated_data.getlist('youth_programs')
-        instance.cwd_accessible = validated_data.getlist('cwd_accessible')
+        instance.cwd_accessible = validated_data.get('cwd_accessible')
         instance.admin_staff_number = validated_data.get('admin_staff_number')
         instance.modified_by = request.user
 

@@ -6,12 +6,12 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from student_registration.schools.models import PartnerOrganization,EducationYear, School
-from student_registration.locations.models import Location, Center
 
 
 @python_2_unicode_compatible
 class User(AbstractUser):
+    from student_registration.locations.models import Location,Center
+    from student_registration.schools.models import PartnerOrganization, School
 
     # First Name and Last Name do not cover name patterns
     # around the globe.
@@ -63,6 +63,7 @@ class User(AbstractUser):
 
 
 class Login(models.Model):
+    from student_registration.schools.models import EducationYear
     user = models.ForeignKey(
         User,
         blank=True, null=True,

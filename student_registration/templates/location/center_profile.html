@@ -26,9 +26,11 @@
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
+                                                {% if request.user|has_group:"MSCC_PARTNER" %}
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">List</a>
+                                                    <a href="/locations/Center-List/">List</a>
                                                 </li>
+                                                {% endif %}
                                                 <li class="active breadcrumb-item" aria-current="page">
                                                     Center and Program Staff
                                                 </li>
@@ -86,7 +88,7 @@
 {% endblock %}
 
 {% block extra_js %}
-
-    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/mscc.js' %}?v=19"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=2"></script>
 
 {% endblock %}

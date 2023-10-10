@@ -6,7 +6,6 @@ from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
 from django.contrib.postgres.fields import ArrayField
 # from django.contrib.gis.db import models
-from student_registration.locations.models import Location
 from student_registration.staffs.models import Bank
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -39,6 +38,7 @@ class PublicHolidays(models.Model):
 
 
 class School(TimeStampedModel):
+    from student_registration.locations.models import Location
     REGISTRATION_LEVEL = (
         ('Level one', _('Level one')),
         ('Level two', _('Level two')),

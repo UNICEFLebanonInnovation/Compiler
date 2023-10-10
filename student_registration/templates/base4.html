@@ -355,17 +355,16 @@
                                             Attendance
                                         </a>
                                     </div>
-                                    {% if request.user|has_group:"MSCC_CENTER"  %}
-                                    {% if request.user.center_id %}
+                                    {% if request.user|has_group:"MSCC_CENTER"  and request.user.center_id %}
                                       <div class="col-sm-6 col-xl-4">
-                                          <a href="{% url 'locations:center_edit' request.user.center_id %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                          <a href="{% url 'locations:center_profile' request.user.center_id %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                               <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                               Center
                                           </a>
 
                                       </div>
                                     {% endif %}
-                                    {% else %}
+                                    {% if request.user|has_group:"MSCC_PARTNER" and request.user.partner_id  %}
                                       <div class="col-sm-6 col-xl-4">
                                           <a href="{% url 'locations:center_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                               <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>

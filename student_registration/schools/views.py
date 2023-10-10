@@ -22,12 +22,12 @@ from .models import (
     PublicDocument,
     PartnerOrganization,
     Evaluation,
-    Location,
     Club,
     Meeting,
     CommunityInitiative,
     HealthVisit
 )
+from student_registration.locations.models import Location
 
 from .serializers import (
     SchoolSerializer,

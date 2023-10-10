@@ -13,6 +13,7 @@ from openpyxl import Workbook
 from rest_framework import status
 from django.db.models import F, Q
 from django.core.urlresolvers import reverse
+from django.shortcuts import render
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
 from django_filters.views import FilterView
@@ -63,6 +64,7 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
 class ProfileView(LoginRequiredMixin,
                   TemplateView):
     template_name = 'location/center_profile.html'
+    group_required = [u"MSCC"]
 
     def get_context_data(self, **kwargs):
         instance = Center.objects.get(id=self.kwargs['pk'])
@@ -80,7 +82,7 @@ class CenterFormView(LoginRequiredMixin,
     template_name ='location/center_form.html'
     form_class = CenterForm
     success_url = ''
-    group_required = [u"MSCC"]
+    group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
         pk = self.kwargs.get('pk')
@@ -88,13 +90,6 @@ class CenterFormView(LoginRequiredMixin,
             return reverse('locations:center_profile', kwargs={'pk': pk})
         else:
             return reverse('mscc:list')
-
-        # if has_group(self.request.user, 'MSCC_CENTER'):
-        #     return reverse('mscc:list')
-        # else:
-        #     return reverse('locations:center_list')
-
-
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -125,13 +120,11 @@ class CenterListView(LoginRequiredMixin,
                    ExportMixin,
                    SingleTableView,
                    RequestConfig):
-
     table_class = CenterTable
     model = Center
     template_name = 'location/center_list.html'
     table = BootstrapTable(Center.objects.all(), order_by='id')
-    group_required = [u"MSCC"]
-
+    group_required = [u"MSCC", u"MSCC_PARTNER"]
     filterset_class = CenterFilter
 
     def get_queryset(self):
@@ -141,13 +134,9 @@ class CenterListView(LoginRequiredMixin,
         if has_group(user, 'MSCC_UNICEF'):
             return Center.objects.order_by('-id')
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return Center.objects.filter(
-                id__in=PartnerOrganization
-                    .objects
-                    .filter(id=partner_id)
-                    .values_list('centers', flat=True))
+            return Center.objects.filter(partner__id=partner_id).order_by('-id')
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return Center.objects.filter(id=center_id)
+            return Center.objects.filter(id=center_id).order_by('-id')
 
         return Center.objects.none()
 

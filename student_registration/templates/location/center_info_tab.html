@@ -2,11 +2,16 @@
 {% load static %}
 {% load util_tags %}
 {% load simple_tags %}
+ <style>
+    .right-align {
+        text-align: right;
+    }
+</style>
 
 <div class="row staff-profile">
 
 <!--Center Data-->
-<div class="col-md-12 col-lg-6 col-xl-4">
+<div class="col-md-12 col-lg-6 col-xl-6">
                             <div class="card-shadow-primary profile-responsive card-border mb-3 card">
 <div class="dropdown-menu-header">
 
@@ -15,9 +20,11 @@
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Center Info.
-                                                      <div style="float:right;">
-                                                            <a href="/locations/Center-Edit/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Center Info."><i class="pe-7s-pen"></i></a>
-                                                      </div>
+                                                      {% if request.user|has_group:"MSCC_CENTER" and  request.user.center %}
+                                                          <div style="float:right;">
+                                                                <a href="/locations/Center-Edit/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Center Info."><i class="pe-7s-pen"></i></a>
+                                                          </div>
+                                                      {% endif %}
                                                     </h5>
                                                 </div>
                                             </div>
@@ -232,7 +239,7 @@
                         </div>
 
 <!--Calculated Info-->
-<div class="col-md-12 col-lg-6 col-xl-8">
+<div class="col-md-12 col-lg-6 col-xl-6">
                                 <div class="mb-3 card">
                                     <div class="p-0 card-body">
                                         <div class="dropdown-menu-header mt-0 mb-0">
@@ -249,27 +256,13 @@
                                                   <div class="widget-content-wrapper">
                                                       <div class="widget-content-left">
                                                           <div class="widget-heading">Number of children</div>
-                                                          <div class="widget-subheading">{{ instance.total_children }}</div>
+                                                          <div class="widget-subheading">Male:</div>
+                                                          <div class="widget-subheading">Female:</div>
                                                       </div>
-                                                  </div>
-                                              </div>
-                                          </li>
-                                          <li class="list-group-item">
-                                              <div class="widget-content p-0">
-                                                  <div class="widget-content-wrapper">
-                                                      <div class="widget-content-left">
-                                                          <div class="widget-heading">Number of children (Male)</div>
-                                                          <div class="widget-subheading">{{ instance.total_male  }}</div>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </li>
-                                          <li class="list-group-item">
-                                              <div class="widget-content p-0">
-                                                  <div class="widget-content-wrapper">
-                                                      <div class="widget-content-left">
-                                                          <div class="widget-heading">Number of children (Female)</div>
-                                                          <div class="widget-subheading">{{ instance.total_female }}</div>
+                                                      <div class="widget-content-right">
+                                                          <div class="widget-numbers widget-numbers-sm text-primary right-align"><span>{{ instance.total_children }}</span></div>
+                                                          <div class="widget-numbers  text-warning font-size-xlg right-align"><span>{{ instance.total_male }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_female }}</span></div>
                                                       </div>
                                                   </div>
                                               </div>
@@ -279,9 +272,29 @@
                                                   <div class="widget-content-wrapper">
                                                       <div class="widget-content-left">
                                                           <div class="widget-heading">Number of children with disabilities</div>
-                                                          <div class="widget-subheading">{{ instance.total_disability }}</div>
-                                                          <div class="widget-subheading">Male: {{ instance.total_disability_male }}</div>
-                                                          <div class="widget-subheading">Female: {{ instance.total_disability_female }}</div>
+                                                          <div class="widget-subheading">Male:</div>
+                                                          <div class="widget-subheading">Female:</div>
+                                                      </div>
+                                                      <div class="widget-content-right">
+                                                          <div class="widget-numbers widget-numbers-sm text-info right-align"><span>{{ instance.total_disability }}</span></div>
+                                                          <div class="widget-numbers  text-warning o font-size-xlg right-align"><span>{{ instance.total_disability_male }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_disability_female }}</span></div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </li>
+                                          <li class="list-group-item">
+                                              <div class="widget-content p-0">
+                                                  <div class="widget-content-wrapper">
+                                                      <div class="widget-content-left">
+                                                          <div class="widget-heading">Total Number of children by Nationality</div>
+                                                          <div class="widget-subheading">Lebanese:</div>
+                                                          <div class="widget-subheading">Non-Lebanese:</div>
+                                                      </div>
+                                                      <div class="widget-content-right">
+                                                          <div class="widget-numbers widget-numbers-sm text-danger right-align"><span>{{ instance.total_children }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-warning font-size-xlg right-align"><span>{{ instance.total_lebanese }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_non_lebanese }}</span></div>
                                                       </div>
                                                   </div>
                                               </div>
@@ -291,25 +304,20 @@
                                               <div class="widget-content p-0">
                                                   <div class="widget-content-wrapper">
                                                       <div class="widget-content-left">
-                                                          <div class="widget-heading">Total Number of children by Nationality</div>
-                                                          <div class="widget-subheading">Lebanese: {{ instance.total_lebanese }}</div>
-                                                          <div class="widget-subheading">Non-Lebanese: {{ instance.total_lebanese }}</div>
+                                                          <div class="widget-heading">Total Number of staff</div>
+                                                          <div class="widget-subheading">Admin Staff:</div>
+                                                          <div class="widget-subheading">Program Staff:</div>
+                                                      </div>
+                                                      <div class="widget-content-right">
+                                                          <div class="widget-numbers widget-numbers-sm text-primary right-align"><span>{{ instance.total_staff }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-warning font-size-xlg right-align"><span>{{ instance.total_admin_staff }}</span></div>
+                                                          <div class="widget-numbers widget-numbers-sm text-success font-size-xlg right-align"><span>{{ instance.total_program_staff }}</span></div>
                                                       </div>
                                                   </div>
                                               </div>
                                           </li>
 
-<!--                                          <li class="list-group-item">-->
-<!--                                              <div class="widget-content p-0">-->
-<!--                                                  <div class="widget-content-wrapper">-->
-<!--                                                      <div class="widget-content-left">-->
-<!--                                                          <div class="widget-heading">Is the center accessible for CWD</div>-->
-<!--                                                          <div class="widget-subheading">{{ instance.total_female }}</div>-->
-<!--                                                      </div>-->
-<!--                                                  </div>-->
-<!--                                              </div>-->
-<!--                                          </li>-->
-                                        </ul>
+<!--                                         </ul>
                                     </div>
                                 </div>
 </div>
@@ -317,3 +325,6 @@
 
 </div>
 
+
+
+</div>

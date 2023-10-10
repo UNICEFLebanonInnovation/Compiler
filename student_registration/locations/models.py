@@ -9,6 +9,7 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from django.utils.translation import ugettext as _
 
 
+
 class LocationType(models.Model):
     name = models.CharField(max_length=64, unique=True)
     name_en = models.CharField(max_length=145, blank=True, null=True)
@@ -51,6 +52,7 @@ class Location(MPTTModel):
 
 
 class Center(TimeStampedModel):
+    from student_registration.schools.models import PartnerOrganization
     TYPE = Choices(
         ('Municipality', _('Municipality')),
         ('Collective Settlement', _('Collective Settlement')),
@@ -80,7 +82,12 @@ class Center(TimeStampedModel):
         ('Yes', _("Yes")),
         ('No', _("No"))
     )
-
+    partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True, null=True,
+        verbose_name=_('Partner'),
+        related_name='center_partner'
+    )
     name = models.CharField(max_length=100)
     governorate = models.ForeignKey(
         Location,
@@ -235,6 +242,19 @@ class Center(TimeStampedModel):
         from student_registration.mscc.models import Registration
         return Registration.objects.filter(center=self.id).exclude(child__nationality__code='LEB').count()
 
+    @property
+    def total_admin_staff(self):
+        return self.admin_staff_number if self.admin_staff_number is not None else 0
+
+    @property
+    def total_program_staff(self):
+        return 0
+
+    @property
+    def total_staff(self):
+        admin_staff = self.total_admin_staff
+        program_staff = self.total_program_staff
+        return admin_staff + program_staff
     def __str__(self):
         return self.name
 

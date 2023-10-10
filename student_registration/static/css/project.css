@@ -787,3 +787,6 @@ td:has(span.warning) {
   opacity: 0.5;
   pointer-events: none;
 }
+.right-align {
+    text-align: right;
+}

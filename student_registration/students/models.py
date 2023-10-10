@@ -8,7 +8,6 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
 from django.core.exceptions import ValidationError
-from student_registration.locations.models import Location
 from django import forms
 
 
