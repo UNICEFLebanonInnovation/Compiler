@@ -77,7 +77,23 @@ class CenterAdminForm(forms.ModelForm):
 
     class Meta:
         model = Center
-        fields = '__all__'
+        fields = (
+            'name',
+            'governorate',
+            'caza',
+            'cadaster',
+            'longitude',
+            'latitude',
+            'manager_name',
+            'phone_number',
+            'email',
+            'type',
+            'provided_packages',
+            'education_programs',
+            'youth_programs',
+            'cwd_accessible',
+            'admin_staff_number',
+        )
 
 
 class CenterForm(forms.ModelForm):
