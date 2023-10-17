@@ -18,7 +18,7 @@
                                                           <img width="42" class="rounded-circle" src="{% static 'images/avatars/male.png' %}">
                                                         </div>
                                                         <div class="widget-content-left" style="width: 200px !important;">
-                                                            <input type="hidden" class="registry_id" name="registry_id[]" value="{{ item.registry_id }}" />
+                                                            <input type="hidden" class="registration_id" name="registry_id[]" value="{{ item.registration_id }}" />
                                                             <input type="hidden" class="attendance_id" name="attendance_id[]" value="{{ item.attendance_id }}" />
                                                             <input type="hidden" class="child_id" name="child_id[]" value="{{ item.child_id }}" />
                                                             <div class="widget-heading"><a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="{% url 'mscc:child_profile_preview' %}?registry_id={{ item.registry_id }}">{{ item.child_fullname }}</a></div>

@@ -67,13 +67,11 @@ class Center(TimeStampedModel):
         ('Child Protection', 'Child Protection'),
         ('Social Protection', 'Social Protection'),
     )
-    EDUCATION_PROGRAM = Choices(
+    PROGRAM = Choices(
         ('BLN', 'BLN'),
         ('ABLN', 'ABLN'),
         ('RS', 'RS'),
-        ('CBECE', 'CBECE')
-    )
-    YOUTH_PROGRAM = Choices(
+        ('CBECE', 'CBECE'),
         ('YBLN', 'YBLN'),
         ('YFS', 'YFS')
     )
@@ -149,27 +147,16 @@ class Center(TimeStampedModel):
         null=True,
         verbose_name=_('Provided Services')
     )
-    education_programs = ArrayField(
+    programs = ArrayField(
         models.CharField(
-            choices=EDUCATION_PROGRAM,
+            choices=PROGRAM,
             max_length=200,
             blank=True,
             null=True,
         ),
         blank=True,
         null=True,
-        verbose_name=_('Education Program')
-    )
-    youth_programs = ArrayField(
-        models.CharField(
-            choices=YOUTH_PROGRAM,
-            max_length=200,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-        verbose_name=_('Youth Program')
+        verbose_name=_('Programs')
     )
     admin_staff_number = models.IntegerField(
         blank=True,
@@ -264,5 +251,141 @@ class Center(TimeStampedModel):
 
     class Meta:
         ordering = ['name']
+        verbose_name = "Center"
+        verbose_name_plural = "Centers"
+
+
+class ProgramStaff(TimeStampedModel):
+
+    GENDER = Choices(
+        ('Male', _('Male')),
+        ('Female', _('Female')),
+    )
+    SUBJECT = Choices(
+        ('Education', _('Education')),
+        ('Child Protection', _('Child Protection')),
+        ('Health and Nutrition', _('Health and Nutrition')),
+        ('Youth', _('Youth')),
+        ('Digital', _('Digital')),
+    )
+    PROGRAM = Choices(
+        ('BLN', 'BLN'),
+        ('ABLN', 'ABLN'),
+        ('RS', 'RS'),
+        ('CBECE', 'CBECE'),
+        ('YBLN', 'YBLN'),
+        ('YFS', 'YFS')
+    )
+    YES_NO = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No"))
+    )
+    TOPICS = Choices(
+        ('PSEA', 'PSEA'),
+        ('Digital', 'Digital'),
+        ('Classroom management', 'Classroom management'),
+        ('SEL', 'SEL'),
+        ('Inclusion', 'Inclusion'),
+        ('Safe identification and referral', 'Safe identification and referral'),
+        ('Psychological first aid', 'Psychological first aid')
+    )
+    center = models.ForeignKey(
+        Center,
+        blank=True, null=True,
+        verbose_name=_('Center'),
+    )
+    facilitator_name = models.CharField(
+        max_length=200,
+        verbose_name='Facilitator Name'
+    )
+    phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone Number')
+    )
+    email = models.EmailField(blank=True, max_length=254, verbose_name='Email')
+    gender = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=GENDER,
+        verbose_name=_('Gender')
+    )
+    subject = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SUBJECT,
+        verbose_name=_('Subject')
+    )
+    programs = ArrayField(
+        models.CharField(
+            choices=PROGRAM,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Education Program')
+    )
+    weekly_hours_taught = models.IntegerField(
+        blank = True,
+        null = True,
+        choices = ((x, x) for x in range(0, 300)),
+        verbose_name = _('Number of Hours Taught Per Week')
+    )
+    attendance_training = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Facilitator Attendance to training ?')
+    )
+    training_topics = ArrayField(
+        models.CharField(
+            choices=TOPICS,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Topics of facilitator training')
+    )
+    attach_CV = models.FileField(
+        upload_to='uploads/program_staff',
+        blank=True,
+        null=True,
+        verbose_name=_('Attachment'),
+    )
+    attach_Diploma = models.FileField(
+        upload_to='uploads/program_staff',
+        blank=True,
+        null=True,
+        verbose_name=_('Attachment'),
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
+
+    def __str__(self):
+        return self.facilitator_name
+
+    def __unicode__(self):
+        return self.facilitator_name
+
+    class Meta:
+        ordering = ['facilitator_name']
         verbose_name = "Center"
         verbose_name_plural = "Centers"

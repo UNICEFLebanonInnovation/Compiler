@@ -342,7 +342,9 @@ def create_attendance(data, center_id):
 
         for child in data['children_attendance']:
             attendance_child, created = MSCCAttendanceChild.objects.get_or_create(attendance_day=attendance,
-                                                                                  child_id=child['child_id'])
+                                                                                  child_id=child['child_id'],
+                                                                                  registration_id=child['registration_id']
+                                                                                  )
             attendance_child.attended = child['attended']
             attendance_child.absence_reason = child['absence_reason']
             attendance_child.absence_reason_other = child['absence_reason_other']
@@ -375,7 +377,7 @@ def load_child_attendance(center_id, attendance_date, education_program, class_s
 
             for attendance in attendances:
                 attendance_record = {}
-                attendance_record['registry_id'] = 0
+                attendance_record['registration_id'] = attendance.registration.id
                 attendance_record['child_id'] = attendance.child.id
                 attendance_record['child_fullname'] = attendance.child.full_name
                 attendance_record['child_mother_fullname'] = attendance.child.mother_fullname
@@ -400,10 +402,9 @@ def load_child_attendance(center_id, attendance_date, education_program, class_s
                 )
             ).filter(has_education_service=True)
 
-
             for registration_child in registrations:
                 registration_record = {}
-                registration_record['registry_id'] = registration_child.id
+                registration_record['registration_id'] = registration_child.id
                 registration_record['child_id'] = registration_child.child.id
                 registration_record['child_fullname'] = registration_child.child.full_name
                 registration_record['child_mother_fullname'] = registration_child.child.mother_fullname

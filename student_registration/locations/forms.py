@@ -89,8 +89,7 @@ class CenterAdminForm(forms.ModelForm):
             'email',
             'type',
             'provided_packages',
-            'education_programs',
-            'youth_programs',
+            'programs',
             'cwd_accessible',
             'admin_staff_number',
         )
@@ -161,17 +160,11 @@ class CenterForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         choices=Center.PROVIDED_PACKAGES
     )
-    education_programs = forms.MultipleChoiceField(
+    programs = forms.MultipleChoiceField(
         label=_('Education Program'),
         required=True,
         widget=forms.CheckboxSelectMultiple,
-        choices=Center.EDUCATION_PROGRAM
-    )
-    youth_programs = forms.MultipleChoiceField(
-        label=_('Youth Program'),
-        required=True,
-        widget=forms.CheckboxSelectMultiple,
-        choices=Center.YOUTH_PROGRAM
+        choices=Center.PROGRAM
     )
     cwd_accessible = forms.ChoiceField(
         label=_("Is the center accessible for CWD ?"),
@@ -240,15 +233,13 @@ class CenterForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('education_programs', css_class='col-md-3  multiple-choice'),
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('youth_programs', css_class='col-md-3  multiple-choice'),
+                    Div('programs', css_class='col-md-3  multiple-choice'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('cwd_accessible', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('admin_staff_number', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -282,8 +273,7 @@ class CenterForm(forms.ModelForm):
         instance.email = validated_data.get('email')
         instance.type = validated_data.get('type')
         instance.provided_packages = validated_data.getlist('provided_packages')
-        instance.education_programs = validated_data.getlist('education_programs')
-        instance.youth_programs = validated_data.getlist('youth_programs')
+        instance.programs = validated_data.getlist('programs')
         instance.cwd_accessible = validated_data.get('cwd_accessible')
         instance.admin_staff_number = validated_data.get('admin_staff_number')
         instance.modified_by = request.user
@@ -306,8 +296,7 @@ class CenterForm(forms.ModelForm):
             'email',
             'type',
             'provided_packages',
-            'education_programs',
-            'youth_programs',
+            'programs',
             'cwd_accessible',
             'admin_staff_number',
 

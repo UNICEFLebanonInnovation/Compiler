@@ -22,6 +22,7 @@ from student_registration.schools.models import (
 from student_registration.locations.models import Center
 from student_registration.child.models import Child
 from student_registration.alp.models import ALPRound
+from student_registration.mscc.models import Registration
 
 
 class Attendance(TimeStampedModel):
@@ -606,6 +607,12 @@ class MSCCAttendanceChild(TimeStampedModel):
         MSCCAttendance,
         blank=True, null=True,
         related_name='attendance_child',
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Registration')
     )
     child = models.ForeignKey(
         Child,

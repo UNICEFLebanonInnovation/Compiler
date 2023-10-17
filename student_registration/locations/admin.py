@@ -45,7 +45,6 @@ class CenterResource(resources.ModelResource):
     class Meta:
         model = Center
         fields = (
-            'id',
             'name',
             'governorate',
             'caza',
@@ -61,7 +60,6 @@ class CenterAdmin(ImportExportModelAdmin):
     resource_class = CenterResource
     form = CenterAdminForm
     list_display = (
-            'id',
             'name',
             'governorate',
             'caza',

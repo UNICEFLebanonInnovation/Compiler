@@ -42,6 +42,7 @@ $(document).ready(function() {
             function()
             {
                var child_id = $(this).find(".child_id").val();
+               var registration_id = $(this).find(".registration_id").val();
                var attended = $(this).find("input.status:checked").val();
                var absence_reason = $(this).find(".absence_reason").val();
                var absence_reason_other = $(this).find(".absence_reason_other").val();
@@ -50,6 +51,7 @@ $(document).ready(function() {
                (
                   {
                      "child_id": child_id,
+                     "registration_id": registration_id,
                      "attended": attended,
                      "absence_reason": absence_reason,
                      "absence_reason_other": absence_reason_other

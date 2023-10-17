@@ -42,6 +42,7 @@ def get_education_service(registry):
     else:
         return None
 
+
 @register.simple_tag
 def get_service_all(registry, model_name):
     try:
@@ -49,6 +50,7 @@ def get_service_all(registry, model_name):
         return model.objects.filter(registration=registry)
     except Exception as ex:
         return False
+
 
 @register.simple_tag
 def get_services(registry):
