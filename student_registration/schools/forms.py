@@ -3181,6 +3181,11 @@ class Classroom_Form_cprep(forms.ModelForm):
 
 
 class SchoolForm(forms.ModelForm):
+    type = forms.ChoiceField(
+        label=_("School Type"),
+        widget=forms.Select, required=True,
+        choices=School.TYPE
+    )
     number = forms.IntegerField(
         label=_('School CERD Number'),
         widget=forms.TextInput, required=False
@@ -3301,11 +3306,10 @@ class SchoolForm(forms.ModelForm):
         label=_('School Digital Capacity'),
         widget=forms.TextInput, required=False
     )
-    is_first_shift = forms.ChoiceField(
-        label=_("School is 1st shift?"),
-        widget=forms.Select, required=False,
-        choices=School.YES_NO,
-        initial= 'yes'
+    is_closed = forms.BooleanField(
+        label="Is the school closed?",
+        required=False,
+        initial=False
     )
     working_days = forms.MultipleChoiceField(
         label=_('Please indicate working days'),
@@ -3333,6 +3337,16 @@ class SchoolForm(forms.ModelForm):
     number_total_children_disability = forms.IntegerField(
         label=_('Total number of Children With Disability (Excluding Dirasa)'),
         widget=forms.TextInput, required=False
+    )
+    benefit_wfp_service = forms.ChoiceField(
+        label=_("Is the school benefiting from WFP services?"),
+        widget=forms.Select, required=True,
+        choices=School.YES_NO
+    )
+    wfp_service_type = forms.ChoiceField(
+        label=_("Service Type"),
+        widget=forms.Select, required=False,
+        choices=School.WFP_SERVICE_TYPE
     )
 
     def __init__(self, *args, **kwargs):
@@ -3398,61 +3412,66 @@ class SchoolForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('registration_level', css_class='col-md-3  multiple-checbkoxes'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('school_capacity', css_class='col-md-3'),
+                    Div('type', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('school_capacity', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('empty_building', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('number_children', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('number_children_male', css_class='col-md-3'),
+                    Div('number_children', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('number_children_male', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('number_children_female', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('number_children_lebanese', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
+                    Div('number_children_lebanese', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('number_children_non_lebanese', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
-                    Div('number_children_sbp', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">10</span>'),
-                    Div('number_children_male_sbp', css_class='col-md-3'),
+                    Div('number_children_sbp', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
+                    Div('number_children_male_sbp', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('number_children_female_sbp', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
-                    Div('number_children_lebanese_sbp', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">13</span>'),
+                    Div('number_children_lebanese_sbp', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('number_children_non_lebanese_sbp', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
-                    Div('CWD_accessible', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">15</span>'),
-                    Div('internet_available', css_class='col-md-3'),
+                    Div('CWD_accessible', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">16</span>'),
+                    Div('internet_available', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('school_digital_capacity', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">17</span>'),
+                    HTML('<span class="badge badge-default">18</span>'),
                     Div('receive_supplies', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">18</span>'),
-                    Div('number_dirasa_children_disability', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">19</span>'),
+                    Div('number_dirasa_children_disability', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">20</span>'),
                     Div('number_total_children_disability', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -3465,7 +3484,7 @@ class SchoolForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
                 ),
                 Div(
-                    Div('is_first_shift', css_class='col-md-3 d-none'),
+                    Div('is_closed', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
@@ -3481,6 +3500,21 @@ class SchoolForm(forms.ModelForm):
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning C_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(HTML('<span>D</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('WFP') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('benefit_wfp_service', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_wfp_service_type">2</span>'),
+                    Div('wfp_service_type', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning D_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -3523,6 +3557,15 @@ class SchoolForm(forms.ModelForm):
 
         return instance
 
+
+    def clean(self):
+        cleaned_data = super(SchoolForm, self).clean()
+        benefit_wfp_service = cleaned_data.get('benefit_wfp_service')
+        wfp_service_type = cleaned_data.get("wfp_service_type")
+
+        if benefit_wfp_service == "yes" and not wfp_service_type:
+            self.add_error('wfp_service_type', 'This field is required')
+
     class Meta:
         model = School
         fields = (
@@ -3553,13 +3596,16 @@ class SchoolForm(forms.ModelForm):
             'CWD_accessible',
             'internet_available',
             'school_digital_capacity',
-            'is_first_shift',
+            'is_closed',
             'working_days',
             'academic_year_start',
             'academic_year_end',
             'receive_supplies',
             'number_dirasa_children_disability',
             'number_total_children_disability',
+            'type',
+            'benefit_wfp_service',
+            'wfp_service_type',
         )
 
 

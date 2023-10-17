@@ -111,6 +111,7 @@ def school_build_xls_extraction(qs_school, qs_club, qs_meeting, qs_community_ini
     columns = [
         'school ID',
         'School CERD Number',
+        'Type',
         'School name',
         'School director name',
         'School land phone number',
@@ -142,6 +143,8 @@ def school_build_xls_extraction(qs_school, qs_club, qs_meeting, qs_community_ini
         'Did the school receive school supplies/stationery',
         'Total number of Children With Disability (Dirasa only)',
         'Total number of Children With Disability (Excluding Dirasa)',
+        'School benefiting from WFP services',
+        'Service Type',
         'Owner',
         'Modified By',
         'Created',
@@ -157,6 +160,7 @@ def school_build_xls_extraction(qs_school, qs_club, qs_meeting, qs_community_ini
     rows = qs_school.order_by('id').values_list(
         'id',
         'number',
+        'type',
         'name',
         'director_name',
         'land_phone_number',
@@ -188,6 +192,8 @@ def school_build_xls_extraction(qs_school, qs_club, qs_meeting, qs_community_ini
         'receive_supplies',
         'number_dirasa_children_disability',
         'number_total_children_disability',
+        'benefit_wfp_service',
+        'wfp_service_type',
         'owner__username',
         'modified_by__username',
         'created',

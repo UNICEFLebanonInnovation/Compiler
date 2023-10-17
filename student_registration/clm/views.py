@@ -3679,7 +3679,7 @@ class BridgingListView(LoginRequiredMixin,
     table_class = BridgingTable
     model = Bridging
     template_name = 'clm/bridging_list.html'
-    table = BootstrapTable(Bridging.objects.all(), order_by='id')
+    table = BootstrapTable(Bridging.objects.all(), order_by='student__full_name')
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingFilter
@@ -3692,7 +3692,6 @@ class BridgingListView(LoginRequiredMixin,
                 qs = qs.filter(school_id=self.request.user.school_id)
         elif not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and not self.request.user.partner:
             qs = qs.none()
-
         return qs
 
 
@@ -3718,6 +3717,8 @@ def bridging_export_data(request):
 
     elif not clm_bridging_all and not is_staff and not request.user.partner:
         vw_bridging_data += " AND id = 0 "
+
+    vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
 
     cursor.execute(vw_bridging_data)
     data = cursor.fetchall()

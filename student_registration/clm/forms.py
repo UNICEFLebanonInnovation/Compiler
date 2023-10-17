@@ -7022,7 +7022,7 @@ class BridgingForm(CommonForm):
         choices=REGISTRATION_LEVEL
     )
     school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_first_shift='yes'), widget=forms.Select,
+        queryset=School.objects.filter(is_closed=False), widget=forms.Select,
         label=_('School Name'),
         empty_label='-------',
         required=False, to_field_name='id',
@@ -7901,14 +7901,14 @@ class BridgingForm(CommonForm):
             partner_id = self.request.user.partner_id
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
 
-        queryset = School.objects.filter(is_first_shift='yes').all()
+        queryset = School.objects.filter(is_closed=False).all()
 
         if not clm_bridging_all:
             if school_id and school_id > 0:
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id and partner_id > 0:
-                queryset = School.objects.filter(is_first_shift='yes',
+                queryset = School.objects.filter(is_closed=False,
                                                  id__in=PartnerOrganization
                                                  .objects
                                                  .filter(id=partner_id)

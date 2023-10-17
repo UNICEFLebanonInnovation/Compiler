@@ -2214,7 +2214,7 @@ class Bridging(CLM):
         return 0
 
     class Meta:
-        ordering = ['-id']
+        ordering = ['student__first_name', 'student__father_name', 'student__last_name']
         verbose_name = "Bridging"
         verbose_name_plural = "Bridging"
 

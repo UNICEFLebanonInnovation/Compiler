@@ -528,10 +528,10 @@ class SchoolListView(LoginRequiredMixin,
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         is_staff = self.request.user.is_staff
 
-        queryset = School.objects.filter(is_first_shift='yes').all()
+        queryset = School.objects.filter(is_closed=False).all()
 
         if clm_bridging_all or is_staff:
-            queryset = School.objects.filter(is_first_shift='yes').all()
+            queryset = School.objects.filter(is_closed=False).all()
         else:
             school_id = 0
             partner_id = 0
@@ -545,7 +545,7 @@ class SchoolListView(LoginRequiredMixin,
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id > 0:
-                queryset = School.objects.filter(is_first_shift='yes',
+                queryset = School.objects.filter(is_closed=False,
                                                  id__in=PartnerOrganization
                                                  .objects
                                                  .filter(id=partner_id)
@@ -894,18 +894,18 @@ class HealthVisitFormView(LoginRequiredMixin,
         return super(HealthVisitFormView, self).form_valid(form)
 
 
-def school_export_data(request):
-    qs_school = School.objects.filter(is_first_shift='yes').order_by('-id')
-    qs_school.order_by('-id')
-    dataset = SchoolResource().export(qs_school)
-    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="school_data.xls"'
-    return response
+# def school_export_data(request):
+#     qs_school = School.objects.filter(is_closed=False).order_by('-id')
+#     qs_school.order_by('-id')
+#     dataset = SchoolResource().export(qs_school)
+#     response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+#     response['Content-Disposition'] = 'attachment; filename="school_data.xls"'
+#     return response
 
 
 
 class school_export_data(LoginRequiredMixin, ListView):
-    qs_school = School.objects.filter(is_first_shift='yes').order_by('-id')
+    qs_school = School.objects.filter(is_closed=False).order_by('-id')
     qs_club = Club.objects.all().order_by('-id')
     qs_meeting = Meeting.objects.all().order_by('-id')
     qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')

@@ -52,6 +52,11 @@ class School(TimeStampedModel):
         ('yes', _("Yes")),
         ('no', _("No")),
     )
+    TYPE = Choices(
+        ('', '----------'),
+        ('Private School', _("Private School")),
+        ('Private Free School', _("Private Free School")),
+    )
     DAYS_OF_THE_WEEK = Choices(
         ('Monday', _('Monday')),
         ('Tuesday', _('Tuesday')),
@@ -61,11 +66,19 @@ class School(TimeStampedModel):
         ('Saturday', _('Saturday')),
         ('Sunday', _('Sunday')),
     )
-
+    WFP_SERVICE_TYPE = Choices(
+        ('', '----------'),
+        ('Community Kitchen', _("Community Kitchen")),
+        ('School Snacks', _("School Snacks")),
+    )
     number = models.CharField(
         max_length=45,
         unique=True,
         verbose_name=_('School CERD Number')
+    )
+    type = models.CharField(
+        blank=True, null=True, max_length=100,
+        choices=TYPE,
     )
     name = models.CharField(
         max_length=255,
@@ -221,7 +234,6 @@ class School(TimeStampedModel):
         null=True,
         verbose_name=_('Working Days')
     )
-
     academic_year_start = models.DateField(
         blank=True,
         null=True,
@@ -376,6 +388,20 @@ class School(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Modified by'),
+    )
+    benefit_wfp_service = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the school benefiting from WFP services?')
+    )
+    wfp_service_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=WFP_SERVICE_TYPE,
+        verbose_name=_('Service Type?')
     )
 
     class Meta:

@@ -205,7 +205,7 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "schools":
-            kwargs["queryset"] = School.objects.filter(is_first_shift='yes')
+            kwargs["queryset"] = School.objects.filter(is_closed=False)
         return super(PartnerOrganizationAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
     def get_export_formats(self):
@@ -697,16 +697,18 @@ class SchoolAdmin(ImportExportModelAdmin):
             'receive_supplies',
             'number_dirasa_children_disability',
             'number_total_children_disability',
+            'is_closed',
     )
     list_display = (
-         'id',
-            'number',
-            'name',
-            'director_name',
-            'land_phone_number',
-            'email',
-            'governorate',
-            'district',
+        'id',
+        'number',
+        'name',
+        'director_name',
+        'land_phone_number',
+        'email',
+        'governorate',
+        'district',
+        'is_closed',
     )
     search_fields = (
         'name',

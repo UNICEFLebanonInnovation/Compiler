@@ -67,7 +67,7 @@ class SchoolListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = School.objects.all()
         if self.request.user.partner:
-            qs = School.objects.filter(is_first_shift='yes',
+            qs = School.objects.filter(is_closed=False,
                                        id__in=PartnerOrganization
                                        .objects
                                        .filter(id=self.request.user.partner_id)

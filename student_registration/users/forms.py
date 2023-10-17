@@ -28,7 +28,7 @@ from django.template.loader import render_to_string
 class UserAdminForm(UserChangeForm):
 
     school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_first_shift='yes'),
+        queryset=School.objects.filter(is_closed=False),
         widget=autocomplete.ModelSelect2(url='school_autocomplete'),
         required=False
     )

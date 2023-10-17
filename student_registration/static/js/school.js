@@ -17,6 +17,8 @@ $(window).load(function () {
 
 $(document).ready(function() {
 
+        reorganizeForm();
+
     if($(document).find('#id_academic_year_start').length == 1) {
         $('#id_academic_year_start').datepicker({dateFormat: "yy-mm-dd"});
     }
@@ -35,6 +37,10 @@ $(document).ready(function() {
      if($(document).find('#id_date_last_visit').length == 1) {
         $('#id_date_last_visit').datepicker({dateFormat: "yy-mm-dd"});
     }
+
+    $(document).on('change', 'select#id_benefit_wfp_service', function(){
+        reorganizeForm();
+    });
 
     $(document).on('click', '.justify-button', function(){
         var item = $(this);
@@ -73,6 +79,21 @@ $(document).ready(function() {
     });
 });
 
+function reorganizeForm()
+{
+    var benefit_wfp_service = $('select#id_benefit_wfp_service').val();
+
+     // wfp_service_type
+    $('div#div_id_wfp_service_type').addClass('d-none');
+    $('#span_wfp_service_type').addClass('d-none');
+
+
+    if(benefit_wfp_service == 'yes'){
+        $('#div_id_wfp_service_type').removeClass('d-none');
+        $('#span_wfp_service_type').removeClass('d-none');
+    }
+}
+
 function pageScripts() {
     /* Magnific Popup */
     $('.image-link').magnificPopup({
@@ -110,6 +131,7 @@ function load_districts(url)
         }
     })
 }
+
 function load_cadasters(url)
 {
     var value = $("#id_district").val();
@@ -123,6 +145,7 @@ function load_cadasters(url)
         }
     })
 }
+
 function load_schools(url)
 {
     var value = $("#id_governorate").val();

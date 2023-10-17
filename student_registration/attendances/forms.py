@@ -57,7 +57,7 @@ class AttendanceForm(forms.Form):
 
 class MainAttendanceForm(forms.ModelForm):
     school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_first_shift='yes'), widget=forms.Select,
+        queryset=School.objects.filter(is_closed=False), widget=forms.Select,
         label=_('School Name'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -175,13 +175,13 @@ class MainAttendanceForm(forms.ModelForm):
             round_id = current_round.id
         self.fields['round_id'].initial = round_id
 
-        queryset = School.objects.filter(is_first_shift='yes').all()
+        queryset = School.objects.filter(is_closed=False).all()
         if not clm_bridging_all:
             if school_id and school_id > 0:
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id and partner_id > 0:
-                queryset = School.objects.filter(is_first_shift='yes',
+                queryset = School.objects.filter(is_closed=False,
                                                  id__in=PartnerOrganization
                                                  .objects
                                                  .filter(id=partner_id)
@@ -325,7 +325,7 @@ class AttendanceAbsenceForm(forms.Form):
 class CLMAttendanceAdminForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
-        queryset=School.objects.filter(is_first_shift='yes'),
+        queryset=School.objects.filter(is_closed=False),
         widget=autocomplete.ModelSelect2(url='school_autocomplete')
     )
 

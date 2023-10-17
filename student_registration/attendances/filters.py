@@ -10,7 +10,7 @@ from student_registration.clm.models import Bridging
 
 
 class CLMAttendanceStudentFilter(FilterSet):
-    school = ModelChoiceFilter(queryset=School.objects.filter(is_first_shift='yes'), empty_label=_('School'))
+    school = ModelChoiceFilter(queryset=School.objects.filter(is_closed=False), empty_label=_('School'))
     registration_level = ChoiceFilter(choices=Bridging.REGISTRATION_LEVEL)
 
     class Meta:
