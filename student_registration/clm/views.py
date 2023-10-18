@@ -3696,7 +3696,13 @@ class BridgingListView(LoginRequiredMixin,
 
 
 @login_required(login_url='/users/login')
-def bridging_export_data(request):
+def bridging_export(request):
+    response = bridging_export_data(request, 0)
+
+    return response
+
+@login_required(login_url='/users/login')
+def bridging_export_data(request, school_id):
     from django.db import connection
     cursor = connection.cursor()
     vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
@@ -3717,6 +3723,9 @@ def bridging_export_data(request):
 
     elif not clm_bridging_all and not is_staff and not request.user.partner:
         vw_bridging_data += " AND id = 0 "
+
+    if school_id > 0:
+        vw_bridging_data += " AND school_id =" + str(school_id)
 
     vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
 
