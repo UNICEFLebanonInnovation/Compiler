@@ -313,11 +313,15 @@ class ProgramStaff(TimeStampedModel):
         choices=GENDER,
         verbose_name=_('Gender')
     )
-    subject = models.CharField(
-        max_length=100,
+    subject = ArrayField(
+        models.CharField(
+            choices=SUBJECT,
+            max_length=200,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices=SUBJECT,
         verbose_name=_('Subject')
     )
     programs = ArrayField(
@@ -355,17 +359,17 @@ class ProgramStaff(TimeStampedModel):
         null=True,
         verbose_name=_('Topics of facilitator training')
     )
-    attach_CV = models.FileField(
+    attach_cv = models.FileField(
         upload_to='uploads/program_staff',
         blank=True,
         null=True,
-        verbose_name=_('Attachment'),
+        verbose_name=_('CV Attachment'),
     )
-    attach_Diploma = models.FileField(
+    attach_diploma = models.FileField(
         upload_to='uploads/program_staff',
         blank=True,
         null=True,
-        verbose_name=_('Attachment'),
+        verbose_name=_('Diploma Attachment'),
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,

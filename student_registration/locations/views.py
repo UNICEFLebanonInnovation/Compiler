@@ -29,12 +29,14 @@ from .tables import (
 )
 from .models import (
     Center,
-    Location
+    Location,
+    ProgramStaff
 )
 from student_registration.schools.models import PartnerOrganization
 
 from .forms import (
-    CenterForm
+    CenterForm,
+    ProgramStaffForm
 )
 from .serializers import (
     LocationSerializer
@@ -140,8 +142,47 @@ class CenterListView(LoginRequiredMixin,
 
         return Center.objects.none()
 
-####################### API VIEWS #############################
 
+class ProgramStaffFormView(LoginRequiredMixin,
+                           GroupRequiredMixin,
+                           FormView):
+    template_name = 'location/program_staff_form.html'
+    form_class = ProgramStaffForm
+    success_url = ''
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+
+    def get_success_url(self):
+        center_id = self.kwargs.get('center_id')
+        if center_id is not None:
+            return reverse('locations:center_profile', kwargs={'pk': center_id})
+        else:
+            return reverse('mscc:list')
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['center_id'] = self.kwargs['center_id']
+        return super(ProgramStaffFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        center_id = int(self.kwargs.get('center_id'))
+        pk = self.kwargs.get('pk', None)
+        if self.request.method == "POST":
+            return ProgramStaffForm(self.request.POST, pk=pk, center_id=center_id, request=self.request)
+        else:
+            if pk:
+                instance = ProgramStaff.objects.get(id=pk)
+                return ProgramStaffForm(instance=instance, pk=pk, center_id=center_id, request=self.request)
+            return ProgramStaffForm(pk=pk, center_id=center_id, request=self.request)
+
+    def form_valid(self, form):
+        center_id = self.kwargs.get('center_id')
+        instance = self.kwargs.get('pk', None)
+        form.save(request=self.request, center_id=center_id, instance=instance)
+        return super(ProgramStaffFormView, self).form_valid(form)
+
+###################### API VIEWS #############################
 
 class LocationViewSet(mixins.RetrieveModelMixin,
                       mixins.ListModelMixin,

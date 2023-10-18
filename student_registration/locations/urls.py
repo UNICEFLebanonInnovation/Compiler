@@ -25,4 +25,14 @@ urlpatterns = [
         view=views.ProfileView.as_view(),
         name='center_profile'
     ),
+    url(
+        regex=r'^Program-Staff-Add/(?P<center_id>[\w.@+-]+)/$',
+        view=views.ProgramStaffFormView.as_view(),
+        name='program_staff_add'
+    ),
+    url(
+        regex=r'^Program-Staff-Edit/(?P<center_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=views.ProgramStaffFormView.as_view(),
+        name='program_staff_edit'
+    )
 ]
