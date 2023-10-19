@@ -46,7 +46,6 @@
       </div>
 </div>
 
-        <!--{{ form.errors }}-->
 
 <div class="main-card mb-3 card">
                                 <div class="card-body">
@@ -54,7 +53,7 @@
                                         <ul class="forms-wizard">
                                             <li>
                                                 <a href="#step-1">
-                                                    <em>1</em><span>Center</span>
+                                                    <em>1</em><span>Program Staff</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -86,16 +85,4 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/location/center.js' %}?v=7"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
-    <script>
-      var url_districts = "{% url 'clm:load_districts' %}";
-      var url_cadasters = "{% url 'clm:load_cadasters' %}";
-
-      $("#id_governorate").change(function () {
-          load_districts(url_districts);
-          load_cadasters(url_cadasters);
-      });
-      $("#id_caza").change(function () {
-          load_cadasters(url_cadasters);
-      });
-    </script>
 {% endblock %}

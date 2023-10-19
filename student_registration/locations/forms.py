@@ -314,7 +314,7 @@ class ProgramStaffForm(forms.ModelForm):
     facilitator_name = forms.CharField(
         label=_("Facilitator Name"),
         widget=forms.TextInput,
-        required = False
+        required=False
     )
     gender = forms.ChoiceField(
         label=_('Gender'),
@@ -392,9 +392,14 @@ class ProgramStaffForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('facilitator_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('gender', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">9</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('email', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -446,6 +451,7 @@ class ProgramStaffForm(forms.ModelForm):
             instance = ProgramStaff.objects.get(id=instance)
 
         instance.facilitator_name = validated_data.get('facilitator_name')
+        instance.gender = validated_data.get('gender')
         instance.phone_number = validated_data.get('phone_number')
         instance.email = validated_data.get('email')
         instance.subject = validated_data.getlist('subject')
@@ -458,7 +464,7 @@ class ProgramStaffForm(forms.ModelForm):
             instance.attach_cv = attach_cv
         attach_diploma = request.FILES.get('attach_diploma', False)
         if attach_diploma:
-            instance.attach_Diploma = attach_diploma
+            instance.attach_diploma = attach_diploma
         instance.modified_by = request.user
 
         instance.save()
@@ -469,6 +475,7 @@ class ProgramStaffForm(forms.ModelForm):
         model = ProgramStaff
         fields = (
             'facilitator_name',
+            'gender',
             'phone_number',
             'email',
             'subject',

@@ -53,7 +53,8 @@ from student_registration.clm.inclusion_views import (
 
 from student_registration.locations.views import (
     LocationViewSet,
-    LocationAutocomplete
+    LocationAutocomplete,
+    ProgramStaffViewSet
 )
 
 from student_registration.users.views import LoginRedirectView, home, login_success
@@ -107,6 +108,8 @@ api.register(r'^clm-cbece/(?P<id>\d+)/$', CBECEViewSet, base_name='clm-cbece-par
 api.register(r'clm-inclusion', InclusionViewSet, base_name='clm-inclusion')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')
 api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, base_name='self-perception-grads')
+api.register(r'program-staff', ProgramStaffViewSet, base_name='program-staff')
+
 
 # api.register(r'general-questionnaire', GeneralQuestionnaireViewSet, base_name='general-questionnaire')
 api.register(r'clm-outreach', OutreachViewSet, base_name='clm-outreach')

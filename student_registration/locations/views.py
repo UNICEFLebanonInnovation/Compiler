@@ -21,6 +21,7 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 
+from django.views.decorators.http import require_POST
 
 from .tables import (
     BootstrapTable,
@@ -39,7 +40,8 @@ from .forms import (
     ProgramStaffForm
 )
 from .serializers import (
-    LocationSerializer
+    LocationSerializer,
+    ProgramStaffSerializer
 )
 from .filters import (
     CenterFilter
@@ -69,11 +71,14 @@ class ProfileView(LoginRequiredMixin,
     group_required = [u"MSCC"]
 
     def get_context_data(self, **kwargs):
-        instance = Center.objects.get(id=self.kwargs['pk'])
+        center_id = self.kwargs['pk']
+        instance = Center.objects.get(id=center_id)
+        program_staffs = ProgramStaff.objects.filter(center__id=center_id).order_by('facilitator_name')
         current_tab = self.request.GET.get('current_tab', 'info')
 
         return {
             'instance': instance,
+            'program_staffs':program_staffs,
             'current_tab': current_tab
         }
 
@@ -181,6 +186,41 @@ class ProgramStaffFormView(LoginRequiredMixin,
         instance = self.kwargs.get('pk', None)
         form.save(request=self.request, center_id=center_id, instance=instance)
         return super(ProgramStaffFormView, self).form_valid(form)
+
+
+class ProgramStaffViewSet(mixins.RetrieveModelMixin,
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.UpdateModelMixin,
+                 viewsets.GenericViewSet):
+
+    model = ProgramStaff
+    queryset = ProgramStaff.objects.all()
+    serializer_class = ProgramStaffSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = self.queryset
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
+def program_staff_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            program_staff = ProgramStaff.objects.get(id=pk)
+            program_staff.delete()
+            result = {"isSuccessful": True}
+        except ProgramStaff.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
 
 ###################### API VIEWS #############################
 

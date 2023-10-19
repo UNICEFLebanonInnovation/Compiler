@@ -391,5 +391,5 @@ class ProgramStaff(TimeStampedModel):
 
     class Meta:
         ordering = ['facilitator_name']
-        verbose_name = "Center"
-        verbose_name_plural = "Centers"
+        verbose_name = "ProgramStaff"
+        verbose_name_plural = "ProgramStaffs"

@@ -34,5 +34,10 @@ urlpatterns = [
         regex=r'^Program-Staff-Edit/(?P<center_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.ProgramStaffFormView.as_view(),
         name='program_staff_edit'
-    )
+    ),
+    url(
+        regex=r'^Program-Staff-Delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.program_staff_delete,
+        name='program_staff_delete'
+    ),
 ]
