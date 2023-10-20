@@ -39,7 +39,6 @@
                         {% if request.user|has_group:"MSCC_CENTER" %}
                           <th>
                             <a href="/locations/Program-Staff-Edit/{{ program_staff.center.id }}/{{ program_staff.id }}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Program Staff."><i class="pe-7s-pen"></i></a>
-<!--                            <a href="" data-toggle="tooltip" data-placement="top" data-original-title="Edit Program Staff." class="dropdown-item delete-program-staff"  data-id="{{ record.id }}"><i class="pe-7s-pen" id="delete-staff-{{ record.id }}"></i></a>-->
                             <a href="" class="delete-program-staff" data-id="{{ program_staff.id }}" data-toggle="tooltip" data-placement="top" data-original-title="Delete Program Staff."><i class="pe-7s-trash" style="color: red;"></i></a>
                           </th>
                         {% endif %}
@@ -74,68 +73,6 @@
 
 </div>
 
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    $(document).ready(function() {
-        // Include the CSRF token in the AJAX request headers
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-                }
-            }
-        });
-
-        $('.delete-program-staff').click(function(event) {
-            event.preventDefault();
-            var programStaffId = $(this).data('id');
-            var trToDelete = $(this).closest('tr');
-
-            $.ajax({
-                type: 'POST',
-                url: '/locations/Program-Staff-Delete/' + programStaffId + '/',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.isSuccessful) {
-                        // Hide the corresponding <tr> element
-                        trToDelete.hide();
-                    } else {
-                        // Handle errors, e.g., display an error message
-                        console.log('Deletion failed.');
-                    }
-                },
-                error: function() {
-                    // Handle AJAX request errors
-                    console.log('An error occurred while making the request.');
-                }
-            });
-        });
-    });
-
-    // Helper functions to include the CSRF token
-    function csrfSafeMethod(method) {
-        // These HTTP methods do not require CSRF protection
-        return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
-    }
-
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-</script>
 
 
 
