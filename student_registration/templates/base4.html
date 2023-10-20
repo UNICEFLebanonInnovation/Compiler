@@ -364,7 +364,7 @@
 
                                       </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"MSCC_PARTNER" and request.user.partner_id  %}
+                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                       <div class="col-sm-6 col-xl-4">
                                           <a href="{% url 'locations:center_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                               <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
