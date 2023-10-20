@@ -52,7 +52,7 @@ class SchoolTable(CommonTable):
 
     bridging_export_column = tables.TemplateColumn(verbose_name=_('Dirasa Data'), orderable=False,
                                         template_name='django_tables2/school/bridging_export_column.html',
-                                        attrs={'url': '/clm/bridging-school-export/', 'programme': 'Bridging'})
+                                        attrs={'url': '/clm/bridging-school-export-data/', 'programme': 'Bridging'})
 
     # delete_column = tables.TemplateColumn(verbose_name=_('Delete school'), orderable=False,
     #                                       template_name='django_tables2/school_delete_column.html',
