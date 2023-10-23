@@ -1,7 +1,7 @@
 {% load staticfiles i18n %}
 {% if column.attrs.url %}
 <div style="width: 100px;">
-  <a href="{{ column.attrs.url }}?school_id={{ record.id }}" class="btn btn-primary col-icon">
+  <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary col-icon">
     <i class="fa fa-download"></i>
   </a>
 </div>

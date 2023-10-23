@@ -3696,19 +3696,7 @@ class BridgingListView(LoginRequiredMixin,
 
 
 @login_required(login_url='/users/login')
-def bridging_export(request):
-    response = bridging_export_data(request, request.GET.get('school_id', 0))
-    return response
-
-
-def bridging_school_export(request):
-    school_id = request.GET.get('school_id')
-    if school_id is not None:
-        response = bridging_export_data(request, school_id)
-        return response
-
-
-def bridging_export_data(request, school_id):
+def bridging_export_data(request):
     from django.db import connection
     cursor = connection.cursor()
     vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
@@ -3729,6 +3717,45 @@ def bridging_export_data(request, school_id):
 
     elif not clm_bridging_all and not is_staff and not request.user.partner:
         vw_bridging_data += " AND id = 0 "
+
+    vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+
+    cursor.execute(vw_bridging_data)
+    data = cursor.fetchall()
+
+    headers = [col[0] for col in cursor.description]
+
+    workbook = Workbook()
+    worksheet_all_data = workbook.create_sheet("All Data")
+    worksheet_all_data.append(headers)
+
+    for row in data:
+        worksheet_all_data.append(row)
+
+    default_sheet = workbook.get_sheet_by_name('Sheet')
+    workbook.remove(default_sheet)
+
+    # Set the appropriate response headers for the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+
+    # Save the workbook to the response
+    workbook.save(response)
+
+    return response
+
+
+class bridging_school_export(LoginRequiredMixin, ListView):
+
+    def get(self, request, *args, **kwargs):
+        school_id = int(self.kwargs.get('school_id'))
+        return bridging_school_export_data(school_id)
+
+
+def bridging_school_export_data(school_id):
+    from django.db import connection
+    cursor = connection.cursor()
+    vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
 
     if school_id > 0:
         vw_bridging_data += " AND school_id =" + str(school_id)
