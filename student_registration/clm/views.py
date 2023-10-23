@@ -3695,16 +3695,16 @@ class BridgingListView(LoginRequiredMixin,
         return qs
 
 
-@login_required(login_url='/users/login')
 def bridging_export(request):
     response = bridging_export_data(request, 0)
     return response
 
 
-@login_required(login_url='/users/login')
-def bridging_school_export(request, school_id):
-    response = bridging_export_data(request, school_id)
-    return response
+def bridging_school_export(request):
+    school_id = request.GET.get('school_id')
+    if school_id is not None:
+        response = bridging_export_data(request, school_id)
+        return response
 
 
 def bridging_export_data(request, school_id):

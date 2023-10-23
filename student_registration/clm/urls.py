@@ -348,7 +348,7 @@ urlpatterns = [
         name='bridging_export'
     ),
     url(
-        regex=r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
+        regex=r'^bridging-school-export-data/$',
         view=views.bridging_school_export,
         name='bridging_school_export_data'
     ),
