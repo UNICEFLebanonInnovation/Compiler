@@ -169,7 +169,7 @@ class CenterForm(forms.ModelForm):
     )
     programs = forms.MultipleChoiceField(
         label=_('Education Program'),
-        required=True,
+        required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=Center.PROGRAM
     )
@@ -181,7 +181,7 @@ class CenterForm(forms.ModelForm):
     admin_staff_number = forms.IntegerField(
         label=_('Number of Admin staff in the center'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        required=False,
+        required=True,
         initial=0,
         min_value=0
     )
@@ -233,11 +233,11 @@ class CenterForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('type', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('provided_packages', css_class='col-md-3  multiple-choice'),
                     css_class='row card-body',
                 ),
                 Div(
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                    Div('provided_packages', css_class='col-md-3  multiple-choice'),
                     HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('programs', css_class='col-md-3  multiple-choice'),
                     css_class='row card-body',
@@ -281,7 +281,17 @@ class CenterForm(forms.ModelForm):
         instance.provided_packages = validated_data.getlist('provided_packages')
         instance.programs = validated_data.getlist('programs')
         instance.cwd_accessible = validated_data.get('cwd_accessible')
-        instance.admin_staff_number = validated_data.get('admin_staff_number')
+        if validated_data.get('admin_staff_number'):
+            instance.admin_staff_number = validated_data.get('admin_staff_number')
+        else:
+            instance.admin_staff_number = 0
+
+
+
+
+
+            
+
         instance.modified_by = request.user
 
         instance.save()

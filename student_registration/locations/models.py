@@ -235,7 +235,7 @@ class Center(TimeStampedModel):
 
     @property
     def total_program_staff(self):
-        return 0
+        return ProgramStaff.objects.filter(center=self.id).count()
 
     @property
     def total_staff(self):
