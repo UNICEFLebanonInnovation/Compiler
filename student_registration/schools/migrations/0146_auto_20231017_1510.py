@@ -1,0 +1,28 @@
+from __future__ import unicode_literals
+
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('schools', '0145_auto_20231017_1240'),
+    ]
+
+    operations = [
+        migrations.AlterField(
+            model_name='school',
+            name='benefit_wfp_service',
+            field=models.CharField(blank=True, choices=[('', '----------'), ('yes', 'Yes'), ('no', 'No')], max_length=100, null=True, verbose_name='Is the school benefiting from WFP services?'),
+        ),
+        migrations.AlterField(
+            model_name='school',
+            name='type',
+            field=models.CharField(blank=True, choices=[('', '----------'), ('Private School', 'Private School'), ('Private Free School', 'Private Free School')], max_length=100, null=True),
+        ),
+        migrations.AlterField(
+            model_name='school',
+            name='wfp_service_type',
+            field=models.CharField(blank=True, choices=[('', '----------'), ('Community Kitchen', 'Community Kitchen'), ('School Snacks', 'School Snacks')], max_length=100, null=True, verbose_name='Service Type?'),
+        ),
+    ]
