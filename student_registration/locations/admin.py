@@ -64,6 +64,8 @@ class CenterAdmin(ImportExportModelAdmin):
             'governorate',
             'caza',
             'cadaster',
+            'longitude',
+            'latitude',
             'p_code',
             'type',
             'partner'

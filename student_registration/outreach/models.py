@@ -355,6 +355,7 @@ class OutreachChild(models.Model):
     work_type_other = models.CharField(max_length=200, blank=True, null=True)
     child_referral = models.CharField(max_length=200, blank=True, null=True)
     child_notes = models.CharField(max_length=1000, blank=True, null=True)
+
     class Meta:
         ordering = ['id']
         verbose_name = "Outreach Child"
