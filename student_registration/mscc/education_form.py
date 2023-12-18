@@ -481,6 +481,7 @@ class EducationServiceForm(forms.ModelForm):
             choices.append(('BLN Level 2', _('BLN Level 2')))
             choices.append(('BLN Level 3', _('BLN Level 3')))
         if service_cbece:
+            choices.append(('CBECE Level 1', _('CBECE Level 1')))
             choices.append(('CBECE Level 2', _('CBECE Level 2')))
             choices.append(('CBECE Level 3', _('CBECE Level 3')))
         if service_abln:
@@ -849,6 +850,18 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['physics_grade'].hidden_widget()
             self.fields['psychomotor_grade'].hidden_widget()
 
+        if programme_type == "CBECE Level 1":
+            field_init(self.fields['language_grade'], 'Language Development', 48)
+            field_init(self.fields['math_grade'], 'Cognitive Development - Mathematics', 24)
+            field_init(self.fields['science_grade'], 'Cognitive Development - Science', 18)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 14)
+            field_init(self.fields['psychomotor_grade'], 'Psychomotor Development', 20)
+            field_init(self.fields['artistic_grade'], 'Artistic Development', 10)
+            self.fields['arabic_grade'].hidden_widget()
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+
         if programme_type == "CBECE Level 2":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 66)
             field_init(self.fields['language_grade'], 'Foreign Language Development', 66)
@@ -998,7 +1011,7 @@ class EducationGradingForm(forms.ModelForm):
                     css_id='step-1'
                 ),
             )
-        if programme_type in ["CBECE Level 2", "CBECE Level 3"]:
+        if programme_type in ["CBECE Level 1", "CBECE Level 2", "CBECE Level 3"]:
             self.helper.layout = Layout(
                 Div(
                     Div(
