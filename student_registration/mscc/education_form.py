@@ -1011,7 +1011,60 @@ class EducationGradingForm(forms.ModelForm):
                     css_id='step-1'
                 ),
             )
-        if programme_type in ["CBECE Level 1", "CBECE Level 2", "CBECE Level 3"]:
+
+        if programme_type in ["CBECE Level 1"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participation', css_class='col-md-4'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('barriers', css_class='col-md-8'),
+                        Div('barriers_other', css_class='col-md-3'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('post_test_done', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('school_year_completed', css_class='col-md-5'),
+                        css_class='row card-body ' + display_post_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="'+badge_css+' badge-pill">'+str(1+ctr)+'</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        HTML('<span class="'+badge_css+' badge-pill">'+str(2+ctr)+'</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="'+badge_css+' badge-pill">'+str(3+ctr)+'</span>'),
+                        Div('science_grade', css_class='col-md-4'),
+                        HTML('<span class="'+badge_css+' badge-pill">'+str(4+ctr)+'</span>'),
+                        Div('psychomotor_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    Div(
+                        HTML('<span class="'+badge_css+' badge-pill">'+str(5+ctr)+'</span>'),
+                        Div('social_emotional_grade', css_class='col-md-4'),
+                        HTML('<span class="'+badge_css+' badge-pill">'+str(6+ctr)+'</span>'),
+                        Div('artistic_grade', css_class='col-md-4'),
+                        css_class='row card-body ' + grade_field_css + display_pre_fields_css
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
+
+        if programme_type in ["CBECE Level 2", "CBECE Level 3"]:
             self.helper.layout = Layout(
                 Div(
                     Div(

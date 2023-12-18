@@ -1124,7 +1124,8 @@ class ReferralForm(forms.ModelForm):
         choices.append(('Referred to YBLN', _('Referred to YBLN')))
 
         if education_program == "CBECE Level 2":
-            choices.append(('Referred to CBECE Higher Level in next school year', _('Referred to CBECE Higher Level in next school year')))
+            choices.append(('Referred to CBECE Higher Level in next school year',
+                            _('Referred to CBECE Higher Level in next school year')))
 
         self.fields['recommended_learning_path'].choices = choices
 
