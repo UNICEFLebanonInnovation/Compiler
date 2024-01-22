@@ -35,6 +35,25 @@ YES_NO = Choices(
 )
 
 
+class Round(models.Model):
+
+    name = models.CharField(max_length=45, unique=True)
+    current_year = models.BooleanField(blank=True, default=False)
+
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Round"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class Registration(TimeStampedModel):
 
     YES_NO = Choices(
@@ -136,6 +155,12 @@ class Registration(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Partner'),
         related_name='+'
+    )
+    round = models.ForeignKey(
+        Round,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Round')
     )
     have_labour = models.CharField(
         max_length=100,
@@ -710,6 +735,7 @@ class HealthNutritionService(TimeStampedModel):
     )
     MALNUTRITION_SCREENING = Choices(
         ('', '----------'),
+        ('No malnutrition screening', _('No malnutrition screening')),
         ('MAM (MUAC >11.5 and <12.5 cm)', _('MAM (MUAC >11.5 and <12.5 cm)')),
         ('SAM (MUAC <11.5 cm)', _('SAM (MUAC <11.5 cm)')),
         ('SAM with Bilateral pitting oedema  (both feet puffy)', _('SAM with Bilateral pitting oedema  (both feet puffy)')),
@@ -1059,6 +1085,7 @@ class EducationService(TimeStampedModel):
         ('RS Grade 7', _('RS Grade 7')),
         ('RS Grade 8', _('RS Grade 8')),
         ('RS Grade 9', _('RS Grade 9')),
+        ('ECD', _('ECD'))
     )
     YOUTH_PROGRAM = Choices(
         ('YBLN Level 1', _('YBLN Level 1')),
@@ -1131,6 +1158,13 @@ class EducationService(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Date of registration in the round')
+    )
+
+    round = models.ForeignKey(
+        Round,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Round')
     )
 
     class Meta:

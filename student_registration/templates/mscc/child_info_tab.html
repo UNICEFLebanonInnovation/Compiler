@@ -504,7 +504,6 @@
                             </div>
 
   <!--Education history and current situation -->
-  {% if instance.child_age > 2 %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationService' instance as result %}
                                 <div class="mb-3 card">
@@ -574,10 +573,18 @@
                                                                 </div>
                                                                 {% endif %}
 
+                                                                <div class="vertical-timeline-item vertical-timeline-element">
+                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Round</h4>
+                                                                            <p> {{result.round}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
                                                                 {%  if result.education_program %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Education programme in Makani</h4>
+                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Core Package Program</h4>
                                                                             <p> {{result.education_program}}</p>
                                                                         </div>
                                                                     </div>
@@ -647,7 +654,6 @@
                                     </div>
                                 </div>
                             </div>
-  {% endif %}
 
 
 </div>

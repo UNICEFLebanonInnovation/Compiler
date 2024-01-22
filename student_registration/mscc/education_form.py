@@ -20,7 +20,8 @@ from .models import (
     EducationService,
     EducationRSService,
     EducationProgrammeAssessment,
-    YES_NO
+    YES_NO,
+    Round
 )
 from student_registration.schools.models import (
     School,
@@ -443,8 +444,14 @@ class EducationServiceForm(forms.ModelForm):
         label=_("Please Specify dropout date from school"),
         required=False
     )
+    round = forms.ModelChoiceField(
+        queryset=Round.objects.all(), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
     education_program = forms.ChoiceField(
-        label=_("Education Program"),
+        label=_("Core Package Program"),
         widget=forms.Select, required=True,
         choices=EducationService.EDUCATION_PROGRAM,
     )
@@ -474,6 +481,7 @@ class EducationServiceForm(forms.ModelForm):
         service_rs = get_service(registry, 'RS')
         service_ybln = get_service(registry, 'YBLN')
         service_yfs = get_service(registry, 'YFS')
+        service_ecd = get_service(registry, 'ECD')
 
         choices = list()
         if service_bln:
@@ -497,6 +505,8 @@ class EducationServiceForm(forms.ModelForm):
         if service_yfs:
             choices.append(('YFS Level 1', _('YFS Level 1')))
             choices.append(('YFS Level 2', _('YFS Level 2')))
+        if service_ecd:
+            choices.append(('ECD', _('ECD')))
 
         self.fields['education_program'].choices = choices
 
@@ -535,10 +545,15 @@ class EducationServiceForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('education_program', css_class='col-md-3'),
+                    Div('round', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('class_section', css_class='col-md-3'),
+                    Div('education_program', css_class='col-md-3'),
+                    css_class='row card-body' + display_edu_section
+                ),
+                Div(
                     HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('class_section', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('registration_date', css_class='col-md-3'),
                     css_class='row card-body'+display_edu_section
                 ),
@@ -572,7 +587,12 @@ class EducationServiceForm(forms.ModelForm):
         if registration_date_str:
             registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
             instance.registration_date = registration_date
+
         instance.save()
+
+        registry = instance.registration
+        registry.round_id = instance.round_id
+        registry.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
@@ -583,6 +603,7 @@ class EducationServiceForm(forms.ModelForm):
         fields = (
             'education_status',
             'dropout_date',
+            'round',
             'education_program',
             'class_section',
             'registration_date',

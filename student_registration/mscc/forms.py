@@ -40,7 +40,8 @@ DAYS.insert(0, ('', '---------'))
 
 
 class MainForm(forms.ModelForm):
-    YEARS = list(((str(x), x) for x in range(Child.CURRENT_YEAR - 20, Child.CURRENT_YEAR + 1)))
+    # YEARS = list(((str(x), x) for x in range(Child.CURRENT_YEAR - 20, Child.CURRENT_YEAR + 1)))
+    YEARS = list(((str(x), x) for x in range(1990, Child.CURRENT_YEAR + 1)))
     YEARS.insert(0, ('', '---------'))
 
     # center = forms.ModelChoiceField(
@@ -742,9 +743,16 @@ class MainForm(forms.ModelForm):
         cleaned_data = super(MainForm, self).clean()
 
         # check if date is valid
-        year = int(cleaned_data.get("child_birthday_year"))
-        month = int(cleaned_data.get("child_birthday_month"))
-        day = int(cleaned_data.get("child_birthday_day"))
+        year = 0
+        month = 0
+        day = 0
+        if cleaned_data.get("child_birthday_year"):
+            year = int(cleaned_data.get("child_birthday_year"))
+        if cleaned_data.get("child_birthday_month"):
+            month = int(cleaned_data.get("child_birthday_month"))
+        if cleaned_data.get("child_birthday_day"):
+            day = int(cleaned_data.get("child_birthday_day"))
+
         try:
             datetime.datetime(year, month, day)
         except ValueError:

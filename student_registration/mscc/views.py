@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 
-from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
@@ -18,6 +18,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
+from django.shortcuts import redirect, render
 
 from .filters import (
     MainFilter,
@@ -183,6 +184,38 @@ class MainEditView(LoginRequiredMixin,
         instance = Registration.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(MainEditView, self).form_valid(form)
+
+
+class NewRoundView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   TemplateView):
+
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+    template_name = 'mscc/new_round.html'
+
+    def get_context_data(self, **kwargs):
+        registry = kwargs.get('pk')
+        return {
+            'registry': registry
+        }
+
+
+class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self):
+
+        registry = self.request.GET.get('registry')
+        if self.request.GET.get('new_round_confirmation', None) == 'confirmed':
+            import copy
+            registration = Registration.objects.get(id=registry)
+            new_registration = copy.copy(registration)
+            new_registration.pk = None
+            new_registration.save()
+            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id,
+                                                                 'package_type': 'Core-Package'})
+
+        return reverse('mscc:new_round', kwargs={'registry': registry})
 
 
 def MainMarkDeleteView(request, pk):

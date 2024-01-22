@@ -107,6 +107,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'child__last_name',
     )
 
+
 class EducationHistoryAdmin(admin.ModelAdmin):
 
     list_display = (
@@ -196,6 +197,7 @@ class PSSServiceAdmin(admin.ModelAdmin):
         'registration__child__father_name',
         'registration__child__last_name',
     )
+
 
 class HealthNutritionServiceAdmin(admin.ModelAdmin):
 
@@ -403,6 +405,7 @@ class YouthReferralAdmin(admin.ModelAdmin):
         'registration__child__last_name',
     )
 
+
 class RecreationalAdmin(admin.ModelAdmin):
     list_display = (
         'registration',
@@ -433,3 +436,4 @@ admin.site.register(Referral, ReferralAdmin)
 admin.site.register(YouthAssessment, YouthAssessmentAdmin)
 admin.site.register(YouthReferral, YouthReferralAdmin)
 admin.site.register(Recreational, RecreationalAdmin)
+admin.site.register(Round)

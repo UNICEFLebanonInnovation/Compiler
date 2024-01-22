@@ -12,6 +12,7 @@ from student_registration.students.models import Nationality
 from .models import (
     Registration,
     EducationService,
+    Round,
     PACKAGE_TYPES
 )
 from student_registration.child.models import Child
@@ -26,6 +27,8 @@ class MainFilter(FilterSet):
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
     child__mother_fullname = CharFilter(lookup_expr='icontains')
+    round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
+                                      .order_by('name').distinct(), empty_label='Round')
 
     class Meta:
         model = Registration
@@ -38,6 +41,8 @@ class FullFilter(FilterSet):
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
+    round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
+                                      .order_by('name').distinct(), empty_label='Round')
     center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Center')
     center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')

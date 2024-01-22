@@ -374,7 +374,8 @@ function child_duplication_check() {
                 if(response.result.length > 0){
                     var text = ''
                     $(response.result).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/MSCC/Child-Profile-Preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name;
+                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/MSCC/Child-Profile-Preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name+'</br>';
+                        text = text + 'Click <a href="/MSCC/New-Round/'+item.id+'/">here</a> to register this child in a new Round.'
                     })
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();

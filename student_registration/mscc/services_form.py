@@ -596,7 +596,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
     development_delays_identified = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=HealthNutritionService.DEVELOPMENT_DELAYS,
-        label=_('Any delays in the development milestones  is being identified? (please to check the Integrated ECD milestones Cards based on the age of the child)')
+        label=_('Any delays in the development milestones is being identified? (please to check the Integrated ECD milestones Cards based on the age of the child)')
     )
     # Caregivers of children 0-18 years
     eating_minimum_meals = forms.ChoiceField(

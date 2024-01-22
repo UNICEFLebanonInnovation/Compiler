@@ -17,6 +17,16 @@ urlpatterns = [
         name='child_edit'
     ),
     url(
+        regex=r'^New-Round/(?P<pk>[\w.@+-]+)/$',
+        view=views.NewRoundView.as_view(),
+        name='new_round'
+    ),
+    url(
+        regex=r'^New-Round-Redirect/$',
+        view=views.NewRoundRedirectView.as_view(),
+        name='new_round_redirect'
+    ),
+    url(
         regex=r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
         view=views.MainMarkDeleteView,
         name='child_mark_deleted'
