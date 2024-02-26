@@ -23,7 +23,10 @@ def to_array(fields, obj):
     data = {}
     for field_name in fields:
         if hasattr(obj, field_name):
-            data[field_name] = getattr(obj, field_name)
+            value = getattr(obj, field_name)
+            if hasattr(value, 'id'):
+                value = getattr(value, 'id')
+            data[field_name] = value
 
     return data
 

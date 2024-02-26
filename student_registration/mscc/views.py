@@ -212,6 +212,7 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             new_registration = copy.copy(registration)
             new_registration.pk = None
             new_registration.save()
+            generate_services(new_registration.child.age, new_registration, self.request.user)
             return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id,
                                                                  'package_type': 'Core-Package'})
 

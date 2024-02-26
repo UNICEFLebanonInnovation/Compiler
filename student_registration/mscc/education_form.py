@@ -583,6 +583,7 @@ class EducationServiceForm(forms.ModelForm):
             instance.dropout_date = dropout_date
         instance.education_program = validated_data.get('education_program')
         instance.class_section = validated_data.get('class_section')
+        instance.round_id = validated_data.get('round')
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
             registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
