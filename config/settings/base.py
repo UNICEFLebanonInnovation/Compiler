@@ -161,7 +161,10 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///clm_07112022'),
+    # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
+    'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/staging_16122022'),
+    # 'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/prod_23022023_2'),
+    # 'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/prod_23022023_2'),
 }
 
 # DATABASES = {
