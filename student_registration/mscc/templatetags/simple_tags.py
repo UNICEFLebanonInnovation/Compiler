@@ -1,7 +1,7 @@
 from django import template
 from django.apps import apps
 
-from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration, EducationService
+from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration, EducationService, Round
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 
 
@@ -24,6 +24,23 @@ def get_child_fullname(registry):
     reg = Registration.objects.filter(id=registry).last()
     return reg.child_fullname
 
+
+@register.simple_tag
+def get_child_rounds(registry):
+    from django.db.models import Subquery
+    registration_ids = Registration.objects.filter(
+        child_id=Subquery(
+            Registration.objects.filter(id=registry).values('child_id')[:1]
+        )
+    ).values_list('id', flat=True)
+    round_names = Round.objects.filter(
+        id__in=EducationService.objects
+            .filter(registration_id__in=registration_ids).values_list('round_id',flat=True)).values_list('name', flat=True).distinct()
+
+    if round_names:
+        return round_names
+    else:
+        return None
 
 @register.simple_tag
 def get_service(registry, service_name):
