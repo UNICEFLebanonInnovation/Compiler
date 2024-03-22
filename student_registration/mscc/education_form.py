@@ -16,6 +16,7 @@ from dal import autocomplete
 
 from student_registration.mscc.templatetags.simple_tags import get_service
 from .models import (
+    Registration,
     EducationAssessment,
     EducationService,
     EducationRSService,
@@ -475,6 +476,8 @@ class EducationServiceForm(forms.ModelForm):
 
         super(EducationServiceForm, self).__init__(*args, **kwargs)
 
+        self.fields['registration_id'].initial = registry
+
         service_bln = get_service(registry, 'BLN')
         service_abln = get_service(registry, 'ABLN')
         service_cbece = get_service(registry, 'CB-ECE')
@@ -599,9 +602,29 @@ class EducationServiceForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        from django.db.models import Subquery
+        cleaned_data = super(EducationServiceForm, self).clean()
+        registration_id = cleaned_data.get("registration_id")
+        round_id = cleaned_data.get("round")
+
+        last_registration = EducationService.objects.filter(
+            registration__child_id=Subquery(
+                Registration.objects.filter(id=registration_id).values('child_id')[:1]
+            ),
+            round_id=round_id
+        ).values(
+            'registration__center__name'
+        ).order_by('-registration_id').first()
+
+        if last_registration:
+            center_name = last_registration['registration__center__name']
+            self.add_error('round', 'This child is already registered in the Center: ' + center_name)
+
     class Meta:
         model = EducationService
         fields = (
+            'registration_id',
             'education_status',
             'dropout_date',
             'round',
