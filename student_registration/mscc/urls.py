@@ -296,4 +296,9 @@ urlpatterns = [
         view=services_view.RecreationalFormView.as_view(),
         name='service_recreational_edit'
     ),
+    url(
+        regex=r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
+        view=views.MainRegistrationCancelView,
+        name='child_registration_cancel'
+    ),
 ]

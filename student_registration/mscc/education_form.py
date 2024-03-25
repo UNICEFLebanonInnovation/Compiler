@@ -567,9 +567,13 @@ class EducationServiceForm(forms.ModelForm):
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 Reset('reset', 'Reset',
                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                HTML(
+                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/MSCC/Child-Registration-Cancel/{}/">Cancel</a>'.format(
+                        registry)
+                ),
+
             ),
         )
-
     def save(self, request=None, instance=None, registry=None, package_type=None):
         from datetime import datetime
         validated_data = request.POST
@@ -605,21 +609,23 @@ class EducationServiceForm(forms.ModelForm):
     def clean(self):
         from django.db.models import Subquery
         cleaned_data = super(EducationServiceForm, self).clean()
-        registration_id = cleaned_data.get("registration_id")
-        round_id = cleaned_data.get("round")
+        instance = self.instance
+        if not instance.pk:
+            registration_id = cleaned_data.get("registration_id")
+            round_id = cleaned_data.get("round")
 
-        last_registration = EducationService.objects.filter(
-            registration__child_id=Subquery(
-                Registration.objects.filter(id=registration_id).values('child_id')[:1]
-            ),
-            round_id=round_id
-        ).values(
-            'registration__center__name'
-        ).order_by('-registration_id').first()
+            last_registration = EducationService.objects.filter(
+                registration__child_id=Subquery(
+                    Registration.objects.filter(id=registration_id).values('child_id')[:1]
+                ),
+                round_id=round_id
+            ).values(
+                'registration__center__name'
+            ).order_by('-registration_id').first()
 
-        if last_registration:
-            center_name = last_registration['registration__center__name']
-            self.add_error('round', 'This child is already registered in the Center: ' + center_name)
+            if last_registration:
+                center_name = last_registration['registration__center__name']
+                self.add_error('round', 'This child is already registered in the Center: ' + center_name)
 
     class Meta:
         model = EducationService

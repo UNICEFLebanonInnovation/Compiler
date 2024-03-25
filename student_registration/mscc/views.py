@@ -319,6 +319,19 @@ class MainViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
+def MainRegistrationCancelView(request, pk):
+    if request.user.is_authenticated:
+        try:
+            registration = Registration.objects.get(id=pk)
+            registration.deleted = True
+            registration.save()
+            return redirect('/MSCC/List/')
+        except Registration.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
 def outreach_child_search(request):
 
     birthday_year = request.GET.get('birthday_year')
