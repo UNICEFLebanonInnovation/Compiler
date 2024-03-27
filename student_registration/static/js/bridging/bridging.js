@@ -1060,22 +1060,30 @@ function reorganizeForm()
     //    id_language
     if (language == 'english_arabic')
     {
-        $('#div_id_english').removeClass('d-none');
+        $('#div_id_english_alphabet_knowledge').removeClass('d-none');
+        $('#div_id_english_familiar_words').removeClass('d-none');
+        $('#div_id_english_reading_comprehension').removeClass('d-none');
         $('#span_english').removeClass('d-none');
     }
     else
     {
-        $('#div_id_english').addClass('d-none');
+        $('#div_id_english_alphabet_knowledge').addClass('d-none');
+        $('#div_id_english_familiar_words').addClass('d-none');
+        $('#div_id_english_reading_comprehension').addClass('d-none');
         $('#span_english').addClass('d-none');
     }
     if (language == 'french_arabic')
     {
-        $('#div_id_french').removeClass('d-none');
+        $('#div_id_french_alphabet_knowledge').removeClass('d-none');
+        $('#div_id_french_familiar_words').removeClass('d-none');
+        $('#div_id_french_reading_comprehension').removeClass('d-none');
         $('#span_french').removeClass('d-none');
     }
     else
     {
-        $('#div_id_french').addClass('d-none');
+        $('#div_id_french_alphabet_knowledge').addClass('d-none');
+        $('#div_id_french_familiar_words').addClass('d-none');
+        $('#div_id_french_reading_comprehension').addClass('d-none');
         $('#span_french').addClass('d-none');
     }
 

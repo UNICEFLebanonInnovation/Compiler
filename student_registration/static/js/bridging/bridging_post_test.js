@@ -185,6 +185,7 @@ function reorganizeForm_post_assessment()
     $('div.grades').addClass('d-none');
     $('#grades').addClass('hide');
 
+
     if(test_done == 'yes'){
     $('#div_id_round_complete').removeClass('d-none');
     $('#span_round_complete').removeClass('d-none');
@@ -203,22 +204,30 @@ function reorganizeForm_post_assessment()
     //    id_language
     if (language == 'english_arabic')
     {
-        $('#div_id_english').removeClass('d-none');
+        $('#div_id_english_alphabet_knowledge').removeClass('d-none');
+        $('#div_id_english_familiar_words').removeClass('d-none');
+        $('#div_id_english_reading_comprehension').removeClass('d-none');
         $('#span_english').removeClass('d-none');
     }
     else
     {
-        $('#div_id_english').addClass('d-none');
+        $('#div_id_english_alphabet_knowledge').addClass('d-none');
+        $('#div_id_english_familiar_words').addClass('d-none');
+        $('#div_id_english_reading_comprehension').addClass('d-none');
         $('#span_english').addClass('d-none');
     }
     if (language == 'french_arabic')
     {
-        $('#div_id_french').removeClass('d-none');
+        $('#div_id_french_alphabet_knowledge').removeClass('d-none');
+        $('#div_id_french_familiar_words').removeClass('d-none');
+        $('#div_id_french_reading_comprehension').removeClass('d-none');
         $('#span_french').removeClass('d-none');
     }
     else
     {
-        $('#div_id_french').addClass('d-none');
+        $('#div_id_french_alphabet_knowledge').addClass('d-none');
+        $('#div_id_french_familiar_words').addClass('d-none');
+        $('#div_id_french_reading_comprehension').addClass('d-none');
         $('#span_french').addClass('d-none');
     }
     }
@@ -237,9 +246,16 @@ function reorganizeForm_post_assessment()
         $('select#id_round_complete').val("");
 
         // grades
-        $('#id_arabic').val('');
-        $('#id_english').val('');
-        $('#id_french').val('');
+
+        $('#id_arabic_alphabet_knowledge').val('');
+        $('#id_arabic_familiar_words').val('');
+        $('#id_arabic_reading_comprehension').val('');
+        $('#id_english_alphabet_knowledge').val('');
+        $('#id_english_familiar_words').val('');
+        $('#id_english_reading_comprehension').val('');
+        $('#id_french_alphabet_knowledge').val('');
+        $('#id_french_familiar_words').val('');
+        $('#id_french_reading_comprehension').val('');
         $('#id_math').val('');
 
         $('div.grades').addClass('d-none');

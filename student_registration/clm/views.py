@@ -1253,12 +1253,30 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
             if 'post_test' in data:
                 p_test = data['post_test']
                 if p_test:
-                    if "Bridging_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["Bridging_ASSESSMENT/arabic"]
-                    if "Bridging_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["Bridging_ASSESSMENT/english"]
-                    if "Bridging_ASSESSMENT/french" in p_test:
-                        data['french'] = p_test["Bridging_ASSESSMENT/french"]
+                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
+                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
+                        data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
+                    if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
+                        data['arabic_reading_comprehension'] = p_test[
+                            "Bridging_ASSESSMENT/arabic_reading_comprehension"]
+
+                    if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
+                        data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
+                        data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
+                    if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
+                        data['english_reading_comprehension'] = p_test[
+                            "Bridging_ASSESSMENT/english_reading_comprehension"]
+
+                    if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
+                        data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
+                        data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
+                    if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
+                        data['french_reading_comprehension'] = p_test[
+                            "Bridging_ASSESSMENT/french_reading_comprehension"]
+
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
                     # if "Bridging_ASSESSMENT/artistic" in p_test:
@@ -1269,7 +1287,7 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingPostAssessmentView, self).form_valid(form)
 
@@ -1301,7 +1319,7 @@ class BridgingFollowupView(LoginRequiredMixin,
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingFollowupView, self).form_valid(form)
 
@@ -3653,12 +3671,29 @@ class BridgingEditView(LoginRequiredMixin,
             if 'pre_test' in data:
                 p_test = data['pre_test']
                 if p_test:
-                    if "Bridging_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["Bridging_ASSESSMENT/arabic"]
-                    if "Bridging_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["Bridging_ASSESSMENT/english"]
-                    if "Bridging_ASSESSMENT/french" in p_test:
-                        data['french'] = p_test["Bridging_ASSESSMENT/french"]
+
+                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
+                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
+                        data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
+                    if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
+                        data['arabic_reading_comprehension'] = p_test["Bridging_ASSESSMENT/arabic_reading_comprehension"]
+
+                    if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
+                        data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
+                        data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
+                    if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
+                        data['english_reading_comprehension'] = p_test["Bridging_ASSESSMENT/english_reading_comprehension"]
+
+
+                    if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
+                        data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
+                    if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
+                        data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
+                    if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
+                        data['french_reading_comprehension'] = p_test["Bridging_ASSESSMENT/french_reading_comprehension"]
+
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
 
