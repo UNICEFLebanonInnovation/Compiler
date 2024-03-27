@@ -613,7 +613,6 @@ class EducationServiceForm(forms.ModelForm):
         if not instance.pk:
             registration_id = cleaned_data.get("registration_id")
             round_id = cleaned_data.get("round")
-
             last_registration = EducationService.objects.filter(
                 registration__child_id=Subquery(
                     Registration.objects.filter(id=registration_id).values('child_id')[:1]
