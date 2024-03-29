@@ -541,7 +541,7 @@ class Child(TimeStampedModel):
             return  self.parent_syrian_national_number
         # 4	"Palestinian national ID"
         elif self.id_type.id == 4:
-            return  self.sop_parent_national_number
+            return  self.parent_sop_national_number
         # 5	"Lebanese national ID"
         elif self.id_type.id == 5:
             return  self.parent_national_number

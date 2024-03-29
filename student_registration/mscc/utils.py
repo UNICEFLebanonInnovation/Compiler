@@ -274,8 +274,8 @@ def get_outreach_child(outreach_id):
         initial['syrian_national_number_confirm'] = instance.child_personal_id
     elif id_type == 'palestinian_id':
         initial['id_type'] = 4
-        initial['sop_parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
-        initial['sop_parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['parent_sop_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['parent_sop_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
         initial['sop_national_number'] = instance.child_personal_id
         initial['sop_national_number_confirm'] = instance.child_personal_id
     elif id_type == 'lebanese_id':
@@ -316,8 +316,8 @@ def get_old_child(student_id):
     # initial['parent_syrian_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
     # initial['syrian_national_number'] = instance.child_personal_id
     # initial['syrian_national_number_confirm'] = instance.child_personal_id
-    # initial['sop_parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
-    # initial['sop_parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['parent_sop_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+    # initial['parent_sop_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
     # initial['sop_national_number'] = instance.child_personal_id
     # initial['sop_national_number_confirm'] = instance.child_personal_id
     # initial['parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id

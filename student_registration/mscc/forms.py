@@ -850,20 +850,20 @@ class MainForm(forms.ModelForm):
                 msg = "The national numbers are not matched"
                 self.add_error('syrian_national_number_confirm', msg)
 
-        sop_parent_national_number = cleaned_data.get("sop_parent_national_number")
-        sop_parent_national_number_confirm = cleaned_data.get("sop_parent_national_number_confirm")
+        parent_sop_national_number = cleaned_data.get("parent_sop_national_number")
+        parent_sop_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
         sop_national_number = cleaned_data.get("sop_national_number")
         sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
 
         # Palestinian national ID
         if id_type and id_type.id == 4:
-            if not sop_parent_national_number:
+            if not parent_sop_national_number:
                 self.add_error('parent_sop_national_number', 'This field is required')
 
-            if not sop_parent_national_number_confirm:
+            if not parent_sop_national_number_confirm:
                 self.add_error('parent_sop_national_number_confirm', 'This field is required')
 
-            if sop_parent_national_number != sop_parent_national_number_confirm:
+            if parent_sop_national_number != parent_sop_national_number_confirm:
                 msg = "The national numbers are not matched"
                 self.add_error('parent_sop_national_number_confirm', msg)
 
