@@ -233,6 +233,7 @@ def MainMarkDeleteView(request, pk):
     return JsonResponse(result)
 
 
+from django.db.models import F, Max
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
@@ -253,6 +254,12 @@ class MainListView(LoginRequiredMixin,
         center_id = user.center_id
         partner_id = user.partner_id
 
+        # ToDo : filter and show the latest registration
+        # latest_reg = Registration.objects.annotate(
+        #     max_round=Max('round__id')
+        # ).filter(
+        #     round__id=F('max_round') | F('round__id__isnull')
+        # )
         if has_group(user, 'MSCC_UNICEF'):
             return Registration.objects.filter(deleted=False).order_by('-id')
         elif has_group(user, 'MSCC_PARTNER') and partner_id:

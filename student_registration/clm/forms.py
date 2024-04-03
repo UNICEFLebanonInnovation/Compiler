@@ -7419,6 +7419,10 @@ class BridgingForm(CommonForm):
         required=False,
         widget=CustomClearableFileInput
     )
+    registration_date = forms.DateField(
+        label=_("Registration date"),
+        required=False,
+    )
     child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -7521,7 +7525,8 @@ class BridgingForm(CommonForm):
                     Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('round', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('registration_date', css_class='col-md-3'),
                     Div('round_start_date', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
@@ -8313,7 +8318,8 @@ class BridgingForm(CommonForm):
             'labour_weekly_income',
             'source_of_transportation',
             'student_p_code',
-            'consent_parents'
+            'consent_parents',
+            'registration_date'
         )
 
     class Media:

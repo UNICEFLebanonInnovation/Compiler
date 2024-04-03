@@ -2064,6 +2064,11 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Consent from parents'),
     )
+    registration_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Registration Date')
+    )
     def calculate_sore(self, stage):
         keys = [
             'Bridging_ASSESSMENT/arabic',

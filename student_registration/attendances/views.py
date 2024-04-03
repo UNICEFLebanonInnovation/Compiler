@@ -608,6 +608,7 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
         else:
             queryset = Bridging.objects.none()
             school = self.request.GET.get('school', None)
+            attendance_date = self.request.GET.get('attendance_date', None)
             if school is not None:
                 school = int(school)
                 registration_level = self.request.GET.get('registration_level', '')
@@ -617,6 +618,10 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
                                                        round__current_round_bridging=True,
                                                        school=school,
                                                        registration_level=registration_level)
+                    if attendance_date is not None:
+                        queryset = queryset.filter(
+                            Q(registration_date__isnull=True) | Q(registration_date__lte=attendance_date)
+                        )
                     queryset = queryset.order_by('student__first_name', 'student__father_name', 'student__last_name')
             data = []
             for line in queryset:
