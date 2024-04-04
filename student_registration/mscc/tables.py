@@ -60,13 +60,14 @@ class MainTable(CommonTable):
             'child.nationality',
             'education_program',
             'partner_unique_number',
+            'has_previous_registration',
             # 'center',
             # 'center_type',
             # 'governorate',
             # 'caza',
             # 'cadaster',
             'owner',
-            'modified_by'
+            'modified_by',
         )
 
 
@@ -109,6 +110,7 @@ class FullTable(CommonTable):
             'governorate',
             'caza',
             'cadaster',
+            'has_previous_registration',
             'owner',
             'modified_by'
         )
@@ -152,6 +154,7 @@ class PartnerTable(CommonTable):
             'governorate',
             'caza',
             'cadaster',
+            'has_previous_registration',
             'owner',
             'modified_by'
         )

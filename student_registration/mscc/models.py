@@ -291,6 +291,15 @@ class Registration(TimeStampedModel):
             result = program.education_program
         return result
 
+    @property
+    def has_previous_registration(self):
+        previous_registration_exists = Registration.objects.filter(
+            student_id=self.child.id,
+            created__lt=self.created
+        ).exists()
+
+        return "Yes" if previous_registration_exists else "No"
+
     def get_absolute_url(self):
         return '/MSCC/Child-Profile/%d/' % self.pk
 
