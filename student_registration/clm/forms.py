@@ -8183,50 +8183,55 @@ class BridgingForm(CommonForm):
 
         if arabic_alphabet_knowledge is None:
             self.add_error('arabic_alphabet_knowledge', 'This field is required')
-        # elif arabic_alphabet_knowledge > 404:
-        #     self.add_error('arabic_alphabet_knowledge', 'This value is greater that 404')
+        elif arabic_alphabet_knowledge > 48:
+            self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
 
         if arabic_familiar_words is None:
             self.add_error('arabic_familiar_words', 'This field is required')
-        # elif arabic_familiar_words > 404:
-        #     self.add_error('arabic_familiar_words', 'This value is greater that 404')
+        elif arabic_familiar_words > 20:
+            self.add_error('arabic_familiar_words', 'This value is greater that 20')
 
         if arabic_reading_comprehension is None:
             self.add_error('arabic_reading_comprehension', 'This field is required')
-        # elif arabic_reading_comprehension > 404:
-        #     self.add_error('arabic_reading_comprehension', 'This value is greater that 404')
+        elif arabic_reading_comprehension > 10:
+            self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
 
         if language == 'english_arabic':
             if english_alphabet_knowledge is None:
                 self.add_error('english_alphabet_knowledge', 'This field is required')
-            # elif english_alphabet_knowledge > 470:
-            #     self.add_error('english_alphabet_knowledge', 'This value is greater that 470')
+            elif english_alphabet_knowledge > 48:
+                self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
 
             if english_familiar_words is None:
                 self.add_error('english_familiar_words', 'This field is required')
-            # elif english_familiar_words > 470:
-            #     self.add_error('english_familiar_words', 'This value is greater that 470')
+            elif english_familiar_words > 20:
+                self.add_error('english_familiar_words', 'This value is greater that 20')
 
             if english_reading_comprehension is None:
                 self.add_error('english_reading_comprehension', 'This field is required')
-            # elif english_reading_comprehension > 470:
-            #     self.add_error('english_reading_comprehension', 'This value is greater that 470')
+            elif english_reading_comprehension > 10:
+                self.add_error('english_reading_comprehension', 'This value is greater that 10')
 
         elif language == 'french_arabic':
             if french_alphabet_knowledge is None:
                 self.add_error('french_alphabet_knowledge', 'This field is required')
-            # elif french_alphabet_knowledge > 184:
-            #     self.add_error('french_alphabet_knowledge', 'This value is greater that 184')
+            elif french_alphabet_knowledge > 48:
+                self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
 
             if french_familiar_words is None:
                 self.add_error('french_familiar_words', 'This field is required')
-            # elif french_familiar_words > 184:
-            #     self.add_error('french_familiar_words', 'This value is greater that 184')
+            elif french_familiar_words > 20:
+                self.add_error('french_familiar_words', 'This value is greater that 20')
 
             if french_reading_comprehension is None:
                 self.add_error('french_reading_comprehension', 'This field is required')
-            # elif french_reading_comprehension > 184:
-            #     self.add_error('french_reading_comprehension', 'This value is greater that 184')
+            elif french_reading_comprehension > 10:
+                self.add_error('french_reading_comprehension', 'This value is greater that 10')
+
+        if math is None:
+            self.add_error('math', 'This field is required')
+        elif math > 50:
+            self.add_error('math', 'This value is greater that 50')
 
 
     def save(self, request=None, instance=None, serializer=None):
@@ -11213,56 +11218,56 @@ class BridgingAssessmentForm(forms.ModelForm):
         if test_done == 'yes':
             if arabic_alphabet_knowledge is None:
                 self.add_error('arabic_alphabet_knowledge', 'This field is required')
-            # elif arabic_alphabet_knowledge > 404:
-            #     self.add_error('arabic_alphabet_knowledge', 'This value is greater that 404')
+            elif arabic_alphabet_knowledge > 48:
+                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
 
             if arabic_familiar_words is None:
                 self.add_error('arabic_familiar_words', 'This field is required')
-            # elif arabic_familiar_words > 404:
-            #     self.add_error('arabic_familiar_words', 'This value is greater that 404')
+            elif arabic_familiar_words > 20:
+                self.add_error('arabic_familiar_words', 'This value is greater that 20')
 
             if arabic_reading_comprehension is None:
                 self.add_error('arabic_reading_comprehension', 'This field is required')
-            # elif arabic_reading_comprehension > 404:
-            #     self.add_error('arabic_reading_comprehension', 'This value is greater that 404')
+            elif arabic_reading_comprehension > 10:
+                self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
 
 
             if language == 'english_arabic':
                 if english_alphabet_knowledge is None:
                     self.add_error('english_alphabet_knowledge', 'This field is required')
-                # elif english_alphabet_knowledge > 470:
-                #     self.add_error('english_alphabet_knowledge', 'This value is greater that 470')
+                elif english_alphabet_knowledge > 48:
+                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
 
                 if english_familiar_words is None:
                     self.add_error('english_familiar_words', 'This field is required')
-                # elif english_familiar_words > 470:
-                #     self.add_error('english_familiar_words', 'This value is greater that 470')
+                elif english_familiar_words > 20:
+                    self.add_error('english_familiar_words', 'This value is greater that 20')
 
                 if english_reading_comprehension is None:
                     self.add_error('english_reading_comprehension', 'This field is required')
-                # elif english_reading_comprehension > 470:
-                #     self.add_error('english_reading_comprehension', 'This value is greater that 470')
+                elif english_reading_comprehension > 10:
+                    self.add_error('english_reading_comprehension', 'This value is greater that 10')
 
             elif language == 'french_arabic':
                 if french_alphabet_knowledge is None:
                     self.add_error('french_alphabet_knowledge', 'This field is required')
-                # elif french_alphabet_knowledge > 184:
-                #     self.add_error('french_alphabet_knowledge', 'This value is greater that 184')
+                elif french_alphabet_knowledge > 48:
+                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
 
                 if french_familiar_words is None:
                     self.add_error('french_familiar_words', 'This field is required')
-                # elif french_familiar_words > 184:
-                #     self.add_error('french_familiar_words', 'This value is greater that 184')
+                elif french_familiar_words > 20:
+                    self.add_error('french_familiar_words', 'This value is greater that 20')
 
                 if french_reading_comprehension is None:
                     self.add_error('french_reading_comprehension', 'This field is required')
-                # elif french_reading_comprehension > 184:
-                #     self.add_error('french_reading_comprehension', 'This value is greater that 184')
+                elif french_reading_comprehension > 10:
+                    self.add_error('french_reading_comprehension', 'This value is greater that 10')
 
             if math is None:
                 self.add_error('math', 'This field is required')
-            elif math > 200:
-                self.add_error('math', 'This value is greater that 200')
+            elif math > 50:
+                self.add_error('math', 'This value is greater that 50')
 
 
 
