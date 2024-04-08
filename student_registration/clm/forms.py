@@ -8183,8 +8183,8 @@ class BridgingForm(CommonForm):
 
         if arabic_alphabet_knowledge is None:
             self.add_error('arabic_alphabet_knowledge', 'This field is required')
-        elif arabic_alphabet_knowledge > 48:
-            self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
+        elif arabic_alphabet_knowledge > 26:
+            self.add_error('arabic_alphabet_knowledge', 'This value is greater that 26')
 
         if arabic_familiar_words is None:
             self.add_error('arabic_familiar_words', 'This field is required')
@@ -8199,8 +8199,8 @@ class BridgingForm(CommonForm):
         if language == 'english_arabic':
             if english_alphabet_knowledge is None:
                 self.add_error('english_alphabet_knowledge', 'This field is required')
-            elif english_alphabet_knowledge > 48:
-                self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
+            elif english_alphabet_knowledge > 26:
+                self.add_error('english_alphabet_knowledge', 'This value is greater that 26')
 
             if english_familiar_words is None:
                 self.add_error('english_familiar_words', 'This field is required')
@@ -8215,8 +8215,8 @@ class BridgingForm(CommonForm):
         elif language == 'french_arabic':
             if french_alphabet_knowledge is None:
                 self.add_error('french_alphabet_knowledge', 'This field is required')
-            elif french_alphabet_knowledge > 48:
-                self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
+            elif french_alphabet_knowledge > 26:
+                self.add_error('french_alphabet_knowledge', 'This value is greater that 26')
 
             if french_familiar_words is None:
                 self.add_error('french_familiar_words', 'This field is required')
@@ -11218,8 +11218,8 @@ class BridgingAssessmentForm(forms.ModelForm):
         if test_done == 'yes':
             if arabic_alphabet_knowledge is None:
                 self.add_error('arabic_alphabet_knowledge', 'This field is required')
-            elif arabic_alphabet_knowledge > 48:
-                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
+            elif arabic_alphabet_knowledge > 26:
+                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 26')
 
             if arabic_familiar_words is None:
                 self.add_error('arabic_familiar_words', 'This field is required')
@@ -11235,8 +11235,8 @@ class BridgingAssessmentForm(forms.ModelForm):
             if language == 'english_arabic':
                 if english_alphabet_knowledge is None:
                     self.add_error('english_alphabet_knowledge', 'This field is required')
-                elif english_alphabet_knowledge > 48:
-                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
+                elif english_alphabet_knowledge > 26:
+                    self.add_error('english_alphabet_knowledge', 'This value is greater that 26')
 
                 if english_familiar_words is None:
                     self.add_error('english_familiar_words', 'This field is required')
@@ -11251,8 +11251,8 @@ class BridgingAssessmentForm(forms.ModelForm):
             elif language == 'french_arabic':
                 if french_alphabet_knowledge is None:
                     self.add_error('french_alphabet_knowledge', 'This field is required')
-                elif french_alphabet_knowledge > 48:
-                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
+                elif french_alphabet_knowledge > 26:
+                    self.add_error('french_alphabet_knowledge', 'This value is greater that 26')
 
                 if french_familiar_words is None:
                     self.add_error('french_familiar_words', 'This field is required')
