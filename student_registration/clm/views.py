@@ -3069,6 +3069,9 @@ def search_kobo_outreach_child(request):
                 .filter(fullname__icontains=terms) \
                 .values('id', 'first_name', 'outreach_caregiver__father_name',
                         'outreach_caregiver__last_name', 'outreach_caregiver__mother_full_name',
+                        'outreach_caregiver__caregiver_first_name','outreach_caregiver__caregiver_father_name',
+                        'outreach_caregiver__caregiver_last_name',
+                        'outreach_caregiver__caregiver_mother_name', 'outreach_caregiver__caregiver_dob',
                         'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
 
         else:
@@ -3079,6 +3082,9 @@ def search_kobo_outreach_child(request):
                 Q(outreach_caregiver__last_name=term)
             ).values('id', 'first_name', 'outreach_caregiver__father_name',
                         'outreach_caregiver__last_name', 'outreach_caregiver__mother_full_name',
+                        'outreach_caregiver__caregiver_first_name','outreach_caregiver__caregiver_father_name',
+                        'outreach_caregiver__caregiver_last_name',
+                        'outreach_caregiver__caregiver_mother_name', 'outreach_caregiver__caregiver_dob',
                         'gender', 'birthday_day', 'birthday_month','birthday_year').distinct()
 
     return JsonResponse({'result': json.dumps(list(qs))})

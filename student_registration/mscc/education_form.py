@@ -606,25 +606,32 @@ class EducationServiceForm(forms.ModelForm):
 
         return instance
 
-    def clean(self):
-        from django.db.models import Subquery
-        cleaned_data = super(EducationServiceForm, self).clean()
-        instance = self.instance
-        if not instance.pk:
-            registration_id = cleaned_data.get("registration_id")
-            round_id = cleaned_data.get("round")
-            last_registration = EducationService.objects.filter(
-                registration__child_id=Subquery(
-                    Registration.objects.filter(id=registration_id).values('child_id')[:1]
-                ),
-                round_id=round_id
-            ).values(
-                'registration__center__name'
-            ).order_by('-registration_id').first()
-
-            if last_registration:
-                center_name = last_registration['registration__center__name']
-                self.add_error('round', 'This child is already registered in the Center: ' + center_name)
+    # def clean(self):
+    #     cleaned_data = super(EducationServiceForm, self).clean()
+    #     instance = self.instance
+    #     # if not instance.pk:
+    #     #     registration_id = cleaned_data.get("registration_id")
+    #     #     round_id = cleaned_data.get("round").id
+    #     #
+    #     #     registration = Registration.objects.get(id=registration_id)
+    #     #     child = registration.child
+    #     #
+    #     #     # Count the number of registrations for the same child and round
+    #     #     count = Registration.objects.filter(
+    #     #         child=child,
+    #     #         round__id=round_id
+    #     #     ).exclude(id=registration_id).count()
+    #     #
+    #     #     last_registration = Registration.objects.filter(
+    #     #         child=child,
+    #     #         round__id=round_id
+    #     #     ).exclude(id=registration_id).values(
+    #     #         'center__name'
+    #     #     ).order_by('-id').first()
+    #     #
+    #     #     if count > 0:
+    #     #         center_name = last_registration['center__name']
+    #     #         self.add_error('round', 'This child is already registered in the Center: ' + center_name)
 
     class Meta:
         model = EducationService

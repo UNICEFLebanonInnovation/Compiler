@@ -1119,7 +1119,6 @@ class ReferralForm(forms.ModelForm):
                                   kwargs={'registry': registry, 'pk': pk})
         if is_cbece == 'Yes':
             self.fields['referred_formal_education'].required = True
-            self.fields['referred_school'].required = True
 
         education_program = get_education_service(registry)
         choices = list()
@@ -1248,8 +1247,9 @@ class ReferralForm(forms.ModelForm):
         if is_cbece and is_cbece == 'Yes' :
             if not referred_formal_education:
                 self.add_error('referred_formal_education', 'This field is required')
-            if not referred_school:
-                self.add_error('referred_school', 'This field is required')
+
+                if referred_formal_education == 'Yes' and not referred_school:
+                    self.add_error('referred_school', 'This field is required')
 
         referred_service = cleaned_data.get("referred_service")
         referred_service_other = cleaned_data.get("referred_service_other")
