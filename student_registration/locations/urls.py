@@ -21,6 +21,11 @@ urlpatterns = [
         name='center_list'
     ),
     url(
+        regex=r'^export/$',
+        view=views.export_data,
+        name='export'
+    ),
+    url(
         regex=r'^Center-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='center_profile'

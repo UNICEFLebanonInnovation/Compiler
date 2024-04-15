@@ -48,5 +48,18 @@ $(document).ready(function() {
             console.log("User canceled marking as deleted for student with ID: " + studentId);
         }
     } );
+
+    $(document).on('click', '.download-center-report', function(e){
+        e.preventDefault();
+
+        var center_name = $("#id_name").val();
+        var center_type = $("#id_type").val();
+        var center_governorate = $("#id_governorate").val();
+
+        window.open("/locations/export/?center_name=" + center_name
+                                + "&center_type=" + center_type
+                                + "&center_governorate=" + center_governorate ,
+            "_blank")
+    });
 });
 
