@@ -1062,22 +1062,15 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
         caregiver_counselling = cleaned_data.get("caregiver_counselling")
         counselling_date = cleaned_data.get("counselling_date")
-        next_counselling_date = cleaned_data.get("next_counselling_date", None)
         if caregiver_counselling and caregiver_counselling == 'Yes':
             if not counselling_date:
                 self.add_error('counselling_date', 'This field is required')
 
-            if not next_counselling_date:
-                self.add_error('next_counselling_date', 'This field is required')
-
         caregiver_ecd_counselling = cleaned_data.get("caregiver_counselling")
         ecd_counselling_date = cleaned_data.get("ecd_counselling_date")
-        next_ecd_counselling_date = cleaned_data.get("next_ecd_counselling_date")
         if caregiver_ecd_counselling and caregiver_ecd_counselling == 'Yes':
             if not ecd_counselling_date:
                 self.add_error('ecd_counselling_date', 'This field is required')
-            if not next_ecd_counselling_date:
-                self.add_error('next_ecd_counselling_date', 'This field is required')
 
         child_screened_malnutrition = cleaned_data.get("child_screened_malnutrition")
         child_malnutrition_screening = cleaned_data.get("child_malnutrition_screening")

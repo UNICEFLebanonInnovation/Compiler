@@ -68,10 +68,7 @@ function reorganizeForm() {
                 $('#id_counselling_date').addClass('error-field');
             }
             $('div#div_id_next_counselling_date').removeClass('d-none');
-            if ($('#id_next_counselling_date').val()== null || $('#id_next_counselling_date').val()=='')
-            {
-                $('#id_next_counselling_date').addClass('error-field');
-            }
+
         }
         else{
             $('#id_counselling_date').val('');
@@ -93,10 +90,6 @@ function reorganizeForm() {
                 $('#id_ecd_counselling_date').addClass('error-field');
             }
             $('div#div_id_next_ecd_counselling_date').removeClass('d-none');
-            if ($('#id_next_ecd_counselling_date').val()== null || $('#id_next_ecd_counselling_date').val()=='')
-            {
-                $('#id_next_ecd_counselling_date').addClass('error-field');
-            }
         }
         else{
             $('#id_ecd_counselling_date').val('');

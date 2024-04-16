@@ -3726,7 +3726,7 @@ class BridgingListView(LoginRequiredMixin,
     filterset_class = BridgingFilter
 
     def get_queryset(self):
-        qs = Bridging.objects.all()
+        qs = Bridging.objects.filter(round__current_year=True)
         if not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and self.request.user.partner:
             qs = qs.filter(partner_id=self.request.user.partner_id)
             if self.request.user.school:

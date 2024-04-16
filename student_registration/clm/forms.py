@@ -256,12 +256,12 @@ class CommonForm(forms.ModelForm):
     hh_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
         label=_('What is the educational level of the mother?'),
-        required=True, to_field_name='id',
+        required=False, to_field_name='id',
     )
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
         label=_('What is the educational level of the father?'),
-        required=True, to_field_name='id',
+        required=False, to_field_name='id',
     )
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)

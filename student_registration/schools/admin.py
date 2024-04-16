@@ -294,11 +294,9 @@ class CLMRoundAdmin(ImportExportModelAdmin):
 
     list_display = (
         'name',
-        'current_round_bln',
-        'current_round_abln',
-        'current_round_cbece',
+        'current_year',
+        'current_round_bridging',
         'current_round_inclusion',
-        'current_round_rs'
     )
 
 

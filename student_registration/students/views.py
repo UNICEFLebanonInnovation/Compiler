@@ -344,7 +344,33 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
 
 def teacher_export_data(request):
     from .export import TeacherResource
-    qs_teacher = Teacher.objects.all().order_by('-id')
+    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+    is_staff = request.user.is_staff
+
+    qs_teacher = Teacher.objects.all()
+
+    if clm_bridging_all or is_staff:
+        qs_teacher = Teacher.objects.all()
+    else:
+        school_id = 0
+        partner_id = 0
+
+        if request.user.school:
+            school_id = request.user.school.id
+        if request.user.partner_id:
+            partner_id = request.user.partner_id
+
+        if school_id and school_id > 0:
+            qs_teacher = Teacher.objects.filter(school_id=school_id)
+
+        elif partner_id > 0:
+            qs_teacher = Teacher.objects.filter(school_id__in=PartnerOrganization
+                                              .objects
+                                              .filter(id=partner_id)
+                                              .values_list('schools', flat=True))
+        else:
+            qs_teacher = qs_teacher.none()
+
     qs_teacher.order_by('-id')
     dataset = TeacherResource().export(qs_teacher)
     response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
