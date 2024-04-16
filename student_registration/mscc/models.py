@@ -16,8 +16,9 @@ from student_registration.schools.models import (
 
 PACKAGE_TYPES = Choices(
     ('Core-Package', _('Core Package')),
-    ('Walk-in-OOSC', _('Walk-in OOSC')),
-    ('Walk-in-In-School', _('Walk-in In School')),
+    ('Walk-in', _('Walk-in')),
+    # ('Walk-in-OOSC', _('Walk-in OOSC')),
+    # ('Walk-in-In-School', _('Walk-in In School')),
 )
 
 PACKAGE_CATEGORIES = Choices(

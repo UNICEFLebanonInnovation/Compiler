@@ -1244,7 +1244,7 @@ class ReferralForm(forms.ModelForm):
         referred_formal_education = cleaned_data.get("referred_formal_education")
         referred_school = cleaned_data.get("referred_school")
 
-        if is_cbece and is_cbece == 'Yes' :
+        if is_cbece and is_cbece == 'Yes':
             if not referred_formal_education:
                 self.add_error('referred_formal_education', 'This field is required')
 

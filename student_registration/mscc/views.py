@@ -82,8 +82,7 @@ class DashboardView(LoginRequiredMixin,
         return {
             'total': instances.count(),
             'total_corepackage': instances.filter(type='Core-Package').count(),
-            'total_woosc': instances.filter(type='Walk-in-OOSC').count(),
-            'total_wshl': instances.filter(type='Walk-in-In-School').count(),
+            'total_walkin': instances.filter(type='Walk-in').count(),
             'centers': centers,
             'governorates': governorates,
             'partners': partners

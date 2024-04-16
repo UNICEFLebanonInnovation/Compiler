@@ -514,7 +514,7 @@ class EducationServiceForm(forms.ModelForm):
         self.fields['education_program'].choices = choices
 
         choices_education_status = list()
-        if package_type == 'Walk-in-In-School':
+        if package_type == 'Walk-in':
             choices_education_status.append(('', _('----------')))
             choices_education_status.append(('Currently registered in Formal Education school',
                                              _('Currently registered in Formal Education school')))
@@ -528,6 +528,7 @@ class EducationServiceForm(forms.ModelForm):
             self.fields['education_program'].required = False
             self.fields['class_section'].required = False
             self.fields['registration_date'].required = False
+            self.fields['round'].required = False
 
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:

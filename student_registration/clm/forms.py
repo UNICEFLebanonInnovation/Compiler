@@ -7421,7 +7421,7 @@ class BridgingForm(CommonForm):
     )
     registration_date = forms.DateField(
         label=_("Registration date"),
-        required=False,
+        required=True,
     )
     child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
 

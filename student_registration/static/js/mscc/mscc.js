@@ -506,7 +506,7 @@ function reorganizeForm()
         $('#id_child_nationality_other').val('');
     }
 
-    if(child_nationality == 5 && $('#id_type').val() == 'Walk-in-In-School'){
+    if(child_nationality == 5 && $('#id_type').val() == 'Walk-in'){
         $('#child_fe_unique_id_block').removeClass('d-none');
     }
     else{
