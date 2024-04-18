@@ -995,7 +995,10 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.caregiver_counselling = caregiver_counselling
         if caregiver_counselling == 'Yes':
             instance.counselling_date = validated_data.get('counselling_date')
-            instance.next_counselling_date = validated_data.get('next_counselling_date')
+            if validated_data.get('next_counselling_date'):
+                instance.next_counselling_date = validated_data.get('next_counselling_date')
+            else:
+                instance.next_counselling_date = None
         else:
             instance.counselling_date = None
             instance.next_counselling_date = None
@@ -1005,7 +1008,10 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.caregiver_ecd_counselling = caregiver_ecd_counselling
         if caregiver_ecd_counselling == 'Yes':
             instance.ecd_counselling_date = validated_data.get('ecd_counselling_date')
-            instance.next_ecd_counselling_date = validated_data.get('next_ecd_counselling_date')
+            if validated_data.get('next_ecd_counselling_date'):
+                instance.next_ecd_counselling_date = validated_data.get('next_ecd_counselling_date')
+            else:
+                instance.next_ecd_counselling_date = None
         else:
             instance.ecd_counselling_date = None
             instance.next_ecd_counselling_date = None
