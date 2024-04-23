@@ -21,6 +21,7 @@ from .models import (
     HealthNutritionService,
     HealthNutritionReferral,
     YouthKitService,
+    YouthService,
     FollowUpService,
     YouthAssessment,
     YouthReferral,
@@ -1615,6 +1616,117 @@ class YouthKitServiceForm(forms.ModelForm):
             'adolescent_attendance',
             'adolescent_dropout_reason',
             'adolescent_dropout_date'
+        )
+
+
+class YouthServiceForm(forms.ModelForm):
+
+    sports_taken = forms.ChoiceField(
+        label=_('Sports for development'),
+        widget=forms.Select, required=False,
+        choices=YES_NO
+    )
+    sports_session_number = forms.IntegerField(
+        label=_('Number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=1,
+        initial=1
+    )
+    life_skills_taken = forms.ChoiceField(
+        label=_('Life skills'),
+        widget=forms.Select, required=False,
+        choices=YES_NO
+    )
+    life_skills_number = forms.IntegerField(
+        label=_('Number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=1,
+        initial=1
+    )
+    youth_lead_initiatives_taken = forms.ChoiceField(
+        label=_('Youth led initiatives'),
+        widget=forms.Select, required=False,
+        choices=YES_NO
+    )
+    youth_lead_initiatives_number = forms.IntegerField(
+        label=_('Number of sessions'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        required=False,
+        min_value=1,
+        initial=1
+    )
+
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    service_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(YouthServiceForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_youth_maharati_add',
+                                  kwargs={'registry': registry })
+        if instance:
+            form_action = reverse('mscc:service_youth_maharati_edit',
+                                  kwargs={'registry': registry, 'pk': instance})
+
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('sports_taken', css_class='col-md-4'),
+                    Div('sports_session_number', css_class='col-md-4'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('life_skills_taken', css_class='col-md-4'),
+                    Div('life_skills_number', css_class='col-md-4'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('youth_lead_initiatives_taken', css_class='col-md-4'),
+                    Div('youth_lead_initiatives_number', css_class='col-md-4'),
+                    css_class='row card-body '
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            ),
+        )
+
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        if not instance:
+            instance = YouthService.objects.create(registration_id=registry)
+        else:
+            instance = YouthService.objects.get(id=instance)
+
+        instance.service_values = request.POST
+        instance.service_type = 'Maharati'
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    class Meta:
+        model = YouthService
+        fields = (
+            'service_type',
         )
 
 

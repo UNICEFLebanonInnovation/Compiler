@@ -1695,6 +1695,34 @@ class YouthKitService(TimeStampedModel):
         verbose_name_plural = "Youth Kit Services"
 
 
+class YouthService(TimeStampedModel):
+
+    TYPE = Choices(
+        ('', '----------'),
+        ('Maharati', _('Maharati')),
+        ('GIL', _('GIL')),
+    )
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    service_type = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=TYPE,
+        verbose_name=_('Service Type')
+    )
+
+    service_values = JSONField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Youth Service"
+        verbose_name_plural = "Youth Services"
+
 class FollowUpService(TimeStampedModel):
 
     FOLLOW_UP_TYPE = Choices(
