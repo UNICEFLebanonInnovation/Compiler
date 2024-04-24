@@ -1619,7 +1619,7 @@ class YouthKitServiceForm(forms.ModelForm):
         )
 
 
-class YouthServiceForm(forms.ModelForm):
+class YouthServiceMaharatiForm(forms.ModelForm):
 
     sports_taken = forms.ChoiceField(
         label=_('Sports for development'),
@@ -1666,7 +1666,7 @@ class YouthServiceForm(forms.ModelForm):
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
-        super(YouthServiceForm, self).__init__(*args, **kwargs)
+        super(YouthServiceMaharatiForm, self).__init__(*args, **kwargs)
 
         form_action = reverse('mscc:service_youth_maharati_add',
                                   kwargs={'registry': registry })
@@ -1722,6 +1722,24 @@ class YouthServiceForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
+
+    def clean(self):
+        cleaned_data = super(YouthServiceMaharatiForm, self).clean()
+
+        sports_taken = cleaned_data.get("sports_taken")
+        sports_session_number = cleaned_data.get("sports_session_number")
+        if sports_taken and sports_taken == 'Yes' and not sports_session_number:
+            self.add_error('sports_session_number', 'This field is required')
+
+        life_skills_taken = cleaned_data.get("life_skills_taken")
+        life_skills_number = cleaned_data.get("life_skills_number")
+        if life_skills_taken and life_skills_taken == 'Yes' and not life_skills_number:
+            self.add_error('life_skills_number', 'This field is required')
+
+        youth_lead_initiatives_taken = cleaned_data.get("youth_lead_initiatives_taken")
+        youth_lead_initiatives_number = cleaned_data.get("youth_lead_initiatives_number")
+        if youth_lead_initiatives_taken and youth_lead_initiatives_taken == 'Yes' and not youth_lead_initiatives_number:
+            self.add_error('youth_lead_initiatives_number', 'This field is required')
 
     class Meta:
         model = YouthService

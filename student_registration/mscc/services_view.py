@@ -239,8 +239,8 @@ class YouthKitServiceFormView(LoginRequiredMixin,
 class YouthServiceFormView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
-    template_name = 'mscc/service_youth_form.html'
-    form_class = YouthServiceForm
+    template_name = 'mscc/service_youth_maharati_form.html'
+    form_class = YouthServiceMaharatiForm
     success_url = ''
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
@@ -259,13 +259,13 @@ class YouthServiceFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         data = {}
         if self.request.method == "POST":
-            return YouthServiceForm(self.request.POST, instance=instance, registry=registry, request=self.request)
+            return YouthServiceMaharatiForm(self.request.POST, instance=instance, registry=registry, request=self.request)
         else:
             if instance:
                 service_data = YouthService.objects.get(id=instance)
                 data = service_data.service_values
-                return YouthServiceForm(data, registry=registry, instance=instance, request=self.request)
-            return YouthServiceForm(registry=registry, instance=instance, request=self.request)
+                return YouthServiceMaharatiForm(data, registry=registry, instance=instance, request=self.request)
+            return YouthServiceMaharatiForm(registry=registry, instance=instance, request=self.request)
 
 
 
