@@ -35,6 +35,13 @@ YES_NO = Choices(
     ('No', _("No"))
 )
 
+AGREE_DISAGREE = Choices(
+    ('Strongly Agree', _("Strongly Agree")),
+    ('Agree', _("Agree")),
+    ('Don\'t Agree', _("Don\'t Agree")),
+    ('Strongly Disagree', _("Strongly Disagree"))
+)
+
 
 class Round(models.Model):
 

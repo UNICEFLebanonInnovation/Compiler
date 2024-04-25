@@ -26,7 +26,8 @@ from .models import (
     YouthAssessment,
     YouthReferral,
     Recreational,
-    YES_NO
+    YES_NO,
+    AGREE_DISAGREE
 )
 
 
@@ -1393,11 +1394,11 @@ class YouthKitServiceForm(forms.ModelForm):
         choices=YouthKitService.VOLUNTEERING,
         label=_('Please specify the volunteering opportunity')
     )
-    social_course = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=YES_NO,
-        label=_('Did the adolescent benefit from any social innovation/entrepreneurship course?')
-    )
+    # social_course = forms.ChoiceField(
+    #     widget=forms.Select, required=True,
+    #     choices=YES_NO,
+    #     label=_('Did the adolescent benefit from any social innovation/entrepreneurship course?')
+    # )
     yfs_course_completed = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=YES_NO,
@@ -1492,11 +1493,11 @@ class YouthKitServiceForm(forms.ModelForm):
                     Div('volunteering_specify', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('social_course', css_class='col-md-6'),
-                    css_class='row card-body'
-                ),
+                # Div(
+                #     HTML('<span class="badge-form badge-pill">5</span>'),
+                #     Div('social_course', css_class='col-md-6'),
+                #     css_class='row card-body'
+                # ),
                 Div(
                     HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('yfs_course_completed', css_class='col-md-4'),
@@ -1549,7 +1550,7 @@ class YouthKitServiceForm(forms.ModelForm):
         instance.life_skills_completed = validated_data.get('life_skills_completed')
         instance.participate_volunteering = validated_data.get('participate_volunteering')
         instance.volunteering_specify = validated_data.get('volunteering_specify')
-        instance.social_course = validated_data.get('social_course')
+        # instance.social_course = validated_data.get('social_course')
         instance.yfs_course_completed = validated_data.get('yfs_course_completed')
         instance.training_material = validated_data.get('training_material')
         instance.future_path = validated_data.get('future_path')
@@ -1607,7 +1608,7 @@ class YouthKitServiceForm(forms.ModelForm):
             'life_skills_completed',
             'participate_volunteering',
             'volunteering_specify',
-            'social_course',
+            # 'social_course',
             'yfs_course_completed',
             'training_material',
             'future_path',
@@ -1740,6 +1741,158 @@ class YouthServiceMaharatiForm(forms.ModelForm):
         youth_lead_initiatives_number = cleaned_data.get("youth_lead_initiatives_number")
         if youth_lead_initiatives_taken and youth_lead_initiatives_taken == 'Yes' and not youth_lead_initiatives_number:
             self.add_error('youth_lead_initiatives_number', 'This field is required')
+
+    class Meta:
+        model = YouthService
+        fields = (
+            'service_type',
+        )
+
+
+class YouthServiceGilForm(forms.ModelForm):
+    social_course = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Did the adolescent benefit from any social innovation/entrepreneurship course?')
+    )
+    trainer_showed_knowledge = forms.ChoiceField(
+        label=_('The trainer showed knowledge of the materials presented in the explanation.'),
+        widget=forms.Select, required=False,
+        choices=AGREE_DISAGREE
+    )
+    trainer_encouraged_discussions = forms.ChoiceField(
+        label=_('The trainer encouraged discussions and critical thinking in the training'),
+        widget=forms.Select, required=False,
+        choices=AGREE_DISAGREE
+    )
+    trainer_provided_feedback = forms.ChoiceField(
+        label=_('The trainer provided constructive feedback and directed it in a respectful and appropriate manner.'),
+        widget=forms.Select, required=False,
+        choices=AGREE_DISAGREE
+    )
+    trainer_patient_helped = forms.ChoiceField(
+        label=_('The trainer was patient and helped me develop my ideas.'),
+        widget=forms.Select, required=False,
+        choices=AGREE_DISAGREE
+    )
+    training_part_useful = forms.CharField(
+        label=_('In your opinion, what part of this training did you find most useful?'),
+        widget=forms.Textarea, required=False
+    )
+    training_part_difficult = forms.CharField(
+        label=_('What part of this training did you find difficult?'),
+        widget=forms.Textarea, required=False
+    )
+    course_feel = forms.CharField(
+        label=_('This course made me feel...'),
+        widget=forms.Textarea, required=False
+    )
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    service_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    # social_course
+    # trainer_showed_knowledge
+    # trainer_encouraged_discussions
+    # trainer_provided_feedback
+    # trainer_patient_helped
+    # training_part_useful
+    # training_part_difficult
+    # training_feel
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+
+        super(YouthServiceGilForm, self).__init__(*args, **kwargs)
+
+        form_action = reverse('mscc:service_youth_maharati_add',
+                                  kwargs={'registry': registry })
+        if instance:
+            form_action = reverse('mscc:service_youth_maharati_edit',
+                                  kwargs={'registry': registry, 'pk': instance})
+
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('social_course', css_class='col-md-8'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">2</span>'),
+                    Div('trainer_showed_knowledge', css_class='col-md-8'),
+                    css_class='row card-body course'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('trainer_encouraged_discussions', css_class='col-md-8'),
+                    css_class='row card-body course'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('trainer_provided_feedback', css_class='col-md-8'),
+                    css_class='row card-body course'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    Div('trainer_patient_helped', css_class='col-md-8'),
+                    css_class='row card-body course'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('training_part_useful', css_class='col-md-8'),
+                    css_class='row card-body course'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">7</span>'),
+                    Div('training_part_difficult', css_class='col-md-8'),
+                    css_class='row card-body course'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    Div('course_feel', css_class='col-md-8'),
+                    css_class='row card-body course'
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            ),
+        )
+
+    def save(self, request=None, instance=None, registry=None, programme_type=None, pre_post=None):
+        if not instance:
+            instance = YouthService.objects.create(registration_id=registry)
+        else:
+            instance = YouthService.objects.get(id=instance)
+
+        instance.service_values = request.POST
+        instance.service_type = 'GIL'
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        return instance
+
+    def clean(self):
+        # social_course
+        # trainer_showed_knowledge
+        # trainer_encouraged_discussions
+        # trainer_provided_feedback
+        # trainer_patient_helped
+        # training_part_useful
+        # training_part_difficult
+        # training_feel
+        cleaned_data = super(YouthServiceGilForm, self).clean()
 
     class Meta:
         model = YouthService

@@ -158,13 +158,23 @@ urlpatterns = [
     ),
     url(
         regex=r'^Services/Youth-Maharati-Add/(?P<registry>[\w.@+-]+)/$',
-        view=services_view.YouthServiceFormView.as_view(),
+        view=services_view.YouthServiceMaharatiFormView.as_view(),
         name='service_youth_maharati_add'
     ),
     url(
         regex=r'^Services/Youth-Maharati-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
-        view=services_view.YouthServiceFormView.as_view(),
+        view=services_view.YouthServiceMaharatiFormView.as_view(),
         name='service_youth_maharati_edit'
+    ),
+    url(
+        regex=r'^Services/Youth-Gil-Add/(?P<registry>[\w.@+-]+)/$',
+        view=services_view.YouthServiceGilFormView.as_view(),
+        name='service_youth_gil_add'
+    ),
+    url(
+        regex=r'^Services/Youth-Gil-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.YouthServiceGilFormView.as_view(),
+        name='service_youth_gil_edit'
     ),
     url(
         regex=r'^Services/Follow-Up-Add/(?P<registry>[\w.@+-]+)/$',
