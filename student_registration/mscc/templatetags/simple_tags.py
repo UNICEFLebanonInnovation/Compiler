@@ -138,6 +138,13 @@ def service_data(model_name, obj):
     except Exception as ex:
         return False
 
+@register.simple_tag
+def service_youth_data(model_name, obj, service_type):
+    try:
+        model = apps.get_model('mscc', model_name)
+        return model.objects.filter(registration=obj, service_type=service_type).last()
+    except Exception as ex:
+        return False
 
 @register.simple_tag
 def education_history(registration_id):

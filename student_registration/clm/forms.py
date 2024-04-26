@@ -8178,6 +8178,8 @@ class BridgingForm(CommonForm):
         french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
 
         math = cleaned_data.get("math")
+
+
         # social_emotional = cleaned_data.get("social_emotional")
         # artistic = cleaned_data.get("artistic")
 
@@ -8230,9 +8232,12 @@ class BridgingForm(CommonForm):
 
         if math is None:
             self.add_error('math', 'This field is required')
-        elif math > 50:
+        elif registration_level == 'level_one' and math > 50:
             self.add_error('math', 'This value is greater that 50')
-
+        elif registration_level == 'level_two' and math > 88:
+            self.add_error('math', 'This value is greater that 88')
+        elif math > 103:
+            self.add_error('math', 'This value is greater that 103')
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
@@ -11266,10 +11271,12 @@ class BridgingAssessmentForm(forms.ModelForm):
 
             if math is None:
                 self.add_error('math', 'This field is required')
-            elif math > 50:
+            elif registration_level == 'level_one' and math > 50:
                 self.add_error('math', 'This value is greater that 50')
-
-
+            elif registration_level == 'level_two' and math > 88:
+                self.add_error('math', 'This value is greater that 88')
+            elif math > 103:
+                self.add_error('math', 'This value is greater that 103')
 
     def save(self, instance=None, request=None):
         instance = super(BridgingAssessmentForm, self).save()

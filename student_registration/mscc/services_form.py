@@ -1797,7 +1797,7 @@ class YouthServiceGilForm(forms.ModelForm):
     # trainer_patient_helped
     # training_part_useful
     # training_part_difficult
-    # training_feel
+    # course_feel
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1806,10 +1806,10 @@ class YouthServiceGilForm(forms.ModelForm):
 
         super(YouthServiceGilForm, self).__init__(*args, **kwargs)
 
-        form_action = reverse('mscc:service_youth_maharati_add',
+        form_action = reverse('mscc:service_youth_gil_add',
                                   kwargs={'registry': registry })
         if instance:
-            form_action = reverse('mscc:service_youth_maharati_edit',
+            form_action = reverse('mscc:service_youth_gil_edit',
                                   kwargs={'registry': registry, 'pk': instance})
 
 
