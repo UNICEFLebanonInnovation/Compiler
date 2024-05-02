@@ -653,7 +653,7 @@ class PSSService(models.Model):
         blank=True,
         null=True,
         choices=CHILD_VULNERABILITY,
-        verbose_name=_("What is the child's living arrangement?")
+        verbose_name=_("Visible and known vulnerabilites of the child")
     )
     child_out_school_reasons = models.CharField(
         max_length=250,
@@ -1086,7 +1086,6 @@ class EducationService(TimeStampedModel):
         ('Other', _('Other')),
     )
     EDUCATION_PROGRAM = Choices(
-        ('', '----------'),
         ('BLN Level 1', _('BLN Level 1')),
         ('BLN Level 2', _('BLN Level 2')),
         ('BLN Level 3', _('BLN Level 3')),
@@ -1876,6 +1875,7 @@ class Referral(TimeStampedModel):
         ('Drop out', _('Drop out')),
         ('Referred to YBLN', _('Referred to YBLN')),
         ('Referred to CBECE Higher Level in next school year', _('Referred to CBECE Higher Level in next school year')),
+        ('Progress to  Higher Level  in next school year', _('Progress to  Higher Level  in next school year')),
     )
 
     registration = models.ForeignKey(

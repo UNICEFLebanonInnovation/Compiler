@@ -47,7 +47,7 @@ class PSSServiceForm(forms.ModelForm):
     child_vulnerability = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=PSSService.CHILD_VULNERABILITY,
-        label=_("What is the child's living arrangement?")
+        label=_("Visible and known vulnerabilites of the child")
     )
     child_out_school_reasons = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -1477,18 +1477,17 @@ class YouthKitServiceForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('test_diagnostic_done', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('receive_passing_grade', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('life_skills_completed', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
 
                 Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('participate_volunteering', css_class='col-md-7'),
                     Div('volunteering_specify', css_class='col-md-4'),
                     css_class='row card-body'
@@ -1499,24 +1498,24 @@ class YouthKitServiceForm(forms.ModelForm):
                 #     css_class='row card-body'
                 # ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('yfs_course_completed', css_class='col-md-4'),
                     Div('training_material', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('future_path', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('participate_community_initiatives', css_class='col-md-6'),
                     Div('community_initiatives_specify', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">9</span>'),
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('adolescent_attendance', css_class='col-md-4'),
                     Div('adolescent_dropout_reason', css_class='col-md-4'),
                     Div('adolescent_dropout_date', css_class='col-md-3'),

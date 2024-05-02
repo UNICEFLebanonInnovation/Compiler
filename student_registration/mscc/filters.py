@@ -27,13 +27,18 @@ class MainFilter(FilterSet):
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
     child__mother_fullname = CharFilter(lookup_expr='icontains')
+    child__number = CharFilter(lookup_expr='icontains')
     round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Round')
+    programme_type = CharFilter(field_name='education_service__education_program', label='Programme Type', method='filter_education_program')
 
     class Meta:
         model = Registration
         fields = [
         ]
+
+    def filter_education_program(self, queryset, name, value):
+        return queryset.filter(education_service__education_program=value)
 
 
 class FullFilter(FilterSet):
@@ -51,17 +56,26 @@ class FullFilter(FilterSet):
                                 .order_by('name').distinct(), empty_label='Caza')
     center__cadaster = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name')
                                     .order_by('name').distinct(), empty_label='Cadaster')
-    # programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM, empty_label='Programme Type')
 
     child__first_name = CharFilter(lookup_expr='icontains')
     child__father_name = CharFilter(lookup_expr='icontains')
     child__last_name = CharFilter(lookup_expr='icontains')
     child__mother_fullname = CharFilter(lookup_expr='icontains')
+    child__number = CharFilter(lookup_expr='icontains')
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Nationality')
+    programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
+                                  field_name='education_service__education_program',
+                                  empty_label='Programme Type', method='filter_education_program')
+
+    # , empty_label = 'Package type'
+
 
     class Meta:
         model = Registration
         fields = [
         ]
+
+    def filter_education_program(self, queryset, name, value):
+        return queryset.filter(education_service__education_program=value)
