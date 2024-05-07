@@ -83,6 +83,7 @@ from .forms import (
     ABLNAssessmentForm,
     CBECEAssessmentForm,
     BridgingAssessmentForm,
+    BridgingMidAssessmentForm,
     BridgingFollowupForm,
     CBECEMidAssessmentForm,
     CBECEFollowupForm,
@@ -1290,6 +1291,92 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
         instance = Bridging.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingPostAssessmentView, self).form_valid(form)
+
+
+
+class BridgingMidAssessmentView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+    template_name = 'clm/bridging_mid_assessment.html'
+    form_class = BridgingMidAssessmentForm
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['number'] = self.kwargs['number'] if 'number' in self.kwargs else None
+        return super(BridgingMidAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form1(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+
+        else:
+            data = BridgingSerializer(instance).data
+            if 'post_test' in data:
+                p_test = data['post_test']
+                if p_test:
+                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
+                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+
+            return form_class(data, instance=instance, request=self.request)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        number = int(self.kwargs.get('number', 1))
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance,number=number, request=self.request)
+        else:
+            data = BridgingSerializer(instance).data
+            p_test = ''
+            if number == 1 and 'mid_test1' in data:
+                p_test = data['mid_test1']
+            elif number == 2 and 'mid_test2' in data:
+                p_test = data['mid_test2']
+
+            if p_test:
+                if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
+                    data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+                if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
+                    data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
+                if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
+                    data['arabic_reading_comprehension'] = p_test[
+                        "Bridging_ASSESSMENT/arabic_reading_comprehension"]
+
+                if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
+                    data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
+                if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
+                    data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
+                if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
+                    data['english_reading_comprehension'] = p_test[
+                        "Bridging_ASSESSMENT/english_reading_comprehension"]
+
+                if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
+                    data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
+                if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
+                    data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
+                if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
+                    data['french_reading_comprehension'] = p_test[
+                        "Bridging_ASSESSMENT/french_reading_comprehension"]
+
+                if "Bridging_ASSESSMENT/math" in p_test:
+                    data['math'] = p_test["Bridging_ASSESSMENT/math"]
+
+            return form_class(data, instance=instance, number=number, request=self.request)
+
+    def form_valid(self, form):
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        number = self.kwargs['number'] if 'number' in self.kwargs else None
+        form.save(request=self.request, number=number, instance=instance)
+        return super(BridgingMidAssessmentView, self).form_valid(form)
 
 
 class BridgingFollowupView(LoginRequiredMixin,

@@ -514,6 +514,13 @@ class BridgingTable(CommonTable):
                                                    template_name='django_tables2/clm_bridging_assessment_column.html',
                                                    attrs={'url': '/clm/bridging-post-assessment/', 'programme': 'Bridging'})
 
+    mid_assessment1_column = tables.TemplateColumn(verbose_name=_('Mid-Assessment 1'), orderable=False,
+                                                   template_name='django_tables2/clm_bridging_mid_assessment1_column.html',
+                                                   attrs={'url': '/clm/bridging-mid-assessment/', 'programme': 'Bridging'})
+
+    mid_assessment2_column = tables.TemplateColumn(verbose_name=_('Mid-Assessment 2'), orderable=False,
+                                                   template_name='django_tables2/clm_bridging_mid_assessment2_column.html',
+                                                   attrs={'url': '/clm/bridging-mid-assessment/', 'programme': 'Bridging'})
     followup_column = tables.TemplateColumn(verbose_name=_('Follow up'), orderable=False,
                                                    template_name='django_tables2/clm_bridging_followup_column.html',
                                                    attrs={'url': '/clm/bridging-followup/', 'programme': 'Bridging'})
@@ -530,6 +537,8 @@ class BridgingTable(CommonTable):
             'edit_column',
             'delete_column',
             'post_assessment_column',
+            'mid_assessment1_column',
+            'mid_assessment2_column',
             'followup_column',
             'clm_absence_column',
             'clm_max_consecutive_column',

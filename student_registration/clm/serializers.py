@@ -342,6 +342,9 @@ class BridgingSerializer(CLMSerializer):
     def update(self, instance, validated_data):
         return update_instance(instance=instance, validated_data=validated_data)
 
+    mid_test1 = serializers.JSONField(required=False)
+    mid_test2 = serializers.JSONField(required=False)
+
     class Meta:
         model = Bridging
         fields = CLMSerializer.Meta.fields + (
@@ -440,7 +443,9 @@ class BridgingSerializer(CLMSerializer):
             'using_digital_platform',
             'school_contacted_caretaker',
             'discussion_topic',
-            'registration_date'
+            'registration_date',
+            'mid_test1',
+            'mid_test2'
         )
 
 

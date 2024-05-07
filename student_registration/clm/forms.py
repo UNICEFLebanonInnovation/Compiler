@@ -8186,7 +8186,7 @@ class BridgingForm(CommonForm):
         if arabic_alphabet_knowledge is None:
             self.add_error('arabic_alphabet_knowledge', 'This field is required')
         elif arabic_alphabet_knowledge > 48:
-            self.add_error('arabic_alphabet_knowledge', 'This value is greater that 26')
+            self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
 
         if arabic_familiar_words is None:
             self.add_error('arabic_familiar_words', 'This field is required')
@@ -8201,8 +8201,8 @@ class BridgingForm(CommonForm):
         if language == 'english_arabic':
             if english_alphabet_knowledge is None:
                 self.add_error('english_alphabet_knowledge', 'This field is required')
-            elif english_alphabet_knowledge > 26:
-                self.add_error('english_alphabet_knowledge', 'This value is greater that 26')
+            elif english_alphabet_knowledge > 48:
+                self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
 
             if english_familiar_words is None:
                 self.add_error('english_familiar_words', 'This field is required')
@@ -8217,8 +8217,8 @@ class BridgingForm(CommonForm):
         elif language == 'french_arabic':
             if french_alphabet_knowledge is None:
                 self.add_error('french_alphabet_knowledge', 'This field is required')
-            elif french_alphabet_knowledge > 26:
-                self.add_error('french_alphabet_knowledge', 'This value is greater that 26')
+            elif french_alphabet_knowledge > 48:
+                self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
 
             if french_familiar_words is None:
                 self.add_error('french_familiar_words', 'This field is required')
@@ -11224,7 +11224,7 @@ class BridgingAssessmentForm(forms.ModelForm):
             if arabic_alphabet_knowledge is None:
                 self.add_error('arabic_alphabet_knowledge', 'This field is required')
             elif arabic_alphabet_knowledge > 48:
-                self.add_error('arab\ic_alphabet_knowledge', 'This value is greater that 26')
+                self.add_error('arab\ic_alphabet_knowledge', 'This value is greater that 48')
 
             if arabic_familiar_words is None:
                 self.add_error('arabic_familiar_words', 'This field is required')
@@ -11240,8 +11240,8 @@ class BridgingAssessmentForm(forms.ModelForm):
             if language == 'english_arabic':
                 if english_alphabet_knowledge is None:
                     self.add_error('english_alphabet_knowledge', 'This field is required')
-                elif english_alphabet_knowledge > 26:
-                    self.add_error('english_alphabet_knowledge', 'This value is greater that 26')
+                elif english_alphabet_knowledge > 48:
+                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
 
                 if english_familiar_words is None:
                     self.add_error('english_familiar_words', 'This field is required')
@@ -11256,8 +11256,8 @@ class BridgingAssessmentForm(forms.ModelForm):
             elif language == 'french_arabic':
                 if french_alphabet_knowledge is None:
                     self.add_error('french_alphabet_knowledge', 'This field is required')
-                elif french_alphabet_knowledge > 26:
-                    self.add_error('french_alphabet_knowledge', 'This value is greater that 26')
+                elif french_alphabet_knowledge > 48:
+                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
 
                 if french_familiar_words is None:
                     self.add_error('french_familiar_words', 'This field is required')
@@ -11327,6 +11327,296 @@ class BridgingAssessmentForm(forms.ModelForm):
             'receiving_social_assistance',
             'receiving_transportation_support',
             'using_digital_platform',
+        )
+
+
+class BridgingMidAssessmentForm(forms.ModelForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four')),
+        ('level_five', _('Level five')),
+        ('level_six', _('Level six'))
+    )
+
+    arabic_alphabet_knowledge = forms.FloatField(
+        label=_('Arabic Alphabet Knowledge'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    arabic_familiar_words = forms.FloatField(
+        label=_('Arabic Familiar words'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    arabic_reading_comprehension = forms.FloatField(
+        label=_('Arabic Reading Comprehension'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    english_alphabet_knowledge = forms.FloatField(
+        label=_('English Alphabet Knowledge'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    english_familiar_words = forms.FloatField(
+        label=_('English Familiar words'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    english_reading_comprehension = forms.FloatField(
+        label=_('English Reading Comprehension'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    french_alphabet_knowledge = forms.FloatField(
+        label=_('French Alphabet Knowledge'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    french_familiar_words = forms.FloatField(
+        label=_('French Familiar words'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    french_reading_comprehension = forms.FloatField(
+        label=_('French Reading Comprehension'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    math = forms.FloatField(
+        label=_('Math'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=False,
+        choices=REGISTRATION_LEVEL
+    )
+    language = forms.ChoiceField(
+        label=_('The language supported in the program'),
+        widget=forms.Select,
+        choices=CLM.LANGUAGES, required=False,
+        initial='english_arabic'
+    )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        number = kwargs.pop('number', None)
+        super(BridgingMidAssessmentForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'Bridging'
+
+        display_assessment = ''
+        assessment_number = int(number)
+        form_action = reverse('clm:bridging_mid_assessment', kwargs={'pk': instance.id, 'number': number})
+
+        if assessment_number == 1 and instance.post_test:
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='Bridging_post_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bridging_mid_assessment', kwargs={'pk': instance.id, 'number': number}))
+            )
+        if assessment_number == 2 and instance.post_test:
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='Bridging_post_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bridging_mid_assessment', kwargs={'pk': instance.id, 'number': number}))
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    Div('registration_level', css_class='col-md-3 d-none'),
+                    Div('language', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_arabic">1</span>'),
+                    Div('arabic_alphabet_knowledge', css_class='col-md-3'),
+                    Div('arabic_familiar_words', css_class='col-md-3'),
+                    Div('arabic_reading_comprehension', css_class='col-md-3'),
+                    css_class='row ',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_english">2</span>'),
+                    Div('english_alphabet_knowledge', css_class='col-md-3'),
+                    Div('english_familiar_words', css_class='col-md-3'),
+                    Div('english_reading_comprehension', css_class='col-md-3'),
+                    css_class='row ',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_french">2</span>'),
+                    Div('french_alphabet_knowledge', css_class='col-md-3'),
+                    Div('french_familiar_words', css_class='col-md-3'),
+                    Div('french_reading_comprehension', css_class='col-md-3'),
+                    css_class='row ',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_math">3</span>'),
+                    Div('math', css_class='col-md-3'),
+                    css_class='row ',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML(
+                    '<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _(
+                        'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(BridgingMidAssessmentForm, self).clean()
+
+        # grades Max Value validation
+        registration_level = cleaned_data.get("registration_level")
+        language = cleaned_data.get("language")
+
+        arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
+        arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
+        arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
+
+        english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
+        english_familiar_words = cleaned_data.get("english_familiar_words")
+        english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
+
+        french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
+        french_familiar_words = cleaned_data.get("french_familiar_words")
+        french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
+
+        math = cleaned_data.get("math")
+
+        if arabic_alphabet_knowledge is None:
+            self.add_error('arabic_alphabet_knowledge', 'This field is required')
+        elif arabic_alphabet_knowledge > 48:
+            self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
+
+        if arabic_familiar_words is None:
+            self.add_error('arabic_familiar_words', 'This field is required')
+        elif arabic_familiar_words > 20:
+            self.add_error('arabic_familiar_words', 'This value is greater that 20')
+
+        if arabic_reading_comprehension is None:
+            self.add_error('arabic_reading_comprehension', 'This field is required')
+        elif arabic_reading_comprehension > 10:
+            self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
+
+        if language == 'english_arabic':
+            if english_alphabet_knowledge is None:
+                self.add_error('english_alphabet_knowledge', 'This field is required')
+            elif english_alphabet_knowledge > 48:
+                self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
+
+            if english_familiar_words is None:
+                self.add_error('english_familiar_words', 'This field is required')
+            elif english_familiar_words > 20:
+                self.add_error('english_familiar_words', 'This value is greater that 20')
+
+            if english_reading_comprehension is None:
+                self.add_error('english_reading_comprehension', 'This field is required')
+            elif english_reading_comprehension > 10:
+                self.add_error('english_reading_comprehension', 'This value is greater that 10')
+
+        elif language == 'french_arabic':
+            if french_alphabet_knowledge is None:
+                self.add_error('french_alphabet_knowledge', 'This field is required')
+            elif french_alphabet_knowledge > 48:
+                self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
+
+            if french_familiar_words is None:
+                self.add_error('french_familiar_words', 'This field is required')
+            elif french_familiar_words > 20:
+                self.add_error('french_familiar_words', 'This value is greater that 20')
+
+            if french_reading_comprehension is None:
+                self.add_error('french_reading_comprehension', 'This field is required')
+            elif french_reading_comprehension > 10:
+                self.add_error('french_reading_comprehension', 'This value is greater that 10')
+
+        if math is None:
+            self.add_error('math', 'This field is required')
+        elif registration_level == 'level_one' and math > 50:
+            self.add_error('math', 'This value is greater that 50')
+        elif registration_level == 'level_two' and math > 88:
+            self.add_error('math', 'This value is greater that 88')
+        elif math > 103:
+            self.add_error('math', 'This value is greater that 103')
+
+    def save(self, instance=None, request=None, number=None):
+        instance = super(BridgingMidAssessmentForm, self).save()
+        instance.modified_by = request.user
+
+        assessment_number = int(number)
+        if assessment_number == 1:
+            instance.mid_test1 = {
+                "Bridging_ASSESSMENT/arabic_alphabet_knowledge": request.POST.get('arabic_alphabet_knowledge'),
+                "Bridging_ASSESSMENT/arabic_familiar_words": request.POST.get('arabic_familiar_words'),
+                "Bridging_ASSESSMENT/arabic_reading_comprehension": request.POST.get('arabic_reading_comprehension'),
+
+                "Bridging_ASSESSMENT/english_alphabet_knowledge": request.POST.get('english_alphabet_knowledge'),
+                "Bridging_ASSESSMENT/english_familiar_words": request.POST.get('english_familiar_words'),
+                "Bridging_ASSESSMENT/english_reading_comprehension": request.POST.get('english_reading_comprehension'),
+
+                "Bridging_ASSESSMENT/french_alphabet_knowledge": request.POST.get('french_alphabet_knowledge'),
+                "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
+                "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
+                "Bridging_ASSESSMENT/math": request.POST.get('math'),
+            }
+        elif assessment_number == 2:
+            instance.mid_test2 = {
+                "Bridging_ASSESSMENT/arabic_alphabet_knowledge": request.POST.get('arabic_alphabet_knowledge'),
+                "Bridging_ASSESSMENT/arabic_familiar_words": request.POST.get('arabic_familiar_words'),
+                "Bridging_ASSESSMENT/arabic_reading_comprehension": request.POST.get('arabic_reading_comprehension'),
+
+                "Bridging_ASSESSMENT/english_alphabet_knowledge": request.POST.get('english_alphabet_knowledge'),
+                "Bridging_ASSESSMENT/english_familiar_words": request.POST.get('english_familiar_words'),
+                "Bridging_ASSESSMENT/english_reading_comprehension": request.POST.get('english_reading_comprehension'),
+
+                "Bridging_ASSESSMENT/french_alphabet_knowledge": request.POST.get('french_alphabet_knowledge'),
+                "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
+                "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
+                "Bridging_ASSESSMENT/math": request.POST.get('math'),
+            }
+        else:
+            instance.mid_test1 = ''
+            instance.mid_test2 = ''
+
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = Bridging
+        fields = (
+            # 'test_done',
         )
 
 

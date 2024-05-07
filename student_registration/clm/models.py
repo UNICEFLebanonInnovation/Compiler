@@ -2069,6 +2069,8 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Registration Date')
     )
+    mid_test1 = JSONField(blank=True, null=True)
+    mid_test2 = JSONField(blank=True, null=True)
     def calculate_sore(self, stage):
         keys = [
             'Bridging_ASSESSMENT/arabic',
