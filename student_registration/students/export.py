@@ -13,7 +13,7 @@ class TeacherResource(resources.ModelResource):
             'last_name',
             'sex',
             'primary_phone_number',
-            'school',
+            'school__name',
             'email',
             'subjects_provided',
             'registration_level',
