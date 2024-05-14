@@ -32,6 +32,9 @@ class MainFilter(FilterSet):
                                       .order_by('name').distinct(), empty_label='Round')
     programme_type = CharFilter(field_name='education_service__education_program', label='Programme Type', method='filter_education_program')
 
+    child__first_phone_number = CharFilter(lookup_expr='icontains')
+    child__second_phone_number = CharFilter(lookup_expr='icontains')
+
     class Meta:
         model = Registration
         fields = [
@@ -69,7 +72,10 @@ class FullFilter(FilterSet):
                                   field_name='education_service__education_program',
                                   empty_label='Programme Type', method='filter_education_program')
 
-    # , empty_label = 'Package type'
+    child__first_phone_number = CharFilter(lookup_expr='icontains')
+    child__second_phone_number = CharFilter(lookup_expr='icontains')
+
+
 
 
     class Meta:
