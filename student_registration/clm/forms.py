@@ -6972,9 +6972,9 @@ class BridgingForm(CommonForm):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
-        ('level_four', _('Level four')),
-        ('level_five', _('Level five')),
-        ('level_six', _('Level six'))
+        # ('level_four', _('Level four')),
+        # ('level_five', _('Level five')),
+        # ('level_six', _('Level six'))
     )
 
     YEARS_Bridging = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 14, Person.CURRENT_YEAR - 6)))
