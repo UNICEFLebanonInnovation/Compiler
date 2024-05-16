@@ -434,6 +434,53 @@ def load_child_attendance(center_id, attendance_date, education_program, class_s
         return []
 
 
+def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+
+    child_attendances = None
+
+    child_attendances = MSCCAttendanceChild.objects.filter(registration_id=registration_id,
+                                                           attendance_day__education_program=education_program,
+                                                           attendance_day__class_section=old_class_section)
+
+    try:
+        if child_attendances:
+            for ca in child_attendances:
+                center_id = ca.attendance_day.center.id
+                attendance_date = ca.attendance_day.attendance_date
+
+                # Search if attendance for the new class exists and move the child attendance to it
+                new_attendance = MSCCAttendance.objects.filter(center_id=center_id,
+                                                           attendance_date=attendance_date,
+                                                           education_program=education_program,
+                                                           class_section=new_class_section
+                                                           ).last()
+                attendance_id = ca.attendance_day.id
+
+                # Count the number of other attendances for the same day
+                other_children_count = MSCCAttendanceChild.objects.filter(attendance_day=ca.attendance_day).exclude(id=ca.id).count()
+
+                if new_attendance:
+                    ca.attendance_day = new_attendance
+                    ca.save()
+                else:
+                    ca.delete()
+
+                if other_children_count == 0:
+                    try:
+                        old_attendance = MSCCAttendance.objects.get(id=attendance_id)
+
+                        # Delete the unique old_attendance instance
+                        old_attendance.delete()
+
+                    except MSCCAttendance.DoesNotExist:
+                        print("Old attendance does not exist.")
+
+
+    except Exception as ex:
+        print(ex)
+        return []
+
+
 class RegistrationResource(resources.ModelResource):
     class Meta:
         model = Registration

@@ -28,6 +28,7 @@ from student_registration.schools.models import (
     School,
     PartnerOrganization
 )
+from .utils import update_child_attendance
 
 
 class DiagnosticAssessmentForm(forms.ModelForm):
@@ -575,6 +576,7 @@ class EducationServiceForm(forms.ModelForm):
 
             ),
         )
+
     def save(self, request=None, instance=None, registry=None, package_type=None):
         from datetime import datetime
         validated_data = request.POST
@@ -583,6 +585,11 @@ class EducationServiceForm(forms.ModelForm):
             instance = EducationService.objects.create(registration_id=registry)
         else:
             instance = EducationService.objects.get(id=instance)
+            old_class_section = instance.class_section
+            new_class_section = validated_data.get('class_section')
+
+            if old_class_section != new_class_section:
+                update_child_attendance(instance.registration.id, instance.education_program, old_class_section, new_class_section)
 
         instance.education_status = validated_data.get('education_status')
         dropout_date_str = validated_data.get('dropout_date')
