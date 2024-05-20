@@ -380,7 +380,7 @@ def outreach_child_search(request):
         result_str = '{} {} {}'.format(result['first_name'], result['outreach_caregiver__father_name'],
                                        result['outreach_caregiver__last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
-        if fuzzy_match > 85:
+        if fuzzy_match > 80:
             result['score'] = fuzzy_match
             result_match.append(result)
 
