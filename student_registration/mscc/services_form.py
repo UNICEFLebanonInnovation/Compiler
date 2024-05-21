@@ -1438,6 +1438,11 @@ class YouthKitServiceForm(forms.ModelForm):
         label=_("Dropout Date"),
         required=False
     )
+    youth_trained_mental_health = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=YES_NO,
+        label=_('Is the youth trained on Mental health?')
+    )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -1521,6 +1526,11 @@ class YouthKitServiceForm(forms.ModelForm):
                     Div('adolescent_dropout_date', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    Div('youth_trained_mental_health', css_class='col-md-6'),
+                    css_class='row card-body'
+                ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -1559,6 +1569,7 @@ class YouthKitServiceForm(forms.ModelForm):
         instance.adolescent_dropout_reason = validated_data.get('adolescent_dropout_reason')
         if validated_data.get('adolescent_dropout_date'):
             instance.adolescent_dropout_date = validated_data.get('adolescent_dropout_date')
+        instance.youth_trained_mental_health = validated_data.get('youth_trained_mental_health')
         instance.modified_by = request.user
         instance.save()
 
@@ -1615,7 +1626,8 @@ class YouthKitServiceForm(forms.ModelForm):
             'community_initiatives_specify',
             'adolescent_attendance',
             'adolescent_dropout_reason',
-            'adolescent_dropout_date'
+            'adolescent_dropout_date',
+            'youth_trained_mental_health'
         )
 
 
@@ -1657,6 +1669,11 @@ class YouthServiceMaharatiForm(forms.ModelForm):
         min_value=1,
         initial=1
     )
+    youth_practiced_YLI_civic = forms.ChoiceField(
+        label=_('Did the youth  practice YLI civic engagement'),
+        widget=forms.Select, required=False,
+        choices=YES_NO
+    )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     service_type = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -1697,6 +1714,11 @@ class YouthServiceMaharatiForm(forms.ModelForm):
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('youth_lead_initiatives_taken', css_class='col-md-4'),
                     Div('youth_lead_initiatives_number', css_class='col-md-4'),
+                    css_class='row card-body '
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('youth_practiced_YLI_civic', css_class='col-md-6'),
                     css_class='row card-body '
                 ),
                 FormActions(
@@ -1789,14 +1811,6 @@ class YouthServiceGilForm(forms.ModelForm):
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
     service_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    # social_course
-    # trainer_showed_knowledge
-    # trainer_encouraged_discussions
-    # trainer_provided_feedback
-    # trainer_patient_helped
-    # training_part_useful
-    # training_part_difficult
-    # course_feel
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1883,14 +1897,6 @@ class YouthServiceGilForm(forms.ModelForm):
         return instance
 
     def clean(self):
-        # social_course
-        # trainer_showed_knowledge
-        # trainer_encouraged_discussions
-        # trainer_provided_feedback
-        # trainer_patient_helped
-        # training_part_useful
-        # training_part_difficult
-        # training_feel
         cleaned_data = super(YouthServiceGilForm, self).clean()
 
     class Meta:

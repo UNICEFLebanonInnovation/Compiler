@@ -319,6 +319,7 @@ class YouthKitServiceAdmin(admin.ModelAdmin):
         'adolescent_attendance',
         'adolescent_dropout_reason',
         'adolescent_dropout_date',
+        'youth_trained_mental_health',
     )
 
     search_fields = (

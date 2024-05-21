@@ -1694,6 +1694,13 @@ class YouthKitService(TimeStampedModel):
         null=True,
         verbose_name=_('Dropout Date')
     )
+    youth_trained_mental_health = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the youth trained on Mental health?')
+    )
 
     class Meta:
         ordering = ['id']
