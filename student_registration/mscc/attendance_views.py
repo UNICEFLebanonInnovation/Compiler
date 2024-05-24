@@ -66,13 +66,27 @@ class LoadAttendanceChildren(LoginRequiredMixin,
     template_name = 'mscc/attendance_children.html'
 
     def get_context_data(self, **kwargs):
+        from datetime import datetime
 
+        current_date = datetime.today().date()
+        attendance_date_str = self.request.GET.get("attendance_date")
         center_id = self.request.GET.get("center_id")
-        attendance_date = self.request.GET.get("attendance_date")
         education_program = self.request.GET.get("education_program")
         class_section = self.request.GET.get("class_section")
 
-        instances = load_child_attendance(center_id, attendance_date, education_program, class_section)
+        if attendance_date_str is None:
+            return {'instances': []}
+
+        try:
+            # Parse the attendance_date_str into a datetime object
+            attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
+
+            if attendance_date <= current_date:
+                instances = load_child_attendance(center_id, attendance_date_str, education_program, class_section)
+            else:
+                instances = []
+        except ValueError:
+            instances = []
 
         return {
             'instances': instances

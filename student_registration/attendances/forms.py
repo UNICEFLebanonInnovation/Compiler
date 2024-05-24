@@ -221,7 +221,9 @@ class MainAttendanceForm(forms.ModelForm):
             #     if num_results > 0:
             #         self.add_error('attendance_date', "There is already an attendance record for this date.")
             if attendance_date != '' and day_off != '' and day_off == 'no':
-                # current_date = datetime.today().date()
+                current_date = datetime.today().date()
+                if not (attendance_date <= current_date):
+                    self.add_error('attendance_date', "Attendance date is not valid.")
                 # two_weeks_ago = current_date - timedelta(days=14)
                 # if not ((attendance_date <= current_date)
                 #         and (attendance_date >= two_weeks_ago)):
