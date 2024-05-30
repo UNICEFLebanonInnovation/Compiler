@@ -8,6 +8,7 @@ $(document).ready(
 
 //      show reason if day_off is yes
         day_off = $("#id_day_off").val();
+        $('div#div_id_close_reason').addClass('d-none');
         if (day_off == 'yes') {
             $('div#div_id_close_reason').removeClass('d-none');
             $('#submit-id-save').attr('disabled', false);

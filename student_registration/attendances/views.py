@@ -585,7 +585,7 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             form=AttendanceStudentForm,
             extra=len(initial_records),
             fk_name='attendance_day',
-            fields=('attended', 'absence_reason','absence_reason', 'student_id'),
+            fields=('attended', 'absence_reason', 'absence_reason_other', 'student_id'),
             can_delete=False
         )
         return attendance_student_inline_formset(initial=initial_records)
@@ -596,7 +596,7 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             CLMAttendanceStudent,
             form=AttendanceStudentForm,
             fk_name='attendance_day',
-            fields=('attended', 'absence_reason', 'absence_reason',  'student_id'),
+            fields=('attended', 'absence_reason', 'absence_reason_other', 'student_id'),
             can_delete=False
         )
         return attendance_student_inline_formset(parameters)
