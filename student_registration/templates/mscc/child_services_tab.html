@@ -2473,8 +2473,11 @@
 {% endif %}
 
   <!--Adolescents kit-->
-{% get_service instance 'Adolescents kit' as result %}
-  {% if result %}
+  {% get_education_service  instance  as service %}
+  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|ABLN Level 1|ABLN Level 2|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
+<!--  {{service}}-->
+    {% get_service instance 'Adolescents kit' as result %}
+      {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'YouthKitService' instance as result %}
                                 <div class="mb-3 card">
@@ -2699,9 +2702,16 @@
                                     </div>
                                 </div>
                             </div>
+  {% endif %}
+   {% endif %}
+
+  {% get_service instance 'Maharati' as result %}
+  {% if result %}
+{% get_education_service  instance  as service %}
+  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|ABLN Level 1|ABLN Level 2|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
 
 <div class="col-md-12 col-lg-6 col-xl-4">
-{% service_youth_data 'YouthService' instance  'Maharati' as result %}
+  {% service_youth_data 'YouthService' instance  'Maharati' as result %}
                                 <div class="mb-3 card">
                                     <!--<div class="card-header-tab card-header">-->
                                         <!--<div class="card-header-title font-size-lg text-capitalize font-weight-normal">-->
@@ -2799,7 +2809,14 @@
                                             </li>
                                         </ul>
                                     </div>
-                                </div>
+</div>
+  {% endif %}
+  {% endif %}
+
+  {% get_service instance 'GIL' as result %}
+   {% if result %}
+{% get_education_service  instance  as service %}
+  {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
 
   <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}
@@ -2915,7 +2932,7 @@
                                         </ul>
                                     </div>
                                 </div>
-
+  {% endif %}
   {% endif %}
 
   <!--PSS-->
