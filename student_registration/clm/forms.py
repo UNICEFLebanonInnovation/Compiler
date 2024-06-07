@@ -7134,6 +7134,7 @@ class BridgingForm(CommonForm):
             ('Syrian national ID', _("Syrian national ID")),
             ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
+            ('Lebanese Extract of Record', _("Lebanese Extract of Record")),
             ('Other nationality', _("Other nationality")),
             ('Child have no ID', _("Child have no ID"))
         ),
@@ -7270,6 +7271,14 @@ class BridgingForm(CommonForm):
     other_number_confirm = forms.CharField(
         required=False,
         label=_('Confirm ID number of the child (optional)')
+    )
+    parent_extract_record = forms.CharField(
+        required=False,
+        label=_('Parent Lebanese Extract of Record')
+    )
+    parent_extract_record_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm Parent Lebanese Extract of Record')
     )
 
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -7823,6 +7832,13 @@ class BridgingForm(CommonForm):
                     Div('other_number_confirm', css_class='col-md-4'),
                     css_class='row child_id child_id6',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">31</span>'),
+                    Div('parent_extract_record', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">32</span>'),
+                    Div('parent_extract_record_confirm', css_class='col-md-4'),
+                    css_class='row child_id child_id7',
+                ),
                 css_class='bd-callout bd-callout-warning child_data C_right_border'
             ),
 
@@ -8007,6 +8023,8 @@ class BridgingForm(CommonForm):
         parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
+        parent_extract_record = cleaned_data.get("parent_extract_record")
+        parent_extract_record_confirm = cleaned_data.get("parent_extract_record_confirm")
         education_status = cleaned_data.get("education_status")
         miss_school_date = cleaned_data.get("miss_school_date")
         student_nationality = cleaned_data.get("student_nationality")
@@ -8131,6 +8149,10 @@ class BridgingForm(CommonForm):
                 msg = "The national numbers are not matched"
                 self.add_error('national_number_confirm', msg)
 
+        if id_type == 'Lebanese Extract of Record':
+            if parent_extract_record != parent_extract_record_confirm:
+                msg = "The Parent Extract Record are not matched"
+                self.add_error('parent_extract_record_confirm', msg)
         if id_type == 'Palestinian national ID':
             if not sop_parent_national_number:
                 self.add_error('parent_sop_national_number', 'This field is required')
@@ -8304,6 +8326,8 @@ class BridgingForm(CommonForm):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+            'parent_extract_record',
+            'parent_extract_record_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
             'rims_case_number',

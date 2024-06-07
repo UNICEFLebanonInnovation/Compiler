@@ -294,6 +294,18 @@ class Child(TimeStampedModel):
         null=True,
         verbose_name=_('Child Lebanese ID number')
     )
+    parent_extract_record = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Parent Lebanese Extract of Record')
+    )
+    parent_extract_record_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Parent Lebanese Extract of Record confirm')
+    )
     parent_syrian_national_number = models.CharField(
         max_length=50,
         blank=True,
@@ -532,22 +544,25 @@ class Child(TimeStampedModel):
     def caregiver_id_number(self):
         # 1	"UNHCR Registered"
         if self.id_type.id == 1:
-            return  self.parent_individual_case_number
+            return self.parent_individual_case_number
         # 2	"UNHCR Recorded"
         elif self.id_type.id == 2:
-            return  self.recorded_number
+            return self.recorded_number
         # 3	"Syrian national ID"
         elif self.id_type.id == 3:
-            return  self.parent_syrian_national_number
+            return self.parent_syrian_national_number
         # 4	"Palestinian national ID"
         elif self.id_type.id == 4:
-            return  self.parent_sop_national_number
+            return self.parent_sop_national_number
         # 5	"Lebanese national ID"
         elif self.id_type.id == 5:
-            return  self.parent_national_number
+            return self.parent_national_number
         # 6	"Other nationality"
         elif self.id_type.id == 6:
-            return  self.parent_other_number
+            return self.parent_other_number
+        # 9	"Lebanese Extract of Record "
+        elif self.id_type.id == 9:
+            return self.parent_extract_record
         # 7 "Caregiver has no ID"
         else:
             return ""

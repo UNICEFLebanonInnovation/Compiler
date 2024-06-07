@@ -59,6 +59,8 @@ class ChildSerializer(serializers.ModelSerializer):
             'recorded_number_confirm',
             'parent_national_number',
             'parent_national_number_confirm',
+            'parent_extract_record',
+            'parent_extract_record_confirm',
             'national_number',
             'national_number_confirm',
             'parent_syrian_national_number',

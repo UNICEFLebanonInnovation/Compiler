@@ -391,6 +391,8 @@ class BridgingSerializer(CLMSerializer):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+            'parent_extract_record',
+            'parent_extract_record_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
             'rims_case_number',

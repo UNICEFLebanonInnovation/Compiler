@@ -1210,6 +1210,10 @@ function reorganizeForm()
         $('div.child_id3').removeClass('d-none');
     }
 
+    if(id_type == 'Lebanese Extract of Record'){
+        $('div.child_id7').removeClass('d-none');
+    }
+
     if(id_type == 'Syrian national ID'){
         $('div.child_id4').removeClass('d-none');
     }

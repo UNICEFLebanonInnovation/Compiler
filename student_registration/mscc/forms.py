@@ -370,6 +370,15 @@ class MainForm(forms.ModelForm):
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
+    parent_extract_record = forms.CharField(
+        label=_('Lebanese Extract of Record'),
+        widget=forms.TextInput, required=False
+    )
+
+    parent_extract_record_confirm = forms.CharField(
+        label=_('Confirm Lebanese Extract of Record'),
+        widget=forms.TextInput, required=False
+    )
     syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
@@ -699,6 +708,13 @@ class MainForm(forms.ModelForm):
                     Div('other_number_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id6',
                 ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('parent_extract_record', css_class='col-md-5'),
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('parent_extract_record_confirm', css_class='col-md-6'),
+                    css_class='row card-body child_id child_id7',
+                ),
                 css_id='step-2',
             ),
             Div(
@@ -899,6 +915,9 @@ class MainForm(forms.ModelForm):
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
 
+        parent_extract_record = cleaned_data.get("parent_extract_record")
+        parent_extract_record_confirm = cleaned_data.get("parent_extract_record_confirm")
+
         # Other nationality
         if id_type and id_type.id == 6:
             if not parent_other_number:
@@ -914,6 +933,11 @@ class MainForm(forms.ModelForm):
             if other_number != other_number_confirm:
                 msg = "The ID numbers are not matched"
                 self.add_error('other_number_confirm', msg)
+
+        if id_type and id_type == 9:
+            if parent_extract_record != parent_extract_record_confirm:
+                msg = "The Parent Extract Record are not matched"
+                self.add_error('parent_extract_record_confirm', msg)
 
         have_labour = cleaned_data.get("have_labour")
         labour_type = cleaned_data.get("labour_type")
@@ -1048,6 +1072,8 @@ class MainForm(forms.ModelForm):
             'parent_individual_case_number_confirm',
             'individual_case_number',
             'individual_case_number_confirm',
+            'parent_extract_record',
+            'parent_extract_record_confirm',
             'recorded_number',
             'recorded_number_confirm',
             'parent_national_number',

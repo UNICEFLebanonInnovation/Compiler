@@ -605,6 +605,10 @@ function reorganizeForm()
         $('div.child_id6').removeClass('d-none');
     }
 
+    if(id_type == 9){
+        $('div.child_id7').removeClass('d-none');
+    }
+
     //  Labour
     var have_labour = $('select#id_have_labour').val();
     if(have_labour == '' || have_labour == 'No'){

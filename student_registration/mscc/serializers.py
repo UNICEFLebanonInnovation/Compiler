@@ -110,6 +110,12 @@ class MainSerializer(serializers.ModelSerializer):
                                                            required=False)
     national_number = serializers.CharField(source='child.national_number', required=False)
     national_number_confirm = serializers.CharField(source='child.national_number_confirm', required=False)
+
+
+    parent_extract_record = serializers.CharField(source='child.parent_extract_record', required=False)
+    parent_extract_record_confirm = serializers.CharField(source='child.parent_extract_record_confirm', required=False)
+
+
     parent_syrian_national_number = serializers.CharField(source='child.parent_syrian_national_number',
                                                           required=False)
     parent_syrian_national_number_confirm = serializers.CharField(source='child.parent_syrian_national_number_confirm',
@@ -236,6 +242,8 @@ class MainSerializer(serializers.ModelSerializer):
             'parent_individual_case_number_confirm',
             'individual_case_number',
             'individual_case_number_confirm',
+            'parent_extract_record',
+            'parent_extract_record_confirm',
             'recorded_number',
             'recorded_number_confirm',
             'parent_national_number',

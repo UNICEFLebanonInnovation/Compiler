@@ -859,6 +859,7 @@ class CLM(TimeStampedModel):
             ('Syrian national ID', _("Syrian national ID")),
             ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
+            ('Lebanese Extract of Record', _("Lebanese Extract of Record")),
             ('Other nationality', _("Other nationality")),
             ('Child have no ID', _("Child have no ID"))
         ),
@@ -910,7 +911,6 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Specify the nationality')
     )
-
     national_number = models.CharField(
         max_length=50,
         blank=True,
@@ -922,6 +922,18 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Lebanese ID number confirm')
+    )
+    parent_extract_record = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Parent Lebanese Extract of Record')
+    )
+    parent_extract_record_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Parent Lebanese Extract of Record confirm')
     )
     syrian_national_number = models.CharField(
         max_length=50,
