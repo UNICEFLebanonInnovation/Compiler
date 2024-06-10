@@ -5,12 +5,16 @@ from __future__ import absolute_import, unicode_literals
 import requests
 from requests.structures import CaseInsensitiveDict
 import json
+
 from django.db.models import Max
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from django.views.generic import DetailView, ListView, RedirectView,FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
+from openpyxl import Workbook
 from dal import autocomplete
 from django.db.models import Q
 from .models import HouseHold, Child, OutreachCaregiver, OutreachChild
@@ -157,6 +161,68 @@ class ChildViewSet(mixins.RetrieveModelMixin,
             return qs
         return []
 
+class OutreachPage(LoginRequiredMixin,
+                   TemplateView):
+    template_name = 'outreach/outreach.html'
 
 
+@login_required(login_url='/users/login')
+def outreach_export_data(request):
+    from django.db import connection
+    cursor = connection.cursor()
+    vw_data = 'SELECT * FROM vw_outreach_data WHERE caregiver_id > 0'
+
+    cursor.execute(vw_data)
+    data = cursor.fetchall()
+
+    headers = [col[0] for col in cursor.description]
+
+    workbook = Workbook()
+    worksheet_all_data = workbook.create_sheet("Outreach Data")
+    worksheet_all_data.append(headers)
+
+    for row in data:
+        worksheet_all_data.append(row)
+
+    default_sheet = workbook.get_sheet_by_name('Sheet')
+    workbook.remove(default_sheet)
+
+    # Set the appropriate response headers for the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=outreach_data.xlsx'
+
+    # Save the workbook to the response
+    workbook.save(response)
+
+    return response
+
+@login_required(login_url='/users/login')
+def outreach_unregistered_export_data(request):
+    from django.db import connection
+    cursor = connection.cursor()
+    vw_data = 'SELECT * FROM vw_outreach_not_registered WHERE caregiver_id > 0'
+
+    cursor.execute(vw_data)
+    data = cursor.fetchall()
+
+    headers = [col[0] for col in cursor.description]
+
+    workbook = Workbook()
+    worksheet_all_data = workbook.create_sheet("Outreach Not Registered Data")
+    worksheet_all_data.append(headers)
+
+    for row in data:
+        worksheet_all_data.append(row)
+
+    default_sheet = workbook.get_sheet_by_name('Sheet')
+    workbook.remove(default_sheet)
+
+    # Set the appropriate response headers for the Excel file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=outreach_not_registered_data.xlsx'
+
+    # Save the workbook to the response
+    workbook.save(response)
+
+    return response
 
