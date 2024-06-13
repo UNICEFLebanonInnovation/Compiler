@@ -2217,7 +2217,7 @@ class Bridging(CLM):
         result = False
         from student_registration.attendances.models import CLMStudentAbsences
         if student_id and round_id:
-            attendance_days = CLMStudentAbsences.objects.filter(student_id=student_id, round_id=round_id, consecutive_absence_days__gte=5).exists()
+            attendance_days = CLMStudentAbsences.objects.filter(student_id=student_id, round_id=round_id, consecutive_absence_days__gte=20).exists()
             if attendance_days:
                 result = True
         return result

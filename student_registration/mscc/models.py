@@ -305,8 +305,20 @@ class Registration(TimeStampedModel):
             student_id=self.child.id,
             created__lt=self.created
         ).exists()
-
         return "Yes" if previous_registration_exists else "No"
+
+    @property
+    def total_absent_days(self):
+        return Registration.get_total_absent_days(self.id)
+
+    @staticmethod
+    def get_total_absent_days(registration_id):
+        result = 0
+        from student_registration.attendances.models import MSCCAttendanceChild
+        attendance_days = MSCCAttendanceChild.objects.filter(registration_id=registration_id ).count()
+        if attendance_days:
+            result = attendance_days
+        return result
 
     def get_absolute_url(self):
         return '/MSCC/Child-Profile/%d/' % self.pk

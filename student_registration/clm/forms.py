@@ -564,26 +564,26 @@ class BLNForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
@@ -1881,53 +1881,53 @@ class ABLNForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
                 'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')
@@ -3242,53 +3242,53 @@ class RSForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')
@@ -4684,53 +4684,53 @@ class CBECEForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')
@@ -6053,53 +6053,53 @@ class OutreachForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
                 'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')
@@ -7141,53 +7141,53 @@ class BridgingForm(CommonForm):
         initial=''
     )
     case_number = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
                 'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')

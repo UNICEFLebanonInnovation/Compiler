@@ -1,7 +1,7 @@
 from django import template
 from django.apps import apps
 
-from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration, EducationService, Round
+from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration, EducationService, Round, Packages
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 
 
@@ -47,6 +47,12 @@ def get_service(registry, service_name):
     if type(registry) == 'int':
         return ProvidedServices.objects.filter(name=service_name, registration_id=registry).last()
     return ProvidedServices.objects.filter(name=service_name, registration=registry).last()
+
+@register.simple_tag
+def get_youth_services(registry,service_name):
+    if type(registry) == 'int':
+        return Packages.objects.filter(type=registry.type, age=registry.child_age).last()
+    return Packages.objects.filter(type=registry.type, age=registry.child_age).last()
 
 
 @register.simple_tag

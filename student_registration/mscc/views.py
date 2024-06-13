@@ -260,11 +260,11 @@ class MainListView(LoginRequiredMixin,
         #     round__id=F('max_round') | F('round__id__isnull')
         # )
         if has_group(user, 'MSCC_UNICEF'):
-            return Registration.objects.filter(deleted=False).order_by('-id')
+            return Registration.objects.filter(deleted=False, round__current_year=True).order_by('-id')
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return Registration.objects.filter(partner=partner_id, deleted=False).order_by('-id')
+            return Registration.objects.filter(partner=partner_id, deleted=False, round__current_year=True).order_by('-id')
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return Registration.objects.filter(center=center_id, deleted=False).order_by('-id')
+            return Registration.objects.filter(center=center_id, deleted=False, round__current_year=True).order_by('-id')
 
         return Registration.objects.none()
 
