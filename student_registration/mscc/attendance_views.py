@@ -8,7 +8,7 @@ from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
-from student_registration.mscc.models import EducationService
+from student_registration.mscc.models import EducationService, Round
 from .utils import load_child_attendance, create_attendance
 
 
@@ -27,6 +27,7 @@ class AttendanceView(LoginRequiredMixin,
         attendance_date = datetime.now().strftime('%m/%d/%Y')
         day_off = 'No'
         close_reason = ''
+        round = Round.objects.filter(current_year=True)
 
         education_programs = EducationService.EDUCATION_PROGRAM
         sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
@@ -49,7 +50,8 @@ class AttendanceView(LoginRequiredMixin,
             'day_off': day_off,
             'close_reason': close_reason,
             'education_program': education_program_dict,
-            'class_section': class_section_dict
+            'class_section': class_section_dict,
+            'round': round
         }
 
 

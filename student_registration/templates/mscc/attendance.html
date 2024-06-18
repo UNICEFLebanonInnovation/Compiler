@@ -104,7 +104,21 @@
                                                         <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
                                                               </div>
                                                   </div>
-
+                                                  <div class="col-md-6">
+                                                    <div class="input-group">
+                                                                  <div class="input-group-prepend ">
+                                                                      <select id="round" class="btn-primary">
+                                                                          <option value="">Round</option>
+                                                                           {% for item in round %}
+                                                                              {% if item != '' %}
+                                                                                <option value="{{ item }}" {% if round == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                              {% endif %}
+                                                                            {% endfor %}
+                                                                      </select>
+                                                                  </div>
+                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
+                                                              </div>
+                                                  </div>
                                                   <div class="col-md-6">
                                                     <div class="input-group">
                                                                   <div class="input-group-prepend ">
