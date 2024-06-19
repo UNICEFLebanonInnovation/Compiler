@@ -141,6 +141,7 @@ urlpatterns = [
     # url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
     url(r'^MSCC/', include('student_registration.mscc.urls', namespace='mscc')),
+    url(r'^youth/', include('student_registration.youth.urls', namespace='youth')),
     url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     # url(r'^staffenroll/', include('student_registration.staffenroll.urls', namespace='staffenroll')),
