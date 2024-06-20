@@ -40,7 +40,7 @@
                                                     {% if form.instance.id == None %}
                                                       <a href="/">List</a>
                                                     {% else %}
-                                                      <a href="/MSCC/Child-Profile/{{ form.instance.id }}">Child Profile</a>
+                                                      <a href="/youth/Child-Profile/{{ form.instance.id }}">Child Profile</a>
                                                     {% endif %}
                                                 </li>
                                                 <li class="breadcrumb-item">
@@ -92,11 +92,6 @@
                                                     <em>2</em><span>Parent/Caregiver Information</span>
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a href="#step-3">
-                                                    <em>3</em><span>Work Status</span>
-                                                </a>
-                                            </li>
                                         </ul>
                                         <div class="form-wizard-content">
 
@@ -107,7 +102,7 @@
 
                                     <div class="clearfix">
                                         <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'youth:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
 
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
@@ -203,7 +198,7 @@
 {% block extra_js %}
 
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=19"></script>
-    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/youth.js' %}?v=19"></script>
+    <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
 
 {% endblock %}

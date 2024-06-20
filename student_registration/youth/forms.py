@@ -405,14 +405,7 @@ class MainForm(forms.ModelForm):
                     HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('adolescent_address', css_class='col-md-6'),
                     HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('child_disability', css_class='col-md-4'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('source_of_identification', css_class='col-md-7'),
-                    HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('source_of_identification_specify', css_class='col-md-4'),
+                    Div('adolescent_disability', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 css_id='step-1',
@@ -560,10 +553,6 @@ class MainForm(forms.ModelForm):
                     Div('parent_extract_record_confirm', css_class='col-md-6'),
                     css_class='row card-body child_id child_id7',
                 ),
-                css_id='step-2',
-            ),
-            Div(
-                #
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -571,8 +560,8 @@ class MainForm(forms.ModelForm):
                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
 
                 ),
-                css_id='step-3',
-            ),
+                css_id='step-2',
+            )
         )
 
     def clean(self):
@@ -783,10 +772,10 @@ class MainForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.center = request.user.center
-                if request.POST.get("adolescent_outreach"):
-                    instance.adolescent_outreach = request.POST.get("adolescent_outreach")
-                if request.POST.get("adolescent_old"):
-                    instance.student_old = request.POST.get("adolescent_old")
+                # if request.POST.get("adolescent_outreach"):
+                #     instance.adolescent_outreach = request.POST.get("adolescent_outreach")
+                # if request.POST.get("adolescent_old"):
+                #     instance.student_old = request.POST.get("adolescent_old")
                 instance.save()
                 request.session['instance_id'] = instance.id
 

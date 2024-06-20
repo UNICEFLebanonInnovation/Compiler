@@ -15,9 +15,7 @@ class BootstrapTable(tables.Table):
 
 class CommonTable(tables.Table):
 
-    child_age = tables.Column(verbose_name=_('Age'), accessor='child.age')
-    # created = tables.Column(verbose_name='Created', accessor='registration.created')
-    child_birthday = tables.Column(verbose_name=_('Birthday'), accessor='child.birthday')
+    # adolescent_birthday = tables.Column(verbose_name=_('Birthday'), accessor='adolescent.birthday')
 
     class Meta:
         model = Registration
@@ -47,7 +45,6 @@ class MainTable(CommonTable):
             'adolescent.mother_fullname',
             'adolescent.gender',
             'adolescent_age',
-            'adolescent_birthday',
             'adolescent.nationality',
         )
 
@@ -74,7 +71,6 @@ class FullTable(CommonTable):
             'adolescent.mother_fullname',
             'adolescent.gender',
             'adolescent_age',
-            'adolescent_birthday',
             'adolescent.nationality',
         )
 
@@ -101,7 +97,6 @@ class PartnerTable(CommonTable):
             'adolescent.mother_fullname',
             'adolescent.gender',
             'adolescent_age',
-            'adolescent_birthday',
             'adolescent.nationality',
 
         )

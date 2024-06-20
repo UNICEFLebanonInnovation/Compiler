@@ -42,12 +42,12 @@ urlpatterns = [
         name='list'
     ),
     url(
-        regex=r'^Services/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
+        regex=r'^Services/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EnrolledProgramsFormView.as_view(),
         name='service_enrolled_programs_add'
     ),
     url(
-        regex=r'^Services/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
+        regex=r'^Services/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EnrolledProgramsFormView.as_view(),
         name='service_enrolled_programs_edit'
     ),

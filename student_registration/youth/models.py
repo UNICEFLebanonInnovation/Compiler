@@ -99,15 +99,15 @@ class Registration(TimeStampedModel):
     # )
 
     @property
-    def child_fullname(self):
-        if self.child:
-            return self.child.full_name
+    def adolescent_fullname(self):
+        if self.adolescent:
+            return self.adolescent.full_name
         return ''
 
     @property
-    def child_age(self):
-        if self.child:
-            return self.child.age
+    def adolescent_age(self):
+        if self.adolescent:
+            return self.adolescent.age
         return 0
 
     @property

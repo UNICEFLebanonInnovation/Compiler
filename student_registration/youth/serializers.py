@@ -5,27 +5,27 @@ from .models import (
 
 
 def create_instance(validated_data, model):
-    from student_registration.child.serializers import ChildSerializer
-    from student_registration.child.models import Child
+    from student_registration.adolescent.serializers import AdolescentSerializer
+    from student_registration.adolescent.models import Adolescent
 
-    child_data = validated_data.pop('child', None)
-    child = None
+    adolescent_data = validated_data.pop('adolescent', None)
+    adolescent = None
 
-    if 'id' in child_data and child_data['id']:
-        child_serializer = ChildSerializer(Child.objects.get(id=child_data['id']), data=child_data)
-        child_serializer.is_valid(raise_exception=True)
-        child_serializer.instance = child_serializer.save()
-        child = child_serializer.instance
+    if 'id' in adolescent_data and adolescent_data['id']:
+        adolescent_serializer = AdolescentSerializer(Adolescent.objects.get(id=adolescent_data['id']), data=adolescent_data)
+        adolescent_serializer.is_valid(raise_exception=True)
+        adolescent_serializer.instance = adolescent_serializer.save()
+        adolescent = adolescent_serializer.instance
 
-    if not child:
-        child_serializer = ChildSerializer(data=child_data)
-        child_serializer.is_valid(raise_exception=True)
-        child_serializer.instance = child_serializer.save()
-        child = child_serializer.instance
+    if not adolescent:
+        adolescent_serializer = AdolescentSerializer(data=adolescent_data)
+        adolescent_serializer.is_valid(raise_exception=True)
+        adolescent_serializer.instance = adolescent_serializer.save()
+        adolescent = adolescent_serializer.instance
 
     try:
         instance = model.objects.create(**validated_data)
-        instance.child = child
+        instance.adolescent = adolescent
         instance.save()
 
     except Exception as ex:
@@ -35,13 +35,13 @@ def create_instance(validated_data, model):
 
 
 def update_instance(instance, validated_data):
-    from student_registration.child.serializers import ChildSerializer
-    child_data = validated_data.pop('child', None)
+    from student_registration.adolescent.serializers import AdolescentSerializer
+    adolescent_data = validated_data.pop('adolescent', None)
 
-    if child_data:
-        child_serializer = ChildSerializer(instance.child, data=child_data)
-        child_serializer.is_valid(raise_exception=True)
-        child_serializer.instance = child_serializer.save()
+    if adolescent_data:
+        adolescent_serializer = AdolescentSerializer(instance.adolescent, data=adolescent_data)
+        adolescent_serializer.is_valid(raise_exception=True)
+        adolescent_serializer.instance = adolescent_serializer.save()
 
     try:
 
@@ -75,6 +75,9 @@ class MainSerializer(serializers.ModelSerializer):
     adolescent_nationality = serializers.CharField(source='adolescent.nationality')
     adolescent_nationality_id = serializers.CharField(source='adolescent.nationality.id', read_only=True)
     adolescent_nationality_other = serializers.CharField(source='adolescent.nationality_other', required=False)
+    adolescent_governorate = serializers.CharField(source='adolescent.governorate', required=False)
+    adolescent_district = serializers.CharField(source='adolescent.district', required=False)
+    adolescent_cadaster = serializers.CharField(source='adolescent.cadaster', required=False)
     adolescent_address = serializers.CharField(source='adolescent.address', required=False)
     adolescent_disability = serializers.CharField(source='adolescent.disability', required=False)
     adolescent_id_number = serializers.CharField(source='adolescent.id_number', required=False)

@@ -34,7 +34,7 @@
                                   </a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="/MSCC/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname  registry %}</a>
+                                    <a href="/youth/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname  registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
                                      Youth Assessment
@@ -69,7 +69,7 @@
 
                                     <div class="clearfix">
                                         <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                        <a href="{% url 'youth:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
 
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
@@ -86,7 +86,7 @@
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/service_youth_assessment.js' %}?v=2"></script>
-    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/service_youth_assessment.js' %}?v=2"></script>
+    <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
 
 {% endblock %}

@@ -202,7 +202,9 @@ class MainListView(LoginRequiredMixin,
         partner_id = user.partner_id
 
         # if has_group(user, 'YOUTH_UNICEF'):
-        return Registration.objects.filter(deleted=False, round__current_year=True).order_by('-id')
+        return Registration.objects.filter(deleted=False
+                                           # , round__current_year=True
+                                           ).order_by('-id')
         # elif has_group(user, 'YOUTH_PARTNER') and partner_id:
         #     return Registration.objects.filter(partner=partner_id, deleted=False, round__current_year=True).order_by('-id')
         # elif has_group(user, 'YOUTH_CENTER') and center_id:

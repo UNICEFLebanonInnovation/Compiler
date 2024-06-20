@@ -80,10 +80,10 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         display_edu_section = ''
 
-        form_action = reverse('youth:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
+        form_action = reverse('youth:service_enrolled_programs_add', kwargs={'registry': registry})
         if instance:
-            form_action = reverse('youth:service_education_edit',
-                                  kwargs={'registry': registry, 'package_type': package_type, 'pk': instance})
+            form_action = reverse('youth:service_enrolled_programs_edit',
+                                  kwargs={'registry': registry, 'pk': instance})
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
