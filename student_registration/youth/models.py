@@ -164,22 +164,10 @@ class EnrolledPrograms(TimeStampedModel):
         ('Other', _('Other')),
     )
     PROGRAM = Choices(
-        ('BLN Level 1', _('BLN Level 1')),
-        ('BLN Level 2', _('BLN Level 2')),
-        ('BLN Level 3', _('BLN Level 3')),
-        ('ABLN Level 1', _('ABLN Level 1')),
-        ('ABLN Level 2', _('ABLN Level 2')),
-        ('YBLN Level 1', _('YBLN Level 1')),
-        ('YBLN Level 2', _('YBLN Level 2')),
-        ('YFS Level 1', _('YFS Level 1')),
-        ('YFS Level 2', _('YFS Level 2')),
-        ('CBECE Level 1', _('CBECE Level 1')),
-        ('CBECE Level 2', _('CBECE Level 2')),
-        ('CBECE Level 3', _('CBECE Level 3')),
-        ('RS Grade 7', _('RS Grade 7')),
-        ('RS Grade 8', _('RS Grade 8')),
-        ('RS Grade 9', _('RS Grade 9')),
-        ('ECD', _('ECD'))
+        ('# of inclusive policies or action plans and recommendations initiated and/or adopted', _('# of inclusive policies or action plans and recommendations initiated and/or adopted')),
+        ('# of key TVET NSF policy actions initiated and/or adopted by the government', _('# of key TVET NSF policy actions initiated and/or adopted by the government')),
+        ('# of inclusive policies, reform/legislation or system/ mechanisms initiated by or engaging public and private sector', _('# of inclusive policies, reform/legislation or system/ mechanisms initiated by or engaging public and private sector')),
+        ('# of private sector entities engaged (nb of companies, nb of individuals)', _('# of private sector entities engaged (nb of companies, nb of individuals)'))
     )
     CLASS_SECTION = Choices(
         ('', '----------'),

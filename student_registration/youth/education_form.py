@@ -43,7 +43,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     programs = forms.ChoiceField(
-        label=_("Core Package Program"),
+        label=_("Program"),
         widget=forms.Select, required=True,
         choices=EnrolledPrograms.PROGRAM,
     )
@@ -54,6 +54,11 @@ class EnrolledProgramsForm(forms.ModelForm):
     )
     registration_date = forms.DateField(
         label=_("Date of registration in the round"),
+        required=False
+    )
+
+    completion_date = forms.DateField(
+        label=_("Date of completion in the round"),
         required=False
     )
 
@@ -101,15 +106,22 @@ class EnrolledProgramsForm(forms.ModelForm):
                     HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('round', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('education_program', css_class='col-md-3'),
-                    css_class='row card-body' + display_edu_section
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('class_section', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                #
+                Div(
                     HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('registration_date', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('completion_date', css_class='col-md-3'),
                     css_class='row card-body'+display_edu_section
+                ),
+
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('programs', css_class='col-md-9'),
+                    css_class='row card-body' + display_edu_section
                 ),
                 css_id='step-1'
             ),

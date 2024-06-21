@@ -150,7 +150,7 @@ def eligible_to_followup(registry):
 @register.simple_tag
 def get_child_fullname(registry):
     reg = Registration.objects.filter(id=registry).last()
-    return reg.child_fullname
+    return reg.adolescent_fullname
 
 
 

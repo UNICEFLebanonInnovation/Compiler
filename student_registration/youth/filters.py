@@ -18,19 +18,20 @@ from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
 
 
+
 class MainFilter(FilterSet):
-    child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
+    adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
 
-    child__first_name = CharFilter(lookup_expr='icontains' )
-    child__father_name = CharFilter(lookup_expr='icontains')
-    child__last_name = CharFilter(lookup_expr='icontains')
-    child__mother_fullname = CharFilter(lookup_expr='icontains')
-    child__number = CharFilter(lookup_expr='icontains')
+    adolescent__first_name = CharFilter(lookup_expr='icontains' )
+    adolescent__father_name = CharFilter(lookup_expr='icontains')
+    adolescent__last_name = CharFilter(lookup_expr='icontains')
+    adolescent__mother_fullname = CharFilter(lookup_expr='icontains')
+    adolescent__number = CharFilter(lookup_expr='icontains')
     round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Round')
-    child__first_phone_number = CharFilter(lookup_expr='icontains')
-    child__second_phone_number = CharFilter(lookup_expr='icontains')
+    adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
+    adolescent__second_phone_number = CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = Registration
@@ -53,17 +54,17 @@ class FullFilter(FilterSet):
     center__cadaster = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name')
                                     .order_by('name').distinct(), empty_label='Cadaster')
 
-    child__first_name = CharFilter(lookup_expr='icontains')
-    child__father_name = CharFilter(lookup_expr='icontains')
-    child__last_name = CharFilter(lookup_expr='icontains')
-    child__mother_fullname = CharFilter(lookup_expr='icontains')
-    child__number = CharFilter(lookup_expr='icontains')
-    child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
-    child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
+    adolescent__first_name = CharFilter(lookup_expr='icontains')
+    adolescent__father_name = CharFilter(lookup_expr='icontains')
+    adolescent__last_name = CharFilter(lookup_expr='icontains')
+    adolescent__mother_fullname = CharFilter(lookup_expr='icontains')
+    adolescent__number = CharFilter(lookup_expr='icontains')
+    adolescent__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
+    adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Nationality')
 
-    child__first_phone_number = CharFilter(lookup_expr='icontains')
-    child__second_phone_number = CharFilter(lookup_expr='icontains')
+    adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
+    adolescent__second_phone_number = CharFilter(lookup_expr='icontains')
 
 
     class Meta:

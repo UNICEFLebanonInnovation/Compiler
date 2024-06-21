@@ -3354,93 +3354,12 @@
                             </div>
   {% endif %}
 
-  <!--Referral-->
-<div class="col-md-12 col-lg-6 col-xl-4">
-  {% service_data 'Referral' instance as result %}
-                                <div class="mb-3 card">
-                                    <div class="p-0 card-body">
-                                        <div class="dropdown-menu-header mt-0 mb-0">
-                                            <div class="dropdown-menu-header-inner bg-heavy-rain">
-                                                <div class="menu-header-image opacity-1"></div>
-                                                <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">Referral
-                                                      <div style="float:right;">
-                                                            {% if result %}
-                                                              <a href="/youth/Referral-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit the Referral Data"><i class="pe-7s-pen"></i></a>
-                                                            {% else %}
-                                                              <a href="/youth/Referral-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add the Referral Data"><i class="pe-7s-plus"></i></a>
-                                                            {% endif %}
-                                                      </div>
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!--<ul class="tabs-animated-shadow tabs-animated nav nav-justified tabs-shadow-bordered p-3">-->
-                                            <!--<li class="nav-item">-->
-                                                <!--<a role="tab" class="nav-link active show" id="tab-c-3" data-toggle="tab" href="#tab-animated-3" aria-selected="true">-->
-                                                    <!--<span>Situation</span>-->
-                                                <!--</a>-->
-                                            <!--</li>-->
-                                        <!--</ul>-->
-                                        <div class="tab-content">
-                                            <div class="tab-pane active show" id="tab-animated-27" role="tabpanel">
-                                                <div class="scroll-area-sm" style="height: 300px;">
-                                                    <div class="scrollbar-container ps ps--active-y">
-                                                        <div class="p-3">
-                                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
-                                                                 {% get_service instance 'CB-ECE' as result1 %}
-                                                                 {% if result1 %}
-                                                                <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to formal education (CBECE Grade 1)</h4>
-                                                                            <p>{{ result.referred_formal_education }} - {{ result.referred_school }}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                               {% endif %}
-                                                              <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child receive all needed materials and resources (Stationery, Books, Learning bundle)</h4>
-                                                                            <p>{{ result.receive_needed_material }}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                              <div class="vertical-timeline-item vertical-timeline-element">
-                                                                  <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                      <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Child referred to a service</h4>
-                                                                            <p>{{ result.referred_service }}
-                                                                              {% if result.referred_service == 'Other'  %} - {{result.referred_service_other}}{% endif %}
-                                                                            </p>
-                                                                      </div>
-                                                                  </div>
-                                                              </div>
-
-                                                              <div class="vertical-timeline-item vertical-timeline-element">
-                                                                    <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
-                                                                        <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Recommended learning path/outcome</h4>
-                                                                            <p>{{ result.recommended_learning_path }}</p>
-                                                                        </div>
-                                                                    </div>
-                                                              </div>
-                                                            </div>
-                                                        </div>
-                                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 200px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 99px;"></div></div></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ul class="nav flex-column">
-                                            <li class="nav-item-btn text-center pt-4 pb-3 nav-item">
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
 
 {% service_data 'EducationService' instance as result1 %}
 {% have_service_category 'Youth' instance as result2 %}
 
-  {% if result1 and result2 %}
+<!--  {% if result1 and result2 %}-->
 {% service_data 'YouthAssessment' instance as result %}
 {% service_data 'YouthReferral' instance as result1 %}
   <!--Youth Assessment-->
@@ -3613,7 +3532,7 @@
                                         </ul>
                                 </div>
                             </div>
-{% endif %}
+<!--{% endif %}-->
 
   <!--Recreational-->
 {% get_service instance 'Recreational' as result %}

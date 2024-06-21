@@ -61,7 +61,6 @@
 </div>
 
 <div class="row">
-{% if request.user|has_group:"youth_FULL" and request.user|has_group:"youth_CENTER" and request.user.center.id %}
                         <div class="col-md-6 col-lg-3">
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
                                 <div class="widget-chat-wrapper-outer">
@@ -75,7 +74,7 @@
                                                         <i class="fa fa-plus"></i>
                                                     </span>
                                                   <a href="{% url 'youth:child_add' %}?type=Core-Package">
-                                                    Core Package
+                                                    Add Youth
                                                   </a>
                                                     <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
@@ -90,119 +89,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-danger pr-2">
-                                                        <i class="fa fa-plus"></i>
-                                                    </span>
-                                                  <a href="{% url 'youth:child_add' %}?type=Walk-in">
-                                                    Walk-in
-                                                  </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-danger-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-{% endif %}
-{% if request.user|has_group:"youth_YOUTH" %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-primary pr-2">
-                                                        <i class="fa fa-plus"></i>
-                                                    </span>
-                                                  <a href="{% url 'youth:child_add' %}?type=Core-Package">
-                                                    Add new Beneficiary
-                                                  </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-{% endif %}
-{% if request.user|has_group:"youth_CENTER" and request.user.center.id or request.user|has_group:"youth_PARTNER" %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Attendance</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-                                                    <span class="opacity-10 text-success pr-2">
-                                                        <i class="fa fa-list"></i>
-                                                    </span>
-                                                    <a href="{% url 'youth:attendance' %}">
-                                                      Daily Attendance
-                                                    </a>
-
-                                                  <!--<small class="opacity-5 pr-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-warning-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-{% endif %}
-
-                          <!--<div class="col-md-6 col-lg-3">-->
-                              <!--<div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">-->
-                                  <!--<div class="widget-chat-wrapper-outer">-->
-                                      <!--<div class="widget-chart-content">-->
-                                          <!--<div class="widget-title opacity-5 text-uppercase">Need RS support</div>-->
-                                          <!--<div class="widget-numbers mt-2 fsize-4 mb-0 w-100">-->
-                                              <!--<div class="widget-chart-flex align-items-center">-->
-                                                  <!--<div>-->
-                                                      <!--<small class="text-success pr-1">+</small>-->
-                                                      <!--34-->
-                                                      <!--<small class="opacity-5 pl-1">%</small>-->
-                                                  <!--</div>-->
-                                                  <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                      <!--<div class="circle-progress circle-progress-success-sm d-inline-block">-->
-                                                          <!--<small></small>-->
-                                                      <!--</div>-->
-                                                  <!--</div>-->
-                                              <!--</div>-->
-                                          <!--</div>-->
-                                      <!--</div>-->
-                                  <!--</div>-->
-                              <!--</div>-->
-                          <!--</div>-->
                     </div>
 
 <div class="row">
