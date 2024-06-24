@@ -1154,20 +1154,56 @@ def absence_export(request,number_of_absences, total_days):
     return response
 
 
-@login_required(login_url='/users/login')
+from django.http import StreamingHttpResponse
+from openpyxl import Workbook
+from django.db import connection
+
+def generate_workbook(headers, cursor, max_rows_per_sheet):
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Attendance Records 1"
+    worksheet.append(headers)
+
+    sheet_count = 1
+    row_count = 0
+    chunk_size = 1000
+
+    while True:
+        rows = cursor.fetchmany(chunk_size)
+        if not rows:
+            break
+        for row in rows:
+            if row_count >= max_rows_per_sheet:
+                sheet_count += 1
+                sheet_title = "Attendance Records " + str(sheet_count)
+                worksheet = workbook.create_sheet(title=sheet_title)
+                worksheet.append(headers)
+                row_count = 0
+            worksheet.append(row)
+            row_count += 1
+
+    # Remove the default sheet if it exists
+    if 'Sheet' in workbook.sheetnames:
+        del workbook['Sheet']
+
+    return workbook
+
+def stream_workbook(workbook):
+    from io import BytesIO
+    buffer = BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
+    return buffer
+
 def attendance_export(request):
-    from django.db import connection
-    # Fetch the current round
     current_round = CLMRound.objects.get(current_round_bridging=True)
     round_id = current_round.id
 
     cursor = connection.cursor()
 
-    # Create the SQL query string
     vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id = %s"
     query_params = [round_id]
 
-    # Apply filters based on user group membership
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
         if request.user.partner_id:
             vw_data_str += " AND partner_id = %s"
@@ -1177,46 +1213,82 @@ def attendance_export(request):
             query_params.append(request.user.school_id)
 
     vw_data_str += " ORDER BY attendance_date"
-
-    # Execute the query
     cursor.execute(vw_data_str, query_params)
-    data = cursor.fetchall()
 
     headers = [col[0] for col in cursor.description]
 
-    # Create the workbook and initial worksheet
-    workbook = Workbook()
-    worksheet = workbook.active
-    worksheet.title = "Attendance Records 1"
-    worksheet.append(headers)
+    max_rows_per_sheet = 50000
+    workbook = generate_workbook(headers, cursor, max_rows_per_sheet)
+    buffer = stream_workbook(workbook)
 
-    # Define the maximum number of rows per sheet
-    max_rows_per_sheet = 100000
-
-    # Write data to worksheets, splitting into multiple sheets if necessary
-    sheet_count = 1
-    for i, row in enumerate(data):
-        if i > 0 and i % max_rows_per_sheet == 0:
-            sheet_count += 1
-            sheet_title = "Attendance Records " + str(sheet_count)
-            worksheet = workbook.create_sheet(title=sheet_title)
-            worksheet.append(headers)
-        worksheet.append(row)
-
-    # Remove the default sheet if it exists
-    if 'Sheet' in workbook.sheetnames:
-        del workbook['Sheet']
-
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
+    response = StreamingHttpResponse(buffer, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=raw_attendance.xlsx'
 
-    # Save the workbook to the response
-    workbook.save(response)
-
     return response
+
+# @login_required(login_url='/users/login')
+# def attendance_export(request):
+#     from django.db import connection
+#     # Fetch the current round
+#     current_round = CLMRound.objects.get(current_round_bridging=True)
+#     round_id = current_round.id
+#
+#     cursor = connection.cursor()
+#
+#     # Create the SQL query string
+#     vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id = %s"
+#     query_params = [round_id]
+#
+#     # Apply filters based on user group membership
+#     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+#         if request.user.partner_id:
+#             vw_data_str += " AND partner_id = %s"
+#             query_params.append(request.user.partner_id)
+#         if request.user.school_id:
+#             vw_data_str += " AND school_id = %s"
+#             query_params.append(request.user.school_id)
+#
+#     vw_data_str += " ORDER BY attendance_date"
+#
+#     # Execute the query
+#     cursor.execute(vw_data_str, query_params)
+#     data = cursor.fetchall()
+#
+#     headers = [col[0] for col in cursor.description]
+#
+#     # Create the workbook and initial worksheet
+#     workbook = Workbook()
+#     worksheet = workbook.active
+#     worksheet.title = "Attendance Records 1"
+#     worksheet.append(headers)
+#
+#     # Define the maximum number of rows per sheet
+#     max_rows_per_sheet = 100000
+#
+#     # Write data to worksheets, splitting into multiple sheets if necessary
+#     sheet_count = 1
+#     for i, row in enumerate(data):
+#         if i > 0 and i % max_rows_per_sheet == 0:
+#             sheet_count += 1
+#             sheet_title = "Attendance Records " + str(sheet_count)
+#             worksheet = workbook.create_sheet(title=sheet_title)
+#             worksheet.append(headers)
+#         worksheet.append(row)
+#
+#     # Remove the default sheet if it exists
+#     if 'Sheet' in workbook.sheetnames:
+#         del workbook['Sheet']
+#
+#     # Set the appropriate response headers for the Excel file
+#     response = HttpResponse(
+#         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+#     )
+#     response['Content-Disposition'] = 'attachment; filename=raw_attendance.xlsx'
+#
+#     # Save the workbook to the response
+#     workbook.save(response)
+#
+#     return response
 
 
 @login_required(login_url='/users/login')
