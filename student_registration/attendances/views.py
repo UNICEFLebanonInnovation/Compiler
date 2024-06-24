@@ -1156,42 +1156,61 @@ def absence_export(request,number_of_absences, total_days):
 
 @login_required(login_url='/users/login')
 def attendance_export(request):
-    current_round = CLMRound.objects.all()
-    current_round = current_round.get(current_round_bridging=True)
+    from django.db import connection
+    # Fetch the current round
+    current_round = CLMRound.objects.get(current_round_bridging=True)
     round_id = current_round.id
 
-    from django.db import connection
     cursor = connection.cursor()
 
-    vw_data_str = "select * from vw_bridging_attendance WHERE round_id = " + str(round_id) + " "
+    # Create the SQL query string
+    vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id = %s"
+    query_params = [round_id]
 
+    # Apply filters based on user group membership
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
         if request.user.partner_id:
-            partner_id = request.user.partner_id
-            vw_data_str += "AND partner_id = " + str(partner_id) + " "
-
+            vw_data_str += " AND partner_id = %s"
+            query_params.append(request.user.partner_id)
         if request.user.school_id:
-            school_id = request.user.school_id
-            vw_data_str += "AND school_id = " + str(school_id) + " "
+            vw_data_str += " AND school_id = %s"
+            query_params.append(request.user.school_id)
 
-    vw_data_str += "ORDER BY attendance_date "
-    cursor.execute(vw_data_str)
+    vw_data_str += " ORDER BY attendance_date"
+
+    # Execute the query
+    cursor.execute(vw_data_str, query_params)
     data = cursor.fetchall()
 
     headers = [col[0] for col in cursor.description]
 
+    # Create the workbook and initial worksheet
     workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("Attendance Records")
-    worksheet_all_data.append(headers)
+    worksheet = workbook.active
+    worksheet.title = "Attendance Records 1"
+    worksheet.append(headers)
 
-    for row in data:
-        worksheet_all_data.append(row)
+    # Define the maximum number of rows per sheet
+    max_rows_per_sheet = 100000
 
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
+    # Write data to worksheets, splitting into multiple sheets if necessary
+    sheet_count = 1
+    for i, row in enumerate(data):
+        if i > 0 and i % max_rows_per_sheet == 0:
+            sheet_count += 1
+            sheet_title = "Attendance Records " + str(sheet_count)
+            worksheet = workbook.create_sheet(title=sheet_title)
+            worksheet.append(headers)
+        worksheet.append(row)
+
+    # Remove the default sheet if it exists
+    if 'Sheet' in workbook.sheetnames:
+        del workbook['Sheet']
 
     # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
     response['Content-Disposition'] = 'attachment; filename=raw_attendance.xlsx'
 
     # Save the workbook to the response
