@@ -172,5 +172,13 @@ def service_data(model_name, obj):
     except Exception as ex:
         return False
 
+@register.simple_tag
+def program_data(model_name, obj):
+    try:
+        model = apps.get_model('youth', model_name)
+        return model.objects.filter(registration=obj)
+    except Exception as ex:
+        return False
+
 
 

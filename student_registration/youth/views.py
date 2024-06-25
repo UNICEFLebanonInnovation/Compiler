@@ -432,7 +432,7 @@ def old_child_search(request):
         fuzzy_match = fuzz.ratio(form_str, result_str)
         if fuzzy_match > 70:
             result['score'] = fuzzy_match
-            result['programmes'] = education_history_programmes(result['id'])
+            # result['programmes'] = education_history_programmes(result['id'])
             result_match.append(result)
 
     return JsonResponse({'result': result_match})

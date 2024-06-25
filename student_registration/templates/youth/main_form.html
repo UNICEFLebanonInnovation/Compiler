@@ -22,9 +22,9 @@
                                         </span>
                                         <span class="d-inline-block">
                                           {% if form.instance.id == None %}
-                                            Add New Child
+                                            Add New Youth
                                           {% else %}
-                                            Edit Child Info.
+                                            Edit Youth Info.
                                           {% endif %}
                                         </span>
                                     </div>
@@ -40,7 +40,7 @@
                                                     {% if form.instance.id == None %}
                                                       <a href="/">List</a>
                                                     {% else %}
-                                                      <a href="/youth/Child-Profile/{{ form.instance.id }}">Child Profile</a>
+                                                      <a href="/youth/Child-Profile/{{ form.instance.id }}">Youth Profile</a>
                                                     {% endif %}
                                                 </li>
                                                 <li class="breadcrumb-item">
@@ -84,7 +84,7 @@
                                             <!--</li>-->
                                             <li>
                                                 <a href="#step-1">
-                                                    <em>1</em><span>Child Information</span>
+                                                    <em>1</em><span>Youth Information</span>
                                                 </a>
                                             </li>
                                             <li>

@@ -134,20 +134,20 @@ class Adolescent(TimeStampedModel):
     address = models.TextField(
         blank=True,
         null=True,
-        verbose_name=_('Registered child Home Address')
+        verbose_name=_('Registered youth Home Address')
     )
     disability = models.ForeignKey(
         Disability,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('Does the child have any disability or special need?')
+        verbose_name=_('Does the youth have any disability or special need?')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,
         blank=False, null=True,
         related_name='+',
-        verbose_name=_('Child ID type')
+        verbose_name=_('Youth ID type')
     )
     case_number = models.CharField(
         max_length=50,
@@ -177,13 +177,13 @@ class Adolescent(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child individual ID')
+        verbose_name=_('Youth individual ID')
     )
     individual_case_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child individual ID confirm')
+        verbose_name=_('Youth individual ID confirm')
     )
     recorded_number = models.CharField(
         max_length=50,
@@ -213,13 +213,13 @@ class Adolescent(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child Lebanese ID number')
+        verbose_name=_('Youth Lebanese ID number')
     )
     national_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child Lebanese ID number')
+        verbose_name=_('Youth Lebanese ID number')
     )
     parent_extract_record = models.CharField(
         max_length=50,
@@ -249,13 +249,13 @@ class Adolescent(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child Syrian ID number')
+        verbose_name=_('Youth Syrian ID number')
     )
     syrian_national_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child Syrian ID number confirm')
+        verbose_name=_('Youth Syrian ID number confirm')
     )
     parent_sop_national_number = models.CharField(
         max_length=50,
@@ -273,13 +273,13 @@ class Adolescent(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child Palestinian ID number')
+        verbose_name=_('Youth Palestinian ID number')
     )
     sop_national_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Child Palestinian ID number confirm')
+        verbose_name=_('Youth Palestinian ID number confirm')
     )
     parent_other_number = models.CharField(
         max_length=50,
@@ -297,13 +297,13 @@ class Adolescent(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('ID number of the child')
+        verbose_name=_('ID number of the youth')
     )
     other_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('ID number of the child confirm')
+        verbose_name=_('ID number of the youth confirm')
     )
     father_educational_level = models.ForeignKey(
         EducationalLevel,
@@ -346,7 +346,7 @@ class Adolescent(TimeStampedModel):
         blank=True,
         null=True,
         choices=MAIN_CAREGIVER,
-        verbose_name=_('who is the Child primary caregiver?')
+        verbose_name=_('who is the youth primary caregiver?')
     )
     main_caregiver_other = models.TextField(
         blank=True, null=True,

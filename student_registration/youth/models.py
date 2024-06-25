@@ -64,7 +64,7 @@ class Registration(TimeStampedModel):
         Adolescent,
         blank=False, null=True,
         related_name='+',
-        verbose_name=_('Child')
+        verbose_name=_('adolescent')
     )
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
@@ -164,39 +164,15 @@ class EnrolledPrograms(TimeStampedModel):
         ('Other', _('Other')),
     )
     PROGRAM = Choices(
-        ('# of inclusive policies or action plans and recommendations initiated and/or adopted', _('# of inclusive policies or action plans and recommendations initiated and/or adopted')),
-        ('# of key TVET NSF policy actions initiated and/or adopted by the government', _('# of key TVET NSF policy actions initiated and/or adopted by the government')),
-        ('# of inclusive policies, reform/legislation or system/ mechanisms initiated by or engaging public and private sector', _('# of inclusive policies, reform/legislation or system/ mechanisms initiated by or engaging public and private sector')),
-        ('# of private sector entities engaged (nb of companies, nb of individuals)', _('# of private sector entities engaged (nb of companies, nb of individuals)'))
-    )
-    CLASS_SECTION = Choices(
-        ('', '----------'),
-        ('A', _('A')),
-        ('B', _('B')),
-        ('C', _('C')),
-        ('D', _('D')),
-        ('E', _('E')),
-        ('F', _('F')),
-        ('G', _('G')),
-        ('H', _('H')),
-        ('I', _('I')),
-        ('J', _('J')),
-        ('K', _('K')),
-        ('L', _('L')),
-        ('M', _('M')),
-        ('N', _('N')),
-        ('O', _('O')),
-        ('P', _('P')),
-        ('Q', _('Q')),
-        ('R', _('R')),
-        ('S', _('S')),
-        ('T', _('T')),
-        ('U', _('U')),
-        ('V', _('V')),
-        ('W', _('W')),
-        ('X', _('X')),
-        ('Y', _('Y')),
-        ('Z', _('Z')),
+        ('Digital Skills Level 1', _('Digital Skills Level 1')),
+        ('Digital Skills Level 2', _('Digital Skills Level 2')),
+        ('Design Thinking', _('Design Thinking')),
+        ('Business Development Skills', _('Business Development Skills')),
+        ('Intro to entrepreneurship and innovation', _('Intro to entrepreneurship and innovation')),
+        ('Basic and functional skills (YBLN and YFS)', _('Basic and functional skills (YBLN and YFS)')),
+        ('YBLN Level 1', _('YBLN Level 1')),
+        ('YBLN Level 2', _('YBLN Level 2')),
+        ('YFS', _('YFS')),
     )
     registration = models.ForeignKey(
         Registration,
@@ -222,13 +198,6 @@ class EnrolledPrograms(TimeStampedModel):
         choices=PROGRAM,
         verbose_name=_('Education Program')
     )
-    class_section = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=CLASS_SECTION,
-        verbose_name=_('Class Section')
-    )
     # @todo not sure about this field
     registration_date = models.DateField(
         blank=True,
@@ -239,13 +208,6 @@ class EnrolledPrograms(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Date of completion in the round')
-    )
-
-    round = models.ForeignKey(
-        Round,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Round')
     )
 
     class Meta:

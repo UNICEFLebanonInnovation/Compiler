@@ -28,7 +28,7 @@ from student_registration.schools.models import (
 
 class EnrolledProgramsForm(forms.ModelForm):
     education_status = forms.ChoiceField(
-        label=_("Child\'s educational level when registering for the round"),
+        label=_("Youth\'s educational level when registering for the round"),
         widget=forms.Select, required=True,
         choices=EnrolledPrograms.EDUCATION_STATUS,
     )
@@ -36,30 +36,19 @@ class EnrolledProgramsForm(forms.ModelForm):
         label=_("Please Specify dropout date from school"),
         required=False
     )
-    round = forms.ModelChoiceField(
-        queryset=Round.objects.all(), widget=forms.Select,
-        label=_('Round'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-    )
     programs = forms.ChoiceField(
         label=_("Program"),
         widget=forms.Select, required=True,
         choices=EnrolledPrograms.PROGRAM,
     )
-    class_section = forms.ChoiceField(
-        label=_("Class Section"),
-        widget=forms.Select, required=True,
-        choices=EnrolledPrograms.CLASS_SECTION,
-    )
     registration_date = forms.DateField(
-        label=_("Date of registration in the round"),
-        required=False
+        label=_("Date of registration"),
+        required=True
     )
 
     completion_date = forms.DateField(
-        label=_("Date of completion in the round"),
-        required=False
+        label=_("Date of completion"),
+        required=True
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -102,14 +91,6 @@ class EnrolledProgramsForm(forms.ModelForm):
                     Div('dropout_date', css_class='col-md-4'),
                     css_class='row card-body'
                 ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('round', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('class_section', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                #
                 Div(
                     HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('registration_date', css_class='col-md-3'),
@@ -155,49 +136,27 @@ class EnrolledProgramsForm(forms.ModelForm):
             dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
             instance.dropout_date = dropout_date
         instance.programs = validated_data.get('programs')
-        instance.class_section = validated_data.get('class_section')
-        instance.round_id = validated_data.get('round')
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
             registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
             instance.registration_date = registration_date
 
+        completion_date_str = validated_data.get('completion_date')
+        if completion_date_str:
+            completion_date = datetime.strptime(completion_date_str, '%Y-%m-%d')
+            instance.completion_date = completion_date
+
+
+
         instance.save()
 
         registry = instance.registration
-        registry.round_id = instance.round_id
         registry.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
 
-    # def clean(self):
-    #     cleaned_data = super(EducationServiceForm, self).clean()
-    #     instance = self.instance
-    #     if not instance.pk:
-    #         registration_id = cleaned_data.get("registration_id")
-    #         round_id = cleaned_data.get("round").id
-    #
-    #         registration = Registration.objects.get(id=registration_id)
-    #         child = registration.child
-    #
-    #         # Count the number of registrations for the same child and round
-    #         count = Registration.objects.filter(
-    #             child=child,
-    #             round__id=round_id
-    #         ).exclude(id=registration_id).count()
-    #
-    #         last_registration = Registration.objects.filter(
-    #             child=child,
-    #             round__id=round_id
-    #         ).exclude(id=registration_id).values(
-    #             'center__name'
-    #         ).order_by('-id').first()
-    #
-    #         if count > 0:
-    #             center_name = last_registration['center__name']
-    #             self.add_error('round', 'This child is already registered in the Center: ' + center_name)
 
     class Meta:
         model = EnrolledPrograms
@@ -205,10 +164,9 @@ class EnrolledProgramsForm(forms.ModelForm):
             'registration_id',
             'education_status',
             'dropout_date',
-            'round',
             'programs',
-            'class_section',
             'registration_date',
+            'completion_date',
         )
 
 

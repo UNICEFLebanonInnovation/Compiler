@@ -50,15 +50,15 @@ class MainForm(forms.ModelForm):
     #     required=True, to_field_name='id',
     # )
     adolescent_first_name = forms.CharField(
-        label=_("Child\'s First Name"),
+        label=_("Youth\'s First Name"),
         widget=forms.TextInput, required=True
     )
     adolescent_father_name = forms.CharField(
-        label=_("Child\'s Father Name"),
+        label=_("Youth\'s Father Name"),
         widget=forms.TextInput, required=True
     )
     adolescent_last_name = forms.CharField(
-        label=_("Child\'s Family Name"),
+        label=_("Youth\'s Family Name"),
         widget=forms.TextInput, required=True
     )
     adolescent_mother_fullname = forms.CharField(
@@ -66,12 +66,12 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     adolescent_gender = forms.ChoiceField(
-        label=_("Child\'s Gender"),
+        label=_("Youth\'s Gender"),
         widget=forms.Select, required=True,
         choices=Adolescent.GENDER
     )
     adolescent_nationality = forms.ModelChoiceField(
-        label=_("Child\'s Nationality"),
+        label=_("Youth\'s Nationality"),
         queryset=Nationality.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
@@ -124,11 +124,11 @@ class MainForm(forms.ModelForm):
         # initial=0
     )
     adolescent_address = forms.CharField(
-        label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
+        label=_("Registered youth Home Address (Village, Street, Building/Camp, Cadaster)"),
         widget=forms.TextInput, required=False
     )
     adolescent_disability = forms.ModelChoiceField(
-        label=_("Does the child have any disability or special need?"),
+        label=_("Does the youth have any disability or special need?"),
         queryset=Disability.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
@@ -167,7 +167,7 @@ class MainForm(forms.ModelForm):
         label=_('Confirm secondary phone number')
     )
     main_caregiver = forms.ChoiceField(
-        label=_("Who is the Child\'s primary caregiver?"),
+        label=_("Who is the youth\'s primary caregiver?"),
         widget=forms.Select, required=True,
         choices=Adolescent.MAIN_CAREGIVER
     )
@@ -228,14 +228,14 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
+            'Individual ID of the youth from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
-            'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
+            'Confirm Individual ID of the youth from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
@@ -253,13 +253,13 @@ class MainForm(forms.ModelForm):
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Lebanese ID number of the child (Optional)')
+        label=_('Lebanese ID number of the youth (Optional)')
     )
     national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
-        label=_('Confirm Lebanese ID number of the child (optional)')
+        label=_('Confirm Lebanese ID number of the youth (optional)')
     )
     parent_extract_record = forms.CharField(
         label=_('Lebanese Extract of Record'),
@@ -273,20 +273,20 @@ class MainForm(forms.ModelForm):
     syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('National ID number of the child (Optional)')
+        label=_('National ID number of the youth (Optional)')
     )
     syrian_national_number_confirm = forms.RegexField(
         regex=r'^\d{11}$',
         required=False,
-        label=_('Confirm National ID number of the child (Optional)')
+        label=_('Confirm National ID number of the youth (Optional)')
     )
     sop_national_number = forms.CharField(
         required=False,
-        label=_('Palestinian ID number of the child (Optional)')
+        label=_('Palestinian ID number of the youth (Optional)')
     )
     sop_national_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm Palestinian ID number of the child (optional)')
+        label=_('Confirm Palestinian ID number of the youth (optional)')
     )
     parent_national_number = forms.RegexField(
         regex=r'^\d{12}$',
@@ -331,11 +331,11 @@ class MainForm(forms.ModelForm):
     )
     other_number = forms.CharField(
         required=False,
-        label=_(' ID number of the child (Optional)')
+        label=_(' ID number of the youth (Optional)')
     )
     other_number_confirm = forms.CharField(
         required=False,
-        label=_('Confirm ID number of the child (optional)')
+        label=_('Confirm ID number of the youth (optional)')
     )
     adolescent_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)

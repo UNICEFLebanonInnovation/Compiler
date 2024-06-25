@@ -16,7 +16,7 @@
                                         <span class="d-inline-block pr-2">
                                             <i class="fa fa-child"></i>
                                         </span>
-                                        <span class="d-inline-block">Child Profile - {{ instance.child.full_name }}</span>
+                                        <span class="d-inline-block">Youth Profile - {{ instance.child.full_name }}</span>
                                     </div>
                                     <div class="page-title-subheading opacity-10">
                                         <nav class="" aria-label="breadcrumb">
@@ -30,7 +30,7 @@
                                                     <a href="/">List</a>
                                                 </li>
                                                 <li class="active breadcrumb-item" aria-current="page">
-                                                    Child Profile and Provided Services
+                                                    Youth Profile and Provided Services
                                                 </li>
                                             </ol>
                                         </nav>
@@ -42,22 +42,22 @@
                         <div class="page-title-actions">
 
                                 {% if instance.student_old %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in one the previous NFE progarmmes">
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Youth found in one the previous NFE progarmmes">
                                     <i class="lnr-link btn-icon-wrapper"> </i>
                                 </button>
                                 {% else %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in any of the previous NFE progarmmes">
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Youth not found in any of the previous NFE progarmmes">
                                     <i class="lnr-unlink btn-icon-wrapper"> </i>
                                 </button>
 
                                 {% endif %}
 
                                 {% if instance.child_outreach %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in the outreach data">
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Youth found in the outreach data">
                                     <i class="lnr-thumbs-up btn-icon-wrapper"> </i>
                                 </button>
                                 {% else %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in the outreach data">
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Youth not found in the outreach data">
                                     <i class="lnr-thumbs-down btn-icon-wrapper"> </i>
                                 </button>
 
@@ -71,7 +71,7 @@
 
 {% get_completion_rate instance as result %}
 
-<div class="progress mr-3" style="height: 35px; float: right; width: 150px;" data-toggle="tooltip" title="" data-placement="top" data-original-title="Completion Percentage of the Child Services">
+<div class="progress mr-3" style="height: 35px; float: right; width: 150px;" data-toggle="tooltip" title="" data-placement="top" data-original-title="Completion Percentage of the Youth Services">
     <div class="progress-bar" role="progressbar" aria-valuenow="{{ result }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ result }}%;">{{ result }}%</div>
 </div>
 
@@ -91,7 +91,7 @@
                                             <ul class="nav nav-justified">
                                                 <li class="nav-item">
                                                     <a data-toggle="tab" href="#tab-eg9-0" class="nav-link show{% if current_tab == 'info' %} active{% endif %}">
-                                                        <div class="widget-number">Child Info.</div>
+                                                        <div class="widget-number">Youth Info.</div>
                                                         <!--<div class="tab-subheading">-->
                                                                 <!--<span class="pr-2 opactiy-6">-->
                                                                     <!--<i class="fa fa-comment-dots"></i>-->
