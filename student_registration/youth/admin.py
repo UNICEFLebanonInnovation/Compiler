@@ -9,7 +9,6 @@ from import_export.admin import ImportExportModelAdmin
 from .models import *
 
 
-
 class RegistrationAdmin(admin.ModelAdmin):
 
     list_display = (
@@ -77,4 +76,5 @@ class YouthAssessmentAdmin(admin.ModelAdmin):
 
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(YouthAssessment, YouthAssessmentAdmin)
-admin.site.register(Round)
+admin.site.register(Program)
+admin.site.register(SubProgram)

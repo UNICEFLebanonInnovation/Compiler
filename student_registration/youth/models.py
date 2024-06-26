@@ -137,6 +137,41 @@ class Registration(TimeStampedModel):
         verbose_name_plural = "YOUTH Registrations"
 
 
+class Program(models.Model):
+
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Program"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class SubProgram(models.Model):
+
+    program = models.ForeignKey(
+        Program,
+        blank=False, null=True,
+        related_name='program',
+    )
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Sub Program"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class EnrolledPrograms(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
@@ -163,17 +198,6 @@ class EnrolledPrograms(TimeStampedModel):
         ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
         ('Other', _('Other')),
     )
-    PROGRAM = Choices(
-        ('Digital Skills Level 1', _('Digital Skills Level 1')),
-        ('Digital Skills Level 2', _('Digital Skills Level 2')),
-        ('Design Thinking', _('Design Thinking')),
-        ('Business Development Skills', _('Business Development Skills')),
-        ('Intro to entrepreneurship and innovation', _('Intro to entrepreneurship and innovation')),
-        ('Basic and functional skills (YBLN and YFS)', _('Basic and functional skills (YBLN and YFS)')),
-        ('YBLN Level 1', _('YBLN Level 1')),
-        ('YBLN Level 2', _('YBLN Level 2')),
-        ('YFS', _('YFS')),
-    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -184,30 +208,33 @@ class EnrolledPrograms(TimeStampedModel):
         blank=True,
         null=True,
         choices=EDUCATION_STATUS,
-        verbose_name=_('Child\'s educational level when registering for the round')
+        verbose_name=_('Child\'s educational level when registering')
     )
     dropout_date = models.DateField(
         blank=True,
         null=True,
         verbose_name=_('Please Specify dropout date from school')
     )
-    programs = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        choices=PROGRAM,
-        verbose_name=_('Education Program')
+    program = models.ForeignKey(
+        Program,
+        blank=False, null=True,
+        related_name='+',
     )
-    # @todo not sure about this field
+    sub_program = models.ForeignKey(
+        SubProgram,
+        blank=False, null=True,
+        related_name='+',
+    )
+
     registration_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Date of registration in the round')
+        verbose_name=_('Date of registration')
     )
     completion_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Date of completion in the round')
+        verbose_name=_('Date of completion')
     )
 
     class Meta:

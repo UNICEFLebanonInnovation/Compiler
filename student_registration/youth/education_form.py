@@ -18,7 +18,9 @@ from .models import (
     Registration,
     EnrolledPrograms,
     YES_NO,
-    Round
+    Round,
+    Program,
+    SubProgram
 )
 from student_registration.schools.models import (
     School,
@@ -28,7 +30,7 @@ from student_registration.schools.models import (
 
 class EnrolledProgramsForm(forms.ModelForm):
     education_status = forms.ChoiceField(
-        label=_("Youth\'s educational level when registering for the round"),
+        label=_("Youth\'s educational level when registering"),
         widget=forms.Select, required=True,
         choices=EnrolledPrograms.EDUCATION_STATUS,
     )
@@ -36,10 +38,17 @@ class EnrolledProgramsForm(forms.ModelForm):
         label=_("Please Specify dropout date from school"),
         required=False
     )
-    programs = forms.ChoiceField(
-        label=_("Program"),
-        widget=forms.Select, required=True,
-        choices=EnrolledPrograms.PROGRAM,
+    program = forms.ModelChoiceField(
+        queryset=Program.objects.all(), widget=forms.Select,
+        label=_('Program'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    sub_program = forms.ModelChoiceField(
+        queryset=SubProgram.objects.all(), widget=forms.Select,
+        label=_('Sub Program'),
+        empty_label='-------',
+        required=True, to_field_name='id',
     )
     registration_date = forms.DateField(
         label=_("Date of registration"),
@@ -92,17 +101,22 @@ class EnrolledProgramsForm(forms.ModelForm):
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('registration_date', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('completion_date', css_class='col-md-3'),
-                    css_class='row card-body'+display_edu_section
+                    css_class='row card-body'
                 ),
 
                 Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('programs', css_class='col-md-9'),
-                    css_class='row card-body' + display_edu_section
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('program', css_class='col-md-9'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    Div('sub_program', css_class='col-md-9'),
+                    css_class='row card-body'
                 ),
                 css_id='step-1'
             ),
@@ -127,15 +141,14 @@ class EnrolledProgramsForm(forms.ModelForm):
             instance = EnrolledPrograms.objects.create(registration_id=registry)
         else:
             instance = EnrolledPrograms.objects.get(id=instance)
-            old_class_section = instance.class_section
-            new_class_section = validated_data.get('class_section')
 
         instance.education_status = validated_data.get('education_status')
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
             dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
             instance.dropout_date = dropout_date
-        instance.programs = validated_data.get('programs')
+        instance.program_id = validated_data.get('program')
+        instance.sub_program_id = validated_data.get('sub_program')
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
             registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
@@ -145,8 +158,6 @@ class EnrolledProgramsForm(forms.ModelForm):
         if completion_date_str:
             completion_date = datetime.strptime(completion_date_str, '%Y-%m-%d')
             instance.completion_date = completion_date
-
-
 
         instance.save()
 
@@ -164,7 +175,8 @@ class EnrolledProgramsForm(forms.ModelForm):
             'registration_id',
             'education_status',
             'dropout_date',
-            'programs',
+            'program',
+            'sub_program',
             'registration_date',
             'completion_date',
         )

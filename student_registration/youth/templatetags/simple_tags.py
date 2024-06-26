@@ -19,7 +19,7 @@ def get_education_service(registry):
         enrolled_programs = EnrolledPrograms.objects.filter(registration_id=registry).last()
     enrolled_programs = EnrolledPrograms.objects.filter( registration=registry).last()
     if enrolled_programs:
-        return enrolled_programs.programs
+        return enrolled_programs.program
     else:
         return None
 
@@ -179,6 +179,7 @@ def program_data(model_name, obj):
         return model.objects.filter(registration=obj)
     except Exception as ex:
         return False
+
 
 
 
