@@ -368,4 +368,9 @@ urlpatterns = [
         view=views.BridgingPage.as_view(),
         name='bridging_page'
     ),
+    url(
+        regex=r'^bridging-attendance-report/$',
+        view=views.BridgingAttendanceReport.as_view(),
+        name='bridging_attendance_report'
+    ),
 ]
