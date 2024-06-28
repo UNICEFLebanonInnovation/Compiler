@@ -113,10 +113,11 @@ class Registration(TimeStampedModel):
     @property
     def enrolled_programs(self):
         result = ''
-        program = self.enrolled_programs.all().first()
+        program = self.enrolled_programs.all()
         if program:
-            result = program.education_program
+            result = program.program
         return result
+
 
     def get_absolute_url(self):
         return '/YOUTH/Child-Profile/%d/' % self.pk
@@ -201,8 +202,9 @@ class EnrolledPrograms(TimeStampedModel):
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
-        related_name='education_service',
+        related_name='enrolled_programs',
     )
+
     education_status = models.CharField(
         max_length=200,
         blank=True,

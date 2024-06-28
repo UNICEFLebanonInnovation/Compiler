@@ -1,18 +1,23 @@
+from django import forms
 from django.utils.translation import ugettext as _
-
 from django_filters import (
     FilterSet,
     ModelChoiceFilter,
     ChoiceFilter,
-    CharFilter
+    CharFilter,
+    DateFromToRangeFilter,
+    DateFilter
 )
+
+import datetime
 
 from student_registration.locations.models import Center, Location
 from student_registration.students.models import Nationality
 from .models import (
     Registration,
     EnrolledPrograms,
-    Round
+    Program,
+    SubProgram
 )
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
@@ -26,12 +31,8 @@ class MainFilter(FilterSet):
     adolescent__first_name = CharFilter(lookup_expr='icontains' )
     adolescent__father_name = CharFilter(lookup_expr='icontains')
     adolescent__last_name = CharFilter(lookup_expr='icontains')
-    adolescent__mother_fullname = CharFilter(lookup_expr='icontains')
     adolescent__number = CharFilter(lookup_expr='icontains')
-    round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
-                                      .order_by('name').distinct(), empty_label='Round')
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
-    adolescent__second_phone_number = CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = Registration
@@ -43,8 +44,6 @@ class FullFilter(FilterSet):
 
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
-    round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
-                                      .order_by('name').distinct(), empty_label='Round')
     center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Center')
     center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')
@@ -57,17 +56,41 @@ class FullFilter(FilterSet):
     adolescent__first_name = CharFilter(lookup_expr='icontains')
     adolescent__father_name = CharFilter(lookup_expr='icontains')
     adolescent__last_name = CharFilter(lookup_expr='icontains')
-    adolescent__mother_fullname = CharFilter(lookup_expr='icontains')
     adolescent__number = CharFilter(lookup_expr='icontains')
     adolescent__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
     adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Nationality')
 
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
-    adolescent__second_phone_number = CharFilter(lookup_expr='icontains')
 
+
+    program = ChoiceFilter(choices=Program.objects.values_list('id', 'name'),
+                                  field_name='enrolled_programs__program',
+                                  empty_label='Program', method='filter_by_program')
+
+    sub_program = ChoiceFilter(choices=SubProgram.objects.values_list('id', 'name'),
+                                  field_name='enrolled_programs__sub_program',
+                                  empty_label='Sub Program', method='filter_by_sub_program')
+
+    # completion_date = DateFromToRangeFilter(field_name='enrolled_programs__completion_date', label='Completion Date Range',
+    #                                    widget=RangeWidget(attrs={'type': 'date'}))
+
+
+
+    start_date = DateFilter(field_name='enrolled_programs__completion_date',
+                            widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+                            lookup_expr='gte', label='Start Date')
+    end_date = DateFilter(field_name='enrolled_programs__completion_date',
+                          widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+                          lookup_expr='lte', label='End Date')
 
     class Meta:
         model = Registration
         fields = [
         ]
+
+    def filter_by_program(self, queryset, name, value):
+        return queryset.filter(enrolled_programs__program=value)
+
+    def filter_by_sub_program(self, queryset, name, value):
+        return queryset.filter(enrolledprograms__sub_program=value)
