@@ -173,6 +173,21 @@ class SubProgram(models.Model):
         return self.name
 
 
+class Donor(models.Model):
+
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Donor"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class EnrolledPrograms(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
@@ -227,7 +242,11 @@ class EnrolledPrograms(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-
+    donor = models.ForeignKey(
+        Donor,
+        blank=False, null=True,
+        related_name='+',
+    )
     registration_date = models.DateField(
         blank=True,
         null=True,

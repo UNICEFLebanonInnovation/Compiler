@@ -17,10 +17,12 @@ from .models import (
     Registration,
     EnrolledPrograms,
     Program,
-    SubProgram
+    SubProgram,
+    Donor
 )
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
+from student_registration.clm.models import Disability, EducationalLevel
 
 
 
@@ -44,8 +46,6 @@ class FullFilter(FilterSet):
 
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
-    center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
-                          .order_by('name').distinct(), empty_label='Center')
     center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')
                                        .order_by('name').distinct(), empty_label='Governorate')
     center__caza = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name')
@@ -61,6 +61,8 @@ class FullFilter(FilterSet):
     adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Nationality')
 
+    adolescent__disability = ChoiceFilter(choices=Disability.objects.values_list('id', 'name')
+                                      .order_by('name').distinct(), empty_label='Disability')
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
 
 
@@ -71,6 +73,10 @@ class FullFilter(FilterSet):
     sub_program = ChoiceFilter(choices=SubProgram.objects.values_list('id', 'name'),
                                   field_name='enrolled_programs__sub_program',
                                   empty_label='Sub Program', method='filter_by_sub_program')
+
+    donor = ChoiceFilter(choices=Donor.objects.values_list('id', 'name'),
+                           field_name='enrolled_programs__donor',
+                           empty_label='Donor', method='filter_by_donor')
 
     # completion_date = DateFromToRangeFilter(field_name='enrolled_programs__completion_date', label='Completion Date Range',
     #                                    widget=RangeWidget(attrs={'type': 'date'}))
@@ -94,3 +100,6 @@ class FullFilter(FilterSet):
 
     def filter_by_sub_program(self, queryset, name, value):
         return queryset.filter(enrolledprograms__sub_program=value)
+
+    def filter_by_donor(self, queryset, name, value):
+        return queryset.filter(enrolledprograms__donor=value)

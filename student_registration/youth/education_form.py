@@ -20,7 +20,8 @@ from .models import (
     YES_NO,
     Round,
     Program,
-    SubProgram
+    SubProgram,
+    Donor
 )
 from student_registration.schools.models import (
     School,
@@ -47,6 +48,12 @@ class EnrolledProgramsForm(forms.ModelForm):
     sub_program = forms.ModelChoiceField(
         queryset=SubProgram.objects.all(), widget=forms.Select,
         label=_('Sub Program'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    donor = forms.ModelChoiceField(
+        queryset=Donor.objects.all(), widget=forms.Select,
+        label=_('Donor'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
@@ -105,16 +112,18 @@ class EnrolledProgramsForm(forms.ModelForm):
                     Div('registration_date', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('completion_date', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('donor', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
 
                 Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('program', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('sub_program', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
@@ -149,6 +158,7 @@ class EnrolledProgramsForm(forms.ModelForm):
             instance.dropout_date = dropout_date
         instance.program_id = validated_data.get('program')
         instance.sub_program_id = validated_data.get('sub_program')
+        instance.donor_id = validated_data.get('donor')
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
             registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
