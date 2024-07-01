@@ -21,7 +21,8 @@ from .models import (
     Round,
     Program,
     SubProgram,
-    Donor
+    Donor,
+    ProgramDocument
 )
 from student_registration.schools.models import (
     School,
@@ -57,11 +58,16 @@ class EnrolledProgramsForm(forms.ModelForm):
         empty_label='-------',
         required=True, to_field_name='id',
     )
+    program_document = forms.ModelChoiceField(
+        queryset=ProgramDocument.objects.all(), widget=forms.Select,
+        label=_('Program Document'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
     registration_date = forms.DateField(
         label=_("Date of registration"),
         required=True
     )
-
     completion_date = forms.DateField(
         label=_("Date of completion"),
         required=True
@@ -112,18 +118,22 @@ class EnrolledProgramsForm(forms.ModelForm):
                     Div('registration_date', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('completion_date', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('donor', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
-
                 Div(
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('donor', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('program', css_class='col-md-9'),
+                    Div('program_document', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('program', css_class='col-md-9'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('sub_program', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
@@ -159,6 +169,8 @@ class EnrolledProgramsForm(forms.ModelForm):
         instance.program_id = validated_data.get('program')
         instance.sub_program_id = validated_data.get('sub_program')
         instance.donor_id = validated_data.get('donor')
+        instance.program_document_id = validated_data.get('program_document')
+
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
             registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')

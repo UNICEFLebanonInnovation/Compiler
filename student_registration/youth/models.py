@@ -188,6 +188,21 @@ class Donor(models.Model):
         return self.name
 
 
+class ProgramDocument(models.Model):
+
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Program Document"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class EnrolledPrograms(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
@@ -244,6 +259,11 @@ class EnrolledPrograms(TimeStampedModel):
     )
     donor = models.ForeignKey(
         Donor,
+        blank=False, null=True,
+        related_name='+',
+    )
+    program_document = models.ForeignKey(
+        ProgramDocument,
         blank=False, null=True,
         related_name='+',
     )

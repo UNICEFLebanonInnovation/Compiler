@@ -30,6 +30,7 @@ class MainTable(CommonTable):
     #                                       template_name='django_tables2/youth/status_column.html')
     # outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
     #                                    template_name='django_tables2/youth/outreached_column.html')
+    adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability')
 
     class Meta:
         model = Registration
@@ -45,6 +46,7 @@ class MainTable(CommonTable):
             'adolescent.gender',
             'adolescent_age',
             'adolescent.nationality',
+            'adolescent_disability'
         )
 
 
@@ -55,6 +57,7 @@ class FullTable(CommonTable):
     #                                       template_name='django_tables2/youth/status_column.html')
     # outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
     #                                    template_name='django_tables2/youth/outreached_column.html')
+    adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability')
 
     class Meta:
         model = Registration
@@ -70,6 +73,7 @@ class FullTable(CommonTable):
             'adolescent.gender',
             'adolescent_age',
             'adolescent.nationality',
+            'adolescent_disability'
         )
 
 
@@ -80,6 +84,7 @@ class PartnerTable(CommonTable):
     #                                       template_name='django_tables2/youth/status_column.html')
     # outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
     #                                    template_name='django_tables2/youth/outreached_column.html')
+    adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability')
 
     class Meta:
         model = Registration
@@ -95,6 +100,7 @@ class PartnerTable(CommonTable):
             'adolescent.gender',
             'adolescent_age',
             'adolescent.nationality',
+            'adolescent_disability'
 
         )
 
@@ -106,6 +112,9 @@ class YouthMainTable(CommonTable):
     #                                       template_name='django_tables2/youth/status_column.html')
     # outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
     #                                    template_name='django_tables2/youth/outreached_column.html')
+    adolescent_disability = tables.Column(verbose_name=_('Disability'), accessor='adolescent.disability')
+
+
     class Meta:
         model = Registration
         fields = (
@@ -121,4 +130,5 @@ class YouthMainTable(CommonTable):
             'adolescent_age',
             'adolescent_birthday',
             'adolescent.nationality',
+            'adolescent_disability'
         )
