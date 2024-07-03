@@ -55,16 +55,13 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/attendance/main-attendance.js' %}?v=45"></script>
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
-
     <script>
-
-        function openAbsencePage()
-        {
-          document.location.href = "{% url "clm:bridging-attendance-report" %}";
+        function openAbsencePage() {
+            document.location.href = "{% url 'clm:bridging_attendance_report' %}";
         }
 
-        var user_token = '{{ user_token }}';
-        var href_full_path = '{{ request.build_absolute_uri }}';
-        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+<!--        var user_token = '{{ user_token }}';-->
+<!--        var href_full_path = '{{ request.build_absolute_uri }}';-->
+<!--        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();-->
     </script>
 {% endblock %}

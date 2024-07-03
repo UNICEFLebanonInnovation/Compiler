@@ -1198,8 +1198,8 @@ def stream_workbook(workbook):
 
 
 def attendance_export(request, **kwargs):
-    month = int(kwargs.get('month'))
-    year = int(kwargs.get('year'))
+    month = kwargs.get('month')
+    year = kwargs.get('year')
 
     current_round = CLMRound.objects.get(current_round_bridging=True)
     round_id = current_round.id
@@ -1207,6 +1207,11 @@ def attendance_export(request, **kwargs):
     cursor = connection.cursor()
 
     vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id = %s"
+    if year:
+        vw_data_str += " AND EXTRACT(YEAR FROM attendance_date) = " + year
+    if month:
+        vw_data_str += " AND EXTRACT(MONTH FROM attendance_date) = " + month
+
     query_params = [round_id]
 
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():

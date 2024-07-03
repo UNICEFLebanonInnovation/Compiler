@@ -5,6 +5,8 @@ from django.conf.urls import url
 from . import views
 from . import inclusion_views
 
+app_name = 'clm'
+
 urlpatterns = [
 
     url(
@@ -369,8 +371,8 @@ urlpatterns = [
         name='bridging_page'
     ),
     url(
-        regex=r'^bridging-attendance-report/$',
-        view=views.BridgingAttendanceReport.as_view(),
+        'bridging-attendance-report/$',
+        views.BridgingAttendanceReport.as_view(),
         name='bridging_attendance_report'
     ),
 ]
