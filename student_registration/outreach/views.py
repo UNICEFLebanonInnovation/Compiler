@@ -196,33 +196,48 @@ def outreach_export_data(request):
 
     return response
 
-@login_required(login_url='/users/login')
-def outreach_unregistered_export_data(request):
-    from django.db import connection
-    cursor = connection.cursor()
-    vw_data = 'SELECT * FROM vw_outreach_not_registered WHERE caregiver_id > 0'
+from django.http import StreamingHttpResponse
+from django.db import connection
+import math
+import io
 
+MAX_CHUNKS = 5
+
+@login_required(login_url='/users/login')
+def outreach_unregistered_export_info(request):
+    cursor = connection.cursor()
+    cursor.execute('SELECT COUNT(*) FROM vw_outreach_not_registered WHERE caregiver_id > 0')
+    total_records = cursor.fetchone()[0]
+    return JsonResponse({'total_records': total_records})
+
+@login_required(login_url='/users/login')
+def outreach_unregistered_export_data(request, part):
+    part = int(part)
+    cursor = connection.cursor()
+    cursor.execute('SELECT COUNT(*) FROM vw_outreach_not_registered WHERE caregiver_id > 0')
+    total_records = cursor.fetchone()[0]
+    records_per_chunk = math.ceil(total_records / MAX_CHUNKS)
+    offset = (part - 1) * records_per_chunk
+
+    vw_data = 'SELECT * FROM vw_outreach_not_registered WHERE caregiver_id > 0 LIMIT {} OFFSET {}'.format(records_per_chunk, offset)
     cursor.execute(vw_data)
     data = cursor.fetchall()
-
     headers = [col[0] for col in cursor.description]
 
     workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("Outreach Not Registered Data")
-    worksheet_all_data.append(headers)
-
+    worksheet = workbook.active
+    worksheet.title = "Part {}".format(part)
+    worksheet.append(headers)
     for row in data:
-        worksheet_all_data.append(row)
+        worksheet.append(row)
 
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
+    output = io.BytesIO()
+    workbook.save(output)
+    output.seek(0)
 
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=outreach_not_registered_data.xlsx'
-
-    # Save the workbook to the response
-    workbook.save(response)
-
+    response = StreamingHttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=outreach_not_registered_data_part_{}.xlsx'.format(part)
     return response
-
