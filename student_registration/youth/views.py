@@ -199,7 +199,7 @@ class MainListView(LoginRequiredMixin,
     def get_queryset(self):
         user = self.request.user
         center_id = user.center_id
-        partner_id = user.partner_id
+        partner_id = user.youth_partner_id
 
         # if has_group(user, 'YOUTH_UNICEF'):
         return Registration.objects.filter(deleted=False
@@ -529,7 +529,7 @@ def export_data(request):
     cursor = connection.cursor()
     user = request.user
     center_id = user.center_id
-    partner_id = user.partner_id
+    partner_id = user.youth_partner_id
 
     first_name = request.GET.get('first_name', '')
     last_name = request.GET.get('last_name', '')

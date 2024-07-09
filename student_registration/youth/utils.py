@@ -9,6 +9,10 @@ from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
 from student_registration.youth.models import Registration
 
+from .models import PopulationGroups, Program
+
+from student_registration.locations.models import Location
+
 
 def to_array(fields, obj):
     data = {}
@@ -290,3 +294,13 @@ def load_dashboard_data(param, grouping):
 
     rows = cursor.fetchall()
     return rows
+
+def get_governorate_choices():
+    return [(location.name, location.name) for location in Location.objects.all()]
+
+def get_population_group_choices():
+    return [(group.name, group.name) for group in PopulationGroups.objects.all()]
+
+def get_population_group_choices():
+    return [(program.name, program.name) for program in Program.objects.all()]
+

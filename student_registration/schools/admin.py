@@ -194,10 +194,8 @@ class PartnerOrganizationResource(resources.ModelResource):
         fields = (
             'id',
             'name',
-            'is_education',
-            'is_youth'
         )
-        export_order = ('name', 'is_education', 'is_youth')
+        export_order = ('name')
 
 
 class PartnerOrganizationAdmin(ImportExportModelAdmin):

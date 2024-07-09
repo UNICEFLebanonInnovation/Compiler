@@ -19,10 +19,10 @@ from .models import (
     Program,
     SubProgram,
     Donor,
-    ProgramDocument
+    ProgramDocument,
+    Partner
 )
 from student_registration.youth.models import Adolescent
-from student_registration.schools.models import PartnerOrganization
 from student_registration.clm.models import Disability, EducationalLevel
 
 
@@ -44,7 +44,7 @@ class MainFilter(FilterSet):
 
 
 class FullFilter(FilterSet):
-    partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name').order_by('name').distinct(), empty_label='Partner')
+    partner = ChoiceFilter(choices=Partner.objects.values_list('id', 'name').order_by('name').distinct(), empty_label='Partner')
     center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(), empty_label='Governorate')
     center__caza = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct(), empty_label='Caza')
     center__cadaster = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct(), empty_label='Cadaster')
@@ -62,7 +62,7 @@ class FullFilter(FilterSet):
     program = ChoiceFilter(choices=Program.objects.values_list('id', 'name'), field_name='enrolled_programs__program', empty_label='Program', method='filter_by_program')
     sub_program = ChoiceFilter(choices=SubProgram.objects.values_list('id', 'name'), field_name='enrolled_programs__sub_program', empty_label='Sub Program', method='filter_by_sub_program')
     donor = ChoiceFilter(choices=Donor.objects.values_list('id', 'name'), field_name='enrolled_programs__donor', empty_label='Donor', method='filter_by_donor')
-    program_document = ChoiceFilter(choices=ProgramDocument.objects.values_list('id', 'name'), field_name='enrolled_programs__program_document', empty_label='Program Document', method='filter_by_program_document')
+    program_document = ChoiceFilter(choices=ProgramDocument.objects.values_list('id', 'project_name'), field_name='enrolled_programs__program_document', empty_label='Program Document', method='filter_by_program_document')
 
     #
     start_date = DateFilter(field_name='enrolled_programs__completion_date',

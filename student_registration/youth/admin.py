@@ -74,9 +74,16 @@ class YouthAssessmentAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Registration, RegistrationAdmin)
-admin.site.register(YouthAssessment, YouthAssessmentAdmin)
+admin.site.register(Partner)
+admin.site.register(FundedBy)
+admin.site.register(FocalPoint)
+admin.site.register(Plan)
+admin.site.register(Sector)
+admin.site.register(ProjectType)
+admin.site.register(PopulationGroups)
 admin.site.register(Program)
 admin.site.register(SubProgram)
 admin.site.register(Donor)
 admin.site.register(ProgramDocument)
+admin.site.register(Registration, RegistrationAdmin)
+admin.site.register(YouthAssessment, YouthAssessmentAdmin)

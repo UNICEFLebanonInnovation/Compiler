@@ -8,11 +8,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 from student_registration.adolescent.models import Adolescent
-from student_registration.locations.models import Center
-from student_registration.schools.models import (
-    School,
-    PartnerOrganization
-)
+from student_registration.locations.models import Center, Location
 
 YES_NO = Choices(
     ('', '----------'),
@@ -47,6 +43,403 @@ class Round(models.Model):
         return self.name
 
 
+class Partner(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Full Name')
+    )
+    short_name = models.CharField(
+        max_length=100,
+        blank=True,
+        unique=True,
+        verbose_name=_('Short Name')
+    )
+    monitoring_evaluation_focal_point_name = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name=_('Monitoring and Evaluation Focal Point Name')
+    )
+    monitoring_evaluation_focal_point_phone = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Monitoring and Evaluation Focal Point Phone')
+    )
+    monitoring_evaluation_focal_point_email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Monitoring and Evaluation Focal Point Email')
+    )
+    program_manager_focal_point_name = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name=_('Program Manager Focal Point Name')
+    )
+    program_manager_focal_point_phone = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Program Manager Focal Point Phone')
+    )
+    program_manager_focal_point_email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Program Manager Focal Point Email')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class FundedBy(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Funded By')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class FocalPoint(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Name of Focal Point')
+    )
+    phone = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Focal Point Phone Number')
+    )
+    email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Focal Point Email')
+    )
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class Plan(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Plan')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class Sector(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Sector')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class ProjectType(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Project Type')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class PopulationGroups(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Population Groups')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class Program(models.Model):
+
+    name = models.CharField(max_length=45, unique=True)
+
+    active = models.BooleanField(blank=True, default=False)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Program"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class SubProgram(models.Model):
+
+    program = models.ForeignKey(
+        Program,
+        blank=False, null=True,
+        related_name='program',
+    )
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Sub Program"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class Donor(models.Model):
+
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Donor"
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class ProgramDocument(models.Model):
+    YES_NO = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No"))
+    )
+    PROJECT_STATUS = Choices(
+        ('', '----------'),
+        ('on going', _("On going")),
+        ('closed', _("No"))
+    )
+    partner = models.ForeignKey(
+        Partner,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Organization Name')
+    )
+    funded_by = models.ForeignKey(
+        FundedBy,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Funded By')
+    )
+    project_status = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=PROJECT_STATUS,
+        verbose_name=_('Project Status')
+    )
+    project_code = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('Project Code')
+    )
+    project_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('Project Name')
+    )
+    project_description = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('Project Description')
+    )
+    implementing_partners = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('Key Implementing Partner(s)')
+    )
+    focal_point = models.ForeignKey(
+        FocalPoint,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Focal Point')
+    )
+    start_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Start Date')
+    )
+    end_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Start Date')
+    )
+    comment = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comment')
+    )
+    plan = models.ForeignKey(
+        Plan,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Plan')
+    )
+    sectors = models.ForeignKey(
+        Sector,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('SELECT SECTORS TARGETED BY THIS PROJECT')
+    )
+    project_type = models.ForeignKey(
+        ProjectType,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Type of Project')
+    )
+    implementing_partners = models.CharField(
+        max_length=100,
+        blank=True,
+        unique=True,
+        verbose_name=_('Support of Public Institution')
+    )
+    governorates = ArrayField(
+        models.CharField(
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Governorate of Coverage')
+    )
+    budget = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name=_('Please add the Project Budget in USD')
+    )
+    cash_assistance = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does this Project have any Cash Assistance Component')
+    )
+    population_groups = ArrayField(
+        models.CharField(
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Population Groups Targeted')
+    )
+    number_targeted_syrians = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of Targeted Displaced Syrians')
+    )
+    number_targeted_lebanese = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of Targeted Lebanese')
+    )
+    number_targeted_prl = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of Targeted PRL')
+    )
+    number_targeted_prs = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Number of Targeted PRS')
+    )
+    programs = ArrayField(
+        models.CharField(
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Population Groups Targeted')
+    )
+
+    class Meta:
+        ordering = ['project_name']
+        verbose_name = "Program Document"
+
+    def __str__(self):
+        return self.project_name
+
+    def __unicode__(self):
+        return self.project_name
+
 class Registration(TimeStampedModel):
 
     YES_NO = Choices(
@@ -69,7 +462,7 @@ class Registration(TimeStampedModel):
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
-        PartnerOrganization,
+        Partner,
         blank=True, null=True,
         verbose_name=_('Partner'),
         related_name='+'
@@ -136,71 +529,6 @@ class Registration(TimeStampedModel):
         ordering = ['-id']
         verbose_name = "YOUTH Registration"
         verbose_name_plural = "YOUTH Registrations"
-
-
-class Program(models.Model):
-
-    name = models.CharField(max_length=45, unique=True)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Program"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class SubProgram(models.Model):
-
-    program = models.ForeignKey(
-        Program,
-        blank=False, null=True,
-        related_name='program',
-    )
-    name = models.CharField(max_length=45, unique=True)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Sub Program"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class Donor(models.Model):
-
-    name = models.CharField(max_length=45, unique=True)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Donor"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class ProgramDocument(models.Model):
-
-    name = models.CharField(max_length=45, unique=True)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Program Document"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
 
 
 class EnrolledPrograms(TimeStampedModel):

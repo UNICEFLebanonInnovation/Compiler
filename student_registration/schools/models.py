@@ -845,10 +845,6 @@ class PartnerOrganization(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
 
-    is_education = models.BooleanField(blank=True, default=False)
-    is_youth = models.BooleanField(blank=True, default=False)
-
-
     bln_round = models.ForeignKey(
         CLMRound,
         blank=True, null=True,

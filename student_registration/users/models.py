@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 class User(AbstractUser):
     from student_registration.locations.models import Location,Center
     from student_registration.schools.models import PartnerOrganization, School
+    from student_registration.youth.models import Partner
 
     # First Name and Last Name do not cover name patterns
     # around the globe.
@@ -50,6 +51,12 @@ class User(AbstractUser):
         max_length=255,
         null=True,
         blank=True
+    )
+    youth_partner = models.ForeignKey(
+        Partner,
+        blank=True, null=True,
+        verbose_name=_('Partner'),
+        related_name='+'
     )
 
     def __str__(self):

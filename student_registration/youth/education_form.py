@@ -24,10 +24,6 @@ from .models import (
     Donor,
     ProgramDocument
 )
-from student_registration.schools.models import (
-    School,
-    PartnerOrganization
-)
 
 
 class EnrolledProgramsForm(forms.ModelForm):
