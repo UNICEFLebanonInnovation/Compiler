@@ -20,7 +20,9 @@ from .models import (
     SubProgram,
     Donor,
     ProgramDocument,
-    Partner
+    Partner,
+    FundedBy,
+    FocalPoint
 )
 from student_registration.youth.models import Adolescent
 from student_registration.clm.models import Disability, EducationalLevel
@@ -89,4 +91,28 @@ class FullFilter(FilterSet):
 
     def filter_by_program_document(self, queryset, name, value):
         return queryset.filter(enrolled_programs__program_document=value)
+
+
+class PDFilter(FilterSet):
+    partner__name = ChoiceFilter(choices=Partner.objects.values_list('id', 'short_name')
+                                .order_by('short_name').distinct(), empty_label='Partner')
+    funded_by__name = ChoiceFilter(choices=FundedBy.objects.values_list('id', 'name')
+                                 .order_by('name').distinct(), empty_label='Funded By')
+
+    project_status = CharFilter(lookup_expr='icontains')
+    project_code = CharFilter(lookup_expr='icontains')
+    project_name = CharFilter(lookup_expr='icontains')
+    implementing_partners = CharFilter(lookup_expr='icontains')
+    focal_point__name = ChoiceFilter(choices=FocalPoint.objects.values_list('id', 'name')
+                                 .order_by('name').distinct(), empty_label='Focal Point')
+
+    start_date = DateFilter(field_name='start_date',
+                            lookup_expr='gte', label='Start Date')
+    end_date = DateFilter(field_name='end_date',
+                          lookup_expr='lte', label='End Date')
+
+    class Meta:
+        model = ProgramDocument
+        fields = [
+        ]
 

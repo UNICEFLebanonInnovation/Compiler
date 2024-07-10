@@ -27,7 +27,6 @@ from .models import (
     YES_NO
 )
 
-from  .utils import get_population_group_choices
 
 from student_registration.locations.models import Location
 from student_registration.schools.models import (

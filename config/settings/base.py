@@ -434,6 +434,7 @@ SUIT_CONFIG = {
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
         {'app': 'clm', 'label': 'CLM', 'icon': 'icon-th-list'},
         {'app': 'mscc', 'label': 'MAKANI', 'icon': 'icon-th-list'},
+        {'app': 'youth', 'label': 'YOUTH', 'icon': 'icon-th-list'},
         # {'label': 'ALP', 'icon': 'icon-th-list', 'models': (
         #     'alp.CurrentRound',
         #     'alp.CurrentOutreach',

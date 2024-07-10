@@ -22,18 +22,21 @@ from django.shortcuts import redirect, render
 
 from .filters import (
     MainFilter,
-    FullFilter
+    FullFilter,
+    PDFilter
 )
 from .tables import (
     BootstrapTable,
     MainTable,
-    YouthMainTable,
     FullTable,
-    PartnerTable,
+    PDTable
+
 )
 from .models import (
     Registration,
+    ProgramDocument
 )
+from student_registration.locations.models import Location
 
 from .forms import (
     MainForm,
@@ -585,3 +588,28 @@ def export_data(request):
     workbook.save(response)
 
     return response
+
+
+class PDListView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   FilterView,
+                   ExportMixin,
+                   SingleTableView,
+                   RequestConfig):
+
+    table_class = PDTable
+    model = ProgramDocument
+    template_name = 'youth/pd_list.html'
+    table = BootstrapTable(ProgramDocument.objects.all(), order_by='id')
+    group_required = [u"YOUTH"]
+
+    filterset_class = PDFilter
+
+    def get_queryset(self):
+        return ProgramDocument.objects.all()
+
+    def get_table_class(self):
+        return PDTable
+
+    def get_filterset_class(self):
+        return PDFilter

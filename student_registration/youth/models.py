@@ -337,7 +337,7 @@ class ProgramDocument(models.Model):
     end_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Start Date')
+        verbose_name=_('End Date')
     )
     comment = models.TextField(
         blank=True, null=True,
@@ -367,16 +367,9 @@ class ProgramDocument(models.Model):
         unique=True,
         verbose_name=_('Support of Public Institution')
     )
-    governorates = ArrayField(
-        models.CharField(
-            max_length=100,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-        verbose_name=_('Governorate of Coverage')
-    )
+    governorates = models.ManyToManyField(Location, blank=True, related_name='program_documents', verbose_name=_('Governorate of Coverage'))
+
+
     budget = models.FloatField(
         blank=True,
         null=True,
@@ -389,16 +382,8 @@ class ProgramDocument(models.Model):
         choices=YES_NO,
         verbose_name=_('Does this Project have any Cash Assistance Component')
     )
-    population_groups = ArrayField(
-        models.CharField(
-            max_length=100,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-        verbose_name=_('Population Groups Targeted')
-    )
+    population_groups = models.ManyToManyField(PopulationGroups, blank=True, verbose_name=_('Governorate of Coverage'))
+
     number_targeted_syrians = models.IntegerField(
         blank=True,
         null=True,
@@ -419,16 +404,8 @@ class ProgramDocument(models.Model):
         null=True,
         verbose_name=_('Number of Targeted PRS')
     )
-    programs = ArrayField(
-        models.CharField(
-            max_length=100,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-        verbose_name=_('Population Groups Targeted')
-    )
+    programs = models.ManyToManyField(Program, blank=True, verbose_name=_('Programs'))
+
 
     class Meta:
         ordering = ['project_name']
@@ -439,6 +416,16 @@ class ProgramDocument(models.Model):
 
     def __unicode__(self):
         return self.project_name
+
+    def get_governorate_names(self):
+        return ", ".join(pop.name for pop in self.governorates.all())
+    # get_governorate_names.short_description = _('Governorates')
+
+    def get_population_groups_name(self):
+        return ", ".join(gov.name for gov in self.population_groups.all())
+
+    def get_program_names(self):
+        return ", ".join(prog.name for prog in self.programs.all())
 
 class Registration(TimeStampedModel):
 

@@ -2,7 +2,7 @@
 import django_tables2 as tables
 from django.utils.translation import ugettext as _
 
-from .models import Registration
+from .models import Registration, ProgramDocument
 
 
 class BootstrapTable(tables.Table):
@@ -131,4 +131,39 @@ class YouthMainTable(CommonTable):
             'adolescent_birthday',
             'adolescent.nationality',
             'adolescent_disability'
+        )
+
+class PDTable(tables.Table):
+    action_column = tables.TemplateColumn(
+        verbose_name=_('Actions'),
+        orderable=False,
+        template_name='django_tables2/youth/pd_action_column.html'
+    )
+    focal_point_name = tables.Column(verbose_name=_('UNICEF Focal Point'), accessor='focal_point.name')
+    sectors = tables.Column(verbose_name=_('Sectors'))
+    governorate = tables.Column(accessor='get_governorate_names', verbose_name=_('Governorates'))
+    population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'))
+
+
+    budget = tables.Column(verbose_name=_('Budget'))
+    class Meta:
+        model = ProgramDocument
+        template = 'django_tables2/bootstrap.html'
+        fields = (
+            'action_column',
+            'partner.short_name',
+            'funded_by.name',
+            'project_status',
+            'project_code',
+            'project_name',
+            'implementing_partners',
+            'focal_point_name',
+            'start_date',
+            'end_date',
+            'plan',
+            'sectors',
+            'project_type',
+            'governorate',
+            'budget',
+            'population_groups'
         )

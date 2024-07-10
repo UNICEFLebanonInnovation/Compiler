@@ -42,6 +42,16 @@ urlpatterns = [
         name='list'
     ),
     url(
+        regex=r'^PD-List/$',
+        view=views.PDListView.as_view(),
+        name='pd_list'
+    ),
+    url(
+        regex=r'^PD-Add/$',
+        view=views.PDListView.as_view(),
+        name='pd_add'
+    ),
+    url(
         regex=r'^Services/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EnrolledProgramsFormView.as_view(),
         name='service_enrolled_programs_add'

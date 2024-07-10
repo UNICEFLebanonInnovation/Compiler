@@ -23,14 +23,28 @@
                                     <div class="page-title-subheading opacity-10">
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
-                                                 <li class="breadcrumb-item">
+                                                <li class="breadcrumb-item">
                                                     <a href="{% url 'youth:list' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
-                                                  </li>
-                                                  <li class="breadcrumb-item">
-                                                        <a href="{% url 'youth:list' %}">List</a>
-                                                  </li>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                      <a href="{% url 'youth:list' %}">List</a>
+                                                </li>
+<!--                                                <li class="breadcrumb-item">-->
+<!--                                                    {{ request.user.center.governorate }}-->
+<!--                                                </li>-->
+<!--                                                <li class="breadcrumb-item">-->
+<!--                                                    {{ request.user.center.caza }}-->
+<!--                                                </li>-->
+<!--                                                <li class="breadcrumb-item">-->
+<!--                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}-->
+<!--                                                </li>-->
+<!--                                                <li class="breadcrumb-item">-->
+<!--                                                    {{ request.user.center.name }} - {{ request.user.center.type }}-->
+<!--                                                </li>-->
+
+
                                             </ol>
                                         </nav>
                                     </div>
@@ -51,16 +65,16 @@
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-title opacity-5 text-uppercase">Registration</div>
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
 
                                                     <span class="opacity-10 text-primary pr-2">
-                                                        <i class="fa fa-plus"></i>
+                                                        <i class="fa fa-list"></i>
                                                     </span>
-                                                  <a href="{% url 'youth:child_add' %}?type=Core-Package">
-                                                    Add Youth
+                                                  <a href="{% url 'youth:list' %}">
+                                                    Youth List
                                                   </a>
                                                     <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
@@ -79,21 +93,21 @@
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Program Document</div>
+                                        <div class="widget-title opacity-5 text-uppercase">New Program Document</div>
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
-                                                    <span class="opacity-10 text-success pr-2">
-                                                        <i class="fa fa-list"></i>
-                                                    </span>
-                                                    <a href="{% url 'youth:pd_list' %}">
-                                                      Program Document
-                                                    </a>
 
-                                                  <!--<small class="opacity-5 pr-1">%</small>-->
+                                                    <span class="opacity-10 text-success pr-2">
+                                                        <i class="fa fa-plus"></i>
+                                                    </span>
+                                                  <a href="{% url 'youth:pd_add' %}">
+                                                    Add Program Document
+                                                  </a>
+                                                    <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
                                                 <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-warning-sm d-inline-block">-->
+                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
                                                         <!--<small></small>-->
                                                     <!--</div>-->
                                                 <!--</div>-->

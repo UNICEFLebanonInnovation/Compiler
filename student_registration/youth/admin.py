@@ -5,7 +5,7 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
-
+from django import forms
 from .models import *
 
 
@@ -74,6 +74,18 @@ class YouthAssessmentAdmin(admin.ModelAdmin):
     )
 
 
+class ProgramDocumentAdminForm(forms.ModelForm):
+    class Meta:
+        model = ProgramDocument
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(ProgramDocumentAdminForm, self).__init__(*args, **kwargs)
+        self.fields['governorates'].queryset = Location.objects.filter(parent__isnull=True)
+
+class ProgramDocumentAdmin(admin.ModelAdmin):
+    form = ProgramDocumentAdminForm
+
 admin.site.register(Partner)
 admin.site.register(FundedBy)
 admin.site.register(FocalPoint)
@@ -84,6 +96,7 @@ admin.site.register(PopulationGroups)
 admin.site.register(Program)
 admin.site.register(SubProgram)
 admin.site.register(Donor)
-admin.site.register(ProgramDocument)
+admin.site.register(YouthAssessment)
+admin.site.register(ProgramDocument, ProgramDocumentAdmin)
 admin.site.register(Registration, RegistrationAdmin)
-admin.site.register(YouthAssessment, YouthAssessmentAdmin)
+# admin.site.register(YouthAssessment, YouthAssessmentAdmin)

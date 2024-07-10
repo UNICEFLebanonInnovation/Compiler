@@ -294,13 +294,3 @@ def load_dashboard_data(param, grouping):
 
     rows = cursor.fetchall()
     return rows
-
-def get_governorate_choices():
-    return [(location.name, location.name) for location in Location.objects.all()]
-
-def get_population_group_choices():
-    return [(group.name, group.name) for group in PopulationGroups.objects.all()]
-
-def get_population_group_choices():
-    return [(program.name, program.name) for program in Program.objects.all()]
-

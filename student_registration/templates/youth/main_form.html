@@ -32,13 +32,13 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
+                                                    <a href="{% url 'youth:list' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {% if form.instance.id == None %}
-                                                      <a href="/">List</a>
+                                                      <a href="{% url 'youth:list' %}">List</a>
                                                     {% else %}
                                                       <a href="/youth/Child-Profile/{{ form.instance.id }}">Youth Profile</a>
                                                     {% endif %}
