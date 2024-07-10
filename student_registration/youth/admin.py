@@ -86,6 +86,13 @@ class ProgramDocumentAdminForm(forms.ModelForm):
 class ProgramDocumentAdmin(admin.ModelAdmin):
     form = ProgramDocumentAdminForm
 
+
+
+class ProgramAdmin(admin.ModelAdmin):
+    list_display = ('name', 'active')
+    search_fields = ('name',)
+
+
 admin.site.register(Partner)
 admin.site.register(FundedBy)
 admin.site.register(FocalPoint)
@@ -93,7 +100,8 @@ admin.site.register(Plan)
 admin.site.register(Sector)
 admin.site.register(ProjectType)
 admin.site.register(PopulationGroups)
-admin.site.register(Program)
+
+admin.site.register(Program, ProgramAdmin)
 admin.site.register(SubProgram)
 admin.site.register(Donor)
 admin.site.register(YouthAssessment)

@@ -4,8 +4,12 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
+import re
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.locations.models import Center, Location
@@ -223,9 +227,7 @@ class PopulationGroups(models.Model):
 
 
 class Program(models.Model):
-
     name = models.CharField(max_length=45, unique=True)
-
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
@@ -237,6 +239,16 @@ class Program(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def clean(self):
+        super(Program, self).clean()
+        # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
+        normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
+        duplicates = Program.objects.exclude(id=self.id)
+        for program in duplicates:
+            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
+            if normalized_name == normalized_duplicate_name:
+                raise ValidationError({'name': _('A program with a similar name already exists: %s') % program.name})
 
 
 class SubProgram(models.Model):
