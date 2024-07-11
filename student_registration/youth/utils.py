@@ -9,7 +9,7 @@ from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
 from student_registration.youth.models import Registration
 
-from .models import PopulationGroups, Program
+from .models import PopulationGroups, MasterProgram
 
 from student_registration.locations.models import Location
 

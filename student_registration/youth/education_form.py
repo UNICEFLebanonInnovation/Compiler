@@ -18,8 +18,7 @@ from .models import (
     Registration,
     EnrolledPrograms,
     YES_NO,
-    Round,
-    Program,
+    MasterProgram,
     SubProgram,
     Donor,
     ProgramDocument
@@ -36,9 +35,9 @@ class EnrolledProgramsForm(forms.ModelForm):
         label=_("Please Specify dropout date from school"),
         required=False
     )
-    program = forms.ModelChoiceField(
-        queryset=Program.objects.all(), widget=forms.Select,
-        label=_('Program'),
+    master_program = forms.ModelChoiceField(
+        queryset=MasterProgram.objects.all(), widget=forms.Select,
+        label=_('Master Program'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
@@ -75,22 +74,10 @@ class EnrolledProgramsForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
-        package_type = kwargs.pop('package_type', None)
 
         super(EnrolledProgramsForm, self).__init__(*args, **kwargs)
 
         self.fields['registration_id'].initial = registry
-
-        choices_education_status = list()
-        if package_type == 'Walk-in':
-            choices_education_status.append(('', _('----------')))
-            choices_education_status.append(('Currently registered in Formal Education school',
-                                             _('Currently registered in Formal Education school')))
-            choices_education_status.append(('Currently registered in Formal Education school but not attending',
-                                             _('Currently registered in Formal Education school but not attending')))
-            self.fields['education_status'].choices = choices_education_status
-
-        display_edu_section = ''
 
         form_action = reverse('youth:service_enrolled_programs_add', kwargs={'registry': registry})
         if instance:
@@ -125,7 +112,7 @@ class EnrolledProgramsForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('program', css_class='col-md-9'),
+                    Div('master_program', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
                 Div(
@@ -148,7 +135,7 @@ class EnrolledProgramsForm(forms.ModelForm):
             ),
         )
 
-    def save(self, request=None, instance=None, registry=None, package_type=None):
+    def save(self, request=None, instance=None, registry=None):
         from datetime import datetime
         validated_data = request.POST
 
@@ -162,7 +149,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         if dropout_date_str:
             dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
             instance.dropout_date = dropout_date
-        instance.program_id = validated_data.get('program')
+        instance.master_program_id = validated_data.get('master_program')
         instance.sub_program_id = validated_data.get('sub_program')
         instance.donor_id = validated_data.get('donor')
         instance.program_document_id = validated_data.get('program_document')
@@ -193,7 +180,7 @@ class EnrolledProgramsForm(forms.ModelForm):
             'registration_id',
             'education_status',
             'dropout_date',
-            'program',
+            'master_program',
             'sub_program',
             'registration_date',
             'completion_date',

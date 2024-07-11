@@ -96,6 +96,7 @@ class Partner(models.Model):
         null=True,
         verbose_name=_('Program Manager Focal Point Email')
     )
+    active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']
@@ -114,6 +115,7 @@ class FundedBy(models.Model):
         unique=True,
         verbose_name=_('Funded By')
     )
+    active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']
@@ -161,6 +163,7 @@ class Plan(models.Model):
         unique=True,
         verbose_name=_('Plan')
     )
+    active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']
@@ -226,13 +229,13 @@ class PopulationGroups(models.Model):
         return self.name
 
 
-class Program(models.Model):
+class MasterProgram(models.Model):
     name = models.CharField(max_length=45, unique=True)
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']
-        verbose_name = "Program"
+        verbose_name = "MasterProgram"
 
     def __str__(self):
         return self.name
@@ -241,22 +244,22 @@ class Program(models.Model):
         return self.name
 
     def clean(self):
-        super(Program, self).clean()
+        super(MasterProgram, self).clean()
         # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
         normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
-        duplicates = Program.objects.exclude(id=self.id)
+        duplicates = MasterProgram.objects.exclude(id=self.id)
         for program in duplicates:
             normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
             if normalized_name == normalized_duplicate_name:
-                raise ValidationError({'name': _('A program with a similar name already exists: %s') % program.name})
+                raise ValidationError({'name': _('A master program with a similar name already exists: %s') % program.name})
 
 
 class SubProgram(models.Model):
 
-    program = models.ForeignKey(
-        Program,
+    master_program = models.ForeignKey(
+        MasterProgram,
         blank=False, null=True,
-        related_name='program',
+        related_name='master_program',
     )
     name = models.CharField(max_length=45, unique=True)
 
@@ -274,6 +277,7 @@ class SubProgram(models.Model):
 class Donor(models.Model):
 
     name = models.CharField(max_length=45, unique=True)
+    active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']
@@ -339,7 +343,7 @@ class ProgramDocument(models.Model):
         FocalPoint,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('Focal Point')
+        verbose_name=_('UNICEF Focal Point')
     )
     start_date = models.DateField(
         blank=True,
@@ -416,7 +420,7 @@ class ProgramDocument(models.Model):
         null=True,
         verbose_name=_('Number of Targeted PRS')
     )
-    programs = models.ManyToManyField(Program, blank=True, verbose_name=_('Programs'))
+    master_programs = models.ManyToManyField(MasterProgram, blank=True, verbose_name=_('Master Programs'))
 
 
     class Meta:
@@ -436,8 +440,8 @@ class ProgramDocument(models.Model):
     def get_population_groups_name(self):
         return ", ".join(gov.name for gov in self.population_groups.all())
 
-    def get_program_names(self):
-        return ", ".join(prog.name for prog in self.programs.all())
+    def get_master_program_names(self):
+        return ", ".join(prog.name for prog in self.master_programs.all())
 
 class Registration(TimeStampedModel):
 
@@ -574,8 +578,8 @@ class EnrolledPrograms(TimeStampedModel):
         null=True,
         verbose_name=_('Please Specify dropout date from school')
     )
-    program = models.ForeignKey(
-        Program,
+    master_program = models.ForeignKey(
+        MasterProgram,
         blank=False, null=True,
         related_name='+',
     )

@@ -26,27 +26,24 @@ class EnrolledProgramsFormView(LoginRequiredMixin,
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         kwargs['registry'] = self.kwargs['registry']
-        kwargs['package_type'] = self.kwargs['package_type'] if 'package_type' in self.kwargs else None
         return super(EnrolledProgramsFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        package_type = self.kwargs['package_type'] if 'package_type' in self.kwargs else None
         data = {}
         if self.request.method == "POST":
             return EnrolledProgramsForm(self.request.POST, instance=instance, registry=registry,
-                                        package_type=package_type, request=self.request)
+                                        request=self.request)
         else:
             if instance:
                 data = to_array(EnrolledProgramsForm.Meta.fields, EnrolledPrograms.objects.get(id=instance))
-                return EnrolledProgramsForm(data, registry=registry, package_type=package_type, instance=instance, request=self.request)
-            return EnrolledProgramsForm(registry=registry, package_type=package_type, instance=instance, request=self.request)
+                return EnrolledProgramsForm(data, registry=registry,  instance=instance, request=self.request)
+            return EnrolledProgramsForm(registry=registry,  instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        package_type = self.kwargs['package_type'] if 'package_type' in self.kwargs else None
-        form.save(request=self.request, registry=registry, package_type=package_type, instance=instance)
+        form.save(request=self.request, registry=registry, instance=instance)
         return super(EnrolledProgramsFormView, self).form_valid(form)
 

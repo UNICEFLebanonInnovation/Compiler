@@ -27,8 +27,7 @@ from .filters import (
 )
 from .tables import (
     BootstrapTable,
-    MainTable,
-    FullTable,
+    RegistrationTable,
     PDTable
 
 )
@@ -163,8 +162,7 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             new_registration = copy.copy(registration)
             new_registration.pk = None
             new_registration.save()
-            return reverse('youth:service_enrolled_programs_add', kwargs={'registry': new_registration.id,
-                                                                 'package_type': 'Core-Package'})
+            return reverse('youth:service_enrolled_programs_add', kwargs={'registry': new_registration.id})
 
         return reverse('youth:new_round', kwargs={'registry': registry})
 
@@ -191,7 +189,7 @@ class MainListView(LoginRequiredMixin,
                    SingleTableView,
                    RequestConfig):
 
-    table_class = MainTable
+    table_class = RegistrationTable
     model = Registration
     template_name = 'youth/list.html'
     table = BootstrapTable(Registration.objects.all(), order_by='id')
@@ -204,9 +202,7 @@ class MainListView(LoginRequiredMixin,
         center_id = user.center_id
         partner_id = user.youth_partner_id
 
-        # if has_group(user, 'YOUTH_UNICEF'):
         return Registration.objects.filter(deleted=False
-                                           # , round__current_year=True
                                            ).order_by('-id')
         # elif has_group(user, 'YOUTH_PARTNER') and partner_id:
         #     return Registration.objects.filter(partner=partner_id, deleted=False, round__current_year=True).order_by('-id')
@@ -216,31 +212,10 @@ class MainListView(LoginRequiredMixin,
         # return Registration.objects.none()
 
     def get_table_class(self):
-        return FullTable
-        # """
-        # Return the class to use for the table.
-        # """
-        # if has_group(self.request.user, 'MSCC_UNICEF'):
-        #     return FullTable
-        # elif has_group(self.request.user, 'MSCC_PARTNER'):
-        #     return PartnerTable
-        # elif has_group(self.request.user, 'MSCC_CENTER'):
-        #     return self.table_class
-        #
-        # if not has_group(self.request.user, 'MSCC_FULL'):
-        #     return YouthMainTable
-        # return self.table_class
+        return RegistrationTable
 
     def get_filterset_class(self):
         return FullFilter
-        # if has_group(self.request.user, 'MSCC_UNICEF'):
-        #     return FullFilter
-        # elif has_group(self.request.user, 'MSCC_PARTNER'):
-        #     return self.filterset_class
-        # elif has_group(self.request.user, 'MSCC_CENTER'):
-        #     return self.filterset_class
-
-        # return self.filterset_class
 
 
 class MainViewSet(mixins.RetrieveModelMixin,

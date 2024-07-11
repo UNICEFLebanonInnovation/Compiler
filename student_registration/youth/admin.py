@@ -83,9 +83,9 @@ class ProgramDocumentAdminForm(forms.ModelForm):
         super(ProgramDocumentAdminForm, self).__init__(*args, **kwargs)
         self.fields['governorates'].queryset = Location.objects.filter(parent__isnull=True)
 
+
 class ProgramDocumentAdmin(admin.ModelAdmin):
     form = ProgramDocumentAdminForm
-
 
 
 class ProgramAdmin(admin.ModelAdmin):
@@ -100,8 +100,7 @@ admin.site.register(Plan)
 admin.site.register(Sector)
 admin.site.register(ProjectType)
 admin.site.register(PopulationGroups)
-
-admin.site.register(Program, ProgramAdmin)
+admin.site.register(MasterProgram, ProgramAdmin)
 admin.site.register(SubProgram)
 admin.site.register(Donor)
 admin.site.register(YouthAssessment)

@@ -16,7 +16,7 @@ from student_registration.students.models import Nationality
 from .models import (
     Registration,
     EnrolledPrograms,
-    Program,
+    MasterProgram,
     SubProgram,
     Donor,
     ProgramDocument,
@@ -61,7 +61,7 @@ class FullFilter(FilterSet):
     adolescent__disability = ChoiceFilter(choices=Disability.objects.values_list('id', 'name').order_by('name').distinct(), empty_label='Disability')
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
 
-    program = ChoiceFilter(choices=Program.objects.values_list('id', 'name'), field_name='enrolled_programs__program', empty_label='Program', method='filter_by_program')
+    master_program = ChoiceFilter(choices=MasterProgram.objects.values_list('id', 'name'), field_name='enrolled_programs__master_program', empty_label='Master Program', method='filter_by_master_program')
     sub_program = ChoiceFilter(choices=SubProgram.objects.values_list('id', 'name'), field_name='enrolled_programs__sub_program', empty_label='Sub Program', method='filter_by_sub_program')
     donor = ChoiceFilter(choices=Donor.objects.values_list('id', 'name'), field_name='enrolled_programs__donor', empty_label='Donor', method='filter_by_donor')
     program_document = ChoiceFilter(choices=ProgramDocument.objects.values_list('id', 'project_name'), field_name='enrolled_programs__program_document', empty_label='Program Document', method='filter_by_program_document')
@@ -80,7 +80,7 @@ class FullFilter(FilterSet):
         model = Registration
         fields = []
 
-    def filter_by_program(self, queryset, name, value):
+    def filter_by_master_program(self, queryset, name, value):
         return queryset.filter(enrolled_programs__program=value)
 
     def filter_by_sub_program(self, queryset, name, value):
