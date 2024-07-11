@@ -182,6 +182,8 @@ class Sector(models.Model):
         unique=True,
         verbose_name=_('Sector')
     )
+    default = models.BooleanField(blank=True, default=False)
+
 
     class Meta:
         ordering = ['name']
@@ -216,7 +218,12 @@ class PopulationGroups(models.Model):
     name = models.CharField(
         max_length=100,
         unique=True,
-        verbose_name=_('Population Groups')
+        verbose_name=_('Full Name')
+    )
+    short_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('Short Name')
     )
 
     class Meta:
@@ -229,7 +236,7 @@ class PopulationGroups(models.Model):
         return self.name
 
 
-class MasterProgram(models.Model):
+class MasterProgram(TimeStampedModel):
     name = models.CharField(max_length=45, unique=True)
     active = models.BooleanField(blank=True, default=False)
 
@@ -254,7 +261,7 @@ class MasterProgram(models.Model):
                 raise ValidationError({'name': _('A master program with a similar name already exists: %s') % program.name})
 
 
-class SubProgram(models.Model):
+class SubProgram(TimeStampedModel):
 
     master_program = models.ForeignKey(
         MasterProgram,
@@ -290,7 +297,7 @@ class Donor(models.Model):
         return self.name
 
 
-class ProgramDocument(models.Model):
+class ProgramDocument(TimeStampedModel):
     YES_NO = Choices(
         ('', '----------'),
         ('Yes', _("Yes")),
@@ -442,6 +449,7 @@ class ProgramDocument(models.Model):
 
     def get_master_program_names(self):
         return ", ".join(prog.name for prog in self.master_programs.all())
+
 
 class Registration(TimeStampedModel):
 
