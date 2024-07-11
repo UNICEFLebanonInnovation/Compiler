@@ -34,23 +34,6 @@ class RegistrationAdmin(admin.ModelAdmin):
     )
 
 
-class EducationServiceAdmin(admin.ModelAdmin):
-    list_display = (
-        'registration',
-        'education_status',
-        'dropout_date',
-    )
-    list_filter = (
-        'education_status',
-
-    )
-    search_fields = (
-        'registration__adolescent__first_name',
-        'registration__adolescent__father_name',
-        'registration__adolescent__last_name',
-    )
-
-
 class YouthAssessmentAdmin(admin.ModelAdmin):
     list_display = (
         'registration',
@@ -106,4 +89,5 @@ admin.site.register(Donor)
 admin.site.register(YouthAssessment)
 admin.site.register(ProgramDocument, ProgramDocumentAdmin)
 admin.site.register(Registration, RegistrationAdmin)
+admin.site.register(EnrolledPrograms)
 # admin.site.register(YouthAssessment, YouthAssessmentAdmin)

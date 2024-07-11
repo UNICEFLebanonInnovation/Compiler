@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 
-from . import views, education_view, services_view
+from . import views, program_view, services_view
 
 urlpatterns = [
 
@@ -15,16 +15,6 @@ urlpatterns = [
         regex=r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
         name='child_edit'
-    ),
-    url(
-        regex=r'^New-Round/(?P<pk>[\w.@+-]+)/$',
-        view=views.NewRoundView.as_view(),
-        name='new_round'
-    ),
-    url(
-        regex=r'^New-Round-Redirect/$',
-        view=views.NewRoundRedirectView.as_view(),
-        name='new_round_redirect'
     ),
     url(
         regex=r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
@@ -52,14 +42,24 @@ urlpatterns = [
         name='pd_add'
     ),
     url(
-        regex=r'^Services/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
-        view=education_view.EnrolledProgramsFormView.as_view(),
-        name='service_enrolled_programs_add'
+        regex=r'^Program/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
+        view=program_view.EnrolledProgramsFormView.as_view(),
+        name='program_enrolled_programs_add'
     ),
     url(
-        regex=r'^Services/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
-        view=education_view.EnrolledProgramsFormView.as_view(),
-        name='service_enrolled_programs_edit'
+        regex=r'^Program/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=program_view.EnrolledProgramsFormView.as_view(),
+        name='program_enrolled_programs_edit'
+    ),
+    url(
+        regex=r'^Program/Program-Document-Add/$',
+        view=program_view.ProgramDocumentFormView.as_view(),
+        name='program_program_document_add'
+    ),
+    url(
+        regex=r'^Program/Program-Document-Edit/(?P<pk>[\w.@+-]+)/$',
+        view=program_view.ProgramDocumentFormView.as_view(),
+        name='program_program_document_edit'
     ),
     url(
         regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',

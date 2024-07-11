@@ -136,19 +136,6 @@ class MainEditView(LoginRequiredMixin,
         return super(MainEditView, self).form_valid(form)
 
 
-class NewRoundView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   TemplateView):
-
-    group_required = [u"YOUTH"]
-    template_name = 'youth/new_round.html'
-
-    def get_context_data(self, **kwargs):
-        registry = kwargs.get('pk')
-        return {
-            'registry': registry
-        }
-
 
 class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
