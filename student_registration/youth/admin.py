@@ -69,25 +69,98 @@ class ProgramDocumentAdminForm(forms.ModelForm):
 
 class ProgramDocumentAdmin(admin.ModelAdmin):
     form = ProgramDocumentAdminForm
+    list_display = (
+        'project_code',
+        'project_name',
+        'project_description',
+        'partner',
+        'funded_by',
+        'project_status',
+    )
+    list_filter = (
+    'partner',
+    'funded_by',
+    'project_status',
+    )
+    search_fields = (
+    'project_code',
+    'project_name',
+    'project_description',
+    )
 
 
 class ProgramAdmin(admin.ModelAdmin):
     list_display = ('name', 'active')
-    search_fields = ('name',)
+    search_fields = ('name', 'active')
+
+class SubProgramAdmin(admin.ModelAdmin):
+    list_display = ('name', 'master_program')
+    search_fields = ('name', 'master_program')
+
+class PartnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name', 'active')
+    search_fields = ('name', 'short_name', 'active')
+
+class FundedByAdmin(admin.ModelAdmin):
+    list_display = ('name', 'active')
+    search_fields = ('name', 'active')
+
+class FocalPointAdmin(admin.ModelAdmin):
+    list_display = ('name', 'phone', 'email')
+    search_fields = ['name']
+
+class PlanAdmin(admin.ModelAdmin):
+    list_display = ('name', 'active')
+    search_fields = ('name', 'active')
+
+class SectorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'default')
+    search_fields = ('name', 'default')
+
+class ProjectTypeAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+
+class PopulationGroupsAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name')
+    search_fields = ('name', 'short_name')
+
+class DonorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'active')
+    search_fields = ('name', 'active')
 
 
-admin.site.register(Partner)
-admin.site.register(FundedBy)
-admin.site.register(FocalPoint)
-admin.site.register(Plan)
-admin.site.register(Sector)
-admin.site.register(ProjectType)
-admin.site.register(PopulationGroups)
+class EnrolledProgramAdmin(admin.ModelAdmin):
+    list_display = (
+        'registration',
+        'education_status',
+        'dropout_date',
+        'master_program',
+        'sub_program',
+        'donor',
+        'program_document',
+        'registration_date',
+        'completion_date'
+    )
+    list_filter = (
+    'education_status',
+    'master_program',
+    'donor',
+    ) 
+
+
+admin.site.register(Partner, PartnerAdmin)
+admin.site.register(FundedBy, FundedByAdmin)
+admin.site.register(FocalPoint, FocalPointAdmin)
+admin.site.register(Plan, PlanAdmin)
+admin.site.register(Sector, SectorAdmin)
+admin.site.register(ProjectType, ProjectTypeAdmin)
+admin.site.register(PopulationGroups, PopulationGroupsAdmin)
 admin.site.register(MasterProgram, ProgramAdmin)
-admin.site.register(SubProgram)
-admin.site.register(Donor)
+admin.site.register(SubProgram, SubProgramAdmin)
+admin.site.register(Donor,DonorAdmin)
 admin.site.register(YouthAssessment)
 admin.site.register(ProgramDocument, ProgramDocumentAdmin)
 admin.site.register(Registration, RegistrationAdmin)
-admin.site.register(EnrolledPrograms)
+admin.site.register(EnrolledPrograms, EnrolledProgramAdmin)
 # admin.site.register(YouthAssessment, YouthAssessmentAdmin)
