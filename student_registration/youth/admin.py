@@ -146,7 +146,7 @@ class EnrolledProgramAdmin(admin.ModelAdmin):
     'education_status',
     'master_program',
     'donor',
-    ) 
+    )
 
 
 admin.site.register(Partner, PartnerAdmin)
