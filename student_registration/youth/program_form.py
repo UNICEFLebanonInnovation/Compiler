@@ -21,7 +21,8 @@ from .models import (
     MasterProgram,
     SubProgram,
     Donor,
-    ProgramDocument
+    ProgramDocument,
+    Partner
 )
 
 
@@ -188,58 +189,18 @@ class EnrolledProgramsForm(forms.ModelForm):
 
 
 class ProgramDocumentForm(forms.ModelForm):
-    education_status = forms.ChoiceField(
-        label=_("Youth\'s educational level when registering"),
-        widget=forms.Select, required=True,
-        choices=EnrolledPrograms.EDUCATION_STATUS,
-    )
-    dropout_date = forms.DateField(
-        label=_("Please Specify dropout date from school"),
-        required=False
-    )
-    master_program = forms.ModelChoiceField(
-        queryset=MasterProgram.objects.all(), widget=forms.Select,
-        label=_('Master Program'),
+    partner = forms.ModelChoiceField(
+        queryset=Partner.objects.all(), widget=forms.Select,
+        label=_('Partner'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
-    sub_program = forms.ModelChoiceField(
-        queryset=SubProgram.objects.all(), widget=forms.Select,
-        label=_('Sub Program'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-    )
-    donor = forms.ModelChoiceField(
-        queryset=Donor.objects.all(), widget=forms.Select,
-        label=_('Donor'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-    )
-    program_document = forms.ModelChoiceField(
-        queryset=ProgramDocument.objects.all(), widget=forms.Select,
-        label=_('Program Document'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-    )
-    registration_date = forms.DateField(
-        label=_("Date of registration"),
-        required=True
-    )
-    completion_date = forms.DateField(
-        label=_("Date of completion"),
-        required=True
-    )
-
-    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
-        registry = kwargs.pop('registry', None)
         instance = kwargs.pop('instance', None)
 
         super(ProgramDocumentForm, self).__init__(*args, **kwargs)
-
-        self.fields['registration_id'].initial = registry
 
         form_action = reverse('youth:program_program_document_add')
         if instance:
@@ -253,33 +214,7 @@ class ProgramDocumentForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('education_status', css_class='col-md-6'),
-                    HTML('<span class="badge-form-0 badge-pill"></span>'),
-                    Div('dropout_date', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('registration_date', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('completion_date', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('donor', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('program_document', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('master_program', css_class='col-md-9'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('sub_program', css_class='col-md-9'),
+                    Div('partner', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
                 css_id='step-1'
@@ -289,47 +224,44 @@ class ProgramDocumentForm(forms.ModelForm):
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                 Reset('reset', 'Reset',
                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                HTML(
-                    '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/Child-Registration-Cancel/{}/">Cancel</a>'.format(
-                        registry)
-                ),
+                # HTML(
+                #     '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/Child-Registration-Cancel/{}/">Cancel</a>'.format(
+                #         registry)
+                # ),
 
             ),
         )
 
-    def save(self, request=None, instance=None, registry=None):
+    def save(self, request=None, instance=None):
         from datetime import datetime
         validated_data = request.POST
 
         if not instance:
-            instance = EnrolledPrograms.objects.create(registration_id=registry)
+            instance = ProgramDocument.objects.create()
         else:
-            instance = EnrolledPrograms.objects.get(id=instance)
+            instance = ProgramDocument.objects.get(id=instance)
 
-        instance.education_status = validated_data.get('education_status')
-        dropout_date_str = validated_data.get('dropout_date')
-        if dropout_date_str:
-            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
-            instance.dropout_date = dropout_date
-        instance.master_program_id = validated_data.get('master_program')
-        instance.sub_program_id = validated_data.get('sub_program')
-        instance.donor_id = validated_data.get('donor')
-        instance.program_document_id = validated_data.get('program_document')
-
-        registration_date_str = validated_data.get('registration_date')
-        if registration_date_str:
-            registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
-            instance.registration_date = registration_date
-
-        completion_date_str = validated_data.get('completion_date')
-        if completion_date_str:
-            completion_date = datetime.strptime(completion_date_str, '%Y-%m-%d')
-            instance.completion_date = completion_date
+        instance.partner_id = validated_data.get('partner')
+        # dropout_date_str = validated_data.get('dropout_date')
+        # if dropout_date_str:
+        #     dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
+        #     instance.dropout_date = dropout_date
+        # instance.master_program_id = validated_data.get('master_program')
+        # instance.sub_program_id = validated_data.get('sub_program')
+        # instance.donor_id = validated_data.get('donor')
+        # instance.program_document_id = validated_data.get('program_document')
+        #
+        # registration_date_str = validated_data.get('registration_date')
+        # if registration_date_str:
+        #     registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
+        #     instance.registration_date = registration_date
+        #
+        # completion_date_str = validated_data.get('completion_date')
+        # if completion_date_str:
+        #     completion_date = datetime.strptime(completion_date_str, '%Y-%m-%d')
+        #     instance.completion_date = completion_date
 
         instance.save()
-
-        registry = instance.registration
-        registry.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
 
@@ -337,15 +269,14 @@ class ProgramDocumentForm(forms.ModelForm):
 
 
     class Meta:
-        model = EnrolledPrograms
+        model = ProgramDocument
         fields = (
-            'registration_id',
-            'education_status',
-            'dropout_date',
-            'master_program',
-            'sub_program',
-            'registration_date',
-            'completion_date',
+            'partner',
+            # 'dropout_date',
+            # 'master_program',
+            # 'sub_program',
+            # 'registration_date',
+            # 'completion_date',
         )
 
 

@@ -280,6 +280,16 @@ class SubProgram(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+    def clean(self):
+        super(SubProgram, self).clean()
+        # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
+        normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
+        duplicates = SubProgram.objects.exclude(id=self.id)
+        for s_program in duplicates:
+            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', s_program.name.lower().strip())
+            if normalized_name == normalized_duplicate_name:
+                raise ValidationError({'name': _('A sub program with a similar name already exists: %s') % s_program.name})
+
 
 class Donor(models.Model):
 

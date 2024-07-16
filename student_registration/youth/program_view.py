@@ -57,7 +57,7 @@ class ProgramDocumentFormView(LoginRequiredMixin,
     group_required = [u"YOUTH"]
 
     def get_success_url(self):
-        return '/youth/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
+        return '/youth/PD-List/'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -73,7 +73,7 @@ class ProgramDocumentFormView(LoginRequiredMixin,
                                         request=self.request)
         else:
             if instance:
-                data = to_array(ProgramDocumentForm.Meta.fields, EnrolledPrograms.objects.get(id=instance))
+                data = to_array(ProgramDocumentForm.Meta.fields, ProgramDocument.objects.get(id=instance))
                 return ProgramDocumentForm(data,   instance=instance, request=self.request)
             return ProgramDocumentForm( instance=instance, request=self.request)
 
