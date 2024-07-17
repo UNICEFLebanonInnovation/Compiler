@@ -73,9 +73,19 @@ class ProgramDocumentFormView(LoginRequiredMixin,
                                         request=self.request)
         else:
             if instance:
-                data = to_array(ProgramDocumentForm.Meta.fields, ProgramDocument.objects.get(id=instance))
-                return ProgramDocumentForm(data,   instance=instance, request=self.request)
-            return ProgramDocumentForm( instance=instance, request=self.request)
+                # Fetch instance data and convert to dictionary format if available
+                try:
+                    instance_data = ProgramDocument.objects.get(id=instance)
+                    data = {
+                        'partner': instance_data.partner_id,
+                        'governorates': instance_data.governorates.all(),  # Assuming governorates is a ManyToManyField
+                    }
+                except ProgramDocument.DoesNotExist:
+                    pass
+
+                return ProgramDocumentForm(data=data, instance=instance, request=self.request)
+
+            return ProgramDocumentForm(instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None

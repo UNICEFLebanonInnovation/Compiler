@@ -318,6 +318,11 @@ class ProgramDocument(TimeStampedModel):
         ('on going', _("On going")),
         ('closed', _("No"))
     )
+    SUPPORT = Choices(
+        ('', '----------'),
+        ('No Support', _("No Support")),
+        ('Support', _("Support"))
+    )
     partner = models.ForeignKey(
         Partner,
         blank=True, null=True,
@@ -394,14 +399,13 @@ class ProgramDocument(TimeStampedModel):
         related_name='+',
         verbose_name=_('Type of Project')
     )
-    implementing_partners = models.CharField(
+    public_institution_support = models.CharField(
         max_length=100,
-        blank=True,
-        unique=True,
+        blank=True, null=True,
+        choices=SUPPORT,
         verbose_name=_('Support of Public Institution')
     )
     governorates = models.ManyToManyField(Location, blank=True, related_name='program_documents', verbose_name=_('Governorate of Coverage'))
-
 
     budget = models.FloatField(
         blank=True,
