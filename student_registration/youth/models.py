@@ -419,7 +419,7 @@ class ProgramDocument(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Does this Project have any Cash Assistance Component')
     )
-    population_groups = models.ManyToManyField(PopulationGroups, blank=True, verbose_name=_('Governorate of Coverage'))
+    population_groups = models.ManyToManyField(PopulationGroups, blank=True, verbose_name=_('Population Groups Targeted'))
 
     number_targeted_syrians = models.IntegerField(
         blank=True,

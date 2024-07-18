@@ -78,7 +78,9 @@ class ProgramDocumentFormView(LoginRequiredMixin,
                     instance_data = ProgramDocument.objects.get(id=instance)
                     data = {
                         'partner': instance_data.partner_id,
-                        'governorates': instance_data.governorates.all(),  # Assuming governorates is a ManyToManyField
+                        'governorates': instance_data.governorates.all(),
+                        'population_groups': instance_data.population_groups.all(),
+                        'master_programs': instance_data.master_programs.all(),
                     }
                 except ProgramDocument.DoesNotExist:
                     pass

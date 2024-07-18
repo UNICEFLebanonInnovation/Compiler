@@ -195,117 +195,125 @@ class EnrolledProgramsForm(forms.ModelForm):
         )
 
 
-class ProgramDocumentForm_bak(forms.ModelForm):
+class ProgramDocumentForm(forms.ModelForm):
     partner = forms.ModelChoiceField(
         queryset=Partner.objects.all(), widget=forms.Select,
         label=_('Partner'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
-    # funded_by = forms.ModelChoiceField(
-    #     queryset=FundedBy.objects.all(), widget=forms.Select,
-    #     label=_('Funded By'),
-    #     empty_label='-------',
-    #     required=True, to_field_name='id',
-    # )
-    # project_status = forms.ChoiceField(
-    #     label=_("Project Status"),
-    #     widget=forms.Select, required=True,
-    #     choices=ProgramDocument.PROJECT_STATUS
-    # )
-    # project_code = forms.CharField(
-    #     label=_("Project Code"),
-    #     widget=forms.TextInput, required=True
-    # )
-    # project_name = forms.CharField(
-    #     label=_("Project Name"),
-    #     widget=forms.TextInput, required=True
-    # )
-    # project_description = forms.CharField(
-    #     label=_("Project Description"),
-    #     widget=forms.TextInput, required=True
-    # )
-    # implementing_partners = forms.CharField(
-    #     label=_("Key Implementing Partner(s)"),
-    #     widget=forms.TextInput, required=True
-    # )
-    # focal_point = forms.ModelChoiceField(
-    #     queryset=FocalPoint.objects.all(), widget=forms.Select,
-    #     label=_('UNICEF Focal Point'),
-    #     empty_label='-------',
-    #     required=True, to_field_name='id',
-    # )
-    # start_date = forms.DateField(
-    #     label=_("Start Date"),
-    #     required=False
-    # )
-    # end_date = forms.DateField(
-    #     label=_("End Date"),
-    #     required=False
-    # )
-    # comment = forms.CharField(
-    #     label=_('Comment'),
-    #     widget=forms.Textarea, required=False
-    # )
-    # plan = forms.ModelChoiceField(
-    #     queryset=Plan.objects.all(), widget=forms.Select,
-    #     label=_('Plan'),
-    #     empty_label='-------',
-    #     required=True, to_field_name='id',
-    # )
-    # sectors = forms.ModelChoiceField(
-    #     queryset=Sector.objects.all(), widget=forms.Select,
-    #     label=_('SELECT SECTORS TARGETED BY THIS PROJECT'),
-    #     empty_label='-------',
-    #     required=True, to_field_name='id',
-    # )
-    # project_type = forms.ModelChoiceField(
-    #     queryset=ProjectType.objects.all(), widget=forms.Select,
-    #     label=_('Type of Project'),
-    #     empty_label='-------',
-    #     required=True, to_field_name='id',
-    # )
-    # public_institution_support = forms.ChoiceField(
-    #     label=_("Support of Public Institution"),
-    #     widget=forms.Select, required=True,
-    #     choices=ProgramDocument.SUPPORT
-    # )
+    funded_by = forms.ModelChoiceField(
+        queryset=FundedBy.objects.all(), widget=forms.Select,
+        label=_('Funded By'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    project_status = forms.ChoiceField(
+        label=_("Project Status"),
+        widget=forms.Select, required=True,
+        choices=ProgramDocument.PROJECT_STATUS
+    )
+    project_code = forms.CharField(
+        label=_("Project Code"),
+        widget=forms.TextInput, required=True
+    )
+    project_name = forms.CharField(
+        label=_("Project Name"),
+        widget=forms.TextInput, required=True
+    )
+    project_description = forms.CharField(
+        label=_("Project Description"),
+        widget=forms.TextInput, required=True
+    )
+    implementing_partners = forms.CharField(
+        label=_("Key Implementing Partner(s)"),
+        widget=forms.TextInput, required=True
+    )
+    focal_point = forms.ModelChoiceField(
+        queryset=FocalPoint.objects.all(), widget=forms.Select,
+        label=_('UNICEF Focal Point'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    start_date = forms.DateField(
+        label=_("Start Date"),
+        required=False
+    )
+    end_date = forms.DateField(
+        label=_("End Date"),
+        required=False
+    )
+    comment = forms.CharField(
+        label=_('Comment'),
+        widget=forms.Textarea, required=False
+    )
+    plan = forms.ModelChoiceField(
+        queryset=Plan.objects.all(), widget=forms.Select,
+        label=_('Plan'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    sectors = forms.ModelChoiceField(
+        queryset=Sector.objects.all(), widget=forms.Select,
+        label=_('SELECT SECTORS TARGETED BY THIS PROJECT'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    project_type = forms.ModelChoiceField(
+        queryset=ProjectType.objects.all(), widget=forms.Select,
+        label=_('Type of Project'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
+    public_institution_support = forms.ChoiceField(
+        label=_("Support of Public Institution"),
+        widget=forms.Select, required=True,
+        choices=ProgramDocument.SUPPORT
+    )
     governorates = forms.ModelMultipleChoiceField(
         queryset=Location.objects.filter(parent__isnull=True),
         widget=forms.CheckboxSelectMultiple,
         label=_('Governorate of Coverage'),
         required=False
     )
-    #
-    # budget = forms.FloatField(
-    #     label=_('Please add the Project Budget in USD'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # cash_assistance = forms.ChoiceField(
-    #     label=_("Does this Project have any Cash Assistance Component"),
-    #     widget=forms.Select, required=True,
-    #     choices=ProgramDocument.YES_NO
-    # )
-    # population_groups = models.ManyToManyField(PopulationGroups, blank=True, verbose_name=_('Governorate of Coverage'))
-
-    # number_targeted_syrians = forms.IntegerField(
-    #     label=_('Number of Targeted Displaced Syrians'),
-    #     widget=forms.TextInput, required=False
-    # )
-    # number_targeted_lebanese = forms.IntegerField(
-    #     label=_('Number of Targeted Lebanese'),
-    #     widget=forms.TextInput, required=False
-    # )
-    # number_targeted_prl = forms.IntegerField(
-    #     label=_('Number of Targeted PRL'),
-    #     widget=forms.TextInput, required=False
-    # )
-    # number_targeted_prs = forms.IntegerField(
-    #     label=_('Number of Targeted PRS'),
-    #     widget=forms.TextInput, required=False
-    # )
-    # master_programs = models.ManyToManyField(MasterProgram, blank=True, verbose_name=_('Master Programs'))
+    budget = forms.FloatField(
+        label=_('Please add the Project Budget in USD'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    cash_assistance = forms.ChoiceField(
+        label=_("Does this Project have any Cash Assistance Component"),
+        widget=forms.Select, required=True,
+        choices=ProgramDocument.YES_NO
+    )
+    population_groups = forms.ModelMultipleChoiceField(
+        queryset=PopulationGroups.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        label=_('Population Groups Targeted'),
+        required=False
+    )
+    number_targeted_syrians = forms.IntegerField(
+        label=_('Number of Targeted Displaced Syrians'),
+        widget=forms.TextInput, required=False
+    )
+    number_targeted_lebanese = forms.IntegerField(
+        label=_('Number of Targeted Lebanese'),
+        widget=forms.TextInput, required=False
+    )
+    number_targeted_prl = forms.IntegerField(
+        label=_('Number of Targeted PRL'),
+        widget=forms.TextInput, required=False
+    )
+    number_targeted_prs = forms.IntegerField(
+        label=_('Number of Targeted PRS'),
+        widget=forms.TextInput, required=False
+    )
+    master_programs = forms.ModelMultipleChoiceField(
+        queryset=MasterProgram.objects.filter(active=True),
+        widget=forms.CheckboxSelectMultiple,
+        label=_('Master Programs'),
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -327,195 +335,106 @@ class ProgramDocumentForm_bak(forms.ModelForm):
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('partner', css_class='col-md-5'),
                     HTML('<span class="badge-form badge-pill">2</span>'),
-                    # Div('funded_by', css_class='col-md-5'),
+                    Div('funded_by', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
-                # Div(
-                #     HTML('<span class="badge-form badge-pill">3</span>'),
-                #     Div('project_status', css_class='col-md-5'),
-                #     HTML('<span class="badge-form badge-pill">4</span>'),
-                #     Div('project_code', css_class='col-md-5'),
-                #     css_class='row card-body'
-                # ),
-                # Div(
-                #     HTML('<span class="badge-form badge-pill">5</span>'),
-                #     Div('project_name', css_class='col-md-5'),
-                #     HTML('<span class="badge-form badge-pill">6</span>'),
-                #     Div('project_description', css_class='col-md-5'),
-                #     css_class='row card-body'
-                # ),
-                # Div(
-                #     HTML('<span class="badge-form badge-pill">7</span>'),
-                #     Div('implementing_partners', css_class='col-md-5'),
-                #     HTML('<span class="badge-form badge-pill">8</span>'),
-                #     Div('focal_point', css_class='col-md-5'),
-                #     css_class='row card-body'
-                # ),
-                # Div(
-                #     HTML('<span class="badge-form badge-pill">9</span>'),
-                #     Div('start_date', css_class='col-md-5'),
-                #     HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                #     Div('end_date', css_class='col-md-5'),
-                #     css_class='row card-body'
-                # ),
-                # Div(
-                #     HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                #     Div('comment', css_class='col-md-10'),
-                #     css_class='row card-body'
-                # ),
-                # Div(
-                #     HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                #     Div('plan', css_class='col-md-5'),
-                #     HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                #     Div('sectors', css_class='col-md-5'),
-                #     css_class='row card-body'
-                # ),
-                # Div(
-                #     HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                #     Div('project_type', css_class='col-md-5'),
-                #     HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                #     Div('public_institution_support', css_class='col-md-5'),
-                #     css_class='row card-body'
-                # ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('governorates', css_class='col-md-5  multiple-checbkoxes'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('project_status', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('project_code', css_class='col-md-5'),
                     css_class='row card-body'
                 ),
-                # Div(
-                #     HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                #     Div('budget', css_class='col-md-5'),
-                #     HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                #     Div('cash_assistance', css_class='col-md-5'),
-                #     css_class='row card-body'
-                # ),
-        #     # population_groups
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">20</span>'),
-        #             Div('number_targeted_syrians', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">21</span>'),
-        #             Div('number_targeted_lebanese', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">22</span>'),
-        #             Div('number_targeted_prl', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">23</span>'),
-        #             Div('number_targeted_prs', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #     # master_programs
+                Div(
+                    HTML('<span class="badge-form badge-pill">5</span>'),
+                    Div('project_name', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
+                    Div('project_description', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">7</span>'),
+                    Div('implementing_partners', css_class='col-md-5'),
+                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    Div('focal_point', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('start_date', css_class='col-md-5'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                    Div('end_date', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                    Div('plan', css_class='col-md-5'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                    Div('sectors', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                    Div('project_type', css_class='col-md-5'),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                    Div('public_institution_support', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('comment', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    Div('budget', css_class='col-md-5'),
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                    Div('cash_assistance', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    Div('number_targeted_syrians', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">21</span>'),
+                    Div('number_targeted_lebanese', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">22</span>'),
+                    Div('number_targeted_prl', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                    Div('number_targeted_prs', css_class='col-md-5'),
+                    css_class='row card-body'
+                ),
                 css_id='step-1'
             ),
-            FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Reset('reset', 'Reset',
-                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                # HTML(
-                #     '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/Child-Registration-Cancel/{}/">Cancel</a>'.format(
-                #         registry)
-                # ),
-
-            ),
-        )
-
-    def save(self, request=None, instance=None):
-        from datetime import datetime
-        validated_data = request.POST
-
-        if not instance:
-            instance = ProgramDocument.objects.create()
-        else:
-            instance = ProgramDocument.objects.get(id=instance)
-
-        instance.partner_id = validated_data.get('partner')
-
-        # Save the instance to ensure it has an ID
-        instance.save()
-
-        # Assign the governorates from the form data
-        governorates_ids = validated_data.getlist('governorates')
-        governorates = Location.objects.filter(id__in=governorates_ids)
-        instance.governorates.set(governorates)
-
-        instance.save()
-
-        messages.success(request, _('Your data has been sent successfully to the server'))
-
-        return instance
-
-
-    class Meta:
-        model = ProgramDocument
-        fields = (
-            'partner',
-            'governorates',
-            # 'dropout_date',
-            # 'master_program',
-            # 'sub_program',
-            # 'registration_date',
-            # 'completion_date',
-        )
-
-
-class ProgramDocumentForm(forms.ModelForm):
-    partner = forms.ModelChoiceField(
-        queryset=Partner.objects.all(), widget=forms.Select,
-        label=_('Partner'),
-        empty_label='-------',
-        required=True, to_field_name='id',
-    )
-
-    governorates = forms.ModelMultipleChoiceField(
-        queryset=Location.objects.filter(parent__isnull=True),
-        widget=forms.CheckboxSelectMultiple,
-        label=_('Governorate of Coverage'),
-        required=False
-    )
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        instance = kwargs.pop('instance', None)
-
-        super(ProgramDocumentForm, self).__init__(*args, **kwargs)
-
-        form_action = reverse('youth:program_program_document_add')
-        if instance:
-            form_action = reverse('youth:program_program_document_edit',
-                                  kwargs={'pk': instance})
-
-        self.helper = FormHelper()
-        self.helper.form_show_labels = True
-        self.helper.form_action = form_action
-        self.helper.layout = Layout(
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('partner', css_class='col-md-5'),
+                    Div('master_programs', css_class='col-md-5  multiple-choice checkbox'),
                     css_class='row card-body'
                 ),
-
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('governorates', css_class='col-md-5  multiple-checbkoxes'),
-                    css_class='row card-body'
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
-
-                css_id='step-1'
-            ),
-            FormActions(
-                Submit('save', 'Save',
-                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Reset('reset', 'Reset',
-                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-
-            ),
+                css_id='step-2'
+            )
         )
 
     def save(self, request=None, instance=None):
@@ -537,6 +456,16 @@ class ProgramDocumentForm(forms.ModelForm):
         governorates = Location.objects.filter(id__in=governorates_ids)
         instance.governorates.set(governorates)
 
+        # Assign the population_groups from the form data
+        population_groups_ids = validated_data.getlist('population_groups')
+        population_groups = PopulationGroups.objects.filter(id__in=population_groups_ids)
+        instance.population_groups.set(population_groups)
+
+        # Assign the master_programs from the form data
+        master_programs_ids = validated_data.getlist('master_programs')
+        master_programs = MasterProgram.objects.filter(id__in=master_programs_ids)
+        instance.master_programs.set(master_programs)
+
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -549,6 +478,8 @@ class ProgramDocumentForm(forms.ModelForm):
         fields = (
             'partner',
             'governorates',
+            'population_groups',
+            'master_programs',
         )
 
 
