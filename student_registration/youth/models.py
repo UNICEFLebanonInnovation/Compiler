@@ -237,7 +237,7 @@ class PopulationGroups(models.Model):
 
 
 class MasterProgram(TimeStampedModel):
-    name = models.CharField(max_length=45, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
@@ -268,7 +268,7 @@ class SubProgram(TimeStampedModel):
         blank=False, null=True,
         related_name='master_program',
     )
-    name = models.CharField(max_length=45, unique=True)
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         ordering = ['name']
@@ -293,7 +293,7 @@ class SubProgram(TimeStampedModel):
 
 class Donor(models.Model):
 
-    name = models.CharField(max_length=45, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
