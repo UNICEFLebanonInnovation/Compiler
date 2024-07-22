@@ -3,10 +3,16 @@
 $(document).ready(function(){
     reorganizeForm();
 
+    if($(document).find('#id_dropout_date').length == 1) {
+        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
+    }
     $(document).on('change', 'select#id_referred_service' , function(){
        reorganizeForm();
     });
     $(document).on('change', 'select#id_referred_formal_education' , function(){
+       reorganizeForm();
+    });
+    $(document).on('change', 'select#id_recommended_learning_path' , function(){
        reorganizeForm();
     });
 
@@ -41,6 +47,15 @@ function reorganizeForm()
         $('#id_referred_school').val('');
         $('div#div_id_referred_school').addClass('d-none');
         $('#id_referred_school').removeClass('error-field');
+    }
+
+    var recommended_learning_path = $('select#id_recommended_learning_path').val();
+    if(recommended_learning_path == 'Drop out'){
+        $('div#div_id_dropout_date').removeClass('d-none');
+    }
+    else{
+        $('#id_dropout_date').val('');
+        $('div#div_id_dropout_date').addClass('d-none');
     }
   }
 
