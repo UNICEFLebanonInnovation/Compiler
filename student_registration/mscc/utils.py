@@ -16,7 +16,7 @@ from student_registration.clm.models import (
     Inclusion
 )
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
-from student_registration.mscc.models import Registration, EducationService, InclusionService
+from student_registration.mscc.models import Registration, EducationService, Referral
 
 
 def to_array(fields, obj):
@@ -405,11 +405,13 @@ def load_child_attendance(center_id, attendance_date, education_program, class_s
                         class_section=class_section
                     )
                 )
-            ).filter(has_education_service=True).exclude(
+            ).filter(has_education_service=True)\
+                .exclude(
                 id__in=Subquery(
-                    InclusionService.objects.filter(
+                    Referral.objects.filter(
                         registration_id=OuterRef('pk'),
-                        dropout='Yes'
+                        recommended_learning_path='Drop out',
+                        dropout_date__lte = attendance_date
                     ).values('registration_id')
                 )
             )
