@@ -2813,10 +2813,12 @@
   {% endif %}
   {% endif %}
 
+
+
   {% get_youth_services instance 'GIL' as result %}
-   {% if result %}
+   {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
-  {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
+  {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' or instance.type == 'Walk-in'  %}
   <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}
                                 <div class="mb-3 card">
