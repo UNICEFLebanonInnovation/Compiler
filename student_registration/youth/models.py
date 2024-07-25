@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 import re
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from datetime import datetime
 
 
 from student_registration.adolescent.models import Adolescent
@@ -235,14 +236,14 @@ class PopulationGroups(models.Model):
     def __unicode__(self):
         return self.name
 
-
 class MasterProgram(TimeStampedModel):
-    name = models.CharField(max_length=100, unique=True)
+    number = models.CharField(max_length=20, blank=False, null=True)
+    name = models.CharField(max_length=100)
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']
-        verbose_name = "MasterProgram"
+        verbose_name = "Master Program"
 
     def __str__(self):
         return self.name
@@ -252,14 +253,23 @@ class MasterProgram(TimeStampedModel):
 
     def clean(self):
         super(MasterProgram, self).clean()
+
         # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
         normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
-        duplicates = MasterProgram.objects.exclude(id=self.id)
+
+        # Extract the year from the creation date
+        creation_year = self.created.year if self.created else datetime.now().year
+
+        # Check for duplicates within the same year
+        duplicates = MasterProgram.objects.exclude(id=self.id).filter(created__year=creation_year)
         for program in duplicates:
             normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
             if normalized_name == normalized_duplicate_name:
-                raise ValidationError({'name': _('A master program with a similar name already exists: %s') % program.name})
+                raise ValidationError({'name': _('A Master Program with a similar name already exists in the same year: %s') % program.name})
 
+    def creation_year(self):
+        return self.created.year if self.created else 'Unknown'
+    creation_year.short_description = 'Creation Year'
 
 class SubProgram(TimeStampedModel):
 
@@ -268,7 +278,8 @@ class SubProgram(TimeStampedModel):
         blank=False, null=True,
         related_name='master_program',
     )
-    name = models.CharField(max_length=100, unique=True)
+    number = models.CharField(max_length=20, blank=False, null=True)
+    name = models.CharField(max_length=100)
 
     class Meta:
         ordering = ['name']
@@ -282,15 +293,25 @@ class SubProgram(TimeStampedModel):
 
     def clean(self):
         super(SubProgram, self).clean()
+
         # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
         normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
-        duplicates = SubProgram.objects.exclude(id=self.id)
-        for s_program in duplicates:
-            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', s_program.name.lower().strip())
+
+        # Extract the year from the creation date
+        creation_year = self.created.year if self.created else datetime.now().year
+
+        # Check for duplicates within the same year
+        duplicates = SubProgram.objects.exclude(id=self.id).filter(created__year=creation_year)
+        for program in duplicates:
+            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
             if normalized_name == normalized_duplicate_name:
-                raise ValidationError({'name': _('A sub program with a similar name already exists: %s') % s_program.name})
+                raise ValidationError({'name': _('A Sub Program with a similar name already exists in the same year: %s') % program.name})
 
+    def creation_year(self):
+        return self.created.year if self.created else 'Unknown'
+    creation_year.short_description = 'Creation Year'
 
+    
 class Donor(models.Model):
 
     name = models.CharField(max_length=100, unique=True)

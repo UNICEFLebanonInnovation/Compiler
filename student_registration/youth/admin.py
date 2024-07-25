@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
@@ -89,13 +90,30 @@ class ProgramDocumentAdmin(admin.ModelAdmin):
     )
 
 
-class ProgramAdmin(admin.ModelAdmin):
-    list_display = ('name', 'active')
-    search_fields = ('name', 'active')
+class CreationYearFilter(admin.SimpleListFilter):
+    title = _('creation year')
+    parameter_name = 'creation_year'
+
+    def lookups(self, request, model_admin):
+        years = set([obj.created.year for obj in model_admin.model.objects.all()])
+        return [(year, year) for year in years]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(created__year=self.value())
+        return queryset
+
+
+class MasterProgramAdmin(admin.ModelAdmin):
+    list_display = ('number', 'name', 'active', 'creation_year')
+    search_fields = ('number', 'name', 'active')
+    list_filter = (CreationYearFilter,)
+
 
 class SubProgramAdmin(admin.ModelAdmin):
-    list_display = ('name', 'master_program')
-    search_fields = ('name', 'master_program')
+    list_display = ('number', 'name', 'master_program', 'creation_year')
+    search_fields = ('number', 'name', 'master_program', 'active')
+    list_filter = (CreationYearFilter,)
 
 class PartnerAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name', 'active')
@@ -156,11 +174,11 @@ admin.site.register(Plan, PlanAdmin)
 admin.site.register(Sector, SectorAdmin)
 admin.site.register(ProjectType, ProjectTypeAdmin)
 admin.site.register(PopulationGroups, PopulationGroupsAdmin)
-admin.site.register(MasterProgram, ProgramAdmin)
+admin.site.register(MasterProgram, MasterProgramAdmin)
 admin.site.register(SubProgram, SubProgramAdmin)
 admin.site.register(Donor,DonorAdmin)
 admin.site.register(YouthAssessment)
 admin.site.register(ProgramDocument, ProgramDocumentAdmin)
 admin.site.register(Registration, RegistrationAdmin)
-admin.site.register(EnrolledPrograms, EnrolledProgramAdmin)
+# admin.site.register(EnrolledPrograms, EnrolledProgramAdmin)
 # admin.site.register(YouthAssessment, YouthAssessmentAdmin)
