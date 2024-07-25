@@ -35,7 +35,7 @@ from student_registration.locations.models import Location
 
 class EnrolledProgramsForm(forms.ModelForm):
     education_status = forms.ChoiceField(
-        label=_("Youth\'s educational level when registering"),
+        label=_("Youth's educational level when registering"),
         widget=forms.Select, required=True,
         choices=EnrolledPrograms.EDUCATION_STATUS,
     )
@@ -43,17 +43,13 @@ class EnrolledProgramsForm(forms.ModelForm):
         label=_("Please Specify dropout date from school"),
         required=False
     )
-    master_program = forms.ModelChoiceField(
-        queryset=MasterProgram.objects.all(), widget=forms.Select,
-        label=_('Master Program'),
-        empty_label='-------',
-        required=True, to_field_name='id',
+    registration_date = forms.DateField(
+        label=_("Date of registration"),
+        required=True
     )
-    sub_program = forms.ModelChoiceField(
-        queryset=SubProgram.objects.all(), widget=forms.Select,
-        label=_('Sub Program'),
-        empty_label='-------',
-        required=True, to_field_name='id',
+    completion_date = forms.DateField(
+        label=_("Date of completion"),
+        required=True
     )
     donor = forms.ModelChoiceField(
         queryset=Donor.objects.all(), widget=forms.Select,
@@ -67,13 +63,17 @@ class EnrolledProgramsForm(forms.ModelForm):
         empty_label='-------',
         required=True, to_field_name='id',
     )
-    registration_date = forms.DateField(
-        label=_("Date of registration"),
-        required=True
+    master_program = forms.ModelChoiceField(
+        queryset=MasterProgram.objects.all(), widget=forms.Select,
+        label=_('Master Program'),
+        empty_label='-------',
+        required=True, to_field_name='id',
     )
-    completion_date = forms.DateField(
-        label=_("Date of completion"),
-        required=True
+    sub_program = forms.ModelChoiceField(
+        queryset=SubProgram.objects.all(), widget=forms.Select,
+        label=_('Sub Program'),
+        empty_label='-------',
+        required=True, to_field_name='id',
     )
 
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -181,17 +181,18 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         return instance
 
-
     class Meta:
         model = EnrolledPrograms
         fields = (
             'registration_id',
             'education_status',
             'dropout_date',
-            'master_program',
-            'sub_program',
             'registration_date',
             'completion_date',
+            'donor',
+            'program_document',
+            'master_program',
+            'sub_program',
         )
 
 

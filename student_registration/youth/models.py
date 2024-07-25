@@ -237,7 +237,7 @@ class PopulationGroups(models.Model):
         return self.name
 
 class MasterProgram(TimeStampedModel):
-    number = models.CharField(max_length=20, blank=False, null=True)
+    number = models.CharField(max_length=20, default='1')
     name = models.CharField(max_length=100)
     active = models.BooleanField(blank=True, default=False)
 
@@ -278,7 +278,7 @@ class SubProgram(TimeStampedModel):
         blank=False, null=True,
         related_name='master_program',
     )
-    number = models.CharField(max_length=20, blank=False, null=True)
+    number = models.CharField(max_length=20, default='1')
     name = models.CharField(max_length=100)
 
     class Meta:
@@ -364,12 +364,12 @@ class ProgramDocument(TimeStampedModel):
     )
     project_code = models.CharField(
         max_length=100,
-        blank=True, null=True,
+        default='project_code',
         verbose_name=_('Project Code')
     )
     project_name = models.CharField(
         max_length=100,
-        blank=True, null=True,
+        default='project_name',
         verbose_name=_('Project Name')
     )
     project_description = models.CharField(
@@ -426,7 +426,7 @@ class ProgramDocument(TimeStampedModel):
         choices=SUPPORT,
         verbose_name=_('Support of Public Institution')
     )
-    governorates = models.ManyToManyField(Location, blank=True, related_name='program_documents', verbose_name=_('Governorate of Coverage'))
+    governorates = models.ManyToManyField(Location, blank=True, related_name='+', verbose_name=_('Governorate of Coverage'))
 
     budget = models.FloatField(
         blank=True,
