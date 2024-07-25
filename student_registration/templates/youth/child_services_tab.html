@@ -2473,7 +2473,7 @@
 {% endif %}
 
   <!--Adolescents kit-->
-  {% get_education_service  instance  as service %}
+  {% get_enrolled_program  instance  as service %}
   {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|ABLN Level 1|ABLN Level 2|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
 <!--  {{service}}-->
     {% get_service instance 'Adolescents kit' as result %}
@@ -2707,7 +2707,7 @@
 
   {% get_youth_services instance 'Maharati' as result %}
   {% if result %}
-{% get_education_service  instance  as service %}
+{% get_enrolled_program  instance  as service %}
   {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|ABLN Level 1|ABLN Level 2|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
 
 <div class="col-md-12 col-lg-6 col-xl-4">
@@ -2815,7 +2815,7 @@
 
   {% get_youth_services instance 'GIL' as result %}
    {% if result %}
-{% get_education_service  instance  as service %}
+{% get_enrolled_program  instance  as service %}
   {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
   <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}

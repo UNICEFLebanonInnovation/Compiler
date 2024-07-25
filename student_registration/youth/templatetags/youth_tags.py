@@ -17,12 +17,12 @@ def have_service(services, service_name):
         return services[service_name]
 
 @register.simple_tag
-def get_education_service(registry):
+def get_enrolled_program(registry):
     if type(registry) == 'int':
         enrolled_programs = EnrolledPrograms.objects.filter(registration_id=registry).last()
     enrolled_programs = EnrolledPrograms.objects.filter( registration=registry).last()
     if enrolled_programs:
-        return enrolled_programs.program
+        return enrolled_programs.master_program
     else:
         return None
 
