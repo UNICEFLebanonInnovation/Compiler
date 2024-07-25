@@ -8,12 +8,6 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('locations', '0020_auto_20231018_1634'),
+        ('locations', '0021_auto_20240722_1626'),
     ]
 
-    operations = [
-        migrations.AlterModelOptions(
-            name='programstaff',
-            options={'ordering': ['facilitator_name'], 'verbose_name': 'ProgramStaff', 'verbose_name_plural': 'ProgramStaffs'},
-        ),
-    ]
