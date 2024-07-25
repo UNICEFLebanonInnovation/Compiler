@@ -1940,6 +1940,7 @@ class Referral(TimeStampedModel):
         choices=LEARNING_PATH,
         verbose_name=_('Based on the overall score, what is the recommended learning path/outcome?')
     )
+    dropout_date = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ['id']

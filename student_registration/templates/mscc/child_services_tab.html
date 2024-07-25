@@ -2813,10 +2813,12 @@
   {% endif %}
   {% endif %}
 
+
+
   {% get_youth_services instance 'GIL' as result %}
-   {% if result %}
+   {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
-  {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
+  {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' or instance.type == 'Walk-in'  %}
   <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}
                                 <div class="mb-3 card">
@@ -3419,7 +3421,9 @@
                                                               <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">Recommended learning path/outcome</h4>
-                                                                            <p>{{ result.recommended_learning_path }}</p>
+                                                                            <p>{{ result.recommended_learning_path }}
+                                                                              {% if result.recommended_learning_path == 'Drop out'  %} - {{result.dropout_date}}{% endif %}
+</p>
                                                                         </div>
                                                                     </div>
                                                               </div>

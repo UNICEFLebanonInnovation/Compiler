@@ -48,7 +48,7 @@ urlpatterns = [
     ),
 
     url(
-        regex=r'^attendance-export/$',
+        regex=r'^attendance-export/(?P<month>[\w.@+-]+)/(?P<year>[\w.@+-]+)/$',
         view=views.attendance_export,
         name='attendance_export'
     ),

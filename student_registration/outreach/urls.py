@@ -26,4 +26,7 @@ urlpatterns = [
         view=views.outreach_unregistered_export_data,
         name='outreach_unregistered_export'
     ),
+    url(r'^outreach-unregistered-export-info/$', views.outreach_unregistered_export_info, name='outreach_unregistered_export_info'),
+    url(r'^outreach-unregistered-export/(?P<part>\d+)/$', views.outreach_unregistered_export_data, name='outreach_unregistered_export')
 ]
+

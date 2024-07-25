@@ -307,53 +307,53 @@ class MainForm(forms.ModelForm):
         required=True, to_field_name='id'
     )
     case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('UNHCR Case Number')
     )
     case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Case Number')
     )
     parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Cargiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Cargiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{8}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
         required=False,
         label=_(
             'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
     )
     recorded_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('UNHCR Barcode number (Shifra number)')
     )
     recorded_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$|^LB-\d{3}-\d{6}|\d{7}$|^86A-\d{2}-\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX or LB-XXX-XXXXXX'}),
         required=False,
         label=_('Confirm UNHCR Barcode number (Shifra number)')
@@ -1128,6 +1128,10 @@ class ReferralForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Referral.LEARNING_PATH,
     )
+    dropout_date = forms.DateField(
+        label=_("Please Specify dropout date"),
+        required=False
+    )
     is_cbece = forms.CharField(required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -1193,9 +1197,11 @@ class ReferralForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form badge-pill">4</span>'),
-                        Div('recommended_learning_path', css_class='col-md-11'),
+                        Div('recommended_learning_path', css_class='col-md-5'),
+                        Div('dropout_date', css_class='col-md-6'),
                         css_class='row card-body'
                     ),
+
                     css_id='step-1'
                 ),
                 FormActions(
@@ -1234,6 +1240,10 @@ class ReferralForm(forms.ModelForm):
                         Div('recommended_learning_path', css_class='col-md-11'),
                         css_class='row card-body'
                     ),
+                    Div(
+                        Div('dropout_date', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
                     css_id='step-1'
                 ),
                 FormActions(
@@ -1245,7 +1255,7 @@ class ReferralForm(forms.ModelForm):
         )
 
     def save(self, request=None, instance=None, registry=None):
-
+        from datetime import datetime
         validated_data = request.POST
 
         if not instance:
@@ -1259,6 +1269,10 @@ class ReferralForm(forms.ModelForm):
         instance.referred_service = validated_data.get('referred_service')
         instance.referred_service_other = validated_data.get('referred_service_other')
         instance.recommended_learning_path = validated_data.get('recommended_learning_path')
+        dropout_date_str = validated_data.get('dropout_date')
+        if dropout_date_str:
+            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
+            instance.dropout_date = dropout_date
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -1283,6 +1297,11 @@ class ReferralForm(forms.ModelForm):
         if referred_service and referred_service == 'Other' and not referred_service_other:
             self.add_error('referred_service_other', 'This field is required')
 
+        recommended_learning_path = cleaned_data.get("recommended_learning_path")
+        dropout_date = cleaned_data.get("dropout_date")
+        if recommended_learning_path == 'Drop out' and not dropout_date:
+            self.add_error('dropout_date', 'This field is required')
+
     class Meta:
         model = Referral
         fields = (
@@ -1292,4 +1311,5 @@ class ReferralForm(forms.ModelForm):
             'referred_service',
             'referred_service_other',
             'recommended_learning_path',
+            'dropout_date',
         )

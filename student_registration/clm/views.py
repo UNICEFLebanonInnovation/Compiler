@@ -3917,3 +3917,8 @@ def bridging_school_export_data(school_id):
 class BridgingPage(LoginRequiredMixin,
                    TemplateView):
         template_name = 'clm/bridging.html'
+
+
+class BridgingAttendanceReport(LoginRequiredMixin,
+                   TemplateView):
+    template_name = 'clm/bridging_attendance_report.html'
