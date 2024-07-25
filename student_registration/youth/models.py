@@ -311,7 +311,7 @@ class SubProgram(TimeStampedModel):
         return self.created.year if self.created else 'Unknown'
     creation_year.short_description = 'Creation Year'
 
-    
+
 class Donor(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
