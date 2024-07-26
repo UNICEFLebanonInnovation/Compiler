@@ -72,6 +72,8 @@ def login_success(request):
 
     if has_group(request.user, 'MSCC'):
         return HttpResponseRedirect(reverse('mscc:list'))
+    elif has_group(request.user, 'YOUTH'):
+        return HttpResponseRedirect(reverse('youth:list'))
     else:
         return HttpResponseRedirect(reverse('clm:index'))
 
