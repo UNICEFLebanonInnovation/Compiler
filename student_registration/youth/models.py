@@ -254,6 +254,11 @@ class MasterProgram(TimeStampedModel):
     def clean(self):
         super(MasterProgram, self).clean()
 
+        if not self.number:
+            raise ValidationError({'number': _('Number cannot be empty')})
+        if not self.name:
+            raise ValidationError({'name': _('Name cannot be empty')})
+
         # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
         normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
 
@@ -293,6 +298,11 @@ class SubProgram(TimeStampedModel):
 
     def clean(self):
         super(SubProgram, self).clean()
+
+        if not self.number:
+            raise ValidationError({'number': _('Number cannot be empty')})
+        if not self.name:
+            raise ValidationError({'name': _('Name cannot be empty')})
 
         # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
         normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
@@ -484,6 +494,14 @@ class ProgramDocument(TimeStampedModel):
 
     def get_master_program_names(self):
         return ", ".join(prog.name for prog in self.master_programs.all())
+
+    def clean(self):
+        super(ProgramDocument, self).clean()
+
+        if not self.project_name:
+            raise ValidationError({'project_name': _('Project Name cannot be empty')})
+        if not self.project_code:
+            raise ValidationError({'project_code': _('Project Code cannot be empty')})
 
 
 class Registration(TimeStampedModel):
