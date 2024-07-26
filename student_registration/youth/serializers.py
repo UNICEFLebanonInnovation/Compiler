@@ -75,11 +75,15 @@ class MainSerializer(serializers.ModelSerializer):
     adolescent_nationality = serializers.CharField(source='adolescent.nationality')
     adolescent_nationality_id = serializers.CharField(source='adolescent.nationality.id', read_only=True)
     adolescent_nationality_other = serializers.CharField(source='adolescent.nationality_other', required=False)
-    adolescent_governorate = serializers.CharField(source='adolescent.governorate', required=False)
-    adolescent_district = serializers.CharField(source='adolescent.district', required=False)
-    adolescent_cadaster = serializers.CharField(source='adolescent.cadaster', required=False)
+    adolescent_governorate = serializers.CharField(source='adolescent.governorate')
+    adolescent_governorate_id = serializers.CharField(source='adolescent.governorate.id', read_only=True)
+    adolescent_district = serializers.CharField(source='adolescent.district')
+    adolescent_district_id = serializers.CharField(source='adolescent.district.id', read_only=True)
+    adolescent_cadaster = serializers.CharField(source='adolescent.cadaster')
+    adolescent_cadaster_id = serializers.CharField(source='adolescent.cadaster.id', read_only=True)
     adolescent_address = serializers.CharField(source='adolescent.address', required=False)
     adolescent_disability = serializers.CharField(source='adolescent.disability', required=False)
+    adolescent_disability_id = serializers.CharField(source='adolescent.disability.id', read_only=True)
     adolescent_id_number = serializers.CharField(source='adolescent.id_number', required=False)
     main_caregiver_nationality = serializers.CharField(source='adolescent.main_caregiver_nationality', required=False)
     main_caregiver_nationality_id = serializers.CharField(source='adolescent.main_caregiver_nationality.id', required=False)
@@ -185,10 +189,14 @@ class MainSerializer(serializers.ModelSerializer):
             'main_caregiver_nationality_other',
             'adolescent_id_number',
             'adolescent_governorate',
+            'adolescent_governorate_id',
             'adolescent_district',
+            'adolescent_district_id',
             'adolescent_cadaster',
+            'adolescent_cadaster_id',
             'adolescent_address',
             'adolescent_disability',
+            'adolescent_disability_id',
             'father_educational_level',
             'father_educational_level_id',
             'mother_educational_level',

@@ -72,8 +72,8 @@ class MainForm(forms.ModelForm):
         choices=Adolescent.GENDER
     )
     adolescent_nationality = forms.ModelChoiceField(
-        label=_("Youth\'s Nationality"),
         queryset=Nationality.objects.all(), widget=forms.Select,
+        label=_('Youth\'s Nationality'),
         required=True, to_field_name='id',
     )
     adolescent_nationality_other = forms.CharField(
@@ -584,8 +584,8 @@ class MainForm(forms.ModelForm):
         except ValueError:
             self.add_error('adolescent_birthday_year', 'The date is not valid.')
 
-        adolescent_nationality = cleaned_data.get("child_nationality")
-        adolescent_nationality_other = cleaned_data.get("child_nationality_other")
+        adolescent_nationality = cleaned_data.get("adolescent_nationality")
+        adolescent_nationality_other = cleaned_data.get("adolescent_nationality_other")
         if adolescent_nationality and adolescent_nationality.id == 6 and not adolescent_nationality_other:
             self.add_error('adolescent_nationality_other', 'This field is required')
 
@@ -803,9 +803,6 @@ class MainForm(forms.ModelForm):
             'adolescent_birthday_month',
             'adolescent_birthday_day',
             'main_caregiver_nationality',
-            'main_caregiver_nationality_other',
-            'main_caregiver_nationality_other',
-            'main_caregiver_nationality_other',
             'main_caregiver_nationality_other',
             'adolescent_governorate',
             'adolescent_district',

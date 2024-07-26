@@ -123,7 +123,11 @@ class MainEditView(LoginRequiredMixin,
             return MainForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = MainSerializer(instance).data
-            data['child_nationality'] = data['child_nationality_id'] if 'child_nationality_id' in data else ''
+            data['adolescent_nationality'] = data['adolescent_nationality_id'] if 'adolescent_nationality_id' in data else ''
+            data['adolescent_governorate'] = data['adolescent_governorate_id'] if 'adolescent_governorate_id' in data else ''
+            data['adolescent_district'] = data['adolescent_district_id'] if 'adolescent_district_id' in data else ''
+            data['adolescent_cadaster'] = data['adolescent_cadaster_id'] if 'adolescent_cadaster_id' in data else ''
+            data['adolescent_disability'] = data['adolescent_disability_id'] if 'adolescent_disability_id' in data else ''
             data['main_caregiver_nationality'] = data['main_caregiver_nationality_id']if 'main_caregiver_nationality_id' in data else ''
             data['father_educational_level'] = data['father_educational_level_id']if 'father_educational_level_id' in data else ''
             data['mother_educational_level'] = data['mother_educational_level_id']if 'mother_educational_level_id' in data else ''
