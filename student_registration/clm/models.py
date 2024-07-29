@@ -1892,6 +1892,11 @@ class Bridging(CLM):
         blank=True, null=True,
         verbose_name=_('Please specify')
     )
+    dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Dropout date')
+    )
     first_attendance_date = models.DateField(
         blank=True,
         null=True,

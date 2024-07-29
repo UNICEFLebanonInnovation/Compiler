@@ -10848,7 +10848,7 @@ class BridgingAssessmentForm(forms.ModelForm):
 
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
             ('graduated_to_Bridging_next_level', _('Graduated to the next level SBP')),
@@ -10862,6 +10862,10 @@ class BridgingAssessmentForm(forms.ModelForm):
     learning_result_other = forms.CharField(
         label=_('Please specify'),
         widget=forms.TextInput, required=False
+    )
+    dropout_date = forms.DateField(
+        label=_("Dropout date"),
+        required=False
     )
     barriers_single = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
@@ -11138,12 +11142,16 @@ class BridgingAssessmentForm(forms.ModelForm):
                     Div('child_received_internet', css_class='col-md-3'),
                     css_class='row',
                 ),
-
                 Div(
                     HTML('<span class="badge badge-default">13</span>'),
                     Div('learning_result', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id="span_learning_result_other">13.1</span>'),
-                    Div('learning_result_other', css_class='col-md-4'),
+                    Div('learning_result_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_dropout_date">13.1</span>'),
+                    Div('dropout_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -11188,6 +11196,8 @@ class BridgingAssessmentForm(forms.ModelForm):
 
         learning_result = cleaned_data.get("learning_result")
         learning_result_other = cleaned_data.get("learning_result_other")
+        dropout_date = cleaned_data.get("dropout_date")
+
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
 
@@ -11215,10 +11225,11 @@ class BridgingAssessmentForm(forms.ModelForm):
             if not round_complete:
                 self.add_error('round_complete', 'This field is required')
 
+        if learning_result == 'other' and not learning_result_other:
+            self.add_error('learning_result_other', 'This field is required')
 
-        if learning_result == 'other':
-            if not learning_result_other:
-                self.add_error('learning_result_other', 'This field is required')
+        if learning_result == 'dropout' and not dropout_date:
+            self.add_error('dropout_date', 'This field is required')
 
         if barriers_single == 'other':
             if not barriers_other:
@@ -11340,6 +11351,7 @@ class BridgingAssessmentForm(forms.ModelForm):
             'pss_kit',
             'learning_result',
             'learning_result_other',
+            'dropout_date',
             'cp_referral',
             'child_received_internet',
             'referal_wash',
