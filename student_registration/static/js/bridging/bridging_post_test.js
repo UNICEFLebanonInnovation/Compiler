@@ -175,9 +175,19 @@ function reorganizeForm_post_assessment()
     // learning_result
     $('div#div_id_learning_result_other').addClass('d-none');
     $('#span_learning_result_other').addClass('d-none');
+    $('#div_id_dropout_date').addClass('d-none');
+    $('#span_dropout_date').addClass('d-none');
     if(learning_result == 'other'){
         $('#div_id_learning_result_other').removeClass('d-none');
         $('#span_learning_result_other').removeClass('d-none');
+    }
+    if(learning_result == 'dropout'){
+        $('#div_id_dropout_date').removeClass('d-none');
+        $('#span_dropout_date').removeClass('d-none');
+    }
+    else
+    {
+        $('#id_dropout_date').val('');
     }
 
     $('div#div_id_round_complete').addClass('d-none');

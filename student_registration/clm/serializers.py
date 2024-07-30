@@ -447,7 +447,8 @@ class BridgingSerializer(CLMSerializer):
             'discussion_topic',
             'registration_date',
             'mid_test1',
-            'mid_test2'
+            'mid_test2',
+            'dropout_date'
         )
 
 
