@@ -17,6 +17,10 @@ $(window).load(function () {
 
 $(document).ready(function(){
 
+    if($(document).find('#id_dropout_date').length == 1) {
+        $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
     learning_result_next_level();
 
     reorganizeForm_post_assessment();
