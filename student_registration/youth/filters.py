@@ -81,7 +81,7 @@ class FullFilter(FilterSet):
         fields = []
 
     def filter_by_master_program(self, queryset, name, value):
-        return queryset.filter(enrolled_programs__program=value)
+        return queryset.filter(enrolled_programs__master_program=value)
 
     def filter_by_sub_program(self, queryset, name, value):
         return queryset.filter(enrolled_programs__sub_program=value)
