@@ -621,7 +621,7 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
                     if attendance_date is not None:
                         queryset = queryset.filter(
                             Q(registration_date__isnull=True) | Q(registration_date__lte=attendance_date),
-                                Q(dropout_date__gt=attendance_date)
+                                Q(dropout_date__isnull=True) | Q(dropout_date__gt=attendance_date)
                         )
 
                     queryset = queryset.order_by('student__first_name', 'student__father_name', 'student__last_name')
