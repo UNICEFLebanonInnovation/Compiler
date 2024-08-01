@@ -55,7 +55,7 @@ class User(AbstractUser):
     youth_partner = models.ForeignKey(
         Partner,
         blank=True, null=True,
-        verbose_name=_('Partner'),
+        verbose_name=_('Youth Partner'),
         related_name='+'
     )
 
