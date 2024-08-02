@@ -236,6 +236,7 @@ class PopulationGroups(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class MasterProgram(TimeStampedModel):
     number = models.CharField(max_length=20, default='1')
     name = models.CharField(max_length=100)
@@ -246,10 +247,10 @@ class MasterProgram(TimeStampedModel):
         verbose_name = "Master Program"
 
     def __str__(self):
-        return self.name
+        return self.number + ' - ' + self.name
 
     def __unicode__(self):
-        return self.name
+        return self.number + ' - ' + self.name
 
     def clean(self):
         super(MasterProgram, self).clean()
@@ -291,10 +292,10 @@ class SubProgram(TimeStampedModel):
         verbose_name = "Sub Program"
 
     def __str__(self):
-        return self.name
+        return self.number + ' - ' + self.name
 
     def __unicode__(self):
-        return self.name
+        return self.number + ' - ' + self.name
 
     def clean(self):
         super(SubProgram, self).clean()

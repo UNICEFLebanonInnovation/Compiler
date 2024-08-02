@@ -425,7 +425,7 @@ class ProgramDocumentForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('master_programs', css_class='col-md-5  multiple-choice checkbox'),
+                    Div('master_programs', css_class='col-md-7  multiple-choice checkbox'),
                     css_class='row card-body'
                 ),
                 FormActions(

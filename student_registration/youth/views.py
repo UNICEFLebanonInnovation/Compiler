@@ -33,7 +33,9 @@ from .tables import (
 )
 from .models import (
     Registration,
-    ProgramDocument
+    ProgramDocument,
+    MasterProgram,
+    SubProgram
 )
 from student_registration.locations.models import Location
 
@@ -579,3 +581,47 @@ class PDListView(LoginRequiredMixin,
 
     def get_filterset_class(self):
         return PDFilter
+
+
+def load_districts(request):
+    cities = []
+    if request.GET.get('id_adolescent_governorate'):
+        id_adolescent_governorate = request.GET.get('id_adolescent_governorate')
+        print(id_adolescent_governorate)
+        cities = Location.objects.filter(parent_id=id_adolescent_governorate).order_by('name')
+        print(cities)
+    return render(request, 'youth/city_dropdown_list_options.html', {'cities': cities})
+
+
+def load_cadasters(request):
+    cities = []
+    if request.GET.get('id_adolescent_district'):
+        id_adolescent_district = request.GET.get('id_adolescent_district')
+        cities = Location.objects.filter(parent_id=id_adolescent_district).order_by('name')
+    return render(request, 'youth/cadaster_dropdown_list_options.html', {'cities': cities})
+
+
+def load_program_document(request):
+    program_documents = []
+    if request.GET.get('id_donor'):
+        id_donor = request.GET.get('id_donor')
+        program_documents = ProgramDocument.objects.filter(partner_id=id_donor).order_by('project_name')
+    return render(request, 'youth/program_document_dropdown_list_options.html', {'program_documents': program_documents})
+
+
+def load_master_program(request):
+    master_programs = []
+    if request.GET.get('id_program_document'):
+        id_program_document = request.GET.get('id_program_document')
+        master_programs = MasterProgram.objects.filter(
+            programdocument__id=id_program_document
+        )
+    return render(request, 'youth/master_program_dropdown_list_options.html', {'master_programs': master_programs})
+
+
+def load_sub_program(request):
+    sub_programs = []
+    if request.GET.get('id_master_program'):
+        id_master_program = request.GET.get('id_master_program')
+        sub_programs = SubProgram.objects.filter(master_program_id=id_master_program).order_by('name')
+    return render(request, 'youth/sub_program_dropdown_list_options.html', {'sub_programs': sub_programs})

@@ -116,4 +116,30 @@ urlpatterns = [
         view=views.MainRegistrationCancelView,
         name='child_registration_cancel'
     ),
+    url(
+        'load-districts/$',
+        views.load_districts,
+        name='load_districts'
+    ),
+    url(
+        'load-cadasters/$',
+        views.load_cadasters,
+        name='load_cadasters'
+    ),
+
+    url(
+        'load-program-document/$',
+        views.load_program_document,
+        name='load_program_document'
+    ),
+    url(
+        'load-master-program/$',
+        views.load_master_program,
+        name='load_master_program'
+    ),
+    url(
+        'load-subr-program/$',
+        views.load_sub_program,
+        name='load_sub_program'
+    ),
 ]

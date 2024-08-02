@@ -305,6 +305,33 @@ function fill_outreach_child_data(data)
 }
 
 
+function load_districts(url)
+{
+    var value = $("#id_adolescent_governorate").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_adolescent_governorate': value
+        },
+        success: function (data) {
+            $("#id_adolescent_district").html(data);
+        }
+    })
+}
+function load_cadasters(url)
+{
+    var value = $("#id_adolescent_district").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_adolescent_district': value
+        },
+        success: function (data) {
+            $("#id_adolescent_cadaster").html(data);
+        }
+    })
+}
+
 //old student
 function old_child_search() {
 

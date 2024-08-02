@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for master_program in master_programs %}
+<option value="{{ master_program.pk }}">{{ master_program.number }} - {{ master_program.name }}</option>
+{% endfor %}
