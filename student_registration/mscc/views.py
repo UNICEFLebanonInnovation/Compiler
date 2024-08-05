@@ -253,19 +253,21 @@ class MainListView(LoginRequiredMixin,
         center_id = user.center_id
         partner_id = user.partner_id
 
-        # ToDo : filter and show the latest registration
-        # latest_reg = Registration.objects.annotate(
-        #     max_round=Max('round__id')
-        # ).filter(
-        #     round__id=F('max_round') | F('round__id__isnull')
-        # )
         if has_group(user, 'MSCC_UNICEF'):
-            return Registration.objects.filter(deleted=False, round__current_year=True).order_by('-id')
+            return Registration.objects.filter(
+                Q(round__isnull=True) | Q(round__current_year=True),
+                deleted=False
+            ).order_by('-id')
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return Registration.objects.filter(partner=partner_id, deleted=False, round__current_year=True).order_by('-id')
+            return Registration.objects.filter(
+                Q(round__isnull=True) | Q(round__current_year=True),
+                deleted=False, partner=partner_id
+            ).order_by('-id')
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return Registration.objects.filter(center=center_id, deleted=False, round__current_year=True).order_by('-id')
-
+            return Registration.objects.filter(
+                Q(round__isnull=True) | Q(round__current_year=True),
+                deleted=False, center=center_id
+            ).order_by('-id')
         return Registration.objects.none()
 
     def get_table_class(self):
