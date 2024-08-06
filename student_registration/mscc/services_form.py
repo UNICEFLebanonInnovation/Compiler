@@ -40,7 +40,7 @@ class PSSServiceForm(forms.ModelForm):
     )
 
     child_living_arrangement = forms.ChoiceField(
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=PSSService.LIVING_ARRANGEMENT,
         label=_("What is the child's living arrangement?")
     )
