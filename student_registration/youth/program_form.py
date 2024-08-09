@@ -315,6 +315,12 @@ class ProgramDocumentForm(forms.ModelForm):
         label=_('Master Programs'),
         required=False
     )
+    donors = forms.ModelMultipleChoiceField(
+        queryset=Donor.objects.filter(active=True),
+        widget=forms.CheckboxSelectMultiple,
+        label=_('Donors'),
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -424,6 +430,14 @@ class ProgramDocumentForm(forms.ModelForm):
             ),
             Div(
                 Div(
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
+                    Div('donors', css_class='col-md-7  multiple-choice checkbox'),
+                    css_class='row card-body'
+                ),
+                css_id='step-2'
+            ),
+            Div(
+                Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('master_programs', css_class='col-md-7  multiple-choice checkbox'),
                     css_class='row card-body'
@@ -434,7 +448,7 @@ class ProgramDocumentForm(forms.ModelForm):
                     Reset('reset', 'Reset',
                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
-                css_id='step-2'
+                css_id='step-3'
             )
         )
 
@@ -467,6 +481,11 @@ class ProgramDocumentForm(forms.ModelForm):
         master_programs = MasterProgram.objects.filter(id__in=master_programs_ids)
         instance.master_programs.set(master_programs)
 
+        # Assign the donors from the form data
+        donor_ids = validated_data.getlist('donors')
+        donors = Donor.objects.filter(id__in=donor_ids)
+        instance.donors.set(donors)
+
         instance.save()
 
         messages.success(request, _('Your data has been sent successfully to the server'))
@@ -481,6 +500,7 @@ class ProgramDocumentForm(forms.ModelForm):
             'governorates',
             'population_groups',
             'master_programs',
+            'donors'
         )
 
 

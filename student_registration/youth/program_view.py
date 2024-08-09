@@ -78,9 +78,30 @@ class ProgramDocumentFormView(LoginRequiredMixin,
                     instance_data = ProgramDocument.objects.get(id=instance)
                     data = {
                         'partner': instance_data.partner_id,
+                        'funded_by': instance_data.funded_by_id,
+                        'project_status': instance_data.project_status,
+                        'project_code': instance_data.project_code,
+                        'project_name': instance_data.project_name,
+                        'project_description': instance_data.project_description,
+                        'implementing_partners': instance_data.implementing_partners,
+                        'focal_point': instance_data.focal_point_id,
+                        'start_date': instance_data.start_date,
+                        'end_date': instance_data.end_date,
+                        'comment': instance_data.comment,
+                        'plan': instance_data.plan_id,
+                        'sectors': instance_data.sectors_id,
+                        'project_type': instance_data.project_type_id,
+                        'public_institution_support': instance_data.public_institution_support,
+                        'budget': instance_data.budget,
+                        'cash_assistance': instance_data.cash_assistance,
+                        'number_targeted_syrians': instance_data.number_targeted_syrians,
+                        'number_targeted_lebanese': instance_data.number_targeted_lebanese,
+                        'number_targeted_prl': instance_data.number_targeted_prl,
+                        'number_targeted_prs': instance_data.number_targeted_prs,
                         'governorates': instance_data.governorates.all(),
                         'population_groups': instance_data.population_groups.all(),
                         'master_programs': instance_data.master_programs.all(),
+                        'donors': instance_data.donors.all()
                     }
                 except ProgramDocument.DoesNotExist:
                     pass
@@ -88,6 +109,7 @@ class ProgramDocumentFormView(LoginRequiredMixin,
                 return ProgramDocumentForm(data=data, instance=instance, request=self.request)
 
             return ProgramDocumentForm(instance=instance, request=self.request)
+
 
     def form_valid(self, form):
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None

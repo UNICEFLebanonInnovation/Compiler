@@ -277,6 +277,7 @@ class MasterProgram(TimeStampedModel):
         return self.created.year if self.created else 'Unknown'
     creation_year.short_description = 'Creation Year'
 
+
 class SubProgram(TimeStampedModel):
 
     master_program = models.ForeignKey(
@@ -474,7 +475,7 @@ class ProgramDocument(TimeStampedModel):
         verbose_name=_('Number of Targeted PRS')
     )
     master_programs = models.ManyToManyField(MasterProgram, blank=True, verbose_name=_('Master Programs'))
-
+    donors = models.ManyToManyField(Donor, blank=True, verbose_name=_('Donors'))
 
     class Meta:
         ordering = ['project_name']
@@ -495,6 +496,10 @@ class ProgramDocument(TimeStampedModel):
 
     def get_master_program_names(self):
         return ", ".join(prog.name for prog in self.master_programs.all())
+
+    def get_donor_names(self):
+        return ", ".join(donor.name for donor in self.donors.all())
+        # return "\n".join(donor.name for donor in self.donors.all())
 
     def clean(self):
         super(ProgramDocument, self).clean()

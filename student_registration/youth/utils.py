@@ -26,6 +26,40 @@ def to_array(fields, obj):
     return data
 
 
+def to_array_many_field(fields, obj):
+    data = {}
+    for field_name in fields:
+        if hasattr(obj, field_name):
+            value = getattr(obj, field_name)
+            # Handle ManyToManyField by converting to list of IDs
+            if hasattr(value, 'all'):
+                data[field_name] = list(value.values_list('id', flat=True))
+            # Handle ForeignKey by getting the ID
+            elif hasattr(value, 'id'):
+                value = getattr(value, 'id')
+                data[field_name] = value
+            # Handle simple fields (CharField, IntegerField, etc.)
+            else:
+                data[field_name] = value
+    return data
+
+
+
+# def to_array_many_field(fields, obj):
+#     data = {}
+#     for field_name in fields:
+#         if hasattr(obj, field_name):
+#             value = getattr(obj, field_name)
+#             # Handle ManyToManyField by converting to list of IDs
+#             if hasattr(value, 'all'):
+#                 value = value.values_list('id', flat=True)
+#             # Handle ForeignKey by getting the ID
+#             elif hasattr(value, 'id'):
+#                 value = value.id
+#             data[field_name] = value
+#     return data
+
+
 def get_outreach_child(outreach_id):
     initial = {}
     instance = OutreachChild.objects.get(id=outreach_id)

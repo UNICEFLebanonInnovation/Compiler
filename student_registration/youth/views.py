@@ -35,7 +35,8 @@ from .models import (
     Registration,
     ProgramDocument,
     MasterProgram,
-    SubProgram
+    SubProgram,
+    Donor
 )
 from student_registration.locations.models import Location
 

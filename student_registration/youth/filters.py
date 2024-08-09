@@ -6,7 +6,8 @@ from django_filters import (
     ChoiceFilter,
     CharFilter,
     DateFromToRangeFilter,
-    DateFilter
+    DateFilter,
+    ModelMultipleChoiceFilter
 )
 
 import datetime
@@ -26,7 +27,6 @@ from .models import (
 )
 from student_registration.youth.models import Adolescent
 from student_registration.clm.models import Disability, EducationalLevel
-
 
 
 class MainFilter(FilterSet):
@@ -110,9 +110,31 @@ class PDFilter(FilterSet):
                             lookup_expr='gte', label='Start Date')
     end_date = DateFilter(field_name='end_date',
                           lookup_expr='lte', label='End Date')
+    # master_programs = ModelMultipleChoiceFilter(
+    #     queryset=MasterProgram.objects.all(),
+    #     label='Master Programs',
+    #     required=False
+    # )
+    # donors = ModelMultipleChoiceFilter(
+    #     queryset=Donor.objects.all(),
+    #     label='Donors',
+    #     required=False
+    # )
+
+    master_programs = ModelChoiceFilter(
+        queryset=MasterProgram.objects.all(),
+        label='Master Programs',
+        required=False,
+        empty_label='Select a Master Program'
+    )
+    donors = ModelChoiceFilter(
+        queryset=Donor.objects.all(),
+        label='Donors',
+        required=False,
+        empty_label='Select a Donor'
+    )
 
     class Meta:
         model = ProgramDocument
         fields = [
         ]
-
