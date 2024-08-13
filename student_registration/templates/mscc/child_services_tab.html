@@ -2706,10 +2706,9 @@
    {% endif %}
 
   {% get_youth_services instance 'Maharati' as result %}
-  {% if result %}
+  {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
-  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|ABLN Level 1|ABLN Level 2|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
-
+  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|ABLN Level 1|ABLN Level 2|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_youth_data 'YouthService' instance  'Maharati' as result %}
                                 <div class="mb-3 card">
@@ -2818,7 +2817,7 @@
   {% get_youth_services instance 'GIL' as result %}
    {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
-  {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' or instance.type == 'Walk-in'  %}
+  {% if service in 'YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
   <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}
                                 <div class="mb-3 card">

@@ -794,7 +794,6 @@ class MainForm(forms.ModelForm):
         if source_of_identification == 'Other Sources' and not source_of_identification_specify:
             self.add_error('source_of_identification_specify', 'This field is required')
 
-
         package_type = cleaned_data.get("type")
         if package_type == 'Core-Package':
 
@@ -1014,7 +1013,6 @@ class MainForm(forms.ModelForm):
             cash_support_programmes = cleaned_data.get("caregiver_mother_name")
             if not cash_support_programmes:
                 self.add_error('cash_support_programmes', 'This field is required')
-
 
     def save(self, request=None, instance=None):
 

@@ -529,7 +529,6 @@ class EducationServiceForm(forms.ModelForm):
             self.fields['education_program'].required = False
             self.fields['class_section'].required = False
             self.fields['registration_date'].required = False
-            self.fields['round'].required = False
 
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:
@@ -551,6 +550,9 @@ class EducationServiceForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('round', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('education_program', css_class='col-md-3'),
                     css_class='row card-body' + display_edu_section
