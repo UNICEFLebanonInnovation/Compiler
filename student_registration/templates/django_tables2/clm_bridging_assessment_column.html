@@ -2,7 +2,7 @@
 {% load util_tags %}
 
 {% if record.total_absent_days >= 40 %}
-    <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary" disabled>
+      <a class="btn btn-info" style="opacity: 0.6; cursor: not-allowed;">
 {% else %}
       <a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary">
 {% endif %}
