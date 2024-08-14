@@ -1,0 +1,78 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+<li class="dropdown">
+   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions</a>
+   <ul class="dropdown-menu">
+      <li>
+        {% if column.attrs.programme|is_allowed_edit and record.total_absent_days < 40 %}
+            <a type="button" href="{{ column.attrs.url_edit }}{{ record.id }}">
+        {% else %}
+            <a type="button"   style="opacity: 0.6; cursor: not-allowed;">
+        {% endif %}
+           <button class="btn btn-info"><i class="icon-edit-sign icon-white"> </i></button>
+           {% trans "Edit" %}
+            </a>
+      </li>
+      <li>
+        <a type="button"
+           {% if record.owner.id == request.user.id and record.total_absent_days < 40 %}
+              href="{{ column.attrs.url }}{{ record.id }}"
+              style="opacity: 1; cursor: pointer;"
+              data-action="{{ column.attrs.url_delete }}{{ record.id }}"
+              translation="{% trans 'Are you sure you want to perform this action?' %}"
+           {% else %}
+              style="opacity: 0.6; cursor: not-allowed; pointer-events: none;"
+           {% endif %}>
+           <button class="btn btn-danger delete-button">
+              <i class="icon-trash icon-white"></i>
+           </button>
+          {% trans "Delete" %}
+        </a>
+      </li>
+     <li>
+        {% if record.total_absent_days < 40 %}
+            <a type="button" href="{{ column.attrs.url_post_assessment }}{{ record.id }}">
+        {% else %}
+            <a type="button"   style="opacity: 0.6; cursor: not-allowed;">
+        {% endif %}
+           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
+           {% trans "Post-Assessment" %}
+            </a>
+      </li>
+     <li>
+        {% if record.total_absent_days < 40 %}
+            <a type="button" href="{{ column.attrs.url_mid_assessment1 }}{{ record.id }}{{ '/1' }}">
+        {% else %}
+            <a type="button"   style="opacity: 0.6; cursor: not-allowed;">
+        {% endif %}
+           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
+           {% trans "Mid-Assessment 1" %}
+            </a>
+      </li>
+
+     <li>
+        {% if record.total_absent_days < 40 %}
+            <a type="button" href="{{ column.attrs.url_mid_assessment2 }}{{ record.id }}{{ '/2' }}">
+        {% else %}
+            <a type="button"   style="opacity: 0.6; cursor: not-allowed;">
+        {% endif %}
+           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
+           {% trans "Mid-Assessment 2" %}
+            </a>
+      </li>
+
+     <li>
+        {% if record.total_absent_days < 40 %}
+            <a type="button" href="{{ column.attrs.url_followup }}{{ record.id }}">
+        {% else %}
+            <a type="button"   style="opacity: 0.6; cursor: not-allowed;">
+        {% endif %}
+           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
+           {% trans "Follow-up" %}
+            </a>
+      </li>
+
+
+   </ul>
+</li>

@@ -34,7 +34,6 @@ $(document).ready(function() {
         check_duplicate_registration();
     }
 
-
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {

@@ -503,6 +503,16 @@ class OutreachTable(CommonTable):
 
 class BridgingTable(CommonTable):
 
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                        template_name='django_tables2/clm_action_column.html',
+                                        attrs={'url_edit': '/clm/bridging-edit/',
+                                               'url_delete': '/api/clm-bridging/',
+                                               'url_post_assessment': '/clm/bridging-post-assessment/',
+                                               'url_mid_assessment1': '/clm/bridging-mid-assessment/',
+                                               'url_mid_assessment2': '/clm/bridging-mid-assessment/',
+                                               'url_followup': '/clm/bridging-followup/',
+                                               'programme': 'Bridging'})
+
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/clm_bridging_edit_column.html',
                                         attrs={'url': '/clm/bridging-edit/', 'programme': 'Bridging'})
@@ -534,6 +544,7 @@ class BridgingTable(CommonTable):
     class Meta:
         model = Bridging
         fields = (
+            # 'action_column',
             'edit_column',
             'delete_column',
             'post_assessment_column',
