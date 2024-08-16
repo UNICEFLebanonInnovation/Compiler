@@ -19,7 +19,7 @@ class EnrolledProgramsFormView(LoginRequiredMixin,
     group_required = [u"YOUTH"]
 
     def get_success_url(self):
-        return '/youth/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
+        return '/youth/Child-Profile/{}/'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""

@@ -23,12 +23,14 @@ from django.shortcuts import redirect, render
 from .filters import (
     MainFilter,
     FullFilter,
-    PDFilter
+    PDFilter,
+    PDPartnerFilter
 )
 from .tables import (
     BootstrapTable,
     RegistrationTable,
-    PDTable
+    PDTable,
+    PDPartnerTable
 
 )
 from .models import (
@@ -193,17 +195,20 @@ class MainListView(LoginRequiredMixin,
 
     def get_queryset(self):
         user = self.request.user
-        center_id = user.center_id
         partner_id = user.youth_partner_id
 
-        return Registration.objects.filter(deleted=False
-                                           ).order_by('-id')
-        # elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-        #     return Registration.objects.filter(partner=partner_id, deleted=False, round__current_year=True).order_by('-id')
-        # elif has_group(user, 'YOUTH_CENTER') and center_id:
-        #     return Registration.objects.filter(center=center_id, deleted=False, round__current_year=True).order_by('-id')
+        if has_group(user, 'YOUTH_UNICEF'):
+            queryset = Registration.objects.filter(deleted=False
+                                                   ).order_by('-id')
+            queryset = queryset.distinct('id')
+            return queryset
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
+            queryset = Registration.objects.filter(deleted=False,partner=partner_id
+                                                   ).order_by('-id')
+            queryset = queryset.distinct('id')
+            return queryset
 
-        # return Registration.objects.none()
+        return Registration.objects.none()
 
     def get_table_class(self):
         return RegistrationTable
@@ -575,22 +580,40 @@ class PDListView(LoginRequiredMixin,
     filterset_class = PDFilter
 
     def get_queryset(self):
-        return ProgramDocument.objects.all()
+        user = self.request.user
+        partner_id = user.youth_partner_id
+
+        if has_group(user, 'YOUTH_UNICEF'):
+            queryset = ProgramDocument.objects.all().order_by('-id')
+            queryset = queryset.distinct('id')
+            return queryset
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
+            queryset = ProgramDocument.objects.filter(partner=partner_id).order_by('-id')
+            queryset = queryset.distinct('id')
+            return queryset
+
+        return ProgramDocument.objects.none()
 
     def get_table_class(self):
-        return PDTable
+        if has_group(self.request.user, 'YOUTH_UNICEF'):
+            return PDTable
+        elif has_group(self.request.user, 'YOUTH_PARTNER'):
+            return PDPartnerTable
+        return PDPartnerTable
 
     def get_filterset_class(self):
-        return PDFilter
+        if has_group(self.request.user, 'YOUTH_UNICEF'):
+            return PDFilter
+        elif has_group(self.request.user, 'YOUTH_PARTNER'):
+            return PDPartnerFilter
+        return PDPartnerFilter
 
 
 def load_districts(request):
     cities = []
     if request.GET.get('id_adolescent_governorate'):
         id_adolescent_governorate = request.GET.get('id_adolescent_governorate')
-        print(id_adolescent_governorate)
         cities = Location.objects.filter(parent_id=id_adolescent_governorate).order_by('name')
-        print(cities)
     return render(request, 'youth/city_dropdown_list_options.html', {'cities': cities})
 
 
@@ -606,7 +629,7 @@ def load_program_document(request):
     program_documents = []
     if request.GET.get('id_donor'):
         id_donor = request.GET.get('id_donor')
-        program_documents = ProgramDocument.objects.filter(partner_id=id_donor).order_by('project_name')
+        program_documents = ProgramDocument.objects.filter(donors__id=id_donor).order_by('project_name')
     return render(request, 'youth/program_document_dropdown_list_options.html', {'program_documents': program_documents})
 
 

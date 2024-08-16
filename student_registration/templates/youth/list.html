@@ -17,7 +17,7 @@
                                             <i class="fa fa-user"></i>
                                         </span>
                                         <span class="d-inline-block">
-                                            {{ request.user.username }} - {{ request.user.partner }}
+                                            {{ request.user.username }} - {{ request.user.youth_partner }}
                                         </span>
                                     </div>
                                     <div class="page-title-subheading opacity-10">
@@ -129,9 +129,9 @@
                  class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
                 </button>
 
-                <a href="" title="Download" class="btn btn-outline-success download-report">
-                    <i class="lnr-download"></i>
-                </a>
+<!--                <a href="" title="Download" class="btn btn-outline-success download-report">-->
+<!--                    <i class="lnr-download"></i>-->
+<!--                </a>-->
 
             </form>
             </div>
@@ -163,7 +163,7 @@
 {% block extra_js %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=15"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/list.js' %}?v=16"></script>
     <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
 
 

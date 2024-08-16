@@ -66,7 +66,6 @@ class FullFilter(FilterSet):
     donor = ChoiceFilter(choices=Donor.objects.values_list('id', 'name'), field_name='enrolled_programs__donor', empty_label='Donor', method='filter_by_donor')
     program_document = ChoiceFilter(choices=ProgramDocument.objects.values_list('id', 'project_name'), field_name='enrolled_programs__program_document', empty_label='Program Document', method='filter_by_program_document')
 
-    #
     start_date = DateFilter(field_name='enrolled_programs__completion_date',
                             lookup_expr='gte', label='Start Date')
     end_date = DateFilter(field_name='enrolled_programs__completion_date',
@@ -94,16 +93,16 @@ class FullFilter(FilterSet):
 
 
 class PDFilter(FilterSet):
-    partner__name = ChoiceFilter(choices=Partner.objects.values_list('id', 'short_name')
+    current_year = datetime.datetime.now().year
+    partner = ChoiceFilter(choices=Partner.objects.filter(active=True).values_list('id', 'short_name')
                                 .order_by('short_name').distinct(), empty_label='Partner')
-    funded_by__name = ChoiceFilter(choices=FundedBy.objects.values_list('id', 'name')
+    funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
-
-    project_status = CharFilter(lookup_expr='icontains')
+    project_status = ChoiceFilter(choices=ProgramDocument.PROJECT_STATUS, empty_label='Status')
     project_code = CharFilter(lookup_expr='icontains')
     project_name = CharFilter(lookup_expr='icontains')
     implementing_partners = CharFilter(lookup_expr='icontains')
-    focal_point__name = ChoiceFilter(choices=FocalPoint.objects.values_list('id', 'name')
+    focal_point = ChoiceFilter(choices=FocalPoint.objects.values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Focal Point')
 
     start_date = DateFilter(field_name='start_date',
@@ -120,18 +119,57 @@ class PDFilter(FilterSet):
     #     label='Donors',
     #     required=False
     # )
-
     master_programs = ModelChoiceFilter(
-        queryset=MasterProgram.objects.all(),
+        queryset=MasterProgram.objects.filter(active=True, created__year=current_year).all(),
         label='Master Programs',
         required=False,
         empty_label='Select a Master Program'
     )
     donors = ModelChoiceFilter(
-        queryset=Donor.objects.all(),
+        queryset=Donor.objects.filter(active=True).all(),
         label='Donors',
         required=False,
         empty_label='Select a Donor'
+    )
+
+    class Meta:
+        model = ProgramDocument
+        fields = [
+        ]
+
+
+class PDPartnerFilter(FilterSet):
+    current_year = datetime.datetime.now().year
+    partner = ChoiceFilter(choices=Partner.objects.filter(active=True).values_list('id', 'short_name')
+                                .order_by('short_name').distinct(), empty_label='Partner')
+    funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
+                                 .order_by('name').distinct(), empty_label='Funded By')
+    project_status = ChoiceFilter(choices=ProgramDocument.PROJECT_STATUS, empty_label='Status')
+    project_code = CharFilter(lookup_expr='icontains')
+    project_name = CharFilter(lookup_expr='icontains')
+    implementing_partners = CharFilter(lookup_expr='icontains')
+    focal_point = ChoiceFilter(choices=FocalPoint.objects.values_list('id', 'name')
+                                 .order_by('name').distinct(), empty_label='Focal Point')
+
+    start_date = DateFilter(field_name='start_date',
+                            lookup_expr='gte', label='Start Date')
+    end_date = DateFilter(field_name='end_date',
+                          lookup_expr='lte', label='End Date')
+    # master_programs = ModelMultipleChoiceFilter(
+    #     queryset=MasterProgram.objects.all(),
+    #     label='Master Programs',
+    #     required=False
+    # )
+    # donors = ModelMultipleChoiceFilter(
+    #     queryset=Donor.objects.all(),
+    #     label='Donors',
+    #     required=False
+    # )
+    master_programs = ModelChoiceFilter(
+        queryset=MasterProgram.objects.filter(active=True, created__year=current_year).all(),
+        label='Master Programs',
+        required=False,
+        empty_label='Select a Master Program'
     )
 
     class Meta:
