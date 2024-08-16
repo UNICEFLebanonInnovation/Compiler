@@ -8,8 +8,6 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.utils.translation import ugettext as _
 
-
-
 class LocationType(models.Model):
     name = models.CharField(max_length=64, unique=True)
     name_en = models.CharField(max_length=145, blank=True, null=True)
@@ -44,6 +42,27 @@ class Location(MPTTModel):
         #         self.name,
         #         self.type.name
         #     )
+        return self.name
+
+    class Meta:
+        unique_together = ('name', 'type', 'p_code')
+        ordering = ['name']
+
+
+class ActivityInfoLocation(MPTTModel):
+
+    name = models.CharField(max_length=254)
+    name_en = models.CharField(max_length=254, blank=True, null=True)
+    type = models.ForeignKey(LocationType, verbose_name='Location Type')
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    p_code = models.CharField(max_length=32, blank=True, null=True)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
         return self.name
 
     class Meta:
