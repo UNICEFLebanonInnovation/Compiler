@@ -3876,20 +3876,34 @@ class bridging_school_export(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         school_id = int(self.kwargs.get('school_id'))
-        return bridging_school_export_data(school_id)
+
+        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = request.user.is_staff
+
+        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+
+        if not clm_bridging_all and not is_staff and request.user.partner:
+            partner_id = request.user.partner_id
+            vw_bridging_data += " AND partner_id =" + str(partner_id)
+
+        elif not clm_bridging_all and not is_staff and not request.user.partner:
+            vw_bridging_data += " AND id = 0 "
+
+        if school_id > 0:
+            vw_bridging_data += " AND school_id =" + str(school_id)
+
+        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+
+        print (vw_bridging_data)
+
+        return bridging_school_export_data(vw_bridging_data)
 
 
-def bridging_school_export_data(school_id):
+def bridging_school_export_data(vw_bridging_data):
     from django.db import connection
     cursor = connection.cursor()
-    vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
-
-    if school_id > 0:
-        vw_bridging_data += " AND school_id =" + str(school_id)
-
-    vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
-
     cursor.execute(vw_bridging_data)
+
     data = cursor.fetchall()
 
     headers = [col[0] for col in cursor.description]
