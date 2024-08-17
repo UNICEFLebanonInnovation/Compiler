@@ -894,26 +894,47 @@ class HealthVisitFormView(LoginRequiredMixin,
         return super(HealthVisitFormView, self).form_valid(form)
 
 
-# def school_export_data(request):
-#     qs_school = School.objects.filter(is_closed=False).order_by('-id')
-#     qs_school.order_by('-id')
-#     dataset = SchoolResource().export(qs_school)
-#     response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename="school_data.xls"'
-#     return response
-
-
-
 class school_export_data(LoginRequiredMixin, ListView):
-    qs_school = School.objects.filter(is_closed=False).order_by('-id')
-    qs_club = Club.objects.all().order_by('-id')
-    qs_meeting = Meeting.objects.all().order_by('-id')
-    qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
-    qs_health_visit = HealthVisit.objects.all().order_by('-id')
-
-
     def get(self, request, *args, **kwargs):
-        return school_build_xls_extraction(self.qs_school, self.qs_club, self.qs_meeting, self.qs_community_initiative, self.qs_health_visit)
+        qs_school = School.objects.filter(is_closed=False).order_by('-id')
+        qs_club = Club.objects.all().order_by('-id')
+        qs_meeting = Meeting.objects.all().order_by('-id')
+        qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
+        qs_health_visit = HealthVisit.objects.all().order_by('-id')
+
+        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = self.request.user.is_staff
+
+        if clm_bridging_all or is_staff:
+            qs_school = School.objects.filter(is_closed=False).all()
+        else:
+            school_id = 0
+            partner_id = 0
+
+            if self.request.user.school:
+                school_id = self.request.user.school.id
+            if self.request.user.partner_id:
+                partner_id = self.request.user.partner_id
+
+            if school_id and school_id > 0:
+                qs_school = School.objects.filter(id=school_id)
+            elif partner_id > 0:
+                qs_school = School.objects.filter(is_closed=False,
+                                                  id__in=PartnerOrganization
+                                                  .objects
+                                                  .filter(id=partner_id)
+                                                  .values_list('schools', flat=True))
+            else:
+                qs_school = qs_school.none()
+
+        school_ids = qs_school.values_list('id', flat=True)
+
+        qs_club = qs_club.filter(school_id__in=school_ids)
+        qs_meeting = qs_meeting.filter(school_id__in=school_ids)
+        qs_community_initiative = qs_community_initiative.filter(school_id__in=school_ids)
+        qs_health_visit = qs_health_visit.filter(school_id__in=school_ids)
+
+        return school_build_xls_extraction(qs_school, qs_club, qs_meeting, qs_community_initiative, qs_health_visit)
 
 
 class SchoolAutocomplete(autocomplete.Select2QuerySetView):
