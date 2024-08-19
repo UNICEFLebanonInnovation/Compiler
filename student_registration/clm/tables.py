@@ -511,6 +511,7 @@ class BridgingTable(CommonTable):
                                                'url_mid_assessment1': '/clm/bridging-mid-assessment/',
                                                'url_mid_assessment2': '/clm/bridging-mid-assessment/',
                                                'url_followup': '/clm/bridging-followup/',
+                                               'url_service': '/clm/bridging-service/',
                                                'programme': 'Bridging'})
 
     clm_absence_column = tables.TemplateColumn(verbose_name=_('Absence'), orderable=False,

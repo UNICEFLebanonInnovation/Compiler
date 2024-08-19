@@ -85,6 +85,7 @@ from .forms import (
     BridgingAssessmentForm,
     BridgingMidAssessmentForm,
     BridgingFollowupForm,
+    BridgingServiceForm,
     CBECEMidAssessmentForm,
     CBECEFollowupForm,
     CBECEReferralForm,
@@ -1409,6 +1410,38 @@ class BridgingFollowupView(LoginRequiredMixin,
         instance = Bridging.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingFollowupView, self).form_valid(form)
+
+
+class BridgingServiceView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+    template_name = 'clm/bridging_service.html'
+    form_class = BridgingServiceForm
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(BridgingServiceView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+
+        else:
+            data = BridgingSerializer(instance).data
+            return form_class(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(BridgingServiceView, self).form_valid(form)
 
 
 class CBECEPostAssessmentView(LoginRequiredMixin,

@@ -11366,6 +11366,445 @@ class BridgingAssessmentForm(forms.ModelForm):
         )
 
 
+class BridgingAssessmentForm2(forms.ModelForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three')),
+        ('level_four', _('Level four')),
+        ('level_five', _('Level five')),
+        ('level_six', _('Level six'))
+    )
+    participation = forms.ChoiceField(
+        label=_('How was the level of child participation in the program?'),
+        widget=forms.Select, required=True,
+        choices=(
+                ('', '----------'),
+                ('no_absence', _('No Absence')),
+                ('less_than_5days', _('Less than 5 absence days')),
+                ('5_10_days', _('5 to 10 absence days')),
+                ('10_15_days', _('10 to 15 absence days')),
+                ('15_25_days', _('15 to 25 absence days')),
+                ('more_than_25days', _('More than 25 absence days')),
+
+            ),
+        initial=''
+    )
+
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('graduated_to_Bridging_next_level', _('Graduated to the next level SBP')),
+            ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level SBP')),
+            ('referred_public_school', _('Referred to public school')),
+            ('dropout', _('Dropout, referral not possible')),
+            ('other', _('Other')),
+        ),
+        initial=''
+    )
+    learning_result_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    dropout_date = forms.DateField(
+        label=_("Dropout date"),
+        required=False
+    )
+    barriers_single = forms.ChoiceField(
+        label=_('The main barriers affecting the daily attendance and performance '
+                'of the child or drop out of programme?'),
+        choices=CLM.BARRIERS,
+        widget=forms.Select,
+        required=False
+    )
+    barriers_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    test_done = forms.ChoiceField(
+        label=_("Post test has been done"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO,
+        initial='yes'
+    )
+
+    round_complete = forms.ChoiceField(
+        label=_("Dirasa Round complete"),
+        widget=forms.Select, required=False,
+        choices=CLM.YES_NO
+    )
+    arabic_alphabet_knowledge = forms.FloatField(
+        label=_('Arabic Alphabet Knowledge'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    arabic_familiar_words = forms.FloatField(
+        label=_('Arabic Familiar words'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    arabic_reading_comprehension = forms.FloatField(
+        label=_('Arabic Reading Comprehension'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    english_alphabet_knowledge = forms.FloatField(
+        label=_('English Alphabet Knowledge'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    english_familiar_words = forms.FloatField(
+        label=_('English Familiar words'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    english_reading_comprehension = forms.FloatField(
+        label=_('English Reading Comprehension'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    french_alphabet_knowledge = forms.FloatField(
+        label=_('French Alphabet Knowledge'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    french_familiar_words = forms.FloatField(
+        label=_('French Familiar words'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    french_reading_comprehension = forms.FloatField(
+        label=_('French Reading Comprehension'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    math = forms.FloatField(
+        label=_('Math'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    follow_up_type = forms.ChoiceField(
+        label=_('Type of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('none', _('----------')),
+            ('Phone', _('Phone Call')),
+            ('House visit', _('House Visit')),
+            ('Family Visit', _('Family Visit')),
+        ),
+        initial=''
+    )
+    child_health_examed = forms.ChoiceField(
+        label=_("Did the child receive health exam"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No")))
+    )
+    child_health_concern = forms.ChoiceField(
+        label=_("Anything to worry about"),
+        widget=forms.Select, required=False,
+        choices=CLM.YES_NO
+    )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=False,
+        choices=REGISTRATION_LEVEL
+    )
+    language = forms.ChoiceField(
+        label=_('The language supported in the program'),
+        widget=forms.Select,
+        choices=CLM.LANGUAGES, required=False,
+        initial='english_arabic'
+    )
+    community_Liaison_follow_up = forms.ChoiceField(
+        label=_("Was the community Liaison at school level involved in follow up on child absence or drop out?"),
+        widget=forms.Select, required=False,
+        choices=CLM.YES_NO,
+    )
+    community_liaison_specify = forms.CharField(
+        label=_('specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(BridgingAssessmentForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'Bridging'
+
+        display_assessment = ''
+        form_action = reverse('clm:bridging_post_assessment', kwargs={'pk': instance.id})
+
+        if instance.post_test:
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='Bridging_post_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bridging_post_assessment', kwargs={'pk': instance.id}))
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    Div('registration_level', css_class='col-md-3 d-none'),
+                    Div('language', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('participation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_barriers_single">1.1</span>'),
+                    Div('barriers_single', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_barriers_other">1.2</span>'),
+                    Div('barriers_other', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_community_Liaison_follow_up">2</span>'),
+                    Div('community_Liaison_follow_up', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_community_liaison_specify">2.1</span>'),
+                    Div('community_liaison_specify', css_class='col-md-4'),
+                    css_class='row community_Liaison',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('test_done', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_round_complete">3.1</span>'),
+                    Div('round_complete', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_learning_result_other">4.1</span>'),
+                    Div('learning_result_other', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_dropout_date">4.1</span>'),
+                    Div('dropout_date', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_arabic">5</span>'),
+                    Div('arabic_alphabet_knowledge', css_class='col-md-3'),
+                    Div('arabic_familiar_words', css_class='col-md-3'),
+                    Div('arabic_reading_comprehension', css_class='col-md-3'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_english">6</span>'),
+                    Div('english_alphabet_knowledge', css_class='col-md-3'),
+                    Div('english_familiar_words', css_class='col-md-3'),
+                    Div('english_reading_comprehension', css_class='col-md-3'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_french">7</span>'),
+                    Div('french_alphabet_knowledge', css_class='col-md-3'),
+                    Div('french_familiar_words', css_class='col-md-3'),
+                    Div('french_reading_comprehension', css_class='col-md-3'),
+                    css_class='row grades',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" id="span_math">8</span>'),
+                    Div('math', css_class='col-md-3'),
+                    css_class='row grades',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML(
+                    '<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _(
+                        'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(BridgingAssessmentForm, self).clean()
+
+        learning_result = cleaned_data.get("learning_result")
+        learning_result_other = cleaned_data.get("learning_result_other")
+        dropout_date = cleaned_data.get("dropout_date")
+
+        barriers_single = cleaned_data.get("barriers_single")
+        barriers_other = cleaned_data.get("barriers_other")
+
+        test_done = cleaned_data.get("test_done")
+        round_complete = cleaned_data.get("round_complete")
+
+        participation = cleaned_data.get("participation")
+        community_Liaison_follow_up = cleaned_data.get("community_Liaison_follow_up")
+        community_liaison_specify = cleaned_data.get("community_liaison_specify")
+
+        if participation != 'no_absence':
+            if not community_Liaison_follow_up:
+                self.add_error('community_Liaison_follow_up', 'This field is required')
+            elif community_Liaison_follow_up == 'yes':
+                if not community_liaison_specify:
+                    self.add_error('community_liaison_specify', 'This field is required')
+
+
+        if test_done == 'yes':
+            if not round_complete:
+                self.add_error('round_complete', 'This field is required')
+
+        if learning_result == 'other' and not learning_result_other:
+            self.add_error('learning_result_other', 'This field is required')
+
+        if learning_result == 'dropout' and not dropout_date:
+            self.add_error('dropout_date', 'This field is required')
+
+        if barriers_single == 'other':
+            if not barriers_other:
+                self.add_error('barriers_other', 'This field is required')
+
+        # grades Max Value validation
+        registration_level = cleaned_data.get("registration_level")
+        language = cleaned_data.get("language")
+
+        arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
+        arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
+        arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
+
+        english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
+        english_familiar_words = cleaned_data.get("english_familiar_words")
+        english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
+
+        french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
+        french_familiar_words = cleaned_data.get("french_familiar_words")
+        french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
+
+        math = cleaned_data.get("math")
+        # social_emotional = cleaned_data.get("social_emotional")
+        # artistic = cleaned_data.get("artistic")
+
+        if test_done == 'yes':
+            if arabic_alphabet_knowledge is None:
+                self.add_error('arabic_alphabet_knowledge', 'This field is required')
+            elif arabic_alphabet_knowledge > 48:
+                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
+
+            if arabic_familiar_words is None:
+                self.add_error('arabic_familiar_words', 'This field is required')
+            elif arabic_familiar_words > 20:
+                self.add_error('arabic_familiar_words', 'This value is greater that 20')
+
+            if arabic_reading_comprehension is None:
+                self.add_error('arabic_reading_comprehension', 'This field is required')
+            elif arabic_reading_comprehension > 10:
+                self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
+
+
+            if language == 'english_arabic':
+                if english_alphabet_knowledge is None:
+                    self.add_error('english_alphabet_knowledge', 'This field is required')
+                elif english_alphabet_knowledge > 48:
+                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
+
+                if english_familiar_words is None:
+                    self.add_error('english_familiar_words', 'This field is required')
+                elif english_familiar_words > 20:
+                    self.add_error('english_familiar_words', 'This value is greater that 20')
+
+                if english_reading_comprehension is None:
+                    self.add_error('english_reading_comprehension', 'This field is required')
+                elif english_reading_comprehension > 10:
+                    self.add_error('english_reading_comprehension', 'This value is greater that 10')
+
+            elif language == 'french_arabic':
+                if french_alphabet_knowledge is None:
+                    self.add_error('french_alphabet_knowledge', 'This field is required')
+                elif french_alphabet_knowledge > 48:
+                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
+
+                if french_familiar_words is None:
+                    self.add_error('french_familiar_words', 'This field is required')
+                elif french_familiar_words > 20:
+                    self.add_error('french_familiar_words', 'This value is greater that 20')
+
+                if french_reading_comprehension is None:
+                    self.add_error('french_reading_comprehension', 'This field is required')
+                elif french_reading_comprehension > 10:
+                    self.add_error('french_reading_comprehension', 'This value is greater that 10')
+
+            if math is None:
+                self.add_error('math', 'This field is required')
+            elif registration_level == 'level_one' and math > 50:
+                self.add_error('math', 'This value is greater that 50')
+            elif registration_level == 'level_two' and math > 88:
+                self.add_error('math', 'This value is greater that 88')
+            elif math > 103:
+                self.add_error('math', 'This value is greater that 103')
+
+    def save(self, instance=None, request=None):
+        instance = super(BridgingAssessmentForm, self).save()
+        # instance = super(BridgingAssessmentForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
+
+        instance.modified_by = request.user
+
+        instance.post_test = {
+            "Bridging_ASSESSMENT/arabic_alphabet_knowledge": request.POST.get('arabic_alphabet_knowledge'),
+            "Bridging_ASSESSMENT/arabic_familiar_words": request.POST.get('arabic_familiar_words'),
+            "Bridging_ASSESSMENT/arabic_reading_comprehension": request.POST.get('arabic_reading_comprehension'),
+
+            "Bridging_ASSESSMENT/english_alphabet_knowledge": request.POST.get('english_alphabet_knowledge'),
+            "Bridging_ASSESSMENT/english_familiar_words": request.POST.get('english_familiar_words'),
+            "Bridging_ASSESSMENT/english_reading_comprehension": request.POST.get('english_reading_comprehension'),
+
+            "Bridging_ASSESSMENT/french_alphabet_knowledge": request.POST.get('french_alphabet_knowledge'),
+            "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
+            "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
+            "Bridging_ASSESSMENT/math": request.POST.get('math'),
+                # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+                # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
+            }
+
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = Bridging
+        fields = (
+            'participation',
+            'barriers_single',
+            'barriers_other',
+            'test_done',
+            'round_complete',
+            'learning_result',
+            'learning_result_other',
+            'dropout_date',
+            'community_Liaison_follow_up',
+            'community_liaison_specify',
+        )
+
+
 class BridgingMidAssessmentForm(forms.ModelForm):
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -11653,6 +12092,173 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         model = Bridging
         fields = (
             # 'test_done',
+        )
+
+
+class BridgingServiceForm(forms.ModelForm):
+    receiving_social_assistance = forms.ChoiceField(
+        label=_("Is the child receiving social assistance?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    receiving_transportation_support = forms.ChoiceField(
+        label=_("Is the Child Receiving Transportation Support?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    using_digital_platform = forms.ChoiceField(
+        label=_("Is the Child Using a digital platform (Akelius or  Learning Passport)"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('yes_akelius)', _("Yes (Akelius)")),
+            ('yes_learning_passport)', _("Yes (Learning Passport)")),
+            ('no', _("No"))
+        )
+    )
+    basic_stationery = forms.ChoiceField(
+        label=_("Did the child receive basic stationery?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    cp_referral = forms.ChoiceField(
+        label=_("CP Followup"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('yes', _("Yes")),
+            ('no', _("No")))
+    )
+    referal_health = forms.ChoiceField(
+        label=_("referal health"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    referal_wash = forms.ChoiceField(
+        label=_("referal wash"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    referal_other = forms.ChoiceField(
+        label=_("referal other"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+    referal_other_specify = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+
+    child_received_internet = forms.ChoiceField(
+        label=_("child received internet"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
+
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(BridgingServiceForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'Bridging'
+
+        form_action = reverse('clm:bridging_service', kwargs={'pk': instance.id})
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('receiving_social_assistance', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('receiving_transportation_support', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('using_digital_platform', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('basic_stationery', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('cp_referral', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('referal_wash', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('referal_health', css_class='col-md-3 '),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" >11</span>'),
+                    Div('referal_other', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_referal_other_specify">11.1</span>'),
+                    Div('referal_other_specify', css_class='col-md-2'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default" >12</span>'),
+                    Div('child_received_internet', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML(
+                    '<a class="btn btn-info cancel-button col-md-2" href="/clm/bridging-list/" translation="' + _(
+                        'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(BridgingServiceForm, self).clean()
+
+        referal_other = cleaned_data.get("referal_other")
+        referal_other_specify = cleaned_data.get("referal_other_specify")
+        if referal_other == 'yes':
+            if not referal_other_specify:
+                self.add_error('referal_other_specify', 'This field is required')
+
+
+    def save(self, instance=None, request=None):
+        instance = super(BridgingServiceForm, self).save()
+        # instance = super(BridgingAssessmentForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = Bridging
+        fields = (
+            'receiving_social_assistance',
+            'receiving_transportation_support',
+            'using_digital_platform',
+            'basic_stationery',
+            'cp_referral',
+            'referal_wash',
+            'referal_health',
+            'referal_other',
+            'referal_other_specify',
+            'child_received_internet',
         )
 
 

@@ -350,6 +350,11 @@ urlpatterns = [
         name='bridging_followup'
     ),
     url(
+        regex=r'^bridging-service/(?P<pk>[\w.@+-]+)/$',
+        view=views.BridgingServiceView.as_view(),
+        name='bridging_service'
+    ),
+    url(
         regex=r'^bridging-export/$',
         view=views.bridging_export_data,
         name='bridging_export'
