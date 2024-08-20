@@ -11892,6 +11892,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         display_assessment = ''
         assessment_number = int(number)
         form_action = reverse('clm:bridging_mid_assessment', kwargs={'pk': instance.id, 'number': number})
+        header_text = 'Mid Test 1'
 
         if assessment_number == 1 and instance.post_test:
             post_test_button = ' btn-outline-success '
@@ -11902,6 +11903,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
                     reverse('clm:bridging_mid_assessment', kwargs={'pk': instance.id, 'number': number}))
             )
         if assessment_number == 2 and instance.post_test:
+            header_text = 'Mid Test 2'
             post_test_button = ' btn-outline-success '
             post_test = instance.assessment_form(
                 stage='post_test',
@@ -11917,7 +11919,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(header_text) + '</h4>'),
                 ),
             ),
             Fieldset(
