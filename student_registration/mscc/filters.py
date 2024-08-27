@@ -49,7 +49,7 @@ class FullFilter(FilterSet):
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
-    round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
+    round = ChoiceFilter(choices=Round.objects.filter(current_year=True).values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Round')
     center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Center')

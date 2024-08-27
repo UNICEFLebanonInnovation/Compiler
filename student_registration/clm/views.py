@@ -3859,7 +3859,12 @@ class BridgingListView(LoginRequiredMixin,
 def bridging_export_data(request):
     from django.db import connection
     cursor = connection.cursor()
+    round_id = request.GET.get('round', None)
+
     vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+
+    if round_id:
+        vw_bridging_data += " AND round_id = %s" % round_id
 
     clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
     is_staff = request.user.is_staff

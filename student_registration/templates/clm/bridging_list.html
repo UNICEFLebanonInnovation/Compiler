@@ -42,7 +42,7 @@
                 <i class="icon-synch-sign icon-white"></i>
                 {% trans "reset" %}
               </a>
-              <a href="{% url 'clm:bridging_export' %}" class="btn btn-success">
+              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">
                   <i class="icon-export-sign icon-white"></i>
                   {% trans "Export data" %}
               </a>
@@ -77,5 +77,16 @@
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        function checkRoundBeforeExport() {
+            var round = $("#id_round").val();
+
+            if (!round) {
+                alert("Round is not selected. Please select a round before exporting data.");
+                return false;
+            }
+            alert(round)
+            window.location.href = "{% url 'clm:bridging_export' %}?round=" + round;
+        }
     </script>
 {% endblock %}

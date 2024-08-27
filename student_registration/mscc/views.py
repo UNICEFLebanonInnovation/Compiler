@@ -647,8 +647,13 @@ def export_data(request):
     father_name = request.GET.get('father_name', '')
     mother_fullname = request.GET.get('mother_fullname', '')
     nationality = request.GET.get('nationality', '')
+    round_id = request.GET.get('round', '')
 
-    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false'  "
+    if not round_id:
+        return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
+                            status=400)
+
+    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = " + str(round_id)
 
     if has_group(user, 'MSCC_UNICEF'):
         vw_mscc_data_str += " AND id>0 "
@@ -657,7 +662,6 @@ def export_data(request):
     elif has_group(user, 'MSCC_CENTER') and center_id:
         vw_mscc_data_str += " AND center_id = " + str(center_id)
     else:
-        # return empty
         vw_mscc_data_str += " AND id=0 "
 
     if first_name != '':
