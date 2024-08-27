@@ -62,7 +62,4 @@ urlpatterns = [
         view=views.consecutive_absence_export,
         name='consecutive_attendance_export'
     ),
-
-
-
 ]

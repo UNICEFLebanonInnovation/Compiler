@@ -3973,4 +3973,11 @@ class BridgingPage(LoginRequiredMixin,
 
 class BridgingAttendanceReport(LoginRequiredMixin,
                    TemplateView):
+
     template_name = 'clm/bridging_attendance_report.html'
+    rounds = CLMRound.objects.filter(current_year=True).all()
+
+    def get_context_data(self, **kwargs):
+        context = super(BridgingAttendanceReport, self).get_context_data(**kwargs)
+        context['rounds'] = CLMRound.objects.filter(current_year=True).all()
+        return context

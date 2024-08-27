@@ -1241,9 +1241,7 @@ def attendance_export(request, **kwargs):
 
 @login_required(login_url='/users/login')
 def total_attendance_export(request):
-    current_round = CLMRound.objects.all()
-    current_round = current_round.get(current_round_bridging=True)
-    round_id = current_round.id
+    round_id = request.GET.get('round', None)
 
     buffer = io.BytesIO()
 
@@ -1255,7 +1253,10 @@ def total_attendance_export(request):
     # Sheet header, first row
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-    total_attendance = CLMStudentTotalAttendance.objects.filter(round_id=round_id).order_by('student_id').all()
+    total_attendance = CLMStudentTotalAttendance.objects.all()
+
+    if round_id:
+        total_attendance = total_attendance.filter(round_id=round_id).order_by('student_id').all()
 
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
         if request.user.school_id:
@@ -1314,9 +1315,7 @@ def total_attendance_export(request):
 
 @login_required(login_url='/users/login')
 def consecutive_absence_export(request):
-    current_round = CLMRound.objects.all()
-    current_round = current_round.get(current_round_bridging=True)
-    round_id = current_round.id
+    round_id = request.GET.get('round', None)
 
     buffer = io.BytesIO()
 
@@ -1327,8 +1326,12 @@ def consecutive_absence_export(request):
     font_style.font.bold = True
 
     # Consecutive and Total Attendance
-    consecutive_student = CLMStudentAbsences.objects.filter(round_id=round_id)
-    total_student = CLMStudentTotalAttendance.objects.filter(round_id=round_id)
+    consecutive_student = CLMStudentAbsences.objects.all()
+    total_student = CLMStudentTotalAttendance.objects.all()
+
+    if round_id:
+        consecutive_student = consecutive_student.filter(round_id=round_id)
+        total_student = consecutive_student.filter(round_id=round_id)
 
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
         if request.user.partner_id:
