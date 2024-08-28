@@ -50,7 +50,7 @@ class FullFilter(FilterSet):
     partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Partner')
     round = ChoiceFilter(choices=Round.objects.filter(current_year=True).values_list('id', 'name')
-                                      .order_by('name').distinct(), empty_label='Round')
+                                      .order_by('name').distinct(), empty_label='Cycle')
     center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
                           .order_by('name').distinct(), empty_label='Center')
     center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')

@@ -96,7 +96,7 @@ function generateAndOpenTotalURL() {
     if (round) {
         window.location.href = "{% url 'attendances:total_attendance_export' %}?round=" + round;
     } else {
-        alert('Please select a round.');
+        alert('Round is not selected. Please select a round before exporting data.');
     }
 }
 
@@ -106,7 +106,7 @@ function generateAndOpenConsecutiveURL() {
     if (round) {
         window.location.href = "{% url 'attendances:consecutive_attendance_export' %}?round=" + round;
     } else {
-        alert('Please select a round.');
+        alert('Round is not selected. Please select a round before exporting data.');
     }
 }
 </script>

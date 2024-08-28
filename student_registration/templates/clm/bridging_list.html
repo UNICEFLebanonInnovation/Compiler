@@ -42,10 +42,10 @@
                 <i class="icon-synch-sign icon-white"></i>
                 {% trans "reset" %}
               </a>
-              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">
-                  <i class="icon-export-sign icon-white"></i>
-                  {% trans "Export data" %}
-              </a>
+<!--              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">-->
+<!--                  <i class="icon-export-sign icon-white"></i>-->
+<!--                  {% trans "Export data" %}-->
+<!--              </a>-->
 
               {% if 'Bridging'|is_allowed_create %}
               <a href="{% url 'clm:bridging_add' %}" class="btn btn-success">
@@ -85,7 +85,6 @@
                 alert("Round is not selected. Please select a round before exporting data.");
                 return false;
             }
-            alert(round)
             window.location.href = "{% url 'clm:bridging_export' %}?round=" + round;
         }
     </script>
