@@ -8,6 +8,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
+import csv
+from django.db import connection
+import codecs
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -3857,6 +3860,59 @@ class BridgingListView(LoginRequiredMixin,
 
 @login_required(login_url='/users/login')
 def bridging_export_data(request):
+    cursor = connection.cursor()
+    round_id = request.GET.get('round', None)
+
+    vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+
+    if round_id:
+        vw_bridging_data += " AND round_id = %s" % round_id
+
+    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+    is_staff = request.user.is_staff
+
+    if not clm_bridging_all and not is_staff and request.user.partner:
+        school_id = 0
+        partner_id = request.user.partner_id
+
+        vw_bridging_data += " AND partner_id =" + str(partner_id)
+
+        if request.user.school:
+            school_id = request.user.school.id
+        if school_id > 0:
+            vw_bridging_data += " AND school_id =" + str(school_id)
+
+    elif not clm_bridging_all and not is_staff and not request.user.partner:
+        vw_bridging_data += " AND id = 0 "
+
+    vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+
+    cursor.execute(vw_bridging_data)
+    data = cursor.fetchall()
+
+    headers = [col[0] for col in cursor.description]
+
+    # Create the HTTP response with CSV headers
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=exported_data.csv'
+
+    # Add UTF-8 BOM to support Arabic text
+    response.write(codecs.BOM_UTF8)
+
+    # Use Unicode writer to handle encoding properly
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+    # Write headers (encode each header to UTF-8)
+    writer.writerow([header.encode('utf-8') if isinstance(header, unicode) else header for header in headers])
+
+    # Write data rows (encode each cell to UTF-8)
+    for row in data:
+        writer.writerow([unicode(cell).encode('utf-8') if isinstance(cell, unicode) else str(cell) for cell in row])
+
+    return response
+
+
+def bridging_export_data_xlsx(request):
     from django.db import connection
     cursor = connection.cursor()
     round_id = request.GET.get('round', None)

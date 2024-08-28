@@ -229,9 +229,11 @@
                  class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
                 </button>
 
-<!--                <a href="" title="Download" class="btn btn-outline-success download-report">-->
-<!--                    <i class="lnr-download"></i>-->
-<!--                </a>-->
+              {% if user|has_group:"EXPORT" %}
+                <a href="" title="Download" class="btn btn-outline-success download-report">
+                    <i class="lnr-download"></i>
+                </a>
+              {% endif %}
 
             </form>
             </div>

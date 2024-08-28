@@ -156,11 +156,18 @@ class MainAttendanceForm(forms.ModelForm):
                         HTML('<div class="space"></div>'),
                         submit_button,
                         HTML('<div class="space"></div>'),
-                        # HTML('<a class="btn btn-success col-md-2" onclick="openAbsencePage();" translation="' + _(
-                        #     'Export Attendance') + '">' + _('Export Attendance') + '</a>'),
+                        HTML(
+                            '{% load util_tags %}'
+                            '{% if user|has_group:"EXPORT" %}'
+                                '<a class="btn btn-success col-md-2" onclick="openAbsencePage();" translation="' + _(
+                                    'Export Attendance') + '">' + _('Export Attendance') + '</a>'
+                            '{% endif %}'
+                        ),
                         css_class='button-group'
                     )
         )
+
+
 
         round_id = 0
         current_round = CLMRound.objects.all()

@@ -7,6 +7,9 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
+import csv
+from django.db import connection
+import codecs
 
 from rest_framework import status
 from django.db.models import F, Q
@@ -635,7 +638,7 @@ class ChildProfilePreview(LoginRequiredMixin,
         }
 
 
-def export_data(request):
+def export_data_xlsx(request):
     from django.db import connection
     cursor = connection.cursor()
     user = request.user
@@ -712,5 +715,84 @@ def export_data(request):
 
     # Save the workbook to the response
     workbook.save(response)
+
+    return response
+
+
+def export_data(request):
+    cursor = connection.cursor()
+    user = request.user
+    center_id = user.center_id
+    partner_id = user.partner_id
+
+    first_name = request.GET.get('first_name', '')
+    last_name = request.GET.get('last_name', '')
+    father_name = request.GET.get('father_name', '')
+    mother_fullname = request.GET.get('mother_fullname', '')
+    nationality = request.GET.get('nationality', '')
+    round_id = request.GET.get('round', '')
+
+    if not round_id:
+        return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
+                            status=400)
+
+    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = " + str(round_id)
+
+    if has_group(user, 'MSCC_UNICEF'):
+        vw_mscc_data_str += " AND id>0 "
+    elif has_group(user, 'MSCC_PARTNER') and partner_id:
+        vw_mscc_data_str += " AND partner_id = " + str(partner_id)
+    elif has_group(user, 'MSCC_CENTER') and center_id:
+        vw_mscc_data_str += " AND center_id = " + str(center_id)
+    else:
+        vw_mscc_data_str += " AND id=0 "
+
+    if first_name != '':
+        vw_mscc_data_str += " AND child_first_name LIKE '%" + first_name + "%'"
+    if father_name != '':
+        vw_mscc_data_str += " AND child_father_name LIKE '%" + father_name + "%'"
+    if last_name != '':
+        vw_mscc_data_str += " AND child_last_name LIKE '%" + last_name + "%'"
+    if mother_fullname != '':
+        vw_mscc_data_str += " AND child_mother_fullname LIKE '%" + mother_fullname + "%'"
+    if nationality != '':
+        vw_mscc_data_str += " AND child_nationality_id = " + nationality
+
+    cursor.execute(vw_mscc_data_str)
+    data = cursor.fetchall()
+
+    headers = [col[0] for col in cursor.description]
+
+    # Create the HTTP response with CSV headers
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=exported_data.csv'
+
+    # Add UTF-8 BOM to support Arabic text
+    response.write(codecs.BOM_UTF8)
+
+    # Use Unicode writer to handle encoding properly
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+    # Write headers (encode each header to UTF-8)
+    writer.writerow([header.encode('utf-8') if isinstance(header, unicode) else header for header in headers])
+
+    # Write data rows (encode each cell to UTF-8)
+    for row in data:
+        writer.writerow([unicode(cell).encode('utf-8') if isinstance(cell, unicode) else str(cell) for cell in row])
+
+    registration_ids = [row[0] for row in data]
+    if registration_ids:
+        followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
+            ','.join(map(str, registration_ids)))
+        cursor.execute(followup_service_data_str)
+        followup_service_data = cursor.fetchall()
+
+        # Write a new header for the followup service data
+        writer.writerow([])  # Add a blank line before the new data section
+        followup_headers = [col[0] for col in cursor.description]
+        writer.writerow([header.encode('utf-8') if isinstance(header, unicode) else header for header in followup_headers])
+
+        for row in followup_service_data:
+            writer.writerow([unicode(cell).encode('utf-8') if isinstance(cell, unicode) else str(cell) for cell in row])
 
     return response

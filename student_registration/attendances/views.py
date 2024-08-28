@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-import datetime
 import json
 import io
 import xlwt
 import csv
+from django.db import connection
+import codecs
 import datetime
 from datetime import date
 from openpyxl import Workbook, load_workbook
@@ -1199,7 +1200,7 @@ def stream_workbook(workbook):
 
 
 
-def attendance_export(request, **kwargs):
+def attendance_export_xlsx(request, **kwargs):
     month = kwargs.get('month')
     year = kwargs.get('year')
 
@@ -1240,7 +1241,7 @@ def attendance_export(request, **kwargs):
 
 
 @login_required(login_url='/users/login')
-def total_attendance_export(request):
+def total_attendance_export_xlsx(request):
     round_id = request.GET.get('round', None)
 
     buffer = io.BytesIO()
@@ -1314,7 +1315,7 @@ def total_attendance_export(request):
 
 
 @login_required(login_url='/users/login')
-def consecutive_absence_export(request):
+def consecutive_absence_export_xlsx(request):
     round_id = request.GET.get('round', None)
 
     buffer = io.BytesIO()
@@ -1417,5 +1418,204 @@ def consecutive_absence_export(request):
     buffer.seek(0)
     response = FileResponse(buffer, content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename="consecutive_absence.xls"'
+
+    return response
+
+
+def attendance_export(request, **kwargs):
+    month = kwargs.get('month')
+    year = kwargs.get('year')
+
+    current_round = CLMRound.objects.get(current_round_bridging=True)
+    round_id = current_round.id
+
+    cursor = connection.cursor()
+
+    vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id = %s"
+    query_params = [round_id]
+
+    if year:
+        vw_data_str += " AND EXTRACT(YEAR FROM attendance_date) = " + year
+    if month:
+        vw_data_str += " AND EXTRACT(MONTH FROM attendance_date) = " + month
+
+    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if request.user.partner_id:
+            vw_data_str += " AND partner_id = %s"
+            query_params.append(request.user.partner_id)
+        if request.user.school_id:
+            vw_data_str += " AND school_id = %s"
+            query_params.append(request.user.school_id)
+
+    vw_data_str += " ORDER BY attendance_date"
+    cursor.execute(vw_data_str, query_params)
+
+    headers = [col[0] for col in cursor.description]
+
+    # Create the HTTP response with CSV headers
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=raw_attendance.csv'
+
+    # Add UTF-8 BOM to support Arabic text
+    response.write(codecs.BOM_UTF8)
+
+    # Use Unicode writer to handle encoding properly
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+    # Write headers (encode each header to UTF-8)
+    writer.writerow([header.encode('utf-8') if isinstance(header, unicode) else header for header in headers])
+
+    # Write data rows (encode each cell to UTF-8)
+    for row in cursor.fetchall():
+        writer.writerow([unicode(cell).encode('utf-8') if isinstance(cell, unicode) else str(cell) for cell in row])
+
+    return response
+
+
+
+@login_required(login_url='/users/login')
+def total_attendance_export(request):
+    round_id = request.GET.get('round', None)
+
+    total_attendance = CLMStudentTotalAttendance.objects.all()
+
+    if round_id:
+        total_attendance = total_attendance.filter(round_id=round_id).order_by('student_id')
+
+    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if request.user.school_id:
+            total_attendance = total_attendance.filter(school_id=request.user.school_id)
+        elif request.user.partner_id:
+            partner_id = request.user.partner_id
+            total_attendance = total_attendance.filter(
+                school_id__in=PartnerOrganization.objects.filter(id=partner_id).values_list('schools', flat=True))
+
+    student_numbers_subquery = Student.objects.filter(id=OuterRef('student_id')).values('number')[:1]
+
+    total_attendance = total_attendance.annotate(number=Subquery(student_numbers_subquery)).order_by('student_id')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=total_attendance.csv'
+    response.write(codecs.BOM_UTF8)
+
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+    columns = ['Student First Name', 'Student Father Name', 'Student Last Name', 'Student Number', 'School',
+               'Registation Level', 'Total Attendance Days', 'Total Absence Days']
+
+    writer.writerow([col.encode('utf-8') for col in columns])
+
+    for row in total_attendance:
+        writer.writerow([
+            row.student_first_name.encode('utf-8'),
+            row.student_father_name.encode('utf-8'),
+            row.student_last_name.encode('utf-8'),
+            row.number.encode('utf-8'),
+            row.school_name.encode('utf-8'),
+            row.registation_level.encode('utf-8'),
+            str(row.total_attendance_days).encode('utf-8'),
+            str(row.total_absence_days).encode('utf-8'),
+        ])
+
+    return response
+
+
+@login_required(login_url='/users/login')
+def consecutive_absence_export(request):
+    round_id = request.GET.get('round', None)
+
+    # Create a CSV response
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="consecutive_absence.csv"'
+
+    # Add UTF-8 BOM to support Arabic text
+    response.write('\ufeff'.encode('utf8'))
+
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+    # Define the header for the CSV
+    consecutive_absences_columns = [
+        'Student First Name',
+        'Student Father Name',
+        'Student Last Name',
+        'Student Number',
+        'School',
+        'Registration Level',
+        'Number of Consecutive Absences',
+        'Consecutive Absences From',
+        'Consecutive Absences To',
+        'Absence Dates',
+        'Total Attendance Days',
+        'Total Absence Days',
+    ]
+    writer.writerow([col.encode('utf-8') for col in consecutive_absences_columns])
+
+    consecutive_student = CLMStudentAbsences.objects.all()
+    total_student = CLMStudentTotalAttendance.objects.all()
+
+    if round_id:
+        consecutive_student = consecutive_student.filter(round_id=round_id)
+        total_student = total_student.filter(round_id=round_id)
+
+    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if request.user.partner_id:
+            partner_id = request.user.partner_id
+            consecutive_student = consecutive_student.filter(school_id__in=PartnerOrganization
+                                                             .objects
+                                                             .filter(id=partner_id)
+                                                             .values_list('schools', flat=True))
+
+            total_student = total_student.filter(school_id__in=PartnerOrganization
+                                                 .objects
+                                                 .filter(id=partner_id)
+                                                 .values_list('schools', flat=True))
+
+        if request.user.school_id:
+            school_id = request.user.school_id
+            consecutive_student = consecutive_student.filter(school_id=school_id)
+            total_student = total_student.filter(school_id=school_id)
+
+    consecutive_student_id = consecutive_student.values_list('student_id', flat=True)
+    total_student_id = total_student.values_list('student_id', flat=True)
+
+    consecutive_student_list = list(consecutive_student_id)
+    total_student_list = list(total_student_id)
+
+    student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
+    student_ids = list(set(student_ids))
+
+    consecutive_absent_students = CLMStudentAbsences.objects.filter(student_id__in=student_ids).all()
+
+    student_numbers_subquery = Student.objects.filter(
+        id=OuterRef('student_id'),
+    ).values('number')[:1]
+
+    consecutive_absent_students = consecutive_absent_students.annotate(
+        number=Subquery(student_numbers_subquery)
+    ).order_by('student_id', 'absence_starting_date')
+
+    # Write data rows to the CSV
+    for row in consecutive_absent_students:
+        absence_dates = ', '.join(row.absence_dates)  # Convert list to comma-separated string
+        student_id = row.student_id
+        total_absent_students = CLMStudentTotalAttendance.objects.filter(student_id=student_id,
+                                                                         round_id=round_id).last()
+
+        total_attendance_days = total_absent_students.total_attendance_days if total_absent_students else ''
+        total_absence_days = total_absent_students.total_absence_days if total_absent_students else ''
+
+        writer.writerow([
+            row.student_first_name.encode('utf-8'),
+            row.student_father_name.encode('utf-8'),
+            row.student_last_name.encode('utf-8'),
+            row.number.encode('utf-8'),
+            row.school_name.encode('utf-8'),
+            row.registation_level.encode('utf-8'),
+            str(row.consecutive_absence_days).encode('utf-8'),
+            str(row.absence_starting_date).encode('utf-8'),
+            str(row.absence_ending_date).encode('utf-8'),
+            absence_dates.encode('utf-8'),
+            str(total_attendance_days).encode('utf-8'),
+            str(total_absence_days).encode('utf-8')
+        ])
 
     return response
