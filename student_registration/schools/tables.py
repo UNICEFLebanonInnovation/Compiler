@@ -50,9 +50,9 @@ class SchoolTable(CommonTable):
                                         template_name='django_tables2/school/health_visit_list_column.html',
                                         attrs={'url': '/schools/health-visit-list/', 'programme': 'Bridging'})
 
-    bridging_export_column = tables.TemplateColumn(verbose_name=_('Dirasa Data'), orderable=False,
-                                        template_name='django_tables2/school/bridging_export_column.html',
-                                        attrs={'url': '/clm/bridging-school-export-data/', 'programme': 'Bridging'})
+    # bridging_export_column = tables.TemplateColumn(verbose_name=_('Dirasa Data'), orderable=False,
+    #                                     template_name='django_tables2/school/bridging_export_column.html',
+    #                                     attrs={'url': '/clm/bridging-school-export-data/', 'programme': 'Bridging'})
 
     # delete_column = tables.TemplateColumn(verbose_name=_('Delete school'), orderable=False,
     #                                       template_name='django_tables2/school_delete_column.html',
@@ -67,7 +67,7 @@ class SchoolTable(CommonTable):
             'meeting_column',
             'community_initiative_column',
             'health_visit_column' ,
-            'bridging_export_column',
+            # 'bridging_export_column',
             'governorate',
             'number',
             'name',

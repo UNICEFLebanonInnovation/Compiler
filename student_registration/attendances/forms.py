@@ -167,8 +167,6 @@ class MainAttendanceForm(forms.ModelForm):
                     )
         )
 
-
-
         round_id = 0
         current_round = CLMRound.objects.all()
         current_round = current_round.get(current_round_bridging=True)

@@ -1494,16 +1494,21 @@ def total_attendance_export(request):
 
     total_attendance = total_attendance.annotate(number=Subquery(student_numbers_subquery)).order_by('student_id')
 
-    response = HttpResponse(content_type='text/csv')
+    # Set content type and add UTF-8 BOM
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename=total_attendance.csv'
     response.write(codecs.BOM_UTF8)
+    
 
-    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL, delimiter=',')
+
     columns = ['Student First Name', 'Student Father Name', 'Student Last Name', 'Student Number', 'School',
-               'Registation Level', 'Total Attendance Days', 'Total Absence Days']
+               'Registration Level', 'Total Attendance Days', 'Total Absence Days']
 
+    # Write header row
     writer.writerow([col.encode('utf-8') for col in columns])
 
+    # Write data rows with explicit UTF-8 encoding
     for row in total_attendance:
         writer.writerow([
             row.student_first_name.encode('utf-8'),
@@ -1515,6 +1520,8 @@ def total_attendance_export(request):
             str(row.total_attendance_days).encode('utf-8'),
             str(row.total_absence_days).encode('utf-8'),
         ])
+
+
 
     return response
 
