@@ -4,8 +4,14 @@ import json
 import io
 import xlwt
 import csv
+import logging
 from django.db import connection
+import traceback
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
 import codecs
+from django.utils.encoding import force_text
+
 import datetime
 from datetime import date
 from openpyxl import Workbook, load_workbook
@@ -1423,57 +1429,77 @@ def consecutive_absence_export_xlsx(request):
 
 
 def attendance_export(request, **kwargs):
-    month = kwargs.get('month')
-    year = kwargs.get('year')
+    try:
+        month = kwargs.get('month')
+        year = kwargs.get('year')
 
-    current_round = CLMRound.objects.get(current_round_bridging=True)
-    round_id = current_round.id
+        cursor = connection.cursor()
+        query_params = []
+        vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id > 0"
 
-    cursor = connection.cursor()
+        if year:
+            vw_data_str += " AND EXTRACT(YEAR FROM attendance_date) = %s"
+            query_params.append(year)
+        if month:
+            vw_data_str += " AND EXTRACT(MONTH FROM attendance_date) = %s"
+            query_params.append(month)
 
-    vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id = %s"
-    query_params = [round_id]
+        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+            if request.user.partner_id:
+                vw_data_str += " AND partner_id = %s"
+                query_params.append(request.user.partner_id)
+            if request.user.school_id:
+                vw_data_str += " AND school_id = %s"
+                query_params.append(request.user.school_id)
 
-    if year:
-        vw_data_str += " AND EXTRACT(YEAR FROM attendance_date) = " + year
-    if month:
-        vw_data_str += " AND EXTRACT(MONTH FROM attendance_date) = " + month
+        vw_data_str += " ORDER BY attendance_date"
+        cursor.execute(vw_data_str, query_params)
 
-    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
-        if request.user.partner_id:
-            vw_data_str += " AND partner_id = %s"
-            query_params.append(request.user.partner_id)
-        if request.user.school_id:
-            vw_data_str += " AND school_id = %s"
-            query_params.append(request.user.school_id)
+        # Log the query for debugging purposes
+        logging.debug("Executing query: %s", vw_data_str)
+        logging.debug("Query params: %s", str(query_params))
 
-    vw_data_str += " ORDER BY attendance_date"
-    cursor.execute(vw_data_str, query_params)
+        # Extract headers from the cursor description
+        headers = [col[0] for col in cursor.description]
 
-    headers = [col[0] for col in cursor.description]
+        # Create the HTTP response with CSV headers
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=raw_attendance.csv'
 
-    # Create the HTTP response with CSV headers
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=raw_attendance.csv'
+        # Add UTF-8 BOM to support Arabic text
+        response.write(codecs.BOM_UTF8)
 
-    # Add UTF-8 BOM to support Arabic text
-    response.write(codecs.BOM_UTF8)
+        # Use CSV writer to handle the CSV creation
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
-    # Use Unicode writer to handle encoding properly
-    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+        # Write headers
+        writer.writerow(headers)
+        arabic_fields = {"student_first_name", "student_father_name", "student_last_name"}
 
-    # Write headers (encode each header to UTF-8)
-    writer.writerow([header.encode('utf-8') if isinstance(header, unicode) else header for header in headers])
+        # Write data rows, handling encoding and converting non-string types
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
 
-    # Write data rows (encode each cell to UTF-8)
-    for row in cursor.fetchall():
-        writer.writerow([unicode(cell).encode('utf-8') if isinstance(cell, unicode) else str(cell) for cell in row])
+        return response
 
-    return response
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-
-@login_required(login_url='/users/login')
+login_required(login_url='/users/login')
 def total_attendance_export(request):
     round_id = request.GET.get('round', None)
 
@@ -1498,9 +1524,8 @@ def total_attendance_export(request):
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename=total_attendance.csv'
     response.write(codecs.BOM_UTF8)
-    
 
-    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL, delimiter=',')
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL, delimiter=str(u','))
 
     columns = ['Student First Name', 'Student Father Name', 'Student Last Name', 'Student Number', 'School',
                'Registration Level', 'Total Attendance Days', 'Total Absence Days']

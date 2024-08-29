@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+from datetime import datetime
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,7 +12,10 @@ from openpyxl import Workbook
 import csv
 from django.db import connection
 import codecs
-
+import logging
+import traceback
+from django.utils.encoding import force_text
+import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
@@ -3860,58 +3864,176 @@ class BridgingListView(LoginRequiredMixin,
 
 @login_required(login_url='/users/login')
 def bridging_export_data(request):
-    cursor = connection.cursor()
-    round_id = request.GET.get('round', None)
+    try:
+        cursor = connection.cursor()
+        round_id = request.GET.get('round', None)
 
-    vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        query_params = []
 
-    if round_id:
-        vw_bridging_data += " AND round_id = %s" % round_id
+        if round_id:
+            vw_bridging_data += " AND round_id = %s"
+            query_params.append(round_id)
 
-    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-    is_staff = request.user.is_staff
+        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = request.user.is_staff
 
-    if not clm_bridging_all and not is_staff and request.user.partner:
-        school_id = 0
-        partner_id = request.user.partner_id
+        if not clm_bridging_all and not is_staff and request.user.partner:
+            school_id = 0
+            partner_id = request.user.partner_id
 
-        vw_bridging_data += " AND partner_id =" + str(partner_id)
+            vw_bridging_data += " AND partner_id = %s"
+            query_params.append(partner_id)
 
-        if request.user.school:
-            school_id = request.user.school.id
+            if request.user.school:
+                school_id = request.user.school.id
+            if school_id > 0:
+                vw_bridging_data += " AND school_id = %s"
+                query_params.append(school_id)
+
+        elif not clm_bridging_all and not is_staff and not request.user.partner:
+            vw_bridging_data += " AND id = 0 "
+
+        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+
+        # Log the query for debugging purposes
+        logging.debug("Executing query: %s", vw_bridging_data)
+        logging.debug("Query params: %s", str(query_params))
+
+        cursor.execute(vw_bridging_data, query_params)
+        data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        # Create the HTTP response with CSV headers
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=exported_data.csv'
+
+        # Add UTF-8 BOM to support Arabic text
+        response.write(codecs.BOM_UTF8)
+
+        # Use CSV writer to handle the CSV creation
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+        # Write headers
+        writer.writerow([header for header in headers])
+
+        # Write data rows, ensuring correct encoding
+        for row in data:
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
+
+        return response
+
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+def bridging_school_export(request, *args, **kwargs):
+    try:
+        school_id = int(kwargs.get('school_id'))
+
+        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = request.user.is_staff
+
+        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        query_params = []
+
+        if not clm_bridging_all and not is_staff and request.user.partner:
+            partner_id = request.user.partner_id
+            vw_bridging_data += " AND partner_id = %s"
+            query_params.append(partner_id)
+
+        elif not clm_bridging_all and not is_staff and not request.user.partner:
+            vw_bridging_data += " AND id = 0"
+
         if school_id > 0:
-            vw_bridging_data += " AND school_id =" + str(school_id)
+            vw_bridging_data += " AND school_id = %s"
+            query_params.append(school_id)
 
-    elif not clm_bridging_all and not is_staff and not request.user.partner:
-        vw_bridging_data += " AND id = 0 "
+        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name"
 
-    vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+        # Log the query for debugging purposes
+        logging.debug("Executing query: %s", vw_bridging_data)
+        logging.debug("Query params: %s", str(query_params))
 
-    cursor.execute(vw_bridging_data)
-    data = cursor.fetchall()
+        cursor = connection.cursor()
+        cursor.execute(vw_bridging_data, query_params)
 
-    headers = [col[0] for col in cursor.description]
+        # Extract headers from the cursor description
+        headers = [col[0] for col in cursor.description]
 
-    # Create the HTTP response with CSV headers
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.csv'
+        # Create the HTTP response with CSV headers
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=bridging_school_data.csv'
 
-    # Add UTF-8 BOM to support Arabic text
-    response.write(codecs.BOM_UTF8)
+        # Add UTF-8 BOM to support Arabic text
+        response.write(codecs.BOM_UTF8)
 
-    # Use Unicode writer to handle encoding properly
-    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+        # Use CSV writer to handle the CSV creation
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
-    # Write headers (encode each header to UTF-8)
-    writer.writerow([header.encode('utf-8') if isinstance(header, unicode) else header for header in headers])
+        # Write headers
+        writer.writerow(headers)
 
-    # Write data rows (encode each cell to UTF-8)
-    for row in data:
-        writer.writerow([unicode(cell).encode('utf-8') if isinstance(cell, unicode) else str(cell) for cell in row])
+        # Write data rows, handling encoding and converting non-string types
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+                # Local
+                # if isinstance(cell, str) or isinstance(cell, unicode):  # Handle Unicode strings
+                #     encoded_row.append(force_text(cell).encode('utf-8'))
+                # elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                #     encoded_row.append(cell.strftime('%Y-%m-%d'))
+                # else:  # Convert other data types to string
+                #     encoded_row.append(str(cell).encode('utf-8'))
+            writer.writerow(encoded_row)
 
-    return response
+        return response
+
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
 
+class BridgingPage(LoginRequiredMixin,
+                   TemplateView):
+        template_name = 'clm/bridging.html'
+
+
+class BridgingAttendanceReport(LoginRequiredMixin,
+                   TemplateView):
+
+    template_name = 'clm/bridging_attendance_report.html'
+    rounds = CLMRound.objects.filter(current_year=True).all()
+
+    def get_context_data(self, **kwargs):
+        context = super(BridgingAttendanceReport, self).get_context_data(**kwargs)
+        context['rounds'] = CLMRound.objects.filter(current_year=True).all()
+        return context
+
+# "Backup to be deleted"
 def bridging_export_data_xlsx(request):
     from django.db import connection
     cursor = connection.cursor()
@@ -3966,7 +4088,7 @@ def bridging_export_data_xlsx(request):
     return response
 
 
-class bridging_school_export(LoginRequiredMixin, ListView):
+class bridging_school_export_xlsx(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         school_id = int(self.kwargs.get('school_id'))
@@ -3993,7 +4115,7 @@ class bridging_school_export(LoginRequiredMixin, ListView):
         return bridging_school_export_data(vw_bridging_data)
 
 
-def bridging_school_export_data(vw_bridging_data):
+def bridging_school_export_data_xlsx(vw_bridging_data):
     from django.db import connection
     cursor = connection.cursor()
     cursor.execute(vw_bridging_data)
@@ -4021,19 +4143,3 @@ def bridging_school_export_data(vw_bridging_data):
 
     return response
 
-
-class BridgingPage(LoginRequiredMixin,
-                   TemplateView):
-        template_name = 'clm/bridging.html'
-
-
-class BridgingAttendanceReport(LoginRequiredMixin,
-                   TemplateView):
-
-    template_name = 'clm/bridging_attendance_report.html'
-    rounds = CLMRound.objects.filter(current_year=True).all()
-
-    def get_context_data(self, **kwargs):
-        context = super(BridgingAttendanceReport, self).get_context_data(**kwargs)
-        context['rounds'] = CLMRound.objects.filter(current_year=True).all()
-        return context
