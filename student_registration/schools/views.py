@@ -37,6 +37,7 @@ from .serializers import (
 from .tables import (
     BootstrapTable,
     SchoolTable,
+    SchoolExportTable,
     ClubTable,
     MeetingTable,
     CommunityInitiativeTable,
@@ -56,7 +57,16 @@ from django.forms import modelformset_factory, formset_factory, inlineformset_fa
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib import messages
-
+import io
+import xlwt
+import csv
+import logging
+from django.db import connection
+import traceback
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
+import codecs
+import datetime
 
 class SchoolViewSet(mixins.ListModelMixin,
                     viewsets.GenericViewSet):
@@ -556,6 +566,18 @@ class SchoolListView(LoginRequiredMixin,
 
         return queryset
 
+    def get_table_class(self):
+
+        """
+        Return the class to use for the table.
+        """
+        if self.request.user.groups.filter(name='EXPORT').exists():
+            return SchoolExportTable
+        else:
+            return SchoolTable
+
+        return self.table_class
+
 
 class SchoolAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
@@ -893,48 +915,47 @@ class HealthVisitFormView(LoginRequiredMixin,
         form.save(request=self.request, school_id=school_id, instance=instance)
         return super(HealthVisitFormView, self).form_valid(form)
 
+def school_export_data(request):
+    qs_school = School.objects.filter(is_closed=False).order_by('-id')
+    qs_club = Club.objects.all().order_by('-id')
+    qs_meeting = Meeting.objects.all().order_by('-id')
+    qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
+    qs_health_visit = HealthVisit.objects.all().order_by('-id')
 
-class school_export_data(LoginRequiredMixin, ListView):
-    def get(self, request, *args, **kwargs):
-        qs_school = School.objects.filter(is_closed=False).order_by('-id')
-        qs_club = Club.objects.all().order_by('-id')
-        qs_meeting = Meeting.objects.all().order_by('-id')
-        qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
-        qs_health_visit = HealthVisit.objects.all().order_by('-id')
+    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+    is_staff = request.user.is_staff
 
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-        is_staff = self.request.user.is_staff
+    if clm_bridging_all or is_staff:
+        qs_school = School.objects.filter(is_closed=False).all()
+    else:
+        school_id = 0
+        partner_id = 0
 
-        if clm_bridging_all or is_staff:
-            qs_school = School.objects.filter(is_closed=False).all()
+        if request.user.school:
+            school_id = request.user.school.id
+        if request.user.partner_id:
+            partner_id = request.user.partner_id
+
+        if school_id and school_id > 0:
+            qs_school = School.objects.filter(id=school_id)
+        elif partner_id > 0:
+            qs_school = School.objects.filter(is_closed=False,
+                                              id__in=PartnerOrganization
+                                              .objects
+                                              .filter(id=partner_id)
+                                              .values_list('schools', flat=True))
         else:
-            school_id = 0
-            partner_id = 0
+            qs_school = qs_school.none()
 
-            if self.request.user.school:
-                school_id = self.request.user.school.id
-            if self.request.user.partner_id:
-                partner_id = self.request.user.partner_id
+    school_ids = qs_school.values_list('id', flat=True)
 
-            if school_id and school_id > 0:
-                qs_school = School.objects.filter(id=school_id)
-            elif partner_id > 0:
-                qs_school = School.objects.filter(is_closed=False,
-                                                  id__in=PartnerOrganization
-                                                  .objects
-                                                  .filter(id=partner_id)
-                                                  .values_list('schools', flat=True))
-            else:
-                qs_school = qs_school.none()
+    qs_club = qs_club.filter(school_id__in=school_ids)
+    qs_meeting = qs_meeting.filter(school_id__in=school_ids)
+    qs_community_initiative = qs_community_initiative.filter(school_id__in=school_ids)
+    qs_health_visit = qs_health_visit.filter(school_id__in=school_ids)
 
-        school_ids = qs_school.values_list('id', flat=True)
+    return school_build_csv_extraction(qs_school, qs_club, qs_meeting, qs_community_initiative, qs_health_visit)
 
-        qs_club = qs_club.filter(school_id__in=school_ids)
-        qs_meeting = qs_meeting.filter(school_id__in=school_ids)
-        qs_community_initiative = qs_community_initiative.filter(school_id__in=school_ids)
-        qs_health_visit = qs_health_visit.filter(school_id__in=school_ids)
-
-        return school_build_xls_extraction(qs_school, qs_club, qs_meeting, qs_community_initiative, qs_health_visit)
 
 
 class SchoolAutocomplete(autocomplete.Select2QuerySetView):

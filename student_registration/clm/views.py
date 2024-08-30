@@ -3997,7 +3997,7 @@ def bridging_school_export(request, *args, **kwargs):
                     encoded_row.append(cell.strftime('%Y-%m-%d'))
                 else:  # Convert other data types to string
                     encoded_row.append(str(cell))
-                # Local
+                # Local 2.7
                 # if isinstance(cell, str) or isinstance(cell, unicode):  # Handle Unicode strings
                 #     encoded_row.append(force_text(cell).encode('utf-8'))
                 # elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
@@ -4032,114 +4032,4 @@ class BridgingAttendanceReport(LoginRequiredMixin,
         context = super(BridgingAttendanceReport, self).get_context_data(**kwargs)
         context['rounds'] = CLMRound.objects.filter(current_year=True).all()
         return context
-
-# "Backup to be deleted"
-def bridging_export_data_xlsx(request):
-    from django.db import connection
-    cursor = connection.cursor()
-    round_id = request.GET.get('round', None)
-
-    vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
-
-    if round_id:
-        vw_bridging_data += " AND round_id = %s" % round_id
-
-    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-    is_staff = request.user.is_staff
-
-    if not clm_bridging_all and not is_staff and request.user.partner:
-        school_id = 0
-        partner_id = request.user.partner_id
-
-        vw_bridging_data += " AND partner_id =" + str(partner_id)
-
-        if request.user.school:
-            school_id = request.user.school.id
-        if school_id > 0:
-            vw_bridging_data += " AND school_id =" + str(school_id)
-
-    elif not clm_bridging_all and not is_staff and not request.user.partner:
-        vw_bridging_data += " AND id = 0 "
-
-    vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
-
-    cursor.execute(vw_bridging_data)
-    data = cursor.fetchall()
-
-    headers = [col[0] for col in cursor.description]
-
-    workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("All Data")
-    worksheet_all_data.append(headers)
-
-    for row in data:
-        worksheet_all_data.append(row)
-
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
-
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
-
-    # Save the workbook to the response
-    workbook.save(response)
-
-    return response
-
-
-class bridging_school_export_xlsx(LoginRequiredMixin, ListView):
-
-    def get(self, request, *args, **kwargs):
-        school_id = int(self.kwargs.get('school_id'))
-
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-        is_staff = request.user.is_staff
-
-        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
-
-        if not clm_bridging_all and not is_staff and request.user.partner:
-            partner_id = request.user.partner_id
-            vw_bridging_data += " AND partner_id =" + str(partner_id)
-
-        elif not clm_bridging_all and not is_staff and not request.user.partner:
-            vw_bridging_data += " AND id = 0 "
-
-        if school_id > 0:
-            vw_bridging_data += " AND school_id =" + str(school_id)
-
-        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
-
-        print (vw_bridging_data)
-
-        return bridging_school_export_data(vw_bridging_data)
-
-
-def bridging_school_export_data_xlsx(vw_bridging_data):
-    from django.db import connection
-    cursor = connection.cursor()
-    cursor.execute(vw_bridging_data)
-
-    data = cursor.fetchall()
-
-    headers = [col[0] for col in cursor.description]
-
-    workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("All Data")
-    worksheet_all_data.append(headers)
-
-    for row in data:
-        worksheet_all_data.append(row)
-
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
-
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
-
-    # Save the workbook to the response
-    workbook.save(response)
-
-    return response
 

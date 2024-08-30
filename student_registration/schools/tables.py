@@ -50,9 +50,56 @@ class SchoolTable(CommonTable):
                                         template_name='django_tables2/school/health_visit_list_column.html',
                                         attrs={'url': '/schools/health-visit-list/', 'programme': 'Bridging'})
 
-    # bridging_export_column = tables.TemplateColumn(verbose_name=_('Dirasa Data'), orderable=False,
-    #                                     template_name='django_tables2/school/bridging_export_column.html',
-    #                                     attrs={'url': '/clm/bridging-school-export-data/', 'programme': 'Bridging'})
+    # delete_column = tables.TemplateColumn(verbose_name=_('Delete school'), orderable=False,
+    #                                       template_name='django_tables2/school_delete_column.html',
+    #                                       attrs={'url': '/api/school/', 'programme': 'Bridging'})
+
+    class Meta:
+        model = School
+        template = 'django_tables2/bootstrap.html'
+        fields = (
+            'edit_column',
+            'club_column',
+            'meeting_column',
+            'community_initiative_column',
+            'health_visit_column',
+            'governorate',
+            'number',
+            'name',
+            'director_name',
+            'land_phone_number',
+            'email',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+        )
+
+
+class SchoolExportTable(CommonTable):
+
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit school'), orderable=False,
+                                        template_name='django_tables2/school_edit_column.html',
+                                        attrs={'url': '/schools/school-edit/', 'programme': 'Bridging'})
+    club_column = tables.TemplateColumn(verbose_name=_('Clubs'), orderable=False,
+                                        template_name='django_tables2/school/club_list_column.html',
+                                        attrs={'url': '/schools/club-list/', 'programme': 'Bridging'})
+
+    meeting_column = tables.TemplateColumn(verbose_name=_('Meetings'), orderable=False,
+                                        template_name='django_tables2/school/meeting_list_column.html',
+                                        attrs={'url': '/schools/meeting-list/', 'programme': 'Bridging'})
+
+    community_initiative_column = tables.TemplateColumn(verbose_name=_('Community Initiatives'), orderable=False,
+                                        template_name='django_tables2/school/community_initiative_list_column.html',
+                                        attrs={'url': '/schools/community-initiative-list/', 'programme': 'Bridging'})
+
+    health_visit_column = tables.TemplateColumn(verbose_name=_('Health Visits'), orderable=False,
+                                        template_name='django_tables2/school/health_visit_list_column.html',
+                                        attrs={'url': '/schools/health-visit-list/', 'programme': 'Bridging'})
+
+    bridging_export_column = tables.TemplateColumn(verbose_name=_('Dirasa Data'), orderable=False,
+                                        template_name='django_tables2/school/bridging_export_column.html',
+                                        attrs={'url': '/clm/bridging-school-export-data/', 'programme': 'Bridging'})
 
     # delete_column = tables.TemplateColumn(verbose_name=_('Delete school'), orderable=False,
     #                                       template_name='django_tables2/school_delete_column.html',
@@ -67,7 +114,7 @@ class SchoolTable(CommonTable):
             'meeting_column',
             'community_initiative_column',
             'health_visit_column' ,
-            # 'bridging_export_column',
+            'bridging_export_column',
             'governorate',
             'number',
             'name',

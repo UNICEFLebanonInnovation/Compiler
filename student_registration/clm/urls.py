@@ -279,7 +279,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^inclusion-export/$',
-        view=inclusion_views.InclusionExportViewSet.as_view(),
+        view=inclusion_views.inclusion_export,
         name='inclusion_export'
     ),
     url(

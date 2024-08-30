@@ -1167,6 +1167,7 @@ from django.http import StreamingHttpResponse
 from openpyxl import Workbook
 from django.db import connection
 
+
 def generate_workbook(headers, cursor, max_rows_per_sheet):
     workbook = Workbook()
     worksheet = workbook.active
@@ -1196,6 +1197,7 @@ def generate_workbook(headers, cursor, max_rows_per_sheet):
         del workbook['Sheet']
 
     return workbook
+
 
 def stream_workbook(workbook):
     from io import BytesIO
@@ -1499,7 +1501,7 @@ def attendance_export(request, **kwargs):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-login_required(login_url='/users/login')
+@login_required(login_url='/users/login')
 def total_attendance_export(request):
     round_id = request.GET.get('round', None)
 
@@ -1533,34 +1535,54 @@ def total_attendance_export(request):
     # Write header row
     writer.writerow([col.encode('utf-8') for col in columns])
 
-    # Write data rows with explicit UTF-8 encoding
-    for row in total_attendance:
-        writer.writerow([
-            row.student_first_name.encode('utf-8'),
-            row.student_father_name.encode('utf-8'),
-            row.student_last_name.encode('utf-8'),
-            row.number.encode('utf-8'),
-            row.school_name.encode('utf-8'),
-            row.registation_level.encode('utf-8'),
-            str(row.total_attendance_days).encode('utf-8'),
-            str(row.total_absence_days).encode('utf-8'),
-        ])
+    # Iterate over the queryset and extract values for each row
+    for attendance in total_attendance:
+        row = [
+            attendance.student_first_name,
+            attendance.student_father_name,
+            attendance.student_last_name,
+            attendance.number,
+            attendance.school_name,
+            attendance.registation_level,
+            attendance.total_attendance_days,
+            attendance.total_absence_days
+        ]
 
+        encoded_row = []
+        for cell in row:
+            if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+            elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                encoded_row.append(cell.strftime('%Y-%m-%d'))
+            else:  # Convert other data types to string
+                encoded_row.append(str(cell))
 
+        writer.writerow(encoded_row)
 
     return response
 
+
+    # local
+    # for row in total_attendance:
+    #     writer.writerow([
+    #         row.student_first_name.encode('utf-8'),
+    #         row.student_father_name.encode('utf-8'),
+    #         row.student_last_name.encode('utf-8'),
+    #         row.number.encode('utf-8'),
+    #         row.school_name.encode('utf-8'),
+    #         row.registation_level.encode('utf-8'),
+    #         str(row.total_attendance_days).encode('utf-8'),
+    #         str(row.total_absence_days).encode('utf-8'),
+    #     ])
 
 @login_required(login_url='/users/login')
 def consecutive_absence_export(request):
     round_id = request.GET.get('round', None)
 
-    # Create a CSV response
-    response = HttpResponse(content_type='text/csv')
+    # Create a CSV response with UTF-8 BOM
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename="consecutive_absence.csv"'
-
-    # Add UTF-8 BOM to support Arabic text
-    response.write('\ufeff'.encode('utf8'))
+    response.write(codecs.BOM_UTF8)
 
     writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
@@ -1579,7 +1601,7 @@ def consecutive_absence_export(request):
         'Total Attendance Days',
         'Total Absence Days',
     ]
-    writer.writerow([col.encode('utf-8') for col in consecutive_absences_columns])
+    writer.writerow([col for col in consecutive_absences_columns])
 
     consecutive_student = CLMStudentAbsences.objects.all()
     total_student = CLMStudentTotalAttendance.objects.all()
@@ -1595,7 +1617,6 @@ def consecutive_absence_export(request):
                                                              .objects
                                                              .filter(id=partner_id)
                                                              .values_list('schools', flat=True))
-
             total_student = total_student.filter(school_id__in=PartnerOrganization
                                                  .objects
                                                  .filter(id=partner_id)
@@ -1609,13 +1630,9 @@ def consecutive_absence_export(request):
     consecutive_student_id = consecutive_student.values_list('student_id', flat=True)
     total_student_id = total_student.values_list('student_id', flat=True)
 
-    consecutive_student_list = list(consecutive_student_id)
-    total_student_list = list(total_student_id)
+    student_ids = list(set(consecutive_student_id) | set(total_student_id))
 
-    student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
-    student_ids = list(set(student_ids))
-
-    consecutive_absent_students = CLMStudentAbsences.objects.filter(student_id__in=student_ids).all()
+    consecutive_absent_students = CLMStudentAbsences.objects.filter(student_id__in=student_ids)
 
     student_numbers_subquery = Student.objects.filter(
         id=OuterRef('student_id'),
@@ -1627,7 +1644,6 @@ def consecutive_absence_export(request):
 
     # Write data rows to the CSV
     for row in consecutive_absent_students:
-        absence_dates = ', '.join(row.absence_dates)  # Convert list to comma-separated string
         student_id = row.student_id
         total_absent_students = CLMStudentTotalAttendance.objects.filter(student_id=student_id,
                                                                          round_id=round_id).last()
@@ -1635,19 +1651,34 @@ def consecutive_absence_export(request):
         total_attendance_days = total_absent_students.total_attendance_days if total_absent_students else ''
         total_absence_days = total_absent_students.total_absence_days if total_absent_students else ''
 
-        writer.writerow([
-            row.student_first_name.encode('utf-8'),
-            row.student_father_name.encode('utf-8'),
-            row.student_last_name.encode('utf-8'),
-            row.number.encode('utf-8'),
-            row.school_name.encode('utf-8'),
-            row.registation_level.encode('utf-8'),
-            str(row.consecutive_absence_days).encode('utf-8'),
-            str(row.absence_starting_date).encode('utf-8'),
-            str(row.absence_ending_date).encode('utf-8'),
-            absence_dates.encode('utf-8'),
-            str(total_attendance_days).encode('utf-8'),
-            str(total_absence_days).encode('utf-8')
-        ])
+        # Convert list of dates to a comma-separated string
+        absence_dates = ', '.join(str(date) for date in row.absence_dates)
+
+        # Construct the row data
+        csv_row = [
+            row.student_first_name,
+            row.student_father_name,
+            row.student_last_name,
+            row.number,
+            row.school_name,
+            row.registation_level,
+            row.consecutive_absence_days,
+            row.absence_starting_date.strftime('%Y-%m-%d') if row.absence_starting_date else '',
+            row.absence_ending_date.strftime('%Y-%m-%d') if row.absence_ending_date else '',
+            absence_dates,
+            total_attendance_days,
+            total_absence_days,
+        ]
+
+        encoded_row = []
+        for cell in csv_row:
+            if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+            elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                encoded_row.append(cell.strftime('%Y-%m-%d'))
+            else:  # Convert other data types to string
+                encoded_row.append(str(cell))
+
+        writer.writerow(encoded_row)
 
     return response

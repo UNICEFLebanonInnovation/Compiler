@@ -173,7 +173,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^school-export/$',
-        view=views.school_export_data.as_view(),
+        view=views.school_export_data,
         name='school_export'
     ),
 ]

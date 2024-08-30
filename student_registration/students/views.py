@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-import json
+
+import datetime
+import logging
+import traceback
+import csv
+import codecs
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
@@ -343,36 +348,102 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
 
 
 def teacher_export_data(request):
-    from .export import TeacherResource
-    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-    is_staff = request.user.is_staff
+    logger = logging.getLogger(__name__)
 
-    qs_teacher = Teacher.objects.all()
+    try:
+        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = request.user.is_staff
 
-    if clm_bridging_all or is_staff:
         qs_teacher = Teacher.objects.all()
-    else:
-        school_id = 0
-        partner_id = 0
 
-        if request.user.school:
-            school_id = request.user.school.id
-        if request.user.partner_id:
-            partner_id = request.user.partner_id
+        if not clm_bridging_all and not is_staff:
+            school_id = 0
+            partner_id = 0
 
-        if school_id and school_id > 0:
-            qs_teacher = Teacher.objects.filter(school_id=school_id)
+            if request.user.school:
+                school_id = request.user.school.id
+            if request.user.partner_id:
+                partner_id = request.user.partner_id
 
-        elif partner_id > 0:
-            qs_teacher = Teacher.objects.filter(school_id__in=PartnerOrganization
-                                              .objects
-                                              .filter(id=partner_id)
-                                              .values_list('schools', flat=True))
-        else:
-            qs_teacher = qs_teacher.none()
+            if school_id and school_id > 0:
+                qs_teacher = Teacher.objects.filter(school_id=school_id)
+            elif partner_id > 0:
+                qs_teacher = Teacher.objects.filter(
+                    school_id__in=PartnerOrganization.objects.filter(id=partner_id).values_list('schools', flat=True))
+            else:
+                qs_teacher = qs_teacher.none()
 
-    qs_teacher.order_by('-id')
-    dataset = TeacherResource().export(qs_teacher)
-    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="teacher_data.xls"'
-    return response
+        # Order the queryset
+        qs_teacher = qs_teacher.order_by('-id')
+
+        # Create the HTTP response with CSV headers
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename="teacher_data.csv"'
+        response.write(codecs.BOM_UTF8)
+
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+        # Define CSV header with all fields from the Teacher model
+        columns = [
+            'First Name', 'Last Name', 'School', 'Email', 'Phone Number', 'Subjects Provided',
+            'Registration Level', 'Teacher Assignment', 'Teaching Hours Private School',
+            'Teaching Hours Dirasa', 'Training Sessions Attended', 'Extra Coaching', 'Extra Coaching Specify',
+            'Attachment 1 Description', 'Attachment 1 Type', 'Attachment 2 Description', 'Attachment 2 Type',
+            'Attachment 3 Description', 'Attachment 3 Type', 'Attachment 4 Description', 'Attachment 4 Type',
+            'Attachment 5 Description', 'Attachment 5 Type', 'Owner', 'Modified By'
+        ]
+
+        # Write header row
+        writer.writerow(columns)
+
+        # Iterate over the queryset and extract values for each row
+        for teacher in qs_teacher:
+            row = [
+                teacher.first_name,
+                teacher.last_name,
+                teacher.school.name if teacher.school else '',
+                teacher.email if teacher.email else '',
+                teacher.primary_phone_number if teacher.primary_phone_number else '',
+                ', '.join(teacher.subjects_provided) if teacher.subjects_provided else '',
+                ', '.join(teacher.registration_level) if teacher.registration_level else '',
+                teacher.teacher_assignment if teacher.teacher_assignment else '',
+                teacher.teaching_hours_private_school if teacher.teaching_hours_private_school is not None else '',
+                teacher.teaching_hours_dirasa if teacher.teaching_hours_dirasa is not None else '',
+                teacher.training_sessions_attended if teacher.training_sessions_attended is not None else '',
+                teacher.extra_coaching if teacher.extra_coaching else '',
+                teacher.extra_coaching_specify if teacher.extra_coaching_specify else '',
+                teacher.attach_short_description_1 if teacher.attach_short_description_1 else '',
+                teacher.attach_type_1.name if teacher.attach_type_1 else '',
+                teacher.attach_short_description_2 if teacher.attach_short_description_2 else '',
+                teacher.attach_type_2.name if teacher.attach_type_2 else '',
+                teacher.attach_short_description_3 if teacher.attach_short_description_3 else '',
+                teacher.attach_type_3.name if teacher.attach_type_3 else '',
+                teacher.attach_short_description_4 if teacher.attach_short_description_4 else '',
+                teacher.attach_type_4.name if teacher.attach_type_4 else '',
+                teacher.attach_short_description_5 if teacher.attach_short_description_5 else '',
+                teacher.attach_type_5.name if teacher.attach_type_5 else '',
+                teacher.owner.username if teacher.owner else '',
+                teacher.modified_by.username if teacher.modified_by else '',
+            ]
+
+            # Encode each cell to UTF-8
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+
+            writer.writerow(encoded_row)
+
+        return response
+
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logger.error("An error occurred during the export process:")
+        logger.error(traceback.format_exc())
+
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)
