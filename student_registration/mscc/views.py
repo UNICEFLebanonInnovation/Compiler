@@ -8,9 +8,14 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
-import csv
 from django.db import connection
+import csv
+import io
+import zipfile
 import codecs
+from django.utils.encoding import smart_str
+import logging
+import traceback
 
 from rest_framework import status
 from django.db.models import F, Q
@@ -720,14 +725,6 @@ def export_data_xlsx(request):
     return response
 
 
-import csv
-import io
-import zipfile
-import logging
-import traceback
-from django.http import HttpResponse, JsonResponse
-from django.db import connection
-
 def export_data(request):
     try:
         cursor = connection.cursor()
@@ -786,10 +783,14 @@ def export_data(request):
             # Create CSV for vw_mscc_data
             csv_mscc_output = io.StringIO()
             csv_writer = csv.writer(csv_mscc_output)
+
+            # Add BOM to handle Arabic text correctly
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
             csv_writer.writerow(headers)  # Write headers
 
             for row in mscc_data:
-                csv_writer.writerow([smart_str(cell) for cell in row])
+                encoded_row = [smart_str(cell) for cell in row]
+                csv_writer.writerow(encoded_row)
 
             # Add CSV to ZIP
             zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
@@ -806,13 +807,18 @@ def export_data(request):
                 # Create CSV for followup_service_data
                 csv_followup_output = io.StringIO()
                 csv_writer = csv.writer(csv_followup_output)
+
+                # Add BOM to handle Arabic text correctly
+                csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
                 csv_writer.writerow(followup_headers)  # Write headers
 
                 for row in followup_service_data:
-                    csv_writer.writerow([smart_str(cell) for cell in row])
+                    encoded_row = [smart_str(cell) for cell in row]
+                    csv_writer.writerow(encoded_row)
+
 
                 # Add CSV to ZIP
-                zf.writestr('followup_service_data.csv', csv_followup_output.getvalue())
+                zf.writestr('followup_data.csv', csv_followup_output.getvalue())
 
         # Prepare the ZIP file response
         response = HttpResponse(zip_output.getvalue(), content_type='application/zip')
@@ -827,5 +833,3 @@ def export_data(request):
 
         # Return a more detailed error response for debugging
         return HttpResponse("An error occurred: " + str(e), status=500)
-
-
