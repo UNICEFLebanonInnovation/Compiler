@@ -652,18 +652,10 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
         kwargs['clm_bridging_all'] = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
 
         round_id = 0
-        current_round = CLMRound.objects.all()
-        current_round = current_round.get(current_round_bridging=True)
+        current_round = CLMRound.objects.filter(current_round_bridging=True).first()
         if current_round:
             round_id = current_round.id
         kwargs['round_id'] = round_id
-
-        if ('school' in self.request.GET) and ('registration_level' in self.request.GET)\
-           or\
-           self.request.method == 'POST':
-            kwargs['saveStage'] = True
-        else:
-            kwargs['saveStage'] = False
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -764,7 +756,6 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
     def get_form(self, form_class=None):
         attendance_id = self.kwargs['pk']
         instance = CLMAttendance.objects.get(id=attendance_id)
-        update_disabled = True
         partner_id = 0
         user_school_id = 0
         if self.request.user.partner:
@@ -772,19 +763,24 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.user.school:
             user_school_id = self.request.user.school.id
 
+        round_id = 0
+        current_round = CLMRound.objects.filter(current_round_bridging=True).first()
+        if current_round:
+            round_id = current_round.id
+
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         # messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
             form = MainAttendanceForm(self.request.POST, instance=instance,
-                                      attendance_student_formset=self.get_student_formset(self.request.POST)
-                                      , saveStage=True, update_disabled=update_disabled,
-                                      partner_id=partner_id, user_school_id=user_school_id, clm_bridging_all=clm_bridging_all)
+                                      attendance_student_formset=self.get_student_formset(self.request.POST),
+                                      partner_id=partner_id, user_school_id=user_school_id,round_id=round_id,
+                                      clm_bridging_all=clm_bridging_all)
         else:
             form = MainAttendanceForm(instance=instance,
                                       attendance_student_formset=self.get_formset(attendance_id),
-                                      saveStage=True, update_disabled=update_disabled,
-                                      partner_id=partner_id, user_school_id=user_school_id, clm_bridging_all=clm_bridging_all)
+                                      partner_id=partner_id, user_school_id=user_school_id,round_id=round_id,
+                                      clm_bridging_all=clm_bridging_all)
 
         form.helper.form_action = reverse('attendances:main_attendance_edit', args=[attendance_id])
 

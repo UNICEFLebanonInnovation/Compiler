@@ -93,29 +93,10 @@ class MainAttendanceForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
 
         attendance_student_formset = kwargs.pop('attendance_student_formset', None)
-        saveStage = kwargs.pop('saveStage', None)
-        update_disabled = kwargs.pop('update_disabled', False)
         partner_id = kwargs.pop('partner_id', None)
         school_id = kwargs.pop('user_school_id', None)
         round_id = kwargs.pop('round_id', None)
         clm_bridging_all= kwargs.pop('clm_bridging_all', None)
-        # can view only: clm_bridging_all, and partner focal point , no school asigned
-        if clm_bridging_all or school_id == 0 :
-            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info')
-            submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
-
-        elif update_disabled:
-            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
-            # submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
-            submit_button = Submit('save', _('Save'), css_class='col-md-2')
-
-        elif saveStage:
-            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info', disabled=True)
-            submit_button = Submit('save', _('Save'), css_class='col-md-2')
-
-        else:
-            load_students_button = Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info')
-            submit_button = Submit('save', _('Save'), css_class='col-md-2', disabled=True)
 
         attendance_students_context = {}
         if attendance_student_formset:
@@ -152,9 +133,9 @@ class MainAttendanceForm(forms.ModelForm):
             ),
             HTML(self.render_attendance_students(self.request, attendance_students_context)),
             FormActions(
-                        load_students_button,
+                Button('LoadStudentsButton', _('Load'), css_class='col-md-2 btn btn-info') ,
                         HTML('<div class="space"></div>'),
-                        submit_button,
+                        Submit('save', _('Save'), css_class='col-md-2'),
                         HTML('<div class="space"></div>'),
                         HTML(
                             '{% load util_tags %}'
@@ -194,10 +175,6 @@ class MainAttendanceForm(forms.ModelForm):
             empty_label='-------',
             required=True, to_field_name='id',
         )
-
-        # if saveStage:
-        #     self.fields['school'].widget.attrs['disabled'] = 'disabled'
-        #     self.fields['registration_level'].widget.attrs['disabled'] = 'disabled'
 
     def clean(self):
         cleaned_data = super(MainAttendanceForm, self).clean()
