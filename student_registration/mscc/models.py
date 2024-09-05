@@ -315,7 +315,7 @@ class Registration(TimeStampedModel):
     def get_total_absent_days(registration_id):
         result = 0
         from student_registration.attendances.models import MSCCAttendanceChild
-        attendance_days = MSCCAttendanceChild.objects.filter(registration_id=registration_id ).count()
+        attendance_days = MSCCAttendanceChild.objects.filter(registration_id=registration_id, attended='No').count()
         if attendance_days:
             result = attendance_days
         return result
