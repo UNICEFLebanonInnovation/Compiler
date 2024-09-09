@@ -41,9 +41,13 @@ $(document).ready(function() {
         (
             function()
             {
+               var attended = "Yes";
                var child_id = $(this).find(".child_id").val();
                var registration_id = $(this).find(".registration_id").val();
-               var attended = $(this).find("input.status:checked").val();
+               var checkedValue = $(this).find("input.status:checked").val();
+               if (checkedValue) {
+                    attended = checkedValue;
+               }
                var absence_reason = $(this).find(".absence_reason").val();
                var absence_reason_other = $(this).find(".absence_reason_other").val();
 
