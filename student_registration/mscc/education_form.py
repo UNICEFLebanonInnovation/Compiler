@@ -447,7 +447,8 @@ class EducationServiceForm(forms.ModelForm):
         required=False
     )
     round = forms.ModelChoiceField(
-        queryset=Round.objects.all(), widget=forms.Select,
+        queryset=Round.objects.filter(current_year=True),
+        widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -530,6 +531,34 @@ class EducationServiceForm(forms.ModelForm):
             self.fields['class_section'].required = False
             self.fields['registration_date'].required = False
 
+        if registry:
+                child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
+
+                if instance:
+                    current_round_id = EducationService.objects.filter(registration_id=registry).values_list('round_id',
+                                                                                                         flat=True).first()
+                    # Get all rounds this child is registered for and exclude the current round
+                    rounds_registered = Registration.objects.filter(
+                        child_id=child_id,
+                        deleted=False
+                    ).exclude(
+                        round_id=current_round_id
+                    ).values_list('round_id', flat=True)
+                else:
+                    # Get all rounds this child is registered for
+                    rounds_registered = EducationService.objects.filter(
+                        registration__child_id=child_id,
+                        registration__deleted=False
+                    ).values_list('round_id', flat=True)
+
+                rounds_current_year = Round.objects.filter(current_year=True)
+
+                # Filter rounds for the current year, excluding already registered rounds
+                available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+
+                # Update the queryset for the 'round' field
+                self.fields['round'].queryset = available_rounds
+
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:
             form_action = reverse('mscc:service_education_edit',
@@ -569,8 +598,6 @@ class EducationServiceForm(forms.ModelForm):
             FormActions(
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                Reset('reset', 'Reset',
-                      css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 HTML(
                     '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/MSCC/Child-Registration-Cancel/{}/">Cancel</a>'.format(
                         registry)

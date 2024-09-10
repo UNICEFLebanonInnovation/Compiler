@@ -220,6 +220,8 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             registration = Registration.objects.get(id=registry)
             new_registration = copy.copy(registration)
             new_registration.pk = None
+            new_registration.owner = self.request.user
+            new_registration.modified_by = self.request.user
             new_registration.save()
             generate_services(new_registration.child.age, new_registration, self.request.user)
             return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id,

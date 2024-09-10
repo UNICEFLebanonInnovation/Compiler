@@ -34,8 +34,9 @@ def get_child_rounds(registry):
         )
     ).values_list('id', flat=True)
     round_names = Round.objects.filter(
-        id__in=EducationService.objects
-            .filter(registration_id__in=registration_ids).values_list('round_id',flat=True)).values_list('name', flat=True).distinct()
+        id__in=EducationService.objects.filter
+        (registration_id__in=registration_ids,
+         registration__deleted=False).values_list('round_id',flat=True)).values_list('name', flat=True).distinct()
 
     if round_names:
         return round_names
