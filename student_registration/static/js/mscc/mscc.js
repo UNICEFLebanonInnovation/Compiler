@@ -379,6 +379,8 @@ function child_duplication_check() {
                     })
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
+                    $('#submit-id-save').prop('disabled', true);
+
                 }
                 console.log(response);
             },
