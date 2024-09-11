@@ -300,6 +300,7 @@ class AttendanceAbsenceForm(forms.Form):
             )
         )
 
+
 class CLMAttendanceAdminForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(

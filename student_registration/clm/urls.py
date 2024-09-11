@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 
-from . import views
+from . import views, attendance_views
 from . import inclusion_views
 
 app_name = 'clm'
@@ -375,9 +375,29 @@ urlpatterns = [
         view=views.BridgingPage.as_view(),
         name='bridging_page'
     ),
+    # url(
+    #     'bridging-attendance-report/$',
+    #     views.BridgingAttendanceReport.as_view(),
+    #     name='bridging_attendance_report'
+    # ),
     url(
-        'bridging-attendance-report/$',
-        views.BridgingAttendanceReport.as_view(),
-        name='bridging_attendance_report'
+        regex=r'^Attendance/$',
+        view=attendance_views.AttendanceView.as_view(),
+        name='attendance'
+    ),
+    url(
+        'Load-Attendance-Children/$',
+        view=attendance_views.LoadAttendanceChildren.as_view(),
+        name='load_attendance_children'
+    ),
+    url(
+        'Save-Attendance-Children/$',
+        view=attendance_views.save_attendance_children,
+        name='save_attendance_children'
+    ),
+    url(
+        'Attendance-Child/(?P<child>[\w.@+-]+)/$',
+        view=attendance_views.LoadAttendanceChild.as_view(),
+        name='attendance_child'
     ),
 ]

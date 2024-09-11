@@ -532,10 +532,7 @@ class School(TimeStampedModel):
         return True
 
     def __unicode__(self):
-        return u'{} - {}'.format(
-            self.number,
-            self.name
-        )
+        return u'{} - {}'.format(self.number, self.name)
 
     def __str__(self):
         return self.name

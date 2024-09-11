@@ -17,6 +17,7 @@ from datetime import datetime
 from .models import Bridging
 from student_registration.students.models import Person
 from student_registration.outreach.models import OutreachChild
+from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentTotalAttendance, CLMStudentAbsences
 
 
 def is_allowed_create(programme):
@@ -1733,7 +1734,6 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc):
     return response
 
 
-# def rs_build_xls_extraction(queryset_students):
 def rs_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
@@ -3350,3 +3350,158 @@ def get_outreach_child(outreach_id):
     #     initial['education_status'] = ''
 
     return initial
+
+
+def create_attendance(data, center_id):
+    from datetime import datetime
+
+    education_program = data["education_program"]
+    class_section = data["class_section"]
+    try:
+        attendance, created = CLMAttendance.objects.get_or_create(center_id=center_id,
+                                                                   attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'),
+                                                                   education_program=education_program,
+                                                                   class_section=class_section
+                                                                   )
+        attendance.day_off = data["attendance_day_off"]
+        attendance.close_reason = data["close_reason"]
+        attendance.save()
+
+        for child in data['children_attendance']:
+            attendance_child, created = CLMAttendanceStudent.objects.get_or_create(attendance_day=attendance,
+                                                                                  child_id=child['child_id'],
+                                                                                  registration_id=child['registration_id']
+                                                                                  )
+            attendance_child.attended = child['attended']
+            attendance_child.absence_reason = child['absence_reason']
+            attendance_child.absence_reason_other = child['absence_reason_other']
+            attendance_child.save()
+        return True
+    except Exception as ex:
+        print(ex)
+        return False
+
+
+def load_child_attendance(center_id, attendance_date, education_program, class_section):
+    from datetime import datetime
+
+    attendance = None
+    #
+    # if attendance_date is not None:
+    #     attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
+    #
+    #     attendance = CLMAttendance.objects.filter(center_id=center_id,
+    #                                                attendance_date=attendance_date,
+    #                                                education_program=education_program,
+    #                                                class_section=class_section
+    #                                                ).last()
+    #
+    # result = []
+    #
+    # try:
+    #     if attendance:
+    #         attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance)
+    #
+    #         for attendance in attendances:
+    #             attendance_record = {}
+    #             attendance_record['registration_id'] = attendance.registration.id
+    #             attendance_record['child_id'] = attendance.child.id
+    #             attendance_record['child_fullname'] = attendance.child.full_name
+    #             attendance_record['child_mother_fullname'] = attendance.child.mother_fullname
+    #             attendance_record['child_birthday'] = attendance.child.birthday
+    #             attendance_record['child_nationality'] = attendance.child.nationality.name
+    #             attendance_record['attended'] = attendance.attended
+    #             attendance_record['absence_reason'] = attendance.absence_reason
+    #             attendance_record['absence_reason_other'] = attendance.absence_reason_other
+    #
+    #             result.append(attendance_record)
+    #     else:
+    #         registrations = Bridging.objects.filter(
+    #             center_id=center_id,
+    #             type='Core-Package',
+    #             deleted=False,
+    #             round__current_year=True
+    #         ).annotate(
+    #             has_education_service=Exists(
+    #                 EducationService.objects.filter(
+    #                     registration_id=OuterRef('pk'),
+    #                     education_program=education_program,
+    #                     class_section=class_section
+    #                 )
+    #             )
+    #         ).filter(has_education_service=True)\
+    #             .exclude(
+    #             id__in=Subquery(
+    #                 Referral.objects.filter(
+    #                     registration_id=OuterRef('pk'),
+    #                     recommended_learning_path='Drop out',
+    #                     dropout_date__lte = attendance_date
+    #                 ).values('registration_id')
+    #             )
+    #         )
+    #
+    #         for registration_child in registrations:
+    #             registration_record = {}
+    #             registration_record['registration_id'] = registration_child.id
+    #             registration_record['child_id'] = registration_child.child.id
+    #             registration_record['child_fullname'] = registration_child.child.full_name
+    #             registration_record['child_mother_fullname'] = registration_child.child.mother_fullname
+    #             registration_record['child_birthday'] = registration_child.child.birthday
+    #             registration_record['child_nationality'] = registration_child.child.nationality.name
+    #             registration_record['attended'] = 'Yes'
+    #             registration_record['absence_reason'] = ''
+    #             registration_record['absence_reason_other'] = ''
+    #             result.append(registration_record)
+    #
+    #     return result
+    #
+    # except Exception as ex:
+    #     print(ex)
+    #     return []
+
+
+def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+
+    child_attendances = None
+
+    child_attendances = CLMAttendanceStudent.objects.filter(registration_id=registration_id,
+                                                           attendance_day__education_program=education_program,
+                                                           attendance_day__class_section=old_class_section)
+
+    try:
+        if child_attendances:
+            for ca in child_attendances:
+                center_id = ca.attendance_day.center.id
+                attendance_date = ca.attendance_day.attendance_date
+
+                # Search if attendance for the new class exists and move the child attendance to it
+                new_attendance = CLMAttendance.objects.filter(center_id=center_id,
+                                                           attendance_date=attendance_date,
+                                                           education_program=education_program,
+                                                           class_section=new_class_section
+                                                           ).last()
+                attendance_id = ca.attendance_day.id
+
+                # Count the number of other attendances for the same day
+                other_children_count = CLMAttendanceStudent.objects.filter(attendance_day=ca.attendance_day).exclude(id=ca.id).count()
+
+                if new_attendance:
+                    ca.attendance_day = new_attendance
+                    ca.save()
+                else:
+                    ca.delete()
+
+                if other_children_count == 0:
+                    try:
+                        old_attendance = CLMAttendance.objects.get(id=attendance_id)
+
+                        # Delete the unique old_attendance instance
+                        old_attendance.delete()
+
+                    except CLMAttendance.DoesNotExist:
+                        print("Old attendance does not exist.")
+
+
+    except Exception as ex:
+        print(ex)
+        return []
