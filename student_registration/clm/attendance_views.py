@@ -1,0 +1,122 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+
+import json
+from django.views.generic import ListView, TemplateView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from braces.views import GroupRequiredMixin
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+
+from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
+from student_registration.schools.models import (
+    School,
+    PartnerOrganization,
+    CLMRound
+)
+from student_registration.clm.models import Bridging
+from .utils import load_child_attendance, create_attendance
+
+
+class AttendanceView(LoginRequiredMixin,
+                     GroupRequiredMixin,
+                     TemplateView):
+
+    group_required = [u"CLM_ATTENDANCE"]
+    template_name = 'clm/attendance.html'
+
+    def get_context_data(self, **kwargs):
+        from datetime import datetime
+        from collections import OrderedDict
+
+        attendance_date = datetime.now().strftime('%m/%d/%Y')
+        day_off = 'No'
+        close_reason = ''
+        rounds = CLMRound.objects.filter(current_year=True)
+
+        school = School.objects.filter(is_closed=False).order_by('name')
+        # sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
+        # education_program_dict = OrderedDict(sorted_education_programs)
+
+        registration_level_dict = OrderedDict((display, value) for value, display in Bridging.REGISTRATION_LEVEL)
+
+        instance = CLMAttendance.objects.filter(id=1).last()
+        #
+        # instance = CLMAttendance.objects.filter(id=1,
+        #                                          attendance_date=datetime.now()).last()
+
+        if instance:
+            day_off = instance.day_off
+            close_reason = instance.close_reason
+
+        return {
+            'instance': instance,
+            'attendance_date': attendance_date,
+            'day_off': day_off,
+            'close_reason': close_reason,
+            'school': school,
+            'registration_level': registration_level_dict,
+            'round': rounds
+        }
+
+
+def save_attendance_children(request):
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+    result = create_attendance(data, request.GET.get('center_id'))
+    return JsonResponse({'result': result})
+
+
+class LoadAttendanceChildren(LoginRequiredMixin,
+                             TemplateView):
+
+    template_name = 'clm/attendance_children.html'
+
+    def get_context_data(self, **kwargs):
+        from datetime import datetime
+
+        current_date = datetime.today().date()
+        attendance_date_str = self.request.GET.get("attendance_date")
+        center_id = self.request.GET.get("center_id")
+        education_program = self.request.GET.get("education_program")
+        class_section = self.request.GET.get("class_section")
+
+        if attendance_date_str is None:
+            return {'instances': []}
+
+        try:
+            # Parse the attendance_date_str into a datetime object
+            attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
+
+            if attendance_date <= current_date:
+                instances = load_child_attendance(center_id, attendance_date_str, education_program, class_section)
+            else:
+                instances = []
+        except ValueError:
+            instances = []
+
+        return {
+            'instances': instances
+        }
+
+
+class LoadAttendanceChild(LoginRequiredMixin,
+                          TemplateView):
+
+    template_name = 'mscc/child_attendance_month.html'
+
+    def get_context_data(self, **kwargs):
+        import calendar
+
+        child_id = kwargs["child"]
+        month = int(self.request.GET.get("month"))
+
+        instances = CLMAttendanceStudent.objects.filter(child_id=child_id,
+                                                       attendance_day__attendance_date__month=month)\
+            .order_by('attendance_day__attendance_date')
+
+        return {
+            'instances': instances,
+            'nbr_attended': instances.filter(attended='Yes').count(),
+            'nbr_absent': instances.filter(attended='No').count(),
+            'attendance_month': calendar.month_name[month]
+        }
