@@ -69,21 +69,9 @@ select {
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
+                                                    <a href="/clm/bridging-page/">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.governorate }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.caza }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    {{ request.user.center.name }} - {{ request.user.center.type }}
                                                 </li>
                                             </ol>
                                         </nav>
@@ -192,9 +180,9 @@ select {
                                           </div>
 
                                         <div class="d-block text-right card-footer">
-                                            <a href="{% url 'clm:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
+                                            <a href="{% url 'clm:load_attendance_children' %}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
                                             {% if request.user|has_group:"CLM_ATTENDANCE" %}
-                                            <a href="{% url 'clm:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+                                            <a href="{% url 'clm:save_attendance_children' %}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
                                             {% endif %}
                                         </div>
                                       </div>
@@ -217,7 +205,7 @@ select {
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/attendance.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/attendance.js' %}?v=2"></script>
 <!--    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>-->
 
 {% endblock %}

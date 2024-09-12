@@ -29,11 +29,12 @@ $(document).ready(function() {
 
         $('.app-drawer-overlay').removeClass('d-none');
 
-        var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
         var attendance_date = $("#attendance_date").val();
-        var education_program = $("#education_program").val();
-        var class_section = $("#class_section").val();
+        var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
         var close_reason = $("#close_reason").val();
+        var round_id = $("#round").val();
+        var school_id = $("#school").val();
+        var registration_level = $("#registration_level").val();
         children_attendance = [];
 
         $(".list-group-item")
@@ -63,15 +64,14 @@ $(document).ready(function() {
                );
             }
         );
-
-
         var attendance_information =
         {
            "attendance_date": attendance_date,
            "attendance_day_off": attendance_day_off,
            "close_reason": close_reason,
-           "education_program": education_program,
-           "class_section": class_section,
+           "round_id": round_id,
+           "school_id": school_id,
+           "registration_level": registration_level,
            "children_attendance": children_attendance
         };
 

@@ -3353,24 +3353,30 @@ def get_outreach_child(outreach_id):
     return initial
 
 
-def create_attendance(data, center_id):
+def create_attendance(data):
     from datetime import datetime
+    attendance_date = datetime.strptime(data["attendance_date"], '%m/%d/%Y')
+    day_off = data["attendance_day_off"]
+    close_reason = data["close_reason"]
+    round_id = data["round_id"]
+    school_id = data["school_id"]
+    registration_level = data["registration_level"]
+    children_attendance = data["children_attendance"]
 
-    education_program = data["education_program"]
-    class_section = data["class_section"]
+
     try:
-        attendance, created = CLMAttendance.objects.get_or_create(center_id=center_id,
-                                                                   attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'),
-                                                                   education_program=education_program,
-                                                                   class_section=class_section
+        attendance, created = CLMAttendance.objects.get_or_create(round_id=round_id,
+                                                                   attendance_date=attendance_date,
+                                                                   school_id=school_id,
+                                                                   registration_level=registration_level
                                                                    )
-        attendance.day_off = data["attendance_day_off"]
-        attendance.close_reason = data["close_reason"]
+        attendance.day_off = day_off
+        attendance.close_reason = close_reason
         attendance.save()
 
-        for child in data['children_attendance']:
+        for child in children_attendance:
             attendance_child, created = CLMAttendanceStudent.objects.get_or_create(attendance_day=attendance,
-                                                                                  child_id=child['child_id'],
+                                                                                  student_id=child['child_id'],
                                                                                   registration_id=child['registration_id']
                                                                                   )
             attendance_child.attended = child['attended']
@@ -3384,12 +3390,6 @@ def create_attendance(data, center_id):
 
 
 def load_child_attendance(round_id, attendance_date, school_id, registration_level):
-    print('loading')
-    print("round_id " + str(round_id))
-    print("attendance_date " + str(attendance_date))
-    print("school_id " + str(school_id))
-    print("registration_level " + str(registration_level))
-
     from datetime import datetime
 
     attendance = None
@@ -3414,7 +3414,7 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
                 attendance_record = {}
                 attendance_record['registration_id'] = attendance.registration.id
                 attendance_record['child_id'] = attendance.student.id
-                attendance_record['child_fullname'] = attendance.student.student_fullname
+                attendance_record['child_fullname'] = attendance.student.full_name
                 attendance_record['child_mother_fullname'] = attendance.student.mother_fullname
                 attendance_record['child_birthday'] = attendance.student.birthday
                 attendance_record['child_nationality'] = attendance.student.nationality.name
@@ -3424,47 +3424,31 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
 
                 result.append(attendance_record)
         else:
-            print('new attendance---------')
-            # registrations = Bridging.objects.none()
             school_id = int(school_id)
 
             registrations = Bridging.objects.filter(round=round_id,
                                                school=school_id,
                                                registration_level=registration_level
                                                 )
-
-
             if attendance_date is not None:
                 registrations = registrations.filter(
                     Q(registration_date__isnull=True) | Q(registration_date__lte=attendance_date),
                         Q(dropout_date__isnull=True) | Q(dropout_date__gt=attendance_date)
                 )
 
-            # registrations = queryset.order_by('student__first_name', 'student__father_name', 'student__last_name')
+            registrations = registrations.order_by('student__first_name', 'student__father_name', 'student__last_name')
 
-            # registrations = Bridging.objects.filter(
-            #     Q(registration_date__isnull=True) | Q(registration_date__lte=attendance_date),
-            #     Q(dropout_date__isnull=True) | Q(dropout_date__gt=attendance_date),
-            #     round=round_id,
-            #     school=school_id,
-            #     registration_level=registration_level,
-            #     deleted=False
-            # ).order_by('student__first_name', 'student__father_name', 'student__last_name')
-
-            print('-----------------------------')
-            print(registrations.query)
-            print('-----------------------------')
             for registration_child in registrations:
-                registration_record = {}
-                registration_record['registration_id'] = registration_child.id
-                registration_record['child_id'] = registration_child.student.id
-                registration_record['child_fullname'] = registration_child.student.full_name
-                registration_record['child_mother_fullname'] = registration_child.student.mother_fullname
-                registration_record['child_birthday'] = registration_child.student.birthday
-                registration_record['child_nationality'] = registration_child.student.nationality.name
-                registration_record['attended'] = 'Yes'
-                registration_record['absence_reason'] = ''
-                registration_record['absence_reason_other'] = ''
+                registration_record = {
+                    'registration_id': registration_child.id,
+                    'child_id': registration_child.student.id,
+                    'child_fullname': registration_child.student.full_name,
+                    'child_mother_fullname': registration_child.student.mother_fullname,
+                    'child_birthday': registration_child.student.birthday,
+                    'child_nationality': registration_child.student.nationality.name,
+                    'attended': 'Yes', 'absence_reason': '',
+                    'absence_reason_other': ''
+                }
                 result.append(registration_record)
 
         return result
