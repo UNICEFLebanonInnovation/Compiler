@@ -37,7 +37,7 @@ class AttendanceView(LoginRequiredMixin,
         # sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
         # education_program_dict = OrderedDict(sorted_education_programs)
 
-        registration_level_dict = OrderedDict((display, value) for value, display in Bridging.REGISTRATION_LEVEL)
+        registration_level_dict = OrderedDict((display, value) for value, display in Bridging.REGISTRATION_LEVEL if value)
 
         instance = CLMAttendance.objects.filter(id=1).last()
         #

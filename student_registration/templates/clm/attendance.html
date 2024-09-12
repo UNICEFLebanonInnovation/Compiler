@@ -14,6 +14,43 @@
     color: white !important;
 }
 
+.form-control, .input-group-prepend select, .btn-primary {
+    height: 40px; /* Ensures uniform height */
+    padding: 0 12px;
+    font-size: 14px;
+    border-radius: 5px; /* Rounded corners for a smoother look */
+}
+
+.input-group-prepend select {
+    border: 1px solid #ced4da;
+}
+
+select {
+    width: 100%; /* Ensures dropdowns take full width */
+}
+
+.input-group-text {
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px 0 0 5px;
+}
+
+.select-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.disabled-input {
+    background-color: white;
+    border: 0;
+}
+.btn-icon {
+    height: 45px; /* Adjust height as needed */
+    padding: 10px 20px; /* Consistent padding */
+    display: inline-flex;
+    align-items: center; /* Ensure icons and text are aligned properly */
+}
 </style>
 
 <div class="app-page-title">
@@ -68,7 +105,6 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
-
                                           <div class="form-group">
                                               {% csrf_token %}
                                               <input type="hidden" value="{{ request.user.center.id }}" name="center_id" id="center_id" />
@@ -81,58 +117,50 @@
                                                     <input type="text" class="form-control" data-toggle="datepicker" id="attendance_date" value="{{ attendance_date }}"/>
                                                   </div>
                                           </div>
-
-
                                           <div class="form-row">
-                                            <div class="col-md-6">
-                                                    <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="round" class="btn-primary form-control">
-                                                                          <option value="">Select Round</option>
-                                                                           {% for item in round %}
-                                                                              {% if item != '' %}
-                                                                                <option value="{{ item }}" {% if round == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
-                                                                              {% endif %}
-                                                                            {% endfor %}
-                                                                      </select>
-                                                                  </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
-                                                              </div>
+                                              <div class="col-md-6">
+                                                  <div class="select-wrapper">
+                                                      <select id="round" class="form-control">
+                                                          <option value="">Round</option>
+                                                          {% for item in round %}
+                                                              {% if item != '' %}
+                                                                  <option value="{{ item }}" {% if round == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
+                                                              {% endif %}
+                                                          {% endfor %}
+                                                      </select>
                                                   </div>
+<!--                                                  <input type="text" class="form-control disabled-input" disabled />-->
+                                              </div>
                                           </div>
                                           <div class="form-row">
-                                            <div class="col-md-6">
-                                                    <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="schools" class="btn-primary form-control">
-                                                                          <option value="">Select School</option>
-                                                                           {% for item in school %}
-                                                                              {% if item != '' %}
-                                                                                <option value="{{ item }}" {% if school == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
-                                                                              {% endif %}
-                                                                            {% endfor %}
-                                                                      </select>
-                                                                  </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
-                                                              </div>
+                                              <div class="col-md-6">
+                                                  <div class="select-wrapper">
+                                                      <select id="schools" class="form-control">
+                                                          <option value="">School</option>
+                                                          {% for item in school %}
+                                                              {% if item != '' %}
+                                                                  <option value="{{ item }}" {% if school == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
+                                                              {% endif %}
+                                                          {% endfor %}
+                                                      </select>
                                                   </div>
+<!--                                                  <input type="text" class="form-control disabled-input" disabled />-->
+                                              </div>
                                           </div>
                                           <div class="form-row">
-                                                  <div class="col-md-6">
-                                                    <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="registration_level" class="btn-primary form-control">
-                                                                          <option value="">Select Registration Level</option>
-                                                                           {% for item in registration_level %}
-                                                                              {% if item != '' %}
-                                                                                <option value="{{ item }}" {% if registration_level == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
-                                                                              {% endif %}
-                                                                            {% endfor %}
-                                                                      </select>
-                                                                  </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
-                                                    </div>
+                                              <div class="col-md-6">
+                                                  <div class="select-wrapper">
+                                                      <select id="registration_level" class="form-control">
+                                                          <option value="">Registration Level</option>
+                                                          {% for item in registration_level %}
+                                                              {% if item != '' %}
+                                                                  <option value="{{ item }}" {% if registration_level == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
+                                                              {% endif %}
+                                                          {% endfor %}
+                                                      </select>
                                                   </div>
+<!--                                                  <input type="text" class="form-control disabled-input" disabled />-->
+                                              </div>
                                           </div>
                                           <div class="form-row">
                                                   <div class="col-md-6">
@@ -168,10 +196,10 @@
                                           </div>
 
                                         <div class="d-block text-right card-footer">
-                                            <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
-{% if request.user|has_group:"CLM_ATTENDANCE" %}
-                                            <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
-{% endif %}
+                                            <a href="{% url 'clm:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
+                                            {% if request.user|has_group:"CLM_ATTENDANCE" %}
+                                            <a href="{% url 'clm:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>
+                                            {% endif %}
                                         </div>
                                       </div>
                                     </div>
