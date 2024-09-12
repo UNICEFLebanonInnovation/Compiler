@@ -46,10 +46,10 @@ select {
     border: 0;
 }
 .btn-icon {
-    height: 45px; /* Adjust height as needed */
-    padding: 10px 20px; /* Consistent padding */
+    height: 35px;
+    padding: 10px 20px;
     display: inline-flex;
-    align-items: center; /* Ensure icons and text are aligned properly */
+    align-items: center;
 }
 </style>
 
@@ -62,7 +62,7 @@ select {
                                             <i class="fa fa-child"></i>
                                         </span>
                                         <span class="d-inline-block">
-                                          Daily Attendance
+                                          Dirasa Daily Attendance
                                         </span>
                                     </div>
                                     <div class="page-title-subheading opacity-10">
@@ -124,7 +124,7 @@ select {
                                                           <option value="">Round</option>
                                                           {% for item in round %}
                                                               {% if item != '' %}
-                                                                  <option value="{{ item }}" {% if round == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
+                                                                  <option value="{{ item.id }}" {% if round == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
                                                               {% endif %}
                                                           {% endfor %}
                                                       </select>
@@ -135,11 +135,11 @@ select {
                                           <div class="form-row">
                                               <div class="col-md-6">
                                                   <div class="select-wrapper">
-                                                      <select id="schools" class="form-control">
+                                                      <select id="school" class="form-control">
                                                           <option value="">School</option>
                                                           {% for item in school %}
                                                               {% if item != '' %}
-                                                                  <option value="{{ item }}" {% if school == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
+                                                                  <option value="{{ item.id }}" {% if school == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
                                                               {% endif %}
                                                           {% endfor %}
                                                       </select>
@@ -152,47 +152,43 @@ select {
                                                   <div class="select-wrapper">
                                                       <select id="registration_level" class="form-control">
                                                           <option value="">Registration Level</option>
-                                                          {% for item in registration_level %}
-                                                              {% if item != '' %}
-                                                                  <option value="{{ item }}" {% if registration_level == "{{ item }}" %}selected{% endif %}>{{ item }}</option>
-                                                              {% endif %}
-                                                          {% endfor %}
+                                                          <option value="level_one" {% if registration_level == 'level_one' %}selected{% endif %}>Level one</option>
+                                                          <option value="level_two" {% if registration_level == 'level_two' %}selected{% endif %}>Level two</option>
+                                                          <option value="level_three" {% if registration_level == 'level_three' %}selected{% endif %}>Level three</option>
+                                                          <option value="level_four" {% if registration_level == 'level_four' %}selected{% endif %}>Level four</option>
+                                                          <option value="level_five" {% if registration_level == 'level_five' %}selected{% endif %}>Level five</option>
+                                                          <option value="level_six" {% if registration_level == 'level_six' %}selected{% endif %}>Level six</option>
                                                       </select>
                                                   </div>
 <!--                                                  <input type="text" class="form-control disabled-input" disabled />-->
                                               </div>
                                           </div>
-                                          <div class="form-row">
-                                                  <div class="col-md-6">
-                                                            <div role="group" class="btn-group-sm btn-group">
-
-                                                              <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
-                                                                <label class="btn btn-light {% if day_off == 'No' %}active{% endif %}">
-                                                                  <input type="radio" value="No" name="attendance_day_off" {% if day_off == 'No' %} checked{% endif %} /> Working day
-                                                                </label>
-                                                                <label class="btn btn-light {% if day_off == 'Yes' %}active{% endif %}">
-                                                                  <input type="radio" value="Yes" name="attendance_day_off" {% if day_off == 'Yes' %} checked{% endif %} /> Day Off
-                                                                </label>
-                                                              </div>
-                                                            </div>
-
-                                                  </div>
-                                                  <div class="col-md-6">
-                                                    <div class="input-group">
-                                                                  <div class="input-group-prepend ">
-                                                                      <select id="close_reason" class="btn-primary {% if close_reason == '' %}hidden{% endif %}">
-                                                                          <option value="">Closing Reason</option>
-                                                                          <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>Public Holiday</option>
-                                                                          <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>School Holiday</option>
-                                                                          <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>Strike</option>
-                                                                          <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>Weekly Holiday</option>
-                                                                          <option value="Roads Closed" {% if close_reason == 'Roads Closed' %}selected{% endif %}>Roads Closed</option>
-                                                                      </select>
-                                                                  </div>
-                                                        <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
-                                                              </div>
-                                                  </div>
-                                              </div>
+                                                          <div class="form-row">
+                    <div class="col-md-6">
+                        <div role="group" class="btn-group-sm btn-group">
+                            <div class="btn-group btn-group-toggle attendance_day_off" data-toggle="buttons">
+                                <label class="btn btn-light {% if day_off == 'No' %}active{% endif %}">
+                                    <input type="radio" value="No" name="attendance_day_off" {% if day_off == 'No' %}checked{% endif %} /> Working day
+                                </label>
+                                <label class="btn btn-light {% if day_off == 'Yes' %}active{% endif %}">
+                                    <input type="radio" value="Yes" name="attendance_day_off" {% if day_off == 'Yes' %}checked{% endif %} /> Day Off
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="select-wrapper">
+                            <select id="close_reason" class="form-control {% if close_reason == '' %}hidden{% endif %}">
+                                <option value="">Closing Reason</option>
+                                <option value="Public Holiday" {% if close_reason == 'Public Holiday' %}selected{% endif %}>Public Holiday</option>
+                                <option value="School Holiday" {% if close_reason == 'School Holiday' %}selected{% endif %}>School Holiday</option>
+                                <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>Strike</option>
+                                <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>Weekly Holiday</option>
+                                <option value="Roads Closed" {% if close_reason == 'Roads Closed' %}selected{% endif %}>Roads Closed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                                           </div>
 
                                         <div class="d-block text-right card-footer">
@@ -221,7 +217,7 @@ select {
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/clm/attendance.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bridging/attendance.js' %}?v=1"></script>
 <!--    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>-->
 
 {% endblock %}

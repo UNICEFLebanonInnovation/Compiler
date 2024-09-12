@@ -115,9 +115,9 @@ $(document).ready(function() {
             async: true,
             data: {
                 'attendance_date': $("#attendance_date").val(),
-                'center_id': $('#center_id').val(),
-                'education_program': $('#education_program').val(),
-                'class_section': $('#class_section').val()
+                'round_id': $('#round').val(),
+                'school_id': $('#school').val(),
+                'registration_level': $('#registration_level').val()
             },
             dataType: 'html',
             success: function (response) {

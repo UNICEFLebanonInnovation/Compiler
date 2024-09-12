@@ -23,6 +23,7 @@ from student_registration.locations.models import Center
 from student_registration.child.models import Child
 from student_registration.alp.models import ALPRound
 from student_registration.mscc.models import Registration
+from student_registration.clm.models import Bridging
 
 
 class Attendance(TimeStampedModel):
@@ -377,6 +378,12 @@ class CLMAttendanceStudent(TimeStampedModel):
         CLMAttendance,
         blank=True, null=True,
         related_name='+',
+    )
+    registration = models.ForeignKey(
+        Bridging,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Registration')
     )
     student = models.ForeignKey(
         Student,

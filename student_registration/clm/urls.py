@@ -375,11 +375,11 @@ urlpatterns = [
         view=views.BridgingPage.as_view(),
         name='bridging_page'
     ),
-    # url(
-    #     'bridging-attendance-report/$',
-    #     views.BridgingAttendanceReport.as_view(),
-    #     name='bridging_attendance_report'
-    # ),
+    url(
+        'bridging-attendance-report/$',
+        views.BridgingAttendanceReport.as_view(),
+        name='bridging_attendance_report'
+    ),
     url(
         regex=r'^Attendance/$',
         view=attendance_views.AttendanceView.as_view(),

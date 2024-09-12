@@ -76,9 +76,15 @@ class LoadAttendanceChildren(LoginRequiredMixin,
 
         current_date = datetime.today().date()
         attendance_date_str = self.request.GET.get("attendance_date")
-        center_id = self.request.GET.get("center_id")
-        education_program = self.request.GET.get("education_program")
-        class_section = self.request.GET.get("class_section")
+        round_id = self.request.GET.get("round_id")
+        school_id = self.request.GET.get("school_id")
+        registration_level = self.request.GET.get("registration_level")
+
+        # print('View prepare')
+        # print("round_id "+ str(round_id))
+        # print("attendance_date_str "+ str(attendance_date_str))
+        # print("school_id "+ str(school_id))
+        # print("registration_level "+ str(registration_level))
 
         if attendance_date_str is None:
             return {'instances': []}
@@ -88,7 +94,7 @@ class LoadAttendanceChildren(LoginRequiredMixin,
             attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
 
             if attendance_date <= current_date:
-                instances = load_child_attendance(center_id, attendance_date_str, education_program, class_section)
+                instances = load_child_attendance(round_id, attendance_date_str, school_id, registration_level)
             else:
                 instances = []
         except ValueError:
