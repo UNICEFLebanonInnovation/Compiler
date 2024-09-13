@@ -19,6 +19,9 @@ from .models import Bridging
 from student_registration.students.models import Person
 from student_registration.outreach.models import OutreachChild
 from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentTotalAttendance, CLMStudentAbsences
+from student_registration.schools.models import (
+    School,
+)
 
 
 def is_allowed_create(programme):
@@ -3375,14 +3378,20 @@ def create_attendance(data):
         attendance.save()
 
         for child in children_attendance:
+            student_id = child['child_id']
             attendance_child, created = CLMAttendanceStudent.objects.get_or_create(attendance_day=attendance,
-                                                                                  student_id=child['child_id'],
+                                                                                  student_id=student_id,
                                                                                   registration_id=child['registration_id']
                                                                                   )
             attendance_child.attended = child['attended']
             attendance_child.absence_reason = child['absence_reason']
             attendance_child.absence_reason_other = child['absence_reason_other']
             attendance_child.save()
+
+            registration = Bridging.objects.filter(student_id=student_id, round_id=round_id).first()
+            update_student_consecutive_absences(student_id, round_id, registration)
+            update_student_total_attendance(student_id, round_id, registration)
+
         return True
     except Exception as ex:
         print(ex)
@@ -3407,7 +3416,6 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
 
     try:
         if attendance:
-            print('Attendance Exists-------')
             attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance)
 
             for attendance in attendances:
@@ -3503,3 +3511,205 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
     except Exception as ex:
         print(ex)
         return []
+
+
+def update_student_consecutive_absences(student_id,round_id, registration):
+
+    student_absences = CLMAttendanceStudent.objects.filter(
+        attended='no',
+        attendance_day__round_id=round_id,
+        student_id=student_id
+    ).order_by('student__id', 'attendance_day__attendance_date').all()
+
+    days_off = []
+    if student_absences:
+        school_id = student_absences[0].attendance_day.school.id
+        registration_level = student_absences[0].attendance_day.registration_level
+        days_off = CLMAttendance.objects.filter(day_off='yes', registration_level=registration_level, school=school_id ,
+                                                    round_id=round_id
+                                                ).order_by('attendance_date').values_list('attendance_date', flat=True)
+
+        partner_id = registration.partner.id
+
+        working_day_names = School.objects.filter(id=school_id).values_list('working_days', flat=True).first()
+
+        current_student_absence = StudentConsecutiveAbsenceTracking()
+
+        current_student_absence.initialise(student_id,partner_id,school_id,round_id,registration,working_day_names,days_off)
+
+        for row in student_absences:
+
+            absence_date = row.attendance_day.attendance_date
+            current_student_absence.check_update_absence_date(absence_date)
+
+        current_student_absence.check_add_absence_record()
+
+        CLMStudentAbsences.objects.filter(student_id=student_id,round_id=round_id)\
+        .exclude(absence_starting_date__in=current_student_absence.absence_dates)\
+        .delete()
+
+
+class StudentConsecutiveAbsenceTracking:
+
+    def __init__(self):
+        self.absence_days = None
+        self.absence_starting_date = None
+        self.absence_ending_date = None
+        self.current_absence_date = None
+        self.absence_dates = None
+        self.consecutive_dates = None
+        self.student_id = None
+        self.partner_id = None
+        self.school_id = None
+        self.round_id = None
+        self.registration = None
+        self.working_day_names = None
+        self.days_off = None
+
+    def initialise(current_student_absence,student_id,partner_id,school_id,   round_id, registration, working_day_names, days_off):
+
+        current_student_absence.absence_days = 0
+        current_student_absence.absence_starting_date = None
+        current_student_absence.absence_ending_date = None
+        current_student_absence.current_absence_date = None
+
+        current_student_absence.absence_dates = []
+        current_student_absence.consecutive_dates = []
+
+        current_student_absence.student_id = student_id
+        current_student_absence.partner_id = partner_id
+        current_student_absence.school_id = school_id
+        current_student_absence.round_id = round_id
+        current_student_absence.registration = registration
+
+        current_student_absence.working_day_names = working_day_names
+        current_student_absence.days_off = days_off
+
+    def check_add_absence_record(current_student_absence):
+        if current_student_absence.absence_starting_date is not None:
+            current_student_absence.add_absence_record()
+            current_student_absence.absence_dates.append(current_student_absence.absence_starting_date)
+
+    def add_absence_record(current_student_absence):
+        round_id = current_student_absence.round.id
+        student_id = current_student_absence.student_id
+        partner_id = current_student_absence.partner_id
+        school_id = current_student_absence.school_id
+        absence_starting_date = current_student_absence.absence_starting_date
+
+        absence_exists = CLMStudentAbsences.objects.filter(student_id=student_id, round_id=round_id,
+                                                           absence_starting_date=absence_starting_date).exists()
+        registration = Bridging.objects.filter(student_id=student_id, round_id=round_id ).first()
+
+        if absence_exists:
+            absence = CLMStudentAbsences.objects.filter(student_id=student_id, round_id=round_id,
+                                                        absence_starting_date=absence_starting_date).first()
+        else:
+
+            absence = CLMStudentAbsences(round_id=round_id,
+                                         student_id=student_id,
+                                         partner_id=partner_id,
+                                         school_id=school_id,
+                                         absence_starting_date=absence_starting_date,
+                                         registration_id = registration.id,
+                                         student_first_name=registration.student.first_name,
+                                         student_father_name=registration.student.father_name,
+                                         student_last_name=registration.student.last_name,
+                                         school_name=registration.school.name,
+                                         registation_level=registration.registration_level
+                                         )
+
+
+        start_date = current_student_absence.absence_starting_date
+        end_date = current_student_absence.absence_ending_date
+        current_student_absence.consecutive_dates = []
+        delta = datetime.datetime.timedelta(days=1)
+        while start_date <= end_date:
+            if not current_student_absence.is_date_off_weekend(start_date, ):
+                current_student_absence.consecutive_dates.append(str(start_date))
+            start_date += delta
+
+        absence.update_absence_statisics(current_student_absence.absence_days, current_student_absence.absence_ending_date, current_student_absence.consecutive_dates)
+        absence.save()
+
+    def check_update_absence_date(current_student_absence,absence_date):
+
+        if current_student_absence.absence_starting_date is None:
+            current_student_absence.absence_starting_date = absence_date
+            current_student_absence.absence_ending_date = absence_date
+            current_student_absence.absence_days = 1
+
+        elif current_student_absence.all_range_off(current_student_absence.absence_ending_date,absence_date):
+
+            current_student_absence.absence_ending_date = absence_date
+            current_student_absence.absence_days += 1
+
+        elif (absence_date != (current_student_absence.absence_ending_date + datetime.timedelta(days=1))):
+
+            current_student_absence.check_add_absence_record()
+            current_student_absence.absence_starting_date = absence_date
+            current_student_absence.absence_ending_date = absence_date
+            current_student_absence.absence_days = 1
+
+
+    def all_range_off(current_student_absence,previous_absence_date,new_absence_date):
+
+        result = True
+
+        current_absence_date = previous_absence_date + datetime.timedelta(days=1)
+
+        while(current_absence_date!=new_absence_date and result):
+
+            result = result and current_student_absence.is_date_off_weekend(current_absence_date,)
+
+            current_absence_date += datetime.timedelta(days=1)
+
+        return result
+
+    def is_date_off_weekend(current_student_absence,current_absence_date):
+
+        day_name = current_absence_date.strftime("%A")
+        working_day_names = current_student_absence.working_day_names
+        days_off = current_student_absence.days_off
+
+        return (day_name not in working_day_names) or (current_absence_date in days_off)
+
+
+def update_student_total_attendance(student_id, round_id, registration):
+
+    total_absence_days = CLMAttendanceStudent.objects.filter(
+        attended='no',
+        round_id = round_id,
+        student_id=student_id
+    ).order_by('student__id', 'attendance_day__attendance_date').count()
+    total_attendance_days = CLMAttendanceStudent.objects.filter(
+        attended='yes',
+        round_id = round_id,
+        student_id=student_id
+    ).order_by('student__id', 'attendance_day__attendance_date').count()
+
+    student_id = student_id
+    registration = registration
+
+    absence_exists = CLMStudentTotalAttendance.objects.filter(student_id=student_id, registration_id=registration.id).exists()
+
+    if absence_exists:
+        absence = CLMStudentTotalAttendance.objects.filter(student_id=student_id, registration_id=registration.id).first()
+    else:
+
+        absence = CLMStudentTotalAttendance(round_id=round_id,
+                                            student_id=student_id,
+                                            partner_id=registration.partner.id,
+                                            school_id=registration.school.id,
+                                            registration_id=registration.id,
+                                            student_first_name=registration.student.first_name,
+                                            student_father_name=registration.student.father_name,
+                                            student_last_name=registration.student.last_name,
+                                            school_name=registration.school.name,
+                                            registation_level=registration.registration_level
+                                             )
+
+    absence.update_absence_statisics(total_absence_days)
+    absence.update_attendance_statisics(total_attendance_days)
+
+    absence.save()
