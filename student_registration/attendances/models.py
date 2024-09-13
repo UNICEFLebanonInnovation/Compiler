@@ -444,22 +444,22 @@ class CLMStudentAbsences(TimeStampedModel):
     partner_id = models.IntegerField(blank=True, null=True)
     school_id = models.IntegerField(blank=True, null=True)
     student_first_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_father_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_last_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     school_name = models.CharField(
-        max_length=100,
+        max_length=200,
         blank=True,
         null=True,
     )
@@ -492,22 +492,22 @@ class CLMStudentTotalAttendance(TimeStampedModel):
     partner_id = models.IntegerField(blank=True, null=True)
     school_id = models.IntegerField(blank=True, null=True)
     student_first_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_father_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_last_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     school_name = models.CharField(
-        max_length=100,
+        max_length=200,
         blank=True,
         null=True,
     )
