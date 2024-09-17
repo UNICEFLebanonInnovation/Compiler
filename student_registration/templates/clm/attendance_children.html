@@ -8,6 +8,11 @@
 }
 
 </style>
+{% if error_message %}
+    <div class="alert alert-warning">
+        {{ error_message }}
+    </div>
+{% endif %}
 <ul class="list-group">
 {% for item in instances %}
                                             <li class="list-group-item">

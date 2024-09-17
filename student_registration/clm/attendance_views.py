@@ -66,37 +66,41 @@ def save_attendance_children(request):
     return JsonResponse({'result': result})
 
 
-class LoadAttendanceChildren(LoginRequiredMixin,
-                             TemplateView):
-
+class LoadAttendanceChildren(LoginRequiredMixin, TemplateView):
     template_name = 'clm/attendance_children.html'
 
     def get_context_data(self, **kwargs):
         from datetime import datetime
-
         current_date = datetime.today().date()
+
         attendance_date_str = self.request.GET.get("attendance_date")
         round_id = self.request.GET.get("round_id")
         school_id = self.request.GET.get("school_id")
         registration_level = self.request.GET.get("registration_level")
 
         if attendance_date_str is None:
-            return {'instances': []}
+            return {'instances': [], 'error_message': 'Attendance date is required.'}
 
         try:
-            # Parse the attendance_date_str into a datetime object
             attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
 
-            if attendance_date <= current_date:
-                instances = load_child_attendance(round_id, attendance_date_str, school_id, registration_level)
-            else:
-                instances = []
-        except ValueError:
-            instances = []
+            working_day_names = School.objects.filter(id=school_id).values_list('working_days', flat=True).first()
+            working_days_set = set(working_day_names)
 
-        return {
-            'instances': instances
-        }
+            if attendance_date > current_date:
+                return {'instances': [], 'error_message': 'Attendance date cannot be in the future.'}
+
+            elif attendance_date.strftime('%A') not in working_days_set:
+                return {'instances': [], 'error_message': 'Attendance date is not a working day.'}
+
+            else:
+                instances = load_child_attendance(round_id, attendance_date_str, school_id, registration_level)
+                return {'instances': instances, 'error_message': None}
+
+        except ValueError:
+            return {'instances': [], 'error_message': 'Invalid date format. Please use MM/DD/YYYY.'}
+
+        return context
 
 
 class LoadAttendanceChild(LoginRequiredMixin,
