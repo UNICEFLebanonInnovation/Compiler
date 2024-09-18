@@ -160,9 +160,15 @@ function generateAndOpenConsecutiveURL() {
     var round = document.getElementById('dirasa-round').value;
 
     if (round) {
-        window.location.href = "{% url 'attendances:consecutive_attendance_export' %}?round=" + round;
+        var url = `/attendances/consecutive-attendance-export/${round}/`;
+        window.location.href = url;
     } else {
         alert('Round is not selected. Please select a round before exporting data.');
+    }
+    if (month && year) {
+
+    } else {
+        alert('Please select both month and year.');
     }
 }
 </script>

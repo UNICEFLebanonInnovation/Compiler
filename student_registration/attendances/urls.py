@@ -58,7 +58,7 @@ urlpatterns = [
         name='total_attendance_export'
     ),
     url(
-        regex=r'^consecutive-attendance-export/$',
+        regex=r'^consecutive-attendance-export/(?P<round>[\w.@+-]+)/$',
         view=views.consecutive_absence_export,
         name='consecutive_attendance_export'
     ),

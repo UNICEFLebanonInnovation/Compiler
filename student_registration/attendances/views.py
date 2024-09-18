@@ -1457,24 +1457,17 @@ def attendance_export(request, **kwargs):
         logging.debug("Executing query: %s", vw_data_str)
         logging.debug("Query params: %s", str(query_params))
 
-        # Extract headers from the cursor description
         headers = [col[0] for col in cursor.description]
 
-        # Create the HTTP response with CSV headers
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename=raw_attendance.csv'
 
-        # Add UTF-8 BOM to support Arabic text
         response.write(codecs.BOM_UTF8)
 
-        # Use CSV writer to handle the CSV creation
         writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
-        # Write headers
         writer.writerow(headers)
-        arabic_fields = {"student_first_name", "student_father_name", "student_last_name"}
 
-        # Write data rows, handling encoding and converting non-string types
         for row in cursor.fetchall():
             encoded_row = []
             for cell in row:
@@ -1489,11 +1482,9 @@ def attendance_export(request, **kwargs):
         return response
 
     except Exception as e:
-        # Log the full traceback for debugging purposes
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
 
-        # Return a more detailed error response for debugging
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
@@ -1518,7 +1509,6 @@ def total_attendance_export(request):
 
     total_attendance = total_attendance.annotate(number=Subquery(student_numbers_subquery)).order_by('student_id')
 
-    # Set content type and add UTF-8 BOM
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename=total_attendance.csv'
     response.write(codecs.BOM_UTF8)
@@ -1528,8 +1518,7 @@ def total_attendance_export(request):
     columns = ['Student First Name', 'Student Father Name', 'Student Last Name', 'Student Number', 'School',
                'Registration Level', 'Total Attendance Days', 'Total Absence Days']
 
-    # Write header row
-    writer.writerow([col.encode('utf-8') for col in columns])
+    writer.writerow(columns)
 
     # Iterate over the queryset and extract values for each row
     for attendance in total_attendance:
@@ -1557,124 +1546,56 @@ def total_attendance_export(request):
 
     return response
 
-
-    # local
-    # for row in total_attendance:
-    #     writer.writerow([
-    #         row.student_first_name.encode('utf-8'),
-    #         row.student_father_name.encode('utf-8'),
-    #         row.student_last_name.encode('utf-8'),
-    #         row.number.encode('utf-8'),
-    #         row.school_name.encode('utf-8'),
-    #         row.registation_level.encode('utf-8'),
-    #         str(row.total_attendance_days).encode('utf-8'),
-    #         str(row.total_absence_days).encode('utf-8'),
-    #     ])
-
 @login_required(login_url='/users/login')
-def consecutive_absence_export(request):
-    round_id = request.GET.get('round', None)
+def consecutive_absence_export(request, **kwargs):
+    try:
+        round_id = kwargs.get('round')
+        cursor = connection.cursor()
+        query_params = []
+        vw_data_str = "SELECT * FROM vw_bridging_absence_consecutive WHERE round_id  = %s"
+        query_params.append(round_id)
 
-    # Create a CSV response with UTF-8 BOM
-    response = HttpResponse(content_type='text/csv; charset=utf-8')
-    response['Content-Disposition'] = 'attachment; filename="consecutive_absence.csv"'
-    response.write(codecs.BOM_UTF8)
+        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+            if request.user.partner_id:
+                vw_data_str += " AND partner_id = %s"
+                query_params.append(request.user.partner_id)
+            if request.user.school_id:
+                vw_data_str += " AND school_id = %s"
+                query_params.append(request.user.school_id)
 
-    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+        vw_data_str += " ORDER BY student_id"
 
-    # Define the header for the CSV
-    consecutive_absences_columns = [
-        'Student First Name',
-        'Student Father Name',
-        'Student Last Name',
-        'Student Number',
-        'School',
-        'Registration Level',
-        'Number of Consecutive Absences',
-        'Consecutive Absences From',
-        'Consecutive Absences To',
-        'Absence Dates',
-        'Total Attendance Days',
-        'Total Absence Days',
-    ]
-    writer.writerow([col for col in consecutive_absences_columns])
+        cursor.execute(vw_data_str, query_params)
 
-    consecutive_student = CLMStudentAbsences.objects.all()
-    total_student = CLMStudentTotalAttendance.objects.all()
+        logging.debug("Executing query: %s", vw_data_str)
+        logging.debug("Query params: %s", str(query_params))
 
-    if round_id:
-        consecutive_student = consecutive_student.filter(round_id=round_id)
-        total_student = total_student.filter(round_id=round_id)
+        headers = [col[0] for col in cursor.description]
 
-    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
-        if request.user.partner_id:
-            partner_id = request.user.partner_id
-            consecutive_student = consecutive_student.filter(school_id__in=PartnerOrganization
-                                                             .objects
-                                                             .filter(id=partner_id)
-                                                             .values_list('schools', flat=True))
-            total_student = total_student.filter(school_id__in=PartnerOrganization
-                                                 .objects
-                                                 .filter(id=partner_id)
-                                                 .values_list('schools', flat=True))
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=consecutive_absence.csv'
 
-        if request.user.school_id:
-            school_id = request.user.school_id
-            consecutive_student = consecutive_student.filter(school_id=school_id)
-            total_student = total_student.filter(school_id=school_id)
+        response.write(codecs.BOM_UTF8)
 
-    consecutive_student_id = consecutive_student.values_list('student_id', flat=True)
-    total_student_id = total_student.values_list('student_id', flat=True)
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
-    student_ids = list(set(consecutive_student_id) | set(total_student_id))
+        writer.writerow(headers)
 
-    consecutive_absent_students = CLMStudentAbsences.objects.filter(student_id__in=student_ids)
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
 
-    student_numbers_subquery = Student.objects.filter(
-        id=OuterRef('student_id'),
-    ).values('number')[:1]
+        return response
 
-    consecutive_absent_students = consecutive_absent_students.annotate(
-        number=Subquery(student_numbers_subquery)
-    ).order_by('student_id', 'absence_starting_date')
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
 
-    # Write data rows to the CSV
-    for row in consecutive_absent_students:
-        student_id = row.student_id
-        total_absent_students = CLMStudentTotalAttendance.objects.filter(student_id=student_id,
-                                                                         round_id=round_id).last()
-
-        total_attendance_days = total_absent_students.total_attendance_days if total_absent_students else ''
-        total_absence_days = total_absent_students.total_absence_days if total_absent_students else ''
-
-        # Convert list of dates to a comma-separated string
-        absence_dates = ', '.join(str(date) for date in row.absence_dates)
-
-        # Construct the row data
-        csv_row = [
-            row.student_first_name,
-            row.student_father_name,
-            row.student_last_name,
-            row.number,
-            row.school_name,
-            row.registation_level,
-            row.consecutive_absence_days,
-            row.absence_starting_date.strftime('%Y-%m-%d') if row.absence_starting_date else '',
-            row.absence_ending_date.strftime('%Y-%m-%d') if row.absence_ending_date else '',
-            absence_dates,
-            total_attendance_days,
-            total_absence_days,
-        ]
-
-        encoded_row = []
-        for cell in csv_row:
-            if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-            elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                encoded_row.append(cell.strftime('%Y-%m-%d'))
-            else:  # Convert other data types to string
-                encoded_row.append(str(cell))
-
-        writer.writerow(encoded_row)
-
-    return response
+        return HttpResponse("An error occurred: " + str(e), status=500)
