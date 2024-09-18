@@ -1,4 +1,4 @@
-{% extends "base4.html" %}
+{% extends "base5.html" %}
 {% load staticfiles i18n %}
 {% load static %}
 {% load bootstrap3 %}
@@ -89,7 +89,11 @@ select {
                                     <div class="main-card mb-3 card">
                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
                                             <div class="btn-actions-pane-right actions-icon-btn">
-                                                <button class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-cloud-download btn-icon-wrapper"></i></button>
+                                              <a href="{% url 'clm:bridging_attendance_report' %}">
+                                                  <button class="btn-icon btn-icon-only btn btn-link">
+                                                      <i class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                                                  </button>
+                                              </a>
                                             </div>
                                         </div>
                                         <div class="card-body">
