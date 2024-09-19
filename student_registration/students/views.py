@@ -373,34 +373,36 @@ def teacher_export_data(request):
             else:
                 qs_teacher = qs_teacher.none()
 
-        # Order the queryset
         qs_teacher = qs_teacher.order_by('-id')
 
-        # Create the HTTP response with CSV headers
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="teacher_data.csv"'
         response.write(codecs.BOM_UTF8)
 
         writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
-        # Define CSV header with all fields from the Teacher model
         columns = [
-            'First Name', 'Last Name', 'School', 'Email', 'Phone Number', 'Subjects Provided',
+            'First Name', 'Last Name', 'Father Name',  'Mother Full Name','Gender',
+            'School', 'Email', 'Phone Number', 'Subjects Provided',
             'Registration Level', 'Teacher Assignment', 'Teaching Hours Private School',
-            'Teaching Hours Dirasa', 'Training Sessions Attended', 'Extra Coaching', 'Extra Coaching Specify',
+            'Teaching Hours Dirasa', 'Trainings', 'Training Sessions Attended', 'Extra Coaching', 'Extra Coaching Specify',
             'Attachment 1 Description', 'Attachment 1 Type', 'Attachment 2 Description', 'Attachment 2 Type',
             'Attachment 3 Description', 'Attachment 3 Type', 'Attachment 4 Description', 'Attachment 4 Type',
             'Attachment 5 Description', 'Attachment 5 Type', 'Owner', 'Modified By'
         ]
 
-        # Write header row
         writer.writerow(columns)
 
-        # Iterate over the queryset and extract values for each row
         for teacher in qs_teacher:
+            trainings_list = ', '.join(
+                [training.name for training in teacher.trainings.all()]) if teacher.trainings.exists() else ''
+
             row = [
                 teacher.first_name,
                 teacher.last_name,
+                teacher.father_name,
+                teacher.mother_fullname,
+                teacher.sex,
                 teacher.school.name if teacher.school else '',
                 teacher.email if teacher.email else '',
                 teacher.primary_phone_number if teacher.primary_phone_number else '',
@@ -409,6 +411,7 @@ def teacher_export_data(request):
                 teacher.teacher_assignment if teacher.teacher_assignment else '',
                 teacher.teaching_hours_private_school if teacher.teaching_hours_private_school is not None else '',
                 teacher.teaching_hours_dirasa if teacher.teaching_hours_dirasa is not None else '',
+                trainings_list,
                 teacher.training_sessions_attended if teacher.training_sessions_attended is not None else '',
                 teacher.extra_coaching if teacher.extra_coaching else '',
                 teacher.extra_coaching_specify if teacher.extra_coaching_specify else '',
@@ -426,7 +429,6 @@ def teacher_export_data(request):
                 teacher.modified_by.username if teacher.modified_by else '',
             ]
 
-            # Encode each cell to UTF-8
             encoded_row = []
             for cell in row:
                 if isinstance(cell, (str, bytes)):  # Handle string and bytes
