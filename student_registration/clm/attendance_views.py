@@ -37,7 +37,7 @@ class AttendanceView(LoginRequiredMixin,
 
         school = School.objects.filter(is_closed=False).all()
         if clm_bridging_all or is_staff:
-            school = School.objects.filter(is_closed=False).all()
+            school = School.objects.filter(is_closed=False).order_by('name')
         else:
             school_id = 0
             partner_id = 0

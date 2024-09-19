@@ -3523,17 +3523,17 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
         return False
 
 
-def update_total_attendance(registration_id, student_id, round_id, school_id, first_name,father_name, last_name ):
+def update_total_attendance(registration_id, student_id, round_id, school_id, first_name,father_name, last_name):
 
     total_absence_days = CLMAttendanceStudent.objects.filter(
         attended='No',
         attendance_day__round_id=round_id,
-        registration_id=registration_id
+        student_id=student_id
     ).count()
     total_attendance_days = CLMAttendanceStudent.objects.filter(
         attended='Yes',
         attendance_day__round_id=round_id,
-        registration_id=registration_id
+        student_id=student_id
     ).count()
 
     # Update or create the student's total attendance record
@@ -3543,15 +3543,15 @@ def update_total_attendance(registration_id, student_id, round_id, school_id, fi
         registration_id=registration_id,
         defaults={
             'student_first_name': first_name,
-            'student_last_name': father_name,
-            'student_father_name': last_name,
+            'student_last_name': last_name,
+            'student_father_name': father_name,
             'student_id': student_id
         }
     )
 
     student_attendance.student_first_name = first_name
-    student_attendance.student_last_name = father_name
-    student_attendance.student_father_name = last_name
+    student_attendance.student_last_name = last_name
+    student_attendance.student_father_name = father_name
     student_attendance.total_attendance_days = total_attendance_days
     student_attendance.total_absence_days = total_absence_days
     student_attendance.save()
