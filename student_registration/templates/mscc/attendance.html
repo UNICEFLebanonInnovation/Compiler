@@ -111,7 +111,7 @@
                                                                           <option value="">Round</option>
                                                                            {% for item in round %}
                                                                               {% if item != '' %}
-                                                                                <option value="{{ item }}" {% if round == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                                <option value="{{ item.id }}" {% if round == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
                                                                               {% endif %}
                                                                             {% endfor %}
                                                                       </select>
@@ -195,7 +195,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=20"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=21"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
 
 {% endblock %}

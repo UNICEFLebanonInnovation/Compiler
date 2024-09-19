@@ -548,6 +548,7 @@ class MSCCAttendance(TimeStampedModel):
         ('Weekly Holiday', _('Weekly Holiday')),
         ('Roads Closed', _('Roads Closed')),
     )
+    round_id = models.IntegerField(blank=True, null=True)
     center = models.ForeignKey(
         Center,
         blank=True, null=True,

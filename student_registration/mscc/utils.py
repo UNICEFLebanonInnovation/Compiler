@@ -328,13 +328,13 @@ def get_old_child(student_id):
     return initial
 
 
-def create_attendance(data, center_id):
+def create_attendance(data, center_id, round_id):
     from datetime import datetime
 
     education_program = data["education_program"]
     class_section = data["class_section"]
     try:
-        attendance, created = MSCCAttendance.objects.get_or_create(center_id=center_id,
+        attendance, created = MSCCAttendance.objects.get_or_create(round_id=round_id, center_id=center_id,
                                                                    attendance_date=datetime.strptime(data["attendance_date"], '%m/%d/%Y'),
                                                                    education_program=education_program,
                                                                    class_section=class_section
@@ -358,7 +358,7 @@ def create_attendance(data, center_id):
         return False
 
 
-def load_child_attendance(center_id, attendance_date, education_program, class_section):
+def load_child_attendance(center_id, round_id, attendance_date, education_program, class_section):
     from datetime import datetime
 
     attendance = None
@@ -396,7 +396,7 @@ def load_child_attendance(center_id, attendance_date, education_program, class_s
                 center_id=center_id,
                 type='Core-Package',
                 deleted=False,
-                round__current_year=True
+                round_id=round_id
             ).annotate(
                 has_education_service=Exists(
                     EducationService.objects.filter(
@@ -415,6 +415,7 @@ def load_child_attendance(center_id, attendance_date, education_program, class_s
                     ).values('registration_id')
                 )
             )
+            print(registrations.query)
 
             for registration_child in registrations:
                 registration_record = {}

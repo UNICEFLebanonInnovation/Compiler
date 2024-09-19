@@ -27,13 +27,38 @@ class AttendanceView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         from datetime import datetime
         from collections import OrderedDict
+        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = self.request.user.is_staff
 
         attendance_date = datetime.now().strftime('%m/%d/%Y')
         day_off = 'No'
         close_reason = ''
         rounds = CLMRound.objects.filter(current_year=True)
 
-        school = School.objects.filter(is_closed=False).order_by('name')
+        school = School.objects.filter(is_closed=False).all()
+        if clm_bridging_all or is_staff:
+            school = School.objects.filter(is_closed=False).all()
+        else:
+            school_id = 0
+            partner_id = 0
+
+            if self.request.user.school:
+                school_id = self.request.user.school.id
+            if self.request.user.partner_id:
+                partner_id = self.request.user.partner_id
+
+            if school_id and school_id > 0:
+                school = School.objects.filter(id=school_id).order_by('name')
+
+            elif partner_id > 0:
+                school = School.objects.filter(is_closed=False,
+                                                 id__in=PartnerOrganization
+                                                 .objects
+                                                 .filter(id=partner_id)
+                                                 .values_list('schools', flat=True)).order_by('name')
+            else:
+                school = school.none()
+
         # sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
         # education_program_dict = OrderedDict(sorted_education_programs)
 

@@ -20,6 +20,7 @@ from student_registration.schools.models import PartnerOrganization
 
 
 class MainFilter(FilterSet):
+    type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
                                 .order_by('name').distinct(), empty_label='Nationality')
 
@@ -30,8 +31,9 @@ class MainFilter(FilterSet):
     child__number = CharFilter(lookup_expr='icontains')
     round = ChoiceFilter(choices=Round.objects.values_list('id', 'name')
                                       .order_by('name').distinct(), empty_label='Round')
-    programme_type = CharFilter(field_name='education_service__education_program', label='Programme Type', method='filter_education_program')
-
+    programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
+                                  field_name='education_service__education_program',
+                                  empty_label='Programme Type', method='filter_education_program')
     child__first_phone_number = CharFilter(lookup_expr='icontains')
     child__second_phone_number = CharFilter(lookup_expr='icontains')
 

@@ -300,6 +300,14 @@ class Registration(TimeStampedModel):
         return result
 
     @property
+    def class_section(self):
+        result = ''
+        program = self.education_service.all().first()
+        if program:
+            result = program.class_section
+        return result
+
+    @property
     def has_previous_registration(self):
         previous_registration_exists = Registration.objects.filter(
             student_id=self.child.id,

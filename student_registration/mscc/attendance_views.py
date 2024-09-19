@@ -58,7 +58,7 @@ class AttendanceView(LoginRequiredMixin,
 def save_attendance_children(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
-    result = create_attendance(data, request.GET.get('center_id'))
+    result = create_attendance(data, request.GET.get('center_id'), request.GET.get('round_id'))
     return JsonResponse({'result': result})
 
 
@@ -75,6 +75,7 @@ class LoadAttendanceChildren(LoginRequiredMixin,
         center_id = self.request.GET.get("center_id")
         education_program = self.request.GET.get("education_program")
         class_section = self.request.GET.get("class_section")
+        round_id = self.request.GET.get("round_id")
 
         if attendance_date_str is None:
             return {'instances': []}
@@ -84,7 +85,7 @@ class LoadAttendanceChildren(LoginRequiredMixin,
             attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
 
             if attendance_date <= current_date:
-                instances = load_child_attendance(center_id, attendance_date_str, education_program, class_section)
+                instances = load_child_attendance(center_id, round_id, attendance_date_str, education_program, class_section)
             else:
                 instances = []
         except ValueError:

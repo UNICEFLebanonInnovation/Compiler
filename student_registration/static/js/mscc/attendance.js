@@ -116,6 +116,7 @@ $(document).ready(function() {
             data: {
                 'attendance_date': $("#attendance_date").val(),
                 'center_id': $('#center_id').val(),
+                'round_id': $('#round').val(),
                 'education_program': $('#education_program').val(),
                 'class_section': $('#class_section').val()
             },
