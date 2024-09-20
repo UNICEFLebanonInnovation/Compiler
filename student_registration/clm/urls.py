@@ -381,6 +381,11 @@ urlpatterns = [
         name='bridging_attendance_report'
     ),
     url(
+        regex=r'^bridging-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.BridgingDeleteView,
+        name='bridging_delete'
+    ),
+    url(
         regex=r'^Attendance/$',
         view=attendance_views.AttendanceView.as_view(),
         name='attendance'
