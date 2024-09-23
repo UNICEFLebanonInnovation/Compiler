@@ -727,6 +727,7 @@ def export_data_xlsx(request):
 
     return response
 
+
 def export_data(request):
     try:
         cursor = connection.cursor()
@@ -734,19 +735,19 @@ def export_data(request):
         center_id = user.center_id
         partner_id = user.partner_id
 
-        # first_name = request.GET.get('first_name', '')
-        # last_name = request.GET.get('last_name', '')
-        # father_name = request.GET.get('father_name', '')
-        # mother_fullname = request.GET.get('mother_fullname', '')
-        # nationality = request.GET.get('nationality', '')
-        round_id = request.GET.get('round', '')
+        round = request.GET.get('round', '')
 
-        if not round_id:
+        if not round:
             return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
                                 status=400)
 
-        vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
-        query_params = [round_id]
+        query_params = []
+
+        if round == 'no_round':
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id is null"
+        else:
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+            query_params = [round]
 
         if has_group(user, 'MSCC_UNICEF'):
             vw_mscc_data_str += " AND id > 0 "
@@ -758,22 +759,6 @@ def export_data(request):
             query_params.append(center_id)
         else:
             vw_mscc_data_str += " AND id = 0 "
-
-        # if first_name:
-        #     vw_mscc_data_str += " AND child_first_name LIKE %s"
-        #     query_params.append('%' + first_name + '%')
-        # if father_name:
-        #     vw_mscc_data_str += " AND child_father_name LIKE %s"
-        #     query_params.append('%' + father_name + '%')
-        # if last_name:
-        #     vw_mscc_data_str += " AND child_last_name LIKE %s"
-        #     query_params.append('%' + last_name + '%')
-        # if mother_fullname:
-        #     vw_mscc_data_str += " AND child_mother_fullname LIKE %s"
-        #     query_params.append('%' + mother_fullname + '%')
-        # if nationality:
-        #     vw_mscc_data_str += " AND child_nationality_id = %s"
-        #     query_params.append(nationality)
 
         cursor.execute(vw_mscc_data_str, query_params)
         mscc_data = cursor.fetchall()
