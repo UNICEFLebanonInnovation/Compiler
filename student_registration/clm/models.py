@@ -2050,6 +2050,7 @@ class Bridging(CLM):
         blank=True,
         null=True,
         choices=(
+            ('', '----------'),
             ('yes_akelius)', _("Yes (Akelius)")),
             ('yes_learning_passport)', _("Yes (Learning Passport)")),
             ('no', _("No"))),
