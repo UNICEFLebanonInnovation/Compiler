@@ -11118,6 +11118,8 @@ class BridgingAssessmentForm(forms.ModelForm):
         community_liaison_specify = cleaned_data.get("community_liaison_specify")
 
         if participation != 'no_absence':
+            if not barriers_single:
+                self.add_error('barriers_single', 'This field is required')
             if not community_Liaison_follow_up:
                 self.add_error('community_Liaison_follow_up', 'This field is required')
             elif community_Liaison_follow_up == 'yes':

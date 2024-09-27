@@ -196,9 +196,6 @@ function reorganizeForm_post_assessment()
 
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');
-    $('div.grades').addClass('d-none');
-    $('#grades').addClass('hide');
-
 
     if(test_done == 'yes'){
     $('#div_id_round_complete').removeClass('d-none');
