@@ -130,19 +130,17 @@ class SchoolExportTable(CommonTable):
 
 class ClubTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit Club'), orderable=False,
-                                        template_name='django_tables2/school/club_edit_column.html',
-                                        attrs={'url': '/schools/club-edit/', 'programme': 'Bridging'})
-    #
-    # delete_column = tables.TemplateColumn(verbose_name=_('Delete school'), orderable=False,
-    #                                       template_name='django_tables2/school_delete_column.html',
-    #                                       attrs={'url': '/api/school/', 'programme': 'Bridging'})
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                        template_name='django_tables2/school/club_action_column.html',
+                                        attrs={'url_edit': '/schools/club-edit/',
+                                               'url_delete': '/schools/club-delete/',
+                                               'programme': 'Bridging'})
 
     class Meta:
         model = Club
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
+            'action_column',
             'club_name',
             'number_clubs',
             'club_type',
@@ -153,17 +151,21 @@ class ClubTable(CommonTable):
             'modified',
         )
 
+
 class MeetingTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit Meeting'), orderable=False,
-                                        template_name='django_tables2/school/meeting_edit_column.html',
-                                        attrs={'url': '/schools/meeting-edit/', 'programme': 'Bridging'})
+
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                        template_name='django_tables2/school/meeting_action_column.html',
+                                        attrs={'url_edit': '/schools/meeting-edit/',
+                                               'url_delete': '/schools/meeting-delete/',
+                                               'programme': 'Bridging'})
 
     class Meta:
         model = Meeting
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
+            'action_column',
             'meeting_name',
             'meeting_date',
             'number_participants',
@@ -176,15 +178,17 @@ class MeetingTable(CommonTable):
 
 class CommunityInitiativeTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit Meeting'), orderable=False,
-                                        template_name='django_tables2/school/community_initiative_edit_column.html',
-                                        attrs={'url': '/schools/community-initiative-edit/', 'programme': 'Bridging'})
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                        template_name='django_tables2/school/initiative_action_column.html',
+                                        attrs={'url_edit': '/schools/community-initiative-edit/',
+                                               'url_delete': '/schools/community-initiative-delete/',
+                                               'programme': 'Bridging'})
 
     class Meta:
         model = CommunityInitiative
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
+            'action_column',
             'community_group_name',
             'number_initiatives',
             'owner',
@@ -196,15 +200,17 @@ class CommunityInitiativeTable(CommonTable):
 
 class HealthVisitTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit Health Visit'), orderable=False,
-                                        template_name='django_tables2/school/health_visit_edit_column.html',
-                                        attrs={'url': '/schools/health-visit-edit/', 'programme': 'Bridging'})
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                        template_name='django_tables2/school/visit_action_column.html',
+                                        attrs={'url_edit': '/schools/health-visit-edit/',
+                                               'url_delete': '/schools/health-visit-delete/',
+                                               'programme': 'Bridging'})
 
     class Meta:
         model = HealthVisit
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
+            'action_column',
             'focal_point_name',
             'number_visits',
             'date_first_visit',

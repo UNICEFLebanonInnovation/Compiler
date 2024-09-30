@@ -112,6 +112,11 @@ urlpatterns = [
         name='club_edit'
     ),
     url(
+        regex=r'^club-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.club_delete,
+        name='club_delete'
+    ),
+    url(
         regex=r'^meeting-list/(?P<school_id>[\w.@+-]+)/$',
         view=views.MeetingListView.as_view(),
         name='meeting_list'
@@ -125,6 +130,11 @@ urlpatterns = [
         regex=r'^meeting-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.MeetingFormView.as_view(),
         name='meeting_edit'
+    ),
+    url(
+        regex=r'^meeting-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.meeting_delete,
+        name='meeting_delete'
     ),
     url(
         regex=r'^community-initiative-list/(?P<school_id>[\w.@+-]+)/$',
@@ -142,6 +152,11 @@ urlpatterns = [
         name='community_initiative_edit'
     ),
     url(
+        regex=r'^community-initiative-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.community_initiative_delete,
+        name='community_initiative_delete'
+    ),
+    url(
         regex=r'^health-visit-list/(?P<school_id>[\w.@+-]+)/$',
         view=views.HealthVisitListView.as_view(),
         name='health_visit_list'
@@ -155,6 +170,11 @@ urlpatterns = [
         regex=r'^health-visit-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.HealthVisitFormView.as_view(),
         name='health_visit_edit'
+    ),
+    url(
+        regex=r'^health-visit-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.health_visit_delete,
+        name='health_visit_delete'
     ),
     url(
         'load-districts/$',

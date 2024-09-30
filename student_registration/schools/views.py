@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.db.models import Q
 from django.views.generic import DetailView, ListView, RedirectView, CreateView, FormView, TemplateView, UpdateView
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from dal import autocomplete
@@ -727,6 +728,19 @@ class ClubFormView(LoginRequiredMixin,
         return super(ClubFormView, self).form_valid(form)
 
 
+def club_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            club = Club.objects.get(pk=pk)
+            club.delete()
+            result = {"isSuccessful": True}
+        except Club.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
+
 class MeetingListView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FilterView,
@@ -787,6 +801,19 @@ class MeetingFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, school_id=school_id, instance=instance)
         return super(MeetingFormView, self).form_valid(form)
+
+
+def meeting_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            meeting = Meeting.objects.get(pk=pk)
+            meeting.delete()
+            result = {"isSuccessful": True}
+        except Meeting.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
 
 class CommunityInitiativeListView(LoginRequiredMixin,
@@ -852,6 +879,17 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
 
 
 
+def community_initiative_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            initiative = CommunityInitiative.objects.get(pk=pk)
+            initiative.delete()
+            result = {"isSuccessful": True}
+        except CommunityInitiative.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
 
 class HealthVisitListView(LoginRequiredMixin,
@@ -914,6 +952,20 @@ class HealthVisitFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, school_id=school_id, instance=instance)
         return super(HealthVisitFormView, self).form_valid(form)
+
+
+def health_visit_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            visit = HealthVisit.objects.get(pk=pk)
+            visit.delete()
+            result = {"isSuccessful": True}
+        except HealthVisit.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
 
 def school_export_data(request):
     qs_school = School.objects.filter(is_closed=False).order_by('-id')
