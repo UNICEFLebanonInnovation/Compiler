@@ -14,6 +14,7 @@ from .models import School, PartnerOrganization, EducationYear, Evaluation, Club
 from student_registration.locations.models import Location
 from .serializers import SchoolSerializer
 
+
 class ProfileForm(forms.ModelForm):
 
     email = forms.EmailField(
@@ -3402,6 +3403,11 @@ class SchoolForm(forms.ModelForm):
                     Div('latitude', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('is_closed', css_class='col-md-3 '),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
             Fieldset(
@@ -3482,10 +3488,6 @@ class SchoolForm(forms.ModelForm):
                 Div(HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
-                ),
-                Div(
-                    Div('is_closed', css_class='col-md-3 d-none'),
-                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),

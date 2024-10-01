@@ -3376,13 +3376,16 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
         if attendance:
             attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance).select_related('student')
             for att in attendances:
+                registration = att.registration if att.registration else None
+                student = att.student if att.student else None
+
                 result.append({
-                    'registration_id': att.registration.id,
-                    'child_id': att.student.id,
-                    'child_fullname': att.student.full_name,
-                    'child_mother_fullname': att.student.mother_fullname,
-                    'child_birthday': att.student.birthday,
-                    'child_nationality': att.student.nationality.name,
+                    'registration_id': registration.id if registration else None,
+                    'child_id': student.id if student else None,
+                    'child_fullname': student.full_name if student else None,
+                    'child_mother_fullname': student.mother_fullname if student else None,
+                    'child_birthday': student.birthday if student else None,
+                    'child_nationality': student.nationality.name if student and student.nationality else None,
                     'attended': att.attended,
                     'absence_reason': att.absence_reason,
                     'absence_reason_other': att.absence_reason_other
@@ -3412,9 +3415,6 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
     except Exception as ex:
         print(ex)
         return []
-
-
-
 
 
 def create_attendance(data):

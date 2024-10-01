@@ -337,6 +337,11 @@ class School(TimeStampedModel):
         verbose_name=_('School location'),
         related_name='+',
     )
+    is_bma = models.BooleanField(
+        default=True,
+        blank=True,
+        verbose_name=_('BMA school')
+    )
     is_closed = models.BooleanField(
         default=False,
         blank=True,
