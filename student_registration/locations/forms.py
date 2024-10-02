@@ -23,6 +23,7 @@ from .models import (
     Center,
     ProgramStaff
 )
+from student_registration.schools.models import PartnerOrganization
 
 
 class CustomClearableFileInput(ClearableFileInput):
@@ -33,6 +34,14 @@ class CenterAdminForm(forms.ModelForm):
     name = forms.CharField(
         label=_("Center name"),
         widget=forms.TextInput, required=True
+    )
+    partner = forms.ModelChoiceField(
+        queryset=PartnerOrganization.objects.all(),
+        widget=forms.Select,
+        label=_('Partner'),
+        empty_label='-------',
+        required=True,
+        to_field_name='id',
     )
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True),
@@ -86,6 +95,7 @@ class CenterAdminForm(forms.ModelForm):
         model = Center
         fields = (
             'name',
+            'partner',
             'governorate',
             'caza',
             'cadaster',
@@ -285,13 +295,6 @@ class CenterForm(forms.ModelForm):
             instance.admin_staff_number = validated_data.get('admin_staff_number')
         else:
             instance.admin_staff_number = 0
-
-
-
-
-
-            
-
         instance.modified_by = request.user
 
         instance.save()

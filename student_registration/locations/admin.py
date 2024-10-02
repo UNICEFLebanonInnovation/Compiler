@@ -70,6 +70,12 @@ class CenterAdmin(ImportExportModelAdmin):
             'type',
             'partner'
     )
+    list_filter = (
+        'name',
+        'governorate',
+        'type',
+        'partner'
+    )
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
