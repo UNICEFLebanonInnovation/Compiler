@@ -68,13 +68,15 @@ class CenterAdmin(ImportExportModelAdmin):
             'latitude',
             'p_code',
             'type',
-            'partner'
+            'partner',
+            'is_active',
     )
     list_filter = (
         'name',
         'governorate',
         'type',
-        'partner'
+        'partner',
+        'is_active',
     )
 
     def get_export_formats(self):

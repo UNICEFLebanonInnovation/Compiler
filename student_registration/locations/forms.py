@@ -87,6 +87,11 @@ class CenterAdminForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         choices= Center.PROVIDED_PACKAGES,
     )
+    is_active = forms.BooleanField(
+        label="Is the center active?",
+        required=False,
+        initial=True
+    )
 
     def __init__(self, *args, **kwargs):
         super(CenterAdminForm, self).__init__(*args, **kwargs)
@@ -109,6 +114,7 @@ class CenterAdminForm(forms.ModelForm):
             'programs',
             'cwd_accessible',
             'admin_staff_number',
+            'is_active'
         )
 
 
@@ -195,6 +201,12 @@ class CenterForm(forms.ModelForm):
         initial=0,
         min_value=0
     )
+    is_active = forms.ChoiceField(
+        label=_("Is the center active?"),
+        widget=forms.Select, required=True,
+        choices=Center.TRUE_FALSE,
+        initial=False
+    )
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         pk = kwargs.pop('pk', None)
@@ -259,6 +271,10 @@ class CenterForm(forms.ModelForm):
                     Div('admin_staff_number', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('is_active', css_class='col-md-3'),
+                ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -295,6 +311,7 @@ class CenterForm(forms.ModelForm):
             instance.admin_staff_number = validated_data.get('admin_staff_number')
         else:
             instance.admin_staff_number = 0
+        instance.is_active = validated_data.get('is_active')
         instance.modified_by = request.user
 
         instance.save()
@@ -318,7 +335,7 @@ class CenterForm(forms.ModelForm):
             'programs',
             'cwd_accessible',
             'admin_staff_number',
-
+            'is_active',
         )
 
 
