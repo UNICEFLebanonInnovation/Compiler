@@ -52,6 +52,11 @@ class School(TimeStampedModel):
         ('yes', _("Yes")),
         ('no', _("No")),
     )
+    TRUE_FALSE = Choices(
+        ('', '----------'),
+        ('True', _("Yes")),
+        ('False', _("No")),
+    )
     TYPE = Choices(
         ('', '----------'),
         ('Private School', _("Private School")),

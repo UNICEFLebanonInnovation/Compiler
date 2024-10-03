@@ -539,10 +539,10 @@ class SchoolListView(LoginRequiredMixin,
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         is_staff = self.request.user.is_staff
 
-        queryset = School.objects.filter(is_bma=True, is_closed=False).all()
+        queryset = School.objects.filter(is_bma=True).all()
 
         if clm_bridging_all or is_staff:
-            queryset = School.objects.filter(is_bma=True, is_closed=False).all()
+            queryset = School.objects.filter(is_bma=True).all()
         else:
             school_id = 0
             partner_id = 0
@@ -556,7 +556,7 @@ class SchoolListView(LoginRequiredMixin,
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id > 0:
-                queryset = School.objects.filter(is_bma=True, is_closed=False,
+                queryset = School.objects.filter(is_bma=True,
                                                  id__in=PartnerOrganization
                                                  .objects
                                                  .filter(id=partner_id)

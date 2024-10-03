@@ -3307,9 +3307,10 @@ class SchoolForm(forms.ModelForm):
         label=_('School Digital Capacity'),
         widget=forms.TextInput, required=False
     )
-    is_closed = forms.BooleanField(
-        label="Is the school closed?",
-        required=False,
+    is_closed = forms.ChoiceField(
+        label=_("Is the school closed?"),
+        widget=forms.Select, required=True,
+        choices=School.TRUE_FALSE,
         initial=False
     )
     working_days = forms.MultipleChoiceField(

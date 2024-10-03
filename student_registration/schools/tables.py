@@ -11,6 +11,7 @@ class BootstrapTable(tables.Table):
         template = 'django_tables2/bootstrap.html'
         attrs = {'class': 'table table-bordered table-striped table-hover'}
 
+
 class CommonTable(tables.Table):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit school'),
@@ -69,6 +70,7 @@ class SchoolTable(CommonTable):
             'director_name',
             'land_phone_number',
             'email',
+            'is_closed',
             'owner',
             'modified_by',
             'created',
@@ -121,6 +123,7 @@ class SchoolExportTable(CommonTable):
             'director_name',
             'land_phone_number',
             'email',
+            'is_closed',
             'owner',
             'modified_by',
             'created',
