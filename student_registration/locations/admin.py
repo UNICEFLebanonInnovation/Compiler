@@ -78,6 +78,9 @@ class CenterAdmin(ImportExportModelAdmin):
         'partner',
         'is_active',
     )
+    search_fields = (
+        'name',
+    )
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats

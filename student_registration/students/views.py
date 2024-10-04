@@ -383,7 +383,7 @@ def teacher_export_data(request):
 
         columns = [
             'First Name', 'Last Name', 'Father Name',  'Mother Full Name','Gender',
-            'School', 'Email', 'Phone Number', 'Subjects Provided',
+            'School','School is closed' , 'Email', 'Phone Number', 'Subjects Provided',
             'Registration Level', 'Teacher Assignment', 'Teaching Hours Private School',
             'Teaching Hours Dirasa', 'Trainings', 'Training Sessions Attended', 'Extra Coaching', 'Extra Coaching Specify',
             'Attachment 1 Description', 'Attachment 1 Type', 'Attachment 2 Description', 'Attachment 2 Type',
@@ -404,6 +404,7 @@ def teacher_export_data(request):
                 teacher.mother_fullname,
                 teacher.sex,
                 teacher.school.name if teacher.school else '',
+                teacher.school.is_closed if teacher.school else '',
                 teacher.email if teacher.email else '',
                 teacher.primary_phone_number if teacher.primary_phone_number else '',
                 ', '.join(teacher.subjects_provided) if teacher.subjects_provided else '',

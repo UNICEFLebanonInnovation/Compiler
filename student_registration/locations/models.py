@@ -182,9 +182,10 @@ class Center(TimeStampedModel):
         null=True,
         verbose_name=_('P-Code')
     )
-    is_active = models.BooleanField(
+    is_active = models.NullBooleanField(
         default=False,
         blank=True,
+        null=True,
         verbose_name=_('is active')
     )
     owner = models.ForeignKey(
