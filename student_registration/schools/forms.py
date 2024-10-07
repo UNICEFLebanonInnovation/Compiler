@@ -3724,7 +3724,7 @@ class MeetingForm(forms.ModelForm):
     )
     meeting_date = forms.DateField(
         label=_('Meeting Date'),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
         required=True
     )
     number_participants = forms.IntegerField(
@@ -3769,13 +3769,15 @@ class MeetingForm(forms.ModelForm):
             ),
 
             FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/meeting-list/' + school_id + '" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
+                Submit('save', _('Save'), css_class='col-md-1'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/meeting-list/' + school_id +
+                     '" translation="' + _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' +
+                     _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to school list') + '</a>'),
                 css_class='button-group'
-                )
+            )
         )
 
     def save(self, request=None, instance=None, school_id=None):
@@ -3886,6 +3888,7 @@ class CommunityInitiativeForm(forms.ModelForm):
             'number_initiatives',
         )
 
+
 class HealthVisitForm(forms.ModelForm):
     focal_point_name = forms.CharField(
         label=_("Health Focal Point Name"),
@@ -3897,12 +3900,12 @@ class HealthVisitForm(forms.ModelForm):
     )
     date_first_visit = forms.DateField(
         label=_('Date of First Visit'),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
         required=True
     )
     date_last_visit = forms.DateField(
         label=_('Date of Last Visit'),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
         required=True
     )
     summary = forms.CharField(
@@ -3910,7 +3913,6 @@ class HealthVisitForm(forms.ModelForm):
         widget=forms.Textarea, required=False
     )
     school_id = forms.CharField(widget=forms.HiddenInput, required=False)
-
 
     def __init__(self, *args, **kwargs):
 
@@ -3955,15 +3957,16 @@ class HealthVisitForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
-
             FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/health-visit-list/' + school_id + '" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
+                Submit('save', _('Save'), css_class='col-md-1'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/health-visit-list/' + school_id +
+                     '" translation="' + _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' +
+                     _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to school list') + '</a>'),
                 css_class='button-group'
-                )
+            )
         )
 
     def save(self, request=None, instance=None, school_id=None):

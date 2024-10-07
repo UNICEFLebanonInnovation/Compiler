@@ -1,11 +1,11 @@
 
 $(document).ready(function() {
 
-     if($(document).find('#id_date_first_visit').length == 1) {
+    if($('#id_date_first_visit').length == 1) {
         $('#id_date_first_visit').datepicker({dateFormat: "yy-mm-dd"});
     }
 
-     if($(document).find('#id_date_last_visit').length == 1) {
+    if($('#id_date_last_visit').length == 1) {
         $('#id_date_last_visit').datepicker({dateFormat: "yy-mm-dd"});
     }
 
