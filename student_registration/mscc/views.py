@@ -621,9 +621,10 @@ def quick_search(request):
         if len(terms.split()) > 1:
             qs = qs.annotate(fullname=Concat('child__first_name', Value(' '), 'child__father_name',
                                              Value(' '), 'child__last_name')) \
-                .filter(child__fullname__icontains=terms) \
+                .filter(fullname__icontains=terms) \
                 .values('id', 'child__first_name', 'child__last_name',
                         'child__father_name', 'child__mother_fullname').distinct()
+
         else:
             # for term in terms:
             qs = qs.filter(
@@ -631,7 +632,6 @@ def quick_search(request):
                 Q(child__last_name__icontains=term))\
                 .values('id', 'child__first_name', 'child__last_name',
                         'child__father_name', 'child__mother_fullname').distinct()
-    
 
     return JsonResponse({'result': json.dumps(list(qs))})
 
