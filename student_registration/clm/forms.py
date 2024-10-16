@@ -10859,12 +10859,26 @@ class BridgingAssessmentForm(forms.ModelForm):
         ),
         initial=''
     )
-    learning_result_other = forms.CharField(
-        label=_('Please specify'),
+    dropout_reason = forms.CharField(
+        label=_('Dropout reason'),
         widget=forms.TextInput, required=False
     )
     dropout_date = forms.DateField(
         label=_("Dropout date"),
+        required=False
+    )
+    learning_result_other = forms.CharField(
+        label=_('Please specify'),
+        widget=forms.TextInput, required=False
+    )
+    referral_school = forms.CharField(
+        label=_('Formal Education School '),
+        widget=forms.TextInput, required=False
+    )
+    referral_school_type = forms.ChoiceField(
+        label=_('School Type'),
+        choices=Bridging.SCHOOL_TYPE,
+        widget=forms.Select,
         required=False
     )
     barriers_single = forms.ChoiceField(
@@ -11055,12 +11069,22 @@ class BridgingAssessmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-4'),
                     HTML('<span class="badge badge-default" id="span_learning_result_other">4.1</span>'),
-                    Div('learning_result_other', css_class='col-md-3'),
+                    Div('learning_result_other', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default" id="span_dropout_reason">4.1</span>'),
+                    Div('dropout_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_dropout_date">4.2</span>'),
+                    Div('dropout_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_dropout_date">4.1</span>'),
-                    Div('dropout_date', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_referral_school">4.1</span>'),
+                    Div('referral_school', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default" id="span_referral_school_type">4.2</span>'),
+                    Div('referral_school_type', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
@@ -11106,6 +11130,9 @@ class BridgingAssessmentForm(forms.ModelForm):
         learning_result = cleaned_data.get("learning_result")
         learning_result_other = cleaned_data.get("learning_result_other")
         dropout_date = cleaned_data.get("dropout_date")
+        dropout_reason = cleaned_data.get("dropout_reason")
+        referral_school = cleaned_data.get("referral_school")
+        referral_school_type = cleaned_data.get("referral_school_type")
 
         barriers_single = cleaned_data.get("barriers_single")
         barriers_other = cleaned_data.get("barriers_other")
@@ -11126,7 +11153,6 @@ class BridgingAssessmentForm(forms.ModelForm):
                 if not community_liaison_specify:
                     self.add_error('community_liaison_specify', 'This field is required')
 
-
         if test_done == 'yes':
             if not round_complete:
                 self.add_error('round_complete', 'This field is required')
@@ -11136,6 +11162,13 @@ class BridgingAssessmentForm(forms.ModelForm):
 
         if learning_result == 'dropout' and not dropout_date:
             self.add_error('dropout_date', 'This field is required')
+        if learning_result == 'dropout' and not dropout_reason:
+            self.add_error('dropout_reason', 'This field is required')
+
+        if learning_result == 'referred_public_school' and not referral_school:
+            self.add_error('referral_school', 'This field is required')
+        if learning_result == 'referred_public_school' and not referral_school_type:
+            self.add_error('referral_school_type', 'This field is required')
 
         if barriers_single == 'other':
             if not barriers_other:
@@ -11255,7 +11288,10 @@ class BridgingAssessmentForm(forms.ModelForm):
             'round_complete',
             'learning_result',
             'learning_result_other',
+            'dropout_reason',
             'dropout_date',
+            'referral_school',
+            'referral_school_type',
             'community_Liaison_follow_up',
             'community_liaison_specify',
         )

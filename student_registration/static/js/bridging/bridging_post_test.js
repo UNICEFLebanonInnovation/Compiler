@@ -58,38 +58,13 @@ $(document).ready(function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
             window_location(item.attr('href'));
-//            window.location = item.attr('href');
         }
     });
 
-//    pageScripts();
 
-//        /* Ajax page load settings */
-//        $(document).on('pjax:end', pageScripts);
-//        if (sessionStorage.getItem("pjax-enabled") === "0") {
-//            return;
-//        }
-//
-//        // Comment it to disable Ajax Page load
-//        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
-//
-//        $(document).on('pjax:beforeReplace', function() {
-//            $('.content-wrap').css('opacity', '0.1');
-//            setTimeout(function() {
-//                $('.content-wrap').fadeTo('100', '1');
-//            }, 1);
-//        });
 });
 
-//function pageScripts() {
-//    /* Magnific Popup */
-//    $('.image-link').magnificPopup({
-//        type: 'image',
-//        gallery: {
-//            enabled: true
-//        }
-//    });
-//}
+
 
 function learning_result_next_level() {
     var registration_level = $('select#id_registration_level').val();
@@ -113,6 +88,36 @@ function learning_result_next_level() {
 }
 function reorganizeForm_post_assessment()
 {
+   var learning_result =  $('select#id_learning_result').val();
+
+    $('#span_learning_result_other').addClass('d-none');
+    $('#div_id_learning_result_other').addClass('d-none');
+    if(learning_result == 'other'){
+        $('#span_learning_result_other').removeClass('d-none');
+        $('#div_id_learning_result_other').removeClass('d-none');
+    }
+
+    $('#div_id_dropout_reason').addClass('d-none');
+    $('#span_dropout_reason').addClass('d-none');
+    $('#div_id_dropout_date').addClass('d-none');
+    $('#span_dropout_date').addClass('d-none');
+    if(learning_result == 'dropout'){
+        $('#div_id_dropout_reason').removeClass('d-none');
+        $('#span_dropout_reason').removeClass('d-none');
+        $('#div_id_dropout_date').removeClass('d-none');
+        $('#span_dropout_date').removeClass('d-none');
+    }
+
+    $('div#div_id_referral_school').addClass('d-none');
+    $('#span_referral_school').addClass('d-none');
+    $('div#div_id_referral_school_type').addClass('d-none');
+    $('#span_referral_school_type').addClass('d-none');
+    if(learning_result == 'referred_public_school'){
+        $('div#div_id_referral_school').removeClass('d-none');
+        $('#span_referral_school').removeClass('d-none');
+        $('div#div_id_referral_school_type').removeClass('d-none');
+        $('#span_referral_school_type').removeClass('d-none');
+    }
 
     var participation = $('select#id_participation').val();
     var barriers_single = $('select#id_barriers_single').val();
@@ -132,7 +137,6 @@ function reorganizeForm_post_assessment()
     var parent_attended_visits = $('select#id_parent_attended_visits').val();
     var grade_registration = $('select#id_grade_registration').val();
 
-    var learning_result = $('select#id_learning_result').val();
     var referal_other = $('select#id_referal_other').val();
 
     // id_participation
@@ -176,24 +180,6 @@ function reorganizeForm_post_assessment()
         $('div#div_id_community_liaison_specify').addClass('d-none');
     }
 
-    // learning_result
-    $('div#div_id_learning_result_other').addClass('d-none');
-    $('#span_learning_result_other').addClass('d-none');
-    $('#div_id_dropout_date').addClass('d-none');
-    $('#span_dropout_date').addClass('d-none');
-    if(learning_result == 'other'){
-        $('#div_id_learning_result_other').removeClass('d-none');
-        $('#span_learning_result_other').removeClass('d-none');
-    }
-    if(learning_result == 'dropout'){
-        $('#div_id_dropout_date').removeClass('d-none');
-        $('#span_dropout_date').removeClass('d-none');
-    }
-    else
-    {
-        $('#id_dropout_date').val('');
-    }
-
     $('div#div_id_round_complete').addClass('d-none');
     $('#span_round_complete').addClass('d-none');
 
@@ -203,15 +189,6 @@ function reorganizeForm_post_assessment()
     $('#grades').removeClass('hide');
     $('div.grades').removeClass('d-none');
 
-
-    $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").show();
-    $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").show();
-    $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").show();
-    $("#id_learning_result option[value=" + 'referred_to_alp' + "]").show();
-    $("#id_learning_result option[value=" + 'referred_public_school' + "]").show();
-    $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").show();
-    $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").show();
-    $("#id_learning_result option[value=" + 'referred_to_bln' + "]").show();
     //    id_language
     if (language == 'english_arabic')
     {
@@ -244,16 +221,6 @@ function reorganizeForm_post_assessment()
     }
     else
     {
-        $("#id_learning_result option[value=" + 'graduated_to_bln_next_round_higher_level' + "]").hide();
-        $("#id_learning_result option[value=" + 'graduated_to_abln_next_round_higher_level' + "]").hide();
-        $("#id_learning_result option[value=" + 'graduated_to_cbece_next_round_higher_level' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_alp' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_public_school' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_tvet' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_ybln' + "]").hide();
-        $("#id_learning_result option[value=" + 'referred_to_bln' + "]").hide();
-
-
         $('select#id_round_complete').val("");
 
         // grades
@@ -309,64 +276,6 @@ function reorganizeForm_post_assessment()
         $('select#id_modality_physics').val("");
     }
 
-
-//    $('div#div_id_arabic').addClass('d-none');
-//    $('#span_arabic').addClass('d-none');
-//    $('div#div_id_modality_arabic').addClass('d-none');
-//    $('#span_modality_arabic').addClass('d-none');
-//
-//    $('div#div_id_english').addClass('d-none');
-//    $('#span_english').addClass('d-none');
-//    $('div#div_id_modality_english').addClass('d-none');
-//    $('#span_modality_english').addClass('d-none');
-//
-//    $('div#div_id_math').addClass('d-none');
-//    $('#span_math').addClass('d-none');
-//    $('div#div_id_modality_math').addClass('d-none');
-//    $('#span_modality_math').addClass('d-none');
-
-
-
-//    // attended_arabic
-//    if(attended_arabic == 'yes'){
-//        $('div#div_id_arabic').removeClass('d-none');
-//        $('#span_arabic').removeClass('d-none');
-//        $('div#div_id_modality_arabic').removeClass('d-none');
-//        $('#span_modality_arabic').removeClass('d-none');
-//
-//    }
-//    else{
-//        $('#id_arabic').val('');
-//        $('select#id_modality_arabic').val("");
-//
-//    }
-
-//    // attended_english
-//    if(attended_english == 'yes'){
-//        $('div#div_id_english').removeClass('d-none');
-//        $('#span_english').removeClass('d-none');
-//        $('div#div_id_modality_english').removeClass('d-none');
-//        $('#span_modality_english').removeClass('d-none');
-//
-//    }
-//    else{
-//        $('#id_english').val('');
-//        $('select#id_modality_english').val("");
-//    }
-//
-//    // attended_math
-//    if(attended_math == 'yes'){
-//        $('div#div_id_math').removeClass('d-none');
-//        $('#span_math').removeClass('d-none');
-//        $('div#div_id_modality_math').removeClass('d-none');
-//        $('#span_modality_math').removeClass('d-none');
-//    }
-//    else{
-//        $('#id_math').val('');
-//        $('select#id_modality_math').val("");
-//    }
-
-
     // pss_parent_attended
     $('#div_id_pss_parent_attended_other').addClass('d-none');
     $('#span_pss_parent_attended_other').addClass('d-none');
@@ -384,8 +293,6 @@ function reorganizeForm_post_assessment()
     $('#span_pss_session_number').addClass('d-none');
     $('div#div_id_pss_session_modality').addClass('d-none');
     $('#span_pss_session_modality').addClass('d-none');
-    // $('div#div_id_pss_parent_attended_other').addClass('d-none');
-    // $('#span_pss_parent_attended_other').addClass('d-none');
     $('div#div_id_pss_parent_attended').addClass('d-none');
     $('#span_pss_parent_attended').addClass('d-none');
 
@@ -395,8 +302,6 @@ function reorganizeForm_post_assessment()
         $('#span_pss_session_number').removeClass('d-none');
         $('div#div_id_pss_session_modality').removeClass('d-none');
         $('#span_pss_session_modality').removeClass('d-none');
-        // $('div#div_id_pss_parent_attended_other').removeClass('d-none');
-        // $('#span_pss_parent_attended_other').removeClass('d-none');
         $('div#div_id_pss_parent_attended').removeClass('d-none');
         $('#span_pss_parent_attended').removeClass('d-none');
     }
@@ -425,8 +330,6 @@ function reorganizeForm_post_assessment()
     $('#span_covid_session_number').addClass('d-none');
     $('div#div_id_covid_session_modality').addClass('d-none');
     $('#span_covid_session_modality').addClass('d-none');
-    // $('div#div_id_covid_parent_attended_other').addClass('d-none');
-    // $('#span_covid_parent_attended_other').addClass('d-none');
     $('div#div_id_covid_parent_attended').addClass('d-none');
     $('#span_covid_parent_attended').addClass('d-none');
 
@@ -436,8 +339,6 @@ function reorganizeForm_post_assessment()
         $('#span_covid_session_number').removeClass('d-none');
         $('div#div_id_covid_session_modality').removeClass('d-none');
         $('#span_covid_session_modality').removeClass('d-none');
-        // $('div#div_id_covid_parent_attended_other').removeClass('d-none');
-        // $('#span_covid_parent_attended_other').removeClass('d-none');
         $('div#div_id_covid_parent_attended').removeClass('d-none');
         $('#span_covid_parent_attended').removeClass('d-none');
     }
@@ -447,7 +348,6 @@ function reorganizeForm_post_assessment()
         $('#span_covid_parent_attended_other').val('');
         $('select#div_id_covid_parent_attended').val("");
     }
-
 
      // followup_parent_attended
     $('#div_id_followup_parent_attended_other').addClass('d-none');
@@ -466,19 +366,14 @@ function reorganizeForm_post_assessment()
     $('#span_followup_session_number').addClass('d-none');
     $('div#div_id_followup_session_modality').addClass('d-none');
     $('#span_followup_session_modality').addClass('d-none');
-    // $('div#div_id_followup_parent_attended_other').addClass('d-none');
-    // $('#span_followup_parent_attended_other').addClass('d-none');
     $('div#div_id_followup_parent_attended').addClass('d-none');
     $('#span_followup_parent_attended').addClass('d-none');
-
 
     if(followup_session_attended == 'yes'){
         $('div#div_id_followup_session_number').removeClass('d-none');
         $('#span_followup_session_number').removeClass('d-none');
         $('div#div_id_followup_session_modality').removeClass('d-none');
         $('#span_followup_session_modality').removeClass('d-none');
-        // $('div#div_id_followup_parent_attended_other').removeClass('d-none');
-        // $('#span_followup_parent_attended_other').removeClass('d-none');
         $('div#div_id_followup_parent_attended').removeClass('d-none');
         $('#span_followup_parent_attended').removeClass('d-none');
     }

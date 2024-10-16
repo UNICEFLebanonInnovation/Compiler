@@ -448,7 +448,10 @@ class BridgingSerializer(CLMSerializer):
             'registration_date',
             'mid_test1',
             'mid_test2',
-            'dropout_date'
+            'dropout_date',
+            'dropout_reason', 
+            'referral_school',
+            'referral_school_type',
         )
 
 
