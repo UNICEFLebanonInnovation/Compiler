@@ -1318,23 +1318,6 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
         kwargs['number'] = self.kwargs['number'] if 'number' in self.kwargs else None
         return super(BridgingMidAssessmentView, self).get_context_data(**kwargs)
 
-    def get_form1(self, form_class=None):
-        form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
-
-        if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
-
-        else:
-            data = BridgingSerializer(instance).data
-            if 'post_test' in data:
-                p_test = data['post_test']
-                if p_test:
-                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
-                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
-
-            return form_class(data, instance=instance, request=self.request)
-
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
         instance = Bridging.objects.get(id=self.kwargs['pk'])
@@ -1351,6 +1334,9 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
                 p_test = data['mid_test2']
 
             if p_test:
+                if "Bridging_ASSESSMENT/mid_test_done" in p_test:
+                    data['mid_test_done'] = p_test["Bridging_ASSESSMENT/mid_test_done"]
+
                 if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
                     data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
                 if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
