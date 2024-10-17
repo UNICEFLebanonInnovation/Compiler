@@ -123,7 +123,12 @@ $(document).ready(function() {
             dataType: 'html',
             success: function (response) {
                 $('#attendance_children').empty("");
-                 $('#attendance_children').append(response);
+                $('#attendance_children').append(response);
+
+                // Count and display number of children loaded
+                var childrenCount = $(".list-group-item").length;
+                $('#children_count').text(childrenCount);
+
                 $('#save_attendance_children').removeClass('disabled');
                 $('.app-drawer-overlay').addClass('d-none');
             },

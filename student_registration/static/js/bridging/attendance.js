@@ -94,48 +94,53 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('click', '#load_attendance_children', function(e) {
-        e.preventDefault();
+$(document).on('click', '#load_attendance_children', function(e) {
+    e.preventDefault();
 
-        var attendance_date = $("#attendance_date").val();
-        var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
-        var round_id = $("#round").val();
-        var school_id = $("#school").val();
-        var registration_level = $("#registration_level").val();
+    var attendance_date = $("#attendance_date").val();
+    var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
+    var round_id = $("#round").val();
+    var school_id = $("#school").val();
+    var registration_level = $("#registration_level").val();
 
-        if (!attendance_date || !round_id || !school_id || !registration_level) {
-            alert("Please fill: Attendance Date, Round, School, and Registration Level.");
-            return false;
+    if (!attendance_date || !round_id || !school_id || !registration_level) {
+        alert("Please fill: Attendance Date, Round, School, and Registration Level.");
+        return false;
+    }
+
+    $('#attendance_children').empty("");
+    $('#attendance_children').append("Loading...");
+    $('.app-drawer-overlay').removeClass('d-none');
+
+    $.ajax({
+        type: "GET",
+        url: $(this).attr('href'),
+        cache: false,
+        async: true,
+        data: {
+            'attendance_date': attendance_date,
+            'round_id': round_id,
+            'school_id': school_id,
+            'registration_level': registration_level
+        },
+        dataType: 'html',
+        success: function(response) {
+            $('#attendance_children').empty("");
+            $('#attendance_children').append(response);
+
+            // Count and display number of children loaded
+            var childrenCount = $(".list-group-item").length;
+            $('#children_count').text(childrenCount);
+
+            $('#save_attendance_children').removeClass('disabled');
+            $('.app-drawer-overlay').addClass('d-none');
+        },
+        error: function(response) {
+            console.log(response);
+            $('.app-drawer-overlay').addClass('d-none');
         }
-
-        $('#attendance_children').empty("");
-        $('#attendance_children').append("Loading...");
-        $('.app-drawer-overlay').removeClass('d-none');
-
-        $.ajax({
-            type: "GET",
-            url: $(this).attr('href'),
-            cache: false,
-            async: true,
-            data: {
-                'attendance_date': attendance_date,
-                'round_id': round_id,
-                'school_id': school_id,
-                'registration_level': registration_level
-            },
-            dataType: 'html',
-            success: function(response) {
-                $('#attendance_children').empty("");
-                $('#attendance_children').append(response);
-                $('#save_attendance_children').removeClass('disabled');
-                $('.app-drawer-overlay').addClass('d-none');
-            },
-            error: function(response) {
-                console.log(response);
-                $('.app-drawer-overlay').addClass('d-none');
-            }
-        });
     });
+});
 
     $('#attendance_date').click(function(e) {
         setTimeout(function() {

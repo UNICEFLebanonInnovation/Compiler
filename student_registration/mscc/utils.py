@@ -415,8 +415,7 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
                     ).values('registration_id')
                 )
             )
-            print(registrations.query)
-
+            # print(registrations.query)
             for registration_child in registrations:
                 registration_record = {}
                 registration_record['registration_id'] = registration_child.id
