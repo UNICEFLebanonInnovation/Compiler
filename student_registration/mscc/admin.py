@@ -298,6 +298,7 @@ class EducationProgrammeAssessmentAdmin(admin.ModelAdmin):
         'registration__child__last_name',
     )
 
+
 class YouthKitServiceAdmin(admin.ModelAdmin):
     list_display = (
         'registration',

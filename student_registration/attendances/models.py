@@ -548,6 +548,53 @@ class MSCCAttendance(TimeStampedModel):
         ('Weekly Holiday', _('Weekly Holiday')),
         ('Roads Closed', _('Roads Closed')),
     )
+    EDUCATION_PROGRAM = Choices(
+        ('BLN Level 1', _('BLN Level 1')),
+        ('BLN Level 2', _('BLN Level 2')),
+        ('BLN Level 3', _('BLN Level 3')),
+        ('ABLN Level 1', _('ABLN Level 1')),
+        ('ABLN Level 2', _('ABLN Level 2')),
+        ('YBLN Level 1', _('YBLN Level 1')),
+        ('YBLN Level 2', _('YBLN Level 2')),
+        ('YFS Level 1', _('YFS Level 1')),
+        ('YFS Level 2', _('YFS Level 2')),
+        ('CBECE Level 1', _('CBECE Level 1')),
+        ('CBECE Level 2', _('CBECE Level 2')),
+        ('CBECE Level 3', _('CBECE Level 3')),
+        ('RS Grade 7', _('RS Grade 7')),
+        ('RS Grade 8', _('RS Grade 8')),
+        ('RS Grade 9', _('RS Grade 9')),
+        ('ECD', _('ECD'))
+    )
+    CLASS_SECTION = Choices(
+        ('', '----------'),
+        ('A', _('A')),
+        ('B', _('B')),
+        ('C', _('C')),
+        ('D', _('D')),
+        ('E', _('E')),
+        ('F', _('F')),
+        ('G', _('G')),
+        ('H', _('H')),
+        ('I', _('I')),
+        ('J', _('J')),
+        ('K', _('K')),
+        ('L', _('L')),
+        ('M', _('M')),
+        ('N', _('N')),
+        ('O', _('O')),
+        ('P', _('P')),
+        ('Q', _('Q')),
+        ('R', _('R')),
+        ('S', _('S')),
+        ('T', _('T')),
+        ('U', _('U')),
+        ('V', _('V')),
+        ('W', _('W')),
+        ('X', _('X')),
+        ('Y', _('Y')),
+        ('Z', _('Z')),
+    )
     round_id = models.IntegerField(blank=True, null=True)
     center = models.ForeignKey(
         Center,
@@ -559,14 +606,14 @@ class MSCCAttendance(TimeStampedModel):
         max_length=200,
         blank=True,
         null=True,
-        choices=CLOSE_REASON,
+        choices=EDUCATION_PROGRAM,
         verbose_name=_('Education Program')
     )
     class_section = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=CLOSE_REASON,
+        choices=CLASS_SECTION,
         verbose_name=_('Class Section')
     )
 
