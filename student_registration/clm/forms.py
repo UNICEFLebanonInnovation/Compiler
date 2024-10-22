@@ -10849,15 +10849,7 @@ class BridgingAssessmentForm(forms.ModelForm):
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('graduated_to_Bridging_next_level', _('Graduated to the next level SBP')),
-            ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level SBP')),
-            ('referred_public_school', _('Referred to public school')),
-            ('dropout', _('Dropout, referral not possible')),
-            ('other', _('Other')),
-        ),
-        initial=''
+        choices=Bridging.LEARNING_RESULT
     )
     dropout_reason = forms.CharField(
         label=_('Dropout reason'),
@@ -11102,14 +11094,14 @@ class BridgingAssessmentForm(forms.ModelForm):
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_french">7</span>'),
+                    HTML('<span class="badge badge-default" id="span_french">6</span>'),
                     Div('french_alphabet_knowledge', css_class='col-md-3'),
                     Div('french_familiar_words', css_class='col-md-3'),
                     Div('french_reading_comprehension', css_class='col-md-3'),
                     css_class='row grades',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default" id="span_math">8</span>'),
+                    HTML('<span class="badge badge-default" id="span_math">7</span>'),
                     Div('math', css_class='col-md-3'),
                     css_class='row grades',
                 ),
