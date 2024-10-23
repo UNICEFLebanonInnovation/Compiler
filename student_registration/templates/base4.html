@@ -26,7 +26,7 @@
     <meta name="msapplication-TileImage" content="{% static 'images/ms-icon-144x144.png' %}">
     <meta name="theme-color" content="#ffffff">
 
-    <title>BMA - Beneficiary Monitoring & Assessment | {% block project_title %}{% endblock %}</title>
+    <title>Makani | {% block project_title %}Home{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
     <meta name="description" content="This is an example dashboard created using build-in elements and components.">
 
@@ -36,164 +36,170 @@
     <link href="{% static 'css/main.87c0748b313a1dda75f5.css' %}" rel="stylesheet">
 
     {% block extra_head %}{% endblock %}
-<style>
-    .app-page-title {
-          padding:  15px;
-    }
-    .form-wizard-content.sw-container.tab-content {
-        min-height: 485px !important;
-    }
-   form .card-body {
-        padding-bottom: 0px;
-        padding-top: 0px;
-        margin-bottom: 0px;
-    }
-    form #step-2 {
-        display: none;
-    }
-    form #step-3 {
-        display: none;
-    }
-    form #step-4 {
-        display: none;
-    }
-    form .form-group label {
-        float: left;
-    }
-    form .multiple-choice .checkbox {
-        width: 400px;
-        height: 33px;
-        float: left;
-    }
-    form .disabled-input .textinput {
-        opacity: 0.5;
-        pointer-events: none;
-    }
 
-    form .radio {
-        float: left;
-        width: 400px;
-    }
-    .form-filters .form-group {
-        padding-right: 10px;
-        padding-bottom: 5px;
-    }
-    .form-filters .btn {
-        margin-right: 10px;
-    }
-    .form-filters .form-control {
-        width: 200px;
-    }
-    .table-list .card-body .table-responsive {
-        padding-bottom: 15px;
-        max-height: 400px;
-        position: relative;
-    }
-    .table-container th {
-        background: white;
-        position: sticky;
-        top: 0; /* Don't forget this, required for the stickiness */
-        box-shadow: 0 1px 2px -1px rgba(63,106,216,0.5);
-        z-index: 999;
-        vertical-align: middle !important;
-    }
-    .table-list .card-body {
-        padding-top: 0px;
-    }
-    .multiple-checbkoxes input {
-        width: 20px !IMPORTANT;
-        position: relative !IMPORTANT;
-        margin-left: 0px !IMPORTANT;
-    }
-    .table-list .dropdown-menu.show {
-        position: fixed !important;
-        top: 500px !important;
-        left: 0px !important;
-    }
-    .form-wizard-content #step-1, .form-wizard-content #step-2, .form-wizard-content #step-3, .form-wizard-content #step-4 {
-        height: 400px;
-    }
-    .asteriskField {
-        color: red;
-    }
-    .help-block {
-        color: red;
-    }
-    .error-field {
-        border-color: red;
-    }
-    .hidden {
-        display: none !important;
-    }
-    label.form-control-label {
-        font-weight: 600;
-        color: #6e6e6e;
-    }
-    .badge-form-0 {
-        padding: 2px 7px;
-        min-width: 25px;
-        max-width: 25px;
-        height: 25px;
-        font-size: 13px;
-        color: #3f6ad8;
-        font-weight: bold;
-    }
-    .badge-form {
-        padding: 2px 7px;
-        min-width: 25px;
-        max-width: 25px;
-        height: 25px;
-        font-size: 13px;
-        border: 1px solid #3f6ad8;
-        background-color: white;
-        color: #3f6ad8;
-        font-weight: bold;
-    }
-    .badge-form-2 {
-        padding: 6px 6px;
-        min-width: 30px;
-        max-width: 30px;
-        height: 30px;
-        font-size: 12px;
-        border: 1px solid #3f6ad8;
-        background-color: white;
-        color: #3f6ad8;
-        font-weight: bold;
-    }
-    .badge-form-3 {
-        padding: 4px 6px;
-        min-width: 35px;
-        max-width: 35px;
-        height: 30px;
-        font-size: 11px;
-        border: 1px solid #3f6ad8;
-        background-color: white;
-        color: #3f6ad8;
-        font-weight: bold;
-    }
-    .tabs-lg-alternate.card-header>.nav .nav-link {
-        padding: 1rem 0 !important;
-    }
-    .tabs-lg-alternate.card-header .widget-number {
-        font-size: 2rem;
-        font-weight: 200;
-    }
-    #quick-search-result  {
-        position: absolute;
-        top: 20px;
-    }
-    ul.ui-widget-content.ui-autocomplete {
-        top: 32px !important;
-        left: 0px !important;
-        width: 315px !important;
-        z-index: 9999 !important;
-        overflow: scroll !important;
-        min-height: 50px;
-        max-height: 300px;
-    }
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J68P860Y4K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    </style>
+      gtag('config', 'G-J68P860Y4K');
+    </script>
+    <style>
+        .app-page-title {
+              padding:  15px;
+        }
+        .form-wizard-content.sw-container.tab-content {
+            min-height: 485px !important;
+        }
+       form .card-body {
+            padding-bottom: 0px;
+            padding-top: 0px;
+            margin-bottom: 0px;
+        }
+        form #step-2 {
+            display: none;
+        }
+        form #step-3 {
+            display: none;
+        }
+        form #step-4 {
+            display: none;
+        }
+        form .form-group label {
+            float: left;
+        }
+        form .multiple-choice .checkbox {
+            width: 400px;
+            height: 33px;
+            float: left;
+        }
+        form .disabled-input .textinput {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        form .radio {
+            float: left;
+            width: 400px;
+        }
+        .form-filters .form-group {
+            padding-right: 10px;
+            padding-bottom: 5px;
+        }
+        .form-filters .btn {
+            margin-right: 10px;
+        }
+        .form-filters .form-control {
+            width: 200px;
+        }
+        .table-list .card-body .table-responsive {
+            padding-bottom: 15px;
+            max-height: 400px;
+            position: relative;
+        }
+        .table-container th {
+            background: white;
+            position: sticky;
+            top: 0; /* Don't forget this, required for the stickiness */
+            box-shadow: 0 1px 2px -1px rgba(63,106,216,0.5);
+            z-index: 999;
+            vertical-align: middle !important;
+        }
+        .table-list .card-body {
+            padding-top: 0px;
+        }
+        .table-list .dropdown-menu.show {
+            position: fixed !important;
+            top: 500px !important;
+            left: 0px !important;
+        }
+        .form-wizard-content #step-1, .form-wizard-content #step-2, .form-wizard-content #step-3, .form-wizard-content #step-4 {
+            height: 400px;
+        }
+        .asteriskField {
+            color: red;
+        }
+        .help-block {
+            color: red;
+        }
+        .error-field {
+            border-color: red;
+        }
+        .hidden {
+            display: none !important;
+        }
+        label.form-control-label {
+            font-weight: 600;
+            color: #6e6e6e;
+        }
+        .badge-form-0 {
+            padding: 2px 7px;
+            min-width: 25px;
+            max-width: 25px;
+            height: 25px;
+            font-size: 13px;
+            color: #3f6ad8;
+            font-weight: bold;
+        }
+        .badge-form {
+            padding: 2px 7px;
+            min-width: 25px;
+            max-width: 25px;
+            height: 25px;
+            font-size: 13px;
+            border: 1px solid #3f6ad8;
+            background-color: white;
+            color: #3f6ad8;
+            font-weight: bold;
+        }
+        .badge-form-2 {
+            padding: 4px 6px;
+            min-width: 30px;
+            max-width: 30px;
+            height: 30px;
+            font-size: 13px;
+            border: 1px solid #3f6ad8;
+            background-color: white;
+            color: #3f6ad8;
+            font-weight: bold;
+        }
+        .badge-form-3 {
+            padding: 4px 6px;
+            min-width: 35px;
+            max-width: 35px;
+            height: 30px;
+            font-size: 11px;
+            border: 1px solid #3f6ad8;
+            background-color: white;
+            color: #3f6ad8;
+            font-weight: bold;
+        }
+        .tabs-lg-alternate.card-header>.nav .nav-link {
+            padding: 1rem 0 !important;
+        }
+        .tabs-lg-alternate.card-header .widget-number {
+            font-size: 2rem;
+            font-weight: 200;
+        }
+        #quick-search-result  {
+            position: absolute;
+            top: 20px;
+        }
+        ul.ui-widget-content.ui-autocomplete {
+            top: 32px !important;
+            left: 0px !important;
+            width: 315px !important;
+            z-index: 9999 !important;
+            overflow: scroll !important;
+            min-height: 50px;
+            max-height: 300px;
+        }
+
+        </style>
 </head>
+
 <body>
 <div class="app-container app-theme-white body-tabs-shadow fixed-header closed-sidebar">
     <div class="app-header header-shadow bg-night-sky header-text-light">
@@ -242,7 +248,9 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                        <!--<button class="search-icon"><span></span></button>-->
                     </div>
+                    <!--<button class="close"></button>-->
                     <div id="quick-search-result"></div>
                 </div>
   {% endif %}
@@ -267,13 +275,20 @@
                                     </div>
                                 </div>
                             </div>
+<!--                            <a href="{% url 'clm:bln_list' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Basic Literacy and Numeracy</a>-->
+<!--                            <a href="{% url 'clm:abln_list' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Adapted Basic Literacy and Numeracy</a>-->
+<!--                            <a href="{% url 'clm:rs_list' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Retention Support</a>-->
+<!--                            <div tabindex="-1" class="dropdown-divider"></div>-->
+<!--                            <a href="{% url 'clm:cbece_list' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Community-Based Early Childhood Education</a>-->
                             <a href="{% url 'clm:inclusion_list' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Disability specialized</a>
+<!--                            <a href="{% url 'clm:general_questionnaire_list' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>General Questionnaire</a>-->
                             <div tabindex="-1" class="dropdown-divider"></div>
+<!--                            <a href="{% url 'clm:outreach_list' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Outreach</a>-->
                             <a href="{% url 'clm:bridging_page' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Dirasa</a>
-                            <div tabindex="-1" class="dropdown-divider"></div>
-                            {% if request.user|has_group:"OUTREACH" %}
-                                <a href="{% url 'outreach:outreach_page' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Outreach</a>
-                            {% endif %}
+<!--                            <div tabindex="-1" class="dropdown-divider"></div>-->
+<!--                            {% if request.user|has_group:"OUTREACH" %}-->
+<!--                                <a href="{% url 'outreach:outreach_page' %}" type="button" tabindex="0" class="dropdown-item"><i class="dropdown-icon lnr-file-empty"> </i>Outreach</a>-->
+<!--                            {% endif %}-->
                         </div>
                     </li>
                 </ul>        </div>
@@ -866,7 +881,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <div class="nav-link">
-                                            BMA - Beneficiary Monitoring & Assessment  2022 - Version 2.14
+                                            BMA - Beneficiary Monitoring & Assessment  2022 - Version 2.20
                                         </div>
                                     </li>
                                 </ul>
