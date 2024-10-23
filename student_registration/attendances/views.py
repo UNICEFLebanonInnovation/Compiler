@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-import datetime
 import json
 import io
 import xlwt
 import csv
+import logging
+from django.db import connection
+import traceback
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
+import codecs
+from django.utils.encoding import force_text
+
 import datetime
 from datetime import date
 from openpyxl import Workbook, load_workbook
@@ -645,18 +652,10 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
         kwargs['clm_bridging_all'] = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
 
         round_id = 0
-        current_round = CLMRound.objects.all()
-        current_round = current_round.get(current_round_bridging=True)
+        current_round = CLMRound.objects.filter(current_round_bridging=True).first()
         if current_round:
             round_id = current_round.id
         kwargs['round_id'] = round_id
-
-        if ('school' in self.request.GET) and ('registration_level' in self.request.GET)\
-           or\
-           self.request.method == 'POST':
-            kwargs['saveStage'] = True
-        else:
-            kwargs['saveStage'] = False
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -757,7 +756,6 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
     def get_form(self, form_class=None):
         attendance_id = self.kwargs['pk']
         instance = CLMAttendance.objects.get(id=attendance_id)
-        update_disabled = True
         partner_id = 0
         user_school_id = 0
         if self.request.user.partner:
@@ -765,19 +763,24 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.user.school:
             user_school_id = self.request.user.school.id
 
+        round_id = 0
+        current_round = CLMRound.objects.filter(current_round_bridging=True).first()
+        if current_round:
+            round_id = current_round.id
+
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         # messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
             form = MainAttendanceForm(self.request.POST, instance=instance,
-                                      attendance_student_formset=self.get_student_formset(self.request.POST)
-                                      , saveStage=True, update_disabled=update_disabled,
-                                      partner_id=partner_id, user_school_id=user_school_id, clm_bridging_all=clm_bridging_all)
+                                      attendance_student_formset=self.get_student_formset(self.request.POST),
+                                      partner_id=partner_id, user_school_id=user_school_id,round_id=round_id,
+                                      clm_bridging_all=clm_bridging_all)
         else:
             form = MainAttendanceForm(instance=instance,
                                       attendance_student_formset=self.get_formset(attendance_id),
-                                      saveStage=True, update_disabled=update_disabled,
-                                      partner_id=partner_id, user_school_id=user_school_id, clm_bridging_all=clm_bridging_all)
+                                      partner_id=partner_id, user_school_id=user_school_id,round_id=round_id,
+                                      clm_bridging_all=clm_bridging_all)
 
         form.helper.form_action = reverse('attendances:main_attendance_edit', args=[attendance_id])
 
@@ -1160,6 +1163,7 @@ from django.http import StreamingHttpResponse
 from openpyxl import Workbook
 from django.db import connection
 
+
 def generate_workbook(headers, cursor, max_rows_per_sheet):
     workbook = Workbook()
     worksheet = workbook.active
@@ -1190,6 +1194,7 @@ def generate_workbook(headers, cursor, max_rows_per_sheet):
 
     return workbook
 
+
 def stream_workbook(workbook):
     from io import BytesIO
     buffer = BytesIO()
@@ -1199,7 +1204,7 @@ def stream_workbook(workbook):
 
 
 
-def attendance_export(request, **kwargs):
+def attendance_export_xlsx(request, **kwargs):
     month = kwargs.get('month')
     year = kwargs.get('year')
 
@@ -1240,10 +1245,8 @@ def attendance_export(request, **kwargs):
 
 
 @login_required(login_url='/users/login')
-def total_attendance_export(request):
-    current_round = CLMRound.objects.all()
-    current_round = current_round.get(current_round_bridging=True)
-    round_id = current_round.id
+def total_attendance_export_xlsx(request):
+    round_id = request.GET.get('round', None)
 
     buffer = io.BytesIO()
 
@@ -1255,7 +1258,10 @@ def total_attendance_export(request):
     # Sheet header, first row
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
-    total_attendance = CLMStudentTotalAttendance.objects.filter(round_id=round_id).order_by('student_id').all()
+    total_attendance = CLMStudentTotalAttendance.objects.all()
+
+    if round_id:
+        total_attendance = total_attendance.filter(round_id=round_id).order_by('student_id').all()
 
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
         if request.user.school_id:
@@ -1313,10 +1319,8 @@ def total_attendance_export(request):
 
 
 @login_required(login_url='/users/login')
-def consecutive_absence_export(request):
-    current_round = CLMRound.objects.all()
-    current_round = current_round.get(current_round_bridging=True)
-    round_id = current_round.id
+def consecutive_absence_export_xlsx(request):
+    round_id = request.GET.get('round', None)
 
     buffer = io.BytesIO()
 
@@ -1327,8 +1331,12 @@ def consecutive_absence_export(request):
     font_style.font.bold = True
 
     # Consecutive and Total Attendance
-    consecutive_student = CLMStudentAbsences.objects.filter(round_id=round_id)
-    total_student = CLMStudentTotalAttendance.objects.filter(round_id=round_id)
+    consecutive_student = CLMStudentAbsences.objects.all()
+    total_student = CLMStudentTotalAttendance.objects.all()
+
+    if round_id:
+        consecutive_student = consecutive_student.filter(round_id=round_id)
+        total_student = consecutive_student.filter(round_id=round_id)
 
     if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
         if request.user.partner_id:
@@ -1416,3 +1424,178 @@ def consecutive_absence_export(request):
     response['Content-Disposition'] = 'attachment; filename="consecutive_absence.xls"'
 
     return response
+
+
+def attendance_export(request, **kwargs):
+    try:
+        month = kwargs.get('month')
+        year = kwargs.get('year')
+
+        cursor = connection.cursor()
+        query_params = []
+        vw_data_str = "SELECT * FROM vw_bridging_attendance WHERE round_id > 0"
+
+        if year:
+            vw_data_str += " AND EXTRACT(YEAR FROM attendance_date) = %s"
+            query_params.append(year)
+        if month:
+            vw_data_str += " AND EXTRACT(MONTH FROM attendance_date) = %s"
+            query_params.append(month)
+
+        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+            if request.user.partner_id:
+                vw_data_str += " AND partner_id = %s"
+                query_params.append(request.user.partner_id)
+            if request.user.school_id:
+                vw_data_str += " AND school_id = %s"
+                query_params.append(request.user.school_id)
+
+        vw_data_str += " ORDER BY attendance_date"
+        cursor.execute(vw_data_str, query_params)
+
+        # Log the query for debugging purposes
+        logging.debug("Executing query: %s", vw_data_str)
+        logging.debug("Query params: %s", str(query_params))
+
+        headers = [col[0] for col in cursor.description]
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=raw_attendance.csv'
+
+        response.write(codecs.BOM_UTF8)
+
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+        writer.writerow(headers)
+
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
+
+        return response
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+@login_required(login_url='/users/login')
+def total_attendance_export(request):
+    round_id = request.GET.get('round', None)
+
+    total_attendance = CLMStudentTotalAttendance.objects.all()
+
+    if round_id:
+        total_attendance = total_attendance.filter(round_id=round_id).order_by('student_id')
+
+    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if request.user.school_id:
+            total_attendance = total_attendance.filter(school_id=request.user.school_id)
+        elif request.user.partner_id:
+            partner_id = request.user.partner_id
+            total_attendance = total_attendance.filter(
+                school_id__in=PartnerOrganization.objects.filter(id=partner_id).values_list('schools', flat=True))
+
+    student_numbers_subquery = Student.objects.filter(id=OuterRef('student_id')).values('number')[:1]
+
+    total_attendance = total_attendance.annotate(number=Subquery(student_numbers_subquery)).order_by('student_id')
+
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename=total_attendance.csv'
+    response.write(codecs.BOM_UTF8)
+
+    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL, delimiter=str(u','))
+
+    columns = ['Student First Name', 'Student Father Name', 'Student Last Name', 'Student Number', 'School',
+               'Registration Level', 'Total Attendance Days', 'Total Absence Days']
+
+    writer.writerow(columns)
+
+    # Iterate over the queryset and extract values for each row
+    for attendance in total_attendance:
+        row = [
+            attendance.student_first_name,
+            attendance.student_father_name,
+            attendance.student_last_name,
+            attendance.number,
+            attendance.school_name,
+            attendance.registation_level,
+            attendance.total_attendance_days,
+            attendance.total_absence_days
+        ]
+
+        encoded_row = []
+        for cell in row:
+            if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+            elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                encoded_row.append(cell.strftime('%Y-%m-%d'))
+            else:  # Convert other data types to string
+                encoded_row.append(str(cell))
+
+        writer.writerow(encoded_row)
+
+    return response
+
+@login_required(login_url='/users/login')
+def consecutive_absence_export(request, **kwargs):
+    try:
+        round_id = kwargs.get('round')
+        cursor = connection.cursor()
+        query_params = []
+        vw_data_str = "SELECT * FROM vw_bridging_absence_consecutive WHERE round_id  = %s"
+        query_params.append(round_id)
+
+        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+            if request.user.partner_id:
+                vw_data_str += " AND partner_id = %s"
+                query_params.append(request.user.partner_id)
+            if request.user.school_id:
+                vw_data_str += " AND school_id = %s"
+                query_params.append(request.user.school_id)
+
+        vw_data_str += " ORDER BY student_id"
+
+        cursor.execute(vw_data_str, query_params)
+
+        logging.debug("Executing query: %s", vw_data_str)
+        logging.debug("Query params: %s", str(query_params))
+
+        headers = [col[0] for col in cursor.description]
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=consecutive_absence.csv'
+
+        response.write(codecs.BOM_UTF8)
+
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+        writer.writerow(headers)
+
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
+
+        return response
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)

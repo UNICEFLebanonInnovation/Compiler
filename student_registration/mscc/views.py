@@ -3,10 +3,20 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 
+from django.utils.encoding import smart_str
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
+from django.db import connection
+import csv
+import io
+import zipfile
+import codecs
+from django.utils.encoding import smart_str
+import logging
+import traceback
 
 from rest_framework import status
 from django.db.models import F, Q
@@ -210,6 +220,8 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             registration = Registration.objects.get(id=registry)
             new_registration = copy.copy(registration)
             new_registration.pk = None
+            new_registration.owner = self.request.user
+            new_registration.modified_by = self.request.user
             new_registration.save()
             generate_services(new_registration.child.age, new_registration, self.request.user)
             return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id,
@@ -584,13 +596,35 @@ def quick_search(request):
     qs = {}
 
     if terms:
-        qs = Registration.objects.filter(center=request.user.center_id)
+        user = request.user
+        center_id = user.center_id
+        partner_id = user.partner_id
+
+        if has_group(user, 'MSCC_UNICEF'):
+            qs= Registration.objects.filter(
+                Q(round__isnull=True) | Q(round__current_year=True),
+                deleted=False
+            ).order_by('-id')
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            qs= Registration.objects.filter(
+                Q(round__isnull=True) | Q(round__current_year=True),
+                deleted=False, partner=partner_id
+            ).order_by('-id')
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            qs= Registration.objects.filter(
+                Q(round__isnull=True) | Q(round__current_year=True),
+                deleted=False, center=center_id
+            ).order_by('-id')
+        else:
+            qs = Registration.objects.none()
+
         if len(terms.split()) > 1:
             qs = qs.annotate(fullname=Concat('child__first_name', Value(' '), 'child__father_name',
                                              Value(' '), 'child__last_name')) \
-                .filter(child__fullname__icontains=terms) \
+                .filter(fullname__icontains=terms) \
                 .values('id', 'child__first_name', 'child__last_name',
                         'child__father_name', 'child__mother_fullname').distinct()
+
         else:
             # for term in terms:
             qs = qs.filter(
@@ -634,79 +668,95 @@ class ChildProfilePreview(LoginRequiredMixin,
             'instance': instance,
         }
 
-
+@login_required(login_url='/users/login')
 def export_data(request):
-    from django.db import connection
-    cursor = connection.cursor()
-    user = request.user
-    center_id = user.center_id
-    partner_id = user.partner_id
+    try:
+        cursor = connection.cursor()
+        user = request.user
+        center_id = user.center_id
+        partner_id = user.partner_id
 
-    first_name = request.GET.get('first_name', '')
-    last_name = request.GET.get('last_name', '')
-    father_name = request.GET.get('father_name', '')
-    mother_fullname = request.GET.get('mother_fullname', '')
-    nationality = request.GET.get('nationality', '')
+        round = request.GET.get('round', '')
 
-    vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE deleted='false'  "
+        if not round:
+            return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
+                                status=400)
 
-    if has_group(user, 'MSCC_UNICEF'):
-        vw_mscc_data_str += " AND id>0 "
-    elif has_group(user, 'MSCC_PARTNER') and partner_id:
-        vw_mscc_data_str += " AND partner_id = " + str(partner_id)
-    elif has_group(user, 'MSCC_CENTER') and center_id:
-        vw_mscc_data_str += " AND center_id = " + str(center_id)
-    else:
-        # return empty
-        vw_mscc_data_str += " AND id=0 "
+        query_params = []
 
-    if first_name != '':
-        vw_mscc_data_str += " AND child_first_name LIKE '%" + first_name + "%'"
-    if father_name != '':
-        vw_mscc_data_str += " AND child_father_name LIKE '%" + father_name + "%'"
-    if last_name != '':
-        vw_mscc_data_str += " AND child_last_name LIKE '%" + last_name + "%'"
-    if mother_fullname != '':
-        vw_mscc_data_str += " AND child_mother_fullname LIKE '%" + mother_fullname + "%'"
-    if nationality != '':
-        vw_mscc_data_str += " AND child_nationality_id = " + nationality
+        if round == 'no_round':
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id is null"
+        else:
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+            query_params = [round]
 
+        if has_group(user, 'MSCC_UNICEF'):
+            vw_mscc_data_str += " AND id > 0 "
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            vw_mscc_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            vw_mscc_data_str += " AND center_id = %s"
+            query_params.append(center_id)
+        else:
+            vw_mscc_data_str += " AND id = 0 "
 
-    cursor.execute(vw_mscc_data_str)
-    data = cursor.fetchall()
-
-    headers = [col[0] for col in cursor.description]
-
-    workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("All Data")
-    worksheet_all_data.append(headers)
-
-    for row in data:
-        worksheet_all_data.append(row)
-
-    registration_ids = [row[0] for row in data]
-    if registration_ids:
-        followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
-            ','.join(map(str, registration_ids)))
-        cursor.execute(followup_service_data_str)
-        followup_service_data = cursor.fetchall()
-
+        cursor.execute(vw_mscc_data_str, query_params)
+        mscc_data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
-        worksheet_followup = workbook.create_sheet("Followup Service Data")
 
-        worksheet_followup.append(headers)
+        # Create a BytesIO object to write the ZIP file into memory
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for vw_mscc_data
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
 
-        for row in followup_service_data:
-            worksheet_followup.append(row)
+            # Add BOM to handle Arabic text correctly
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)  # Write headers
 
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
+            for row in mscc_data:
+                encoded_row = [smart_str(cell) for cell in row]
+                csv_writer.writerow(encoded_row)
 
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+            # Add CSV to ZIP
+            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
 
-    # Save the workbook to the response
-    workbook.save(response)
+            # Process followup_service_data
+            registration_ids = [row[0] for row in mscc_data]
+            if registration_ids:
+                followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
+                    ','.join(['%s'] * len(registration_ids)))
+                cursor.execute(followup_service_data_str, registration_ids)
+                followup_service_data = cursor.fetchall()
+                followup_headers = [col[0] for col in cursor.description]
 
-    return response
+                # Create CSV for followup_service_data
+                csv_followup_output = io.StringIO()
+                csv_writer = csv.writer(csv_followup_output)
+
+                # Add BOM to handle Arabic text correctly
+                csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                csv_writer.writerow(followup_headers)  # Write headers
+
+                for row in followup_service_data:
+                    encoded_row = [smart_str(cell) for cell in row]
+                    csv_writer.writerow(encoded_row)
+
+                # Add CSV to ZIP
+                zf.writestr('followup_data.csv', csv_followup_output.getvalue())
+
+        # Prepare the ZIP file response
+        response = HttpResponse(zip_output.getvalue(), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=exported_data.zip'
+
+        return response
+
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)

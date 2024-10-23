@@ -5,6 +5,8 @@
 {% load util_tags %}
 {% bootstrap_css %}
 
+{% block project_title %}Attendance{% endblock %}
+
 {% block content %}
 
 <style>
@@ -111,7 +113,7 @@
                                                                           <option value="">Round</option>
                                                                            {% for item in round %}
                                                                               {% if item != '' %}
-                                                                                <option value="{{ item }}" {% if round == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
+                                                                                <option value="{{ item.id }}" {% if round == "{{ item }}"%}selected{% endif %}>{{ item }}</option>
                                                                               {% endif %}
                                                                             {% endfor %}
                                                                       </select>
@@ -160,6 +162,7 @@
                                                                           <option value="Strike" {% if close_reason == 'Strike' %}selected{% endif %}>Strike</option>
                                                                           <option value="Weekly Holiday" {% if close_reason == 'Weekly Holiday' %}selected{% endif %}>Weekly Holiday</option>
                                                                           <option value="Roads Closed" {% if close_reason == 'Roads Closed' %}selected{% endif %}>Roads Closed</option>
+                                                                          <option value="Other" {% if close_reason == 'Other' %}selected{% endif %}>Other</option>
                                                                       </select>
                                                                   </div>
                                                         <input type="text" class="form-control" style="border: 0px;background-color: white;" disabled>
@@ -181,7 +184,9 @@
             <div class="col-md-8">
 
                 <div class="main-card mb-3 card">
-                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>Children Registered in Core-Package</div>
+                  <div class="card-header"><i class="header-icon ion-android-people icon-gradient bg-plum-plate"> </i>
+                    <p class="mb-0">Children Registered in Core-Package: <span id="children_count">0</span></p>
+                  </div>
                   <div class="card-body" style="height: 400px; overflow: auto;">
                       <div id="attendance_children"></div>
                   </div>
@@ -194,7 +199,7 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=17"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/attendance.js' %}?v=21"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
 
 {% endblock %}

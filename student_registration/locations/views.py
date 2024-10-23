@@ -23,6 +23,16 @@ from fuzzywuzzy import fuzz
 
 from django.views.decorators.http import require_POST
 
+import io
+import zipfile
+import csv
+import codecs
+from django.utils.encoding import smart_str
+from django.http import HttpResponse
+from django.db import connection
+import logging
+import traceback
+
 from .tables import (
     BootstrapTable,
     CenterTable
@@ -33,7 +43,7 @@ from .models import (
     Location,
     ProgramStaff
 )
-from student_registration.schools.models import PartnerOrganization
+from student_registration.schools.models import PartnerOrganization, School
 
 from .forms import (
     CenterForm,
@@ -223,80 +233,84 @@ def program_staff_delete(request, pk):
 
 
 def export_data(request):
-    from django.db import connection
-    cursor = connection.cursor()
+    try:
+        cursor = connection.cursor()
+        user = request.user
+        center_id = user.center_id
+        partner_id = user.partner_id
 
-    user = request.user
-    center_id = user.center_id
-    partner_id = user.partner_id
-
-    center_name = request.GET.get('center_name', '')
-    center_type = request.GET.get('center_type', '')
-    center_governorate = request.GET.get('center_governorate', '')
-
-    vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id>0  "
-
-    if has_group(user, 'MSCC_UNICEF'):
-        vw_center_data_str = vw_center_data_str
-    elif has_group(user, 'MSCC_PARTNER') and partner_id:
-        vw_center_data_str += " AND partner_id = " + str(partner_id)
-    elif has_group(user, 'MSCC_CENTER') and center_id:
-        vw_center_data_str += " AND center_id = " + str(center_id)
-    else:
-        # return empty
-        vw_center_data_str += " AND id=0 "
-
-    center_name = request.GET.get('center_name', '')
-    center_type = request.GET.get('center_type', '')
-    center_governorate = request.GET.get('center_governorate', '')
+        center_name = request.GET.get('center_name', '')
+        center_type = request.GET.get('center_type', '')
+        center_governorate = request.GET.get('center_governorate', '')
 
 
-    if center_name != '':
-        vw_center_data_str += " AND center_name LIKE '%" + center_name + "%'"
-    if center_type != '':
-        vw_center_data_str += " AND center_type LIKE '%" + center_type + "%'"
-    if center_governorate != '':
-        vw_center_data_str += " AND governorate_id = " + center_governorate
+        vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
 
+        if has_group(user, 'MSCC_UNICEF'):
+            vw_center_data_str += ""  # UNICEF has no extra filter
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            vw_center_data_str += " AND partner_id = {}".format(partner_id)
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            vw_center_data_str += " AND center_id = {}".format(center_id)
+        else:
+            vw_center_data_str += " AND center_id = 0"  # Dummy condition for safety
 
-    cursor.execute(vw_center_data_str)
-    data = cursor.fetchall()
+        if center_name:
+            vw_center_data_str += " AND center_name LIKE '%{}%'".format(center_name)
+        if center_type:
+            vw_center_data_str += " AND center_type LIKE '%{}%'".format(center_type)
+        if center_governorate:
+            vw_center_data_str += " AND governorate_id = {}".format(center_governorate)
 
-    headers = [col[0] for col in cursor.description]
-
-    workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("All Data")
-    worksheet_all_data.append(headers)
-
-    for row in data:
-        worksheet_all_data.append(row)
-
-    center_ids = [row[0] for row in data]
-    if center_ids:
-        staff_data_str = "SELECT * FROM vw_center_program_staff WHERE center_id IN ({})".format(
-            ','.join(map(str, center_ids)))
-        cursor.execute(staff_data_str)
-        staff_data = cursor.fetchall()
-
+        cursor.execute(vw_center_data_str)
+        data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
-        worksheet_staff = workbook.create_sheet("Program Staff Data")
 
-        worksheet_staff.append(headers)
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for center data
+            csv_center_output = io.StringIO()
+            csv_writer = csv.writer(csv_center_output)
 
-        for row in staff_data:
-            worksheet_staff.append(row)
+            csv_center_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)
 
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
+            for row in data:
+                csv_writer.writerow([smart_str(cell) for cell in row])
 
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+            zf.writestr('center_data.csv', csv_center_output.getvalue())
 
-    # Save the workbook to the response
-    workbook.save(response)
+            center_ids = [row[0] for row in data]
+            if center_ids:
+                staff_data_str = "SELECT * FROM vw_center_program_staff WHERE center_id IN ({})".format(
+                    ','.join(map(str, center_ids)))
+                cursor.execute(staff_data_str)
+                staff_data = cursor.fetchall()
+                staff_headers = [col[0] for col in cursor.description]
 
-    return response
+                # Create CSV for staff data
+                csv_staff_output = io.StringIO()
+                csv_writer = csv.writer(csv_staff_output)
+
+                # Add BOM for staff data CSV
+                csv_staff_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                csv_writer.writerow(staff_headers)
+
+                for row in staff_data:
+                    csv_writer.writerow([smart_str(cell) for cell in row])
+
+                zf.writestr('staff_data.csv', csv_staff_output.getvalue())
+
+        response = HttpResponse(zip_output.getvalue(), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=exported_data.zip'
+
+        return response
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
 
 ###################### API VIEWS #############################

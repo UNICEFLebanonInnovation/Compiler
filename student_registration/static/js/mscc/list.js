@@ -11,11 +11,18 @@ $(document).ready(function() {
         var father_name = $("#id_child__father_name").val();
         var mother_fullname = $("#id_child__mother_fullname").val();
 
+        var round = $("#id_round").val();
+        if(!round){
+            alert("Cycle is not selected. Please select a cycle before exporting data.");
+            return;
+        }
+
         window.open("/MSCC/export/?nationality=" + nationality
                                 + "&first_name=" + first_name
                                 + "&last_name=" + last_name
                                 + "&father_name=" + father_name
-                               + "&mother_fullname=" + mother_fullname,
+                               + "&mother_fullname=" + mother_fullname
+                               + "&round=" + round,
             "_blank")
     });
 

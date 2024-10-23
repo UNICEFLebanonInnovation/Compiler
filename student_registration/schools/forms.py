@@ -14,6 +14,7 @@ from .models import School, PartnerOrganization, EducationYear, Evaluation, Club
 from student_registration.locations.models import Location
 from .serializers import SchoolSerializer
 
+
 class ProfileForm(forms.ModelForm):
 
     email = forms.EmailField(
@@ -3306,9 +3307,10 @@ class SchoolForm(forms.ModelForm):
         label=_('School Digital Capacity'),
         widget=forms.TextInput, required=False
     )
-    is_closed = forms.BooleanField(
-        label="Is the school closed?",
-        required=False,
+    is_closed = forms.ChoiceField(
+        label=_("Is the school closed?"),
+        widget=forms.Select, required=True,
+        choices=School.TRUE_FALSE,
         initial=False
     )
     working_days = forms.MultipleChoiceField(
@@ -3402,6 +3404,11 @@ class SchoolForm(forms.ModelForm):
                     Div('latitude', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('is_closed', css_class='col-md-3 '),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
             Fieldset(
@@ -3482,10 +3489,6 @@ class SchoolForm(forms.ModelForm):
                 Div(HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
-                ),
-                Div(
-                    Div('is_closed', css_class='col-md-3 d-none'),
-                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -3721,7 +3724,7 @@ class MeetingForm(forms.ModelForm):
     )
     meeting_date = forms.DateField(
         label=_('Meeting Date'),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
         required=True
     )
     number_participants = forms.IntegerField(
@@ -3766,13 +3769,15 @@ class MeetingForm(forms.ModelForm):
             ),
 
             FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/meeting-list/' + school_id + '" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
+                Submit('save', _('Save'), css_class='col-md-1'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/meeting-list/' + school_id +
+                     '" translation="' + _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' +
+                     _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to school list') + '</a>'),
                 css_class='button-group'
-                )
+            )
         )
 
     def save(self, request=None, instance=None, school_id=None):
@@ -3883,6 +3888,7 @@ class CommunityInitiativeForm(forms.ModelForm):
             'number_initiatives',
         )
 
+
 class HealthVisitForm(forms.ModelForm):
     focal_point_name = forms.CharField(
         label=_("Health Focal Point Name"),
@@ -3894,12 +3900,12 @@ class HealthVisitForm(forms.ModelForm):
     )
     date_first_visit = forms.DateField(
         label=_('Date of First Visit'),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
         required=True
     )
     date_last_visit = forms.DateField(
         label=_('Date of Last Visit'),
-        widget=forms.TextInput,
+        widget=forms.TextInput(attrs={'class': 'datepicker', 'autocomplete': 'off'}),
         required=True
     )
     summary = forms.CharField(
@@ -3907,7 +3913,6 @@ class HealthVisitForm(forms.ModelForm):
         widget=forms.Textarea, required=False
     )
     school_id = forms.CharField(widget=forms.HiddenInput, required=False)
-
 
     def __init__(self, *args, **kwargs):
 
@@ -3952,15 +3957,16 @@ class HealthVisitForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
-
             FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/health-visit-list/' + school_id + '" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
+                Submit('save', _('Save'), css_class='col-md-1'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/health-visit-list/' + school_id +
+                     '" translation="' + _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' +
+                     _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
+                    'Back to school list') + '</a>'),
                 css_class='button-group'
-                )
+            )
         )
 
     def save(self, request=None, instance=None, school_id=None):

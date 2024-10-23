@@ -99,6 +99,11 @@ class Center(TimeStampedModel):
         ('Yes', _("Yes")),
         ('No', _("No"))
     )
+    TRUE_FALSE = Choices(
+        ('', '----------'),
+        ('True', _("Yes")),
+        ('False', _("No")),
+    )
     partner = models.ForeignKey(
         PartnerOrganization,
         blank=True, null=True,
@@ -195,6 +200,12 @@ class Center(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('P-Code')
+    )
+    is_active = models.NullBooleanField(
+        default=False,
+        blank=True,
+        null=True,
+        verbose_name=_('is active')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,

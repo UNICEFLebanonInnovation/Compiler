@@ -1,16 +1,27 @@
-{% extends "base2.html" %}
+{% extends "base6.html" %}
 {% load staticfiles i18n %}
 {% load crispy_forms_tags %}
 
-{% block head_title %}Health Visit{% endblock %}
+{% block head_title %}School - Health Visit{% endblock %}
 
 {% block extra_head %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
-    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
-
+    <style>
+        .ui-datepicker {
+            z-index: 9999 !important; /* Ensure datepicker appears on top */
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
 {% endblock %}
+
+
+
 
 {% block content-full-page %}
 <section>
@@ -30,23 +41,18 @@
 
         <section class="inline-form inner-section light bg-color01">
             <div class="container-fluid nopadding">
-                {{ form.errors }}
-                {% crispy form 'bootstrap4' %}
+                {% crispy form %}
             </div>
         </section>
 
     </div>
 </section>
-
-{% endblock %}
-
-{% block extra_js %}
-
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/school.js' %}?v=3"></script>
-    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".datepicker").datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+    });
+</script>
 
 {% endblock %}

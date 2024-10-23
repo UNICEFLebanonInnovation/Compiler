@@ -34,15 +34,35 @@ $(document).ready(function() {
         check_duplicate_registration();
     }
 
-    $(document).on('click', '.delete-button', function(){
-        var item = $(this);
-        if(confirm($(this).attr('translation'))) {
-            var callback = function(){
-                item.parents('tr').remove();
-            };
-            delete_student(item, callback());
+    $( ".delete-student" ).on( "click", function(e) {
+
+        e.preventDefault();
+
+        var buttonId = $(this).attr("id");
+        var registrationId = $(this).data("registration-id");
+        var parentTR = $(this).closest('tr');
+
+        var confirmed = confirm("Are you sure you want to delete this student?");
+        requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
+        if (confirmed) {
+            $.ajax({
+                url: "/clm/bridging-delete/" + registrationId + "/",
+                type: "GET",
+                headers: requestHeaders,
+                success: function(data) {
+                    console.log(parentTR.html());
+                    parentTR.remove();
+                },
+                error: function(error) {
+                    // Handle error if needed
+                }
+            });
+        } else {
+            console.log("User canceled deleting for student with ID: " + registrationId);
         }
-    });
+    } );
 
     if($(document).find('#id_registration_date').length == 1) {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
@@ -1692,29 +1712,6 @@ function justify_student_enrollment(justify_status, justify_date)
         headers: getHeader(),
         dataType: 'json',
         success: function (response) {
-            console.log(response);
-        },
-        error: function(response) {
-            console.log(response);
-        }
-    });
-}
-
-function delete_student(item, callback)
-{
-    var url = item.attr('data-action');
-
-    $.ajax({
-        type: "DELETE",
-        url: url+'/',
-        cache: false,
-        async: false,
-        headers: getHeader(),
-        dataType: 'json',
-        success: function (response) {
-            if(callback != undefined){
-                callback();
-            }
             console.log(response);
         },
         error: function(response) {

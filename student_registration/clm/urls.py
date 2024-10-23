@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 
-from . import views
+from . import views, attendance_views
 from . import inclusion_views
 
 app_name = 'clm'
@@ -279,7 +279,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^inclusion-export/$',
-        view=inclusion_views.InclusionExportViewSet.as_view(),
+        view=inclusion_views.inclusion_export,
         name='inclusion_export'
     ),
     url(
@@ -350,13 +350,18 @@ urlpatterns = [
         name='bridging_followup'
     ),
     url(
+        regex=r'^bridging-service/(?P<pk>[\w.@+-]+)/$',
+        view=views.BridgingServiceView.as_view(),
+        name='bridging_service'
+    ),
+    url(
         regex=r'^bridging-export/$',
         view=views.bridging_export_data,
         name='bridging_export'
     ),
     url(
         regex=r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
-        view=views.bridging_school_export.as_view(),
+        view=views.bridging_school_export,
         name='bridging_school_export_data'
     ),
 
@@ -374,5 +379,30 @@ urlpatterns = [
         'bridging-attendance-report/$',
         views.BridgingAttendanceReport.as_view(),
         name='bridging_attendance_report'
+    ),
+    url(
+        regex=r'^bridging-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.BridgingDeleteView,
+        name='bridging_delete'
+    ),
+    url(
+        regex=r'^Attendance/$',
+        view=attendance_views.AttendanceView.as_view(),
+        name='attendance'
+    ),
+    url(
+        'Load-Attendance-Children/$',
+        view=attendance_views.LoadAttendanceChildren.as_view(),
+        name='load_attendance_children'
+    ),
+    url(
+        'Save-Attendance-Children/$',
+        view=attendance_views.save_attendance_children,
+        name='save_attendance_children'
+    ),
+    url(
+        'Attendance-Child/(?P<child>[\w.@+-]+)/$',
+        view=attendance_views.LoadAttendanceChild.as_view(),
+        name='attendance_child'
     ),
 ]

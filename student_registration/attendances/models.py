@@ -23,6 +23,7 @@ from student_registration.locations.models import Center
 from student_registration.child.models import Child
 from student_registration.alp.models import ALPRound
 from student_registration.mscc.models import Registration
+from student_registration.clm.models import Bridging
 
 
 class Attendance(TimeStampedModel):
@@ -378,6 +379,12 @@ class CLMAttendanceStudent(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+    registration = models.ForeignKey(
+        Bridging,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Registration')
+    )
     student = models.ForeignKey(
         Student,
         blank=True, null=True,
@@ -437,22 +444,22 @@ class CLMStudentAbsences(TimeStampedModel):
     partner_id = models.IntegerField(blank=True, null=True)
     school_id = models.IntegerField(blank=True, null=True)
     student_first_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_father_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_last_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     school_name = models.CharField(
-        max_length=100,
+        max_length=200,
         blank=True,
         null=True,
     )
@@ -485,22 +492,22 @@ class CLMStudentTotalAttendance(TimeStampedModel):
     partner_id = models.IntegerField(blank=True, null=True)
     school_id = models.IntegerField(blank=True, null=True)
     student_first_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_father_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     student_last_name = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         null=True,
     )
     school_name = models.CharField(
-        max_length=100,
+        max_length=200,
         blank=True,
         null=True,
     )
@@ -541,6 +548,54 @@ class MSCCAttendance(TimeStampedModel):
         ('Weekly Holiday', _('Weekly Holiday')),
         ('Roads Closed', _('Roads Closed')),
     )
+    EDUCATION_PROGRAM = Choices(
+        ('BLN Level 1', _('BLN Level 1')),
+        ('BLN Level 2', _('BLN Level 2')),
+        ('BLN Level 3', _('BLN Level 3')),
+        ('ABLN Level 1', _('ABLN Level 1')),
+        ('ABLN Level 2', _('ABLN Level 2')),
+        ('YBLN Level 1', _('YBLN Level 1')),
+        ('YBLN Level 2', _('YBLN Level 2')),
+        ('YFS Level 1', _('YFS Level 1')),
+        ('YFS Level 2', _('YFS Level 2')),
+        ('CBECE Level 1', _('CBECE Level 1')),
+        ('CBECE Level 2', _('CBECE Level 2')),
+        ('CBECE Level 3', _('CBECE Level 3')),
+        ('RS Grade 7', _('RS Grade 7')),
+        ('RS Grade 8', _('RS Grade 8')),
+        ('RS Grade 9', _('RS Grade 9')),
+        ('ECD', _('ECD'))
+    )
+    CLASS_SECTION = Choices(
+        ('', '----------'),
+        ('A', _('A')),
+        ('B', _('B')),
+        ('C', _('C')),
+        ('D', _('D')),
+        ('E', _('E')),
+        ('F', _('F')),
+        ('G', _('G')),
+        ('H', _('H')),
+        ('I', _('I')),
+        ('J', _('J')),
+        ('K', _('K')),
+        ('L', _('L')),
+        ('M', _('M')),
+        ('N', _('N')),
+        ('O', _('O')),
+        ('P', _('P')),
+        ('Q', _('Q')),
+        ('R', _('R')),
+        ('S', _('S')),
+        ('T', _('T')),
+        ('U', _('U')),
+        ('V', _('V')),
+        ('W', _('W')),
+        ('X', _('X')),
+        ('Y', _('Y')),
+        ('Z', _('Z')),
+    )
+    round_id = models.IntegerField(blank=True, null=True)
     center = models.ForeignKey(
         Center,
         blank=True, null=True,
@@ -551,14 +606,14 @@ class MSCCAttendance(TimeStampedModel):
         max_length=200,
         blank=True,
         null=True,
-        choices=CLOSE_REASON,
+        choices=EDUCATION_PROGRAM,
         verbose_name=_('Education Program')
     )
     class_section = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=CLOSE_REASON,
+        choices=CLASS_SECTION,
         verbose_name=_('Class Section')
     )
 

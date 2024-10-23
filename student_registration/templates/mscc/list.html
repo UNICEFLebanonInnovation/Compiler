@@ -6,6 +6,8 @@
 {% load util_tags %}
 {% bootstrap_css %}
 
+{% block project_title %}List{% endblock %}
+
 {% block content %}
 
 <div class="app-page-title">
@@ -229,9 +231,11 @@
                  class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
                 </button>
 
+              {% if user|has_group:"EXPORT" %}
                 <a href="" title="Download" class="btn btn-outline-success download-report">
                     <i class="lnr-download"></i>
                 </a>
+              {% endif %}
 
             </form>
             </div>
@@ -263,7 +267,7 @@
 {% block extra_js %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=15"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=18"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
 
 

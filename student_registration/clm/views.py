@@ -2,13 +2,20 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+from datetime import datetime
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
-
+import csv
+from django.db import connection
+import codecs
+import logging
+import traceback
+from django.utils.encoding import force_text
+import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
@@ -85,6 +92,7 @@ from .forms import (
     BridgingAssessmentForm,
     BridgingMidAssessmentForm,
     BridgingFollowupForm,
+    BridgingServiceForm,
     CBECEMidAssessmentForm,
     CBECEFollowupForm,
     CBECEReferralForm,
@@ -1310,23 +1318,6 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
         kwargs['number'] = self.kwargs['number'] if 'number' in self.kwargs else None
         return super(BridgingMidAssessmentView, self).get_context_data(**kwargs)
 
-    def get_form1(self, form_class=None):
-        form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
-
-        if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
-
-        else:
-            data = BridgingSerializer(instance).data
-            if 'post_test' in data:
-                p_test = data['post_test']
-                if p_test:
-                    if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
-                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
-
-            return form_class(data, instance=instance, request=self.request)
-
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
         instance = Bridging.objects.get(id=self.kwargs['pk'])
@@ -1343,6 +1334,9 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
                 p_test = data['mid_test2']
 
             if p_test:
+                if "Bridging_ASSESSMENT/mid_test_done" in p_test:
+                    data['mid_test_done'] = p_test["Bridging_ASSESSMENT/mid_test_done"]
+
                 if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
                     data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
                 if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
@@ -1409,6 +1403,38 @@ class BridgingFollowupView(LoginRequiredMixin,
         instance = Bridging.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BridgingFollowupView, self).form_valid(form)
+
+
+class BridgingServiceView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+    template_name = 'clm/bridging_service.html'
+    form_class = BridgingServiceForm
+    success_url = '/clm/bridging-list/'
+    group_required = [u"CLM_Bridging"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(BridgingServiceView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance, request=self.request)
+
+        else:
+            data = BridgingSerializer(instance).data
+            return form_class(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(BridgingServiceView, self).form_valid(form)
 
 
 class CBECEPostAssessmentView(LoginRequiredMixin,
@@ -2917,6 +2943,17 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
+def BridgingDeleteView(request, pk):
+    if request.user.is_authenticated:
+        try:
+            registration =  Bridging.objects.get(pk=pk)
+            registration.delete()
+            result = {"isSuccessful": True}
+        except Bridging.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
 class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
@@ -3824,108 +3861,157 @@ class BridgingListView(LoginRequiredMixin,
 
 @login_required(login_url='/users/login')
 def bridging_export_data(request):
-    from django.db import connection
-    cursor = connection.cursor()
-    vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+    try:
+        cursor = connection.cursor()
+        round_id = request.GET.get('round', None)
 
-    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-    is_staff = request.user.is_staff
+        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        query_params = []
 
-    if not clm_bridging_all and not is_staff and request.user.partner:
-        school_id = 0
-        partner_id = request.user.partner_id
+        if round_id:
+            vw_bridging_data += " AND round_id = %s"
+            query_params.append(round_id)
 
-        vw_bridging_data += " AND partner_id =" + str(partner_id)
+        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        is_staff = request.user.is_staff
 
-        if request.user.school:
-            school_id = request.user.school.id
-        if school_id > 0:
-            vw_bridging_data += " AND school_id =" + str(school_id)
+        if not clm_bridging_all and not is_staff and request.user.partner:
+            school_id = 0
+            partner_id = request.user.partner_id
 
-    elif not clm_bridging_all and not is_staff and not request.user.partner:
-        vw_bridging_data += " AND id = 0 "
+            vw_bridging_data += " AND partner_id = %s"
+            query_params.append(partner_id)
 
-    vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+            if request.user.school:
+                school_id = request.user.school.id
+            if school_id > 0:
+                vw_bridging_data += " AND school_id = %s"
+                query_params.append(school_id)
 
-    cursor.execute(vw_bridging_data)
-    data = cursor.fetchall()
+        elif not clm_bridging_all and not is_staff and not request.user.partner:
+            vw_bridging_data += " AND id = 0 "
 
-    headers = [col[0] for col in cursor.description]
+        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
 
-    workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("All Data")
-    worksheet_all_data.append(headers)
+        # Log the query for debugging purposes
+        logging.debug("Executing query: %s", vw_bridging_data)
+        logging.debug("Query params: %s", str(query_params))
 
-    for row in data:
-        worksheet_all_data.append(row)
+        cursor.execute(vw_bridging_data, query_params)
+        data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
 
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
+        # Create the HTTP response with CSV headers
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=exported_data.csv'
 
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+        # Add UTF-8 BOM to support Arabic text
+        response.write(codecs.BOM_UTF8)
 
-    # Save the workbook to the response
-    workbook.save(response)
+        # Use CSV writer to handle the CSV creation
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
-    return response
+        # Write headers
+        writer.writerow([header for header in headers])
+
+        # Write data rows, ensuring correct encoding
+        for row in data:
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
+
+        return response
+
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-class bridging_school_export(LoginRequiredMixin, ListView):
-
-    def get(self, request, *args, **kwargs):
-        school_id = int(self.kwargs.get('school_id'))
+def bridging_school_export(request, *args, **kwargs):
+    try:
+        school_id = int(kwargs.get('school_id'))
 
         clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         is_staff = request.user.is_staff
 
         vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        query_params = []
 
         if not clm_bridging_all and not is_staff and request.user.partner:
             partner_id = request.user.partner_id
-            vw_bridging_data += " AND partner_id =" + str(partner_id)
+            vw_bridging_data += " AND partner_id = %s"
+            query_params.append(partner_id)
 
         elif not clm_bridging_all and not is_staff and not request.user.partner:
-            vw_bridging_data += " AND id = 0 "
+            vw_bridging_data += " AND id = 0"
 
         if school_id > 0:
-            vw_bridging_data += " AND school_id =" + str(school_id)
+            vw_bridging_data += " AND school_id = %s"
+            query_params.append(school_id)
 
-        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name"
 
-        print (vw_bridging_data)
+        # Log the query for debugging purposes
+        logging.debug("Executing query: %s", vw_bridging_data)
+        logging.debug("Query params: %s", str(query_params))
 
-        return bridging_school_export_data(vw_bridging_data)
+        cursor = connection.cursor()
+        cursor.execute(vw_bridging_data, query_params)
 
+        # Extract headers from the cursor description
+        headers = [col[0] for col in cursor.description]
 
-def bridging_school_export_data(vw_bridging_data):
-    from django.db import connection
-    cursor = connection.cursor()
-    cursor.execute(vw_bridging_data)
+        # Create the HTTP response with CSV headers
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=bridging_school_data.csv'
 
-    data = cursor.fetchall()
+        # Add UTF-8 BOM to support Arabic text
+        response.write(codecs.BOM_UTF8)
 
-    headers = [col[0] for col in cursor.description]
+        # Use CSV writer to handle the CSV creation
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
-    workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("All Data")
-    worksheet_all_data.append(headers)
+        # Write headers
+        writer.writerow(headers)
 
-    for row in data:
-        worksheet_all_data.append(row)
+        # Write data rows, handling encoding and converting non-string types
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+                # Local 2.7
+                # if isinstance(cell, str) or isinstance(cell, unicode):  # Handle Unicode strings
+                #     encoded_row.append(force_text(cell).encode('utf-8'))
+                # elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                #     encoded_row.append(cell.strftime('%Y-%m-%d'))
+                # else:  # Convert other data types to string
+                #     encoded_row.append(str(cell).encode('utf-8'))
+            writer.writerow(encoded_row)
 
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
+        return response
 
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
 
-    # Save the workbook to the response
-    workbook.save(response)
-
-    return response
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
 
 class BridgingPage(LoginRequiredMixin,
@@ -3935,4 +4021,12 @@ class BridgingPage(LoginRequiredMixin,
 
 class BridgingAttendanceReport(LoginRequiredMixin,
                    TemplateView):
+
     template_name = 'clm/bridging_attendance_report.html'
+    rounds = CLMRound.objects.filter(current_year=True).all()
+
+    def get_context_data(self, **kwargs):
+        context = super(BridgingAttendanceReport, self).get_context_data(**kwargs)
+        context['rounds'] = CLMRound.objects.filter(current_year=True).all()
+        return context
+

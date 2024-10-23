@@ -711,6 +711,7 @@ class SchoolAdmin(ImportExportModelAdmin):
     search_fields = (
         'name',
         'number',
+        'is_closed',
     )
 
     def has_delete_permission(self, request, obj=None):

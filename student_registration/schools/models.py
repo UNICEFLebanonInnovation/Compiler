@@ -52,6 +52,11 @@ class School(TimeStampedModel):
         ('yes', _("Yes")),
         ('no', _("No")),
     )
+    TRUE_FALSE = Choices(
+        ('', '----------'),
+        ('True', _("Yes")),
+        ('False', _("No")),
+    )
     TYPE = Choices(
         ('', '----------'),
         ('Private School', _("Private School")),
@@ -337,6 +342,11 @@ class School(TimeStampedModel):
         verbose_name=_('School location'),
         related_name='+',
     )
+    is_bma = models.BooleanField(
+        default=True,
+        blank=True,
+        verbose_name=_('BMA school')
+    )
     is_closed = models.BooleanField(
         default=False,
         blank=True,
@@ -532,10 +542,7 @@ class School(TimeStampedModel):
         return True
 
     def __unicode__(self):
-        return u'{} - {}'.format(
-            self.number,
-            self.name
-        )
+        return u'{} - {}'.format(self.number, self.name)
 
     def __str__(self):
         return self.name

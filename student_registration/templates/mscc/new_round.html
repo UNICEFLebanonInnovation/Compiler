@@ -7,6 +7,8 @@
 {% load simple_tags %}
 {% bootstrap_css %}
 
+{% block project_title %}New Round{% endblock %}
+
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
 {% endblock %}
@@ -86,7 +88,7 @@
                                                   <div class="form-group" style="padding-top: 100px;">
                                                     <div class="">
                                                       <a type="button" href="/MSCC/New-Round-Redirect/?registry={{registry}}&new_round_confirmation=confirmed" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
-                                                      <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="reset-id-reset">Cancel</a>
+                                                      <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/MSCC/List/">Cancel</a>
                                                     </div>
                                                   </div>
                                               <!--</div>-->

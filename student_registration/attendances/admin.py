@@ -766,12 +766,16 @@ class MSCCAttendanceAdmin(admin.ModelAdmin):
         'center',
         'attendance_date',
         'day_off',
-        'close_reason'
+        'close_reason',
+        'education_program',
+        'class_section'
     )
     list_filter = (
         'center',
         'attendance_date',
-        'day_off'
+        'day_off',
+        'education_program',
+        'class_section'
     )
 
 

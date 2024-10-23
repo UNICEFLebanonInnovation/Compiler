@@ -5,6 +5,7 @@
 {% load bootstrap3 %}
 {% load util_tags %}
 {% bootstrap_css %}
+{% block head_title %}Teacher List{% endblock %}
 
 {% block extra_head %}
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
@@ -42,10 +43,12 @@
                 <i class="icon-synch-sign icon-white"></i>
                 {% trans "reset" %}
               </a>
+              {% if user|has_group:"EXPORT" %}
               <a href="{% url 'students:teacher_export' %}" class="btn btn-success download-report">
                   <i class="icon-export-sign icon-white"></i>
                   {% trans "Export data" %}
               </a>
+              {% endif %}
               {% if 'Bridging'|is_allowed_create %}
               <a href="{% url 'students:teacher_add' %}" class="btn btn-success">
                   <i class="icon-plus-sign icon-white"></i>
@@ -55,6 +58,8 @@
             </div>
         </form>
     </div>
+
+
     <div class="" style="overflow: auto; margin: 10px;">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}

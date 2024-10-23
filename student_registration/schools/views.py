@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.db.models import Q
 from django.views.generic import DetailView, ListView, RedirectView, CreateView, FormView, TemplateView, UpdateView
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from dal import autocomplete
@@ -37,6 +38,7 @@ from .serializers import (
 from .tables import (
     BootstrapTable,
     SchoolTable,
+    SchoolExportTable,
     ClubTable,
     MeetingTable,
     CommunityInitiativeTable,
@@ -56,7 +58,16 @@ from django.forms import modelformset_factory, formset_factory, inlineformset_fa
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib import messages
-
+import io
+import xlwt
+import csv
+import logging
+from django.db import connection
+import traceback
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
+import codecs
+import datetime
 
 class SchoolViewSet(mixins.ListModelMixin,
                     viewsets.GenericViewSet):
@@ -528,10 +539,10 @@ class SchoolListView(LoginRequiredMixin,
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         is_staff = self.request.user.is_staff
 
-        queryset = School.objects.filter(is_closed=False).all()
+        queryset = School.objects.filter(is_bma=True).all()
 
         if clm_bridging_all or is_staff:
-            queryset = School.objects.filter(is_closed=False).all()
+            queryset = School.objects.filter(is_bma=True).all()
         else:
             school_id = 0
             partner_id = 0
@@ -545,7 +556,7 @@ class SchoolListView(LoginRequiredMixin,
                 queryset = School.objects.filter(id=school_id)
 
             elif partner_id > 0:
-                queryset = School.objects.filter(is_closed=False,
+                queryset = School.objects.filter(is_bma=True,
                                                  id__in=PartnerOrganization
                                                  .objects
                                                  .filter(id=partner_id)
@@ -555,6 +566,18 @@ class SchoolListView(LoginRequiredMixin,
 
 
         return queryset
+
+    def get_table_class(self):
+
+        """
+        Return the class to use for the table.
+        """
+        if self.request.user.groups.filter(name='EXPORT').exists():
+            return SchoolExportTable
+        else:
+            return SchoolTable
+
+        return self.table_class
 
 
 class SchoolAddView(LoginRequiredMixin,
@@ -705,6 +728,19 @@ class ClubFormView(LoginRequiredMixin,
         return super(ClubFormView, self).form_valid(form)
 
 
+def club_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            club = Club.objects.get(pk=pk)
+            club.delete()
+            result = {"isSuccessful": True}
+        except Club.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
+
 class MeetingListView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FilterView,
@@ -765,6 +801,19 @@ class MeetingFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, school_id=school_id, instance=instance)
         return super(MeetingFormView, self).form_valid(form)
+
+
+def meeting_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            meeting = Meeting.objects.get(pk=pk)
+            meeting.delete()
+            result = {"isSuccessful": True}
+        except Meeting.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
 
 class CommunityInitiativeListView(LoginRequiredMixin,
@@ -830,6 +879,17 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
 
 
 
+def community_initiative_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            initiative = CommunityInitiative.objects.get(pk=pk)
+            initiative.delete()
+            result = {"isSuccessful": True}
+        except CommunityInitiative.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
 
 class HealthVisitListView(LoginRequiredMixin,
@@ -894,47 +954,60 @@ class HealthVisitFormView(LoginRequiredMixin,
         return super(HealthVisitFormView, self).form_valid(form)
 
 
-class school_export_data(LoginRequiredMixin, ListView):
-    def get(self, request, *args, **kwargs):
-        qs_school = School.objects.filter(is_closed=False).order_by('-id')
-        qs_club = Club.objects.all().order_by('-id')
-        qs_meeting = Meeting.objects.all().order_by('-id')
-        qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
-        qs_health_visit = HealthVisit.objects.all().order_by('-id')
+def health_visit_delete(request, pk):
+    if request.user.is_authenticated:
+        try:
+            visit = HealthVisit.objects.get(pk=pk)
+            visit.delete()
+            result = {"isSuccessful": True}
+        except HealthVisit.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
 
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-        is_staff = self.request.user.is_staff
 
-        if clm_bridging_all or is_staff:
-            qs_school = School.objects.filter(is_closed=False).all()
+def school_export_data(request):
+    qs_school = School.objects.filter(is_bma=True).order_by('-id')
+    qs_club = Club.objects.all().order_by('-id')
+    qs_meeting = Meeting.objects.all().order_by('-id')
+    qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
+    qs_health_visit = HealthVisit.objects.all().order_by('-id')
+
+    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+    is_staff = request.user.is_staff
+
+    if clm_bridging_all or is_staff:
+        qs_school = School.objects.filter(is_bma=True).all()
+    else:
+        school_id = 0
+        partner_id = 0
+
+        if request.user.school:
+            school_id = request.user.school.id
+        if request.user.partner_id:
+            partner_id = request.user.partner_id
+
+        if school_id and school_id > 0:
+            qs_school = School.objects.filter(id=school_id)
+        elif partner_id > 0:
+            qs_school = School.objects.filter(is_bma=True,
+                                              id__in=PartnerOrganization
+                                              .objects
+                                              .filter(id=partner_id)
+                                              .values_list('schools', flat=True))
         else:
-            school_id = 0
-            partner_id = 0
+            qs_school = qs_school.none()
 
-            if self.request.user.school:
-                school_id = self.request.user.school.id
-            if self.request.user.partner_id:
-                partner_id = self.request.user.partner_id
+    school_ids = qs_school.values_list('id', flat=True)
 
-            if school_id and school_id > 0:
-                qs_school = School.objects.filter(id=school_id)
-            elif partner_id > 0:
-                qs_school = School.objects.filter(is_closed=False,
-                                                  id__in=PartnerOrganization
-                                                  .objects
-                                                  .filter(id=partner_id)
-                                                  .values_list('schools', flat=True))
-            else:
-                qs_school = qs_school.none()
+    qs_club = qs_club.filter(school_id__in=school_ids)
+    qs_meeting = qs_meeting.filter(school_id__in=school_ids)
+    qs_community_initiative = qs_community_initiative.filter(school_id__in=school_ids)
+    qs_health_visit = qs_health_visit.filter(school_id__in=school_ids)
 
-        school_ids = qs_school.values_list('id', flat=True)
+    return school_build_csv_extraction(qs_school, qs_club, qs_meeting, qs_community_initiative, qs_health_visit)
 
-        qs_club = qs_club.filter(school_id__in=school_ids)
-        qs_meeting = qs_meeting.filter(school_id__in=school_ids)
-        qs_community_initiative = qs_community_initiative.filter(school_id__in=school_ids)
-        qs_health_visit = qs_health_visit.filter(school_id__in=school_ids)
-
-        return school_build_xls_extraction(qs_school, qs_club, qs_meeting, qs_community_initiative, qs_health_visit)
 
 
 class SchoolAutocomplete(autocomplete.Select2QuerySetView):

@@ -41,9 +41,13 @@ $(document).ready(function() {
         (
             function()
             {
+               var attended = "Yes";
                var child_id = $(this).find(".child_id").val();
                var registration_id = $(this).find(".registration_id").val();
-               var attended = $(this).find("input.status:checked").val();
+               var checkedValue = $(this).find("input.status:checked").val();
+               if (checkedValue) {
+                    attended = checkedValue;
+               }
                var absence_reason = $(this).find(".absence_reason").val();
                var absence_reason_other = $(this).find(".absence_reason_other").val();
 
@@ -112,13 +116,19 @@ $(document).ready(function() {
             data: {
                 'attendance_date': $("#attendance_date").val(),
                 'center_id': $('#center_id').val(),
+                'round_id': $('#round').val(),
                 'education_program': $('#education_program').val(),
                 'class_section': $('#class_section').val()
             },
             dataType: 'html',
             success: function (response) {
                 $('#attendance_children').empty("");
-                 $('#attendance_children').append(response);
+                $('#attendance_children').append(response);
+
+                // Count and display number of children loaded
+                var childrenCount = $(".list-group-item").length;
+                $('#children_count').text(childrenCount);
+
                 $('#save_attendance_children').removeClass('disabled');
                 $('.app-drawer-overlay').addClass('d-none');
             },

@@ -29,7 +29,7 @@
     <meta name="msapplication-TileImage" content="{% static 'images/favicons/ms-icon-144x144.png' %}">
     <meta name="theme-color" content="#ffffff">
 
-      <title>CLM | {% block head_title %}{% endblock %}</title>
+      <title>Dirasa | {% block head_title %}Home{% endblock %}</title>
 
     <meta name="description"
           content="Gridus vCard HTML Template is the professional responsive personal website template, based on the latest Bootstrap 3">
@@ -76,27 +76,36 @@
             crossorigin="anonymous"></script>
     {% block extra_head %}
     {% endblock %}
-  <style>
-    .col-icon i.fa {
-      color: #fff !important;
-    }
-    .col-icon i:before {
-      color: #fff !important;
-    }
-    .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-    ul.dropdown-menu, ul.your-menu-class {
-      list-style-type: none;
-      padding-left: 0;
-      margin-left: 0;
-    }
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J68P860Y4K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    li {
+      gtag('config', 'G-J68P860Y4K');
+    </script>
+    <style>
+      .col-icon i.fa {
+        color: #fff !important;
+      }
+      .col-icon i:before {
+        color: #fff !important;
+      }
+      .dropdown:hover .dropdown-menu {
+          display: block;
+      }
+      ul.dropdown-menu, ul.your-menu-class {
         list-style-type: none;
-    }
+        padding-left: 0;
+        margin-left: 0;
+      }
 
-  </style>
+      li {
+          list-style-type: none;
+      }
+
+    </style>
 </head>
 
 <body id="olivia" class="boxed" style="max-width: 95%;">

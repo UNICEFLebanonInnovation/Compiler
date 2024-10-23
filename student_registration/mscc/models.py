@@ -300,6 +300,14 @@ class Registration(TimeStampedModel):
         return result
 
     @property
+    def class_section(self):
+        result = ''
+        program = self.education_service.all().first()
+        if program:
+            result = program.class_section
+        return result
+
+    @property
     def has_previous_registration(self):
         previous_registration_exists = Registration.objects.filter(
             student_id=self.child.id,
@@ -315,7 +323,7 @@ class Registration(TimeStampedModel):
     def get_total_absent_days(registration_id):
         result = 0
         from student_registration.attendances.models import MSCCAttendanceChild
-        attendance_days = MSCCAttendanceChild.objects.filter(registration_id=registration_id ).count()
+        attendance_days = MSCCAttendanceChild.objects.filter(registration_id=registration_id, attended='No').count()
         if attendance_days:
             result = attendance_days
         return result

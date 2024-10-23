@@ -1,0 +1,29 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+<li class="dropdown">
+   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions</a>
+   <ul class="dropdown-menu">
+     {% if column.attrs.url_edit %}
+          <li>
+            <a type="button" href="{{ column.attrs.url_edit }}{{ record.school_id }}/{{ record.id }}">
+           <button class="btn btn-info"><i class="icon-edit-sign icon-white"> </i></button>
+           {% trans "Edit" %}
+            </a>
+      </li>
+      {% endif %}
+
+     {% if column.attrs.url_delete %}
+        <li>
+          <a type="button" href="{{ column.attrs.url_delete }}{{ record.id }}" class="dropdown-item delete-club" data-club-id="{{ record.id }}">
+            <button id="delete-button-{{ record.id }}" class="btn btn-danger delete-button">
+              <i class="icon-trash icon-white"> </i>
+            </button>
+            {% trans "Delete" %}
+          </a>
+        </li>
+      {% endif %}
+
+   </ul>
+</li>
+

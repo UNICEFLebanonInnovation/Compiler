@@ -298,6 +298,7 @@ class EducationProgrammeAssessmentAdmin(admin.ModelAdmin):
         'registration__child__last_name',
     )
 
+
 class YouthKitServiceAdmin(admin.ModelAdmin):
     list_display = (
         'registration',
@@ -419,6 +420,20 @@ class RecreationalAdmin(admin.ModelAdmin):
     )
 
 
+class RoundAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'current_year',
+        'start_date',
+        'end_date',
+    )
+
+    search_fields = (
+        'name',
+        'current_year',
+    )
+
+
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(EducationHistory, EducationHistoryAdmin)
 admin.site.register(ProvidedServices, ProvidedServicesAdmin)
@@ -437,4 +452,4 @@ admin.site.register(Referral, ReferralAdmin)
 admin.site.register(YouthAssessment, YouthAssessmentAdmin)
 admin.site.register(YouthReferral, YouthReferralAdmin)
 admin.site.register(Recreational, RecreationalAdmin)
-admin.site.register(Round)
+admin.site.register(Round, RoundAdmin)

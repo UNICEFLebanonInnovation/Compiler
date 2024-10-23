@@ -6,6 +6,8 @@
 {% load util_tags %}
 {% bootstrap_css %}
 
+{% block head_title %}Registration - List{% endblock %}
+
 {% block extra_head %}
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
 {% endblock %}
@@ -42,10 +44,12 @@
                 <i class="icon-synch-sign icon-white"></i>
                 {% trans "reset" %}
               </a>
-              <a href="{% url 'clm:bridging_export' %}" class="btn btn-success">
+              {% if user|has_group:"EXPORT" %}
+              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">
                   <i class="icon-export-sign icon-white"></i>
                   {% trans "Export data" %}
               </a>
+              {% endif %}
 
               {% if 'Bridging'|is_allowed_create %}
               <a href="{% url 'clm:bridging_add' %}" class="btn btn-success">
@@ -70,12 +74,22 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}?v=10"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}?v=12"></script>
 
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        function checkRoundBeforeExport() {
+            var round = $("#id_round").val();
+
+            if (!round) {
+                alert("Round is not selected. Please select a round before exporting data.");
+                return false;
+            }
+            window.location.href = "{% url 'clm:bridging_export' %}?round=" + round;
+        }
     </script>
 {% endblock %}

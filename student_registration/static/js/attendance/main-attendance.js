@@ -11,9 +11,6 @@ $(document).ready(
         $('div#div_id_close_reason').addClass('d-none');
         if (day_off == 'yes') {
             $('div#div_id_close_reason').removeClass('d-none');
-            $('#submit-id-save').attr('disabled', false);
-            $('#button-id-loadstudentsbutton').attr('disabled',true);
-
         }
         else
         {
@@ -26,55 +23,11 @@ $(document).ready(
             day_off = $("#id_day_off").val();
             if (day_off == 'yes') {
                 $('div#div_id_close_reason').removeClass('d-none');
-                $('#submit-id-save').attr('disabled', false);
-                $('#button-id-loadstudentsbutton').attr('disabled',true);
             }
             else {
                 $('div#div_id_close_reason').addClass('d-none');
-                $('#button-id-loadstudentsbutton').attr('disabled',false);
-                $('#submit-id-save').attr('disabled', true);
             }
         });
-
-//        $(document).on('change', 'select#id_close_reason', function () {
-//            close_reason = $("#id_close_reason").val();
-//            loadButtonDisabled = $('#button-id-loadstudentsbutton').attr('disabled');
-//            var table = document.querySelector('.table');
-//            table_have_rows = table && table.rows.length > 0
-//
-//            if (close_reason != '' &&  loadButtonDisabled && table_have_rows) {
-//            }
-//        });
-
-        $(document).on('change', 'select#id_school, select#id_registration_level ' , function () {
-            filter_changed();
-        });
-
-
-
-//        $("#id_attendance_date").on("change", function() {
-//            filter_changed();
-//            var selectedDate = $(this).datepicker('getDate');
-//            alert("Selected date is : " + selectedDate );
-//            var today = new Date();
-//            var twoWeeksbefore = new Date(today.setDate(today.getDate() - 14));
-//            if (selectedDate.getTime() > today.setHours(0,0,0,0)) {
-//                alert(selectedDate.getTime())
-//                alert (today.setHours(0,0,0,0))
-//                alert('You cannot enter attendance for a future date');
-//                return false;
-//            }
-//            else if (selectedDate.getTime() < twoWeeksbefore.setHours(0,0,0,0)) {
-//                alert('More than 2 weeks');
-//                return false;
-//            }
-//        });
-//        $( "#id_attendance_date" ).datepicker({
-//             minDate: -5,
-//             maxDate: "+5D",
-//             beforeShowDay: disableHoliday
-//        });
-
 
 
       $("#button-id-loadstudentsbutton").click(function() {
@@ -126,15 +79,6 @@ function load_students()
     }
 
  }
-
-function filter_changed()
-{
-    loadButtonDisabled = $('#button-id-loadstudentsbutton').attr('disabled');
-    if (loadButtonDisabled){
-        $('#submit-id-save').attr('disabled', (loadButtonDisabled));
-        $('#button-id-loadstudentsbutton').attr('disabled', (!loadButtonDisabled));
-}
-}
 
 function disableHoliday(date) {
     var string = $.datepicker.formatDate('yy-mm-dd', date);

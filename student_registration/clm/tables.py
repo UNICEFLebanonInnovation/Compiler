@@ -15,12 +15,12 @@ class BootstrapTable(tables.Table):
 
 class CommonTable(tables.Table):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
-                                        template_name='django_tables2/edit_column.html',
-                                        attrs={'url': ''})
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
-                                          template_name='django_tables2/delete_column.html',
-                                          attrs={'url': ''})
+    # edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    #                                     template_name='django_tables2/edit_column.html',
+    #                                     attrs={'url': ''})
+    # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
+    #                                       template_name='django_tables2/delete_column.html',
+    #                                       attrs={'url': ''})
 
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
     student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday')
@@ -29,8 +29,8 @@ class CommonTable(tables.Table):
         model = CLM
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
-            'delete_column',
+            # 'edit_column',
+            # 'delete_column',
         )
 
 
@@ -506,11 +506,12 @@ class BridgingTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/clm_action_column.html',
                                         attrs={'url_edit': '/clm/bridging-edit/',
-                                               'url_delete': '/api/clm-bridging/',
+                                               'url_delete': '/clm/bridging-delete/',
                                                'url_post_assessment': '/clm/bridging-post-assessment/',
                                                'url_mid_assessment1': '/clm/bridging-mid-assessment/',
                                                'url_mid_assessment2': '/clm/bridging-mid-assessment/',
                                                'url_followup': '/clm/bridging-followup/',
+                                               'url_service': '/clm/bridging-service/',
                                                'programme': 'Bridging'})
 
     clm_absence_column = tables.TemplateColumn(verbose_name=_('Absence'), orderable=False,

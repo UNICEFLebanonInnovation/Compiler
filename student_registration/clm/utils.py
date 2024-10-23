@@ -12,11 +12,19 @@ import copy
 import logging
 logger = logging.getLogger(__name__)
 
-from datetime import datetime
+from django.db.models import Q, Sum, Avg, F, Func, When ,OuterRef, Subquery
+from datetime import datetime, timedelta
+
+from django.db import transaction
+
 
 from .models import Bridging
 from student_registration.students.models import Person
 from student_registration.outreach.models import OutreachChild
+from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentTotalAttendance, CLMStudentAbsences
+from student_registration.schools.models import (
+    School,
+)
 
 
 def is_allowed_create(programme):
@@ -1733,7 +1741,6 @@ def cbece_build_xls_extraction(queryset_students, queryset_fc):
     return response
 
 
-# def rs_build_xls_extraction(queryset_students):
 def rs_build_xls_extraction(queryset_students, queryset_fc):
     buffer = io.BytesIO()
 
@@ -3350,3 +3357,284 @@ def get_outreach_child(outreach_id):
     #     initial['education_status'] = ''
 
     return initial
+
+
+def load_child_attendance(round_id, attendance_date, school_id, registration_level):
+    from datetime import datetime
+
+    result = []
+    try:
+        if attendance_date is not None:
+            attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
+            attendance = CLMAttendance.objects.filter(
+                round_id=round_id,
+                attendance_date=attendance_date,
+                school_id=school_id,
+                registration_level=registration_level
+            ).last()
+
+        if attendance:
+            attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance).select_related('student')
+            for att in attendances:
+                registration = att.registration if att.registration else None
+                student = att.student if att.student else None
+
+                result.append({
+                    'registration_id': registration.id if registration else None,
+                    'child_id': student.id if student else None,
+                    'child_fullname': student.full_name if student else None,
+                    'child_mother_fullname': student.mother_fullname if student else None,
+                    'child_birthday': student.birthday if student else None,
+                    'child_nationality': student.nationality.name if student and student.nationality else None,
+                    'attended': att.attended,
+                    'absence_reason': att.absence_reason,
+                    'absence_reason_other': att.absence_reason_other
+                })
+        else:
+            registrations = Bridging.objects.filter(
+                round=round_id,
+                school=school_id,
+                registration_level=registration_level
+            ).select_related('student')
+
+            for reg in registrations:
+                result.append({
+                    'registration_id': reg.id,
+                    'child_id': reg.student.id,
+                    'child_fullname': reg.student.full_name,
+                    'child_mother_fullname': reg.student.mother_fullname,
+                    'child_birthday': reg.student.birthday,
+                    'child_nationality': reg.student.nationality.name,
+                    'attended': 'Yes',
+                    'absence_reason': '',
+                    'absence_reason_other': ''
+                })
+
+        return result
+
+    except Exception as ex:
+        print(ex)
+        return []
+
+
+def create_attendance(data):
+    from datetime import datetime
+    attendance_date = datetime.strptime(data["attendance_date"], '%m/%d/%Y')
+    day_off = data["attendance_day_off"]
+    close_reason = data["close_reason"]
+    round_id = data["round_id"]
+    school_id = data["school_id"]
+    registration_level = data["registration_level"]
+    children_attendance = data["children_attendance"]
+
+    try:
+        with transaction.atomic():  # Ensure atomic transactions
+            attendance, created = CLMAttendance.objects.get_or_create(
+                round_id=round_id,
+                attendance_date=attendance_date,
+                school_id=school_id,
+                registration_level=registration_level
+            )
+            attendance.day_off = day_off
+            attendance.close_reason = close_reason
+            attendance.save()
+
+            student_ids = [child['child_id'] for child in children_attendance]
+            registrations = Bridging.objects.filter(student_id__in=student_ids, round_id=round_id)
+
+            for child in children_attendance:
+                student_id = child['child_id']
+                registration_id = child['registration_id']
+                registration = registrations.filter(student_id=student_id).first()
+
+                # Use update_or_create to minimize database hits
+                attendance_child, created = CLMAttendanceStudent.objects.update_or_create(
+                    attendance_day=attendance,
+                    student_id=student_id,
+                    registration_id=registration_id,
+                    defaults={
+                        'attended': child['attended'],
+                        'absence_reason': child['absence_reason'],
+                        'absence_reason_other': child['absence_reason_other'],
+                    }
+                )
+
+                update_total_attendance(registration_id, student_id, round_id, school_id, registration.student.first_name,
+                                           registration.student.father_name, registration.student.last_name,)
+
+                if child['attended'] == 'No':
+                    update_consecutive_absence(registration_id, student_id, registration.student.first_name,
+                                               registration.student.father_name, registration.student.last_name,
+                                               attendance_date, round_id, school_id, registration)
+
+        return True
+
+    except Exception as ex:
+        print(ex)
+        return False
+
+
+def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
+
+    child_attendances = CLMAttendanceStudent.objects.filter(
+        registration_id=registration_id,
+        attendance_day__education_program=education_program,
+        attendance_day__class_section=old_class_section
+    )
+
+    try:
+        if child_attendances:
+            for ca in child_attendances:
+                center_id = ca.attendance_day.center.id
+                attendance_date = ca.attendance_day.attendance_date
+
+                # Search if attendance for the new class exists and move the child attendance to it
+                new_attendance = CLMAttendance.objects.filter(
+                    center_id=center_id,
+                    attendance_date=attendance_date,
+                    education_program=education_program,
+                    class_section=new_class_section
+                ).last()
+
+                attendance_id = ca.attendance_day.id
+
+                # Count the number of other attendances for the same day
+                other_children_count = CLMAttendanceStudent.objects.filter(attendance_day=ca.attendance_day).exclude(id=ca.id).count()
+
+                if new_attendance:
+                    ca.attendance_day = new_attendance
+                    ca.save()
+                else:
+                    ca.delete()
+
+                if other_children_count == 0:
+                    try:
+                        old_attendance = CLMAttendance.objects.get(id=attendance_id)
+
+                        # Delete the unique old_attendance instance
+                        old_attendance.delete()
+
+                    except CLMAttendance.DoesNotExist:
+                        print("Old attendance does not exist.")
+        return True
+
+    except Exception as ex:
+        print(ex)
+        return False
+
+
+def update_total_attendance(registration_id, student_id, round_id, school_id, first_name,father_name, last_name):
+
+    total_absence_days = CLMAttendanceStudent.objects.filter(
+        attended='No',
+        attendance_day__round_id=round_id,
+        student_id=student_id
+    ).count()
+    total_attendance_days = CLMAttendanceStudent.objects.filter(
+        attended='Yes',
+        attendance_day__round_id=round_id,
+        student_id=student_id
+    ).count()
+
+    # Update or create the student's total attendance record
+    student_attendance, created = CLMStudentTotalAttendance.objects.get_or_create(
+        round_id=round_id,
+        school_id=school_id,
+        registration_id=registration_id,
+        defaults={
+            'student_first_name': first_name,
+            'student_last_name': last_name,
+            'student_father_name': father_name,
+            'student_id': student_id
+        }
+    )
+
+    student_attendance.student_first_name = first_name
+    student_attendance.student_last_name = last_name
+    student_attendance.student_father_name = father_name
+    student_attendance.total_attendance_days = total_attendance_days
+    student_attendance.total_absence_days = total_absence_days
+    student_attendance.save()
+
+
+def update_consecutive_absence(registration_id, student_id, first_name, father_name, last_name, attendance_date,
+                               round_id, school_id, registration):
+
+    working_day_names = School.objects.filter(id=school_id).values_list('working_days', flat=True).first()
+    working_days_set = set(working_day_names)
+
+    def get_previous_working_day(current_date):
+        previous_day = current_date - timedelta(days=1)
+        while previous_day.strftime('%A') not in working_days_set:
+            previous_day -= timedelta(days=1)
+        return previous_day
+
+    def get_next_working_day(current_date):
+        next_day = current_date + timedelta(days=1)
+        while next_day.strftime('%A') not in working_days_set:
+            next_day += timedelta(days=1)
+        return next_day
+
+
+    previous_absence = CLMStudentAbsences.objects.filter(
+        Q(absence_starting_date=get_next_working_day(attendance_date)) |
+        Q(absence_ending_date=get_previous_working_day(attendance_date)) |
+        Q(absence_starting_date=attendance_date) |
+        Q(absence_ending_date=attendance_date),
+        registration_id=registration_id,
+        round_id=round_id
+    ).last()
+
+    if previous_absence:
+        attendance_day = attendance_date.date() if isinstance(attendance_date, datetime) else attendance_date
+        previous_start_day = previous_absence.absence_starting_date.date() if isinstance(previous_absence.absence_starting_date, datetime) else previous_absence.absence_starting_date
+        previous_end_day = previous_absence.absence_ending_date.date() if isinstance(previous_absence.absence_ending_date, datetime) else previous_absence.absence_ending_date
+
+        previous_working_day = get_previous_working_day(previous_start_day)
+        if attendance_day == previous_working_day:
+            previous_absence.absence_starting_date = attendance_day
+            absence_dates_list = previous_absence.absence_dates or []
+            absence_dates_list.append(attendance_day.strftime('%Y-%m-%d'))
+            previous_absence.absence_dates = absence_dates_list
+
+        next_working_day = get_next_working_day(previous_end_day)
+        if attendance_day == next_working_day:
+            previous_absence.absence_ending_date = attendance_day
+            absence_dates_list = previous_absence.absence_dates or []
+            absence_dates_list.append(attendance_day.strftime('%Y-%m-%d'))
+            previous_absence.absence_dates = absence_dates_list
+
+        current_day = previous_absence.absence_starting_date
+        consecutive_days = 0
+        while current_day <= previous_absence.absence_ending_date:
+            if current_day.strftime('%A') in working_days_set:
+                consecutive_days += 1
+            current_day += timedelta(days=1)
+
+        previous_absence.consecutive_absence_days = consecutive_days
+
+        previous_absence.school_id = school_id
+        previous_absence.school_name = registration.school.name
+        previous_absence.registation_level = registration.registration_level
+        previous_absence.student_first_name = first_name
+        previous_absence.student_father_name = father_name
+        previous_absence.student_last_name = last_name
+        previous_absence.save()
+    else:
+        absence = CLMStudentAbsences(
+            partner_id=registration.partner_id,
+            registration_id=registration_id,
+            student_id=student_id,
+            round_id=round_id,
+            school_id=school_id,
+            school_name=registration.school.name,
+            registation_level=registration.registration_level,
+            student_first_name=first_name,
+            student_father_name=father_name,
+            student_last_name=last_name,
+            absence_starting_date=attendance_date,
+            absence_ending_date=attendance_date,
+            absence_dates=[attendance_date.strftime('%Y-%m-%d')],
+            consecutive_absence_days=1,
+        )
+        absence.save()

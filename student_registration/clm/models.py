@@ -1547,6 +1547,7 @@ class CLM(TimeStampedModel):
     class Meta:
         abstract = True
 
+
 class BLN(CLM):
     miss_school_date = models.DateField(
         blank=True,
@@ -1811,11 +1812,17 @@ class Bridging(CLM):
     )
     LEARNING_RESULT = Choices(
         ('', _('----------')),
-        ('graduated_to_Bridging_next_level', _('Graduated to the next level SBP')),
-        ('graduated_to_Bridging_next_round_same_level', _('Graduated to the next round, same level SBP')),
+        ('graduated_to_Bridging_next_level', _('Progress to the next Dirasa level')),
+        ('graduated_to_Bridging_next_round_same_level', _('Same level to Repeat the same Dirasa level')),
+        ('dropout', _('Drop out')),
         ('referred_public_school', _('Referred to public school')),
-        ('dropout', _('Dropout, referral not possible')),
-        ('other', _('Other')),
+        ('other', _('Referred to another pathway')),
+    )
+    SCHOOL_TYPE = Choices(
+        ('', _('----------')),
+        ('Public', _('Public')),
+        ('Private', _('Private')),
+        ('Semi-Private', _('Semi-Private'))
     )
     REGISTRATION_LEVEL = (
         ('', '----------'),
@@ -1880,7 +1887,6 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Referral')
     )
-
     learning_result = models.CharField(
         max_length=100,
         blank=True,
@@ -1888,9 +1894,24 @@ class Bridging(CLM):
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
     )
+    dropout_reason = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Dropout reason')
+    )
     learning_result_other = models.TextField(
         blank=True, null=True,
-        verbose_name=_('Please specify')
+        verbose_name=_('Please Specify')
+    )
+    referral_school = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Formal Education school')
+    )
+    referral_school_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=SCHOOL_TYPE,
+        verbose_name=_('School Type')
     )
     dropout_date = models.DateField(
         blank=True,
@@ -2050,6 +2071,7 @@ class Bridging(CLM):
         blank=True,
         null=True,
         choices=(
+            ('', '----------'),
             ('yes_akelius)', _("Yes (Akelius)")),
             ('yes_learning_passport)', _("Yes (Learning Passport)")),
             ('no', _("No"))),

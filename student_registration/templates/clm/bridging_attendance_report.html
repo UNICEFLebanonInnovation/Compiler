@@ -1,119 +1,176 @@
-{% extends "base2.html" %}
+{% extends "base5.html" %}
+{% load staticfiles i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% bootstrap_css %}
+{% block project_title %}Attendance Export{% endblock %}
 
-{% block main_content %}
+{% block content %}
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-child"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                          Dirasa Daily Attendance
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="/clm/bridging-page/">
+                                                        <i aria-hidden="true" class="fa fa-home"></i>
+                                                    </a>
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
 
-<section class="container-fluid" data-section="home" xmlns="http://www.w3.org/1999/html">
-  <!-- Personal Flexy Section -->
-  <div class="row flex-row">
-     <!-- Personal Details 02 -->
-     <div id="personal-3" class="col-md-12 flex-column ui-block-color01 light nopadding"
-          data-animation-origin="right"
-          data-animation-duration="300"
-          data-animation-delay="600"
-          data-animation-distance="200px">
-        <div class="row flex-panel nopadding">
-           <div class="col-md-12 nopadding">
-              <div class="row flex-row nopadding">
 
-              </div>
-           </div>
-           <div class="col-md-12 nopadding">
-              <div class="row flex-row nopadding">
-              </div>
-           </div>
-           <div class="col-md-12 nopadding">
-              <div class="row flex-row nopadding">
-                <div class="col-md-3 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-green">
+                        </div>
+</div>
+
+<section class="container-fluid" data-section="home">
+    <div class="row flex-row">
+        <!-- Filters Section -->
+        <div id="filters-section" class="col-md-12 flex-column ui-block-color01 light nopadding">
+            <div class="row flex-panel nopadding">
+                <!-- Filter Panel Left -->
+                <div class="col-md-6 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-green">
                     <div class="flex-panel padding-44">
-                       <div class="p-icon green"></div>
-                       <span class="uppercase">Filters</span>
-                       <select id="dirasa-month" class="form-control">
-                         <option value="">Select Month</option>
-                         <option value="01">January</option>
-                         <option value="02">February</option>
-                         <option value="03">March</option>
-                         <option value="04">April</option>
-                         <option value="05">May</option>
-                         <option value="06">June</option>
-                         <option value="07">July</option>
-                         <option value="08">August</option>
-                         <option value="09">September</option>
-                         <option value="10">October</option>
-                         <option value="11">November</option>
-                         <option value="12">December</option>
-                       </select>
-                       <select id="dirasa-year" class="form-control">
-                         <option value="">Select Year</option>
-                         <option value="2023">2023</option>
-                         <option value="2024">2024</option>
-                         <option value="2025">2025</option>
-                         <option value="2026">2026</option>
-                         <option value="2027">2027</option>
-                         <option value="2028">2028</option>
-                         <option value="2029">2029</option>
-                         <option value="2030">2030</option>
-                       </select>
-                      </br>
-                       <button id="generate-url" class="btn btn-primary" onclick="generateAndOpenURL()">Export Raw Attendance</button>
-                    </div>
-                 </div>
-                 <div class="col-md-9 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-blue">
-                    <div class="flex-panel padding-44">
+                        <div class="p-icon green"></div>
+                        <span class="uppercase">Filters</span>
 
+                        <div class="form-group">
+                            <label for="dirasa-month">Select Month</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                                </div>
+                                <select id="dirasa-month" class="form-control">
+                                    <option value="">Select Month</option>
+                                    <option value="01">January</option>
+                                    <option value="02">February</option>
+                                    <option value="03">March</option>
+                                    <option value="04">April</option>
+                                    <option value="05">May</option>
+                                    <option value="06">June</option>
+                                    <option value="07">July</option>
+                                    <option value="08">August</option>
+                                    <option value="09">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dirasa-year">Select Year</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                                </div>
+                                <select id="dirasa-year" class="form-control">
+                                    <option value="">Select Year</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2030">2030</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenURL()">
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Raw Attendance
+                        </button>
                     </div>
-                 </div>
-              </div>
-           </div>
+                </div>
+
+                <!-- Filter Panel Right -->
+                <div class="col-md-6 flex-column bg-color03 p-grid-item nopadding hvr-bounce-to-top hvr-blue">
+                    <div class="flex-panel padding-44">
+                        <div class="p-icon green"></div>
+                        <span class="uppercase">Filters</span>
+                        <div class="form-group">
+                            <label for="dirasa-round">Select Round</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="fa fa-clipboard-list"></i></div>
+                                </div>
+                                <select id="dirasa-round" class="form-control">
+                                    <option value="">Select Round</option>
+                                    {% for round in rounds %}
+                                        <option value="{{ round.id }}">{{ round.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <button id="generate-total-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenTotalURL()">
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendances
+                        </button>
+                        <button id="generate-round-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenConsecutiveURL()">
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Consecutive Absence
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-     </div>
-  </div>
+    </div>
 </section>
+{% endblock %}
 
-   <section id="professional" class="container-fluid" data-section="home">
-      <div class="row flex-row">
-         <div id="pro-experience" class="col-md-4 flex-column dark nopadding ui-block-color02 flex-col"
-              data-animation-origin="bottom"
-              data-animation-duration="300"
-              data-animation-delay="800"
-              data-animation-distance="200px">
-            <div class="padding-50 flex-panel">
-               <h3 class="font-accident-two-normal uppercase">
-               </h3>
-               <div class="dividewhite4"></div>
-               <div class="experience">
-               </div>
-               <div class="dividewhite1"></div>
-            </div>
-         </div>
-         <div id="bar-skills" class="col-md-8 flex-column dark nopadding ui-block-color03 flex-col" data-section="bar-skills"
-              data-animation-origin="right"
-              data-animation-duration="400"
-              data-animation-delay="1100"
-              data-animation-distance="200px">
-            <div class="padding-50 flex-panel">
-               <h3 class="font-accident-two-normal uppercase"></h3>
-               <div class="dividewhite2"></div>
-               <div class="row">
-               </div>
-            </div>
-         </div>
-      </div>
-   </section>
-
-
+{% block extra_js %}
 <script>
 function generateAndOpenURL() {
     var month = document.getElementById('dirasa-month').value;
     var year = document.getElementById('dirasa-year').value;
 
     if (month && year) {
-
         var url = `/attendances/attendance-export/${month}/${year}/`;
         window.location.href = url;
     } else {
         alert('Please select both month and year.');
     }
 }
-</script>
 
+function generateAndOpenTotalURL() {
+    var round = document.getElementById('dirasa-round').value;
+
+    if (round) {
+        window.location.href = "{% url 'attendances:total_attendance_export' %}?round=" + round;
+    } else {
+        alert('Round is not selected. Please select a round before exporting data.');
+    }
+}
+
+function generateAndOpenConsecutiveURL() {
+    var round = document.getElementById('dirasa-round').value;
+
+    if (round) {
+        var url = `/attendances/consecutive-attendance-export/${round}/`;
+        window.location.href = url;
+    } else {
+        alert('Round is not selected. Please select a round before exporting data.');
+    }
+    if (month && year) {
+
+    } else {
+        alert('Please select both month and year.');
+    }
+}
+</script>
 {% endblock %}
