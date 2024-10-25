@@ -27,11 +27,10 @@ class InclusionTable(tables.Table):
         model = Inclusion
         fields = (
             'edit_column',
-            # 'assessment_column',
             'delete_column',
             'followup_column',
-            # 'referral_column',
             'first_attendance_date',
+            'round',
             'governorate',
             'district',
             'internal_number',

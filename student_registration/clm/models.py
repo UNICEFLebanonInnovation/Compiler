@@ -1813,9 +1813,9 @@ class Bridging(CLM):
     LEARNING_RESULT = Choices(
         ('', _('----------')),
         ('graduated_to_Bridging_next_level', _('Progress to the next Dirasa level')),
-        ('graduated_to_Bridging_next_round_same_level', _('Same level to Repeat the same Dirasa level')),
+        ('graduated_to_Bridging_next_round_same_level', _('Repeat the same Dirasa level')),
         ('dropout', _('Drop out')),
-        ('referred_public_school', _('Referred to public school')),
+        ('referred_public_school', _('Referred to formal education')),
         ('other', _('Referred to another pathway')),
     )
     SCHOOL_TYPE = Choices(
