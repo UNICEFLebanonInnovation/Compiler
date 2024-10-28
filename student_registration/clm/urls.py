@@ -302,7 +302,11 @@ urlpatterns = [
         view=inclusion_views.InclusionAssessmentView.as_view(),
         name='inclusion_assessment'
     ),
-
+    url(
+        regex=r'^inclusion-delete/(?P<pk>[\w.@+-]+)/$',
+        view=inclusion_views.InclusionDeleteView,
+        name='inclusion_delete'
+    ),
     url(
         regex=r'^outreach-add/$',
         view=views.OutreachAddView.as_view(),

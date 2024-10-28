@@ -10,8 +10,9 @@ class InclusionTable(tables.Table):
                                         template_name='django_tables2/clm_edit_column.html',
                                         attrs={'url': '/clm/inclusion-edit/', 'programme': 'Inclusion'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-                                          template_name='django_tables2/clm_delete_column.html',
-                                          attrs={'url': '/api/clm-inclusion/', 'programme': 'Inclusion'})
+                                          template_name='django_tables2/clm_inclusion_delete_column.html',
+                                          attrs={'url': '/clm/inclusion-delete/', 'programme': 'Inclusion'})
+
     followup_column = tables.TemplateColumn(verbose_name=_('followup'), orderable=False,
                                             template_name='django_tables2/clm_followup_column.html',
                                             attrs={'url': '/clm/inclusion-followup/', 'programme': 'Inclusion'})

@@ -64,6 +64,37 @@ $(document).ready(function() {
         }
     } );
 
+    $( ".delete-inclusion-student" ).on( "click", function(e) {
+
+        e.preventDefault();
+
+        var buttonId = $(this).attr("id");
+        var registrationId = $(this).data("registration-id");
+        var parentTR = $(this).closest('tr');
+
+        var confirmed = confirm("Are you sure you want to delete this student?");
+        requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
+        if (confirmed) {
+            $.ajax({
+                url: "/clm/inclusion-delete/" + registrationId + "/",
+                type: "GET",
+                headers: requestHeaders,
+                success: function(data) {
+                    console.log(parentTR.html());
+                    parentTR.remove();
+                },
+                error: function(error) {
+                    // Handle error if needed
+                }
+            });
+        } else {
+            console.log("User canceled deleting for student with ID: " + registrationId);
+        }
+    } );
+
+
     if($(document).find('#id_registration_date').length == 1) {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }

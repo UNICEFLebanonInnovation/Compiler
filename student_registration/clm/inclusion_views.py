@@ -241,6 +241,20 @@ class InclusionAssessmentView(LoginRequiredMixin,
         form.save(request=self.request, instance=instance)
         return super(InclusionAssessmentView, self).form_valid(form)
 
+
+def InclusionDeleteView(request, pk):
+    if request.user.is_authenticated:
+        try:
+            registration =  Inclusion.objects.get(pk=pk)
+            registration.delete()
+            result = {"isSuccessful": True}
+        except Inclusion.DoesNotExist:
+            result = {"isSuccessful": False}
+    else:
+        result = {"isSuccessful": False}
+    return JsonResponse(result)
+
+
 @login_required(login_url='/users/login')
 def inclusion_export(request):
     round_id = request.GET.get('round', None)
