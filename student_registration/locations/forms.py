@@ -179,6 +179,20 @@ class CenterForm(forms.ModelForm):
         choices=Center.TRUE_FALSE,
         initial=False
     )
+    offer_digital_learning = forms.ChoiceField(
+        label=_("Does the center offer digital learning services?"),
+        widget=forms.Select, required=False,
+        choices=Center.YES_NO,
+    )
+    have_digital_hub = forms.ChoiceField(
+        label=_("Does the center have a digital hub?"),
+        widget=forms.Select, required=False,
+        choices=Center.YES_NO,
+    )
+    neaby_phcc = forms.CharField(
+        label=_("Nearby PHCC name"),
+        widget=forms.TextInput, required=True
+    )
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         pk = kwargs.pop('pk', None)
@@ -243,8 +257,18 @@ class CenterForm(forms.ModelForm):
                     Div('admin_staff_number', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
+
                 Div(
                     HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    Div('offer_digital_learning', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    Div('have_digital_hub', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    Div('neaby_phcc', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('is_active', css_class='col-md-3'),
                 ),
                 FormActions(
@@ -285,6 +309,9 @@ class CenterForm(forms.ModelForm):
             instance.admin_staff_number = 0
         instance.is_active = validated_data.get('is_active')
         instance.modified_by = request.user
+        instance.offer_digital_learning = validated_data.get('offer_digital_learning')
+        instance.have_digital_hub = validated_data.get('have_digital_hub')
+        instance.neaby_phcc = validated_data.get('neaby_phcc')
 
         instance.save()
 
@@ -308,6 +335,9 @@ class CenterForm(forms.ModelForm):
             'cwd_accessible',
             'admin_staff_number',
             'is_active',
+            'offer_digital_learning',
+            'have_digital_hub',
+            'neaby_phcc'
         )
 
 

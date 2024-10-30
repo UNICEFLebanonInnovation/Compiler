@@ -218,6 +218,27 @@ class Center(TimeStampedModel):
         related_name='+',
         verbose_name=_('Modified by'),
     )
+    offer_digital_learning = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the center offer digital learning services?')
+    )
+    have_digital_hub = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the center have a digital hub?')
+    )
+    neaby_phcc = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_('Nearby PHCC name')
+    )
+
     @property
     def total_children(self):
         from student_registration.mscc.models import Registration

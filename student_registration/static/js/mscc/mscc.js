@@ -345,8 +345,9 @@ function old_child_search() {
 function child_duplication_check() {
 
     $('#child-duplication-error').hide();
+    $('#submit-id-save').prop('disabled', false);
 
-    if (isAddPage()) {
+//    if (isAddPage()) {
 
         var birthday_year = $('#id_child_birthday_year').val();
         var birthday_month = $('#id_child_birthday_month').val();
@@ -388,7 +389,7 @@ function child_duplication_check() {
                 console.log(response);
             }
         });
-    }
+//    }
 }
 
 
