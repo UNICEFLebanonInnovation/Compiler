@@ -1599,3 +1599,79 @@ def consecutive_absence_export(request, **kwargs):
         logging.error(traceback.format_exc())
 
         return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+def mscc_attendance_export(request, **kwargs):
+    try:
+        month = kwargs.get('month')
+        year = kwargs.get('year')
+        # round = kwargs.get('round')
+        education_program = kwargs.get('education_program', '')
+        class_section = kwargs.get('class_section', '')
+
+        if education_program == 'none':
+            education_program = ''
+        if class_section == 'none':
+            class_section = ''
+
+        cursor = connection.cursor()
+        query_params = []
+        vw_data_str = "SELECT * FROM vw_mscc_attendance_data WHERE attendance_id > 0"
+
+        if year:
+            vw_data_str += " AND EXTRACT(YEAR FROM attendance_date) = %s"
+            query_params.append(year)
+        if month:
+            vw_data_str += " AND EXTRACT(MONTH FROM attendance_date) = %s"
+            query_params.append(month)
+
+        if education_program:
+            vw_data_str += " AND education_program = %s"
+            query_params.append(education_program)
+
+        if class_section:
+            vw_data_str += " AND class_section = %s"
+            query_params.append(class_section)
+
+        if not request.user.groups.filter(name='MSCC_UNICEF').exists():
+            if request.user.center_id:
+                vw_data_str += " AND center_id = %s"
+                query_params.append(request.user.center_id)
+
+        vw_data_str += " ORDER BY attendance_date"
+        cursor.execute(vw_data_str, query_params)
+
+        # Log the query for debugging purposes
+        logging.debug("Executing query: %s", vw_data_str)
+        logging.debug("Query params: %s", str(query_params))
+
+        headers = [col[0] for col in cursor.description]
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=mscc_raw_attendance.csv'
+
+        response.write(codecs.BOM_UTF8)
+
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+        writer.writerow(headers)
+
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
+
+        return response
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
+

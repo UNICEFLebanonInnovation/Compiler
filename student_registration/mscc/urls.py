@@ -277,6 +277,11 @@ urlpatterns = [
         name='attendance_child'
     ),
     url(
+        'attendance-report/$',
+        attendance_views.AttendanceReport.as_view(),
+        name='attendance_report'
+    ),
+    url(
         regex=r'^Services/Follow-Up-View-ALl/(?P<registry>[\w.@+-]+)/$',
         view=services_view.FollowUpViewAll.as_view(),
         name='service_follow_up_view_all'

@@ -70,9 +70,13 @@
 <div class="row">
 <div class="col-md-4">
                                     <div class="main-card mb-3 card">
-                                        <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
+                                         <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
                                             <div class="btn-actions-pane-right actions-icon-btn">
-                                                <button class="btn-icon btn-icon-only btn btn-link"><i class="pe-7s-cloud-download btn-icon-wrapper"></i></button>
+                                              <a href="{% url 'mscc:attendance_report' %}">
+                                                  <button class="btn-icon btn-icon-only btn btn-link">
+                                                      <i class="pe-7s-cloud-download btn-icon-wrapper"></i>
+                                                  </button>
+                                              </a>
                                             </div>
                                         </div>
                                         <div class="card-body">

@@ -16,7 +16,7 @@ class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      TemplateView):
 
-    group_required = [u"MSCC", u"MSCC_CENTER", "MSCC_PARTNER"]
+    group_required = [u"MSCC",u"MSCC_UNICEF", u"MSCC_CENTER", "MSCC_PARTNER"]
     template_name = 'mscc/attendance.html'
 
     def get_context_data(self, **kwargs):
@@ -117,3 +117,28 @@ class LoadAttendanceChild(LoginRequiredMixin,
             'nbr_absent': instances.filter(attended='No').count(),
             'attendance_month': calendar.month_name[month]
         }
+
+
+class AttendanceReport(LoginRequiredMixin,
+                   TemplateView):
+
+    template_name = 'mscc/attendance_report.html'
+
+    def get_context_data(self, **kwargs):
+        from collections import OrderedDict
+
+        context = super(AttendanceReport, self).get_context_data(**kwargs)
+
+        context['rounds'] = Round.objects.filter(current_year=True).all()
+
+        education_programs = EducationService.EDUCATION_PROGRAM
+        sorted_education_programs = sorted(education_programs, key=lambda x: x[1])
+        education_program_dict = OrderedDict(sorted_education_programs)
+        context['education_program'] = education_program_dict
+
+        class_sections = EducationService.CLASS_SECTION
+        sorted_class_sections = sorted(class_sections, key=lambda x: x[1])
+        class_section_dict = OrderedDict(sorted_class_sections)
+        context['class_section'] = class_section_dict
+
+        return context

@@ -270,6 +270,7 @@ class CenterForm(forms.ModelForm):
                     Div('neaby_phcc', css_class='col-md-3'),
                     HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('is_active', css_class='col-md-3'),
+                    css_class='row card-body',
                 ),
                 FormActions(
                     Submit('save', 'Save',

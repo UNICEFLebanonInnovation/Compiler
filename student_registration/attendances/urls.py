@@ -62,4 +62,10 @@ urlpatterns = [
         view=views.consecutive_absence_export,
         name='consecutive_attendance_export'
     ),
+    url(
+        regex=r'^mscc-attendance-export/(?P<month>[\w.@+-]+)/(?P<year>[\w.@+-]+)/(?P<education_program>[\w\s.@+-]*)/(?P<class_section>[\w\s.@+-]*)/?$',
+        view=views.mscc_attendance_export,
+        name='mscc_attendance_export'
+    ),
+
 ]
