@@ -156,8 +156,8 @@
         }
         .badge-form-2 {
             padding: 4px 6px;
-            min-width: 30px;
-            max-width: 30px;
+            min-width: 32px;
+            max-width: 32px;
             height: 30px;
             font-size: 13px;
             border: 1px solid #3f6ad8;
@@ -195,7 +195,30 @@
             overflow: scroll !important;
             min-height: 50px;
             max-height: 300px;
-        }
+       }
+      .multiple-choice-options {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 10px; /* Adds space between checkbox and label */
+      }
+
+      .checkbox {
+          margin: 0 10px 0 0; /* Space out checkboxes if needed */
+          width: auto; /* Ensures checkbox doesn’t take up too much space */
+      }
+
+      /* Ensures that checkbox elements are displayed inline */
+      .checkbox input[type="checkbox"] {
+          margin-right: 5px; /* Space between checkbox and label text */
+      }
+
+      .card-body .multiple-choice-label {
+          padding-bottom: 5px; /* Adjust spacing between elements */
+      }
+
+
+
 
         </style>
 </head>

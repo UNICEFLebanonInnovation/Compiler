@@ -252,6 +252,7 @@ class ProgramDocumentForm(forms.ModelForm):
         label=_('Comment'),
         widget=forms.Textarea, required=False
     )
+
     plan = forms.ModelChoiceField(
         queryset=Plan.objects.all(), widget=forms.Select,
         label=_('Plan'),
@@ -438,8 +439,8 @@ class ProgramDocumentForm(forms.ModelForm):
                 ),
                 Div(
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">1</span>'),
-                        Div('donors', css_class='col-md-7  multiple-choice checkbox'),
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
                         css_class='row card-body'
                     ),
                     css_id='step-2'
@@ -447,7 +448,7 @@ class ProgramDocumentForm(forms.ModelForm):
                 Div(
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('master_programs', css_class='col-md-7  multiple-choice checkbox'),
+                        Div('master_programs', css_class='col-md-8 multiple-choice-options checkbox'),
                         css_class='row card-body'
                     ),
                     FormActions(
@@ -555,7 +556,7 @@ class ProgramDocumentForm(forms.ModelForm):
                 Div(
                     Div(
                         HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('master_programs', css_class='col-md-7  multiple-choice checkbox'),
+                        Div('master_programs', css_class='col-md-8 multiple-choice-options checkbox'),
                         css_class='row card-body'
                     ),
                     FormActions(
@@ -568,8 +569,8 @@ class ProgramDocumentForm(forms.ModelForm):
                 ),
                 Div(
                     Div(
-                        HTML('<span class="badge-form-2 badge-pill">1</span>'),
-                        Div('donors', css_class='col-md-7 multiple-choice checkbox'),
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
                         css_class='row card-body'
                     ),
                     css_id='step-3',
@@ -587,10 +588,32 @@ class ProgramDocumentForm(forms.ModelForm):
         else:
             instance = ProgramDocument.objects.get(id=instance)
 
-        instance.partner_id = validated_data.get('partner')
 
         # Save the instance to ensure it has an ID
         instance.save()
+
+
+        instance.partner_id = validated_data.get('partner')
+        instance.funded_by_id = validated_data.get('funded_by')
+        instance.project_status = validated_data.get('project_status')
+        instance.project_code = validated_data.get('project_code')
+        instance.project_name = validated_data.get('project_name')
+        instance.project_description = validated_data.get('project_description')
+        instance.implementing_partners = validated_data.get('implementing_partners')
+        instance.focal_point_id = validated_data.get('focal_point')
+        instance.start_date = validated_data.get('start_date')
+        instance.end_date = validated_data.get('end_date')
+        instance.comment = validated_data.get('comment')
+        instance.plan_id = validated_data.get('plan')
+        instance.sectors_id = validated_data.get('sectors')
+        instance.project_type_id = validated_data.get('project_type')
+        instance.public_institution_support = validated_data.get('public_institution_support')
+        instance.budget = validated_data.get('budget')
+        instance.cash_assistance = validated_data.get('cash_assistance')
+        instance.number_targeted_syrians = validated_data.get('number_targeted_syrians')
+        instance.number_targeted_lebanese = validated_data.get('number_targeted_lebanese')
+        instance.number_targeted_prl = validated_data.get('number_targeted_prl')
+        instance.number_targeted_prs = validated_data.get('number_targeted_prs') 
 
         # Assign the governorates from the form data
         governorates_ids = validated_data.getlist('governorates')
@@ -617,7 +640,6 @@ class ProgramDocumentForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
-
 
     class Meta:
         model = ProgramDocument

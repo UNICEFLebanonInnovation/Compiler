@@ -23,12 +23,12 @@ $(document).ready(function() {
 
         // Logic to enable/disable based on selected groups
         console.log(selectedLabels)
-        if (!selectedLabels.includes('Displaced Syrians')) {
+        if (!selectedLabels.includes('Syrians')) {
             numberTargetedSyrians.prop('disabled', true).val('');
         } else {
             numberTargetedSyrians.prop('disabled', false);
         }
-        if (!selectedLabels.includes('Vulnerable Lebanese')) {
+        if (!selectedLabels.includes('Lebanese')) {
             numberTargetedLebanese.prop('disabled', true).val('');
         } else {
             numberTargetedLebanese.prop('disabled', false);
