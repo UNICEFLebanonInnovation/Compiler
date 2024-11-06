@@ -380,12 +380,12 @@ class ProgramDocument(TimeStampedModel):
         verbose_name=_('Project Code')
     )
     project_name = models.CharField(
-        max_length=100,
+        max_length=250,
         default='project_name',
         verbose_name=_('Project Name')
     )
     project_description = models.CharField(
-        max_length=100,
+        max_length=300,
         blank=True, null=True,
         verbose_name=_('Project Description')
     )
