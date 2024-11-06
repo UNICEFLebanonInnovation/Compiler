@@ -128,6 +128,24 @@ class FundedBy(models.Model):
         return self.name
 
 
+class ProjectStatus(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Project Status')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class FocalPoint(models.Model):
 
     name = models.CharField(
@@ -346,11 +364,6 @@ class ProgramDocument(TimeStampedModel):
         ('Yes', _("Yes")),
         ('No', _("No"))
     )
-    PROJECT_STATUS = Choices(
-        ('', '----------'),
-        ('on going', _("On going")),
-        ('closed', _("No"))
-    )
     SUPPORT = Choices(
         ('', '----------'),
         ('No Support', _("No Support")),
@@ -368,10 +381,10 @@ class ProgramDocument(TimeStampedModel):
         related_name='+',
         verbose_name=_('Funded By')
     )
-    project_status = models.CharField(
-        max_length=100,
+    project_status = models.ForeignKey(
+        ProjectStatus,
         blank=True, null=True,
-        choices=PROJECT_STATUS,
+        related_name='+',
         verbose_name=_('Project Status')
     )
     project_code = models.CharField(

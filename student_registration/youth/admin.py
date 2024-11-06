@@ -115,21 +115,26 @@ class SubProgramAdmin(admin.ModelAdmin):
     search_fields = ('number', 'name', 'master_program', 'active')
     list_filter = (CreationYearFilter,)
 
+
 class PartnerAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name', 'active')
     search_fields = ('name', 'short_name', 'active')
+
 
 class FundedByAdmin(admin.ModelAdmin):
     list_display = ('name', 'active')
     search_fields = ('name', 'active')
 
+
 class FocalPointAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone', 'email')
     search_fields = ['name']
 
+
 class PlanAdmin(admin.ModelAdmin):
     list_display = ('name', 'active')
     search_fields = ('name', 'active')
+
 
 class SectorAdmin(admin.ModelAdmin):
     list_display = ('name', 'default')
@@ -139,9 +144,16 @@ class ProjectTypeAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
 
+
+class ProjectStatusAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+
+
 class PopulationGroupsAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name')
     search_fields = ('name', 'short_name')
+
 
 class DonorAdmin(admin.ModelAdmin):
     list_display = ('name', 'active')
@@ -173,6 +185,7 @@ admin.site.register(FocalPoint, FocalPointAdmin)
 admin.site.register(Plan, PlanAdmin)
 admin.site.register(Sector, SectorAdmin)
 admin.site.register(ProjectType, ProjectTypeAdmin)
+admin.site.register(ProjectStatus, ProjectStatusAdmin)
 admin.site.register(PopulationGroups, PopulationGroupsAdmin)
 admin.site.register(MasterProgram, MasterProgramAdmin)
 admin.site.register(SubProgram, SubProgramAdmin)

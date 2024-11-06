@@ -1,5 +1,5 @@
 
-var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
+var arabic_fields = "#id_adolescent_first_name, #id_adolescent_father_name, #id_adolescent_last_name, #id_adolescent_mother_fullname, " +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 
 $(document).ready(function() {
@@ -101,7 +101,7 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_child_gender', function(){
+    $(document).on('change', 'select#id_adolescent_gender', function(){
         reorganizeForm();
     });
 
@@ -140,33 +140,33 @@ $(document).ready(function() {
     });
     reorganizeForm();
 
-    $(document).on('change', 'select#id_child_have_children, select#id_child_nationality, select#id_main_caregiver, select#id_main_caregiver_nationality, select#id_have_labour, select#id_labour_type, select#id_child_have_sibling', function(){
+    $(document).on('change', 'select#id_adolescent_have_children, select#id_adolescent_nationality, select#id_main_caregiver, select#id_main_caregiver_nationality, select#id_have_labour, select#id_labour_type, select#id_adolescent_have_sibling', function(){
          reorganizeForm();
     });
     $(document).on('change', 'select#id_student_nationality, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_child_first_name, select#id_child_father_name, select#id_child_last_name, select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
+    $(document).on('change', 'select#id_adolescent_first_name, select#id_adolescent_father_name, select#id_adolescent_last_name, select#id_adolescent_birthday_year, select#id_adolescent_birthday_month, select#id_adolescent_birthday_day', function(){
         $('#search_loader').removeClass('hidden');
         $('#nfe_search_loader').removeClass('hidden');
 
-        var first_name = $('#id_child_first_name').val();
-        var father_name = $('#id_child_father_name').val();
-        var last_name = $('#id_child_last_name').val();
+        var first_name = $('#id_adolescent_first_name').val();
+        var father_name = $('#id_adolescent_father_name').val();
+        var last_name = $('#id_adolescent_last_name').val();
         if ( first_name!= '' && father_name!= '' && last_name!= '')
         {
-            outreach_child_search();
-            old_child_search();
-            child_duplication_check();
+            outreach_adolescent_search();
+            old_adolescent_search();
+            adolescent_duplication_check();
         }
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
         var main_caregiver = $('select#id_main_caregiver').val();
         if(main_caregiver == 'Father'){
-            var father_name = $('#id_child_father_name').val();
-            var last_name = $('#id_child_last_name').val();
+            var father_name = $('#id_adolescent_father_name').val();
+            var last_name = $('#id_adolescent_last_name').val();
             $('#id_caregiver_first_name').val(father_name);
             $('#id_caregiver_last_name').val(last_name);
         }
@@ -201,16 +201,16 @@ $(document).ready(function() {
 
 });
 
-function outreach_child_search() {
+function outreach_adolescent_search() {
 
     if (isAddPage()) {
 
-        var birthday_year = $('#id_child_birthday_year').val();
-        var birthday_month = $('#id_child_birthday_month').val();
-        var birthday_day = $('#id_child_birthday_day').val();
-        var first_name = $('#id_child_first_name').val();
-        var father_name = $('#id_child_father_name').val();
-        var last_name = $('#id_child_last_name').val();
+        var birthday_year = $('#id_adolescent_birthday_year').val();
+        var birthday_month = $('#id_adolescent_birthday_month').val();
+        var birthday_day = $('#id_adolescent_birthday_day').val();
+        var first_name = $('#id_adolescent_first_name').val();
+        var father_name = $('#id_adolescent_father_name').val();
+        var last_name = $('#id_adolescent_last_name').val();
 
         var data = {
             birthday_year: birthday_year,
@@ -337,12 +337,12 @@ function old_child_search() {
 
     if (isAddPage()) {
 
-        var birthday_year = $('#id_child_birthday_year').val();
-        var birthday_month = $('#id_child_birthday_month').val();
-        var birthday_day = $('#id_child_birthday_day').val();
-        var first_name = $('#id_child_first_name').val();
-        var father_name = $('#id_child_father_name').val();
-        var last_name = $('#id_child_last_name').val();
+        var birthday_year = $('#id_adolescent_birthday_year').val();
+        var birthday_month = $('#id_adolescent_birthday_month').val();
+        var birthday_day = $('#id_adolescent_birthday_day').val();
+        var first_name = $('#id_adolescent_first_name').val();
+        var father_name = $('#id_adolescent_father_name').val();
+        var last_name = $('#id_adolescent_last_name').val();
 
         var data = {
             birthday_year: birthday_year,
@@ -375,12 +375,12 @@ function child_duplication_check() {
 
     if (isAddPage()) {
 
-        var birthday_year = $('#id_child_birthday_year').val();
-        var birthday_month = $('#id_child_birthday_month').val();
-        var birthday_day = $('#id_child_birthday_day').val();
-        var first_name = $('#id_child_first_name').val();
-        var father_name = $('#id_child_father_name').val();
-        var last_name = $('#id_child_last_name').val();
+        var birthday_year = $('#id_adolescent_birthday_year').val();
+        var birthday_month = $('#id_adolescent_birthday_month').val();
+        var birthday_day = $('#id_adolescent_birthday_day').val();
+        var first_name = $('#id_adolescent_first_name').val();
+        var father_name = $('#id_adolescent_father_name').val();
+        var last_name = $('#id_adolescent_last_name').val();
 
         var data = {
             birthday_year: birthday_year,
@@ -511,57 +511,28 @@ function isAddPage()
 
 function reorganizeForm()
 {
-//  child_gender
-    var child_gender = $('select#id_child_gender').val();
+//  adolescent_gender
+    var adolescent_gender = $('select#id_adolescent_gender').val();
 
-    if(child_gender =='Female'){
-        $("#id_child_have_children").append('<option value="Child pregnant or expecting children">Child pregnant or expecting children</option>');
+    if(adolescent_gender =='Female'){
+        $("#id_adolescent_have_children").append('<option value="Child pregnant or expecting children">Child pregnant or expecting children</option>');
     }
     else
      {
-        $("#id_child_have_children option[value='Child pregnant or expecting children']").remove();
+        $("#id_adolescent_have_children option[value='Child pregnant or expecting children']").remove();
     }
 
 //    Child Nationality
-    var child_nationality = $('select#id_child_nationality').val();
-    $('div#div_id_child_nationality_other').addClass('d-none');
+    var child_nationality = $('select#id_adolescent_nationality').val();
+    $('div#div_id_adolescent_nationality_other').addClass('d-none');
 
     if(child_nationality == 6){
-        $('#div_id_child_nationality_other').removeClass('d-none');
+        $('#div_id_adolescent_nationality_other').removeClass('d-none');
     }
     else{
-        $('#id_child_nationality_other').val('');
+        $('#id_adolescent_nationality_other').val('');
     }
 
-    if(child_nationality == 5 && $('#id_type').val() == 'Walk-in'){
-        $('#child_fe_unique_id_block').removeClass('d-none');
-    }
-    else{
-        $('#child_fe_unique_id_block').addClass('d-none');
-        $('#id_child_fe_unique_id').val('');
-    }
-
-//    Child have children
-    var child_have_children = $('select#id_child_have_children').val();
-
-    if(child_have_children =='Yes'){
-        $('div#div_id_child_children_number').removeClass('d-none');
-    }
-    else{
-        $('div#div_id_child_children_number').addClass('d-none');
-        $('#id_child_children_number').val('');
-    }
-
-    //child_have_sibling
-    var child_have_sibling = $('select#id_child_have_sibling').val();
-
-    if(child_have_sibling =='Yes'){
-        $('div#div_id_child_siblings_have_disability').removeClass('d-none');
-    }
-    else{
-        $('div#div_id_child_siblings_have_disability').addClass('d-none');
-        $('#id_child_siblings_have_disability').val('');
-    }
 
 //   Source of Identification
     var source_of_identification = $('select#id_source_of_identification').val();

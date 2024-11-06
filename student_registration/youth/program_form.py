@@ -28,7 +28,8 @@ from .models import (
     Plan,
     Sector,
     ProjectType,
-    PopulationGroups
+    PopulationGroups,
+    ProjectStatus
 )
 from student_registration.locations.models import Location
 from student_registration.users.templatetags.custom_tags import has_group
@@ -185,6 +186,14 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(EnrolledProgramsForm, self).clean()
+        registration_date = cleaned_data.get("registration_date")
+        completion_date = cleaned_data.get("completion_date")
+        if registration_date >= completion_date:
+            self.add_error('registration_date', 'Registration Date must be less than Completion Date')
+
+
     class Meta:
         model = EnrolledPrograms
         fields = (
@@ -213,10 +222,11 @@ class ProgramDocumentForm(forms.ModelForm):
         empty_label='-------',
         required=True, to_field_name='id',
     )
-    project_status = forms.ChoiceField(
-        label=_("Project Status"),
-        widget=forms.Select, required=True,
-        choices=ProgramDocument.PROJECT_STATUS
+    project_status = forms.ModelChoiceField(
+        queryset=ProjectStatus.objects.all(), widget=forms.Select,
+        label=_('Project Status"'),
+        empty_label='-------',
+        required=True, to_field_name='id',
     )
     project_code = forms.CharField(
         label=_("Project Code"),
@@ -595,7 +605,7 @@ class ProgramDocumentForm(forms.ModelForm):
 
         instance.partner_id = validated_data.get('partner')
         instance.funded_by_id = validated_data.get('funded_by')
-        instance.project_status = validated_data.get('project_status')
+        instance.project_status_id = validated_data.get('project_status')
         instance.project_code = validated_data.get('project_code')
         instance.project_name = validated_data.get('project_name')
         instance.project_description = validated_data.get('project_description')
@@ -613,7 +623,7 @@ class ProgramDocumentForm(forms.ModelForm):
         instance.number_targeted_syrians = validated_data.get('number_targeted_syrians')
         instance.number_targeted_lebanese = validated_data.get('number_targeted_lebanese')
         instance.number_targeted_prl = validated_data.get('number_targeted_prl')
-        instance.number_targeted_prs = validated_data.get('number_targeted_prs') 
+        instance.number_targeted_prs = validated_data.get('number_targeted_prs')
 
         # Assign the governorates from the form data
         governorates_ids = validated_data.getlist('governorates')
@@ -640,6 +650,13 @@ class ProgramDocumentForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
+
+    def clean(self):
+        cleaned_data = super(ProgramDocumentForm, self).clean()
+        start_date = cleaned_data.get("start_date")
+        end_date = cleaned_data.get("end_date")
+        if start_date >= end_date:
+            self.add_error('start_date', 'Start Date must be less than End Date')
 
     class Meta:
         model = ProgramDocument

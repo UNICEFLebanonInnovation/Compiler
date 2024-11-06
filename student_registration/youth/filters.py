@@ -23,6 +23,7 @@ from .models import (
     ProgramDocument,
     Partner,
     FundedBy,
+    ProjectStatus,
     FocalPoint
 )
 from student_registration.youth.models import Adolescent
@@ -98,7 +99,8 @@ class PDFilter(FilterSet):
                                 .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
-    project_status = ChoiceFilter(choices=ProgramDocument.PROJECT_STATUS, empty_label='Status')
+    project_status = ChoiceFilter(choices=ProjectStatus.objects.values_list('id', 'name')
+                                 .order_by('name').distinct(), empty_label='Status')
     project_code = CharFilter(lookup_expr='icontains')
     project_name = CharFilter(lookup_expr='icontains')
     implementing_partners = CharFilter(lookup_expr='icontains')
@@ -144,7 +146,8 @@ class PDPartnerFilter(FilterSet):
                                 .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
-    project_status = ChoiceFilter(choices=ProgramDocument.PROJECT_STATUS, empty_label='Status')
+    project_status = ChoiceFilter(choices=ProjectStatus.objects.values_list('id', 'name')
+                                  .order_by('name').distinct(), empty_label='Status')
     project_code = CharFilter(lookup_expr='icontains')
     project_name = CharFilter(lookup_expr='icontains')
     implementing_partners = CharFilter(lookup_expr='icontains')

@@ -79,7 +79,7 @@ class ProgramDocumentFormView(LoginRequiredMixin,
                     data = {
                         'partner': instance_data.partner_id,
                         'funded_by': instance_data.funded_by_id,
-                        'project_status': instance_data.project_status,
+                        'project_status_id': instance_data.project_status_id,
                         'project_code': instance_data.project_code,
                         'project_name': instance_data.project_name,
                         'project_description': instance_data.project_description,
