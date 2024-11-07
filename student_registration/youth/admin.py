@@ -90,6 +90,15 @@ class ProgramDocumentAdmin(admin.ModelAdmin):
     )
 
 
+class ProgramTypeAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+
+
+class ProgramTagAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+
 class CreationYearFilter(admin.SimpleListFilter):
     title = _('creation year')
     parameter_name = 'creation_year'
@@ -105,9 +114,9 @@ class CreationYearFilter(admin.SimpleListFilter):
 
 
 class MasterProgramAdmin(admin.ModelAdmin):
-    list_display = ('number', 'name', 'active', 'creation_year')
-    search_fields = ('number', 'name', 'active')
-    list_filter = (CreationYearFilter,)
+    list_display = ('number', 'name', 'program_type', 'program_tag', 'active', 'creation_year')
+    search_fields = ('number', 'name')
+    list_filter = (CreationYearFilter, 'program_type', 'program_tag', 'active')
 
 
 class SubProgramAdmin(admin.ModelAdmin):
@@ -139,6 +148,7 @@ class PlanAdmin(admin.ModelAdmin):
 class SectorAdmin(admin.ModelAdmin):
     list_display = ('name', 'default')
     search_fields = ('name', 'default')
+
 
 class ProjectTypeAdmin(admin.ModelAdmin):
     list_display = ['name']
@@ -187,6 +197,8 @@ admin.site.register(Sector, SectorAdmin)
 admin.site.register(ProjectType, ProjectTypeAdmin)
 admin.site.register(ProjectStatus, ProjectStatusAdmin)
 admin.site.register(PopulationGroups, PopulationGroupsAdmin)
+admin.site.register(ProgramType, ProgramTypeAdmin)
+admin.site.register(ProgramTag, ProgramTagAdmin)
 admin.site.register(MasterProgram, MasterProgramAdmin)
 admin.site.register(SubProgram, SubProgramAdmin)
 admin.site.register(Donor,DonorAdmin)

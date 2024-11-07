@@ -255,9 +255,57 @@ class PopulationGroups(models.Model):
         return self.name
 
 
+class ProgramType(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Program Type')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class ProgramTag(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Program Tag')
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class MasterProgram(TimeStampedModel):
     number = models.CharField(max_length=20, default='1')
     name = models.CharField(max_length=100)
+    program_type = models.ForeignKey(
+        ProgramType,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Program Type')
+    )
+    program_tag = models.ForeignKey(
+        ProgramTag,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Program Tag')
+    )
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
