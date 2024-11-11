@@ -16,6 +16,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'adolescent',
         'partner',
         'center',
+        'deleted',
         'created',
         'modified',
     )
@@ -25,6 +26,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'adolescent__nationality',
         'partner',
         'center',
+        'deleted',
         'created',
         'modified',
     )
