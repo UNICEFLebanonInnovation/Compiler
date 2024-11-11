@@ -37,7 +37,10 @@ class AttendanceView(LoginRequiredMixin,
         sorted_class_sections = sorted(class_sections, key=lambda x: x[1])
         class_section_dict = OrderedDict(sorted_class_sections)
 
-        instance = MSCCAttendance.objects.filter(center_id=center_id,
+        instance = None
+
+        if center_id:
+            instance = MSCCAttendance.objects.filter(center_id=center_id,
                                                  attendance_date=datetime.now()).last()
 
         if instance:
@@ -84,7 +87,7 @@ class LoadAttendanceChildren(LoginRequiredMixin,
             # Parse the attendance_date_str into a datetime object
             attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
 
-            if attendance_date <= current_date:
+            if attendance_date <= current_date and center_id:
                 instances = load_child_attendance(center_id, round_id, attendance_date_str, education_program, class_section)
             else:
                 instances = []
