@@ -1608,11 +1608,17 @@ def mscc_attendance_export(request, **kwargs):
         # round = kwargs.get('round')
         education_program = kwargs.get('education_program', '')
         class_section = kwargs.get('class_section', '')
+        partner_id = kwargs.get('partner', '')
+        center_id = kwargs.get('center', '')
 
         if education_program == 'none':
             education_program = ''
         if class_section == 'none':
             class_section = ''
+        if partner_id == 'none':
+            partner_id = ''
+        if center_id == 'none':
+            center_id = ''
 
         cursor = connection.cursor()
         query_params = []
@@ -1632,6 +1638,14 @@ def mscc_attendance_export(request, **kwargs):
         if class_section:
             vw_data_str += " AND class_section = %s"
             query_params.append(class_section)
+
+        if partner_id:
+            vw_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+
+        if center_id:
+            vw_data_str += " AND center_id = %s"
+            query_params.append(center_id)
 
         if not request.user.groups.filter(name='MSCC_UNICEF').exists():
             if request.user.center_id:

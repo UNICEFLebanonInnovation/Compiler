@@ -9,6 +9,9 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, Http
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.mscc.models import EducationService, Round
+from student_registration.locations.models import Center
+from student_registration.schools.models import PartnerOrganization
+
 from .utils import load_child_attendance, create_attendance
 
 
@@ -122,9 +125,7 @@ class LoadAttendanceChild(LoginRequiredMixin,
         }
 
 
-class AttendanceReport(LoginRequiredMixin,
-                   TemplateView):
-
+class AttendanceReport(LoginRequiredMixin, TemplateView):
     template_name = 'mscc/attendance_report.html'
 
     def get_context_data(self, **kwargs):
@@ -143,5 +144,18 @@ class AttendanceReport(LoginRequiredMixin,
         sorted_class_sections = sorted(class_sections, key=lambda x: x[1])
         class_section_dict = OrderedDict(sorted_class_sections)
         context['class_section'] = class_section_dict
+
+        context['center'] = []
+        context['partner'] = []
+
+        if not self.request.user.groups.filter(name='MSCC_UNICEF').exists():
+            if self.request.user.center_id:
+                center = Center.objects.filter(id=self.request.user.center_id).last()
+                if center:
+                    context['center'] = [center]
+                    context['partner'] = PartnerOrganization.objects.filter(id=center.partner_id).all()
+        else:
+            context['center'] = Center.objects.all()
+            context['partner'] = PartnerOrganization.objects.all()
 
         return context
