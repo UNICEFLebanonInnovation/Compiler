@@ -26,6 +26,9 @@ from student_registration.schools.models import (
     School,
 )
 
+from student_registration.students.utils import generate_id
+
+
 
 def is_allowed_create(programme):
     from student_registration.schools.models import CLMRound
@@ -3638,3 +3641,16 @@ def update_consecutive_absence(registration_id, student_id, first_name, father_n
             consecutive_absence_days=1,
         )
         absence.save()
+
+
+def regenerate_child_id(first_name, father_name, last_name,mother_fullname, gender, birthday_day, birthday_month,birthday_year):
+    return generate_id(
+        first_name,
+        father_name,
+        last_name,
+        mother_fullname,
+        gender,
+        birthday_day,
+        birthday_month,
+        birthday_year
+    )

@@ -59,6 +59,7 @@ from .serializers import (
     OutreachSerializer,
     BridgingSerializer,
 )
+from .utils import  regenerate_child_id
 
 from django.forms.widgets import ClearableFileInput
 
@@ -8262,7 +8263,48 @@ class BridgingForm(CommonForm):
             self.add_error('math', 'This value is greater that 103')
 
     def save(self, request=None, instance=None, serializer=None):
+        if instance:
+            old_values = {
+                'first_name': instance.student.first_name,
+                'father_name': instance.student.father_name,
+                'last_name': instance.student.last_name,
+                'mother_fullname': instance.student.mother_fullname,
+                'gender': instance.student.sex,
+                'birthday_year': instance.student.birthday_year,
+                'birthday_month': instance.student.birthday_month,
+                'birthday_day': instance.student.birthday_day,
+            }
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
+
+        if instance:
+            validated_data = request.POST
+            new_first_name = validated_data.get('student_first_name')
+            new_father_name = validated_data.get('student_father_name')
+            new_last_name = validated_data.get('student_last_name')
+            new_mother_fullname = validated_data.get('student_mother_fullname')
+            new_gender = validated_data.get('student_sex')
+            new_birthday_year = validated_data.get('student_birthday_year')
+            new_birthday_month = validated_data.get('student_birthday_month')
+            new_birthday_day = validated_data.get('student_birthday_day')
+
+            if (old_values['first_name'] != new_first_name
+                or old_values['father_name'] != new_father_name
+                or old_values['last_name'] != new_last_name
+                or old_values['mother_fullname'] != new_mother_fullname
+                or old_values['gender'] != new_gender
+                or old_values['birthday_year'] != new_birthday_year
+                or old_values['birthday_month'] != new_birthday_month
+                or old_values['birthday_day'] != new_birthday_day):
+                new_child_number = regenerate_child_id(
+                    new_first_name, new_father_name, new_last_name,
+                    new_mother_fullname, new_gender, new_birthday_day,
+                    new_birthday_month, new_birthday_year
+                )
+                print("Old Child Number:", instance.student.number)
+                print("New Child Number:", new_child_number)
+                if new_child_number:
+                    instance.child.number = new_child_number
+
         instance.save()
         consent_parents = request.FILES.get('consent_parents', False)
         if consent_parents:
