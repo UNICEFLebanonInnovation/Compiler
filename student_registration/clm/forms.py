@@ -8295,20 +8295,26 @@ class BridgingForm(CommonForm):
                 or old_values['birthday_year'] != new_birthday_year
                 or old_values['birthday_month'] != new_birthday_month
                 or old_values['birthday_day'] != new_birthday_day):
+
                 new_child_number = regenerate_child_id(
                     new_first_name, new_father_name, new_last_name,
                     new_mother_fullname, new_gender, new_birthday_day,
                     new_birthday_month, new_birthday_year
                 )
+
                 print("Old Child Number:", instance.student.number)
                 print("New Child Number:", new_child_number)
+
                 if new_child_number:
-                    instance.child.number = new_child_number
+                    instance.student.number = new_child_number
+                    instance.student.save()  # Ensure to save the student instance
 
         instance.save()
+
         consent_parents = request.FILES.get('consent_parents', False)
         if consent_parents:
             instance.consent_parents = consent_parents
+
         instance.pre_test = {
             "Bridging_ASSESSMENT/arabic_alphabet_knowledge": request.POST.get('arabic_alphabet_knowledge'),
             "Bridging_ASSESSMENT/arabic_familiar_words": request.POST.get('arabic_familiar_words'),
@@ -8324,6 +8330,7 @@ class BridgingForm(CommonForm):
 
             "Bridging_ASSESSMENT/math": request.POST.get('math')
         }
+
         instance.save()
 
     class Meta:
