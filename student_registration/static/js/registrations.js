@@ -1611,7 +1611,7 @@ function duplicate_search_student_name()
 
 function duplicate_search(search_by) {
 
-    if (isAddPage() ) {
+//    if (isAddPage() ) {
         var search_by = search_by;
         var round = $('select#id_round').val();
         // var new_registry = $('select#id_new_registry').val();
@@ -1684,7 +1684,7 @@ function duplicate_search(search_by) {
         });
 
 
-    }
+//    }
 
 }
 
