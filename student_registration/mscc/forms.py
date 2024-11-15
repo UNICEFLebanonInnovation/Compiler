@@ -1045,16 +1045,10 @@ class MainForm(forms.ModelForm):
                         new_birthday_month, new_birthday_year
                     )
 
-                    print('------------------old--------------------')
-                    print(instance.child.number)
-                    print('-----------------new---------------------')
-                    print(new_child_number)
-
                 old_dob_year = instance.child.birthday_year
                 old_dob_month = instance.child.birthday_month
                 old_dob_age = instance.child_age
 
-                # Update instance and assign new child number if it exists
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 if new_child_number:
                     instance.child.number = new_child_number

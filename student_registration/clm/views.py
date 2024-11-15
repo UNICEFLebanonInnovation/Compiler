@@ -3256,19 +3256,19 @@ def search_clm_duplicate_registration(request):
         parent_national_number = body.get('parent_national_number')
         parent_other_number = body.get('parent_other_number')
 
-        model = BLN
-        if clm_type == 'BLN':
-            model = BLN
-        if clm_type == 'RS':
-            model = RS
-        elif clm_type == 'ABLN':
-            model = ABLN
-        elif clm_type == 'CBECE':
-            model = CBECE
-        elif clm_type == 'Outreach':
-            model = Outreach
-        elif clm_type == 'Bridging':
-            model = Bridging
+        model = Bridging
+        # if clm_type == 'BLN':
+        #     model = BLN
+        # if clm_type == 'RS':
+        #     model = RS
+        # elif clm_type == 'ABLN':
+        #     model = ABLN
+        # elif clm_type == 'CBECE':
+        #     model = CBECE
+        # elif clm_type == 'Outreach':
+        #     model = Outreach
+        # elif clm_type == 'Bridging':
+        #     model = Bridging
 
         str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
                                           student_father_name,student_last_name,student_mother_fullname
@@ -3278,29 +3278,29 @@ def search_clm_duplicate_registration(request):
 
         if str_partner_name != '':
             return JsonResponse({'result': str_partner_name})
-        elif clm_type == 'BLN':
-            model = ABLN
-            str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                              student_father_name,student_last_name,student_mother_fullname,
-                                               phone_number, case_number, recorded_number,
-                                              parent_syrian_national_number, parent_sop_national_number,
-                                              parent_national_number,
-                                              parent_other_number)
-
-            if str_partner_name != '':
-                return JsonResponse({'result': str_partner_name})
-        elif clm_type == 'ABLN':
-            model = BLN
-            str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
-                                              student_father_name,student_last_name,student_mother_fullname,
-                                               phone_number, case_number, recorded_number,
-                                              parent_syrian_national_number, parent_sop_national_number,
-                                              parent_national_number,
-                                              parent_other_number)
-
-            if str_partner_name != '':
-
-                return JsonResponse({'result': str_partner_name})
+        # elif clm_type == 'BLN':
+        #     model = ABLN
+        #     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+        #                                       student_father_name,student_last_name,student_mother_fullname,
+        #                                        phone_number, case_number, recorded_number,
+        #                                       parent_syrian_national_number, parent_sop_national_number,
+        #                                       parent_national_number,
+        #                                       parent_other_number)
+        #
+        #     if str_partner_name != '':
+        #         return JsonResponse({'result': str_partner_name})
+        # elif clm_type == 'ABLN':
+        #     model = BLN
+        #     str_partner_name = search_student(model, search_by, round_id, id_type, student_id, student_first_name,
+        #                                       student_father_name,student_last_name,student_mother_fullname,
+        #                                        phone_number, case_number, recorded_number,
+        #                                       parent_syrian_national_number, parent_sop_national_number,
+        #                                       parent_national_number,
+        #                                       parent_other_number)
+        #
+        #     if str_partner_name != '':
+        #
+        #         return JsonResponse({'result': str_partner_name})
 
     return JsonResponse({'result': ''})
 
