@@ -57,30 +57,24 @@
                                                     <em>1</em><span>Program Document</span>
                                                 </a>
                                             </li>
-                                          <li>
+                                           {% if request.user|has_group:"YOUTH_UNICEF" %}
+                                            <li>
+                                                <a href="#step-2">
+                                                    <em>2</em><span>Donors</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#step-3">
+                                                    <em>3</em><span>Master Programs</span>
+                                                </a>
+                                            </li>
+                                          {% else %}
+                                            <li>
                                                 <a href="#step-2">
                                                     <em>2</em><span>Master Programs</span>
                                                 </a>
                                             </li>
-
-<!--                                           {% if request.user|has_group:"YOUTH_UNICEF" %}-->
-<!--                                            <li>-->
-<!--                                                <a href="#step-2">-->
-<!--                                                    <em>2</em><span>Donors</span>-->
-<!--                                                </a>-->
-<!--                                            </li>-->
-<!--                                            <li>-->
-<!--                                                <a href="#step-3">-->
-<!--                                                    <em>3</em><span>Master Programs</span>-->
-<!--                                                </a>-->
-<!--                                            </li>-->
-<!--                                          {% else %}-->
-<!--                                            <li>-->
-<!--                                                <a href="#step-2">-->
-<!--                                                    <em>2</em><span>Master Programs</span>-->
-<!--                                                </a>-->
-<!--                                            </li>-->
-<!--                                           {% endif %}-->
+                                           {% endif %}
                                         </ul>
                                         <div class="form-wizard-content">
 

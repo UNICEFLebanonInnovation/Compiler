@@ -61,21 +61,21 @@ class EnrolledProgramsForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     program_document = forms.ModelChoiceField(
-        queryset=ProgramDocument.objects.all(),
+        queryset=ProgramDocument.objects.none(),
         widget=forms.Select,
         label=_('Program Document'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
     master_program = forms.ModelChoiceField(
-        queryset=MasterProgram.objects.all(),
+        queryset=MasterProgram.objects.none(),
         widget=forms.Select,
         label=_('Master Program'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
     sub_program = forms.ModelChoiceField(
-        queryset=SubProgram.objects.all(), widget=forms.Select,
+        queryset=SubProgram.objects.none(), widget=forms.Select,
         label=_('Sub Program'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -330,12 +330,12 @@ class ProgramDocumentForm(forms.ModelForm):
     #     label=_('Master Programs'),
     #     required=False
     # )
-    # donors = forms.ModelMultipleChoiceField(
-    #     queryset=Donor.objects.filter(active=True),
-    #     widget=forms.CheckboxSelectMultiple,
-    #     label=_('Donors'),
-    #     required=False
-    # )
+    donors = forms.ModelMultipleChoiceField(
+        queryset=Donor.objects.filter(active=True),
+        widget=forms.CheckboxSelectMultiple,
+        label=_('Donors'),
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -348,102 +348,354 @@ class ProgramDocumentForm(forms.ModelForm):
             form_action = reverse('youth:program_program_document_edit',
                                   kwargs={'pk': instance})
 
-        # display_donor = has_group(self.request.user, 'YOUTH_UNICEF')
+        display_donor = has_group(self.request.user, 'YOUTH_UNICEF')
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
 
-        self.helper.layout = Layout(
-            Div(
+        # self.helper.layout = Layout(
+        #     Div(
+        #         Div(
+        #             HTML('<span class="badge-form badge-pill">1</span>'),
+        #             Div('partner', css_class='col-md-5'),
+        #             HTML('<span class="badge-form badge-pill">2</span>'),
+        #             Div('funded_by', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form badge-pill">3</span>'),
+        #             Div('project_status', css_class='col-md-5'),
+        #             HTML('<span class="badge-form badge-pill">4</span>'),
+        #             Div('project_code', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form badge-pill">5</span>'),
+        #             Div('project_name', css_class='col-md-5'),
+        #             HTML('<span class="badge-form badge-pill">6</span>'),
+        #             Div('project_description', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form badge-pill">7</span>'),
+        #             Div('implementing_partners', css_class='col-md-5'),
+        #             HTML('<span class="badge-form badge-pill">8</span>'),
+        #             Div('focal_point', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form badge-pill">9</span>'),
+        #             Div('start_date', css_class='col-md-5'),
+        #             HTML('<span class="badge-form-2 badge-pill">10</span>'),
+        #             Div('end_date', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form-2 badge-pill">11</span>'),
+        #             Div('plan', css_class='col-md-5'),
+        #             HTML('<span class="badge-form-2 badge-pill">12</span>'),
+        #             Div('sectors', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form-2 badge-pill">13</span>'),
+        #             Div('project_type', css_class='col-md-5'),
+        #             HTML('<span class="badge-form-2 badge-pill">14</span>'),
+        #             Div('public_institution_support', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form-2 badge-pill">15</span>'),
+        #             Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
+        #             HTML('<span class="badge-form-2 badge-pill">16</span>'),
+        #             Div('comment', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form-2 badge-pill">17</span>'),
+        #             Div('budget', css_class='col-md-5'),
+        #             HTML('<span class="badge-form-2 badge-pill">18</span>'),
+        #             Div('cash_assistance', css_class='col-md-5'),
+        #             css_class='row card-body'
+        #         ),
+        #         Div(
+        #             HTML('<span class="badge-form-2 badge-pill">19</span>'),
+        #             Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
+        #             css_class='row card-body'
+        #         ),
+        #         css_id='step-1'
+        #         ),
+        #         Div(
+        #         HTML("""
+        #             <table class="table table-bordered">
+        #                 <thead>
+        #                     <tr>
+        #                         <th>Indicator</th>
+        #                         <th>Baseline</th>
+        #                         <th>Target</th>
+        #                     </tr>
+        #                 </thead>
+        #                 <tbody>
+        #                     <tr>
+        #                         <td># of youth enrolled in learning path or courses on the NammiSkills Platform</td>
+        #                         <td>0</td>
+        #                         <td>50</td>
+        #                     </tr>
+        #                 </tbody>
+        #             </table>
+        #         """),
+        #             FormActions(
+        #                 Submit('save', 'Save',
+        #                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+        #                 Reset('reset', 'Reset',
+        #                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+        #             ),
+        #             css_id='step-2'
+        #         )
+        #     )
+
+        if display_donor:
+            self.fields['donors'].required = True
+            self.helper.layout = Layout(
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('partner', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('funded_by', css_class='col-md-5'),
-                    css_class='row card-body'
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('partner', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('funded_by', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('project_status', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('project_code', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('project_name', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('project_description', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('implementing_partners', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('focal_point', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('start_date', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('end_date', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('plan', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('sectors', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('project_type', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                        Div('public_institution_support', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('comment', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('budget', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                        Div('cash_assistance', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                        Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
+                        css_class='row card-body'
+                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    #     Div('number_targeted_syrians', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">21</span>'),
+                    #     Div('number_targeted_lebanese', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">22</span>'),
+                    #     Div('number_targeted_prl', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                    #     Div('number_targeted_prs', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    css_id='step-1'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('project_status', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('project_code', css_class='col-md-5'),
-                    css_class='row card-body'
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
+                        css_class='row card-body'
+                    ),
+                    css_id='step-2'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('project_name', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('project_description', css_class='col-md-5'),
-                    css_class='row card-body'
+                    HTML("""
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Indicator</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td># of youth enrolled in learning path or courses on the NammiSkills Platform</td>
+                                    <td>0</td>
+                                    <td>50</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    """),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-3'
+                )
+            )
+        else:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('partner', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('funded_by', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('project_status', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('project_code', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('project_name', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('project_description', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('implementing_partners', css_class='col-md-5'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('focal_point', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('start_date', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('end_date', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('plan', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('sectors', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('project_type', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                        Div('public_institution_support', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('comment', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('budget', css_class='col-md-5'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                        Div('cash_assistance', css_class='col-md-5'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                        Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
+                        css_class='row card-body'
+                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    #     Div('number_targeted_syrians', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">21</span>'),
+                    #     Div('number_targeted_lebanese', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">22</span>'),
+                    #     Div('number_targeted_prl', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                    #     Div('number_targeted_prs', css_class='col-md-5'),
+                    #     css_class='row card-body'
+                    # ),
+                    css_id='step-1'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('implementing_partners', css_class='col-md-5'),
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('focal_point', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('start_date', css_class='col-md-5'),
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('end_date', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('plan', css_class='col-md-5'),
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('sectors', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('project_type', css_class='col-md-5'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('public_institution_support', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('comment', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('budget', css_class='col-md-5'),
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                    Div('cash_assistance', css_class='col-md-5'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
-                    css_class='row card-body'
-                ),
-                css_id='step-1'
-                ),
-                Div(
-                HTML("""
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Indicator</th>
-                                <th>Baseline</th>
-                                <th>Target</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td># of youth enrolled in learning path or courses on the NammiSkills Platform</td>
-                                <td>0</td>
-                                <td>50</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                """),
+                    HTML("""
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Indicator</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td># of youth enrolled in learning path or courses on the NammiSkills Platform</td>
+                                    <td>0</td>
+                                    <td>50</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    """),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -451,244 +703,18 @@ class ProgramDocumentForm(forms.ModelForm):
                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
                     css_id='step-2'
-                )
-            )
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
+                        css_class='row card-body'
+                    ),
+                    css_id='step-3',
+                    css_class='d-none'
+                ),
 
-        # if display_donor:
-        #     self.fields['donors'].required = True
-        #     self.helper.layout = Layout(
-        #         Div(
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">1</span>'),
-        #                 Div('partner', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">2</span>'),
-        #                 Div('funded_by', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">3</span>'),
-        #                 Div('project_status', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">4</span>'),
-        #                 Div('project_code', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">5</span>'),
-        #                 Div('project_name', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">6</span>'),
-        #                 Div('project_description', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">7</span>'),
-        #                 Div('implementing_partners', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">8</span>'),
-        #                 Div('focal_point', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">9</span>'),
-        #                 Div('start_date', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">10</span>'),
-        #                 Div('end_date', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">11</span>'),
-        #                 Div('plan', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">12</span>'),
-        #                 Div('sectors', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">13</span>'),
-        #                 Div('project_type', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">14</span>'),
-        #                 Div('public_institution_support', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">15</span>'),
-        #                 Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
-        #                 HTML('<span class="badge-form-2 badge-pill">16</span>'),
-        #                 Div('comment', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">17</span>'),
-        #                 Div('budget', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">18</span>'),
-        #                 Div('cash_assistance', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">19</span>'),
-        #                 Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">20</span>'),
-        #                 Div('number_targeted_syrians', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">21</span>'),
-        #                 Div('number_targeted_lebanese', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">22</span>'),
-        #                 Div('number_targeted_prl', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">23</span>'),
-        #                 Div('number_targeted_prs', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             css_id='step-1'
-        #         ),
-        #         Div(
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">1</span>'),
-        #                 Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
-        #                 css_class='row card-body'
-        #             ),
-        #             css_id='step-2'
-        #         ),
-        #         Div(
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">1</span>'),
-        #                 Div('master_programs', css_class='col-md-8 multiple-choice-options checkbox'),
-        #                 css_class='row card-body'
-        #             ),
-        #             FormActions(
-        #                 Submit('save', 'Save',
-        #                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-        #                 Reset('reset', 'Reset',
-        #                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-        #             ),
-        #             css_id='step-3'
-        #         )
-        #     )
-        # else:
-        #     self.helper.layout = Layout(
-        #         Div(
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">1</span>'),
-        #                 Div('partner', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">2</span>'),
-        #                 Div('funded_by', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">3</span>'),
-        #                 Div('project_status', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">4</span>'),
-        #                 Div('project_code', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">5</span>'),
-        #                 Div('project_name', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">6</span>'),
-        #                 Div('project_description', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">7</span>'),
-        #                 Div('implementing_partners', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form badge-pill">8</span>'),
-        #                 Div('focal_point', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">9</span>'),
-        #                 Div('start_date', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">10</span>'),
-        #                 Div('end_date', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">11</span>'),
-        #                 Div('plan', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">12</span>'),
-        #                 Div('sectors', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">13</span>'),
-        #                 Div('project_type', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">14</span>'),
-        #                 Div('public_institution_support', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">15</span>'),
-        #                 Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
-        #                 HTML('<span class="badge-form-2 badge-pill">16</span>'),
-        #                 Div('comment', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">17</span>'),
-        #                 Div('budget', css_class='col-md-5'),
-        #                 HTML('<span class="badge-form-2 badge-pill">18</span>'),
-        #                 Div('cash_assistance', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">19</span>'),
-        #                 Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">20</span>'),
-        #                 Div('number_targeted_syrians', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">21</span>'),
-        #                 Div('number_targeted_lebanese', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">22</span>'),
-        #                 Div('number_targeted_prl', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             Div(
-        #                 HTML('<span class="badge-form-2 badge-pill">23</span>'),
-        #                 Div('number_targeted_prs', css_class='col-md-5'),
-        #                 css_class='row card-body'
-        #             ),
-        #             css_id='step-1'
-        #         ),
-        #         Div(
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">1</span>'),
-        #                 Div('master_programs', css_class='col-md-8 multiple-choice-options checkbox'),
-        #                 css_class='row card-body'
-        #             ),
-        #             FormActions(
-        #                 Submit('save', 'Save',
-        #                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-        #                 Reset('reset', 'Reset',
-        #                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-        #             ),
-        #             css_id='step-2'
-        #         ),
-        #         Div(
-        #             Div(
-        #                 HTML('<span class="badge-form badge-pill">1</span>'),
-        #                 Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
-        #                 css_class='row card-body'
-        #             ),
-        #             css_id='step-3',
-        #             css_class='d-none'
-        #         ),
-        #
-        #     )
+            )
 
     def save(self, request=None, instance=None):
         from datetime import datetime
@@ -721,10 +747,10 @@ class ProgramDocumentForm(forms.ModelForm):
         instance.public_institution_support = validated_data.get('public_institution_support')
         instance.budget = validated_data.get('budget')
         instance.cash_assistance = validated_data.get('cash_assistance')
-        instance.number_targeted_syrians = validated_data.get('number_targeted_syrians')
-        instance.number_targeted_lebanese = validated_data.get('number_targeted_lebanese')
-        instance.number_targeted_prl = validated_data.get('number_targeted_prl')
-        instance.number_targeted_prs = validated_data.get('number_targeted_prs')
+        # instance.number_targeted_syrians = validated_data.get('number_targeted_syrians')
+        # instance.number_targeted_lebanese = validated_data.get('number_targeted_lebanese')
+        # instance.number_targeted_prl = validated_data.get('number_targeted_prl')
+        # instance.number_targeted_prs = validated_data.get('number_targeted_prs')
 
         # Assign the governorates from the form data
         governorates_ids = validated_data.getlist('governorates')
@@ -741,10 +767,10 @@ class ProgramDocumentForm(forms.ModelForm):
         # master_programs = MasterProgram.objects.filter(id__in=master_programs_ids)
         # instance.master_programs.set(master_programs)
 
-        # # Assign the donors from the form data
-        # donor_ids = validated_data.getlist('donors')
-        # donors = Donor.objects.filter(id__in=donor_ids)
-        # instance.donors.set(donors)
+        # Assign the donors from the form data
+        donor_ids = validated_data.getlist('donors')
+        donors = Donor.objects.filter(id__in=donor_ids)
+        instance.donors.set(donors)
 
         instance.save()
 
