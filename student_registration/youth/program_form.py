@@ -61,7 +61,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     program_document = forms.ModelChoiceField(
-        queryset=ProgramDocument.objects.none(),
+        queryset=ProgramDocument.objects.all(),
         widget=forms.Select,
         label=_('Program Document'),
         empty_label='-------',
@@ -75,7 +75,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     sub_program = forms.ModelChoiceField(
-        queryset=SubProgram.objects.none(), widget=forms.Select,
+        queryset=SubProgram.objects.all(), widget=forms.Select,
         label=_('Sub Program'),
         empty_label='-------',
         required=True, to_field_name='id',
