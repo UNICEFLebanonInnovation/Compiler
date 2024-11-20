@@ -68,7 +68,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     master_program = forms.ModelChoiceField(
-        queryset=MasterProgram.objects.none(),
+        queryset=MasterProgram.objects.all(),
         widget=forms.Select,
         label=_('Master Program'),
         empty_label='-------',
