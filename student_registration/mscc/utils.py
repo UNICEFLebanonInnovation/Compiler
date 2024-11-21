@@ -18,7 +18,6 @@ from student_registration.clm.models import (
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.mscc.models import Registration, EducationService, Referral
 
-from student_registration.students.utils import generate_id
 
 
 def to_array(fields, obj):
@@ -64,17 +63,6 @@ def regenerate_services(child_age, registry, user=None):
         service.save()
 
 
-def regenerate_child_id(first_name, father_name, last_name,mother_fullname, gender, birthday_day, birthday_month,birthday_year):
-    return generate_id(
-        first_name,
-        father_name,
-        last_name,
-        mother_fullname,
-        gender,
-        birthday_day,
-        birthday_month,
-        birthday_year
-    )
 
 
 def update_service(service_name, registry_id, service_id):

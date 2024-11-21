@@ -630,16 +630,16 @@ class Child(TimeStampedModel):
         :param kwargs:
         :return:
         """
-        if self.pk is None:
-            self.number = generate_id(
-                self.first_name,
-                self.father_name,
-                self.last_name,
-                self.mother_fullname,
-                self.gender,
-                self.birthday_day,
-                self.birthday_month,
-                self.birthday_year
-            )
+        # if self.pk is None:
+        self.number = generate_id(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+            self.mother_fullname,
+            self.gender,
+            self.birthday_day,
+            self.birthday_month,
+            self.birthday_year
+        )
 
         super(Child, self).save(**kwargs)

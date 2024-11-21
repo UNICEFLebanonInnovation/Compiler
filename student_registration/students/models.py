@@ -382,17 +382,17 @@ class Person(TimeStampedModel):
         :param kwargs:
         :return:
         """
-        if self.pk is None:
-            self.number = generate_id(
-                self.first_name,
-                self.father_name,
-                self.last_name,
-                self.mother_fullname,
-                self.sex,
-                self.birthday_day,
-                self.birthday_month,
-                self.birthday_year
-            )
+        # if self.pk is None:
+        self.number = generate_id(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+            self.mother_fullname,
+            self.sex,
+            self.birthday_day,
+            self.birthday_month,
+            self.birthday_year
+        )
 
         super(Person, self).save(**kwargs)
 

@@ -30,7 +30,7 @@ from .models import (
 from student_registration.schools.models import (
     School
 )
-from .utils import generate_services, generate_education_history, regenerate_services, regenerate_child_id
+from .utils import generate_services, generate_education_history, regenerate_services
 from .serializers import MainSerializer
 from student_registration.mscc.templatetags.simple_tags import get_service, get_education_service
 import datetime
@@ -1019,40 +1019,11 @@ class MainForm(forms.ModelForm):
         if instance:
             serializer = MainSerializer(instance, data=request.POST)
             if serializer.is_valid():
-                validated_data = request.POST
-                new_first_name = validated_data.get('child_first_name')
-                new_father_name = validated_data.get('child_father_name')
-                new_last_name = validated_data.get('child_last_name')
-                new_mother_fullname = validated_data.get('child_mother_fullname')
-                new_gender = validated_data.get('child_gender')
-                new_birthday_year = validated_data.get('child_birthday_year')
-                new_birthday_month = validated_data.get('child_birthday_month')
-                new_birthday_day = validated_data.get('child_birthday_day')
-                new_child_number = ''
-
-                # Regenerate child ID if details have changed
-                if (instance.child.first_name != new_first_name
-                    or instance.child.father_name != new_father_name
-                    or instance.child.last_name != new_last_name
-                    or instance.child.mother_fullname != new_mother_fullname
-                    or instance.child.gender != new_gender
-                    or instance.child.birthday_year != new_birthday_year
-                    or instance.child.birthday_month != new_birthday_month
-                    or instance.child.birthday_day != new_birthday_day):
-                    new_child_number = regenerate_child_id(
-                        new_first_name, new_father_name, new_last_name,
-                        new_mother_fullname, new_gender, new_birthday_day,
-                        new_birthday_month, new_birthday_year
-                    )
-
                 old_dob_year = instance.child.birthday_year
                 old_dob_month = instance.child.birthday_month
                 old_dob_age = instance.child_age
 
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
-                if new_child_number:
-                    instance.child.number = new_child_number
-                    instance.child.save()
 
                 instance.modified_by = request.user
                 instance.save()
