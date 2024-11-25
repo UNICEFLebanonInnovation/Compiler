@@ -173,6 +173,9 @@
                         <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenURL()">
                             <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Raw Attendance
                         </button>
+                        <button id="generate-attendance_url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenAttendanceURL()">
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendance
+                        </button>
                     </div>
                 </div>
 
@@ -200,6 +203,24 @@
       } else {
           alert('Please select both month and year.');
       }
+  }
+
+  function generateAndOpenAttendanceURL() {
+    var month = document.getElementById('month').value;
+    var year = document.getElementById('year').value;
+    var education_program = document.getElementById('education_program').value || 'none';
+    var class_section = document.getElementById('mscc-section').value || 'none';
+    var partner = document.getElementById('partner').value || 'none';
+    var center = document.getElementById('center').value || 'none';
+
+    if (month && year) {
+        // Encode parameters to handle spaces and special characters
+        let url = `/attendances/mscc-total-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
+
+        window.location.href = url;
+    } else {
+        alert('Please select both month and year.');
+    }
   }
 </script>
 {% endblock %}

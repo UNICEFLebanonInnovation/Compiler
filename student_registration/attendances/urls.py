@@ -67,5 +67,10 @@ urlpatterns = [
         view=views.mscc_attendance_export,
         name='mscc_attendance_export'
     ),
+    url(
+        regex=r'^mscc-total-attendance-export/(?P<month>[\w.@+-]+)/(?P<year>[\w.@+-]+)/(?P<education_program>[\w\s.@+-]*)/(?P<class_section>[\w\s.@+-]*)/(?P<partner>[\w\s.@+-]*)/(?P<center>[\w\s.@+-]*)/?$',
+        view=views.mscc_total_attendance_export,
+        name='mscc_total_attendance_export'
+    ),
 
 ]
