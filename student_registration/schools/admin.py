@@ -292,10 +292,27 @@ class CLMRoundResource(resources.ModelResource):
 class CLMRoundAdmin(ImportExportModelAdmin):
     resource_class = CLMRoundResource
 
+    fields = (
+        'name',
+        'current_year',
+        'current_round_bridging',
+        'start_date_bridging',
+        'end_date_bridging',
+        'start_date_bridging_edit',
+        'end_date_bridging_edit',
+        'current_year_inclusion',
+        'current_round_inclusion',
+        'start_date_inclusion',
+        'end_date_inclusion',
+        'start_date_inclusion_edit',
+        'end_date_inclusion_edit',
+    )
+
     list_display = (
         'name',
         'current_year',
         'current_round_bridging',
+        'current_year_inclusion',
         'current_round_inclusion',
     )
 

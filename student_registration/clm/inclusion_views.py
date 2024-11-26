@@ -146,9 +146,9 @@ class InclusionListView(LoginRequiredMixin,
         partner_id = self.request.user.partner_id
         force_default_language(self.request)
         if not self.request.user.is_staff and partner_id:
-            return Inclusion.objects.filter(round__current_year=True,partner=partner_id).order_by('-id')
+            return Inclusion.objects.filter(round__current_year_inclusion=True,partner=partner_id).order_by('-id')
         elif self.request.user.is_staff:
-            return Inclusion.objects.filter(round__current_year=True).order_by('-id')
+            return Inclusion.objects.filter(round__current_year_inclusion=True).order_by('-id')
         return Inclusion.objects.none()
 
 

@@ -9,7 +9,7 @@ from .models import Inclusion, Disability
 
 
 class CommonFilter(FilterSet):
-    round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year=True).all(), empty_label=_('Round'))
+    round = ModelChoiceFilter(queryset=CLMRound.objects.filter(current_year_inclusion=True).all(), empty_label=_('Round'))
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.exclude(id=9), empty_label=_('Nationality'))

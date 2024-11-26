@@ -44,12 +44,12 @@
                 <i class="icon-synch-sign icon-white"></i>
                 {% trans "reset" %}
               </a>
-<!--              {% if user|has_group:"EXPORT" %}-->
-<!--              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">-->
-<!--                  <i class="icon-export-sign icon-white"></i>-->
-<!--                  {% trans "Export data" %}-->
-<!--              </a>-->
-<!--              {% endif %}-->
+              {% if user|has_group:"EXPORT" %}
+              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">
+                  <i class="icon-export-sign icon-white"></i>
+                  {% trans "Export data" %}
+              </a>
+              {% endif %}
               {% if 'Inclusion'|is_allowed_create %}
               <a href="{% url 'clm:inclusion_add' %}" class="btn btn-success">
                   <i class="icon-plus-sign icon-white"></i>
