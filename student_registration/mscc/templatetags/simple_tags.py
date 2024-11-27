@@ -26,6 +26,12 @@ def get_child_fullname(registry):
 
 
 @register.simple_tag
+def get_regitration_type(registry):
+    reg = Registration.objects.filter(id=registry).last()
+    return reg.type
+
+
+@register.simple_tag
 def get_child_rounds(registry):
     from django.db.models import Subquery
     registration_ids = Registration.objects.filter(

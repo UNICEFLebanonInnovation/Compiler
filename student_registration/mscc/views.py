@@ -215,6 +215,8 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self):
 
         registry = self.request.GET.get('registry')
+        type = self.request.GET.get('registrationType')
+
         if self.request.GET.get('new_round_confirmation', None) == 'confirmed':
             import copy
             registration = Registration.objects.get(id=registry)
@@ -222,14 +224,15 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             new_registration.pk = None
             new_registration.owner = self.request.user
             new_registration.modified_by = self.request.user
+            new_registration.type = type
             if self.request.user.center:
                 new_registration.center = self.request.user.center
             if self.request.user.partner:
                 new_registration.partner = self.request.user.partner
             new_registration.save()
+
             generate_services(new_registration.child.age, new_registration, self.request.user)
-            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id,
-                                                                 'package_type': 'Core-Package'})
+            return reverse('mscc:service_education_add', kwargs={'registry': new_registration.id, 'package_type': type})
 
         return reverse('mscc:new_round', kwargs={'registry': registry})
 

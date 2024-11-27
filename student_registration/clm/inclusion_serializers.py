@@ -43,7 +43,6 @@ def create_instance(validated_data):
 def update_instance(instance, validated_data):
     from student_registration.students.serializers import StudentSerializer
     student_data = validated_data.pop('student', None)
-    print(student_data)
 
     if student_data:
         student_serializer = StudentSerializer(instance.student, data=student_data)
