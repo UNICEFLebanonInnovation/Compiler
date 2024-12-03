@@ -532,32 +532,35 @@ class EducationServiceForm(forms.ModelForm):
             self.fields['registration_date'].required = False
 
         if registry:
-                child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
+            child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
 
-                if instance:
-                    current_round_id = EducationService.objects.filter(registration_id=registry).values_list('round_id',
+            if instance:
+                current_round_id = EducationService.objects.filter(registration_id=registry).values_list('round_id',
                                                                                                          flat=True).first()
-                    # Get all rounds this child is registered for and exclude the current round
-                    rounds_registered = Registration.objects.filter(
-                        child_id=child_id,
-                        deleted=False
-                    ).exclude(
-                        round_id=current_round_id
-                    ).values_list('round_id', flat=True)
-                else:
-                    # Get all rounds this child is registered for
-                    rounds_registered = EducationService.objects.filter(
-                        registration__child_id=child_id,
-                        registration__deleted=False
-                    ).values_list('round_id', flat=True)
 
-                rounds_current_year = Round.objects.filter(current_year=True)
+                # Get all rounds this child is registered for and exclude the current round
+                rounds_registered = Registration.objects.filter(
+                    child_id=child_id,
+                    deleted=False
+                ).exclude(
+                    round_id=current_round_id  # Exclude current round
+                ).values_list('round_id', flat=True)
 
-                # Filter rounds for the current year, excluding already registered rounds
-                available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+                # Remove any None values from rounds_registered
+                rounds_registered = [round for round in rounds_registered if round is not None]
 
-                # Update the queryset for the 'round' field
-                self.fields['round'].queryset = available_rounds
+
+            else:
+                rounds_registered = EducationService.objects.filter(
+                    registration__child_id=child_id,
+                    registration__deleted=False
+                ).values_list('round_id', flat=True)
+
+
+            all_rounds = Round.objects.filter(current_year=True)
+            available_rounds = all_rounds.exclude(id__in=rounds_registered)
+
+            self.fields['round'].queryset = available_rounds
 
         form_action = reverse('mscc:service_education_add', kwargs={'registry': registry, 'package_type': package_type})
         if instance:

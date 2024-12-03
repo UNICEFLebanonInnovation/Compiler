@@ -3398,7 +3398,7 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
                 school=school_id,
                 registration_level=registration_level
             ).exclude(
-                learning_result='dropout', dropout_date__gte=attendance_date
+                learning_result='dropout', dropout_date__lte=attendance_date
             ).select_related('student')
 
             for reg in registrations:
