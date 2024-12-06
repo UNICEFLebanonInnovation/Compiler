@@ -336,6 +336,53 @@ class ProgramDocumentForm(forms.ModelForm):
         label=_('Donors'),
         required=False
     )
+    master_program1 = forms.ModelChoiceField(
+        queryset=MasterProgram.objects.all(),
+        widget=forms.Select,
+        label=_('Master Program 1'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    master_program2 = forms.ModelChoiceField(
+        queryset=MasterProgram.objects.all(),
+        widget=forms.Select,
+        label=_('Master Program 2'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    master_program3 = forms.ModelChoiceField(
+        queryset=MasterProgram.objects.all(),
+        widget=forms.Select,
+        label=_('Master Program 3'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+
+    baseline1 = forms.IntegerField(
+        label=_('baseline 1'),
+        widget=forms.TextInput, required=False
+    )
+    baseline2 = forms.IntegerField(
+        label=_('baseline 2'),
+        widget=forms.TextInput, required=False
+    )
+    baseline3 = forms.IntegerField(
+        label=_('baseline 3'),
+        widget=forms.TextInput, required=False
+    )
+
+    target1 = forms.IntegerField(
+        label=_('Target 1'),
+        widget=forms.TextInput, required=False
+    )
+    target2 = forms.IntegerField(
+        label=_('Target 2'),
+        widget=forms.TextInput, required=False
+    )
+    target3 = forms.IntegerField(
+        label=_('Target 3'),
+        widget=forms.TextInput, required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -557,24 +604,28 @@ class ProgramDocumentForm(forms.ModelForm):
                     css_id='step-2'
                 ),
                 Div(
-                    HTML("""
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Indicator</th>
-                                    <th>Baseline</th>
-                                    <th>Target</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td># of youth enrolled in learning path or courses on the NammiSkills Platform</td>
-                                    <td>0</td>
-                                    <td>50</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    """),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('master_program1', css_class='col-md-3'),
+                        Div('baseline1', css_class='col-md-3'),
+                        Div('target1', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('master_program2', css_class='col-md-3'),
+                        Div('baseline2', css_class='col-md-3'),
+                        Div('target2', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
+
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('master_program3', css_class='col-md-3'),
+                        Div('baseline3', css_class='col-md-3'),
+                        Div('target3', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -678,24 +729,29 @@ class ProgramDocumentForm(forms.ModelForm):
                     css_id='step-1'
                 ),
                 Div(
-                    HTML("""
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Indicator</th>
-                                    <th>Baseline</th>
-                                    <th>Target</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td># of youth enrolled in learning path or courses on the NammiSkills Platform</td>
-                                    <td>0</td>
-                                    <td>50</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    """),
+
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">1</span>'),
+                        Div('master_program1', css_class='col-md-3'),
+                        Div('baseline1', css_class='col-md-3'),
+                        Div('target1', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">2</span>'),
+                        Div('master_program2', css_class='col-md-3'),
+                        Div('baseline2', css_class='col-md-3'),
+                        Div('target2', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
+
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">3</span>'),
+                        Div('master_program3', css_class='col-md-3'),
+                        Div('baseline3', css_class='col-md-3'),
+                        Div('target3', css_class='col-md-3'),
+                        css_class='row card-body'
+                    ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -716,6 +772,8 @@ class ProgramDocumentForm(forms.ModelForm):
 
             )
 
+
+
     def save(self, request=None, instance=None):
         from datetime import datetime
         validated_data = request.POST
@@ -725,9 +783,12 @@ class ProgramDocumentForm(forms.ModelForm):
         else:
             instance = ProgramDocument.objects.get(id=instance)
 
-
         # Save the instance to ensure it has an ID
         instance.save()
+
+        # handle blank string inputs
+        def blank_int(value):
+            return int(value) if value and value.isdigit() else None
 
 
         instance.partner_id = validated_data.get('partner')
@@ -751,6 +812,19 @@ class ProgramDocumentForm(forms.ModelForm):
         # instance.number_targeted_lebanese = validated_data.get('number_targeted_lebanese')
         # instance.number_targeted_prl = validated_data.get('number_targeted_prl')
         # instance.number_targeted_prs = validated_data.get('number_targeted_prs')
+
+        instance.master_program1_id = blank_int(validated_data.get('master_program1'))
+        instance.baseline1 = blank_int(validated_data.get('baseline1'))
+        instance.target1 = blank_int(validated_data.get('target1'))
+
+        instance.master_program2_id = blank_int(validated_data.get('master_program2'))
+        instance.baseline2 = blank_int(validated_data.get('baseline2'))
+        instance.target2 = blank_int(validated_data.get('target2'))
+
+        instance.master_program3_id = blank_int(validated_data.get('master_program3'))
+        instance.baseline3 = blank_int(validated_data.get('baseline3'))
+        instance.target3 = blank_int(validated_data.get('target3'))
+
 
         # Assign the governorates from the form data
         governorates_ids = validated_data.getlist('governorates')

@@ -95,9 +95,8 @@ class PDPartnerTable(tables.Table):
     governorate = tables.Column(accessor='get_governorate_names', verbose_name=_('Governorates'))
     population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'))
     master_programs = tables.Column(accessor='get_master_program_names', verbose_name=_('Master Programs'))
-
-
     budget = tables.Column(verbose_name=_('Budget'))
+
     class Meta:
         model = ProgramDocument
         template = 'django_tables2/bootstrap.html'

@@ -9,7 +9,7 @@ from django_filters import (
     DateFilter,
     ModelMultipleChoiceFilter
 )
-
+from django.db.models import Q
 import datetime
 
 from student_registration.locations.models import Center, Location
@@ -28,7 +28,6 @@ from .models import (
 )
 from student_registration.youth.models import Adolescent
 from student_registration.clm.models import Disability, EducationalLevel
-
 
 class MainFilter(FilterSet):
     adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
@@ -121,23 +120,39 @@ class PDFilter(FilterSet):
     #     label='Donors',
     #     required=False
     # )
-    master_programs = ModelChoiceFilter(
-        queryset=MasterProgram.objects.filter(active=True, created__year=current_year).all(),
-        label='Master Programs',
-        required=False,
-        empty_label='Select a Master Program'
-    )
+    # master_programs = ModelChoiceFilter(
+    #     queryset=MasterProgram.objects.filter(active=True, created__year=current_year).all(),
+    #     label='Master Programs',
+    #     required=False,
+    #     empty_label='Select a Master Program'
+    # )
     donors = ModelChoiceFilter(
         queryset=Donor.objects.filter(active=True).all(),
         label='Donors',
         required=False,
         empty_label='Select a Donor'
     )
+    master_program = ModelChoiceFilter(
+        queryset=MasterProgram.objects.filter(active=True, created__year=current_year),
+        label='Master Program',
+        required=False,
+        empty_label='Select a Master Program',
+        method='filter_by_master_program'
+    )
 
     class Meta:
         model = ProgramDocument
         fields = [
         ]
+
+    def filter_by_master_program(self, queryset, name, value):
+        if value:
+            return queryset.filter(
+                Q(master_program1=value) |
+                Q(master_program2=value) |
+                Q(master_program3=value)
+            )
+        return queryset
 
 
 class PDPartnerFilter(FilterSet):
