@@ -281,18 +281,20 @@ class EducationSchoolGradingFormView(LoginRequiredMixin,
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         kwargs['registry'] = self.kwargs['registry']
+        kwargs['programme_type'] = self.kwargs['programme_type']
         return super(EducationSchoolGradingFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
+        programme_type = self.kwargs['programme_type']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         if self.request.method == "POST":
             return EducationSchoolGradingForm(self.request.POST, instance=instance, registry=registry,
-                                              request=self.request)
+                                              programme_type=programme_type, request=self.request)
         else:
             grade_data = EducationProgrammeAssessment.objects.get(id=instance)
             data = grade_data.school_test
-            return EducationSchoolGradingForm(data, registry=registry, instance=instance, request=self.request)
+            return EducationSchoolGradingForm(data, registry=registry, programme_type=programme_type, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']

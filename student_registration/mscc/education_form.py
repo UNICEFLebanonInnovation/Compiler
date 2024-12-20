@@ -1645,54 +1645,109 @@ class EducationSchoolGradingForm(forms.ModelForm):
         label="Physics",
         initial=0
     )
+    science_grade = forms.IntegerField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4, 'max': 100})),
+        required=False,
+        label="Science",
+        initial=0
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         registry = kwargs.pop('registry', None)
+        programme_type = kwargs.pop('programme_type', None)
         instance = kwargs.pop('instance', None)
 
         super(EducationSchoolGradingForm, self).__init__(*args, **kwargs)
 
         form_action = reverse('mscc:service_school_grading',
-                              kwargs={'registry': registry, 'pk': instance})
+                              kwargs={'registry': registry,'programme_type':programme_type, 'pk': instance})
+
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
+            field_init(self.fields['language_grade'], 'Foreign Language', 20)
+            field_init(self.fields['math_grade'], 'Mathematics', 20)
+            field_init(self.fields['biology_grade'], 'Biology', 20)
+            field_init(self.fields['chemistry_grade'], 'Chemistry', 20)
+            field_init(self.fields['physics_grade'], 'Physics', 20)
+            self.fields['science_grade'].hidden_widget()
+
+        if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
+            field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
+            field_init(self.fields['language_grade'], 'Foreign Language', 20)
+            field_init(self.fields['math_grade'], 'Mathematics', 20)
+            field_init(self.fields['science_grade'], 'Science', 20)
+
+            self.fields['biology_grade'].hidden_widget()
+            self.fields['chemistry_grade'].hidden_widget()
+            self.fields['physics_grade'].hidden_widget()
+
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
 
-        self.helper.layout = Layout(
-            Div(
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+            self.helper.layout = Layout(
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('arabic_grade', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('language_grade', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('math_grade', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('biology_grade', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('chemistry_grade', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('physics_grade', css_class='col-md-4'),
-                    css_class='row card-body'
-                ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('biology_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('chemistry_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('physics_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
 
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
                 ),
-                css_id='step-1'
-            ),
-        )
+            )
+
+        if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('arabic_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('language_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('math_grade', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('science_grade', css_class='col-md-4'),
+                        css_class='row card-body'
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                ),
+            )
 
     def save(self, request=None, instance=None):
         instance = EducationProgrammeAssessment.objects.get(id=instance)
