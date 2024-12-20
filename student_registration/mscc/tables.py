@@ -90,6 +90,19 @@ class FullTable(CommonTable):
     governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
     caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
     cadaster = tables.Column(verbose_name=_('Cadaster'), accessor='center.cadaster')
+    deleted = tables.Column(
+        accessor='deleted',
+        verbose_name='Deleted',
+        orderable=True,
+        empty_values=(),
+        attrs={
+            "td": {"class": "text-center"},
+        },
+        default="No"
+    )
+
+    def render_deleted(self, value):
+        return "Yes" if value else "No"
 
     class Meta:
         model = Registration
@@ -119,6 +132,7 @@ class FullTable(CommonTable):
             'caza',
             'cadaster',
             'has_previous_registration',
+            'deleted',
             'owner',
             'modified_by'
         )

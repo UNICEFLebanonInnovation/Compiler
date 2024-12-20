@@ -4,8 +4,11 @@ from django_filters import (
     FilterSet,
     ModelChoiceFilter,
     ChoiceFilter,
-    CharFilter
+    CharFilter,
+    BooleanFilter
 )
+
+from django import forms
 
 from student_registration.locations.models import Center, Location
 from student_registration.students.models import Nationality
@@ -100,11 +103,22 @@ class FullFilter(FilterSet):
 
     child__first_phone_number = CharFilter(lookup_expr='icontains')
     child__second_phone_number = CharFilter(lookup_expr='icontains')
+    deleted = BooleanFilter(
+        field_name='deleted',
+        label='Deleted',
+        widget=forms.CheckboxInput,
+        method='filter_deleted'
+    )
 
     class Meta:
         model = Registration
         fields = [
         ]
+
+    def filter_deleted(self, queryset, name, value):
+        if value:  # If the checkbox is checked, deleted=True
+            return queryset
+        return queryset.filter(deleted=False)  # Default, deleted=False
 
     def filter_round(self, queryset, name, value):
         if value == 'no_round':

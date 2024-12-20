@@ -273,10 +273,18 @@ class MainListView(LoginRequiredMixin,
         partner_id = user.partner_id
 
         if has_group(user, 'MSCC_UNICEF'):
-            return Registration.objects.filter(
+            # return Registration.objects.filter(
+            #     Q(round__isnull=True) | Q(round__current_year=True)
+            # ).order_by('-id')
+            # By default, include only deleted=False records
+            qs = Registration.objects.filter(
                 Q(round__isnull=True) | Q(round__current_year=True),
-                deleted=False
+                deleted=False  # Default to deleted=False
             ).order_by('-id')
+
+            # Apply filters when available
+            filter_qs = FullFilter(self.request.GET, queryset=qs)
+            return filter_qs.qs
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             return Registration.objects.filter(
                 Q(round__isnull=True) | Q(round__current_year=True),
@@ -692,7 +700,7 @@ def export_data(request):
         query_params = []
 
         if round == 'no_round':
-            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id is null"
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0 "
         else:
             vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
             query_params = [round]
