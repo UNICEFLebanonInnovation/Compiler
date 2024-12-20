@@ -893,6 +893,9 @@ class EducationGradingForm(forms.ModelForm):
             form_action = reverse('mscc:service_education_grading_edit',
                                   kwargs={'registry': registry, 'programme_type': programme_type,'pre_post': pre_post, 'pk': instance})
 
+        if programme_type:
+            self.fields['programme_type'].initial = programme_type
+
         if programme_type == "BLN Level 1":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 48)
             field_init(self.fields['language_grade'], 'Foreign Language Development', 40)
@@ -1351,6 +1354,38 @@ class EducationGradingForm(forms.ModelForm):
 
         return instance
 
+    def clean(self):
+        cleaned_data = super(EducationGradingForm, self).clean()
+        # programme_type = cleaned_data.get("programme_type")
+
+        arabic_grade = cleaned_data.get("arabic_grade")
+        language_grade = cleaned_data.get("language_grade")
+        math_grade = cleaned_data.get("math_grade")
+        biology_grade = cleaned_data.get("biology_grade")
+        chemistry_grade = cleaned_data.get("chemistry_grade")
+        physics_grade = cleaned_data.get("physics_grade")
+        science_grade = cleaned_data.get("science_grade")
+
+        # if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6", "RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+        if arabic_grade and arabic_grade > 20:
+            self.add_error('arabic_grade', 'This value is greater that 20')
+        if language_grade and language_grade > 20:
+            self.add_error('language_grade', 'This value is greater that 20')
+        if math_grade and math_grade > 20:
+            self.add_error('math_grade', 'This value is greater that 20')
+
+        # if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+        if biology_grade and biology_grade > 20:
+            self.add_error('biology_grade', 'This value is greater that 20')
+        if chemistry_grade and chemistry_grade > 20:
+            self.add_error('chemistry_grade', 'This value is greater that 20')
+        if physics_grade and physics_grade > 20:
+            self.add_error('physics_grade', 'This value is greater that 20')
+
+        # if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
+        if science_grade and science_grade > 20:
+            self.add_error('science_grade', 'This value is greater that 20')
+
     class Meta:
         model = EducationProgrammeAssessment
         fields = (
@@ -1757,6 +1792,31 @@ class EducationSchoolGradingForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
+
+    def clean(self):
+        cleaned_data = super(EducationSchoolGradingForm, self).clean()
+        arabic_grade = cleaned_data.get("arabic_grade")
+        language_grade = cleaned_data.get("language_grade")
+        math_grade = cleaned_data.get("math_grade")
+        biology_grade = cleaned_data.get("biology_grade")
+        chemistry_grade = cleaned_data.get("chemistry_grade")
+        physics_grade = cleaned_data.get("physics_grade")
+        science_grade = cleaned_data.get("science_grade")
+
+        if arabic_grade and arabic_grade > 20:
+            self.add_error('arabic_grade', 'This value is greater that 20')
+        if language_grade and language_grade > 20:
+            self.add_error('language_grade', 'This value is greater that 20')
+        if math_grade and math_grade > 20:
+            self.add_error('math_grade', 'This value is greater that 20')
+        if biology_grade and biology_grade > 20:
+            self.add_error('biology_grade', 'This value is greater that 20')
+        if chemistry_grade and chemistry_grade > 20:
+            self.add_error('chemistry_grade', 'This value is greater that 20')
+        if physics_grade and physics_grade > 20:
+            self.add_error('physics_grade', 'This value is greater that 20')
+        if science_grade and science_grade > 20:
+            self.add_error('science_grade', 'This value is greater that 20')
 
     class Meta:
         model = EducationProgrammeAssessment

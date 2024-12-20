@@ -222,6 +222,7 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
             registration = Registration.objects.get(id=registry)
             new_registration = copy.copy(registration)
             new_registration.pk = None
+            new_registration.round = None
             new_registration.owner = self.request.user
             new_registration.modified_by = self.request.user
             new_registration.type = type
@@ -273,18 +274,10 @@ class MainListView(LoginRequiredMixin,
         partner_id = user.partner_id
 
         if has_group(user, 'MSCC_UNICEF'):
-            # return Registration.objects.filter(
-            #     Q(round__isnull=True) | Q(round__current_year=True)
-            # ).order_by('-id')
-            # By default, include only deleted=False records
-            qs = Registration.objects.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
-                deleted=False  # Default to deleted=False
+            return Registration.objects.filter(
+                Q(round__isnull=True) | Q(round__current_year=True)
             ).order_by('-id')
 
-            # Apply filters when available
-            filter_qs = FullFilter(self.request.GET, queryset=qs)
-            return filter_qs.qs
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
             return Registration.objects.filter(
                 Q(round__isnull=True) | Q(round__current_year=True),

@@ -85,6 +85,8 @@ class RegistrationAdmin(admin.ModelAdmin):
         'child',
         'partner',
         'center',
+        'round',
+        'deleted',
         'created',
         'modified',
     )
@@ -98,6 +100,8 @@ class RegistrationAdmin(admin.ModelAdmin):
         'have_labour',
         'partner',
         'center',
+        'round',
+        'deleted',
         'created',
         'modified',
     )

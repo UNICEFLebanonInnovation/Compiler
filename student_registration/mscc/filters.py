@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext as _
+from django.db.models import Q
 
 from django_filters import (
     FilterSet,
@@ -20,6 +21,12 @@ from .models import (
 )
 from student_registration.child.models import Child
 from student_registration.schools.models import PartnerOrganization
+
+DELETED_CHOICES = [
+    ('', 'All'),
+    ('yes', 'Yes'),
+    ('no', 'No'),
+]
 
 
 class MainFilter(FilterSet):
@@ -103,11 +110,11 @@ class FullFilter(FilterSet):
 
     child__first_phone_number = CharFilter(lookup_expr='icontains')
     child__second_phone_number = CharFilter(lookup_expr='icontains')
-    deleted = BooleanFilter(
-        field_name='deleted',
+    deleted = ChoiceFilter(
+        choices=DELETED_CHOICES,
         label='Deleted',
-        widget=forms.CheckboxInput,
-        method='filter_deleted'
+        empty_label='Deleted',
+        method='filter_deleted',
     )
 
     class Meta:
@@ -115,10 +122,13 @@ class FullFilter(FilterSet):
         fields = [
         ]
 
+
     def filter_deleted(self, queryset, name, value):
-        if value:  # If the checkbox is checked, deleted=True
-            return queryset
-        return queryset.filter(deleted=False)  # Default, deleted=False
+        if value == 'yes':
+            return queryset.filter(deleted=True)
+        elif value == 'no':
+            return queryset.filter(Q(deleted=False) | Q(deleted__isnull=True))
+        return queryset
 
     def filter_round(self, queryset, name, value):
         if value == 'no_round':
