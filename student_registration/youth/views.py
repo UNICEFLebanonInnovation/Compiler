@@ -635,12 +635,26 @@ def load_program_document(request):
 
 def load_master_program(request):
     master_programs = []
+
+    # Check if 'id_program_document' is provided in the GET request
     if request.GET.get('id_program_document'):
         id_program_document = request.GET.get('id_program_document')
-        master_programs = MasterProgram.objects.filter(
-            programdocument__id=id_program_document
-        )
-    return render(request, 'youth/master_program_dropdown_list_options.html', {'master_programs': master_programs})
+
+        # Fetch the ProgramDocument by id
+        program_document = ProgramDocument.objects.filter(id=id_program_document).first()
+
+        if program_document:
+            # Create a list of master programs to populate the dropdown
+            if program_document.master_program1:
+                master_programs.append(program_document.master_program1)
+            if program_document.master_program2:
+                master_programs.append(program_document.master_program2)
+            if program_document.master_program3:
+                master_programs.append(program_document.master_program3)
+
+    return render(request, 'youth/master_program_dropdown_list_options.html', {
+        'master_programs': master_programs
+    })
 
 
 def load_sub_program(request):

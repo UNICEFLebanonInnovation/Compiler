@@ -1,4 +1,4 @@
-{% extends "base4.html" %}
+{% extends "base7.html" %}
 {% load static i18n %}
 {% load static %}
 {% load render_table from django_tables2 %}
@@ -7,7 +7,14 @@
 {% bootstrap_css %}
 
 {% block content %}
-
+<style>
+    .wide-dropdown {
+        width: 200px;
+    }
+    .wide-checkbox input[type="checkbox"] {
+      width: 50px;
+    }
+</style>
 <div class="app-page-title">
                         <div class="page-title-wrapper">
                             <div class="page-title-heading">
