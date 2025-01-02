@@ -331,9 +331,9 @@ def get_old_child(student_id):
     return initial
 
 
-def create_attendance(data, center_id, round_id):
+def create_attendance(data, center_id):
     from datetime import datetime
-
+    round_id = data["round_id"]
     education_program = data["education_program"]
     class_section = data["class_section"]
     try:
@@ -372,7 +372,8 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
         attendance = MSCCAttendance.objects.filter(center_id=center_id,
                                                    attendance_date=attendance_date,
                                                    education_program=education_program,
-                                                   class_section=class_section
+                                                   class_section=class_section,
+                                                   round_id=round_id
                                                    ).last()
 
     result = []

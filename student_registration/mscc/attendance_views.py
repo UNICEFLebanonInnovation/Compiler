@@ -64,7 +64,7 @@ class AttendanceView(LoginRequiredMixin,
 def save_attendance_children(request):
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
-    result = create_attendance(data, request.GET.get('center_id'), request.GET.get('round_id'))
+    result = create_attendance(data, request.GET.get('center_id'))
     return JsonResponse({'result': result})
 
 

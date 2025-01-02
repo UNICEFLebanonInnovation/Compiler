@@ -29,11 +29,14 @@ $(document).ready(function() {
 
         $('.app-drawer-overlay').removeClass('d-none');
 
+        $('#save_attendance_children').addClass('disabled');
+
         var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
         var attendance_date = $("#attendance_date").val();
         var education_program = $("#education_program").val();
         var class_section = $("#class_section").val();
         var close_reason = $("#close_reason").val();
+        var round_id = $("#round").val();
         children_attendance = [];
 
         $(".list-group-item")
@@ -72,6 +75,7 @@ $(document).ready(function() {
            "close_reason": close_reason,
            "education_program": education_program,
            "class_section": class_section,
+           "round_id": round_id,
            "children_attendance": children_attendance
         };
 
@@ -96,9 +100,12 @@ $(document).ready(function() {
             error: function(response) {
                 console.log(response);
                 $('.app-drawer-overlay').addClass('d-none');
+            },
+            complete: function() {
+                $('#save_attendance_children').removeClass('disabled');
+                $('.app-drawer-overlay').addClass('d-none');
             }
         });
-
     });
 
     $(document).on('click', '#load_attendance_children', function(e){
