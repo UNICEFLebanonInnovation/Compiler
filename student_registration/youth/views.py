@@ -5,6 +5,7 @@ import json
 
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
 
@@ -19,7 +20,14 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
-
+from django.db import connection
+import csv
+import io
+import zipfile
+import codecs
+from django.utils.encoding import smart_str
+import logging
+import traceback
 from .filters import (
     MainFilter,
     FullFilter,
@@ -500,69 +508,83 @@ class ChildProfilePreview(LoginRequiredMixin,
             'instance': instance,
         }
 
-
+@login_required(login_url='/users/login')
 def export_data(request):
-    from django.db import connection
-    cursor = connection.cursor()
-    user = request.user
-    center_id = user.center_id
-    partner_id = user.youth_partner_id
+    try:
+        cursor = connection.cursor()
+        user = request.user
+        partner_id = user.partner_id
 
-    first_name = request.GET.get('first_name', '')
-    last_name = request.GET.get('last_name', '')
-    father_name = request.GET.get('father_name', '')
-    mother_fullname = request.GET.get('mother_fullname', '')
-    nationality = request.GET.get('nationality', '')
+        query_params = []
+        vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'  "
 
-    vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'  "
+        if has_group(user, 'YOUTH_UNICEF'):
+            vw_youth_data_str += " AND id > 0 "
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
+            vw_youth_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+        else:
+            vw_youth_data_str += " AND id = 0 "
 
-    # if has_group(user, 'MSCC_UNICEF'):
-    #     vw_mscc_data_str += " AND id>0 "
-    # elif has_group(user, 'MSCC_PARTNER') and partner_id:
-    #     vw_mscc_data_str += " AND partner_id = " + str(partner_id)
-    # elif has_group(user, 'MSCC_CENTER') and center_id:
-    #     vw_mscc_data_str += " AND center_id = " + str(center_id)
-    # else:
-    #     # return empty
-    #     vw_mscc_data_str += " AND id=0 "
-    #
-    # if first_name != '':
-    #     vw_mscc_data_str += " AND child_first_name LIKE '%" + first_name + "%'"
-    # if father_name != '':
-    #     vw_mscc_data_str += " AND child_father_name LIKE '%" + father_name + "%'"
-    # if last_name != '':
-    #     vw_mscc_data_str += " AND child_last_name LIKE '%" + last_name + "%'"
-    # if mother_fullname != '':
-    #     vw_mscc_data_str += " AND child_mother_fullname LIKE '%" + mother_fullname + "%'"
-    # if nationality != '':
-    #     vw_mscc_data_str += " AND child_nationality_id = " + nationality
+        cursor.execute(vw_youth_data_str, query_params)
+        mscc_data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
 
+        # Create a BytesIO object to write the ZIP file into memory
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for vw_mscc_data
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
 
-    cursor.execute(vw_youth_data_str)
-    data = cursor.fetchall()
+            # Add BOM to handle Arabic text correctly
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)  # Write headers
 
-    headers = [col[0] for col in cursor.description]
+            for row in mscc_data:
+                encoded_row = [smart_str(cell) for cell in row]
+                csv_writer.writerow(encoded_row)
 
-    workbook = Workbook()
-    worksheet_all_data = workbook.create_sheet("All Data")
-    worksheet_all_data.append(headers)
+            # Add CSV to ZIP
+            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
 
-    for row in data:
-        worksheet_all_data.append(row)
+            # Process vw_youth_enrolledprograms
+            registration_ids = [row[0] for row in mscc_data]
+            if registration_ids:
+                enrolledprograms_data_str = "SELECT * FROM vw_youth_enrolledprograms WHERE registration_id IN ({})".format(
+                    ','.join(['%s'] * len(registration_ids)))
+                cursor.execute(enrolledprograms_data_str, registration_ids)
+                enrolledprograms_data = cursor.fetchall()
+                enrolledprograms_headers = [col[0] for col in cursor.description]
 
+                # Create CSV for enrolledprograms_data
+                csv_enrolledprograms_output = io.StringIO()
+                csv_writer = csv.writer(csv_enrolledprograms_output)
 
-    default_sheet = workbook.get_sheet_by_name('Sheet')
-    workbook.remove(default_sheet)
+                # Add BOM to handle Arabic text correctly
+                csv_enrolledprograms_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                csv_writer.writerow(enrolledprograms_headers)  # Write headers
 
-    # Set the appropriate response headers for the Excel file
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=exported_data.xlsx'
+                for row in enrolledprograms_data:
+                    encoded_row = [smart_str(cell) for cell in row]
+                    csv_writer.writerow(encoded_row)
 
-    # Save the workbook to the response
-    workbook.save(response)
+                # Add CSV to ZIP
+                zf.writestr('enrolledprograms_data.csv', csv_enrolledprograms_output.getvalue())
 
-    return response
+        # Prepare the ZIP file response
+        response = HttpResponse(zip_output.getvalue(), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=exported_data.zip'
 
+        return response
+
+    except Exception as e:
+        # Log the full traceback for debugging purposes
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        # Return a more detailed error response for debugging
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
 class PDListView(LoginRequiredMixin,
                    GroupRequiredMixin,
