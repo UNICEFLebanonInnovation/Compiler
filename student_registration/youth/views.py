@@ -509,7 +509,7 @@ class ChildProfilePreview(LoginRequiredMixin,
         }
 
 @login_required(login_url='/users/login')
-def export_data(request):
+def export_data1(request):
     try:
         cursor = connection.cursor()
         user = request.user
@@ -585,6 +585,58 @@ def export_data(request):
 
         # Return a more detailed error response for debugging
         return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+def export_data(request, **kwargs):
+    try:
+        cursor = connection.cursor()
+        user = request.user
+        partner_id = user.partner_id
+
+        query_params = []
+        vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'  "
+
+        if has_group(user, 'YOUTH_UNICEF'):
+            vw_youth_data_str += " AND id > 0 "
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
+            vw_youth_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+        else:
+            vw_youth_data_str += " AND id = 0 "
+
+        cursor.execute(vw_youth_data_str, query_params)
+
+
+        headers = [col[0] for col in cursor.description]
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=youth_registration_data.csv'
+
+        response.write(codecs.BOM_UTF8)
+
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+
+        writer.writerow(headers)
+
+        for row in cursor.fetchall():
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            writer.writerow(encoded_row)
+
+        return response
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
 
 class PDListView(LoginRequiredMixin,
                    GroupRequiredMixin,

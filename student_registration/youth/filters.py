@@ -84,7 +84,9 @@ class FullFilter(FilterSet):
     master_program = MultipleChoiceFilter(
         choices=lambda: [
             (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in MasterProgram.objects.filter(active=True, created__year=datetime.datetime.now().year)
+            for mp in MasterProgram.objects.filter(active=True
+                                                   # , created__year=datetime.datetime.now().year
+                                                   )
         ],
         field_name='enrolled_programs__master_program',
         label='Master Program',
@@ -95,7 +97,9 @@ class FullFilter(FilterSet):
     sub_program = MultipleChoiceFilter(
         choices=lambda: [
             (sp.id, "{} - {}".format(sp.number, sp.name))
-            for sp in SubProgram.objects.filter(created__year=datetime.datetime.now().year)
+            for sp in SubProgram.objects.filter(master_program__active=True
+                                                # ,created__year=datetime.datetime.now().year
+                                                )
         ],
         field_name='enrolled_programs__sub_program',
         label='Sub Program',
