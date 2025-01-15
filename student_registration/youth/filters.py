@@ -52,15 +52,15 @@ class FullFilter(FilterSet):
         choices=Partner.objects.values_list('id', 'name').order_by('name').distinct(),
         empty_label='Partner'
     )
-    center__governorate = ChoiceFilter(
+    adolescent__governorate = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(),
         empty_label='Governorate'
     )
-    center__caza = ChoiceFilter(
+    adolescent__caza = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct(),
         empty_label='Caza'
     )
-    center__cadaster = ChoiceFilter(
+    adolescent__cadaster = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct(),
         empty_label='Cadaster'
     )

@@ -593,8 +593,111 @@ def export_data(request, **kwargs):
         user = request.user
         partner_id = user.partner_id
 
+        partner = request.GET.get('partner', '')
+        governorate = request.GET.get('governorate', '')
+        caza = request.GET.get('caza', '')
+        cadaster = request.GET.get('cadaster', '')
+        adolescent_first_name = request.GET.get('adolescent_first_name', '')
+        adolescent_father_name = request.GET.get('adolescent_father_name', '')
+        adolescent_last_name = request.GET.get('adolescent_last_name', '')
+        adolescent_number = request.GET.get('adolescent_number', '')
+        adolescent_gender = request.GET.get('adolescent_gender', '')
+        adolescent_nationality = request.GET.get('adolescent_nationality', '')
+        adolescent_disability = request.GET.get('adolescent_disability', '')
+        adolescent_first_phone_number = request.GET.get('adolescent_first_phone_number', '')
+        master_program = request.GET.get('master_program', '')
+        sub_program = request.GET.get('sub_program', '')
+        program_document = request.GET.get('program_document', '')
+        start_date = request.GET.get('start_date', '')
+        end_date = request.GET.get('end_date', '')
+        # print("-----------------PD parameters---------------------")
+        # print("master_program: " + str(master_program))
+        # print("sub_program: " + str(sub_program))
+        # print("program_document: " + str(program_document))
+        # print("start_date: " + str(start_date))
+        # print("end_date: " + str(end_date))
+ 
         query_params = []
         vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'  "
+
+        if partner:
+            vw_youth_data_str += " AND partner_id = %s"
+            query_params.append(partner)
+
+        if governorate!= 'Governorate':
+            vw_youth_data_str += " AND governorate = %s"
+            query_params.append(governorate)
+
+        if caza!= 'Caza':
+            vw_youth_data_str += " AND district = %s"
+            query_params.append(caza)
+
+        if cadaster!= 'Cadaster':
+            vw_youth_data_str += " AND cadaster = %s"
+            query_params.append(cadaster)
+
+        if adolescent_first_name:
+            vw_youth_data_str += " AND adolescent_first_name = %s"
+            query_params.append(adolescent_first_name)
+
+        if adolescent_father_name:
+            vw_youth_data_str += " AND adolescent_father_name = %s"
+            query_params.append(adolescent_father_name)
+
+        if adolescent_last_name:
+            vw_youth_data_str += " AND adolescent_last_name = %s"
+            query_params.append(adolescent_last_name)
+
+        if adolescent_number:
+            vw_youth_data_str += " AND adolescent_number = %s"
+            query_params.append(adolescent_number)
+
+        if adolescent_gender:
+            vw_youth_data_str += " AND adolescent_gender = %s"
+            query_params.append(adolescent_gender)
+
+        if adolescent_nationality:
+            vw_youth_data_str += " AND adolescent_nationality_id = %s"
+            query_params.append(adolescent_nationality)
+
+        if adolescent_disability!= 'Disability':
+            vw_youth_data_str += " AND disability_name = %s"
+            query_params.append(adolescent_disability)
+
+        if adolescent_first_phone_number:
+            vw_youth_data_str += " AND first_phone_number = %s"
+            query_params.append(adolescent_first_phone_number)
+
+        # if master_program:
+        #     vw_youth_data_str += " AND master_program IN (%s)"
+        #     query_params.append(master_program)
+        #
+        # if sub_program:
+        #     vw_youth_data_str += " AND sub_program IN (%s)"
+        #     query_params.append(sub_program)
+        #
+        # if program_document:
+        #     vw_youth_data_str += " AND program_document = %s"
+        #     query_params.append(program_document)
+        #
+
+
+        # donor =  enrolled_programs__donor
+        # program_document =  enrolled_programs__program_document
+        # start_date =  enrolled_programs__completion_date
+        # end_date =  enrolled_programs__completion_date
+
+        # if start_date:
+        #     vw_youth_data_str += " AND start_date >= %s"
+        #     query_params.append(start_date)
+        #
+        # if end_date:
+        #     vw_youth_data_str += " AND end_date <= %s"
+        #     query_params.append(end_date)
+
+        # Final query and parameters
+        print(vw_youth_data_str)
+        print(query_params)
 
         if has_group(user, 'YOUTH_UNICEF'):
             vw_youth_data_str += " AND id > 0 "
@@ -605,7 +708,6 @@ def export_data(request, **kwargs):
             vw_youth_data_str += " AND id = 0 "
 
         cursor.execute(vw_youth_data_str, query_params)
-
 
         headers = [col[0] for col in cursor.description]
 
