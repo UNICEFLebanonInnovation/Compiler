@@ -572,7 +572,8 @@ def child_duplication_check(request):
     filtered_results = Registration.objects.filter(
         child__birthday_year=birthday_year,
         child__birthday_month=birthday_month,
-        child__birthday_day=birthday_day
+        child__birthday_day=birthday_day,
+        deleted=False
     )
 
     filtered_results = filtered_results.values(
