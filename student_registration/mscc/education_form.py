@@ -972,10 +972,10 @@ class EducationGradingForm(forms.ModelForm):
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 66)
             field_init(self.fields['language_grade'], 'Foreign Language Development', 66)
             field_init(self.fields['math_grade'], 'Cognitive Development - Mathematics', 48)
-            field_init(self.fields['science_grade'], 'Cognitive Development - Science', 36)
-            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 34)
+            field_init(self.fields['science_grade'], 'Cognitive Development - Science', 38)
+            field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 40)
             field_init(self.fields['psychomotor_grade'], 'Psychomotor Development', 40)
-            field_init(self.fields['artistic_grade'], 'Artistic Development', 14)
+            field_init(self.fields['artistic_grade'], 'Artistic Development', 16)
             self.fields['biology_grade'].hidden_widget()
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
@@ -984,7 +984,7 @@ class EducationGradingForm(forms.ModelForm):
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 74)
             field_init(self.fields['language_grade'], 'Foreign Language Development', 74)
             field_init(self.fields['math_grade'], 'Cognitive Development - Mathematics', 50)
-            field_init(self.fields['science_grade'], 'Cognitive Development - Science', 34)
+            field_init(self.fields['science_grade'], 'Cognitive Development - Science', 38)
             field_init(self.fields['social_emotional_grade'], 'Social-Emotional Development', 40)
             field_init(self.fields['psychomotor_grade'], 'Psychomotor Development', 42)
             field_init(self.fields['artistic_grade'], 'Artistic Development', 16)
@@ -1355,36 +1355,143 @@ class EducationGradingForm(forms.ModelForm):
         return instance
 
     def clean(self):
+
         cleaned_data = super(EducationGradingForm, self).clean()
-        # programme_type = cleaned_data.get("programme_type")
+        programme_type = cleaned_data.get("programme_type")
 
-        arabic_grade = cleaned_data.get("arabic_grade")
-        language_grade = cleaned_data.get("language_grade")
-        math_grade = cleaned_data.get("math_grade")
-        biology_grade = cleaned_data.get("biology_grade")
-        chemistry_grade = cleaned_data.get("chemistry_grade")
-        physics_grade = cleaned_data.get("physics_grade")
-        science_grade = cleaned_data.get("science_grade")
+        # Validation thresholds for each programme type
+        thresholds = {
+            "BLN Level 1": {
+                "arabic_grade": 48,
+                "language_grade": 40,
+                "math_grade": 18,
+                "social_emotional_grade": 24,
+                "artistic_grade": 10,
+            },
+            "BLN Level 2": {
+                "arabic_grade": 56,
+                "language_grade": 58,
+                "math_grade": 32,
+                "social_emotional_grade": 24,
+                "artistic_grade": 10,
+            },
+            "BLN Level 3": {
+                "arabic_grade": 60,
+                "language_grade": 62,
+                "math_grade": 32,
+                "social_emotional_grade": 24,
+                "artistic_grade": 10,
+            },
+            "ABLN Level 1": {
+                "arabic_grade": 46,
+                "math_grade": 20,
+                "social_emotional_grade": 24,
+                "artistic_grade": 10,
+            },
+            "ABLN Level 2": {
+                "arabic_grade": 56,
+                "math_grade": 36,
+                "social_emotional_grade": 24,
+                "artistic_grade": 10,
+            },
+            "CBECE Level 1": {
+                "language_grade": 48,
+                "math_grade": 24,
+                "science_grade": 18,
+                "social_emotional_grade": 14,
+                "psychomotor_grade": 20,
+                "artistic_grade": 10,
+            },
+            "CBECE Level 2": {
+                "arabic_grade": 66,
+                "language_grade": 66,
+                "math_grade": 48,
+                "science_grade": 38,
+                "social_emotional_grade": 40,
+                "psychomotor_grade": 40,
+                "artistic_grade": 16,
+            },
+            "CBECE Level 3": {
+                "arabic_grade": 74,
+                "language_grade": 74,
+                "math_grade": 50,
+                "science_grade": 38,
+                "social_emotional_grade": 40,
+                "psychomotor_grade": 42,
+                "artistic_grade": 16,
+            },
+            "RS Grade 7": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "RS Grade 8": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "RS Grade 9": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "RS Grade 1": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "RS Grade 2": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "RS Grade 3": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "RS Grade 4": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "RS Grade 5": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+            "RS Grade 6": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "science_grade": 20,
+            },
+        }
 
-        # if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6", "RS Grade 7", "RS Grade 8", "RS Grade 9"]:
-        if arabic_grade and arabic_grade > 20:
-            self.add_error('arabic_grade', 'This value is greater that 20')
-        if language_grade and language_grade > 20:
-            self.add_error('language_grade', 'This value is greater that 20')
-        if math_grade and math_grade > 20:
-            self.add_error('math_grade', 'This value is greater that 20')
+        if programme_type in thresholds:
+            programme_thresholds = thresholds[programme_type]
 
-        # if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
-        if biology_grade and biology_grade > 20:
-            self.add_error('biology_grade', 'This value is greater that 20')
-        if chemistry_grade and chemistry_grade > 20:
-            self.add_error('chemistry_grade', 'This value is greater that 20')
-        if physics_grade and physics_grade > 20:
-            self.add_error('physics_grade', 'This value is greater that 20')
+            # Iterate through the thresholds to validate each field
+            for field, max_value in programme_thresholds.items():
+                field_value = cleaned_data.get(field)
+                if field_value is not None and field_value > max_value:
+                    self.add_error(field, "This value is greater than " + str(max_value))
 
-        # if programme_type in ["RS Grade 1", "RS Grade 2", "RS Grade 3", "RS Grade 4", "RS Grade 5", "RS Grade 6"]:
-        if science_grade and science_grade > 20:
-            self.add_error('science_grade', 'This value is greater that 20')
+        return cleaned_data
 
     class Meta:
         model = EducationProgrammeAssessment
