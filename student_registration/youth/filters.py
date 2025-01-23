@@ -119,14 +119,14 @@ class FullFilter(FilterSet):
     # )
 
     donor = ChoiceFilter(
-        choices=Donor.objects.values_list('id', 'name'),
         field_name='enrolled_programs__donor',
+        choices=Donor.objects.values_list('id', 'name'),
         empty_label='Donor',
         method='filter_by_donor'
     )
     program_document = ChoiceFilter(
-        choices=ProgramDocument.objects.values_list('id', 'project_name'),
         field_name='enrolled_programs__program_document',
+        choices=ProgramDocument.objects.values_list('id', 'project_name'),
         empty_label='Program Document',
         method='filter_by_program_document'
     )
@@ -189,8 +189,8 @@ class PDFilter(FilterSet):
         choices=lambda: [
             (mp.id, "{} - {}".format(mp.number, mp.name))  # Format as "number - name"
             for mp in MasterProgram.objects.filter(
-                active=True,
-                created__year=datetime.datetime.now().year
+                active=True
+                # , created__year=datetime.datetime.now().year
             )
         ],
         label='Master Program',
@@ -235,8 +235,8 @@ class PDPartnerFilter(FilterSet):
 
     master_program = MultipleChoiceFilter(
         choices=lambda: [(mp.id, mp.name) for mp in MasterProgram.objects.filter(
-            active=True,
-            created__year=datetime.datetime.now().year
+            active=True
+            # ,created__year=datetime.datetime.now().year
         )],
         label='Master Program',
         required=False,

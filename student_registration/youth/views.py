@@ -46,7 +46,8 @@ from .models import (
     ProgramDocument,
     MasterProgram,
     SubProgram,
-    Donor
+    Donor,
+    EnrolledPrograms
 )
 from student_registration.locations.models import Location
 
@@ -508,88 +509,11 @@ class ChildProfilePreview(LoginRequiredMixin,
             'instance': instance,
         }
 
+
 @login_required(login_url='/users/login')
-def export_data1(request):
-    try:
-        cursor = connection.cursor()
-        user = request.user
-        partner_id = user.partner_id
-
-        query_params = []
-        vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'  "
-
-        if has_group(user, 'YOUTH_UNICEF'):
-            vw_youth_data_str += " AND id > 0 "
-        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-            vw_youth_data_str += " AND partner_id = %s"
-            query_params.append(partner_id)
-        else:
-            vw_youth_data_str += " AND id = 0 "
-
-        cursor.execute(vw_youth_data_str, query_params)
-        mscc_data = cursor.fetchall()
-        headers = [col[0] for col in cursor.description]
-
-        # Create a BytesIO object to write the ZIP file into memory
-        zip_output = io.BytesIO()
-        with zipfile.ZipFile(zip_output, 'w') as zf:
-            # Create CSV for vw_mscc_data
-            csv_mscc_output = io.StringIO()
-            csv_writer = csv.writer(csv_mscc_output)
-
-            # Add BOM to handle Arabic text correctly
-            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
-            csv_writer.writerow(headers)  # Write headers
-
-            for row in mscc_data:
-                encoded_row = [smart_str(cell) for cell in row]
-                csv_writer.writerow(encoded_row)
-
-            # Add CSV to ZIP
-            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
-
-            # Process vw_youth_enrolledprograms
-            registration_ids = [row[0] for row in mscc_data]
-            if registration_ids:
-                enrolledprograms_data_str = "SELECT * FROM vw_youth_enrolledprograms WHERE registration_id IN ({})".format(
-                    ','.join(['%s'] * len(registration_ids)))
-                cursor.execute(enrolledprograms_data_str, registration_ids)
-                enrolledprograms_data = cursor.fetchall()
-                enrolledprograms_headers = [col[0] for col in cursor.description]
-
-                # Create CSV for enrolledprograms_data
-                csv_enrolledprograms_output = io.StringIO()
-                csv_writer = csv.writer(csv_enrolledprograms_output)
-
-                # Add BOM to handle Arabic text correctly
-                csv_enrolledprograms_output.write(codecs.BOM_UTF8.decode('utf-8'))
-                csv_writer.writerow(enrolledprograms_headers)  # Write headers
-
-                for row in enrolledprograms_data:
-                    encoded_row = [smart_str(cell) for cell in row]
-                    csv_writer.writerow(encoded_row)
-
-                # Add CSV to ZIP
-                zf.writestr('enrolledprograms_data.csv', csv_enrolledprograms_output.getvalue())
-
-        # Prepare the ZIP file response
-        response = HttpResponse(zip_output.getvalue(), content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=exported_data.zip'
-
-        return response
-
-    except Exception as e:
-        # Log the full traceback for debugging purposes
-        logging.error("An error occurred during the export process:")
-        logging.error(traceback.format_exc())
-
-        # Return a more detailed error response for debugging
-        return HttpResponse("An error occurred: " + str(e), status=500)
-
-
 def export_data(request, **kwargs):
+    import datetime
     try:
-        cursor = connection.cursor()
         user = request.user
         partner_id = user.partner_id
 
@@ -607,136 +531,238 @@ def export_data(request, **kwargs):
         adolescent_first_phone_number = request.GET.get('adolescent_first_phone_number', '')
         master_program = request.GET.get('master_program', '')
         sub_program = request.GET.get('sub_program', '')
+        donor = request.GET.get('donor', '')
         program_document = request.GET.get('program_document', '')
         start_date = request.GET.get('start_date', '')
         end_date = request.GET.get('end_date', '')
-        # print("-----------------PD parameters---------------------")
-        # print("master_program: " + str(master_program))
-        # print("sub_program: " + str(sub_program))
-        # print("program_document: " + str(program_document))
-        # print("start_date: " + str(start_date))
-        # print("end_date: " + str(end_date))
- 
-        query_params = []
-        vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'  "
+
+        # Filter EnrolledPrograms
+        queryset = EnrolledPrograms.objects.filter(registration__deleted=False).all()
 
         if partner:
-            vw_youth_data_str += " AND partner_id = %s"
-            query_params.append(partner)
+            queryset = queryset.filter(registration__partner__id=partner)
 
-        if governorate!= 'Governorate':
-            vw_youth_data_str += " AND governorate = %s"
-            query_params.append(governorate)
 
-        if caza!= 'Caza':
-            vw_youth_data_str += " AND district = %s"
-            query_params.append(caza)
+        print("governorate: " + str(governorate))
 
-        if cadaster!= 'Cadaster':
-            vw_youth_data_str += " AND cadaster = %s"
-            query_params.append(cadaster)
+        if governorate:
+            queryset = queryset.filter(registration__governorate__id=governorate)
+
+        if caza:
+            queryset = queryset.filter(registration__district__id=caza)
+
+        if cadaster:
+            queryset = queryset.filter(registration__cadaster__id=partner)
 
         if adolescent_first_name:
-            vw_youth_data_str += " AND adolescent_first_name = %s"
-            query_params.append(adolescent_first_name)
+            queryset = queryset.filter(registration__adolescent__first_name=adolescent_first_name)
 
         if adolescent_father_name:
-            vw_youth_data_str += " AND adolescent_father_name = %s"
-            query_params.append(adolescent_father_name)
+            queryset = queryset.filter(registration__adolescent__father_name=adolescent_father_name)
 
         if adolescent_last_name:
-            vw_youth_data_str += " AND adolescent_last_name = %s"
-            query_params.append(adolescent_last_name)
+            queryset = queryset.filter(registration__adolescent__last_name=adolescent_last_name)
 
         if adolescent_number:
-            vw_youth_data_str += " AND adolescent_number = %s"
-            query_params.append(adolescent_number)
+            queryset = queryset.filter(registration__adolescent__number=adolescent_number)
 
         if adolescent_gender:
-            vw_youth_data_str += " AND adolescent_gender = %s"
-            query_params.append(adolescent_gender)
+            queryset = queryset.filter(registration__adolescent__gender=adolescent_gender)
 
         if adolescent_nationality:
-            vw_youth_data_str += " AND adolescent_nationality_id = %s"
-            query_params.append(adolescent_nationality)
+            queryset = queryset.filter(registration__adolescent__nationality_id=adolescent_nationality)
 
-        if adolescent_disability!= 'Disability':
-            vw_youth_data_str += " AND disability_name = %s"
-            query_params.append(adolescent_disability)
+        if adolescent_disability:
+            queryset = queryset.filter(registration__adolescent__disability__id=adolescent_disability)
 
         if adolescent_first_phone_number:
-            vw_youth_data_str += " AND first_phone_number = %s"
-            query_params.append(adolescent_first_phone_number)
+            queryset = queryset.filter(registration__adolescent__first_phone_number=adolescent_first_phone_number)
 
-        # if master_program:
-        #     vw_youth_data_str += " AND master_program IN (%s)"
-        #     query_params.append(master_program)
-        #
-        # if sub_program:
-        #     vw_youth_data_str += " AND sub_program IN (%s)"
-        #     query_params.append(sub_program)
-        #
-        # if program_document:
-        #     vw_youth_data_str += " AND program_document = %s"
-        #     query_params.append(program_document)
-        #
+        if master_program:
+            master_program_ids = master_program.split(",")
+            queryset = queryset.filter(master_program__id__in=master_program_ids)
+
+        if sub_program:
+            sub_program_ids = sub_program.split(",")
+            queryset = queryset.filter(sub_program__id__in=sub_program_ids)
+
+        if donor:
+            queryset = queryset.filter(donor__id=donor)
+
+        if program_document:
+            queryset = queryset.filter(program_document__id=program_document)
+
+        if start_date:
+            try:
+                start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                queryset = queryset.filter(completion_date__gte=start_date_obj)
+            except ValueError:
+                pass
+
+        if end_date:
+            try:
+                end_date_obj = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                queryset = queryset.filter(completion_date__lte=end_date_obj)
+            except ValueError:
+                pass
+
+        registration_ids = queryset.values_list('registration_id', flat=True).distinct()
 
 
-        # donor =  enrolled_programs__donor
-        # program_document =  enrolled_programs__program_document
-        # start_date =  enrolled_programs__completion_date
-        # end_date =  enrolled_programs__completion_date
+        print('-------registration_ids------------')
+        print(tuple(registration_ids))
 
-        # if start_date:
-        #     vw_youth_data_str += " AND start_date >= %s"
-        #     query_params.append(start_date)
-        #
-        # if end_date:
-        #     vw_youth_data_str += " AND end_date <= %s"
-        #     query_params.append(end_date)
+        # vw_youth_data query
+        cursor = connection.cursor()
 
-        # Final query and parameters
-        print(vw_youth_data_str)
-        print(query_params)
+        query_params = []
+        vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'"
 
+        if registration_ids:
+            vw_youth_data_str += " AND id IN %s"
+            query_params.append(tuple(registration_ids))
+
+        # User group filtering
         if has_group(user, 'YOUTH_UNICEF'):
-            vw_youth_data_str += " AND id > 0 "
+            vw_youth_data_str += " AND id > 0"
         elif has_group(user, 'YOUTH_PARTNER') and partner_id:
             vw_youth_data_str += " AND partner_id = %s"
             query_params.append(partner_id)
         else:
-            vw_youth_data_str += " AND id = 0 "
+            vw_youth_data_str += " AND id = 0"
 
+        # Log the query to the console before execution
+        print("Executing Query:")
+        print(cursor.mogrify(vw_youth_data_str, query_params).decode('utf-8'))  # Ensure compatibility with Python 3
+
+
+        # Execute the query
         cursor.execute(vw_youth_data_str, query_params)
 
         headers = [col[0] for col in cursor.description]
 
+        # Prepare CSV response
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename=youth_registration_data.csv'
 
         response.write(codecs.BOM_UTF8)
-
         writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
-
         writer.writerow(headers)
 
         for row in cursor.fetchall():
-            encoded_row = []
-            for cell in row:
-                if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
-                else:  # Convert other data types to string
-                    encoded_row.append(str(cell))
-            writer.writerow(encoded_row)
+            writer.writerow([
+                cell.strftime('%Y-%m-%d') if isinstance(cell, (datetime.date, datetime.datetime)) else cell
+                for cell in row
+            ])
 
         return response
 
     except Exception as e:
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
+
+@login_required(login_url='/users/login')
+def export_pd_data(request, **kwargs):
+    import datetime
+    try:
+        user = request.user
+        partner_id = user.partner_id
+
+        partner = request.GET.get('partner', '').strip()
+        funded_by = request.GET.get('funded_by', '').strip()
+        project_status = request.GET.get('project_status', '').strip()
+        project_code = request.GET.get('project_code', '').strip()
+        project_name = request.GET.get('project_name', '').strip()
+        implementing_partners = request.GET.get('implementing_partners', '').strip()
+        focal_point = request.GET.get('focal_point', '').strip()
+        start_date = request.GET.get('start_date', '').strip()
+        end_date = request.GET.get('end_date', '').strip()
+        donor = request.GET.get('donor', '').strip()
+        master_program = request.GET.get('master_program', '').strip()
+
+
+        queryset = ProgramDocument.objects.all()
+
+        if partner.isdigit():
+            queryset = queryset.filter(registration__partner__id=int(partner))
+        if funded_by.isdigit():
+            queryset = queryset.filter(funded_by__id=int(funded_by))
+        if project_status.isdigit():
+            queryset = queryset.filter(project_status__id=int(project_status))
+        if project_code:
+            queryset = queryset.filter(project_code__icontains=project_code)
+        if project_name:
+            queryset = queryset.filter(project__icontains=project_name)
+        if implementing_partners:
+            queryset = queryset.filter(implementing_partners__icontains=implementing_partners)
+        if focal_point.isdigit():
+            queryset = queryset.filter(focal_point__id=int(focal_point))
+        if start_date:
+            try:
+                start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                queryset = queryset.filter(start_date__gte=start_date_obj)
+            except ValueError:
+                pass
+        if end_date:
+            try:
+                end_date_obj = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                queryset = queryset.filter(end_date__lte=end_date_obj)
+            except ValueError:
+                pass
+        if donor.isdigit():
+            queryset = queryset.filter(donors__id=int(donor))
+        if master_program:
+            master_program_ids = [int(mp) for mp in master_program.split(",") if mp.isdigit()]
+            if master_program_ids:
+                queryset = queryset.filter(master_program__id__in=master_program_ids)
+
+        pd_ids = queryset.values_list('id', flat=True).distinct()
+
+        # print('---------------ids------------')
+        # print(tuple(pd_ids))
+
+        cursor = connection.cursor()
+
+        query_params = []
+        vw_youth_data_str = "SELECT * FROM vw_youth_pd WHERE id >0 "
+
+        if pd_ids:
+            vw_youth_data_str += " AND id IN %s"
+            query_params.append(tuple(pd_ids))
+
+        # User group filtering
+        if has_group(user, 'YOUTH_UNICEF'):
+            vw_youth_data_str += " AND id > 0"
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
+            vw_youth_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+        else:
+            vw_youth_data_str += " AND id = 0"
+
+        cursor.execute(vw_youth_data_str, query_params)
+
+        headers = [col[0] for col in cursor.description]
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename=youth_pd_data.csv'
+
+        response.write(codecs.BOM_UTF8)
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(headers)
+
+        for row in cursor.fetchall():
+            writer.writerow([
+                cell.strftime('%Y-%m-%d') if isinstance(cell, (datetime.date, datetime.datetime)) else cell
+                for cell in row
+            ])
+
+        return response
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 

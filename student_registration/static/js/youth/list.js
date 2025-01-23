@@ -6,16 +6,16 @@ $(document).ready(function() {
         e.preventDefault();
 
         var partner = $("#id_partner").val();
-        var governorate = $("#id_adolescent__governorate option:selected").text();
-        var caza = $("#id_adolescent__caza option:selected").text();
-        var cadaster = $("#id_adolescent__cadaster option:selected").text();
+        var governorate = $("#id_adolescent__governorate").val();
+        var caza = $("#id_adolescent__caza").val();
+        var cadaster = $("#id_adolescent__cadaster").val();
         var adolescent_first_name = $("#id_adolescent__first_name").val();
         var adolescent_father_name = $("#id_adolescent__father_name").val();
         var adolescent_last_name = $("#id_adolescent__last_name").val();
         var adolescent_number = $("#id_adolescent__number").val();
         var adolescent_gender = $("#id_adolescent__gender").val();
         var adolescent_nationality = $("#id_adolescent__nationality").val();
-        var adolescent_disability = $("#id_adolescent__disability option:selected").text();
+        var adolescent_disability = $("#id_adolescent__disability").val();
         var adolescent_first_phone_number = $("#id_adolescent__first_phone_number").val();
         var master_program = $("#id_master_program").val();
         var sub_program = $("#id_sub_program").val();
