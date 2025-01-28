@@ -721,6 +721,27 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
 
         super(HealthNutritionServiceForm, self).__init__(*args, **kwargs)
+        if age <= 5:
+            self.fields['baby_breastfed'].required = True
+            self.fields['eat_solid_food'].required = True
+            self.fields['immunization_record_screened'].required = True
+            self.fields['vaccine_missing'].required = True
+            self.fields['muac_malnutrition_screening'].required = True
+            self.fields['eating_minimum_meals'].required = True
+            self.fields['child_vaccinated'].required = True
+            self.fields['positive_parenting'].required = True
+            self.fields['development_delays_identified'].required = True
+            self.fields['caregiver_counselling'].required = True
+            self.fields['caregiver_ecd_counselling'].required = True
+            self.fields['child_screened_malnutrition'].required = True
+            self.fields['child_immunization_screened'].required = True
+        if 6 <= age <= 18:
+            self.fields['eating_minimum_meals'].required = True
+            self.fields['child_vaccinated'].required = True
+            self.fields['respond_stressful_events'].required = True
+            self.fields['physical_activity'].required = True
+            self.fields['accessing_reproductive_health'].required = True
+            self.fields['attended_health_nutrition_session'].required = True
 
         form_action = reverse('mscc:service_health_nutrition_add', kwargs={'registry': registry, 'age': age})
         if instance:
@@ -1069,38 +1090,17 @@ class HealthNutritionServiceForm(forms.ModelForm):
 
             baby_breastfed = cleaned_data.get("baby_breastfed")
             infant_exclusively_breastfed = cleaned_data.get("infant_exclusively_breastfed")
-            if not baby_breastfed:
-                self.add_error('baby_breastfed', 'This field is required.')
             if baby_breastfed and baby_breastfed == 'Yes' and not infant_exclusively_breastfed:
                 self.add_error('infant_exclusively_breastfed', 'This field is required')
 
             eat_solid_food = cleaned_data.get("eat_solid_food")
             age_eat_solid_food = cleaned_data.get("age_eat_solid_food")
-            if not eat_solid_food:
-                self.add_error('eat_solid_food', 'This field is required.')
 
             if eat_solid_food and eat_solid_food == 'Yes' and not age_eat_solid_food:
                 self.add_error('age_eat_solid_food', 'This field is required')
 
-            if not cleaned_data.get('immunization_record_screened'):
-                self.add_error('immunization_record_screened', 'This field is required.')
-            if not cleaned_data.get('vaccine_missing'):
-                self.add_error('vaccine_missing', 'This field is required.')
-            if not cleaned_data.get('muac_malnutrition_screening'):
-                self.add_error('muac_malnutrition_screening', 'This field is required.')
-            if not cleaned_data.get('eating_minimum_meals'):
-                self.add_error('eating_minimum_meals', 'This field is required.')
-            if not cleaned_data.get('child_vaccinated'):
-                self.add_error('child_vaccinated', 'This field is required.')
-            if not cleaned_data.get('positive_parenting'):
-                self.add_error('positive_parenting', 'This field is required.')
-            if not cleaned_data.get('development_delays_identified'):
-                self.add_error('development_delays_identified', 'This field is required.')
             caregiver_counselling = cleaned_data.get("caregiver_counselling")
             counselling_date = cleaned_data.get("counselling_date")
-
-            if not caregiver_counselling:
-                self.add_error('caregiver_counselling', 'This field is required.')
 
             if caregiver_counselling and caregiver_counselling == 'Yes':
                 if not counselling_date:
@@ -1109,44 +1109,26 @@ class HealthNutritionServiceForm(forms.ModelForm):
             caregiver_ecd_counselling = cleaned_data.get("caregiver_counselling")
             ecd_counselling_date = cleaned_data.get("ecd_counselling_date")
 
-            if not caregiver_ecd_counselling:
-                self.add_error('caregiver_ecd_counselling', 'This field is required.')
-
             if caregiver_ecd_counselling and caregiver_ecd_counselling == 'Yes':
                 if not ecd_counselling_date:
                     self.add_error('ecd_counselling_date', 'This field is required')
 
             child_screened_malnutrition = cleaned_data.get("child_screened_malnutrition")
             child_malnutrition_screening = cleaned_data.get("child_malnutrition_screening")
-            if not child_screened_malnutrition:
-                self.add_error('child_screened_malnutrition', 'This field is required.')
             if child_screened_malnutrition and child_screened_malnutrition == 'Yes' and not child_malnutrition_screening:
                 self.add_error('child_malnutrition_screening', 'This field is required')
 
             child_immunization_screened = cleaned_data.get("child_immunization_screened")
             missing_vaccine = cleaned_data.get("missing_vaccine")
-            if not child_immunization_screened:
-                self.add_error('child_immunization_screened', 'This field is required.')
             if child_immunization_screened and child_immunization_screened == 'Yes' and not missing_vaccine:
                 self.add_error('missing_vaccine', 'This field is required')
 
         elif 6 <= age <= 18:
-            if not cleaned_data.get('eating_minimum_meals'):
-                self.add_error('eating_minimum_meals', 'This field is required.')
-            if not cleaned_data.get('child_vaccinated'):
-                self.add_error('child_vaccinated', 'This field is required.')
-            if not cleaned_data.get('respond_stressful_events'):
-                self.add_error('respond_stressful_events', 'This field is required.')
-            if not cleaned_data.get('physical_activity'):
-                self.add_error('physical_activity', 'This field is required.')
-            if not cleaned_data.get('accessing_reproductive_health'):
-                self.add_error('accessing_reproductive_health', 'This field is required.')
+
             attended_health_nutrition_session = cleaned_data.get("attended_health_nutrition_session")
             health_nutrition_session_title = cleaned_data.get("health_nutrition_session_title")
             health_nutrition_session_date = cleaned_data.get("health_nutrition_session_date")
-
-            if not attended_health_nutrition_session:
-                self.add_error('attended_health_nutrition_session', 'This field is required.')
+ 
             if attended_health_nutrition_session and attended_health_nutrition_session == 'Yes':
                 if not health_nutrition_session_title:
                     self.add_error('health_nutrition_session_title', 'This field is required')
