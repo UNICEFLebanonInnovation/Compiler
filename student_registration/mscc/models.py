@@ -741,6 +741,7 @@ class HealthNutritionService(TimeStampedModel):
         ('Language/Communication', _('Language/Communication')),
         ('Cognitive (learning thinking, problem solving)', _('Cognitive (learning thinking, problem solving)')),
         ('Movement/Physical development', _('Movement/Physical development')),
+        ('No', _('No')),
     )
     AGE_EAT_SOLID_FOOD = Choices(
         ('', '----------'),
