@@ -1,7 +1,8 @@
 # -- coding: utf-8 --
 from itertools import chain
-import datetime
 
+from datetime import datetime, date
+from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef, Subquery
 from import_export import resources, fields
 
@@ -63,14 +64,12 @@ def regenerate_services(child_age, registry, user=None):
         service.save()
 
 
-
-
 def update_service(service_name, registry_id, service_id):
     from .models import ProvidedServices
     ProvidedServices.objects.filter(registration_id=registry_id,
                                     name=service_name).update(service_id=service_id,
                                                               completed=True,
-                                                              completion_date=datetime.datetime.now())
+                                                              completion_date=datetime.now())
 
 
 def generate_education_history(registration_id, child_id, student_old_id):
@@ -590,3 +589,33 @@ def load_dashboard_data(param, grouping):
 
     rows = cursor.fetchall()
     return rows
+
+
+
+def validate_date(date_str):
+    """
+    Validates a date input by attempting to parse it into a datetime object.
+    Supports multiple date formats.
+    Accepts both string and datetime.date types.
+    """
+    if not date_str:
+        return None
+
+    # If the value is already a date object, return it as is
+    if isinstance(date_str, date):
+        return date_str
+
+    # If it's a string, attempt to parse it
+    # formats = ['%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y']
+    formats = ['%Y-%m-%d']  # Supported formats
+    for fmt in formats:
+        try:
+            return datetime.strptime(date_str, fmt).date()
+        except ValueError:
+            continue
+
+    raise ValidationError("Date is not valid")
+
+
+
+
