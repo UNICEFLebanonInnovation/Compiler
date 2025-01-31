@@ -450,3 +450,18 @@ def teacher_export_data(request):
 
         # Return a more detailed error response for debugging
         return HttpResponse("An error occurred: " + str(e), status=500)
+
+from django.http import FileResponse
+from storages.backends.azure_storage import AzureStorage
+from pathlib import Path
+
+class MyAzureStorage(AzureStorage):
+    location = "export"
+
+def serve_file(request, file_path):
+    file_name = Path(file_path).name
+    storage = MyAzureStorage()
+    file = storage.open(file_path, "rb")
+    response = FileResponse(file)
+    response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
+    return response

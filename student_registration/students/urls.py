@@ -25,7 +25,6 @@ urlpatterns = [
         regex=r'^teacher-export/$',
         view=views.teacher_export_data,
         name='teacher_export'
-    ),
-
+    )
 ]
 
