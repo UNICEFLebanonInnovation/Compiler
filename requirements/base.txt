@@ -79,3 +79,4 @@ djangosecure==0.0.11
 xlwt==1.3.0
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.12.0
+django-storages==1.6.5
