@@ -70,6 +70,7 @@ from student_registration.enrollments.views import (
 )
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 from student_registration.backends.views import NotificationViewSet, ExporterViewSet
+from student_registration.students.views import serve_file
 
 api = routers.SimpleRouter()
 # api.register(r'alp', OutreachViewSet, base_name='alp')
@@ -159,6 +160,7 @@ urlpatterns = [
     url(r'^api/docs/', schema_view),
 
     url(r'^api/', include(api.urls)),
+    url(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from crispy_forms.helper import FormHelper
 
@@ -15,6 +16,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from dal import autocomplete
 
 from student_registration.mscc.templatetags.simple_tags import get_service
+from student_registration.mscc.utils import validate_date
 from .models import (
     Registration,
     EducationAssessment,
@@ -652,32 +654,49 @@ class EducationServiceForm(forms.ModelForm):
 
         return instance
 
-    # def clean(self):
-    #     cleaned_data = super(EducationServiceForm, self).clean()
-    #     instance = self.instance
-    #     if not instance.pk:
-    #         registration_id = cleaned_data.get("registration_id")
-    #         round_id = cleaned_data.get("round").id
-    #
-    #         registration = Registration.objects.get(id=registration_id)
-    #         child = registration.child
-    #
-    #         # Count the number of registrations for the same child and round
-    #         count = Registration.objects.filter(
-    #             child=child,
-    #             round__id=round_id
-    #         ).exclude(id=registration_id).count()
-    #
-    #         last_registration = Registration.objects.filter(
-    #             child=child,
-    #             round__id=round_id
-    #         ).exclude(id=registration_id).values(
-    #             'center__name'
-    #         ).order_by('-id').first()
-    #
-    #         if count > 0:
-    #             center_name = last_registration['center__name']
-    #             self.add_error('round', 'This child is already registered in the Center: ' + center_name)
+    def clean(self):
+
+        cleaned_data = super(EducationServiceForm, self).clean()
+
+        dropout_date_str = cleaned_data.get("dropout_date")
+        if dropout_date_str:
+            try:
+                validate_date(dropout_date_str)
+            except ValidationError as e:
+                self.add_error("dropout_date", str(e))
+
+        registration_date_str = cleaned_data.get("registration_date")
+        if registration_date_str:
+            try:
+                validate_date(registration_date_str)
+            except ValidationError as e:
+                self.add_error("registration_date", str(e))
+
+        # instance = self.instance
+
+        # if not instance.pk:
+        #     registration_id = cleaned_data.get("registration_id")
+        #     round_id = cleaned_data.get("round").id
+        #
+        #     registration = Registration.objects.get(id=registration_id)
+        #     child = registration.child
+        #
+        #     # Count the number of registrations for the same child and round
+        #     count = Registration.objects.filter(
+        #         child=child,
+        #         round__id=round_id
+        #     ).exclude(id=registration_id).count()
+        #
+        #     last_registration = Registration.objects.filter(
+        #         child=child,
+        #         round__id=round_id
+        #     ).exclude(id=registration_id).values(
+        #         'center__name'
+        #     ).order_by('-id').first()
+        #
+        #     if count > 0:
+        #         center_name = last_registration['center__name']
+        #         self.add_error('round', 'This child is already registered in the Center: ' + center_name)
 
     class Meta:
         model = EducationService

@@ -1128,7 +1128,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
             attended_health_nutrition_session = cleaned_data.get("attended_health_nutrition_session")
             health_nutrition_session_title = cleaned_data.get("health_nutrition_session_title")
             health_nutrition_session_date = cleaned_data.get("health_nutrition_session_date")
- 
+
             if attended_health_nutrition_session and attended_health_nutrition_session == 'Yes':
                 if not health_nutrition_session_title:
                     self.add_error('health_nutrition_session_title', 'This field is required')
