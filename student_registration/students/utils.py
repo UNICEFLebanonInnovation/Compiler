@@ -23,7 +23,7 @@ def get_api_token():
             "password": settings.UNIQUE_ID_API_PASSWORD
         }
 
-        resp = requests.post(settings.UNIQUE_ID_API_URL, data=body)
+        resp = requests.post(settings.UNIQUE_ID_API_TOKEN_URL, data=body)
         result = json.loads(resp.text)
 
         return result['token'] if "token" in result else 0
