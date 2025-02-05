@@ -8,7 +8,62 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color
 from datetime import datetime
 import logging
+from django.conf import settings
+import requests
+from requests.structures import CaseInsensitiveDict
+import json
 logger = logging.getLogger(__name__)
+
+
+def get_api_token():
+
+    try:
+        body = {
+            "username": settings.UNIQEU_ID_API_USERNAME,
+            "password": settings.UNIQUE_ID_API_PASSWORD
+        }
+
+        resp = requests.post(settings.UNIQUE_ID_API_URL, data=body)
+        result = json.loads(resp.text)
+
+        return result['token'] if "token" in result else 0
+    except Exception as ex:
+        return 0
+
+
+def get_api_data(token, data):
+
+    try:
+        headers = CaseInsensitiveDict()
+        headers["Authorization"] = token
+        resp = requests.post(settings.UNIQUE_ID_API_URL, headers=headers, data=data)
+        result = json.loads(resp.text)
+        individuals = result["individuals"] if "individuals" in result else ''
+        # if len(individuals):
+        return individuals[0]
+    except Exception as ex:
+        return 0
+
+
+def generate_one_unique_id(data):
+
+    try:
+        token = get_api_token()
+        if not token:
+            return 0
+
+        result = get_api_data(token, data)
+        return result["unicef_id"]
+    except Exception as ex:
+        return 0
+
+
+def generate_bulk_unique_id(data):
+    token = get_api_token()
+    if not token:
+        return 0
+
+    return get_api_data(token, data)
 
 
 def generate_id(

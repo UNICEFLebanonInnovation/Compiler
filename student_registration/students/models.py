@@ -307,6 +307,7 @@ class Person(TimeStampedModel):
         verbose_name=_('P-code')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
+    unicef_id = models.CharField(max_length=45, blank=True, null=True)
     number_part1 = models.CharField(max_length=45, blank=True, null=True)
     number_part2 = models.CharField(max_length=45, blank=True, null=True)
     std_phone = models.CharField(max_length=74, blank=True, null=True)
@@ -392,6 +393,18 @@ class Person(TimeStampedModel):
             self.birthday_day,
             self.birthday_month,
             self.birthday_year
+        )
+
+        self.unicef_id = generate_one_unique_id({
+                "id": self.pk,
+                "first_name": self.first_name,
+                "father_name": self.father_name,
+                "last_name": self.last_name,
+                "mother_name": self.mother_fullname,
+                "date_of_birth": self.birthday,
+                "nationality": self.nationality_name(),
+                "gender": self.sex
+            }
         )
 
         super(Person, self).save(**kwargs)

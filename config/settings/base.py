@@ -164,7 +164,7 @@ MANAGERS = ADMINS
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
-    'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/staging_16122022'),
+    'default': env.db('DATABASE_URL', default='postgres://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-12.postgres.database.azure.com:5432/prod_03092024'),
     # 'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/prod_23022023_2'),
     # 'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/prod_23022023_2'),
 }
@@ -473,6 +473,10 @@ SUIT_CONFIG = {
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }
+
+UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='NO_URL')
+UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
+UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 
 HELPDESK_TRANSLATE_TICKET_COMMENTS = True
 HELPDESK_SHOW_DELETE_BUTTON_SUPERUSER_FOLLOW_UP = True
