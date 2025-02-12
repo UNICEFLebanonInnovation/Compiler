@@ -19,7 +19,7 @@ def get_api_token():
 
     try:
         body = {
-            "username": settings.UNIQEU_ID_API_USERNAME,
+            "username": settings.UNIQUE_ID_API_USERNAME,
             "password": settings.UNIQUE_ID_API_PASSWORD
         }
 
@@ -34,13 +34,15 @@ def get_api_token():
 def get_api_data(token, data):
 
     try:
+
         headers = CaseInsensitiveDict()
         headers["Authorization"] = token
-        resp = requests.post(settings.UNIQUE_ID_API_URL, headers=headers, data=data)
+        json_data = json.dumps(data)
+        resp = requests.post(settings.UNIQUE_ID_API_URL, headers=headers, data=json_data)
         result = json.loads(resp.text)
-        individuals = result["individuals"] if "individuals" in result else ''
-        # if len(individuals):
-        return individuals[0]
+        individuals = result["individual"] if "individual" in result else ''
+        if len(individuals):
+            return individuals[0]
     except Exception as ex:
         return 0
 

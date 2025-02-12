@@ -354,6 +354,13 @@ class Person(TimeStampedModel):
             self.birthday_month,
             self.birthday_year,
         )
+    @property
+    def birthdate(self):
+        return u'{}-{}-{}'.format(
+            self.birthday_year,
+            self.birthday_month,
+            self.birthday_day,
+        )
 
     @property
     def age(self):
@@ -396,16 +403,19 @@ class Person(TimeStampedModel):
         )
 
         self.unicef_id = generate_one_unique_id({
-                "id": self.pk,
-                "first_name": self.first_name,
-                "father_name": self.father_name,
-                "last_name": self.last_name,
-                "mother_name": self.mother_fullname,
-                "date_of_birth": self.birthday,
-                "nationality": self.nationality_name(),
-                "gender": self.sex
-            }
-        )
+            "individuals": [
+                {
+                    "id": str(self.pk),
+                    "first_name": self.first_name,
+                    "father_name": self.father_name,
+                    "last_name": self.last_name,
+                    "mother_name": self.mother_fullname,
+                    "date_of_birth": self.birthdate,
+                    "nationality": 'syrian',
+                    "gender": self.sex
+                }
+            ]
+        })
 
         super(Person, self).save(**kwargs)
 
