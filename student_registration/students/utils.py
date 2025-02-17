@@ -47,13 +47,25 @@ def get_api_data(token, data):
         return 0
 
 
-def generate_one_unique_id(data):
-
+def generate_one_unique_id(pk,first_name,father_name, last_name, mother_fullname, birthdate, nationality, sex):
     try:
         token = get_api_token()
         if not token:
             return 0
-
+        data = {
+            "individuals": [
+                {
+                    "id": pk,
+                    "first_name": first_name,
+                    "father_name": father_name,
+                    "last_name": last_name,
+                    "mother_name": mother_fullname,
+                    "date_of_birth": birthdate,
+                    "nationality": nationality,
+                    "gender": sex
+                }
+            ]
+        }
         result = get_api_data(token, data)
         return result["unicef_id"]
     except Exception as ex:

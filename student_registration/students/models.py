@@ -60,6 +60,7 @@ class StudentALPManager(models.Manager):
 class Nationality(models.Model):
     name = models.CharField(max_length=45, unique=True)
     code = models.CharField(max_length=5, null=True)
+    name_en = models.CharField(max_length=45, unique=True, null=True)
 
     class Meta:
         ordering = ['id']
@@ -347,6 +348,12 @@ class Person(TimeStampedModel):
 
         return ''
 
+    def nationality_name_en(self):
+        if self.nationality:
+            return self.nationality.name_en
+
+        return ''
+
     @property
     def birthday(self):
         return u'{}/{}/{}'.format(
@@ -402,20 +409,16 @@ class Person(TimeStampedModel):
             self.birthday_year
         )
 
-        self.unicef_id = generate_one_unique_id({
-            "individuals": [
-                {
-                    "id": str(self.pk),
-                    "first_name": self.first_name,
-                    "father_name": self.father_name,
-                    "last_name": self.last_name,
-                    "mother_name": self.mother_fullname,
-                    "date_of_birth": self.birthdate,
-                    "nationality": 'syrian',
-                    "gender": self.sex
-                }
-            ]
-        })
+        self.unicef_id = generate_one_unique_id(
+            str(self.pk),
+            self.first_name,
+            self.father_name,
+            self.last_name,
+            self.mother_fullname,
+            self.birthdate,
+            self.nationality_name_en(),
+            self.sex
+        )
 
         super(Person, self).save(**kwargs)
 
