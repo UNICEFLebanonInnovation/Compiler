@@ -48,10 +48,10 @@ class UserResource(resources.ModelResource):
             'last_name',
             'username',
             'email',
-            'partner',  # Remove __name
-            'school',
-            'center',
-            'youth_partner',
+            'partner__name',
+            'school__name',
+            'center__name',
+            'youth_partner__name',
             'is_active',
             'user_category',
         )
