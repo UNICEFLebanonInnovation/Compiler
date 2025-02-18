@@ -27,6 +27,11 @@ urlpatterns = [
         name='export'
     ),
     url(
+        regex=r'^export-pd/$',
+        view=views.export_pd_data,
+        name='export_pd'
+    ),
+    url(
         regex=r'^List/$',
         view=views.MainListView.as_view(),
         name='list'

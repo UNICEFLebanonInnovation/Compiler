@@ -5,17 +5,44 @@ $(document).ready(function() {
     $(document).on('click', '.download-report', function(e){
         e.preventDefault();
 
-        var nationality = $("#id_child__nationality").val();
-        var first_name = $("#id_child__first_name").val();
-        var last_name = $("#id_child__last_name").val();
-        var father_name = $("#id_child__father_name").val();
-        var mother_fullname = $("#id_child__mother_fullname").val();
+        var partner = $("#id_partner").val();
+        var governorate = $("#id_adolescent__governorate").val();
+        var caza = $("#id_adolescent__caza").val();
+        var cadaster = $("#id_adolescent__cadaster").val();
+        var adolescent_first_name = $("#id_adolescent__first_name").val();
+        var adolescent_father_name = $("#id_adolescent__father_name").val();
+        var adolescent_last_name = $("#id_adolescent__last_name").val();
+        var adolescent_number = $("#id_adolescent__number").val();
+        var adolescent_gender = $("#id_adolescent__gender").val();
+        var adolescent_nationality = $("#id_adolescent__nationality").val();
+        var adolescent_disability = $("#id_adolescent__disability").val();
+        var adolescent_first_phone_number = $("#id_adolescent__first_phone_number").val();
+        var master_program = $("#id_master_program").val();
+        var sub_program = $("#id_sub_program").val();
+        var donor = $("#id_donor").val();
+        var program_document = $("#id_program_document").val();
+        var start_date = $("#id_start_date").val();
+        var end_date = $("#id_end_date").val();
 
-        window.open("/youth/export/?nationality=" + nationality
-                                + "&first_name=" + first_name
-                                + "&last_name=" + last_name
-                                + "&father_name=" + father_name
-                               + "&mother_fullname=" + mother_fullname,
+
+        window.open("/youth/export/?partner=" + partner
+                                + "&governorate=" + governorate
+                                + "&caza=" + caza
+                                + "&cadaster=" + cadaster
+                                + "&adolescent_first_name=" + adolescent_first_name
+                                + "&adolescent_father_name=" + adolescent_father_name
+                                + "&adolescent_last_name=" + adolescent_last_name
+                                + "&adolescent_number=" + adolescent_number
+                                + "&adolescent_gender=" + adolescent_gender
+                                + "&adolescent_nationality=" + adolescent_nationality
+                                + "&adolescent_disability=" + adolescent_disability
+                                + "&adolescent_first_phone_number=" + adolescent_first_phone_number
+                                + "&master_program=" + master_program
+                                + "&sub_program=" + sub_program
+                                + "&donor=" + donor
+                                + "&program_document=" + program_document
+                                + "&start_date=" + start_date
+                                + "&end_date=" + end_date  ,
             "_blank")
     });
 
