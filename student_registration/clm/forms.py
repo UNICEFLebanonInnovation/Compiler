@@ -11634,7 +11634,7 @@ class BridgingServiceForm(forms.ModelForm):
 
     child_received_internet = forms.ChoiceField(
         label=_("child received internet"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=CLM.YES_NO
     )
 
@@ -11700,7 +11700,7 @@ class BridgingServiceForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default" >12</span>'),
                     Div('child_received_internet', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row d-none',
                 ),
                 css_class='bd-callout bd-callout-warning A_right_border'
             ),
@@ -11840,7 +11840,7 @@ class BridgingFollowupForm(forms.ModelForm):
     )
     covid_session_attended = forms.ChoiceField(
         label=_("Attended covid Session"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=(('yes', _("Yes")), ('no', _("No")))
     )
     covid_session_number = forms.IntegerField(
@@ -12014,26 +12014,26 @@ class BridgingFollowupForm(forms.ModelForm):
                     Div('covid_parent_attended', css_class='col-md-2'),
                     HTML('<span class="badge badge-default" id="span_covid_parent_attended_other">3.4</span>'),
                     Div('covid_parent_attended_other', css_class='col-md-2'),
-                    css_class='row parent_visits',
+                    css_class='row d-none',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('followup_session_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_followup_session_modality">4.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_modality">3.1</span>'),
                     Div('followup_session_modality', css_class='col-md-2 multiple-checbkoxes'),
-                    HTML('<span class="badge badge-default" id="span_followup_session_number">4.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_session_number">3.2</span>'),
                     Div('followup_session_number', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">4.3</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended">3.3</span>'),
                     Div('followup_parent_attended', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">4.4</span>'),
+                    HTML('<span class="badge badge-default" id="span_followup_parent_attended_other">3.4</span>'),
                     Div('followup_parent_attended_other', css_class='col-md-2'),
                     css_class='row parent_visits',
                 ),
 
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('school_contacted_caretaker', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default" id= "span_discussion_topic">5</span>'),
+                    HTML('<span class="badge badge-default" id= "span_discussion_topic">6</span>'),
                     Div('discussion_topic', css_class='col-md-4'),
                     css_class='row',
                 ),

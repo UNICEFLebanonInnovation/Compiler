@@ -3255,43 +3255,43 @@ class SchoolForm(forms.ModelForm):
     )
     number_children = forms.IntegerField(
         label=_('Total Number of children enrolled (excluding Dirasa)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_male = forms.IntegerField(
         label=_('Total Number of children enrolled (male)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_female = forms.IntegerField(
         label=_('Total Number of children enrolled (female)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_lebanese = forms.IntegerField(
         label=_('Total Number of children enrolled (Lebanese)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_non_lebanese = forms.IntegerField(
         label=_('Total Number of children enrolled (non Lebanese)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_sbp = forms.IntegerField(
         label=_('Total Number of children enrolled (Dirasa only)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_male_sbp = forms.IntegerField(
         label=_('Total Number of children enrolled (male, Dirasa only)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_female_sbp = forms.IntegerField(
         label=_('Total Number of children enrolled (female, Dirasa only)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_lebanese_sbp = forms.IntegerField(
         label=_('Total Number of children enrolled (Lebanese, Dirasa only)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     number_children_non_lebanese_sbp = forms.IntegerField(
         label=_('Total Number of children enrolled (non Lebanese, Dirasa only)'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     CWD_accessible = forms.ChoiceField(
         label=_("Is the school accessible for CWD?"),
