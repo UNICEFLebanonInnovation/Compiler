@@ -632,8 +632,9 @@
                                                                         <h4 class="timeline-title">{{ item.education_program }}
 <!--                                                                            {% if item.round %} - {{ item.round }}{% endif %}-->
                                                                         </h4>
-                                                                        {% if item.round %}<p>Round: {{ item.round }}</p>{% endif %}
 
+                                                                        {% if item.registration.center %}<p>Center: {{ item.registration.center }}</p>{% endif %}
+                                                                        {% if item.round %}<p>Round: {{ item.round }}</p>{% endif %}
                                                                         {% if item.class_section %}<p>Section: {{ item.class_section }}</p>{% endif %}
                                                                     </div>
                                                                 </div>

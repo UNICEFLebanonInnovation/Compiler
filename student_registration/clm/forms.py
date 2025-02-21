@@ -11657,7 +11657,7 @@ class BridgingServiceForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Service Data') + '</h4>'),
                 ),
             ),
             Fieldset(
@@ -11665,7 +11665,7 @@ class BridgingServiceForm(forms.ModelForm):
                 Div(
                     HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Services') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
