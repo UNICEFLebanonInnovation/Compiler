@@ -56,6 +56,18 @@ $(document).ready(function() {
         }
     } );
 
+//    $(document).on('click', '.download-center-report', function(e){
+//        e.preventDefault();
+//
+//        var center_name = $("#id_name").val();
+//        var center_type = $("#id_type").val();
+//        var center_governorate = $("#id_governorate").val();
+//
+//        window.open("/locations/export/?center_name=" + center_name
+//                                + "&center_type=" + center_type
+//                                + "&center_governorate=" + center_governorate ,
+//            "_blank")
+//    });
     $(document).on('click', '.download-center-report', function(e){
         e.preventDefault();
 
@@ -63,10 +75,30 @@ $(document).ready(function() {
         var center_type = $("#id_type").val();
         var center_governorate = $("#id_governorate").val();
 
-        window.open("/locations/export/?center_name=" + center_name
+        requestHeaders = getHeader();
+
+        $(".downloading-message").show();
+        $('.download-center-report').addClass('disabled');
+
+        $.ajax({
+            url: "/locations/export-background/?center_name=" + center_name
                                 + "&center_type=" + center_type
                                 + "&center_governorate=" + center_governorate ,
-            "_blank")
+            type: "GET",
+            headers: requestHeaders,
+            success: function(data) {
+
+               $(".downloading-message").hide();
+               $('.download-center-report').removeClass('disabled');
+               window.open("/locations/export-download/" + data,
+                           "_blank");
+
+            },
+            error: function(error) {
+                // Handle error if needed
+            }
+        });
+
     });
 });
 

@@ -10,9 +10,35 @@ from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import Group
 from .models import User
 from .forms import UserAdminForm
+from student_registration.alp.templatetags.util_tags import has_group
+from django.contrib.admin import SimpleListFilter
+
+
+class UserCategoryFilter(SimpleListFilter):
+    title = 'User Category'
+    parameter_name = 'user_category'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('MSCC', 'MSCC'),
+            ('YOUTH', 'YOUTH'),
+            ('Dirasa', 'Dirasa'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'MSCC':
+            return queryset.filter(groups__name='MSCC')
+        if self.value() == 'YOUTH':
+            return queryset.filter(groups__name='YOUTH')
+        if self.value() == 'Dirasa':
+            return queryset.exclude(groups__name__in=['MSCC', 'YOUTH'])
+        return queryset
+
 
 
 class UserResource(resources.ModelResource):
+    is_active = fields.Field(column_name='is_active', attribute='is_active')
+    user_category = fields.Field(column_name='user_category')
 
     class Meta:
         model = User
@@ -23,15 +49,26 @@ class UserResource(resources.ModelResource):
             'username',
             'email',
             'partner__name',
+            'school__name',
+            'center__name',
+            'youth_partner__name',
+            'is_active',
+            'user_category',
         )
         export_order = fields
+
+    def dehydrate_user_category(self, user):
+        if has_group(user, 'MSCC'):
+            return 'MSCC'
+        if has_group(user, 'YOUTH'):
+            return 'YOUTH'
+        return 'Dirasa'
 
 
 class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
     resource_class = UserResource
     form = UserAdminForm
-
-    filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools', 'regions')
+    filter_horizontal = ('groups', 'user_permissions')
     list_display = (
         'username',
         'first_name',
@@ -39,23 +76,27 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         'is_active',
         'email',
         'school',
-        'location',
+        'center',
+        'partner',
+        'youth_partner',
         'phone_number',
+        'is_active',
+        'user_category_display'
     )
     search_fields = (
         u'username',
         u'school__name',
-        u'location__name',
         u'first_name',
         u'last_name',
     )
     list_filter = (
         'groups',
         'school',
-        'location',
         'center',
         'partner',
+        'youth_partner',
         'is_active',
+        UserCategoryFilter
     )
     actions = (
         'activate',
@@ -105,6 +146,14 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (None, {'fields': ('partner','youth_partner', 'center', 'location', 'school', 'locations', 'schools', 'regions')})
     )
+
+    def user_category_display(self, obj):
+        if has_group(obj, 'MSCC'):
+            return 'MSCC'
+        if has_group(obj, 'YOUTH'):
+            return 'YOUTH'
+        return 'Dirasa'
+    user_category_display.short_description = 'User Category'
 
     def activate(self, request, queryset):
         queryset.update(is_active=True)

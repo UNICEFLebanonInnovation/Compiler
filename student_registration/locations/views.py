@@ -60,7 +60,15 @@ from .filters import (
 from .utils import *
 
 from dal import autocomplete
-
+from django.conf import settings
+import os
+from django.http import FileResponse
+import uuid
+from storages.backends.azure_storage import AzureStorage
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import re
+from django.contrib.auth.decorators import login_required
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -312,6 +320,122 @@ def export_data(request):
 
         return HttpResponse("An error occurred: " + str(e), status=500)
 
+@login_required(login_url='/users/login')
+def export_background(request):
+    try:
+        cursor = connection.cursor()
+        user = request.user
+        center_id = user.center_id
+        partner_id = user.partner_id
+
+        center_name = request.GET.get('center_name', '')
+        center_type = request.GET.get('center_type', '')
+        center_governorate = request.GET.get('center_governorate', '')
+
+
+        vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
+
+        if has_group(user, 'MSCC_UNICEF'):
+            vw_center_data_str += ""  # UNICEF has no extra filter
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            vw_center_data_str += " AND partner_id = {}".format(partner_id)
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            vw_center_data_str += " AND center_id = {}".format(center_id)
+        else:
+            vw_center_data_str += " AND center_id = 0"  # Dummy condition for safety
+
+        if center_name:
+            vw_center_data_str += " AND center_name LIKE '%{}%'".format(center_name)
+        if center_type:
+            vw_center_data_str += " AND center_type LIKE '%{}%'".format(center_type)
+        if center_governorate:
+            vw_center_data_str += " AND governorate_id = {}".format(center_governorate)
+
+        cursor.execute(vw_center_data_str)
+        data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for center data
+            csv_center_output = io.StringIO()
+            csv_writer = csv.writer(csv_center_output)
+
+            csv_center_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)
+
+            for row in data:
+                csv_writer.writerow([smart_str(cell) for cell in row])
+
+            zf.writestr('center_data.csv', csv_center_output.getvalue())
+
+            center_ids = [row[0] for row in data]
+            if center_ids:
+                staff_data_str = "SELECT * FROM vw_center_program_staff WHERE center_id IN ({})".format(
+                    ','.join(map(str, center_ids)))
+                cursor.execute(staff_data_str)
+                staff_data = cursor.fetchall()
+                staff_headers = [col[0] for col in cursor.description]
+
+                # Create CSV for staff data
+                csv_staff_output = io.StringIO()
+                csv_writer = csv.writer(csv_staff_output)
+
+                # Add BOM for staff data CSV
+                csv_staff_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                csv_writer.writerow(staff_headers)
+
+                for row in staff_data:
+                    csv_writer.writerow([smart_str(cell) for cell in row])
+
+                zf.writestr('staff_data.csv', csv_staff_output.getvalue())
+
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        file_path = os.path.join('center', file_name)
+
+        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+
+        return HttpResponse(file_name)
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+class MyAzureStorage(AzureStorage):
+    location = "export"
+
+@login_required(login_url='/users/login')
+def get_center_file(request, file_name):
+
+    response = None
+
+    if is_valid_filename(file_name):
+        storage = MyAzureStorage()
+
+        file_path = os.path.join('center', file_name)
+        returned_file_name = 'output_file.zip'
+
+        try:
+            with storage.open(file_path, 'rb') as f:
+                file_stream = io.BytesIO(f.read())
+                file_stream.seek(0)
+                response = FileResponse(file_stream)
+                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
+        except Exception as e:
+            response = HttpResponse("Error reading file: {}".format(e))
+
+        default_storage.delete(file_path)
+    else:
+        response = HttpResponse("Invalid file.")
+    return response
+
+def is_valid_filename(filename):
+    pattern = r'^[a-zA-Z0-9-_]+.zip$'
+
+    return re.match(pattern, filename) is not None
 
 ###################### API VIEWS #############################
 

@@ -589,7 +589,7 @@ def child_duplication_check(request):
         result_str = '{} {} {}'.format(result['child__first_name'], result['child__father_name'],
                                        result['child__last_name'])
         fuzzy_match = fuzz.ratio(form_str, result_str)
-        if fuzzy_match > 90:
+        if fuzzy_match > 95:
             result['score'] = fuzzy_match
             result_match.append(result)
 

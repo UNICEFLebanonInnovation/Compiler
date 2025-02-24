@@ -25,6 +25,17 @@ urlpatterns = [
         view=views.export_data,
         name='export'
     ),
+
+    url(
+        regex=r'^export-background/$',
+        view=views.export_background,
+        name='export_background'
+    ),
+    url(
+        regex=r"^export-download/(?P<file_name>.+)/$",
+        view=views.get_center_file,
+        name='export_download'
+    ),
     url(
         regex=r'^Center-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
