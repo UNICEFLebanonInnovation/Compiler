@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.locations.models import Location
-from student_registration.students.utils import generate_id
+from student_registration.students.utils import generate_id, generate_one_unique_id
 
 
 class Adolescent(TimeStampedModel):
@@ -143,6 +143,7 @@ class Adolescent(TimeStampedModel):
         verbose_name=_('Does the youth have any disability or special need?')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
+    unicef_id = models.CharField(max_length=45, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,
         blank=False, null=True,
@@ -537,16 +538,27 @@ class Adolescent(TimeStampedModel):
         :param kwargs:
         :return:
         """
-        if self.pk is None:
-            self.number = generate_id(
-                self.first_name,
-                self.father_name,
-                self.last_name,
-                self.mother_fullname,
-                self.gender,
-                self.birthday_day,
-                self.birthday_month,
-                self.birthday_year
-            )
+        # if self.pk is None:
+        self.number = generate_id(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+            self.mother_fullname,
+            self.gender,
+            self.birthday_day,
+            self.birthday_month,
+            self.birthday_year
+        )
+
+        self.unicef_id = generate_one_unique_id(
+            str(self.pk),
+            self.first_name,
+            self.father_name,
+            self.last_name,
+            self.mother_fullname,
+            self.birthdate,
+            self.nationality_name_en(),
+            self.sex
+        )
 
         super(Adolescent, self).save(**kwargs)
