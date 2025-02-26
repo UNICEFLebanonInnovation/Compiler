@@ -1,0 +1,109 @@
+import time
+import datetime
+from django.utils import timezone
+import threading
+
+from student_registration.students.utils import generate_bulk_unique_id
+
+
+class ChildUIDThreading(object):
+    def __init__(self, interval=1):
+        self.interval = interval
+
+        thread = threading.Thread(target=self.run, args=())
+
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+        from student_registration.child.models import Child
+
+        records = Child.objects.exclude(unicef_id__isnull=False)[0:1000]
+
+        payload = {
+            "individuals": [
+                {
+                    "id": record.pk,
+                    "first_name": record.first_name,
+                    "father_name": record.father_name,
+                    "last_name": record.last_name,
+                    "mother_name": record.mother_fullname,
+                    "date_of_birth": record.birthdate,
+                    "nationality": record.nationality_name_en(),
+                    "gender": record.sex
+                }
+                for record in records
+            ]
+        }
+
+        result = generate_bulk_unique_id(payload)
+
+        # Update Django records in bulk
+        for record in records:
+            if record.pk in result:
+                record.unicef_id = result[record.pk]
+                record.save(skip=True)
+
+        # for django >= 2.2
+        # Student.objects.bulk_update(records, ['unicef_id'])
+
+        print("End Thread")
+
+
+def generate_child_unique_id():
+    th = ChildUIDThreading(interval=5)
+
+
+class StudentUIDThreading(object):
+    def __init__(self, interval=1):
+        self.interval = interval
+
+        thread = threading.Thread(target=self.run, args=())
+
+        print("Start Thread")
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+        from student_registration.students.models import Student
+
+        records = Student.objects.exclude(unicef_id__isnull=False)[0:1000]
+        print(records.count())
+
+        payload = {
+            "individuals": [
+                {
+                    "id": record.pk,
+                    "first_name": record.first_name,
+                    "father_name": record.father_name,
+                    "last_name": record.last_name,
+                    "mother_name": record.mother_fullname,
+                    "date_of_birth": record.birthdate,
+                    "nationality": record.nationality_name_en(),
+                    "gender": record.sex
+                }
+                for record in records
+            ]
+        }
+
+        result = generate_bulk_unique_id(payload)
+        # print(result)
+
+        # Update Django records in bulk
+        for record in records:
+            if record.pk in result:
+                record.unicef_id = result[record.pk]
+                record.save()
+                # record.save(skip=True)
+
+        # for django >= 2.2
+        # Student.objects.bulk_update(records, ['unicef_id'])
+
+        print("End Thread")
+
+        return True
+
+
+def generate_student_unique_id():
+    th = StudentUIDThreading(interval=5)
+    return th

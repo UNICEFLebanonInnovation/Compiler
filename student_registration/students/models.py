@@ -409,16 +409,19 @@ class Person(TimeStampedModel):
             self.birthday_year
         )
 
-        self.unicef_id = generate_one_unique_id(
-            str(self.pk),
-            self.first_name,
-            self.father_name,
-            self.last_name,
-            self.mother_fullname,
-            self.birthdate,
-            self.nationality_name_en(),
-            self.sex
-        )
+        # if kwargs.get('skip', None) & kwargs.get('skip'):
+        #     return False
+        #
+        # self.unicef_id = generate_one_unique_id(
+        #     str(self.pk),
+        #     self.first_name,
+        #     self.father_name,
+        #     self.last_name,
+        #     self.mother_fullname,
+        #     self.birthdate,
+        #     self.nationality_name_en(),
+        #     self.sex
+        # )
 
         super(Person, self).save(**kwargs)
 

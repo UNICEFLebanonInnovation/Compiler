@@ -677,6 +677,7 @@ class ChildProfilePreview(LoginRequiredMixin,
             'instance': instance,
         }
 
+
 @login_required(login_url='/users/login')
 def export_data(request):
     try:

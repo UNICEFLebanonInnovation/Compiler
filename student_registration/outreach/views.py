@@ -11,15 +11,18 @@ from django.views.generic import DetailView, ListView, RedirectView,FormView, Te
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
-from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 from openpyxl import Workbook
-from dal import autocomplete
-from django.db.models import Q
 from .models import HouseHold, Child, OutreachCaregiver, OutreachChild
 from .serializers import HouseHoldSerializer, ChildSerializer
 import datetime
+from django.http import StreamingHttpResponse
+from django.db import connection
+import math
+import io
+
+MAX_CHUNKS = 5
 
 
 def outreach_import_data(request):
@@ -161,6 +164,7 @@ class ChildViewSet(mixins.RetrieveModelMixin,
             return qs
         return []
 
+
 class OutreachPage(LoginRequiredMixin,
                    TemplateView):
     template_name = 'outreach/outreach.html'
@@ -196,12 +200,6 @@ def outreach_export_data(request):
 
     return response
 
-from django.http import StreamingHttpResponse
-from django.db import connection
-import math
-import io
-
-MAX_CHUNKS = 5
 
 @login_required(login_url='/users/login')
 def outreach_unregistered_export_info(request):
@@ -209,6 +207,7 @@ def outreach_unregistered_export_info(request):
     cursor.execute('SELECT COUNT(*) FROM vw_outreach_not_registered WHERE caregiver_id > 0')
     total_records = cursor.fetchone()[0]
     return JsonResponse({'total_records': total_records})
+
 
 @login_required(login_url='/users/login')
 def outreach_unregistered_export_data(request, part):

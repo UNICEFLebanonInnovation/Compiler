@@ -40,9 +40,11 @@ def get_api_data(token, data):
         json_data = json.dumps(data)
         resp = requests.post(settings.UNIQUE_ID_API_URL, headers=headers, data=json_data)
         result = json.loads(resp.text)
-        individuals = result["individual"] if "individual" in result else ''
-        if len(individuals):
+
+        individuals = result["individual"] if "individual" in result else []
+        if len(individuals) == 1:
             return individuals[0]
+        return individuals
     except Exception as ex:
         return 0
 
@@ -77,7 +79,8 @@ def generate_bulk_unique_id(data):
     if not token:
         return 0
 
-    return get_api_data(token, data)
+    data = get_api_data(token, data)
+    return {int(indiv["id"]): indiv["unicef_id"] for indiv in data}
 
 
 def generate_id(

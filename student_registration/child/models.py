@@ -643,6 +643,9 @@ class Child(TimeStampedModel):
             self.birthday_year
         )
 
+        if kwargs.get('skip', None) & kwargs.get('skip'):
+            return False
+
         self.unicef_id = generate_one_unique_id(
             str(self.pk),
             self.first_name,

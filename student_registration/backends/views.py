@@ -18,6 +18,26 @@ from .filters import ExporterFilter
 from .tables import BootstrapTable, ExporterTable
 
 
+def generate_child_unique_id(request):
+    from student_registration.backends.threads import generate_child_unique_id
+
+    generate_child_unique_id()
+    return HttpResponse("records saved successfully")
+
+
+def generate_student_unique_id(request):
+    from student_registration.backends.threads import generate_student_unique_id
+
+    from student_registration.students.models import Student
+
+    print(Student.objects.all().count())
+    print(Student.objects.filter(unicef_id__isnull=False).count())
+    print(Student.objects.filter(unicef_id__isnull=True).count())
+
+    generate_student_unique_id()
+    return HttpResponse("records saved successfully")
+
+
 class NotificationViewSet(mixins.UpdateModelMixin,
                           viewsets.GenericViewSet):
 
