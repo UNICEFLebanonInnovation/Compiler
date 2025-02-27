@@ -3465,14 +3465,16 @@ class SchoolForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('CWD_accessible', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">15</span>'),
-                    Div('internet_available', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">16</span>'),
-                    Div('school_digital_capacity', css_class='col-md-3'),
+                    Div('receive_supplies', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">16</span>'),
+                    Div('internet_available', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">17</span>'),
-                    Div('receive_supplies', css_class='col-md-3'),
+                    Div('digital_learning_programme', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_school_digital_capacity">17.1</span>'),
+                    Div('school_digital_capacity', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -3563,11 +3565,17 @@ class SchoolForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(SchoolForm, self).clean()
+
         benefit_wfp_service = cleaned_data.get('benefit_wfp_service')
         wfp_service_type = cleaned_data.get("wfp_service_type")
-
         if benefit_wfp_service == "yes" and not wfp_service_type:
             self.add_error('wfp_service_type', 'This field is required')
+
+        digital_learning_programme = cleaned_data.get("digital_learning_programme")
+        school_digital_capacity = cleaned_data.get("school_digital_capacity")
+        if digital_learning_programme == "yes" and not school_digital_capacity:
+            self.add_error('school_digital_capacity', 'This field is required')
+
 
     class Meta:
         model = School
@@ -3598,6 +3606,7 @@ class SchoolForm(forms.ModelForm):
             'number_children_non_lebanese_sbp',
             'CWD_accessible',
             'internet_available',
+            'digital_learning_programme',
             'school_digital_capacity',
             'is_closed',
             'working_days',

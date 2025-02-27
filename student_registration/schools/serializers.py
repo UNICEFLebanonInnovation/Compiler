@@ -39,6 +39,7 @@ class SchoolSerializer(serializers.ModelSerializer):
             'CWD_accessible',
             'internet_available',
             'school_digital_capacity',
+            'digital_learning_programme',
             'is_closed',
             'weekend',
             'working_days',

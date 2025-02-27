@@ -935,6 +935,19 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Parent Lebanese Extract of Record confirm')
     )
+
+    individual_extract_record = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Lebanese Extract of Record of the child')
+    )
+    individual_extract_record_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Confirm Lebanese Extract of Record of the child')
+    )
     syrian_national_number = models.CharField(
         max_length=50,
         blank=True,
@@ -2110,6 +2123,14 @@ class Bridging(CLM):
     )
     mid_test1 = JSONField(blank=True, null=True)
     mid_test2 = JSONField(blank=True, null=True)
+
+    enrolled_formal_education = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Was this child enrolled in Formal Education last year and dropped out due to lack of documentation?')
+    )
     def calculate_sore(self, stage):
         keys = [
             'Bridging_ASSESSMENT/arabic',

@@ -42,6 +42,10 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
+    $(document).on('change', 'select#id_digital_learning_programme', function(){
+        reorganizeForm();
+    });
+
     $(document).on('click', '.justify-button', function(){
         var item = $(this);
         var itemscope = item.attr('itemscope');
@@ -91,6 +95,18 @@ function reorganizeForm()
     if(benefit_wfp_service == 'yes'){
         $('#div_id_wfp_service_type').removeClass('d-none');
         $('#span_wfp_service_type').removeClass('d-none');
+    }
+
+    var digital_learning_programme = $('select#id_digital_learning_programme').val();
+
+     // wfp_service_type
+    $('div#div_id_school_digital_capacity').addClass('d-none');
+    $('#span_school_digital_capacity').addClass('d-none');
+
+
+    if(digital_learning_programme == 'yes'){
+        $('#div_id_school_digital_capacity').removeClass('d-none');
+        $('#span_school_digital_capacity').removeClass('d-none');
     }
 }
 

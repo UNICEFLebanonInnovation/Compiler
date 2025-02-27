@@ -208,9 +208,16 @@ class School(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Availability of Internet')
     )
+    digital_learning_programme = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Does the school have a digital learning programme?')
+    )
     school_digital_capacity = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('School Digital Capacity')
+        verbose_name=_('Number of devices')
     )
     is_first_shift = models.CharField(
         max_length=10,

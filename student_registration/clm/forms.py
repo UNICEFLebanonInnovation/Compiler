@@ -7280,11 +7280,11 @@ class BridgingForm(CommonForm):
     #     required=False,
     #     label=_('Confirm Parent Lebanese Extract of Record')
     # )
-    parent_extract_record = forms.CharField(
+    individual_extract_record = forms.CharField(
         required=False,
         label=_('Lebanese Extract of Record of the child')
     )
-    parent_extract_record_confirm = forms.CharField(
+    individual_extract_record_confirm = forms.CharField(
         required=False,
         label=_('Confirm Lebanese Extract of Record of the child')
     )
@@ -7440,6 +7440,11 @@ class BridgingForm(CommonForm):
         label=_("Registration date"),
         required=True,
     )
+    enrolled_formal_education = forms.ChoiceField(
+        label=_("Was this child enrolled in Formal Education last year and dropped out due to lack of documentation?"),
+        widget=forms.Select, required=True,
+        choices=CLM.YES_NO
+    )
     child_outreach = forms.IntegerField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -7571,6 +7576,11 @@ class BridgingForm(CommonForm):
                     HTML('<span class="badge badge-default">11</span>'),
                     Div('registration_level', css_class='col-md-3'),
                     Div('first_attendance_date', css_class='col-md-3 d-none'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('enrolled_formal_education', css_class='col-md-4'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -7767,9 +7777,9 @@ class BridgingForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">16</span>'),
-                    Div('parent_extract_record', css_class='col-md-4'),
+                    Div('individual_extract_record', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">17</span>'),
-                    Div('parent_extract_record_confirm', css_class='col-md-4'),
+                    Div('individual_extract_record_confirm', css_class='col-md-4'),
                     css_class='row child_id child_id7',
                 ),
                 Div(
@@ -8018,8 +8028,8 @@ class BridgingForm(CommonForm):
         sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
-        parent_extract_record = cleaned_data.get("parent_extract_record")
-        parent_extract_record_confirm = cleaned_data.get("parent_extract_record_confirm")
+        individual_extract_record = cleaned_data.get("individual_extract_record")
+        individual_extract_record_confirm = cleaned_data.get("individual_extract_record_confirm")
         education_status = cleaned_data.get("education_status")
         miss_school_date = cleaned_data.get("miss_school_date")
         student_nationality = cleaned_data.get("student_nationality")
@@ -8133,9 +8143,11 @@ class BridgingForm(CommonForm):
                 self.add_error('national_number_confirm', msg)
 
         if id_type == 'Lebanese Extract of Record':
-            if parent_extract_record != parent_extract_record_confirm:
+            if not individual_extract_record:
+                self.add_error('individual_extract_record', 'This field is required')
+            if individual_extract_record != individual_extract_record_confirm:
                 msg = "The Parent Extract Record are not matched"
-                self.add_error('parent_extract_record_confirm', msg)
+                self.add_error('individual_extract_record_confirm', msg)
 
         if id_type == 'Palestinian national ID':
             if not sop_national_number:
@@ -8305,8 +8317,8 @@ class BridgingForm(CommonForm):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
-            'parent_extract_record',
-            'parent_extract_record_confirm',
+            'individual_extract_record',
+            'individual_extract_record_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
             'rims_case_number',
@@ -8332,7 +8344,8 @@ class BridgingForm(CommonForm):
             'source_of_transportation',
             'student_p_code',
             'consent_parents',
-            'registration_date'
+            'registration_date',
+            'enrolled_formal_education'
         )
 
     class Media:

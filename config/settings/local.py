@@ -127,6 +127,6 @@ AUTO_LOGOUT_DELAY = 1000  # equivalent to 20 minutes
 # Maximum number of GET/POST parameters that will be read before a
 # SuspiciousOperation (TooManyFieldsSent) is raised.
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 4000
-ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 

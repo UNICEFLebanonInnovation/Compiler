@@ -393,6 +393,8 @@ class BridgingSerializer(CLMSerializer):
             'other_number_confirm',
             'parent_extract_record',
             'parent_extract_record_confirm',
+            'individual_extract_record',
+            'individual_extract_record_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
             'rims_case_number',
@@ -452,6 +454,7 @@ class BridgingSerializer(CLMSerializer):
             'dropout_reason',
             'referral_school',
             'referral_school_type',
+            'enrolled_formal_education',
         )
 
 
