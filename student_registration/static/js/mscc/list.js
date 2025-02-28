@@ -2,29 +2,6 @@
 
 $(document).ready(function() {
 
-    $(document).on('click', '.download-report', function(e){
-        e.preventDefault();
-
-        var nationality = $("#id_child__nationality").val();
-        var first_name = $("#id_child__first_name").val();
-        var last_name = $("#id_child__last_name").val();
-        var father_name = $("#id_child__father_name").val();
-        var mother_fullname = $("#id_child__mother_fullname").val();
-
-        var round = $("#id_round").val();
-        if(!round){
-            alert("Cycle is not selected. Please select a cycle before exporting data.");
-            return;
-        }
-
-        window.open("/MSCC/export/?nationality=" + nationality
-                                + "&first_name=" + first_name
-                                + "&last_name=" + last_name
-                                + "&father_name=" + father_name
-                               + "&mother_fullname=" + mother_fullname
-                               + "&round=" + round,
-            "_blank")
-    });
 
     $( ".delete-student" ).on( "click", function(e) {
 
@@ -56,18 +33,7 @@ $(document).ready(function() {
         }
     } );
 
-//    $(document).on('click', '.download-center-report', function(e){
-//        e.preventDefault();
-//
-//        var center_name = $("#id_name").val();
-//        var center_type = $("#id_type").val();
-//        var center_governorate = $("#id_governorate").val();
-//
-//        window.open("/locations/export/?center_name=" + center_name
-//                                + "&center_type=" + center_type
-//                                + "&center_governorate=" + center_governorate ,
-//            "_blank")
-//    });
+
     $(document).on('click', '.download-center-report', function(e){
         e.preventDefault();
 
@@ -81,7 +47,7 @@ $(document).ready(function() {
         $('.download-center-report').addClass('disabled');
 
         $.ajax({
-            url: "/locations/export-background/?center_name=" + center_name
+            url: "/locations/export-center-background/?center_name=" + center_name
                                 + "&center_type=" + center_type
                                 + "&center_governorate=" + center_governorate ,
             type: "GET",
@@ -90,7 +56,7 @@ $(document).ready(function() {
 
                $(".downloading-message").hide();
                $('.download-center-report').removeClass('disabled');
-               window.open("/locations/export-download/" + data,
+               window.open("/MSCC/export-download/" + data,
                            "_blank");
 
             },
@@ -100,5 +66,52 @@ $(document).ready(function() {
         });
 
     });
+
+    $(document).on('click', '.download-report', function(e){
+        e.preventDefault();
+
+        var nationality = $("#id_child__nationality").val();
+        var first_name = $("#id_child__first_name").val();
+        var last_name = $("#id_child__last_name").val();
+        var father_name = $("#id_child__father_name").val();
+        var mother_fullname = $("#id_child__mother_fullname").val();
+        var round = $("#id_round").val();
+        if(!round){
+            alert("Cycle is not selected. Please select a cycle before exporting data.");
+            return;
+        }
+
+        requestHeaders = getHeader();
+
+        $(".downloading-message").show();
+        $('.download-report').addClass('disabled');
+
+
+
+
+        $.ajax({
+            url: "/MSCC/export-list-background/?nationality=" + nationality
+                                + "&first_name=" + first_name
+                                + "&last_name=" + last_name
+                                + "&father_name=" + father_name
+                               + "&mother_fullname=" + mother_fullname
+                               + "&round=" + round,
+            type: "GET",
+            headers: requestHeaders,
+            success: function(data) {
+
+               $(".downloading-message").hide();
+               $('.download-report').removeClass('disabled');
+               window.open("/MSCC/export-download/" + data,
+                           "_blank");
+
+            },
+            error: function(error) {
+                // Handle error if needed
+            }
+        });
+
+    });
+
 });
 

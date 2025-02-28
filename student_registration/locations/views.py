@@ -60,15 +60,16 @@ from .filters import (
 from .utils import *
 
 from dal import autocomplete
-from django.conf import settings
+# from django.conf import settings
 import os
-from django.http import FileResponse
+# from django.http import FileResponse
 import uuid
-from storages.backends.azure_storage import AzureStorage
+# from storages.backends.azure_storage import AzureStorage
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-import re
+# import re
 from django.contrib.auth.decorators import login_required
+
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -321,7 +322,7 @@ def export_data(request):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 @login_required(login_url='/users/login')
-def export_background(request):
+def export_center_background(request):
     try:
         cursor = connection.cursor()
         user = request.user
@@ -404,38 +405,6 @@ def export_background(request):
 
         return HttpResponse("An error occurred: " + str(e), status=500)
 
-class MyAzureStorage(AzureStorage):
-    location = "export"
-
-@login_required(login_url='/users/login')
-def get_center_file(request, file_name):
-
-    response = None
-
-    if is_valid_filename(file_name):
-        storage = MyAzureStorage()
-
-        file_path = os.path.join('center', file_name)
-        returned_file_name = 'output_file.zip'
-
-        try:
-            with storage.open(file_path, 'rb') as f:
-                file_stream = io.BytesIO(f.read())
-                file_stream.seek(0)
-                response = FileResponse(file_stream)
-                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
-        except Exception as e:
-            response = HttpResponse("Error reading file: {}".format(e))
-
-        default_storage.delete(file_path)
-    else:
-        response = HttpResponse("Invalid file.")
-    return response
-
-def is_valid_filename(filename):
-    pattern = r'^[a-zA-Z0-9-_]+.zip$'
-
-    return re.match(pattern, filename) is not None
 
 ###################### API VIEWS #############################
 

@@ -3304,7 +3304,7 @@ class SchoolForm(forms.ModelForm):
         choices=School.YES_NO
     )
     school_digital_capacity = forms.IntegerField(
-        label=_('School Digital Capacity'),
+        label=_('Number of devices'),
         widget=forms.TextInput, required=False
     )
     is_closed = forms.ChoiceField(

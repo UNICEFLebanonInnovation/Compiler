@@ -32,11 +32,6 @@ urlpatterns = [
         name='child_mark_deleted'
     ),
     url(
-        regex=r'^export/$',
-        view=views.export_data,
-        name='export'
-    ),
-    url(
         regex=r'^List/$',
         view=views.MainListView.as_view(),
         name='list'
@@ -325,5 +320,15 @@ urlpatterns = [
         regex=r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
         view=views.MainRegistrationCancelView,
         name='child_registration_cancel'
+    ),
+    url(
+        regex=r'^export-list-background/$',
+        view=views.export_list_background,
+        name='export_list_background'
+    ),
+    url(
+        regex=r"^export-download/(?P<file_name>.+)/$",
+        view=views.get_file,
+        name='export_download'
     ),
 ]

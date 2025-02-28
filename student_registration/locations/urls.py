@@ -25,16 +25,10 @@ urlpatterns = [
         view=views.export_data,
         name='export'
     ),
-
     url(
-        regex=r'^export-background/$',
-        view=views.export_background,
-        name='export_background'
-    ),
-    url(
-        regex=r"^export-download/(?P<file_name>.+)/$",
-        view=views.get_center_file,
-        name='export_download'
+        regex=r'^export-center-background/$',
+        view=views.export_center_background,
+        name='export_center_background'
     ),
     url(
         regex=r'^Center-Profile/(?P<pk>[\w.@+-]+)/$',

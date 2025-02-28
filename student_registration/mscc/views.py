@@ -29,6 +29,15 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
+from django.conf import settings
+import os
+from django.http import FileResponse
+import uuid
+from storages.backends.azure_storage import AzureStorage
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import re
+from django.contrib.auth.decorators import login_required
 
 from .filters import (
     MainFilter,
@@ -679,7 +688,7 @@ class ChildProfilePreview(LoginRequiredMixin,
 
 
 @login_required(login_url='/users/login')
-def export_data(request):
+def export_list_background(request):
     try:
         cursor = connection.cursor()
         user = request.user
@@ -715,7 +724,6 @@ def export_data(request):
         mscc_data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
 
-        # Create a BytesIO object to write the ZIP file into memory
         zip_output = io.BytesIO()
         with zipfile.ZipFile(zip_output, 'w') as zf:
             # Create CSV for vw_mscc_data
@@ -757,16 +765,49 @@ def export_data(request):
                 # Add CSV to ZIP
                 zf.writestr('followup_data.csv', csv_followup_output.getvalue())
 
-        # Prepare the ZIP file response
-        response = HttpResponse(zip_output.getvalue(), content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=exported_data.zip'
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        file_path = os.path.join('center', file_name)
 
-        return response
+        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+
+        return HttpResponse(file_name)
 
     except Exception as e:
-        # Log the full traceback for debugging purposes
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
 
-        # Return a more detailed error response for debugging
         return HttpResponse("An error occurred: " + str(e), status=500)
+
+class MyAzureStorage(AzureStorage):
+    location = "export"
+
+@login_required(login_url='/users/login')
+def get_file(request, file_name):
+
+    response = None
+
+    if is_valid_filename(file_name):
+        storage = MyAzureStorage()
+
+        file_path = os.path.join('center', file_name)
+        returned_file_name = 'output_file.zip'
+
+        try:
+            with storage.open(file_path, 'rb') as f:
+                file_stream = io.BytesIO(f.read())
+                file_stream.seek(0)
+                response = FileResponse(file_stream)
+                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
+        except Exception as e:
+            response = HttpResponse("Error reading file: {}".format(e))
+
+        default_storage.delete(file_path)
+    else:
+        response = HttpResponse("Invalid file.")
+    return response
+
+def is_valid_filename(filename):
+    pattern = r'^[a-zA-Z0-9-_]+.zip$'
+
+    return re.match(pattern, filename) is not None
