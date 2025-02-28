@@ -184,6 +184,7 @@ class BridgingAdmin(admin.ModelAdmin):
         'governorate',
         'district',
         'partner',
+        'deleted',
         'created',
         'modified',
     )
@@ -1027,16 +1028,16 @@ class OutreachAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
-admin.site.register(Assessment)
-admin.site.register(Cycle)
-admin.site.register(Site)
+# admin.site.register(Assessment)
+# admin.site.register(Cycle)
+# admin.site.register(Site)
 admin.site.register(Center, CenterAdmin)
-admin.site.register(Referral)
+# admin.site.register(Referral)
 admin.site.register(Disability, DisabilityAdmin)
-admin.site.register(BLN, BLNAdmin)
+# admin.site.register(BLN, BLNAdmin)
 admin.site.register(Bridging, BridgingAdmin)
-admin.site.register(ABLN, ABLNAdmin)
-admin.site.register(RS, RSAdmin)
-admin.site.register(CBECE, CBECEAdmin)
+# admin.site.register(ABLN, ABLNAdmin)
+# admin.site.register(RS, RSAdmin)
+# admin.site.register(CBECE, CBECEAdmin)
 admin.site.register(Inclusion, InclusionAdmin)
-admin.site.register(Outreach, OutreachAdmin)
+# admin.site.register(Outreach, OutreachAdmin)

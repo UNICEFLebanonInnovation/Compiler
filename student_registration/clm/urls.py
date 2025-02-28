@@ -386,7 +386,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^bridging-delete/(?P<pk>[\w.@+-]+)/$',
-        view=views.BridgingDeleteView,
+        view=views.BridgingMarkDeleteView,
         name='bridging_delete'
     ),
     url(

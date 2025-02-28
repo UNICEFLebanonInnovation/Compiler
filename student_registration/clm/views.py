@@ -2943,17 +2943,32 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
-def BridgingDeleteView(request, pk):
+# def BridgingDeleteView(request, pk):
+#     if request.user.is_authenticated:
+#         try:
+#             registration =  Bridging.objects.get(pk=pk)
+#             registration.delete()
+#             result = {"isSuccessful": True}
+#         except Bridging.DoesNotExist:
+#             result = {"isSuccessful": False}
+#     else:
+#         result = {"isSuccessful": False}
+#     return JsonResponse(result)
+
+
+def BridgingMarkDeleteView(request, pk):
     if request.user.is_authenticated:
         try:
-            registration =  Bridging.objects.get(pk=pk)
-            registration.delete()
+            registration = Bridging.objects.get(id=pk)
+            registration.deleted = True
+            registration.save()
             result = {"isSuccessful": True}
         except Bridging.DoesNotExist:
             result = {"isSuccessful": False}
     else:
         result = {"isSuccessful": False}
     return JsonResponse(result)
+
 
 class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
