@@ -10,7 +10,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from helpdesk.models import Ticket
-from .models import Exporter, Notification
+from .models import Exporter, Notification, ExportHistory
 from student_registration.users.models import User
 from student_registration.schools.models import School
 
@@ -351,8 +351,27 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         return attachments
 
 
+class ExportHistoryAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'export_type',
+        'created_by',
+        'partner_name',
+        'created',
+        'modified',
+    )
+    list_filter = (
+        'export_type',
+        'partner_name',
+    )
+    search_fields = (
+        'created_by__username',
+    )
+
 # admin.site.register(LogEntry)
 # admin.site.register(Exporter, ExporterAdmin)
 # admin.site.register(Notification, NotificationAdmin)
 # admin.site.unregister(Ticket)
 # admin.site.register(Ticket, TicketSchoolAdmin)
+
+admin.site.register(ExportHistory, ExportHistoryAdmin)

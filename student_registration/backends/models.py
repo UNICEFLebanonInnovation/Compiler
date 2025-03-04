@@ -78,6 +78,41 @@ class Notification(TimeStampedModel):
         return self.name
 
 
+class ExportHistory(TimeStampedModel):
+
+    EXPORT_TYPE = Choices(
+        ('', '----------'),
+        ('Makani List', _('Makani List')),
+        ('Makani Center', _('Makani Center')),
+        ('Makani Teacher', _('Makani Teacher')),
+        ('Makani Attendance', _('Makani Attendance'))
+    )
+    export_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=EXPORT_TYPE,
+        verbose_name=_('Export Type')
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
+    partner_name = models.CharField(
+        max_length=64,
+        db_index=True,
+        blank=True, null=True,
+        verbose_name=_('Partner name')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Export History"
+        verbose_name_plural = "Export History"
+
+
 def create_helpdesk_notification(sender, instance, created, **kwargs):
     title = ''
     comments = ''

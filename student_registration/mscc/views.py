@@ -55,6 +55,7 @@ from .models import (
     Referral,
     EducationHistory
 )
+from student_registration.backends.models import ExportHistory
 
 from .forms import (
     MainForm,
@@ -770,6 +771,11 @@ def export_list_background(request):
         file_path = os.path.join('center', file_name)
 
         default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        ExportHistory.objects.create(
+            export_type='Makani List',
+            modified_by=request.user,
+            partner_name=request.user.partner.name
+        )
 
         return HttpResponse(file_name)
 
