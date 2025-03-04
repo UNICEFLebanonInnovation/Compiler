@@ -644,7 +644,7 @@ class Child(TimeStampedModel):
         )
 
         if kwargs.get('skip', None) & kwargs.get('skip'):
-            return False
+            super(Child, self).save(**kwargs)
 
         self.unicef_id = generate_one_unique_id(
             str(self.pk),
