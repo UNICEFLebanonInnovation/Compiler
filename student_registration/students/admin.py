@@ -655,6 +655,7 @@ class StudentAdmin(ImportExportModelAdmin):
         'sex',
         'nationality',
         'mother_nationality',
+        'unicef_id'
 
     )
     list_filter = (

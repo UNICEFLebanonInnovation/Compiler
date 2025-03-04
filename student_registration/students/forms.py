@@ -84,6 +84,7 @@ class StudentEnrollmentForm(forms.ModelForm):
             'unhcr_image',
             'birthdoc_image',
             'std_image',
+            'unicef_id'
           #  'std_image',
         )
 
