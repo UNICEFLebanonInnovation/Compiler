@@ -16,6 +16,7 @@ class ChildAdmin(admin.ModelAdmin):
         'disability',
         'marital_status',
         'number',
+        'unicef_id',
         'created',
         'modified',
     )
@@ -34,5 +35,6 @@ class ChildAdmin(admin.ModelAdmin):
         'father_name',
         'last_name',
     )
+
 
 admin.site.register(Child, ChildAdmin)
