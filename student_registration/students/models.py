@@ -348,6 +348,7 @@ class Person(TimeStampedModel):
 
         return ''
 
+    @property
     def nationality_name_en(self):
         if self.nationality:
             return self.nationality.name_en
@@ -361,6 +362,7 @@ class Person(TimeStampedModel):
             self.birthday_month,
             self.birthday_year,
         )
+
     @property
     def birthdate(self):
         return u'{}-{}-{}'.format(
@@ -409,19 +411,16 @@ class Person(TimeStampedModel):
             self.birthday_year
         )
 
-        if kwargs.get('skip', None) & kwargs.get('skip'):
-            super(Person, self).save(**kwargs)
-
-        self.unicef_id = generate_one_unique_id(
-            str(self.pk),
-            self.first_name,
-            self.father_name,
-            self.last_name,
-            self.mother_fullname,
-            self.birthdate,
-            self.nationality_name_en(),
-            self.sex
-        )
+        # self.unicef_id = generate_one_unique_id(
+        #     str(self.pk),
+        #     self.first_name,
+        #     self.father_name,
+        #     self.last_name,
+        #     self.mother_fullname,
+        #     self.birthdate,
+        #     self.nationality_name_en(),
+        #     self.sex
+        # )
 
         super(Person, self).save(**kwargs)
 

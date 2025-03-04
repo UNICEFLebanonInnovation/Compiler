@@ -18,7 +18,7 @@ class ChildUIDThreading(object):
     def run(self):
         from student_registration.child.models import Child
 
-        records = Child.objects.exclude(unicef_id__isnull=False)[0:1000]
+        records = Child.objects.exclude(unicef_id__isnull=False)[0:10000]
 
         payload = {
             "individuals": [
@@ -29,8 +29,8 @@ class ChildUIDThreading(object):
                     "last_name": record.last_name,
                     "mother_name": record.mother_fullname,
                     "date_of_birth": record.birthdate,
-                    "nationality": record.nationality_name_en(),
-                    "gender": record.sex
+                    "nationality": record.nationality_name_en,
+                    "gender": record.gender
                 }
                 for record in records
             ]
@@ -42,7 +42,7 @@ class ChildUIDThreading(object):
         for record in records:
             if record.pk in result:
                 record.unicef_id = result[record.pk]
-                record.save(skip=True)
+                record.save()
 
         # for django >= 2.2
         # Student.objects.bulk_update(records, ['unicef_id'])
@@ -68,7 +68,6 @@ class StudentUIDThreading(object):
         from student_registration.students.models import Student
 
         records = Student.objects.exclude(unicef_id__isnull=False)[0:1000]
-        print(records.count())
 
         payload = {
             "individuals": [
@@ -79,7 +78,7 @@ class StudentUIDThreading(object):
                     "last_name": record.last_name,
                     "mother_name": record.mother_fullname,
                     "date_of_birth": record.birthdate,
-                    "nationality": record.nationality_name_en(),
+                    "nationality": record.nationality_name_en,
                     "gender": record.sex
                 }
                 for record in records
@@ -93,8 +92,7 @@ class StudentUIDThreading(object):
         for record in records:
             if record.pk in result:
                 record.unicef_id = result[record.pk]
-                # record.save()
-                record.save(skip=True)
+                record.save()
 
         # for django >= 2.2
         # Student.objects.bulk_update(records, ['unicef_id'])

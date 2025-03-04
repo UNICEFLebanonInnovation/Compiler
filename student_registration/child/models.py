@@ -574,11 +574,26 @@ class Child(TimeStampedModel):
         return ''
 
     @property
+    def nationality_name_en(self):
+        if self.nationality:
+            return self.nationality.name_en
+
+        return ''
+
+    @property
     def birthday(self):
         return u'{}/{}/{}'.format(
             self.birthday_day,
             self.birthday_month,
             self.birthday_year,
+        )
+
+    @property
+    def birthdate(self):
+        return u'{}-{}-{}'.format(
+            self.birthday_year,
+            self.birthday_month,
+            self.birthday_day,
         )
 
     @property
@@ -643,18 +658,15 @@ class Child(TimeStampedModel):
             self.birthday_year
         )
 
-        if kwargs.get('skip', None) & kwargs.get('skip'):
-            super(Child, self).save(**kwargs)
-
-        self.unicef_id = generate_one_unique_id(
-            str(self.pk),
-            self.first_name,
-            self.father_name,
-            self.last_name,
-            self.mother_fullname,
-            self.birthdate,
-            self.nationality_name_en(),
-            self.sex
-        )
+        # self.unicef_id = generate_one_unique_id(
+        #     str(self.pk),
+        #     self.first_name,
+        #     self.father_name,
+        #     self.last_name,
+        #     self.mother_fullname,
+        #     self.birthdate,
+        #     self.nationality_name_en(),
+        #     self.sex
+        # )
 
         super(Child, self).save(**kwargs)
