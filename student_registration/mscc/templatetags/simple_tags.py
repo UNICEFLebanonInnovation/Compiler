@@ -85,7 +85,9 @@ def get_service_all(registry, model_name):
 @register.simple_tag
 def get_education_service_history(child_id):
     try:
-        return EducationService.objects.filter(registration__child_id=child_id, registration__deleted=False)
+        return EducationService.objects.filter( registration__child_id=child_id,registration__deleted=False)\
+            .order_by('registration_date')
+
     except Exception as ex:
         return False
 

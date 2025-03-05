@@ -777,9 +777,6 @@ def export_list_background(request):
             partner_name=request.user.partner.name
         )
 
-
-        
-
         return HttpResponse(file_name)
 
     except Exception as e:

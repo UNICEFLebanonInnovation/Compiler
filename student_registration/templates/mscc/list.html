@@ -19,7 +19,10 @@
                                             <i class="fa fa-user"></i>
                                         </span>
                                         <span class="d-inline-block">
-                                            {{ request.user.username }} - {{ request.user.partner }}
+                                          {{ request.user.username }}
+                                          {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_CENTER"  %}
+                                          - {{ request.user.partner }}
+                                          {% endif %}
                                         </span>
                                     </div>
                                     <div class="page-title-subheading opacity-10">
@@ -33,6 +36,8 @@
                                                 <li class="breadcrumb-item">
                                                       <a href="/">List</a>
                                                 </li>
+                                              {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
+
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
                                                 </li>
@@ -45,7 +50,7 @@
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.name }} - {{ request.user.center.type }}
                                                 </li>
-
+                                              {% endif %}
 
                                             </ol>
                                         </nav>
