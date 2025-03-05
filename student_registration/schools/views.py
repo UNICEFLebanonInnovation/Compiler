@@ -13,6 +13,23 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from django.contrib import admin
+import zipfile
+import csv
+from django.utils.encoding import smart_str
+import traceback
+
+import os
+import uuid
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
+from django.shortcuts import render, redirect
+
+from student_registration.users.templatetags.custom_tags import has_group
+from django.contrib.auth.decorators import login_required
+
+import logging
+logging.basicConfig(level=logging.ERROR)
 from student_registration.backends.models import Notification
 from student_registration.users.utils import force_default_language
 from .models import (
@@ -45,6 +62,8 @@ from .tables import (
     HealthVisitTable
 
 )
+from student_registration.backends.models import ExportHistory
+
 from .filters import (
     SchoolFilter
 )
@@ -54,20 +73,7 @@ from .forms import ProfileForm,SchoolForm, ClubForm, MeetingForm, CommunityIniti
     Classroom_Form_c9, Classroom_Form_cprep
 from .utils import *
 
-from django.forms import modelformset_factory, formset_factory, inlineformset_factory, forms
-from django.shortcuts import render, redirect
-from django.db import transaction
-from django.contrib import messages
-import io
-import xlwt
-import csv
-import logging
-from django.db import connection
-import traceback
-# Configure logging
-logging.basicConfig(level=logging.ERROR)
-import codecs
-import datetime
+
 
 class SchoolViewSet(mixins.ListModelMixin,
                     viewsets.GenericViewSet):
@@ -967,47 +973,134 @@ def health_visit_delete(request, pk):
     return JsonResponse(result)
 
 
-def school_export_data(request):
-    qs_school = School.objects.filter(is_bma=True).order_by('-id')
-    qs_club = Club.objects.all().order_by('-id')
-    qs_meeting = Meeting.objects.all().order_by('-id')
-    qs_community_initiative = CommunityInitiative.objects.all().order_by('-id')
-    qs_health_visit = HealthVisit.objects.all().order_by('-id')
+@login_required(login_url='/users/login')
+def export_school_background(request):
+    try:
+        user = request.user
 
-    clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-    is_staff = request.user.is_staff
-
-    if clm_bridging_all or is_staff:
-        qs_school = School.objects.filter(is_bma=True).all()
-    else:
         school_id = 0
         partner_id = 0
+        partner_name = ''
 
-        if request.user.school:
-            school_id = request.user.school.id
-        if request.user.partner_id:
-            partner_id = request.user.partner_id
+        if user.school:
+            school_id = user.school.id
 
-        if school_id and school_id > 0:
-            qs_school = School.objects.filter(id=school_id)
-        elif partner_id > 0:
-            qs_school = School.objects.filter(is_bma=True,
-                                              id__in=PartnerOrganization
-                                              .objects
-                                              .filter(id=partner_id)
-                                              .values_list('schools', flat=True))
+        if user.partner_id:
+            partner_id = user.partner_id
+            partner_name = user.partner.name
+
+        qs_school = School.objects.filter(is_bma=True).order_by('-id')
+
+        is_staff = user.is_staff
+
+        if has_group(user, 'CLM_BRIDGING_ALL') or is_staff:
+            qs_school = School.objects.filter(is_bma=True).all()
         else:
-            qs_school = qs_school.none()
+            if school_id and school_id > 0:
+                qs_school = School.objects.filter(id=school_id)
+            elif partner_id > 0:
+                qs_school = School.objects.filter(is_bma=True,
+                                                  id__in=PartnerOrganization
+                                                  .objects
+                                                  .filter(id=partner_id)
+                                                  .values_list('schools', flat=True))
+            else:
+                qs_school = qs_school.none()
 
-    school_ids = qs_school.values_list('id', flat=True)
+        school_ids = qs_school.values_list('id', flat=True)
 
-    qs_club = qs_club.filter(school_id__in=school_ids)
-    qs_meeting = qs_meeting.filter(school_id__in=school_ids)
-    qs_community_initiative = qs_community_initiative.filter(school_id__in=school_ids)
-    qs_health_visit = qs_health_visit.filter(school_id__in=school_ids)
+        qs_club = Club.objects.filter(school_id__in=school_ids).order_by('-id')
+        qs_meeting = Meeting.objects.filter(school_id__in=school_ids).order_by('-id')
+        qs_community_initiative = CommunityInitiative.objects.filter(school_id__in=school_ids).order_by('-id')
+        qs_health_visit = HealthVisit.objects.filter(school_id__in=school_ids).order_by('-id')
 
-    return school_build_csv_extraction(qs_school, qs_club, qs_meeting, qs_community_initiative, qs_health_visit)
 
+
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # **Add qs_school data CSV**
+            csv_qs_school_output = io.StringIO()
+            csv_writer = csv.writer(csv_qs_school_output)
+
+            # Extract and write headers dynamically
+            qs_school_headers = [field.name for field in School._meta.fields]
+            csv_writer.writerow(qs_school_headers)
+
+            # Write queryset data to CSV
+            for school in qs_school:
+                csv_writer.writerow([smart_str(getattr(school, field)) for field in qs_school_headers])
+
+            zf.writestr('qs_school_data.csv', csv_qs_school_output.getvalue())
+
+            # **Add qs_club data CSV**
+            csv_qs_club_output = io.StringIO()
+            csv_writer = csv.writer(csv_qs_club_output)
+
+            qs_club_headers = [field.name for field in Club._meta.fields]
+            csv_writer.writerow(qs_club_headers)
+
+            for club in qs_club:
+                csv_writer.writerow([smart_str(getattr(club, field)) for field in qs_club_headers])
+
+            zf.writestr('qs_club_data.csv', csv_qs_club_output.getvalue())
+
+
+            csv_qs_meeting_output = io.StringIO()
+            csv_writer = csv.writer(csv_qs_meeting_output)
+
+            qs_meeting_headers = [field.name for field in Meeting._meta.fields]
+            csv_writer.writerow(qs_meeting_headers)
+
+            for meeting in qs_meeting:
+                csv_writer.writerow([smart_str(getattr(meeting, field)) for field in qs_meeting_headers])
+
+            zf.writestr('qs_meeting_data.csv', csv_qs_meeting_output.getvalue())
+
+            csv_qs_community_initiative_output = io.StringIO()
+            csv_writer = csv.writer(csv_qs_community_initiative_output)
+
+            qs_community_initiative_headers = [field.name for field in CommunityInitiative._meta.fields]
+            csv_writer.writerow(qs_community_initiative_headers)
+
+            for community_initiative in qs_community_initiative:
+                csv_writer.writerow([smart_str(getattr(community_initiative, field)) for field in qs_community_initiative_headers])
+
+            zf.writestr('qs_community_initiative_data.csv', csv_qs_community_initiative_output.getvalue())
+
+
+            csv_qs_health_visit_output = io.StringIO()
+            csv_writer = csv.writer(csv_qs_health_visit_output)
+
+            qs_health_visit_headers = [field.name for field in HealthVisit._meta.fields]
+            csv_writer.writerow(qs_health_visit_headers)
+
+            for health_visit in qs_health_visit:
+                csv_writer.writerow([smart_str(getattr(health_visit, field)) for field in qs_health_visit_headers])
+
+            zf.writestr('qs_health_visit_data.csv', csv_qs_health_visit_output.getvalue())
+
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        file_path = os.path.join('export', file_name)
+
+        try:
+            default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        except Exception as e:
+            print("Error saving file:", str(e))
+
+
+        ExportHistory.objects.create(
+            export_type='School List',
+            created_by=request.user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
 
 class SchoolAutocomplete(autocomplete.Select2QuerySetView):

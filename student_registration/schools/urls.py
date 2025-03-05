@@ -192,8 +192,8 @@ urlpatterns = [
         name='load_schools'
     ),
     url(
-        regex=r'^school-export/$',
-        view=views.school_export_data,
-        name='school_export'
+        regex=r'^school-export-background/$',
+        view=views.export_school_background,
+        name='school_export_background'
     ),
 ]

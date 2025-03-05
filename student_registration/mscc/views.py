@@ -694,9 +694,16 @@ def export_list_background(request):
         cursor = connection.cursor()
         user = request.user
         center_id = user.center_id
-        partner_id = user.partner_id
+
+        partner_id = 0
+        partner_name = ''
+        if user.partner_id:
+            partner_id = user.partner_id
+            partner_name = user.partner.name
+
 
         round = request.GET.get('round', '')
+
 
         if not round:
             return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
@@ -768,13 +775,13 @@ def export_list_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        file_path = os.path.join('center', file_name)
+        file_path = os.path.join('export', file_name)
 
         default_storage.save(file_path, ContentFile(zip_output.getvalue()))
         ExportHistory.objects.create(
             export_type='Makani List',
-            created_by=request.user,
-            partner_name=request.user.partner.name
+            created_by=user,
+            partner_name=partner_name
         )
 
         return HttpResponse(file_name)
@@ -796,7 +803,7 @@ def get_file(request, file_name):
     if is_valid_filename(file_name):
         storage = MyAzureStorage()
 
-        file_path = os.path.join('center', file_name)
+        file_path = os.path.join('export', file_name)
         returned_file_name = 'output_file.zip'
 
         try:

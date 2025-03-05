@@ -44,6 +44,7 @@ from .models import (
     ProgramStaff
 )
 from student_registration.schools.models import PartnerOrganization, School
+from student_registration.backends.models import ExportHistory
 
 from .forms import (
     CenterForm,
@@ -327,7 +328,11 @@ def export_center_background(request):
         cursor = connection.cursor()
         user = request.user
         center_id = user.center_id
-        partner_id = user.partner_id
+        partner_id = 0
+        partner_name = ''
+        if user.partner_id:
+            partner_id = user.partner_id
+            partner_name = user.partner.name
 
         center_name = request.GET.get('center_name', '')
         center_type = request.GET.get('center_type', '')
@@ -393,10 +398,14 @@ def export_center_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        file_path = os.path.join('center', file_name)
+        file_path = os.path.join('export', file_name)
 
         default_storage.save(file_path, ContentFile(zip_output.getvalue()))
-
+        ExportHistory.objects.create(
+            export_type='Center List',
+            created_by=user,
+            partner_name=partner_name
+        )
         return HttpResponse(file_name)
 
     except Exception as e:

@@ -32,32 +32,40 @@
     </ol>
 
     <div class="pb-5 pr-5 list-filter" style="margin: 10px;">
-        <form action="" method="get" class="form form-inline">
-            {% bootstrap_form filter.form layout='inline' %}
-            <div class="">
-              <button class="btn btn-primary">
+    <form action="" method="get" class="form form-inline">
+        {% bootstrap_form filter.form layout='inline' %}
+        <div class="button-container">
+            <button class="btn btn-primary">
                 <i class="icon-validation-sign icon-white"></i>
                 {% trans "filter" %}
-              </button>
-              <a class="btn btn-warning" href="{% url 'schools:school_list' %}" type="link">
+            </button>
+            <a class="btn btn-warning" href="{% url 'schools:school_list' %}" type="link">
                 <i class="icon-synch-sign icon-white"></i>
                 {% trans "reset" %}
-              </a>
-<!--              {% if user|has_group:"EXPORT" %}-->
-<!--              <a href="{% url 'schools:school_export' %}" class="btn btn-success download-report">-->
-<!--                  <i class="icon-export-sign icon-white"></i>-->
-<!--                  {% trans "Export data" %}-->
-<!--              </a>-->
-<!--              {% endif %}-->
-              {% if 'Bridging'|is_allowed_create %}
-              <a href="{% url 'schools:school_add' %}" class="btn btn-success">
-                  <i class="icon-plus-sign icon-white"></i>
-                  {% trans "Add New School" %}
-              </a>
-              {% endif %}
+            </a>
+
+            {% if 'Bridging'|is_allowed_create %}
+            <a href="{% url 'schools:school_add' %}" class="btn btn-success">
+                <i class="icon-plus-sign icon-white"></i>
+                {% trans "Add New School" %}
+            </a>
+            {% endif %}
+
+            {% if user|has_group:"EXPORT" %}
+            <div class="download-container">
+                <a href="#" title="Download" class="btn btn-success download-report">
+                    <i class="icon-export-sign icon-white"></i>
+                    {% trans "Export data" %}
+                </a>
+                <div class="downloading-message" style="display:none;">
+                    Loading...
+                </div>
             </div>
-        </form>
-    </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
     <div class="" style="overflow: auto; margin: 10px;">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
@@ -72,7 +80,7 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/school/list.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/school/list.js' %}?v=7"></script>
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
