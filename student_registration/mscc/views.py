@@ -701,10 +701,7 @@ def export_list_background(request):
             partner_id = user.partner_id
             partner_name = user.partner.name
 
-
         round = request.GET.get('round', '')
-
-
         if not round:
             return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
                                 status=400)

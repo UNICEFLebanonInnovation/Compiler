@@ -170,12 +170,20 @@
                                 </select>
                             </div>
                         </div>
-                        <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenURL()">
-                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Raw Attendance
+                        <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3 download-report"
+                                onclick="generateAndOpenURL(event)">
+                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i> Export Raw Attendance
                         </button>
-                        <button id="generate-attendance_url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenAttendanceURL()">
-                            <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendance
+                        <div class="downloading-message" style="display:none">
+                            Loading...
+                        </div>
+                        <button id="generate-total-url" class="btn btn-primary btn-block btn-icon mt-3 download-total-report"
+                                onclick="generateAndOpenTotalURL(event)">
+                          <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendance
                         </button>
+                        <div class="downloading-total-message" style="display:none">
+                            Loading...
+                        </div>
                     </div>
                 </div>
 
@@ -187,25 +195,10 @@
 
 {% block extra_js %}
 <script>
-  function generateAndOpenURL() {
-      var month = document.getElementById('month').value;
-      var year = document.getElementById('year').value;
-      var education_program = document.getElementById('education_program').value || 'none';
-      var class_section = document.getElementById('mscc-section').value || 'none';
-      var partner = document.getElementById('partner').value || 'none';
-      var center = document.getElementById('center').value || 'none';
+function generateAndOpenURL(event) {
+    event.preventDefault();
 
-      if (month && year) {
-          // Encode parameters to handle spaces and special characters
-          let url = `/attendances/mscc-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
-
-          window.location.href = url;
-      } else {
-          alert('Please select both month and year.');
-      }
-  }
-
-  function generateAndOpenAttendanceURL() {
+    requestHeaders = getHeader();
     var month = document.getElementById('month').value;
     var year = document.getElementById('year').value;
     var education_program = document.getElementById('education_program').value || 'none';
@@ -213,14 +206,79 @@
     var partner = document.getElementById('partner').value || 'none';
     var center = document.getElementById('center').value || 'none';
 
-    if (month && year) {
-        // Encode parameters to handle spaces and special characters
-        let url = `/attendances/mscc-total-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
+    $(".downloading-message").show();
+    $('.download-report').addClass('disabled');
 
-        window.location.href = url;
+    if (month && year) {
+        let url = `/attendances/mscc-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: requestHeaders,
+            success: function (data) {
+                $(".downloading-message").hide();
+                $('.download-report').removeClass('disabled');
+
+                // Open the file in a new tab
+                window.open("/MSCC/export-download/" + encodeURIComponent(data), "_blank");
+            },
+            error: function (error) {
+                alert("Error downloading file. Please try again.");
+                $(".downloading-message").hide();
+                $('.download-report').removeClass('disabled');
+            }
+        });
+
     } else {
         alert('Please select both month and year.');
+        $(".downloading-message").hide();
+        $('.download-report').removeClass('disabled');
     }
-  }
+}
+
+
+function generateAndOpenTotalURL(event) {
+    event.preventDefault();
+
+    requestHeaders = getHeader();
+    var month = document.getElementById('month').value;
+    var year = document.getElementById('year').value;
+    var education_program = document.getElementById('education_program').value || 'none';
+    var class_section = document.getElementById('mscc-section').value || 'none';
+    var partner = document.getElementById('partner').value || 'none';
+    var center = document.getElementById('center').value || 'none';
+
+
+    $(".downloading-total-message").show();
+    $('.download-total-report').addClass('disabled');
+
+    if (month && year) {
+        let url = `/attendances/mscc-total-attendance-export/${encodeURIComponent(month)}/${encodeURIComponent(year)}/${encodeURIComponent(education_program)}/${encodeURIComponent(class_section)}/${encodeURIComponent(partner)}/${encodeURIComponent(center)}/`;
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: requestHeaders,
+            success: function (data) {
+                $(".downloading-total-message").hide();
+                $('.download-total-report').removeClass('disabled');
+
+                window.open("/MSCC/export-download/" + encodeURIComponent(data), "_blank");
+            },
+            error: function (error) {
+                alert("Error downloading file. Please try again.");
+                $(".downloading-total-message").hide();
+                $('.download-total-report').removeClass('disabled');
+            }
+        });
+
+    } else {
+        alert('Please select both month and year.');
+        $(".downloading-total-message").hide();
+        $('.download-total-report').removeClass('disabled');
+    }
+}
+
 </script>
 {% endblock %}

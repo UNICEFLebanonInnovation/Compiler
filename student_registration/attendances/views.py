@@ -5,19 +5,16 @@ import io
 import xlwt
 import csv
 import logging
-from django.db import connection
 import traceback
-# Configure logging
 logging.basicConfig(level=logging.ERROR)
 import codecs
-from django.utils.encoding import force_text
-
 import datetime
-from datetime import date
-from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font, Color
-
-import copy
+import zipfile
+from django.utils.encoding import smart_str
+import os
+import uuid
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, CreateView
 from django.forms import inlineformset_factory
@@ -61,6 +58,7 @@ from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent, C
 from student_registration.students.models import Student
 from student_registration.clm.models import Bridging
 from student_registration.schools.models import CLMRound
+from student_registration.backends.models import ExportHistory
 
 from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer
 from .tables import CLMAttendanceStudentTable, BootstrapTable
@@ -1601,8 +1599,14 @@ def consecutive_absence_export(request, **kwargs):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
+@login_required(login_url='/users/login')
 def mscc_attendance_export(request, **kwargs):
     try:
+        user = request.user
+        partner_name = ''
+        if user.partner:
+            partner_name = user.partner.name
+
         month = kwargs.get('month')
         year = kwargs.get('year')
         # round = kwargs.get('round')
@@ -1653,7 +1657,9 @@ def mscc_attendance_export(request, **kwargs):
                 query_params.append(request.user.center_id)
 
         vw_data_str += " ORDER BY attendance_date"
+
         cursor.execute(vw_data_str, query_params)
+        att_data = cursor.fetchall()
 
         # Log the query for debugging purposes
         logging.debug("Executing query: %s", vw_data_str)
@@ -1661,37 +1667,56 @@ def mscc_attendance_export(request, **kwargs):
 
         headers = [col[0] for col in cursor.description]
 
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename=mscc_raw_attendance.csv'
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for vw_mscc_data
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
 
-        response.write(codecs.BOM_UTF8)
+            # Add BOM to handle Arabic text correctly
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)  # Write headers
 
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+            for row in att_data:
+                encoded_row = []
+                for cell in row:
+                    if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                        encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                    elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                        encoded_row.append(cell.strftime('%Y-%m-%d'))
+                    else:  # Convert other data types to string
+                        encoded_row.append(str(cell))
+                csv_writer.writerow(encoded_row)
 
-        writer.writerow(headers)
+            # Add CSV to ZIP
+            zf.writestr('mscc_raw_attendance_data.csv', csv_mscc_output.getvalue())
 
-        for row in cursor.fetchall():
-            encoded_row = []
-            for cell in row:
-                if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
-                else:  # Convert other data types to string
-                    encoded_row.append(str(cell))
-            writer.writerow(encoded_row)
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        file_path = os.path.join('export', file_name)
 
-        return response
+        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        ExportHistory.objects.create(
+            export_type='Makani Raw Attendance',
+            created_by=user,
+            partner_name=partner_name
+        )
+        return HttpResponse(file_name)
 
     except Exception as e:
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
-
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
+@login_required(login_url='/users/login')
 def mscc_total_attendance_export(request, **kwargs):
     try:
+        user = request.user
+        partner_name = ''
+        if user.partner:
+            partner_name = user.partner.name
+
         month = kwargs.get('month')
         year = kwargs.get('year')
         # round = kwargs.get('round')
@@ -1743,34 +1768,49 @@ def mscc_total_attendance_export(request, **kwargs):
 
         vw_data_str += " ORDER BY child_id"
         cursor.execute(vw_data_str, query_params)
+        att_data = cursor.fetchall()
 
         # Log the query for debugging purposes
         logging.debug("Executing query: %s", vw_data_str)
         logging.debug("Query params: %s", str(query_params))
 
         headers = [col[0] for col in cursor.description]
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for vw_mscc_data
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
 
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename=mscc_raw_attendance.csv'
+            # Add BOM to handle Arabic text correctly
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)  # Write headers
 
-        response.write(codecs.BOM_UTF8)
+            for row in att_data:
+                encoded_row = []
+                for cell in row:
+                    if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                        encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                    elif isinstance(cell,
+                                    (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                        encoded_row.append(cell.strftime('%Y-%m-%d'))
+                    else:  # Convert other data types to string
+                        encoded_row.append(str(cell))
+                csv_writer.writerow(encoded_row)
 
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+            # Add CSV to ZIP
+            zf.writestr('mscc_total_attendance_data.csv', csv_mscc_output.getvalue())
 
-        writer.writerow(headers)
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        file_path = os.path.join('export', file_name)
 
-        for row in cursor.fetchall():
-            encoded_row = []
-            for cell in row:
-                if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
-                else:  # Convert other data types to string
-                    encoded_row.append(str(cell))
-            writer.writerow(encoded_row)
-
-        return response
+        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        ExportHistory.objects.create(
+            export_type='Makani Total Attendance',
+            created_by=user,
+            partner_name=partner_name
+        )
+        return HttpResponse(file_name)
 
     except Exception as e:
         logging.error("An error occurred during the export process:")
