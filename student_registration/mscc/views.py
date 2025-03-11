@@ -821,3 +821,34 @@ def is_valid_filename(filename):
     pattern = r'^[a-zA-Z0-9-_]+.zip$'
 
     return re.match(pattern, filename) is not None
+
+
+@login_required(login_url='/users/login')
+def get_file_csv(request, file_name):
+    response = None
+
+    if is_valid_filename_csv(file_name):
+        storage = MyAzureStorage()
+        file_path = os.path.join('export', file_name)
+        returned_file_name = "exported_data.csv"
+
+        try:
+            with storage.open(file_path, 'rb') as f:
+                file_stream = io.BytesIO(f.read())
+                file_stream.seek(0)
+                response = FileResponse(file_stream, content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
+        except Exception as e:
+            response = HttpResponse("Error reading file: {}".format(e))
+
+        # Optionally delete after serving
+        default_storage.delete(file_path)
+    else:
+        response = HttpResponse("Invalid file.", status=400)
+
+    return response
+
+def is_valid_filename_csv(filename):
+    """Ensure the filename is a valid CSV file with expected format."""
+    pattern = r'^[a-zA-Z0-9-_]+\.csv$'
+    return re.match(pattern, filename) is not None

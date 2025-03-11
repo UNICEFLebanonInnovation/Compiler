@@ -1423,9 +1423,12 @@ def consecutive_absence_export_xlsx(request):
 
     return response
 
-
+@login_required(login_url='/users/login')
 def attendance_export(request, **kwargs):
     try:
+        user = request.user
+        partner_name = user.partner.name if user.partner else ''
+
         month = kwargs.get('month')
         year = kwargs.get('year')
 
@@ -1450,6 +1453,7 @@ def attendance_export(request, **kwargs):
 
         vw_data_str += " ORDER BY attendance_date"
         cursor.execute(vw_data_str, query_params)
+        att_data = cursor.fetchall()
 
         # Log the query for debugging purposes
         logging.debug("Executing query: %s", vw_data_str)
@@ -1457,16 +1461,15 @@ def attendance_export(request, **kwargs):
 
         headers = [col[0] for col in cursor.description]
 
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename=raw_attendance.csv'
+        # Create CSV
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
 
-        response.write(codecs.BOM_UTF8)
+        # Add BOM for Arabic text
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)
 
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
-
-        writer.writerow(headers)
-
-        for row in cursor.fetchall():
+        for row in att_data:
             encoded_row = []
             for cell in row:
                 if isinstance(cell, (str, bytes)):  # Handle string and bytes
@@ -1475,9 +1478,25 @@ def attendance_export(request, **kwargs):
                     encoded_row.append(cell.strftime('%Y-%m-%d'))
                 else:  # Convert other data types to string
                     encoded_row.append(str(cell))
-            writer.writerow(encoded_row)
 
-        return response
+            csv_writer.writerow(encoded_row)
+
+        unique_id = str(uuid.uuid4())
+        file_name = "consecutive_absence_{}.csv".format(unique_id)
+        file_path = os.path.join('export', file_name)
+
+        # Save file
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        # Store export history
+        ExportHistory.objects.create(
+            export_type='Bridging Absence Raw Data',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
+
 
     except Exception as e:
         logging.error("An error occurred during the export process:")
@@ -1487,71 +1506,15 @@ def attendance_export(request, **kwargs):
 
 
 @login_required(login_url='/users/login')
-def total_attendance_export(request):
-    round_id = request.GET.get('round', None)
-
-    total_attendance = CLMStudentTotalAttendance.objects.all()
-
-    if round_id:
-        total_attendance = total_attendance.filter(round_id=round_id).order_by('student_id')
-
-    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
-        if request.user.school_id:
-            total_attendance = total_attendance.filter(school_id=request.user.school_id)
-        elif request.user.partner_id:
-            partner_id = request.user.partner_id
-            total_attendance = total_attendance.filter(
-                school_id__in=PartnerOrganization.objects.filter(id=partner_id).values_list('schools', flat=True))
-
-    student_numbers_subquery = Student.objects.filter(id=OuterRef('student_id')).values('number')[:1]
-
-    total_attendance = total_attendance.annotate(number=Subquery(student_numbers_subquery)).order_by('student_id')
-
-    response = HttpResponse(content_type='text/csv; charset=utf-8')
-    response['Content-Disposition'] = 'attachment; filename=total_attendance.csv'
-    response.write(codecs.BOM_UTF8)
-
-    writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL, delimiter=str(u','))
-
-    columns = ['Student First Name', 'Student Father Name', 'Student Last Name', 'Student Number', 'School',
-               'Registration Level', 'Total Attendance Days', 'Total Absence Days']
-
-    writer.writerow(columns)
-
-    # Iterate over the queryset and extract values for each row
-    for attendance in total_attendance:
-        row = [
-            attendance.student_first_name,
-            attendance.student_father_name,
-            attendance.student_last_name,
-            attendance.number,
-            attendance.school_name,
-            attendance.registation_level,
-            attendance.total_attendance_days,
-            attendance.total_absence_days
-        ]
-
-        encoded_row = []
-        for cell in row:
-            if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-            elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                encoded_row.append(cell.strftime('%Y-%m-%d'))
-            else:  # Convert other data types to string
-                encoded_row.append(str(cell))
-
-        writer.writerow(encoded_row)
-
-    return response
-
-@login_required(login_url='/users/login')
-def consecutive_absence_export(request, **kwargs):
+def total_attendance_export(request, **kwargs):
     try:
+        user = request.user
+        partner_name = user.partner.name if user.partner else ''
+
         round_id = kwargs.get('round')
         cursor = connection.cursor()
-        query_params = []
-        vw_data_str = "SELECT * FROM vw_bridging_absence_consecutive WHERE round_id  = %s"
-        query_params.append(round_id)
+        query_params = [round_id]
+        vw_data_str = "SELECT * FROM vw_bridging_attendance_total WHERE round_id = %s"
 
         if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
             if request.user.partner_id:
@@ -1562,40 +1525,113 @@ def consecutive_absence_export(request, **kwargs):
                 query_params.append(request.user.school_id)
 
         vw_data_str += " ORDER BY student_id"
-
         cursor.execute(vw_data_str, query_params)
+        att_data = cursor.fetchall()
 
         logging.debug("Executing query: %s", vw_data_str)
         logging.debug("Query params: %s", str(query_params))
 
         headers = [col[0] for col in cursor.description]
 
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename=consecutive_absence.csv'
+        # Create CSV
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
 
-        response.write(codecs.BOM_UTF8)
+        # Add BOM for Arabic text
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)  # Write headers
 
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+        for row in att_data:
+            csv_writer.writerow(
+                [cell.decode('utf-8') if isinstance(cell, bytes) else
+                 cell.strftime('%Y-%m-%d') if isinstance(cell, (datetime.date, datetime.datetime)) else
+                 str(cell) for cell in row]
+            )
 
-        writer.writerow(headers)
+        unique_id = str(uuid.uuid4())
+        file_name = "total_attendance_{}.csv".format(unique_id)
+        file_path = os.path.join('export', file_name)
 
-        for row in cursor.fetchall():
-            encoded_row = []
-            for cell in row:
-                if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
-                else:  # Convert other data types to string
-                    encoded_row.append(str(cell))
-            writer.writerow(encoded_row)
+        # Save file
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
 
-        return response
+        # Store export history
+        ExportHistory.objects.create(
+            export_type='Bridging Attendance Total',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
 
     except Exception as e:
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
+        return HttpResponse("An error occurred: " + str(e), status=500)
 
+
+@login_required(login_url='/users/login')
+def consecutive_absence_export(request, **kwargs):
+    try:
+        user = request.user
+        partner_name = user.partner.name if user.partner else ''
+
+        round_id = kwargs.get('round')
+        cursor = connection.cursor()
+        query_params = [round_id]
+        vw_data_str = "SELECT * FROM vw_bridging_absence_consecutive WHERE round_id = %s"
+
+        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+            if request.user.partner_id:
+                vw_data_str += " AND partner_id = %s"
+                query_params.append(request.user.partner_id)
+            if request.user.school_id:
+                vw_data_str += " AND school_id = %s"
+                query_params.append(request.user.school_id)
+
+        vw_data_str += " ORDER BY student_id"
+        cursor.execute(vw_data_str, query_params)
+        att_data = cursor.fetchall()
+
+        logging.debug("Executing query: %s", vw_data_str)
+        logging.debug("Query params: %s", str(query_params))
+
+        headers = [col[0] for col in cursor.description]
+
+        # Create CSV
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
+
+        # Add BOM for Arabic text
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)  # Write headers
+
+        for row in att_data:
+            csv_writer.writerow(
+                [cell.decode('utf-8') if isinstance(cell, bytes) else
+                 cell.strftime('%Y-%m-%d') if isinstance(cell, (datetime.date, datetime.datetime)) else
+                 str(cell) for cell in row]
+            )
+
+        unique_id = str(uuid.uuid4())
+        file_name = "consecutive_absence_{}.csv".format(unique_id)
+        file_path = os.path.join('export', file_name)
+
+        # Save file
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        # Store export history
+        ExportHistory.objects.create(
+            export_type='Bridging Absence Consecutive',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 

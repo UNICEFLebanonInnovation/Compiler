@@ -93,9 +93,12 @@
                             </div>
                         </div>
 
-                        <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenURL()">
+                        <button id="generate-url" class="btn btn-primary btn-block btn-icon mt-3 download-report" onclick="generateAndOpenURL()">
                             <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Raw Attendance
                         </button>
+                        <div class="downloading-message" style="display:none">
+                            Loading...
+                        </div>
                     </div>
                 </div>
 
@@ -119,12 +122,18 @@
                             </div>
                         </div>
 
-                        <button id="generate-total-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenTotalURL()">
+                        <button id="generate-total-url" class="btn btn-primary btn-block btn-icon mt-3 download-total-report" onclick="generateAndOpenTotalURL()">
                             <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Total Attendances
                         </button>
-                        <button id="generate-round-url" class="btn btn-primary btn-block btn-icon mt-3" onclick="generateAndOpenConsecutiveURL()">
+                        <div class="downloading-total-message" style="display:none">
+                            Loading...
+                        </div>
+                        <button id="generate-round-url" class="btn btn-primary btn-block btn-icon mt-3 download-consecutive-report" onclick="generateAndOpenConsecutiveURL(event)">
                             <i class="pe-7s-cloud-download btn-icon-wrapper"></i>Export Consecutive Absence
                         </button>
+                        <div class="downloading-consecutive-message" style="display:none">
+                            Loading...
+                        </div>
                     </div>
                 </div>
             </div>
@@ -135,42 +144,123 @@
 
 {% block extra_js %}
 <script>
-function generateAndOpenURL() {
+function generateAndOpenURL(event) {
+    if (event) {
+       event.preventDefault();
+    }
+
+    requestHeaders = getHeader();
     var month = document.getElementById('dirasa-month').value;
     var year = document.getElementById('dirasa-year').value;
 
+    $(".downloading-message").show();
+    $('.download-report').addClass('disabled');
+
     if (month && year) {
-        var url = `/attendances/attendance-export/${month}/${year}/`;
-        window.location.href = url;
-    } else {
-        alert('Please select both month and year.');
-    }
-}
+        let url = `/attendances/attendance-export/${month}/${year}/`;
 
-function generateAndOpenTotalURL() {
-    var round = document.getElementById('dirasa-round').value;
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: requestHeaders,
+            success: function (data) {
+                $(".downloading-message").hide();
+                $('.download-report').removeClass('disabled');
 
-    if (round) {
-        window.location.href = "{% url 'attendances:total_attendance_export' %}?round=" + round;
-    } else {
-        alert('Round is not selected. Please select a round before exporting data.');
-    }
-}
+                // Open the file in a new tab
+               // window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open(window.location.origin + "/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
 
-function generateAndOpenConsecutiveURL() {
-    var round = document.getElementById('dirasa-round').value;
-
-    if (round) {
-        var url = `/attendances/consecutive-attendance-export/${round}/`;
-        window.location.href = url;
-    } else {
-        alert('Round is not selected. Please select a round before exporting data.');
-    }
-    if (month && year) {
+            },
+            error: function (error) {
+                alert("Error downloading file. Please try again.");
+                $(".downloading-message").hide();
+                $('.download-report').removeClass('disabled');
+            }
+        });
 
     } else {
         alert('Please select both month and year.');
+        $(".downloading-message").hide();
+        $('.download-report').removeClass('disabled');
     }
 }
+
+function generateAndOpenTotalURL(event) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    requestHeaders = getHeader();
+    var round = document.getElementById('dirasa-round').value;
+
+    $(".downloading-total-message").show();
+    $('.download-total-report').addClass('disabled');
+
+    if (round) {
+        let url = `/attendances/total-attendance-export/${round}/`;
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: requestHeaders,
+            success: function (data) {
+                $(".downloading-total-message").hide();
+                $('.download-total-report').removeClass('disabled');
+
+                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+            },
+            error: function (error) {
+                alert("Error downloading file. Please try again.");
+                $(".downloading-total-message").hide();
+                $('.download-total-report').removeClass('disabled');
+            }
+        });
+
+    } else {
+        alert('Round is not selected. Please select a round before exporting data.');
+        $(".downloading-total-message").hide();
+        $('.download-total-report').removeClass('disabled');
+    }
+}
+
+function generateAndOpenConsecutiveURL(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    var requestHeaders = getHeader();
+    var round = document.getElementById('dirasa-round').value;
+
+    $(".downloading-consecutive-message").show();
+    $('.download-consecutive-report').addClass('disabled');
+
+    if (round) {
+        let url = `/attendances/consecutive-attendance-export/${round}/`;
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: requestHeaders,
+            success: function (data) {
+                $(".downloading-consecutive-message").hide();
+                $('.download-consecutive-report').removeClass('disabled');
+
+                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+            },
+            error: function (error) {
+                alert("Error downloading file. Please try again.");
+                $(".downloading-consecutive-message").hide();
+                $('.download-consecutive-report').removeClass('disabled');
+            }
+        });
+
+    } else {
+        alert('Round is not selected. Please select a round before exporting data.');
+        $(".downloading-consecutive-message").hide();
+        $('.download-consecutive-report').removeClass('disabled');
+    }
+}
+
 </script>
 {% endblock %}

@@ -53,7 +53,7 @@ urlpatterns = [
         name='attendance_export'
     ),
     url(
-        regex=r'^total-attendance-export/$',
+        regex=r'^total-attendance-export/(?P<round>[\w.@+-]+)/$',
         view=views.total_attendance_export,
         name='total_attendance_export'
     ),

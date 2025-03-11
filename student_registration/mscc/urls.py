@@ -331,4 +331,10 @@ urlpatterns = [
         view=views.get_file,
         name='export_download'
     ),
+
+    url(
+        regex=r"^export-download-csv/(?P<file_name>.+)/$",
+        view=views.get_file_csv,
+        name='export_download_csv'
+    ),
 ]
