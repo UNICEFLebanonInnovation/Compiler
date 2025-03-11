@@ -1243,187 +1243,6 @@ def attendance_export_xlsx(request, **kwargs):
 
 
 @login_required(login_url='/users/login')
-def total_attendance_export_xlsx(request):
-    round_id = request.GET.get('round', None)
-
-    buffer = io.BytesIO()
-
-    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
-
-    # Total Attendance
-    ws_total_attendance = wb_student.add_sheet('Total Attendance')
-
-    # Sheet header, first row
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-    total_attendance = CLMStudentTotalAttendance.objects.all()
-
-    if round_id:
-        total_attendance = total_attendance.filter(round_id=round_id).order_by('student_id').all()
-
-    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
-        if request.user.school_id:
-            school_id = request.user.school_id
-            total_attendance = total_attendance.filter(school_id=school_id)
-        elif request.user.partner_id:
-            partner_id = request.user.partner_id
-            total_attendance = total_attendance.filter(school_id__in=PartnerOrganization
-                                             .objects
-                                             .filter(id=partner_id)
-                                             .values_list('schools', flat=True))
-    student_numbers_subquery = Student.objects.filter(
-        id=OuterRef('student_id'),
-    ).values('number')[:1]
-
-    total_attendance = total_attendance.annotate(
-        number=Subquery(student_numbers_subquery)
-    ).order_by('student_id')
-
-
-    total_attendance_columns = [
-        'Student First Name',
-        'Student Father Name',
-        'Student Last Name',
-        'Student Number',
-        'School',
-        'Registation Level',
-        'Total Attendance Days',
-        'Total Absence Days',
-    ]
-
-    for col_num in range(len(total_attendance_columns)):
-        ws_total_attendance.write(0, col_num, total_attendance_columns[col_num], font_style)
-
-    row_num_student = 0
-    for row in total_attendance:
-        row_num_student += 1
-        ws_total_attendance.write(row_num_student, 0, row.student_first_name, font_style)
-        ws_total_attendance.write(row_num_student, 1, row.student_father_name, font_style)
-        ws_total_attendance.write(row_num_student, 2, row.student_last_name, font_style)
-        ws_total_attendance.write(row_num_student, 3, row.number, font_style)
-        ws_total_attendance.write(row_num_student, 4, row.school_name, font_style)
-        ws_total_attendance.write(row_num_student, 5, row.registation_level, font_style)
-        ws_total_attendance.write(row_num_student, 6, row.total_attendance_days, font_style)
-        ws_total_attendance.write(row_num_student, 7, row.total_absence_days, font_style)
-        ws_total_attendance.write(row_num_student, 8, row.student_id, font_style)
-
-    wb_student.save(buffer)
-
-    buffer.seek(0)
-    response = FileResponse(buffer, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="total_attendance.xls"'
-
-    return response
-
-
-@login_required(login_url='/users/login')
-def consecutive_absence_export_xlsx(request):
-    round_id = request.GET.get('round', None)
-
-    buffer = io.BytesIO()
-
-    wb_student = xlwt.Workbook(encoding='utf-8', style_compression=2)
-
-    # Sheet header, first row
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-
-    # Consecutive and Total Attendance
-    consecutive_student = CLMStudentAbsences.objects.all()
-    total_student = CLMStudentTotalAttendance.objects.all()
-
-    if round_id:
-        consecutive_student = consecutive_student.filter(round_id=round_id)
-        total_student = consecutive_student.filter(round_id=round_id)
-
-    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
-        if request.user.partner_id:
-            partner_id = request.user.partner_id
-            consecutive_student = consecutive_student.filter(school_id__in=PartnerOrganization
-                                             .objects
-                                             .filter(id=partner_id)
-                                             .values_list('schools', flat=True))
-
-            total_student = total_student.filter(school_id__in=PartnerOrganization
-                                             .objects
-                                             .filter(id=partner_id)
-                                             .values_list('schools', flat=True))
-
-        if request.user.school_id:
-            school_id = request.user.school_id
-            consecutive_student = consecutive_student.filter(school_id=school_id)
-            total_student = total_student.filter(school_id=school_id)
-
-    consecutive_student_id = consecutive_student.values_list('student_id', flat=True)
-    total_student_id = total_student.values_list('student_id', flat=True)
-
-
-    consecutive_student_list = list(consecutive_student_id)
-    total_student_list = list(total_student_id)
-
-    student_ids = consecutive_student_list + list(set(total_student_list) - set(consecutive_student_list))
-    student_ids = list(set(student_ids))
-
-    consecutive_absent_students = CLMStudentAbsences.objects.filter(student_id__in= student_ids).all()
-
-    student_numbers_subquery = Student.objects.filter(
-        id=OuterRef('student_id'),
-    ).values('number')[:1]
-
-    consecutive_absent_students = consecutive_absent_students.annotate(
-        number=Subquery(student_numbers_subquery)
-    ).order_by('student_id','absence_starting_date')
-
-    consecutive_absences_columns = [
-        'Student First Name',
-        'Student Father Name',
-        'Student Last Name',
-        'Student Number',
-        'School',
-        'Registation Level',
-        'Number of Consecutive Absences',
-        'Consecutive Absences From',
-        'Consecutive Absences To',
-        'Absence Dates',
-        'Total Attendance Days',
-        'Total Absence Days',
-    ]
-
-    ws_consecutive_absences = wb_student.add_sheet('Consecutive Absences')
-    for col_num in range(len(consecutive_absences_columns)):
-        ws_consecutive_absences.write(0, col_num, consecutive_absences_columns[col_num], font_style)
-
-    row_num_student = 0
-    for row in consecutive_absent_students:
-        row_num_student += 1
-        ws_consecutive_absences.write(row_num_student, 0, row.student_first_name,font_style)
-        ws_consecutive_absences.write(row_num_student, 1, row.student_father_name,font_style)
-        ws_consecutive_absences.write(row_num_student, 2, row.student_last_name,font_style)
-        ws_consecutive_absences.write(row_num_student, 3, row.number,font_style)
-        ws_consecutive_absences.write(row_num_student, 4, row.school_name,font_style)
-        ws_consecutive_absences.write(row_num_student, 5, row.registation_level,font_style)
-        ws_consecutive_absences.write(row_num_student, 6, row.consecutive_absence_days,font_style)
-        ws_consecutive_absences.write(row_num_student, 7, row.absence_starting_date,font_style)
-        ws_consecutive_absences.write(row_num_student, 8, row.absence_ending_date,font_style)
-        # convert list row.absence_dates
-        absence_dates = ', '.join(row.absence_dates)
-        ws_consecutive_absences.write(row_num_student, 9, absence_dates,font_style)
-        student_id= row.student_id
-        total_absent_students = CLMStudentTotalAttendance.objects\
-            .filter(student_id=student_id, round_id=round_id).last()
-        if total_absent_students:
-            ws_consecutive_absences.write(row_num_student, 10, total_absent_students.total_attendance_days,font_style)
-            ws_consecutive_absences.write(row_num_student, 11, total_absent_students.total_absence_days,font_style)
-
-    wb_student.save(buffer)
-
-    buffer.seek(0)
-    response = FileResponse(buffer, content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="consecutive_absence.xls"'
-
-    return response
-
-@login_required(login_url='/users/login')
 def attendance_export(request, **kwargs):
     try:
         user = request.user
@@ -1634,14 +1453,11 @@ def consecutive_absence_export(request, **kwargs):
         logging.error(traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
 
-
 @login_required(login_url='/users/login')
 def mscc_attendance_export(request, **kwargs):
     try:
         user = request.user
-        partner_name = ''
-        if user.partner:
-            partner_name = user.partner.name
+        partner_name = user.partner.name if user.partner else ''
 
         month = kwargs.get('month')
         year = kwargs.get('year')
@@ -1697,46 +1513,44 @@ def mscc_attendance_export(request, **kwargs):
         cursor.execute(vw_data_str, query_params)
         att_data = cursor.fetchall()
 
-        # Log the query for debugging purposes
         logging.debug("Executing query: %s", vw_data_str)
         logging.debug("Query params: %s", str(query_params))
 
         headers = [col[0] for col in cursor.description]
 
-        zip_output = io.BytesIO()
-        with zipfile.ZipFile(zip_output, 'w') as zf:
-            # Create CSV for vw_mscc_data
-            csv_mscc_output = io.StringIO()
-            csv_writer = csv.writer(csv_mscc_output)
+        # Create CSV
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
 
-            # Add BOM to handle Arabic text correctly
-            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
-            csv_writer.writerow(headers)  # Write headers
+        # Add BOM for Arabic text
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)  # Write headers
 
-            for row in att_data:
-                encoded_row = []
-                for cell in row:
-                    if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                        encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                    elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                        encoded_row.append(cell.strftime('%Y-%m-%d'))
-                    else:  # Convert other data types to string
-                        encoded_row.append(str(cell))
-                csv_writer.writerow(encoded_row)
-
-            # Add CSV to ZIP
-            zf.writestr('mscc_raw_attendance_data.csv', csv_mscc_output.getvalue())
+        for row in att_data:
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            csv_writer.writerow(encoded_row)
 
         unique_id = str(uuid.uuid4())
-        file_name = "out_file_{}.zip".format(unique_id)
+        file_name = "mscc_raw_attendance_data_{}.csv".format(unique_id)
         file_path = os.path.join('export', file_name)
 
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        # Save file
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        # Store export history
         ExportHistory.objects.create(
             export_type='Makani Raw Attendance',
             created_by=user,
             partner_name=partner_name
         )
+
         return HttpResponse(file_name)
 
     except Exception as e:
@@ -1747,6 +1561,111 @@ def mscc_attendance_export(request, **kwargs):
 
 @login_required(login_url='/users/login')
 def mscc_total_attendance_export(request, **kwargs):
+    try:
+        user = request.user
+        partner_name = user.partner.name if user.partner else ''
+
+        month = kwargs.get('month')
+        year = kwargs.get('year')
+        # round = kwargs.get('round')
+        education_program = kwargs.get('education_program', '')
+        class_section = kwargs.get('class_section', '')
+        partner_id = kwargs.get('partner', '')
+        center_id = kwargs.get('center', '')
+
+        if education_program == 'none':
+            education_program = ''
+        if class_section == 'none':
+            class_section = ''
+        if partner_id == 'none':
+            partner_id = ''
+        if center_id == 'none':
+            center_id = ''
+
+        cursor = connection.cursor()
+        query_params = []
+        vw_data_str = "SELECT * FROM vw_mscc_attendance_absence WHERE center_id > 0"
+
+        if year:
+            vw_data_str += " AND attendance_year = %s"
+            query_params.append(year)
+        if month:
+            vw_data_str += " AND attendance_month = %s"
+            query_params.append(month)
+
+        if education_program:
+            vw_data_str += " AND education_program = %s"
+            query_params.append(education_program)
+
+        if class_section:
+            vw_data_str += " AND class_section = %s"
+            query_params.append(class_section)
+
+        if partner_id:
+            vw_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+
+        if center_id:
+            vw_data_str += " AND center_id = %s"
+            query_params.append(center_id)
+
+        if not request.user.groups.filter(name='MSCC_UNICEF').exists():
+            if request.user.center_id:
+                vw_data_str += " AND center_id = %s"
+                query_params.append(request.user.center_id)
+
+        vw_data_str += " ORDER BY child_id"
+        cursor.execute(vw_data_str, query_params)
+        att_data = cursor.fetchall()
+
+        logging.debug("Executing query: %s", vw_data_str)
+        logging.debug("Query params: %s", str(query_params))
+
+        headers = [col[0] for col in cursor.description]
+
+        # Create CSV
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
+
+        # Add BOM for Arabic text
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)  # Write headers
+
+        for row in att_data:
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (str, bytes)):  # Handle string and bytes
+                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
+                elif isinstance(cell,
+                                (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                else:  # Convert other data types to string
+                    encoded_row.append(str(cell))
+            csv_writer.writerow(encoded_row)
+
+        unique_id = str(uuid.uuid4())
+        file_name = "mscc_total_attendance_data_{}.csv".format(unique_id)
+        file_path = os.path.join('export', file_name)
+
+        # Save file
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        # Store export history
+        ExportHistory.objects.create(
+            export_type='Makani Total Attendance',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+@login_required(login_url='/users/login')
+def mscc_total_attendance_export1(request, **kwargs):
     try:
         user = request.user
         partner_name = ''
