@@ -9,13 +9,14 @@ from .models import Child
 class ChildAdmin(admin.ModelAdmin):
 
     list_display = (
-        'full_name',
+        'first_name',
+        'father_name',
+        'last_name',
+        'mother_fullname',
         'nationality',
         'birthday_year',
-        'p_code',
         'disability',
         'marital_status',
-        'number',
         'unicef_id',
         'created',
         'modified',

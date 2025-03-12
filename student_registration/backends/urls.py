@@ -17,6 +17,11 @@ urlpatterns = [
         name='generate_child_id'
     ),
     url(
+        regex=r'^generate-all-child-unique-id/$',
+        view=views.generate_all_child_unique_id,
+        name='generate_all_child_unique_id'
+    ),
+    url(
         regex=r'^generate-student-unique-id/$',
         view=views.generate_student_unique_id,
         name='generate_student_id'

@@ -50,8 +50,62 @@ class ChildUIDThreading(object):
         print("End Thread")
 
 
+class AllChildUIDThreading(object):
+    def __init__(self, interval=1):
+        self.interval = interval
+
+        thread = threading.Thread(target=self.run, args=())
+
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+
+        from student_registration.child.models import Child
+
+        records = Child.objects.all()
+
+        slicing = 10000
+
+        for key in range(1, 7):
+            batch = records[slicing * key:(key + 1) * slicing]  # Correct slicing
+
+            payload = {
+                "individuals": [
+                    {
+                        "id": record.pk,
+                        "first_name": record.first_name,
+                        "father_name": record.father_name,
+                        "last_name": record.last_name,
+                        "mother_name": record.mother_fullname,
+                        "date_of_birth": record.birthdate,
+                        "nationality": record.nationality_name_en,
+                        "gender": record.gender
+                    }
+                    for record in batch
+                ]
+            }
+
+            result = generate_bulk_unique_id(payload)
+
+            # Update Django records in bulk
+            for record in records:
+                if record.pk in result:
+                    record.unicef_id = result[record.pk]
+                    record.save()
+
+        # for django >= 2.2
+        # Student.objects.bulk_update(records, ['unicef_id'])
+
+        print("End Thread")
+
+
 def generate_child_unique_id():
     th = ChildUIDThreading(interval=5)
+
+
+def generate_all_child_unique_id():
+    th = AllChildUIDThreading(interval=6)
 
 
 class StudentUIDThreading(object):
@@ -67,7 +121,7 @@ class StudentUIDThreading(object):
     def run(self):
         from student_registration.students.models import Student
 
-        records = Student.objects.exclude(unicef_id__isnull=False)[0:1000]
+        records = Student.objects.exclude(unicef_id__isnull=False)[0:10000]
 
         payload = {
             "individuals": [
