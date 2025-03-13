@@ -359,7 +359,7 @@ urlpatterns = [
         name='bridging_service'
     ),
     url(
-        regex=r'^bridging-export/$',
+        regex=r'^bridging-export/(?P<round>[\w.@+-]+)/$',
         view=views.bridging_export_data,
         name='bridging_export'
     ),

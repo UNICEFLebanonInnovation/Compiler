@@ -8,8 +8,14 @@ from django.views.generic import ListView, FormView, TemplateView, UpdateView, V
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from openpyxl import Workbook
+import io
 import csv
+import logging
+logging.basicConfig(level=logging.ERROR)
+import os
+import uuid
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.db import connection
 import codecs
 import logging
@@ -76,6 +82,7 @@ from student_registration.schools.models import (
     School,
     CLMRound,
 )
+from student_registration.backends.models import ExportHistory
 from .forms import (
     BLNForm,
     ABLNForm,
@@ -3875,9 +3882,12 @@ class BridgingListView(LoginRequiredMixin,
 
 
 @login_required(login_url='/users/login')
-def bridging_export_data(request):
+def bridging_export_data(request, **kwargs):
     try:
         cursor = connection.cursor()
+        user = request.user
+        partner_name = user.partner.name if user.partner else ''
+
         round_id = request.GET.get('round', None)
 
         vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
@@ -3908,29 +3918,23 @@ def bridging_export_data(request):
 
         vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
 
-        # Log the query for debugging purposes
+        cursor.execute(vw_bridging_data, query_params)
+        bridging_data = cursor.fetchall()
+
         logging.debug("Executing query: %s", vw_bridging_data)
         logging.debug("Query params: %s", str(query_params))
 
-        cursor.execute(vw_bridging_data, query_params)
-        data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
 
-        # Create the HTTP response with CSV headers
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename=exported_data.csv'
+        # Create CSV
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
 
-        # Add UTF-8 BOM to support Arabic text
-        response.write(codecs.BOM_UTF8)
+        # Add BOM for Arabic text
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)  # Write headers
 
-        # Use CSV writer to handle the CSV creation
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
-
-        # Write headers
-        writer.writerow([header for header in headers])
-
-        # Write data rows, ensuring correct encoding
-        for row in data:
+        for row in bridging_data:
             encoded_row = []
             for cell in row:
                 if isinstance(cell, (str, bytes)):  # Handle string and bytes
@@ -3939,21 +3943,36 @@ def bridging_export_data(request):
                     encoded_row.append(cell.strftime('%Y-%m-%d'))
                 else:  # Convert other data types to string
                     encoded_row.append(str(cell))
-            writer.writerow(encoded_row)
+            csv_writer.writerow(encoded_row)
 
-        return response
+        unique_id = str(uuid.uuid4())
+        file_name = "total_attendance_{}.csv".format(unique_id)
+        file_path = os.path.join('export', file_name)
+
+        # Save file
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        # Store export history
+        ExportHistory.objects.create(
+            export_type='Bridging List',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
 
     except Exception as e:
-        # Log the full traceback for debugging purposes
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
-
-        # Return a more detailed error response for debugging
         return HttpResponse("An error occurred: " + str(e), status=500)
 
-
-def bridging_school_export(request, *args, **kwargs):
+@login_required(login_url='/users/login')
+def bridging_school_export(request, **kwargs):
     try:
+        cursor = connection.cursor()
+        user = request.user
+        partner_name = user.partner.name if user.partner else ''
+
         school_id = int(kwargs.get('school_id'))
 
         clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
@@ -3976,31 +3995,21 @@ def bridging_school_export(request, *args, **kwargs):
 
         vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name"
 
-        # Log the query for debugging purposes
+        cursor.execute(vw_bridging_data, query_params)
+        bridging_data = cursor.fetchall()
+
         logging.debug("Executing query: %s", vw_bridging_data)
         logging.debug("Query params: %s", str(query_params))
 
-        cursor = connection.cursor()
-        cursor.execute(vw_bridging_data, query_params)
-
-        # Extract headers from the cursor description
         headers = [col[0] for col in cursor.description]
 
-        # Create the HTTP response with CSV headers
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename=bridging_school_data.csv'
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
 
-        # Add UTF-8 BOM to support Arabic text
-        response.write(codecs.BOM_UTF8)
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)
 
-        # Use CSV writer to handle the CSV creation
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
-
-        # Write headers
-        writer.writerow(headers)
-
-        # Write data rows, handling encoding and converting non-string types
-        for row in cursor.fetchall():
+        for row in bridging_data:
             encoded_row = []
             for cell in row:
                 if isinstance(cell, (str, bytes)):  # Handle string and bytes
@@ -4016,16 +4025,27 @@ def bridging_school_export(request, *args, **kwargs):
                 #     encoded_row.append(cell.strftime('%Y-%m-%d'))
                 # else:  # Convert other data types to string
                 #     encoded_row.append(str(cell).encode('utf-8'))
-            writer.writerow(encoded_row)
+            csv_writer.writerow(encoded_row)
 
-        return response
+        unique_id = str(uuid.uuid4())
+        file_name = "total_attendance_{}.csv".format(unique_id)
+        file_path = os.path.join('export', file_name)
+
+
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        # Store export history
+        ExportHistory.objects.create(
+            export_type='School List - Bridging ',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
 
     except Exception as e:
-        # Log the full traceback for debugging purposes
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
-
-        # Return a more detailed error response for debugging
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 

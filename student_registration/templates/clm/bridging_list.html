@@ -45,10 +45,13 @@
                 {% trans "reset" %}
               </a>
               {% if user|has_group:"EXPORT" %}
-              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">
-                  <i class="icon-export-sign icon-white"></i>
-                  {% trans "Export data" %}
-              </a>
+                  <a href="javascript:void(0);" class="btn btn-success download-report" onclick="checkRoundBeforeExport(event)">
+                      <i class="icon-export-sign icon-white"></i>
+                      {% trans "Export data" %}
+                  </a>
+                  <div class="downloading-message" style="display:none">
+                      Loading...
+                  </div>
               {% endif %}
 
               {% if 'Bridging'|is_allowed_create %}
@@ -82,14 +85,42 @@
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
 
-        function checkRoundBeforeExport() {
+        function checkRoundBeforeExport(event) {
+            event.preventDefault();
+
+            requestHeaders = getHeader();
             var round = $("#id_round").val();
 
-            if (!round) {
+            $(".downloading-message").show();
+            $('.download-report').addClass('disabled');
+
+            if (round) {
+                let url = `/clm/bridging-export/${encodeURIComponent(round)}/`;
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    headers: requestHeaders,
+                    success: function (data) {
+                        $(".downloading-message").hide();
+                        $('.download-report').removeClass('disabled');
+
+                        // Open the file in a new tab
+                        window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                    },
+                    error: function (error) {
+                        alert("Error downloading file. Please try again.");
+                        $(".downloading-message").hide();
+                        $('.download-report').removeClass('disabled');
+                    }
+                });
+
+            } else {
                 alert("Round is not selected. Please select a round before exporting data.");
-                return false;
+
+                $(".downloading-message").hide();
+                $('.download-report').removeClass('disabled');
             }
-            window.location.href = "{% url 'clm:bridging_export' %}?round=" + round;
         }
     </script>
 {% endblock %}
