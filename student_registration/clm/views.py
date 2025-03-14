@@ -3946,7 +3946,7 @@ def bridging_export_data(request, **kwargs):
             csv_writer.writerow(encoded_row)
 
         unique_id = str(uuid.uuid4())
-        file_name = "total_attendance_{}.csv".format(unique_id)
+        file_name = "bridging_{}.csv".format(unique_id)
         file_path = os.path.join('export', file_name)
 
         # Save file
@@ -3965,6 +3965,7 @@ def bridging_export_data(request, **kwargs):
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
+
 
 @login_required(login_url='/users/login')
 def bridging_school_export(request, **kwargs):
@@ -4028,7 +4029,7 @@ def bridging_school_export(request, **kwargs):
             csv_writer.writerow(encoded_row)
 
         unique_id = str(uuid.uuid4())
-        file_name = "total_attendance_{}.csv".format(unique_id)
+        file_name = "bridging_school_{}.csv".format(unique_id)
         file_path = os.path.join('export', file_name)
 
 

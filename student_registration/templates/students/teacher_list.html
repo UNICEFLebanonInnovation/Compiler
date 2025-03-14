@@ -43,11 +43,15 @@
                 <i class="icon-synch-sign icon-white"></i>
                 {% trans "reset" %}
               </a>
+
               {% if user|has_group:"EXPORT" %}
-              <a href="{% url 'students:teacher_export' %}" class="btn btn-success download-report">
-                  <i class="icon-export-sign icon-white"></i>
-                  {% trans "Export data" %}
-              </a>
+                  <a href="javascript:void(0);" class="btn btn-success download-report" onclick="teacherExport(event)">
+                      <i class="icon-export-sign icon-white"></i>
+                      {% trans "Export data" %}
+                  </a>
+                  <div class="downloading-message" style="display:none">
+                      Loading...
+                  </div>
               {% endif %}
               {% if 'Bridging'|is_allowed_create %}
               <a href="{% url 'students:teacher_add' %}" class="btn btn-success">
@@ -80,5 +84,35 @@
         var user_token = '{{ user_token }}';
         var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+        function teacherExport(event) {
+            event.preventDefault();
+
+            requestHeaders = getHeader();
+
+            $(".downloading-message").show();
+            $('.download-report').addClass('disabled');
+            let url = `/students/teacher-export/`;
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                headers: requestHeaders,
+                success: function (data) {
+                    $(".downloading-message").hide();
+                    $('.download-report').removeClass('disabled');
+
+                    // Open the file in a new tab
+                    window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                },
+                error: function (error) {
+                    alert("Error downloading file. Please try again.");
+                    $(".downloading-message").hide();
+                    $('.download-report').removeClass('disabled');
+                }
+            });
+
+
+        }
     </script>
 {% endblock %}

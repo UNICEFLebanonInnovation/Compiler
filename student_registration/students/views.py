@@ -2,20 +2,23 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+from django.contrib.auth.decorators import login_required
+import io
+import csv
+import logging
+logging.basicConfig(level=logging.ERROR)
+import os
+import uuid
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.db import connection
+import codecs
 import logging
 import traceback
-import csv
-import codecs
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
-from django.db.models.expressions import RawSQL
-from django.core.urlresolvers import reverse
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -23,7 +26,9 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from dal import autocomplete
-from student_registration.backends.djqscsv import render_to_csv_response
+from django.http import FileResponse
+from storages.backends.azure_storage import AzureStorage
+
 from student_registration.users.utils import force_default_language
 from .utils import is_allowed_create, is_allowed_edit
 from .models import (
@@ -51,6 +56,7 @@ from student_registration.enrollments.models import (
     EducationYear
 )
 from student_registration.alp.models import ALPRound
+from student_registration.backends.models import ExportHistory
 
 
 class StudentViewSet(mixins.RetrieveModelMixin,
@@ -347,89 +353,52 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
+@login_required(login_url='/users/login')
 def teacher_export_data(request):
-    logger = logging.getLogger(__name__)
-
     try:
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
-        is_staff = request.user.is_staff
+        cursor = connection.cursor()
+        user = request.user
+        is_staff = user.is_staff
+        clm_bridging_all = user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        partner_name = user.partner.name if user.partner else ''
 
-        qs_teacher = Teacher.objects.all()
+        vw_teacher_data = 'SELECT * FROM vw_teacher_data WHERE id > 0'
+        query_params = []
 
-        if not clm_bridging_all and not is_staff:
+        if not clm_bridging_all and not is_staff and request.user.partner:
             school_id = 0
-            partner_id = 0
+            partner_id = user.partner_id
 
-            if request.user.school:
-                school_id = request.user.school.id
-            if request.user.partner_id:
-                partner_id = request.user.partner_id
+            vw_teacher_data += " AND partner_id = %s"
+            query_params.append(partner_id)
 
-            if school_id and school_id > 0:
-                qs_teacher = Teacher.objects.filter(school_id=school_id)
-            elif partner_id > 0:
-                qs_teacher = Teacher.objects.filter(
-                    school_id__in=PartnerOrganization.objects.filter(id=partner_id).values_list('schools', flat=True))
-            else:
-                qs_teacher = qs_teacher.none()
+            if user.school:
+                school_id = user.school.id
+            if school_id > 0:
+                vw_teacher_data += " AND school_id = %s"
+                query_params.append(school_id)
 
-        qs_teacher = qs_teacher.order_by('-id')
+        elif not clm_bridging_all and not is_staff and not request.user.partner:
+            vw_teacher_data += " AND id = 0 "
 
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename="teacher_data.csv"'
-        response.write(codecs.BOM_UTF8)
+        cursor.execute(vw_teacher_data, query_params)
 
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+        bridging_data = cursor.fetchall()
 
-        columns = [
-            'First Name', 'Last Name', 'Father Name',  'Mother Full Name','Gender',
-            'School','School is closed' , 'Email', 'Phone Number', 'Subjects Provided',
-            'Registration Level', 'Teacher Assignment', 'Teaching Hours Private School',
-            'Teaching Hours Dirasa', 'Trainings', 'Training Sessions Attended', 'Extra Coaching', 'Extra Coaching Specify',
-            'Attachment 1 Description', 'Attachment 1 Type', 'Attachment 2 Description', 'Attachment 2 Type',
-            'Attachment 3 Description', 'Attachment 3 Type', 'Attachment 4 Description', 'Attachment 4 Type',
-            'Attachment 5 Description', 'Attachment 5 Type', 'Owner', 'Modified By'
-        ]
+        logging.debug("Executing query: %s", vw_teacher_data)
+        logging.debug("Query params: %s", str(query_params))
 
-        writer.writerow(columns)
+        headers = [col[0] for col in cursor.description]
 
-        for teacher in qs_teacher:
-            trainings_list = ', '.join(
-                [training.name for training in teacher.trainings.all()]) if teacher.trainings.exists() else ''
+        # Create CSV
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output)
 
-            row = [
-                teacher.first_name,
-                teacher.last_name,
-                teacher.father_name,
-                teacher.mother_fullname,
-                teacher.sex,
-                teacher.school.name if teacher.school else '',
-                teacher.school.is_closed if teacher.school else '',
-                teacher.email if teacher.email else '',
-                teacher.primary_phone_number if teacher.primary_phone_number else '',
-                ', '.join(teacher.subjects_provided) if teacher.subjects_provided else '',
-                ', '.join(teacher.registration_level) if teacher.registration_level else '',
-                teacher.teacher_assignment if teacher.teacher_assignment else '',
-                teacher.teaching_hours_private_school if teacher.teaching_hours_private_school is not None else '',
-                teacher.teaching_hours_dirasa if teacher.teaching_hours_dirasa is not None else '',
-                trainings_list,
-                teacher.training_sessions_attended if teacher.training_sessions_attended is not None else '',
-                teacher.extra_coaching if teacher.extra_coaching else '',
-                teacher.extra_coaching_specify if teacher.extra_coaching_specify else '',
-                teacher.attach_short_description_1 if teacher.attach_short_description_1 else '',
-                teacher.attach_type_1.name if teacher.attach_type_1 else '',
-                teacher.attach_short_description_2 if teacher.attach_short_description_2 else '',
-                teacher.attach_type_2.name if teacher.attach_type_2 else '',
-                teacher.attach_short_description_3 if teacher.attach_short_description_3 else '',
-                teacher.attach_type_3.name if teacher.attach_type_3 else '',
-                teacher.attach_short_description_4 if teacher.attach_short_description_4 else '',
-                teacher.attach_type_4.name if teacher.attach_type_4 else '',
-                teacher.attach_short_description_5 if teacher.attach_short_description_5 else '',
-                teacher.attach_type_5.name if teacher.attach_type_5 else '',
-                teacher.owner.username if teacher.owner else '',
-                teacher.modified_by.username if teacher.modified_by else '',
-            ]
+        # Add BOM for Arabic text
+        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_writer.writerow(headers)  # Write headers
 
+        for row in bridging_data:
             encoded_row = []
             for cell in row:
                 if isinstance(cell, (str, bytes)):  # Handle string and bytes
@@ -438,22 +407,28 @@ def teacher_export_data(request):
                     encoded_row.append(cell.strftime('%Y-%m-%d'))
                 else:  # Convert other data types to string
                     encoded_row.append(str(cell))
+            csv_writer.writerow(encoded_row)
 
-            writer.writerow(encoded_row)
+        unique_id = str(uuid.uuid4())
+        file_name = "teacher_{}.csv".format(unique_id)
+        file_path = os.path.join('export', file_name)
 
-        return response
+        # Save file
+        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        # Store export history
+        ExportHistory.objects.create(
+            export_type='Teacher List',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
 
     except Exception as e:
-        # Log the full traceback for debugging purposes
-        logger.error("An error occurred during the export process:")
-        logger.error(traceback.format_exc())
-
-        # Return a more detailed error response for debugging
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
         return HttpResponse("An error occurred: " + str(e), status=500)
-
-
-from django.http import FileResponse
-from storages.backends.azure_storage import AzureStorage
 
 
 class MyAzureStorage(AzureStorage):
