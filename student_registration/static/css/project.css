@@ -430,7 +430,7 @@ tr.odd {
 
 .list-filter .form-group {
   margin: 5px;
-  width: 150px;
+  width: auto;
 }
 
 .list-filter .btn {
