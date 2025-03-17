@@ -19,12 +19,14 @@ from student_registration.students.models import (
 )
 from student_registration.schools.models import (
     School,
-    PartnerOrganization
+    PartnerOrganization,
+    CLMRound
 )
 
 from student_registration.students.serializers import (
     TeacherSerializer
 )
+
 
 from django.utils.safestring import mark_safe
 
@@ -98,6 +100,12 @@ class CustomClearableFileInput(ClearableFileInput):
 
 
 class TeacherForm(forms.ModelForm):
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.filter(current_round_bridging=True), widget=forms.Select,
+        label=_('Academic year'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+    )
     school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_closed=False).order_by('-id'), widget=forms.Select,
         label=_('School'),
@@ -285,6 +293,8 @@ class TeacherForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('round', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -521,6 +531,7 @@ class TeacherForm(forms.ModelForm):
         model = Teacher
         fields = (
             'id',
+            'round',
             'first_name',
             'father_name',
             'last_name',

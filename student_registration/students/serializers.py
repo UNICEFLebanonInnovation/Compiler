@@ -88,6 +88,7 @@ class TeacherSerializer(serializers.ModelSerializer):
         model = Teacher
         fields = (
             'id',
+            'round',
             'first_name',
             'father_name',
             'last_name',

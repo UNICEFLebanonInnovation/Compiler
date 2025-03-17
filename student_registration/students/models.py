@@ -667,6 +667,12 @@ class Teacher(Person):
         ('yes', _("Yes")),
         ('no', _("No")),
     )
+    round = models.ForeignKey(
+        'schools.CLMRound',
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Round')
+    )
     school = models.ForeignKey(
         'schools.School',
         blank=False, null=True,

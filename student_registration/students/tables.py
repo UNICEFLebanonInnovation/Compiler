@@ -52,6 +52,7 @@ class TeacherTable(CommonTable):
             'sex',
             'primary_phone_number',
             'school',
+            'round',
             'email',
             'owner',
             'modified_by',

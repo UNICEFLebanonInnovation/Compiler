@@ -196,6 +196,8 @@ class TeacherListView(LoginRequiredMixin,
 
         if clm_bridging_all or is_staff:
             queryset = Teacher.objects.all()
+            # queryset = Teacher.objects.filter(round__current_year=True)
+
         else:
             school_id = 0
             partner_id = 0
