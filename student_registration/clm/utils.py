@@ -3293,7 +3293,7 @@ def get_outreach_child(outreach_id):
         if main_caregiver == u'الام':
             initial['main_caregiver'] = 'mother'
         elif main_caregiver == u'اخر':
-            initial['main_caregiver'] = 'other' 
+            initial['main_caregiver'] = 'other'
     dob_string = instance.outreach_caregiver.caregiver_dob
     dob = datetime.strptime(dob_string, '%Y-%m-%d')
     initial['caretaker_dob'] = dob_string
