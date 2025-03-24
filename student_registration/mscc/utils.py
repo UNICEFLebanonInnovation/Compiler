@@ -215,23 +215,25 @@ def get_outreach_child(outreach_id):
     initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
 
     initial['have_labour'] = instance.working_status.capitalize()
-    labour_type = instance.work_type
-    if labour_type == 'manufacturing_producing':
-        initial['labour_type'] = 'Manufacturing'
-    elif labour_type == 'garage_mechanics_workshop':
-        initial['labour_type'] = ''
-    elif labour_type == 'construction_site':
-        initial['labour_type'] = 'Building'
-    elif labour_type == 'shop_restaurant_bakery_barber':
-        initial['labour_type'] = 'Retail / Store'
-    elif labour_type == 'street_connected_work__begging__vending_':
-        initial['labour_type'] = 'Begging'
-    elif labour_type == 'agriculture_animal_herding':
-        initial['labour_type'] = 'Agriculture'
-    elif labour_type == 'others':
-        initial['labour_type'] = 'Other services'
-    else:
-        initial['labour_type'] = ''
+    if instance.working_status == 'yes':
+        initial['have_labour'] = 'Yes - Full Day'
+        labour_type = instance.work_type
+        if labour_type == 'manufacturing_producing':
+            initial['labour_type'] = 'Manufacturing'
+        elif labour_type == 'garage_mechanics_workshop':
+            initial['labour_type'] = ''
+        elif labour_type == 'construction_site':
+            initial['labour_type'] = 'Building'
+        elif labour_type == 'shop_restaurant_bakery_barber':
+            initial['labour_type'] = 'Retail / Store'
+        elif labour_type == 'street_connected_work__begging__vending_':
+            initial['labour_type'] = 'Begging'
+        elif labour_type == 'agriculture_animal_herding':
+            initial['labour_type'] = 'Agriculture'
+        elif labour_type == 'others':
+            initial['labour_type'] = 'Other services'
+        else:
+            initial['labour_type'] = ''
 
     initial['labour_type_specify'] = instance.work_type_other
     initial['first_phone_number'] = instance.outreach_caregiver.primary_phone

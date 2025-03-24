@@ -3254,25 +3254,28 @@ def get_outreach_child(outreach_id):
     initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
 
     initial['have_labour_single_selection'] = instance.working_status
-    labour_type = instance.work_type
-    if labour_type == 'manufacturing_producing':
-        initial['labour_type'] = 'manufacturing'
-    elif labour_type == 'garage_mechanics_workshop':
-        initial['labour_type'] = ''
-    elif labour_type == 'construction_site':
-        initial['labour_type'] = 'building'
-    elif labour_type == 'shop_restaurant_bakery_barber':
-        initial['labour_type'] = 'retail_store'
-    elif labour_type == 'street_connected_work__begging__vending_':
-        initial['labour_type'] = 'begging'
-    elif labour_type == 'agriculture_animal_herding':
-        initial['labour_type'] = 'agriculture'
-    elif labour_type == 'others':
-        initial['labour_type'] = 'other_many_other'
-    else:
-        initial['labour_type'] = ''
+    if instance.working_status == 'yes':
+        initial['have_labour_single_selection'] = 'Yes - All day'
 
-    initial['labours_other_specify'] = instance.work_type_other
+        labour_type = instance.work_type
+        if labour_type == 'manufacturing_producing':
+            initial['labours_single_selection'] = 'manufacturing'
+        elif labour_type == 'garage_mechanics_workshop':
+            initial['labours_single_selection'] = ''
+        elif labour_type == 'construction_site':
+            initial['labours_single_selection'] = 'building'
+        elif labour_type == 'shop_restaurant_bakery_barber':
+            initial['labours_single_selection'] = 'retail_store'
+        elif labour_type == 'street_connected_work__begging__vending_':
+            initial['labours_single_selection'] = 'begging'
+        elif labour_type == 'agriculture_animal_herding':
+            initial['labours_single_selection'] = 'agriculture'
+        elif labour_type == 'others':
+            initial['labours_single_selection'] = 'other_many_other'
+        else:
+            initial['labours_single_selection'] = ''
+
+        initial['labours_other_specify'] = instance.work_type_other
 
     initial['phone_number'] = instance.outreach_caregiver.primary_phone
     initial['phone_number_confirm'] = instance.outreach_caregiver.primary_phone
@@ -3337,6 +3340,10 @@ def get_outreach_child(outreach_id):
         initial['parent_other_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
     elif id_type == 'other_nationality_id' or id_type == 'Other Nationality ID':
         initial['id_type'] = 'Child have no ID'
+
+
+
+
 
     # TO DO: Awaiting feedback
     # education_status = instance.education_status
