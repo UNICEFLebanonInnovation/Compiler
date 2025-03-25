@@ -20,6 +20,7 @@ import traceback
 
 import os
 import uuid
+import codecs
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
@@ -973,121 +974,65 @@ def health_visit_delete(request, pk):
     return JsonResponse(result)
 
 
+def add_csv_to_zip(zipfile_obj, filename, queryset):
+    csv_output = io.StringIO()
+    csv_writer = csv.writer(csv_output)
+
+    csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+
+    headers = [field.name for field in queryset.model._meta.fields]
+    csv_writer.writerow(headers)
+
+    for obj in queryset:
+        csv_writer.writerow([getattr(obj, field) for field in headers])
+
+    zipfile_obj.writestr(filename, csv_output.getvalue())
+
+
 @login_required(login_url='/users/login')
 def export_school_background(request):
     try:
         user = request.user
-
-        school_id = 0
-        partner_id = 0
-        partner_name = ''
-
-        if user.school:
-            school_id = user.school.id
-
-        if user.partner_id:
-            partner_id = user.partner_id
-            partner_name = user.partner.name
+        school_id = user.school.id if hasattr(user, 'school') and user.school else 0
+        partner_id = user.partner_id if hasattr(user, 'partner_id') else 0
+        partner_name = user.partner.name if hasattr(user, 'partner') and user.partner else ''
 
         qs_school = School.objects.filter(is_bma=True).order_by('-id')
-
-        is_staff = user.is_staff
-
-        if has_group(user, 'CLM_BRIDGING_ALL') or is_staff:
-            qs_school = School.objects.filter(is_bma=True).all()
-        else:
-            if school_id and school_id > 0:
+        if not (user.is_staff or has_group(user, 'CLM_BRIDGING_ALL')):
+            if school_id > 0:
                 qs_school = School.objects.filter(id=school_id)
             elif partner_id > 0:
-                qs_school = School.objects.filter(is_bma=True,
-                                                  id__in=PartnerOrganization
-                                                  .objects
-                                                  .filter(id=partner_id)
-                                                  .values_list('schools', flat=True))
+                qs_school = School.objects.filter(
+                    is_bma=True,
+                    id__in=PartnerOrganization.objects.filter(id=partner_id).values_list('schools', flat=True)
+                )
             else:
                 qs_school = qs_school.none()
 
         school_ids = qs_school.values_list('id', flat=True)
-
         qs_club = Club.objects.filter(school_id__in=school_ids).order_by('-id')
         qs_meeting = Meeting.objects.filter(school_id__in=school_ids).order_by('-id')
         qs_community_initiative = CommunityInitiative.objects.filter(school_id__in=school_ids).order_by('-id')
         qs_health_visit = HealthVisit.objects.filter(school_id__in=school_ids).order_by('-id')
 
-
-
         zip_output = io.BytesIO()
         with zipfile.ZipFile(zip_output, 'w') as zf:
-            # **Add qs_school data CSV**
-            csv_qs_school_output = io.StringIO()
-            csv_writer = csv.writer(csv_qs_school_output)
-
-            # Extract and write headers dynamically
-            qs_school_headers = [field.name for field in School._meta.fields]
-            csv_writer.writerow(qs_school_headers)
-
-            # Write queryset data to CSV
-            for school in qs_school:
-                csv_writer.writerow([smart_str(getattr(school, field)) for field in qs_school_headers])
-
-            zf.writestr('qs_school_data.csv', csv_qs_school_output.getvalue())
-
-            # **Add qs_club data CSV**
-            csv_qs_club_output = io.StringIO()
-            csv_writer = csv.writer(csv_qs_club_output)
-
-            qs_club_headers = [field.name for field in Club._meta.fields]
-            csv_writer.writerow(qs_club_headers)
-
-            for club in qs_club:
-                csv_writer.writerow([smart_str(getattr(club, field)) for field in qs_club_headers])
-
-            zf.writestr('qs_club_data.csv', csv_qs_club_output.getvalue())
-
-
-            csv_qs_meeting_output = io.StringIO()
-            csv_writer = csv.writer(csv_qs_meeting_output)
-
-            qs_meeting_headers = [field.name for field in Meeting._meta.fields]
-            csv_writer.writerow(qs_meeting_headers)
-
-            for meeting in qs_meeting:
-                csv_writer.writerow([smart_str(getattr(meeting, field)) for field in qs_meeting_headers])
-
-            zf.writestr('qs_meeting_data.csv', csv_qs_meeting_output.getvalue())
-
-            csv_qs_community_initiative_output = io.StringIO()
-            csv_writer = csv.writer(csv_qs_community_initiative_output)
-
-            qs_community_initiative_headers = [field.name for field in CommunityInitiative._meta.fields]
-            csv_writer.writerow(qs_community_initiative_headers)
-
-            for community_initiative in qs_community_initiative:
-                csv_writer.writerow([smart_str(getattr(community_initiative, field)) for field in qs_community_initiative_headers])
-
-            zf.writestr('qs_community_initiative_data.csv', csv_qs_community_initiative_output.getvalue())
-
-
-            csv_qs_health_visit_output = io.StringIO()
-            csv_writer = csv.writer(csv_qs_health_visit_output)
-
-            qs_health_visit_headers = [field.name for field in HealthVisit._meta.fields]
-            csv_writer.writerow(qs_health_visit_headers)
-
-            for health_visit in qs_health_visit:
-                csv_writer.writerow([smart_str(getattr(health_visit, field)) for field in qs_health_visit_headers])
-
-            zf.writestr('qs_health_visit_data.csv', csv_qs_health_visit_output.getvalue())
+            add_csv_to_zip(zf, 'qs_school_data.csv', qs_school)
+            add_csv_to_zip(zf, 'qs_club_data.csv', qs_club)
+            add_csv_to_zip(zf, 'qs_meeting_data.csv', qs_meeting)
+            add_csv_to_zip(zf, 'qs_community_initiative_data.csv', qs_community_initiative)
+            add_csv_to_zip(zf, 'qs_health_visit_data.csv', qs_health_visit)
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
+
         file_path = os.path.join('export', file_name)
 
         try:
             default_storage.save(file_path, ContentFile(zip_output.getvalue()))
         except Exception as e:
-            print("Error saving file:", str(e))
-
+            logging.error("Error saving file: %s", str(e))
+            return HttpResponse("An error occurred while saving the file.", status=500)
 
         ExportHistory.objects.create(
             export_type='School List',
@@ -1096,7 +1041,6 @@ def export_school_background(request):
         )
 
         return HttpResponse(file_name)
-
     except Exception as e:
         logging.error("An error occurred during the export process:")
         logging.error(traceback.format_exc())

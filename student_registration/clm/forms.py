@@ -7126,7 +7126,7 @@ class BridgingForm(CommonForm):
         label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
-        label=_("ID type of the Caregiver"),
+        label=_("ID type of the Child"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=True,
         choices=(

@@ -3335,11 +3335,11 @@ def get_outreach_child(outreach_id):
         initial['national_number'] = instance.child_personal_id
         initial['national_number_confirm'] = instance.child_personal_id
     elif id_type == 'No_papers' or id_type == 'No papers':
+        initial['id_type'] = 'Child have no ID'
+    elif id_type == 'other_nationality_id' or id_type == 'Other Nationality ID':
         initial['id_type'] = 'Other nationality'
         initial['parent_other_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['parent_other_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
-    elif id_type == 'other_nationality_id' or id_type == 'Other Nationality ID':
-        initial['id_type'] = 'Child have no ID'
 
 
 
