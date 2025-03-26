@@ -1059,18 +1059,18 @@ class MainForm(forms.ModelForm):
                     regenerate_services(instance.child.age, instance, request.user)
 
                 request.session['instance_id'] = instance.id
-                messages.success(request, _('Your data has been sent successfully to the server'))
-
-                instance.unicef_id = generate_one_unique_id(
-                    str(instance.pk),
-                    instance.first_name,
-                    instance.father_name,
-                    instance.last_name,
-                    instance.mother_fullname,
-                    instance.birthdate,
-                    instance.nationality_name_en,
-                    instance.sex
+                unicef_id = generate_one_unique_id(
+                    str(instance.child_id),
+                    instance.child.first_name,
+                    instance.child.father_name,
+                    instance.child.last_name,
+                    instance.child.mother_fullname,
+                    instance.child.birthdate,
+                    instance.child.nationality_name_en,
+                    instance.child.gender
                 )
+                instance.child.unicef_id = unicef_id
+                messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
 
@@ -1097,19 +1097,21 @@ class MainForm(forms.ModelForm):
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance, request.user)
                 generate_education_history(instance.id, instance.child_id, instance.student_old)
-
-                messages.success(request, _('Your data has been sent successfully to the server'))\
-
-                instance.unicef_id = generate_one_unique_id(
-                    str(instance.pk),
-                    instance.first_name,
-                    instance.father_name,
-                    instance.last_name,
-                    instance.mother_fullname,
-                    instance.birthdate,
-                    instance.nationality_name_en,
-                    instance.sex
+ 
+                unicef_id = generate_one_unique_id(
+                    str(instance.child_id),
+                    instance.child.first_name,
+                    instance.child.father_name,
+                    instance.child.last_name,
+                    instance.child.mother_fullname,
+                    instance.child.birthdate,
+                    instance.child.nationality_name_en,
+                    instance.child.gender
                 )
+                instance.child.unicef_id = unicef_id
+                messages.success(request, _('Your data has been sent successfully to the server'))
+
+
             else:
                 messages.warning(request, serializer.errors)
 
