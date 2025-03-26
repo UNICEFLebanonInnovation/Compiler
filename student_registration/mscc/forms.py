@@ -1034,6 +1034,8 @@ class MainForm(forms.ModelForm):
 
     def save(self, request=None, instance=None):
 
+        from student_registration.students.utils import generate_one_unique_id
+
         if instance:
             serializer = MainSerializer(instance, data=request.POST)
             if serializer.is_valid():
@@ -1058,6 +1060,17 @@ class MainForm(forms.ModelForm):
 
                 request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
+
+                instance.unicef_id = generate_one_unique_id(
+                    str(instance.pk),
+                    instance.first_name,
+                    instance.father_name,
+                    instance.last_name,
+                    instance.mother_fullname,
+                    instance.birthdate,
+                    instance.nationality_name_en,
+                    instance.sex
+                )
             else:
                 messages.warning(request, serializer.errors)
 
@@ -1085,7 +1098,18 @@ class MainForm(forms.ModelForm):
                 generate_services(instance.child.age, instance, request.user)
                 generate_education_history(instance.id, instance.child_id, instance.student_old)
 
-                messages.success(request, _('Your data has been sent successfully to the server'))
+                messages.success(request, _('Your data has been sent successfully to the server'))\
+
+                instance.unicef_id = generate_one_unique_id(
+                    str(instance.pk),
+                    instance.first_name,
+                    instance.father_name,
+                    instance.last_name,
+                    instance.mother_fullname,
+                    instance.birthdate,
+                    instance.nationality_name_en,
+                    instance.sex
+                )
             else:
                 messages.warning(request, serializer.errors)
 
