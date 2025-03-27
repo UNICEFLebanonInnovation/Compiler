@@ -11,11 +11,6 @@ urlpatterns = [
         name='outreach-import-data'
     ),
     url(
-        regex=r'^new_outreach_import_data/$',
-        view=views.new_outreach_import_data,
-        name='new-outreach-import-data'
-    ),
-    url(
         regex=r'^outreach-page/$',
         view=views.OutreachPage.as_view(),
         name='outreach_page'
