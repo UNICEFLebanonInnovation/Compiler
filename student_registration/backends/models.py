@@ -83,9 +83,16 @@ class ExportHistory(TimeStampedModel):
     EXPORT_TYPE = Choices(
         ('', '----------'),
         ('Makani List', _('Makani List')),
-        ('Makani Center', _('Makani Center')),
-        ('Makani Teacher', _('Makani Teacher')),
-        ('Makani Attendance', _('Makani Attendance'))
+        ('Makani Raw Attendance', _('Makani Raw Attendance')),
+        ('Makani Total Attendance', _('Makani Total Attendance')),
+        ('Center List', _('Center List')),
+        ('Bridging Absence Raw Data', _('Bridging Absence Raw Data')),
+        ('Bridging Attendance Total', _('Bridging Attendance Total')),
+        ('Bridging Absence Consecutive', _('Bridging Absence Consecutive')),
+        ('Teacher List', _('Teacher List')),
+        ('Bridging List', _('Bridging List')),
+        ('School List - Bridging', _('School List - Bridging')),
+        ('School List', _('School List')),
     )
     export_type = models.CharField(
         max_length=100,

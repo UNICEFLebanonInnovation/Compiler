@@ -4037,7 +4037,7 @@ def bridging_school_export(request, **kwargs):
 
         # Store export history
         ExportHistory.objects.create(
-            export_type='School List - Bridging ',
+            export_type='School List - Bridging',
             created_by=user,
             partner_name=partner_name
         )

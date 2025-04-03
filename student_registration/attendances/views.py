@@ -1271,6 +1271,7 @@ def attendance_export(request, **kwargs):
                 query_params.append(request.user.school_id)
 
         vw_data_str += " ORDER BY attendance_date"
+        
         cursor.execute(vw_data_str, query_params)
         att_data = cursor.fetchall()
 
@@ -1504,6 +1505,10 @@ def mscc_attendance_export(request, **kwargs):
             query_params.append(center_id)
 
         if not request.user.groups.filter(name='MSCC_UNICEF').exists():
+            if request.user.partner_id:
+                vw_data_str += " AND partner_id = %s"
+                query_params.append(request.user.partner_id)
+
             if request.user.center_id:
                 vw_data_str += " AND center_id = %s"
                 query_params.append(request.user.center_id)
@@ -1610,6 +1615,10 @@ def mscc_total_attendance_export(request, **kwargs):
             query_params.append(center_id)
 
         if not request.user.groups.filter(name='MSCC_UNICEF').exists():
+            if request.user.partner_id:
+                vw_data_str += " AND partner_id = %s"
+                query_params.append(request.user.partner_id)
+
             if request.user.center_id:
                 vw_data_str += " AND center_id = %s"
                 query_params.append(request.user.center_id)
