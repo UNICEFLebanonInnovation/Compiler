@@ -205,14 +205,14 @@ class MainForm(forms.ModelForm):
         initial=''
     )
     first_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=False,
         label=_('Primary phone number')
     )
     first_phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=False,
         label=_('Confirm primary phone number')
     )
@@ -224,14 +224,14 @@ class MainForm(forms.ModelForm):
         initial=''
     )
     second_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=False,
         label=_('Secondary phone number')
     )
     second_phone_number_confirm = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=False,
         label=_('Confirm secondary phone number')
     )
@@ -1097,7 +1097,7 @@ class MainForm(forms.ModelForm):
                 request.session['instance_id'] = instance.id
                 generate_services(instance.child.age, instance, request.user)
                 generate_education_history(instance.id, instance.child_id, instance.student_old)
- 
+
                 unicef_id = generate_one_unique_id(
                     str(instance.child_id),
                     instance.child.first_name,

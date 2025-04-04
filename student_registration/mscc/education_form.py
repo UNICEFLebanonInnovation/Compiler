@@ -490,18 +490,29 @@ class EducationServiceForm(forms.ModelForm):
         service_yfs = get_service(registry, 'YFS')
         service_ecd = get_service(registry, 'ECD')
 
+        service_bln_catch_up = get_service(registry, 'BLN Catch-up')
+        service_abln_catch_up = get_service(registry, 'ABLN Catch-up')
+        service_ybln_catch_up = get_service(registry, 'YBLN Catch-up')
+        service_cbece_catch_up = get_service(registry, 'CB-ECE Catch-up')
+
         choices = list()
         if service_bln:
             choices.append(('BLN Level 1', _('BLN Level 1')))
             choices.append(('BLN Level 2', _('BLN Level 2')))
             choices.append(('BLN Level 3', _('BLN Level 3')))
+        if service_bln_catch_up:
+            choices.append(('BLN Catch-up', _('BLN Catch-up')))
         if service_cbece:
             choices.append(('CBECE Level 1', _('CBECE Level 1')))
             choices.append(('CBECE Level 2', _('CBECE Level 2')))
             choices.append(('CBECE Level 3', _('CBECE Level 3')))
+        if service_cbece_catch_up:
+            choices.append(('CBECE Catch-up', _('CBECE Catch-up')))
         if service_abln:
             choices.append(('ABLN Level 1', _('ABLN Level 1')))
             choices.append(('ABLN Level 2', _('ABLN Level 2')))
+        if service_abln_catch_up:
+            choices.append(('ABLN Catch-up', _('ABLN Catch-up')))
         if service_rs:
             choices.append(('RS Grade 1', _('RS Grade 1')))
             choices.append(('RS Grade 2', _('RS Grade 2')))
@@ -515,6 +526,8 @@ class EducationServiceForm(forms.ModelForm):
         if service_ybln:
             choices.append(('YBLN Level 1', _('YBLN Level 1')))
             choices.append(('YBLN Level 2', _('YBLN Level 2')))
+        if service_ybln_catch_up:
+            choices.append(('YBLN Catch-up', _('YBLN Catch-up')))
         if service_yfs:
             choices.append(('YFS Level 1', _('YFS Level 1')))
             choices.append(('YFS Level 2', _('YFS Level 2')))
