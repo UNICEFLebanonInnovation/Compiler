@@ -3384,7 +3384,7 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
             ).last()
 
         if attendance:
-            attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance).select_related('student')
+            attendances = CLMAttendanceStudent.objects.filter(attendance_day=attendance, registration__deleted=False).select_related('student')
             for att in attendances:
                 registration = att.registration if att.registration else None
                 student = att.student if att.student else None
@@ -3404,9 +3404,9 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
             registrations = Bridging.objects.filter(
                 round=round_id,
                 school=school_id,
-                registration_level=registration_level
+                registration_level=registration_level,
             ).exclude(
-                learning_result='dropout', dropout_date__lte=attendance_date
+                learning_result='dropout', dropout_date__lte=attendance_date, deleted=True
             ).select_related('student')
 
             for reg in registrations:

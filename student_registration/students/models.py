@@ -852,3 +852,7 @@ class Teacher(Person):
         related_name='+',
         verbose_name=_('Modified by'),
     )
+
+    @property
+    def id_reference(self):
+        return 'TCH-' + str("%05d" % (self.id,))
