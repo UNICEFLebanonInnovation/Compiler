@@ -33,15 +33,6 @@ class TeacherFilter(FilterSet):
 
     def filter_id_reference(self, queryset, name, value):
         return queryset.annotate(
-            id_reference=Concat(
-                Value('TCH-'),
-                LPAD(Cast('id', CharField(max_length=10)), 5, Value('0'))
-            )
-        ).filter(id_reference__icontains=value)
-
-
-    def filter_id_reference(self, queryset, name, value):
-        return queryset.annotate(
             id_reference_display=Concat(
                 Value('TCH-'),
                 LPAD(Cast('id', CharField(max_length=10)), 5, Value('0'))

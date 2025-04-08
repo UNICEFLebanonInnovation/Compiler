@@ -15,14 +15,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='registration',
-            name='deleted_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Deleted by'),
-        ),
-        migrations.AlterField(
-            model_name='educationservice',
-            name='education_program',
-            field=models.CharField(blank=True, choices=[('BLN Level 1', 'BLN Level 1'), ('BLN Level 2', 'BLN Level 2'), ('BLN Level 3', 'BLN Level 3'), ('BLN Catch-up', 'BLN Catch-up'), ('ABLN Level 1', 'ABLN Level 1'), ('ABLN Level 2', 'ABLN Level 2'), ('ABLN Catch-up', 'ABLN Catch-up'), ('YBLN Level 1', 'YBLN Level 1'), ('YBLN Level 2', 'YBLN Level 2'), ('YBLN Catch-up', 'YBLN Catch-up'), ('YFS Level 1', 'YFS Level 1'), ('YFS Level 2', 'YFS Level 2'), ('CBECE Level 1', 'CBECE Level 1'), ('CBECE Level 2', 'CBECE Level 2'), ('CBECE Level 3', 'CBECE Level 3'), ('CBECE Catch-up', 'CBECE Catch-up'), ('RS Grade 1', 'RS Grade 1'), ('RS Grade 2', 'RS Grade 2'), ('RS Grade 3', 'RS Grade 3'), ('RS Grade 4', 'RS Grade 4'), ('RS Grade 5', 'RS Grade 5'), ('RS Grade 6', 'RS Grade 6'), ('RS Grade 7', 'RS Grade 7'), ('RS Grade 8', 'RS Grade 8'), ('RS Grade 9', 'RS Grade 9'), ('ECD', 'ECD')], max_length=200, null=True, verbose_name='Education Program'),
-        ),
+        # migrations.AddField(
+        #     model_name='registration',
+        #     name='deleted_by',
+        #     field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Deleted by'),
+        # ),
+        # migrations.AlterField(
+        #     model_name='educationservice',
+        #     name='education_program',
+        #     field=models.CharField(blank=True, choices=[('BLN Level 1', 'BLN Level 1'), ('BLN Level 2', 'BLN Level 2'), ('BLN Level 3', 'BLN Level 3'), ('BLN Catch-up', 'BLN Catch-up'), ('ABLN Level 1', 'ABLN Level 1'), ('ABLN Level 2', 'ABLN Level 2'), ('ABLN Catch-up', 'ABLN Catch-up'), ('YBLN Level 1', 'YBLN Level 1'), ('YBLN Level 2', 'YBLN Level 2'), ('YBLN Catch-up', 'YBLN Catch-up'), ('YFS Level 1', 'YFS Level 1'), ('YFS Level 2', 'YFS Level 2'), ('CBECE Level 1', 'CBECE Level 1'), ('CBECE Level 2', 'CBECE Level 2'), ('CBECE Level 3', 'CBECE Level 3'), ('CBECE Catch-up', 'CBECE Catch-up'), ('RS Grade 1', 'RS Grade 1'), ('RS Grade 2', 'RS Grade 2'), ('RS Grade 3', 'RS Grade 3'), ('RS Grade 4', 'RS Grade 4'), ('RS Grade 5', 'RS Grade 5'), ('RS Grade 6', 'RS Grade 6'), ('RS Grade 7', 'RS Grade 7'), ('RS Grade 8', 'RS Grade 8'), ('RS Grade 9', 'RS Grade 9'), ('ECD', 'ECD')], max_length=200, null=True, verbose_name='Education Program'),
+        # ),
     ]
