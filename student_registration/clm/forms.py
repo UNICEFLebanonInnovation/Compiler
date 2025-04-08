@@ -1,7 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
 
-import re
-
 from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
@@ -8004,21 +8002,6 @@ class BridgingForm(CommonForm):
     def clean(self):
         cleaned_data = super(BridgingForm, self).clean()
 
-        # Define Arabic characters range. Allows Arabic letters and spaces
-        arabic_pattern = re.compile(r'[^ء-ي\s]')
-
-        name_fields = ['student_first_name', 'student_father_name', 'student_last_name', 'student_mother_fullname']
-
-        for field in name_fields:
-            value = cleaned_data.get(field, "").strip()
-
-            # Remove non-Arabic characters
-            cleaned_value = arabic_pattern.sub('', value)
-            cleaned_data[field] = cleaned_value
-
-            if not cleaned_value:
-                self.add_error(field, "This field is required.")
-
 
         # check if date is valid
         year = int(cleaned_data.get("student_birthday_year"))
@@ -8274,12 +8257,6 @@ class BridgingForm(CommonForm):
         consent_parents = request.FILES.get('consent_parents', False)
         if consent_parents:
             instance.consent_parents = consent_parents
-
-        instance.student.first_name = self.cleaned_data['student_first_name']
-        instance.student.father_name = self.cleaned_data['student_father_name']
-        instance.student.last_name = self.cleaned_data['student_last_name']
-        instance.student.mother_fullname = self.cleaned_data['student_mother_fullname']
-        instance.student.save()
 
         instance.pre_test = {
             "Bridging_ASSESSMENT/arabic_alphabet_knowledge": request.POST.get('arabic_alphabet_knowledge'),

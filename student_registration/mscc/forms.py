@@ -1,7 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
 
-import re
-
 from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
@@ -760,21 +758,6 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
-        # Define Arabic characters range. Allows Arabic letters and spaces
-        arabic_pattern = re.compile(r'[^ء-ي\s]')
-
-        name_fields = ['child_first_name', 'child_father_name', 'child_last_name', 'child_mother_fullname']
-
-        for field in name_fields:
-            value = cleaned_data.get(field, "").strip()
-
-            # Remove non-Arabic characters
-            cleaned_value = arabic_pattern.sub('', value)
-            cleaned_data[field] = cleaned_value
-
-            if not cleaned_value:
-                self.add_error(field, "This field is required.")
-
 
         # check if date is valid
         year = 0
@@ -1045,11 +1028,6 @@ class MainForm(forms.ModelForm):
 
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
 
-                instance.child.first_name = self.cleaned_data['child_first_name']
-                instance.child.father_name = self.cleaned_data['child_father_name']
-                instance.child.last_name = self.cleaned_data['child_last_name']
-                instance.child.mother_fullname = self.cleaned_data['child_mother_fullname']
-                instance.child.save()
 
                 instance.modified_by = request.user
                 instance.save()
@@ -1078,12 +1056,6 @@ class MainForm(forms.ModelForm):
             serializer = MainSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-
-                instance.child.first_name = self.cleaned_data['child_first_name']
-                instance.child.father_name = self.cleaned_data['child_father_name']
-                instance.child.last_name = self.cleaned_data['child_last_name']
-                instance.child.mother_fullname = self.cleaned_data['child_mother_fullname']
-                instance.child.save()
 
                 instance.owner = request.user
                 instance.modified_by = request.user

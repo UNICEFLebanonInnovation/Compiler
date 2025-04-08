@@ -253,6 +253,7 @@ def MainMarkDeleteView(request, pk):
         try:
             registration = Registration.objects.get(id=pk)
             registration.deleted = True
+            registration.deleted_by = request.user
             registration.save()
             result = {"isSuccessful": True}
         except Registration.DoesNotExist:

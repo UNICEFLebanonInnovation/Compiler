@@ -267,6 +267,12 @@ class Registration(TimeStampedModel):
         verbose_name=_('Modified by'),
     )
     deleted = models.BooleanField(blank=True, default=False)
+    deleted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Deleted by'),
+    )
     registration_date = models.DateField(
         blank=True,
         null=True,
