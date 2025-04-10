@@ -49,7 +49,7 @@ class TeacherTable(CommonTable):
             'first_name',
             'father_name',
             'last_name',
-            'sex', 
+            'sex',
             'primary_phone_number',
             'school',
             'round',

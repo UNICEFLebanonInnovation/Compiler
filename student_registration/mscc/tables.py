@@ -61,7 +61,7 @@ class MainTable(CommonTable):
             'child_age',
             'child_birthday',
             'child.nationality',
-            'get_education_program',
+            'education_program',
             'class_section',
             'partner_unique_number',
             'has_previous_registration',
@@ -73,11 +73,6 @@ class MainTable(CommonTable):
             'owner',
             'modified_by',
         )
-
-        def get_education_program(self, obj):
-            return obj.education_program
-
-        get_education_program.short_description = 'Education Program'
 
 
 class FullTable(CommonTable):

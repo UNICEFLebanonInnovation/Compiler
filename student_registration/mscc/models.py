@@ -300,7 +300,7 @@ class Registration(TimeStampedModel):
     @property
     def education_program(self):
         result = ''
-        program = self.education_service.all().first()
+        program = self.education_service.all().last()
         if program:
             result = program.education_program
         return result
@@ -308,7 +308,7 @@ class Registration(TimeStampedModel):
     @property
     def class_section(self):
         result = ''
-        program = self.education_service.all().first()
+        program = self.education_service.all().last()
         if program:
             result = program.class_section
         return result

@@ -1866,6 +1866,12 @@ function fill_outreach_child_data(data)
             });
         }
     });
+    var arabic_fields_array = arabic_fields.split(",");
+    arabic_fields_array.forEach(function(selector) {
+        $(selector.trim()).each(function() {
+            checkArabicOnly($(this));
+        });
+    });
 }
 
 

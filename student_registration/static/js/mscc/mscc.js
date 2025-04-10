@@ -283,6 +283,12 @@ function get_child_data(outreach_id)
         dataType: 'json',
         success: function (response) {
             fill_outreach_child_data(response);
+            var arabic_fields_array = arabic_fields.split(",");
+            arabic_fields_array.forEach(function(selector) {
+                $(selector.trim()).each(function() {
+                    checkArabicOnly($(this));
+                });
+            });
         },
         error: function (response) {
             console.log(response);
