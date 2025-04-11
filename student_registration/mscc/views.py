@@ -617,41 +617,44 @@ def quick_search(request):
 
     if terms:
         user = request.user
-        center_id = user.center_id
-        partner_id = user.partner_id
+        if user.is_authenticated:
+            center_id = user.center_id
+            partner_id = user.partner_id
 
-        if has_group(user, 'MSCC_UNICEF'):
-            qs= Registration.objects.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
-                deleted=False
-            ).order_by('-id')
-        elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            qs= Registration.objects.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
-                deleted=False, partner=partner_id
-            ).order_by('-id')
-        elif has_group(user, 'MSCC_CENTER') and center_id:
-            qs= Registration.objects.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
-                deleted=False, center=center_id
-            ).order_by('-id')
+            if has_group(user, 'MSCC_UNICEF'):
+                qs= Registration.objects.filter(
+                    Q(round__isnull=True) | Q(round__current_year=True),
+                    deleted=False
+                ).order_by('-id')
+            elif has_group(user, 'MSCC_PARTNER') and partner_id:
+                qs= Registration.objects.filter(
+                    Q(round__isnull=True) | Q(round__current_year=True),
+                    deleted=False, partner=partner_id
+                ).order_by('-id')
+            elif has_group(user, 'MSCC_CENTER') and center_id:
+                qs= Registration.objects.filter(
+                    Q(round__isnull=True) | Q(round__current_year=True),
+                    deleted=False, center=center_id
+                ).order_by('-id')
+            else:
+                qs = Registration.objects.none()
+
+            if len(terms.split()) > 1:
+                qs = qs.annotate(fullname=Concat('child__first_name', Value(' '), 'child__father_name',
+                                                 Value(' '), 'child__last_name')) \
+                    .filter(fullname__icontains=terms) \
+                    .values('id', 'child__first_name', 'child__last_name',
+                            'child__father_name', 'child__mother_fullname').distinct()
+
+            else:
+                # for term in terms:
+                qs = qs.filter(
+                    Q(child__first_name__icontains=term) |
+                    Q(child__last_name__icontains=term))\
+                    .values('id', 'child__first_name', 'child__last_name',
+                            'child__father_name', 'child__mother_fullname').distinct()
         else:
-            qs = Registration.objects.none()
-
-        if len(terms.split()) > 1:
-            qs = qs.annotate(fullname=Concat('child__first_name', Value(' '), 'child__father_name',
-                                             Value(' '), 'child__last_name')) \
-                .filter(fullname__icontains=terms) \
-                .values('id', 'child__first_name', 'child__last_name',
-                        'child__father_name', 'child__mother_fullname').distinct()
-
-        else:
-            # for term in terms:
-            qs = qs.filter(
-                Q(child__first_name__icontains=term) |
-                Q(child__last_name__icontains=term))\
-                .values('id', 'child__first_name', 'child__last_name',
-                        'child__father_name', 'child__mother_fullname').distinct()
+            return JsonResponse({'error': 'User not authenticated'}, status=401)
 
     return JsonResponse({'result': json.dumps(list(qs))})
 
@@ -674,7 +677,7 @@ class ProgrammeDetails(LoginRequiredMixin,
         }
 
 
-class ChildProfilePreview(LoginRequiredMixin,
+class ChildProfilePreview1(LoginRequiredMixin,
                           TemplateView):
 
     template_name = 'mscc/child_profile_preview.html'
@@ -682,11 +685,43 @@ class ChildProfilePreview(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         registry_id = self.request.GET.get('registry_id')
 
-        instance = Registration.objects.get(id=registry_id)
+        if not registry_id:
+            print("Error: No id provided")
+            return
+        try:
+            instance = Registration.objects.get(id=registry_id)
+        except Exception:
+            print("Error: Registration with id " + str(registry_id))
+            return
 
         return {
             'instance': instance,
         }
+
+
+class ChildProfilePreview(LoginRequiredMixin, TemplateView):
+    template_name = 'mscc/child_profile_preview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ChildProfilePreview, self).get_context_data(**kwargs)
+
+        registry_id = self.request.GET.get('registry_id')
+
+        if not registry_id:
+            context['error'] = 'No id provided.'
+            return context
+
+        try:
+            instance = Registration.objects.get(id=registry_id)
+        except Registration.DoesNotExist:
+            context['error'] = 'Registration with id' + str(registry_id) + ' not found.'
+            return context
+        except ValueError:
+            context['error'] = 'Invalid registry_id ' + str(registry_id)
+            return context
+
+        context['instance'] = instance
+        return context
 
 
 @login_required(login_url='/users/login')

@@ -38,6 +38,9 @@ class MainTable(CommonTable):
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
 
+    has_previous_registration = tables.Column(accessor='has_previous_registration')
+
+
     # center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
     # governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
     # caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
