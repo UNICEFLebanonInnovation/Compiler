@@ -736,8 +736,6 @@ class MainForm(forms.ModelForm):
                 msg = "The Parent Extract Record are not matched"
                 self.add_error('parent_extract_record_confirm', msg)
 
-
-
         first_phone_number = cleaned_data.get("first_phone_number")
         first_phone_number_confirm = cleaned_data.get("first_phone_number_confirm")
         second_phone_number = cleaned_data.get("second_phone_number")
@@ -751,6 +749,8 @@ class MainForm(forms.ModelForm):
             self.add_error('second_phone_number_confirm', msg)
 
     def save(self, request=None, instance=None):
+
+        from student_registration.students.utils import generate_one_unique_id
 
         if instance:
             serializer = MainSerializer(instance, data=request.POST)
@@ -780,10 +780,22 @@ class MainForm(forms.ModelForm):
                 instance.save()
                 request.session['instance_id'] = instance.id
 
-
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
+
+        if instance:
+            instance.unicef_id = generate_one_unique_id(
+                str(instance.pk),
+                instance.first_name,
+                instance.father_name,
+                instance.last_name,
+                instance.mother_fullname,
+                instance.birthdate,
+                instance.nationality_name_en,
+                instance.gender
+            )
+            instance.save()
 
         return instance
 

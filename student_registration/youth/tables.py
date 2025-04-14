@@ -29,7 +29,7 @@ class RegistrationTable(tables.Table):
             'action_column',
             # 'status_column',
             # 'outreached',
-            'adolescent.number',
+            'adolescent.unicef_id',
             'adolescent.first_name',
             'adolescent.father_name',
             'adolescent.last_name',
@@ -81,6 +81,7 @@ class PDTable(tables.Table):
             'master_programs',
             'donor_names'
         )
+
 
 class PDPartnerTable(tables.Table):
     action_column = tables.TemplateColumn(

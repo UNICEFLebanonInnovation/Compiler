@@ -12,7 +12,7 @@ class AdolescentAdmin(admin.ModelAdmin):
         'full_name',
         'nationality',
         'birthday_year',
-        'number',
+        'unicef_id',
         'created',
         'modified',
     )
@@ -28,5 +28,6 @@ class AdolescentAdmin(admin.ModelAdmin):
         'father_name',
         'last_name',
     )
+
 
 admin.site.register(Adolescent, AdolescentAdmin)

@@ -101,6 +101,7 @@ class ProgramTagAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
 
+
 class CreationYearFilter(admin.SimpleListFilter):
     title = _('creation year')
     parameter_name = 'creation_year'
