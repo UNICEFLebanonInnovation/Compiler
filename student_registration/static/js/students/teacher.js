@@ -14,6 +14,7 @@ $(window).load(function () {
     });
 
 });
+var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_child_mother_fullname";
 
 $(document).ready(function() {
 
@@ -34,6 +35,10 @@ $(document).ready(function() {
             var itemscope = item.attr('itemscope');
             justify_student_enrollment(item.attr('itemscope'));
         }
+    });
+
+    $(document).on('blur', arabic_fields, function(){
+        checkArabicOnly($(this));
     });
 
     $(document).on('click', '.cancel-button', function(e){

@@ -13,6 +13,7 @@ from .models import (
     Nationality,
     IDType,
     Labour,
+    Teacher,
     FinancialSupport,
     SpecialNeeds,
     SpecialNeedsDt,
@@ -659,6 +660,7 @@ class StudentAdmin(ImportExportModelAdmin):
 
     )
     list_filter = (
+        'unicef_id',
         FromAgeFilter,
         ToAgeFilter,
         'birthday_day',
@@ -690,6 +692,26 @@ class StudentAdmin(ImportExportModelAdmin):
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
+
+
+class TeacherAdmin(ImportExportModelAdmin):
+    list_display = (
+        'first_name',
+        'father_name',
+        'last_name',
+        'sex',
+        'unicef_id'
+
+    )
+    list_filter = (
+        'sex',
+    )
+    search_fields = (
+        'first_name',
+        'father_name',
+        'last_name',
+        'unicef_id',
+    )
 
 
 class StudentMatchingResource(resources.ModelResource):
@@ -760,6 +782,7 @@ class AttachmentTypeAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Student, StudentAdmin)
+admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 # admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)

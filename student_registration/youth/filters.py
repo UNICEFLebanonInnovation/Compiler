@@ -39,6 +39,7 @@ class MainFilter(FilterSet):
     adolescent__father_name = CharFilter(lookup_expr='icontains')
     adolescent__last_name = CharFilter(lookup_expr='icontains')
     adolescent__number = CharFilter(lookup_expr='icontains')
+    adolescent__unicef_id = CharFilter(lookup_expr='icontains')
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
 
     class Meta:
@@ -69,6 +70,7 @@ class FullFilter(FilterSet):
     adolescent__father_name = CharFilter(lookup_expr='icontains')
     adolescent__last_name = CharFilter(lookup_expr='icontains')
     adolescent__number = CharFilter(lookup_expr='icontains')
+    adolescent__unicef_id = CharFilter(lookup_expr='icontains')
     adolescent__gender = ChoiceFilter(choices=Adolescent.GENDER, empty_label='Gender')
     adolescent__nationality = ChoiceFilter(
         choices=Nationality.objects.values_list('id', 'name').order_by('name').distinct(),

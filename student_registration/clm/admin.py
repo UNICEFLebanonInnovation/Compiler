@@ -181,6 +181,7 @@ class BridgingAdmin(admin.ModelAdmin):
 
     list_display = (
         'student',
+        'get_unicef_id',
         'governorate',
         'district',
         'partner',
@@ -207,7 +208,12 @@ class BridgingAdmin(admin.ModelAdmin):
         'student__father_name',
         'student__last_name',
         'student__mother_fullname',
+        'student__unicef_id',
     )
+
+    def get_unicef_id(self, obj):
+        return obj.student.unicef_id
+    get_unicef_id.short_description = 'Unicef ID'
 
 
 class RSResource(resources.ModelResource):

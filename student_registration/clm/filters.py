@@ -184,6 +184,7 @@ class BridgingFilter(FilterSet):
     student__mother_fullname = CharFilter(lookup_expr='icontains')
     student__id_number = CharFilter(lookup_expr='icontains')
     student__number = CharFilter(lookup_expr='icontains')
+    student__unicef_id = CharFilter(lookup_expr='icontains')
     internal_number = CharFilter(lookup_expr='icontains')
     student__last_name = CharFilter(lookup_expr='icontains')
     phone_number = CharFilter(lookup_expr='icontains')
@@ -202,6 +203,7 @@ class BridgingFilter(FilterSet):
             'student__mother_fullname',
             'student__id_number',
             'student__number',
+            'student__unicef_id',
             'internal_number',
             'student__nationality',
             'disability',

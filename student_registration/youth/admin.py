@@ -14,6 +14,7 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     list_display = (
         'adolescent',
+        'get_unicef_id',
         'partner',
         'center',
         'deleted',
@@ -34,7 +35,12 @@ class RegistrationAdmin(admin.ModelAdmin):
         'adolescent__first_name',
         'adolescent__father_name',
         'adolescent__last_name',
+        'adolescent__unicef_id',
     )
+
+    def get_unicef_id(self, obj):
+        return obj.adolescent.unicef_id
+    get_unicef_id.short_description = 'Unicef ID'
 
 
 class YouthAssessmentAdmin(admin.ModelAdmin):

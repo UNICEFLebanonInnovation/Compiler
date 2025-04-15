@@ -83,6 +83,7 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     list_display = (
         'child',
+        'get_unicef_id',
         'partner',
         'center',
         'round',
@@ -109,7 +110,11 @@ class RegistrationAdmin(admin.ModelAdmin):
         'child__first_name',
         'child__father_name',
         'child__last_name',
+        'child__unicef_id',
     )
+    def get_unicef_id(self, obj):
+        return obj.child.unicef_id
+    get_unicef_id.short_description = 'Unicef ID'
 
 
 class EducationHistoryAdmin(admin.ModelAdmin):
