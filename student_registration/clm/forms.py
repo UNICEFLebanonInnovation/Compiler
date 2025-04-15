@@ -8251,6 +8251,9 @@ class BridgingForm(CommonForm):
             self.add_error('math', 'This value is greater that 103')
 
     def save(self, request=None, instance=None, serializer=None):
+
+        from student_registration.students.utils import generate_one_unique_id
+
         instance = super(BridgingForm, self).save(request=request, instance=instance, serializer=BridgingSerializer)
         instance.save()
 
@@ -8275,6 +8278,19 @@ class BridgingForm(CommonForm):
         }
 
         instance.save()
+
+        if instance:
+            instance.student.unicef_id = generate_one_unique_id(
+                str(instance.student.pk),
+                instance.student.first_name,
+                instance.student.father_name,
+                instance.student.last_name,
+                instance.student.mother_fullname,
+                instance.student.birthdate,
+                instance.student.nationality_name_en,
+                instance.student.sex
+            )
+            instance.student.save()
 
     class Meta:
         model = Bridging

@@ -785,17 +785,17 @@ class MainForm(forms.ModelForm):
                 messages.warning(request, serializer.errors)
 
         if instance:
-            instance.unicef_id = generate_one_unique_id(
-                str(instance.pk),
-                instance.first_name,
-                instance.father_name,
-                instance.last_name,
-                instance.mother_fullname,
-                instance.birthdate,
-                instance.nationality_name_en,
-                instance.gender
+            instance.adolescent.unicef_id = generate_one_unique_id(
+                str(instance.adolescent.pk),
+                instance.adolescent.first_name,
+                instance.adolescent.father_name,
+                instance.adolescent.last_name,
+                instance.adolescent.mother_fullname,
+                instance.adolescent.birthdate,
+                instance.adolescent.nationality_name_en,
+                instance.adolescent.gender
             )
-            instance.save()
+            instance.adolescent.save()
 
         return instance
 
