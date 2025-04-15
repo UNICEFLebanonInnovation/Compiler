@@ -50,6 +50,7 @@ class TeacherTable(CommonTable):
             'father_name',
             'last_name',
             'sex',
+            'unicef_id',
             'primary_phone_number',
             'school',
             'round',

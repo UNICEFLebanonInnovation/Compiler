@@ -441,6 +441,7 @@ class TeacherForm(forms.ModelForm):
         )
 
     def save(self, request=None, instance=None, serializer=None):
+        from student_registration.students.utils import generate_one_unique_id
         if instance:
             data = request.POST.copy()
             data.update(request.FILES)
@@ -507,6 +508,19 @@ class TeacherForm(forms.ModelForm):
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
+
+        if instance:
+            instance.unicef_id = generate_one_unique_id(
+                str(instance.pk),
+                instance.first_name,
+                instance.father_name,
+                instance.last_name,
+                'وردة',
+                '2000-01-01',
+                'lebanese',
+                instance.sex
+            )
+            instance.save()
 
     def clean(self):
         cleaned_data = super(TeacherForm, self).clean()
