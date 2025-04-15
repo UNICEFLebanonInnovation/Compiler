@@ -533,7 +533,7 @@ class BridgingTable(CommonTable):
             'district',
             'internal_number',
             'student.number',
-            # 'student.unicef_id',
+            'student.unicef_id',
             'student.first_name',
             'student.father_name',
             'student.last_name',
