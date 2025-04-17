@@ -3126,7 +3126,7 @@ def search_clm_child(request):
     clm_type = request.GET.get('clm_type', 'BLN')
     term = request.GET.get('term', 0)
     terms = request.GET.get('term', 0)
-    model = BLN
+    model = Bridging
     if clm_type == 'RS':
         model = RS
     elif clm_type == 'ABLN':
@@ -3174,7 +3174,7 @@ def clm_child_list(model, term, terms, search_model):
             qs = model.objects.annotate(fullname=Concat('student__first_name', Value(' '),
                                                         'student__father_name', Value(' '),
                                                         'student__last_name')) \
-                .filter(fullname__icontains=terms) \
+                .filter(fullname__icontains=terms, deleted=False) \
                 .values('id', 'student__first_name', 'student__father_name',
                         'student__last_name', 'student__mother_fullname',
                         'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3183,7 +3183,7 @@ def clm_child_list(model, term, terms, search_model):
         else:
             # for term in terms:
             # .filter(partner=request.user.partner_id)
-            qs = model.objects \
+            qs = model.objects.filter(deleted=False)\
                 .filter(
                 Q(student__first_name__contains=term) |
                 Q(student__father_name__contains=term) |

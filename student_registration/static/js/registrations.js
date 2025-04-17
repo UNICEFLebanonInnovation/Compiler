@@ -48,7 +48,7 @@ $(document).ready(function() {
 
         if (confirmed) {
             $.ajax({
-                url: "/bridging-delete/" + registrationId + "/",
+                url: "/clm/bridging-delete/" + registrationId + "/",
                 type: "GET",
                 headers: requestHeaders,
                 success: function(data) {
