@@ -87,14 +87,14 @@ class ProgramDocumentAdmin(admin.ModelAdmin):
         'project_status',
     )
     list_filter = (
-    'partner',
-    'funded_by',
-    'project_status',
+        'partner',
+        'funded_by',
+        'project_status',
     )
     search_fields = (
-    'project_code',
-    'project_name',
-    'project_description',
+        'project_code',
+        'project_name',
+        'project_description',
     )
 
 
@@ -192,9 +192,9 @@ class EnrolledProgramAdmin(admin.ModelAdmin):
         'completion_date'
     )
     list_filter = (
-    'education_status',
-    'master_program',
-    'donor',
+        'education_status',
+        'master_program',
+        'donor',
     )
 
 

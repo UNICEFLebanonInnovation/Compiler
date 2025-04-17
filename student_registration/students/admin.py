@@ -592,6 +592,7 @@ class StudentResource(resources.ModelResource):
             'mother_nationality',
             'id_type',
             'id_number',
+            'unicef_id',
             'number',
             'address',
             'phone',

@@ -392,8 +392,7 @@ class Person(TimeStampedModel):
         abstract = True
 
     def save(self, **kwargs):
-        if self.phone:
-            self.std_phone = self.phone_prefix+self.phone
+
         """
         Generate unique IDs for every person
         :param kwargs:

@@ -825,8 +825,10 @@ def export_list_background(request):
 
         return HttpResponse("An error occurred: " + str(e), status=500)
 
+
 class MyAzureStorage(AzureStorage):
     location = "export"
+
 
 @login_required(login_url='/users/login')
 def get_file(request, file_name):
@@ -852,6 +854,7 @@ def get_file(request, file_name):
     else:
         response = HttpResponse("Invalid file.")
     return response
+
 
 def is_valid_filename(filename):
     pattern = r'^[a-zA-Z0-9-_]+.zip$'
@@ -883,6 +886,7 @@ def get_file_csv(request, file_name):
         response = HttpResponse("Invalid file.", status=400)
 
     return response
+
 
 def is_valid_filename_csv(filename):
     """Ensure the filename is a valid CSV file with expected format."""

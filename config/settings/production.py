@@ -112,19 +112,21 @@ DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
 # COMPRESS_ENABLED = env.bool('COMPRESS_ENABLED', default=True)
 # EMAIL
 # ------------------------------------------------------------------------------
-DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
-                         default='Student Registration <noreply@compiler.uniceflebanon.org>')
-EMAIL_SUBJECT_PREFIX = env('DJANGO_EMAIL_SUBJECT_PREFIX', default='[Student Registration]')
-SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
+# DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
+#                          default='Student Registration <noreply@compiler.uniceflebanon.org>')
+# EMAIL_SUBJECT_PREFIX = env('DJANGO_EMAIL_SUBJECT_PREFIX', default='[Student Registration]')
+# SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 
-# Anymail with Mailgun
-INSTALLED_APPS += ['anymail', ]
+# DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='NO_DEFAULT_FROM_EMAIL')
+# EMAIL_FROM = env('EMAIL_FROM', default='NO_FROM_EMAIL')
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = env('EMAIL_HOST', default='smtp.office365.com')
+# EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='NO_EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='NO_EMAIL_HOST_PASSWORD')
+# EMAIL_PORT = env('EMAIL_HOST_PORT', default=587)
+# EMAIL_USE_TLS = env('EMAIL_USE_TLS', default=True)  # set True if using TLS
 
-ANYMAIL = {
-    'MAILGUN_API_KEY': env('DJANGO_MAILGUN_API_KEY', default=''),
-    'MAILGUN_SENDER_DOMAIN': env('MAILGUN_SENDER_DOMAIN', default='')
-}
-EMAIL_BACKEND = 'anymail.backends.mailgun.MailgunBackend'
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
