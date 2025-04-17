@@ -3364,14 +3364,14 @@ def search_duplicate_student_id(model, round_id, student_id):
     qs = {}
     if round_id:
         qs = model.objects.filter(
-            round=round_id, student=student_id
+            round=round_id, student=student_id, deleted=False
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
                  'student__birthday_year', 'round__name', 'internal_number').distinct()
     else:
         qs = model.objects.filter(
-            student=student_id
+            student=student_id, deleted=False
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3390,6 +3390,7 @@ def search_duplicate_student_name(model, round_id, student_first_name, student_f
             student__father_name=student_father_name,
             student__last_name=student_last_name,
             student__mother_fullname=student_mother_fullname,
+            deleted=False
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3400,6 +3401,7 @@ def search_duplicate_student_name(model, round_id, student_first_name, student_f
             student__father_name=student_father_name,
             student__last_name=student_last_name,
             student__mother_fullname=student_mother_fullname,
+            deleted=False
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3415,7 +3417,8 @@ def search_duplicate_phone(model, round_id, student_first_name, phone_number):
         qs = model.objects.filter(
             round=round_id,
             student__first_name=student_first_name,
-            phone_number=phone_number
+            phone_number=phone_number,
+            deleted=False
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3423,7 +3426,8 @@ def search_duplicate_phone(model, round_id, student_first_name, phone_number):
     else:
         qs = model.objects.filter(
             student__first_name=student_first_name,
-            phone_number=phone_number
+            phone_number=phone_number,
+            deleted=False
         ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                  'student__last_name', 'student__mother_fullname',
                  'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3441,7 +3445,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
             qs = model.objects.filter(
                 round=round_id,
                 student__first_name=student_first_name,
-                case_number=case_number
+                case_number=case_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3450,7 +3455,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
             qs = model.objects.filter(
                 round=round_id,
                 student__first_name=student_first_name,
-                recorded_number=recorded_number
+                recorded_number=recorded_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3459,7 +3465,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
             qs = model.objects.filter(
                 round=round_id,
                 student__first_name=student_first_name,
-                parent_syrian_national_number=parent_syrian_national_number
+                parent_syrian_national_number=parent_syrian_national_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3468,7 +3475,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
             qs = model.objects.filter(
                 round=round_id,
                 student__first_name=student_first_name,
-                parent_sop_national_number=parent_sop_national_number
+                parent_sop_national_number=parent_sop_national_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3477,7 +3485,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
             qs = model.objects.filter(
                 round=round_id,
                 student__first_name=student_first_name,
-                parent_national_number=parent_national_number
+                parent_national_number=parent_national_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3486,7 +3495,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
             qs = model.objects.filter(
                 round=round_id,
                 student__first_name=student_first_name,
-                parent_other_number=parent_other_number
+                parent_other_number=parent_other_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3495,7 +3505,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
         if id_type == 'UNHCR Registered':
             qs = model.objects.filter(
                 student__first_name=student_first_name,
-                case_number=case_number
+                case_number=case_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3503,7 +3514,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
         elif id_type == 'UNHCR Recorded':
             qs = model.objects.filter(
                 student__first_name=student_first_name,
-                recorded_number=recorded_number
+                recorded_number=recorded_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3511,7 +3523,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
         elif id_type == 'Syrian national ID':
             qs = model.objects.filter(
                 student__first_name=student_first_name,
-                parent_syrian_national_number=parent_syrian_national_number
+                parent_syrian_national_number=parent_syrian_national_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3519,7 +3532,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
         elif id_type == 'Palestinian national ID':
             qs = model.objects.filter(
                 student__first_name=student_first_name,
-                parent_sop_national_number=parent_sop_national_number
+                parent_sop_national_number=parent_sop_national_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3527,7 +3541,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
         elif id_type == 'Lebanese national ID':
             qs = model.objects.filter(
                 student__first_name=student_first_name,
-                parent_national_number=parent_national_number
+                parent_national_number=parent_national_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
@@ -3535,7 +3550,8 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
         elif id_type == 'Other nationality':
             qs = model.objects.filter(
                 student__first_name=student_first_name,
-                parent_other_number=parent_other_number
+                parent_other_number=parent_other_number,
+                deleted=False
             ).values('id', 'partner__name', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
