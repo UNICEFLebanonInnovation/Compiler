@@ -14,8 +14,7 @@ class BootstrapTable(tables.Table):
 
 
 class CommonTable(tables.Table):
-
-    child_age = tables.Column(verbose_name=_('Age'), accessor='child.age')
+    child_age = tables.Column(verbose_name=_('Age'))
     # created = tables.Column(verbose_name='Created', accessor='registration.created')
     child_birthday = tables.Column(verbose_name=_('Birthday'), accessor='child.birthday')
 
@@ -23,6 +22,10 @@ class CommonTable(tables.Table):
         model = Registration
         template = 'django_tables2/bootstrap.html'
         fields = ()
+
+    def render_child_age(self, record):
+        return record.child.age
+
 
 
 class MainTable(CommonTable):
