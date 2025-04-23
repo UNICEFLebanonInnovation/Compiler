@@ -387,3 +387,62 @@ function resizeCanvas(canvas) {
     //signaturePad.clear(); // otherwise isEmpty() might return incorrect value
 }
 
+function checkFieldCharacters(field,characterCheck)
+{
+    var sNewVal = "";
+
+    var sFieldVal = field.val();
+
+    for(var i = 0; i < sFieldVal.length; i++) {
+
+        var ch = sFieldVal.charAt(i);
+
+        if(!characterCheck(ch)) {
+            // Discard
+        }
+
+        else {
+            sNewVal += ch;
+        }
+    }
+
+    if(field.val() != sNewVal) {
+        field.val(sNewVal);
+    }
+}
+
+$(document).ready(function() {
+    var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_child_mother_fullname";
+
+    $(document).on('blur', arabic_fields, function(){
+        checkFieldCharacters
+    (
+        $(this),
+        function(ch)
+        {
+            var c = ch.charCodeAt(0);
+            return !((c < 1536 || c > 1791) && ch != " ");
+        }
+    );
+
+    });
+});
+
+$(document).load(function() {
+    var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_child_mother_fullname";
+
+    $(document).on('blur', arabic_fields, function(){
+        checkFieldCharacters
+        (
+            $(this),
+            function(ch)
+            {
+                var c = ch.charCodeAt(0);
+                return !((c < 1536 || c > 1791) && ch != " ");
+            }
+        );
+
+
+    });
+});
+

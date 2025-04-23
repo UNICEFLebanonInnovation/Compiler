@@ -14,7 +14,6 @@ $(window).load(function () {
     });
 
 });
-var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_child_mother_fullname";
 
 $(document).ready(function() {
 
@@ -37,9 +36,6 @@ $(document).ready(function() {
         }
     });
 
-    $(document).on('blur', arabic_fields, function(){
-        checkArabicOnly($(this));
-    });
 
     $(document).on('click', '.cancel-button', function(e){
         e.preventDefault();
@@ -130,43 +126,4 @@ function window_location(value)
     $('head').append('<meta http-equiv="refresh" content="0; URL='+value+'" id="redirect"/>');
 }
 
-function load_districts(url)
-{
-    var value = $("#id_governorate").val();
-    $.ajax({
-        url: url,
-        data: {
-            'id_governorate': value
-        },
-        success: function (data) {
-            $("#id_district").html(data);
-        }
-    })
-}
-function load_cadasters(url)
-{
-    var value = $("#id_district").val();
-    $.ajax({
-        url: url,
-        data: {
-            'id_district': value
-        },
-        success: function (data) {
-            $("#id_cadaster").html(data);
-        }
-    })
-}
-function load_schools(url)
-{
-    var value = $("#id_governorate").val();
-    $.ajax({
-        url: url,
-        data: {
-            'id_governorate': value
-        },
-        success: function (data) {
-            $("#id_school").html(data);
-        }
-    })
-}
 
