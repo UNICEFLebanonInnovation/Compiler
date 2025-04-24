@@ -22,17 +22,10 @@ def push_cadaster_data(file_name, base_url, token, protocol='HTTPS'):
             data['name_en'] = row[3].value
             data['type_id'] = row[4].value
             data['parent_id'] = row[5].value
-            print("---------------")
             result = post_data(protocol=protocol, url=base_url, apifunc='/api/locations', token=token, data=data)
-            print(result)
             result = json.loads(result)
-            print(result)
 
         except Exception as ex:
-            print("---------------")
-            print("error: ", ex)
-            print(json.dumps(data, cls=DjangoJSONEncoder))
-            print("---------------")
             continue
 
 

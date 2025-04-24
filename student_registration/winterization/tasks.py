@@ -77,9 +77,6 @@ def import_docs(**kwargs):
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.save()
-            else:
-                print(serializer.errors)
-                print(json.dumps(doc))
 
 
 @app.task

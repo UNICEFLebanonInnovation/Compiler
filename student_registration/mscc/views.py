@@ -677,28 +677,6 @@ class ProgrammeDetails(LoginRequiredMixin,
         }
 
 
-class ChildProfilePreview1(LoginRequiredMixin,
-                          TemplateView):
-
-    template_name = 'mscc/child_profile_preview.html'
-
-    def get_context_data(self, **kwargs):
-        registry_id = self.request.GET.get('registry_id')
-
-        if not registry_id:
-            print("Error: No id provided")
-            return
-        try:
-            instance = Registration.objects.get(id=registry_id)
-        except Exception:
-            print("Error: Registration with id " + str(registry_id))
-            return
-
-        return {
-            'instance': instance,
-        }
-
-
 class ChildProfilePreview(LoginRequiredMixin, TemplateView):
     template_name = 'mscc/child_profile_preview.html'
 

@@ -95,7 +95,7 @@ def outreach_import_data(request):
                                 st.birthday_month = dt.month
                                 st.birthday_day = dt.day
                             except ValueError as e:
-                                print("Skipping invalid date '{}': {}".format(dt_string, e))
+                                pass
 
                         if "DC/gender" in student:
                             if student["DC/gender"] == '_':
@@ -122,10 +122,10 @@ def outreach_import_data(request):
                         record_value(st, "child_notes", student, "DC/child_notes")
                         st.save()
                 except Exception as student_error:
-                    print("Error processing student: {}".format(student_error))
+                    pass
 
         except Exception as record_error:
-            print("Error processing record {}: {}".format(record["_id"], record_error))
+            pass
     return HttpResponse("records saved successfully")
 
 

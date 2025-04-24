@@ -13,8 +13,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if '2ndshift' in options['models']:
-            print('Generate hash number for 2nd shift students')
             generate_2ndshift_unique_number()
         if 'alp' in options['models']:
-            print('Generate hash number for ALP students')
             generate_alp_unique_number()

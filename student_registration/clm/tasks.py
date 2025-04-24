@@ -41,10 +41,6 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
                 data['student_sex'] = row[6].value if row[6].value else 'Male'
                 data['student_nationality'] = row[7].value if row[7].value else 1
                 data['student_birthday_year'] = row[8].value if row[8].value else 2009
-                # birthday_year = datetime.strptime(data['student_birthday_year'], '%Y-%m-%d')
-                # print(birthday_year.year)
-                # print(birthday_year.month)
-                # print(birthday_year.day)
                 data['student_birthday_month'] = 1
                 data['student_birthday_day'] = 1
                 data['governorate'] = row[9].value
@@ -68,10 +64,6 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
                     post_data(protocol=protocol, url=base_url, apifunc='/clm/assessment-submission/', token=token,
                               data=assessment)
                 except Exception as ex:
-                    print("---------------")
-                    print("error: ", ex)
-                    print(json.dumps(assessment, cls=DjangoJSONEncoder))
-                    print("---------------")
                     pass
 
                 try:
@@ -87,15 +79,7 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
                     post_data(protocol=protocol, url=base_url, apifunc='/clm/assessment-submission/', token=token,
                               data=assessment)
                 except Exception as ex:
-                    print("---------------")
-                    print("error: ", ex)
-                    print(json.dumps(assessment, cls=DjangoJSONEncoder))
-                    print("---------------")
                     pass
 
             except Exception as ex:
-                print("---------------")
-                print("error: ", ex)
-                print(json.dumps(data, cls=DjangoJSONEncoder))
-                print("---------------")
                 continue

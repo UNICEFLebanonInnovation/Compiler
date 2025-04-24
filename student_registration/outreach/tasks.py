@@ -35,10 +35,6 @@ def push_household_data(base_url, token, protocol='HTTPS'):
 
             post_data(protocol=protocol, url=base_url, apifunc='/api/household/', token=token, data=data)
     except Exception as ex:
-        print("---------------")
-        print("error: ", ex.message)
-        print(json.dumps(data, cls=DjangoJSONEncoder))
-        print("---------------")
         pass
 
 
@@ -97,10 +93,6 @@ def push_children_data(base_url, token, protocol='HTTPS'):
 
             post_data(protocol=protocol, url=base_url, apifunc='/api/child/', token=token, data=data)
     except Exception as ex:
-        print("---------------")
-        print("error: ", ex.message)
-        print(json.dumps(data, cls=DjangoJSONEncoder))
-        print("---------------")
         pass
 
 
@@ -116,7 +108,6 @@ def link_household_to_children():
             ctr += 1
             child.barcode_subset = '{}-{}'.format(hh.barcode_number, ctr)
             child.household = hh
-            print(child.id)
             child.save()
 
 

@@ -82,7 +82,6 @@ def is_allowed_create(programme):
 
 
     except Exception as ex:
-        print(ex)
         return False
 
 
@@ -145,7 +144,6 @@ def is_allowed_edit(programme):
             return False
 
     except Exception as ex:
-        print(ex)
         return False
 
 
@@ -3426,7 +3424,6 @@ def load_child_attendance(round_id, attendance_date, school_id, registration_lev
         return result
 
     except Exception as ex:
-        print(ex)
         return []
 
 
@@ -3483,7 +3480,6 @@ def create_attendance(data):
         return True
 
     except Exception as ex:
-        print(ex)
         return False
 
 
@@ -3528,11 +3524,10 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
                         old_attendance.delete()
 
                     except CLMAttendance.DoesNotExist:
-                        print("Old attendance does not exist.")
+                        pass
         return True
 
     except Exception as ex:
-        print(ex)
         return False
 
 

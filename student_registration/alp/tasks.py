@@ -121,7 +121,6 @@ def auto_refer_to_alp_level():
             )
             record.save()
         except Exception as ex:
-            print(ex.message)
             continue
 
 
@@ -138,14 +137,9 @@ def assign_section(section):
     )
     section = Section.objects.get(id=section)
 
-    print(len(registrations), " ALP registrations found")
-    print("Start assignment")
-
     for registry in registrations:
         registry.section = section
         registry.save()
-
-    print("End assignment")
 
 
 @app.task
@@ -154,7 +148,6 @@ def assign_round(round_id):
 
     registrations = Outreach.objects.filter(alp_round__isnull=True).update(alp_round_id=round_id)
 
-    print("End assignment")
 
 
 @app.task
@@ -163,7 +156,6 @@ def assign_round_to_deleted(round_id):
 
     registrations = Outreach.objects.filter(alp_round__isnull=True, id__lt=13724).update(alp_round_id=round_id)
 
-    print("End assignment")
 
 
 @app.task
@@ -179,13 +171,9 @@ def fix_round_assignment(update):
         id__gt=14163
     )
 
-    print(len(registrations), " records to assign")
 
     if update == 1:
         total = registrations.update(alp_round_id=4)
-        print(total, " records assigned")
-
-    print("End assignment")
 
 
 @app.task
@@ -194,6 +182,5 @@ def move_student_to_school(school_from, school_to):
 
     if not school_from or not school_to:
         return False
-    print("from school: ", school_from, " to school: ", school_to)
     registrations = Outreach.objects.filter(school_id=school_from)
     registrations.update(school_id=school_to)

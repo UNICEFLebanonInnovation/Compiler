@@ -639,10 +639,6 @@ def import_attendance_by_student():
             instance.save()
 
         except Exception as ex:
-            print("---------------")
-            ctr += 1
-            print("error: ", ex)
-            print("---------------")
             pass
     print(ctr)
 
