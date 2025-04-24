@@ -8292,6 +8292,8 @@ class BridgingForm(CommonForm):
             )
             instance.student.save()
 
+        return instance
+
     class Meta:
         model = Bridging
         fields = CommonForm.Meta.fields + (

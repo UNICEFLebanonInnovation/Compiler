@@ -71,7 +71,7 @@ def save_attendance_children(request):
             return JsonResponse({'result': result})
 
         except Exception as e:
-            print(str(e))
+            pass
 
 
 class LoadAttendanceChildren(LoginRequiredMixin,
