@@ -16,7 +16,7 @@ class BootstrapTable(tables.Table):
 class CommonTable(tables.Table):
     child_age = tables.Column(verbose_name=_('Age'))
     # created = tables.Column(verbose_name='Created', accessor='registration.created')
-    child_birthday = tables.Column(verbose_name=_('Birthday'), accessor='child.birthday')
+    child_birthday = tables.Column(verbose_name=_('Birthday'))
 
     class Meta:
         model = Registration
@@ -25,6 +25,9 @@ class CommonTable(tables.Table):
 
     def render_child_age(self, record):
         return record.child.age
+
+    def render_child_birthday(self, record):
+        return record.child.birthday
 
 
 
