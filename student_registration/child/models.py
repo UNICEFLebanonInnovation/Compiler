@@ -75,7 +75,7 @@ class Child(TimeStampedModel):
         ('Separated', _('Separated')),
         ('Living with one caregivers', _('Living with one caregivers')),
         ('Living with caregivers', _('Living with caregivers')),
-        ('Child headed household ', _('Child headed household')),
+        ('Child headed household', _('Child headed household')),
         ('Married and living with extended family', _('Married and living with extended family')),
     )
 

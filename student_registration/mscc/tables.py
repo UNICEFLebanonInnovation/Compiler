@@ -30,7 +30,6 @@ class CommonTable(tables.Table):
         return record.child.birthday
 
 
-
 class MainTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                           template_name='django_tables2/mscc/action_column.html')
@@ -45,6 +44,7 @@ class MainTable(CommonTable):
                                        template_name='django_tables2/mscc/absence_column.html')
 
     has_previous_registration = tables.Column(accessor='has_previous_registration')
+    education_program = tables.Column(verbose_name=_('Education Program'))
 
 
     # center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
@@ -84,6 +84,9 @@ class MainTable(CommonTable):
             'modified_by',
         )
 
+    def render_education_program(self, record):
+        return record.education_program
+
 
 class FullTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
@@ -110,6 +113,7 @@ class FullTable(CommonTable):
         },
         default="No"
     )
+    education_program = tables.Column(verbose_name=_('Education Program'))
 
     def render_deleted(self, value):
         return "Yes" if value else "No"
@@ -148,6 +152,9 @@ class FullTable(CommonTable):
             'modified_by'
         )
 
+    def render_education_program(self, record):
+        return record.education_program
+
 
 class PartnerTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
@@ -164,6 +171,7 @@ class PartnerTable(CommonTable):
     governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
     caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
     cadaster = tables.Column(verbose_name=_('Cadaster'), accessor='center.cadaster')
+    education_program = tables.Column(verbose_name=_('Education Program'))
 
     class Meta:
         model = Registration
@@ -196,6 +204,9 @@ class PartnerTable(CommonTable):
             'owner',
             'modified_by'
         )
+
+    def render_education_program(self, record):
+        return record.education_program
 
 
 class YouthMainTable(CommonTable):
