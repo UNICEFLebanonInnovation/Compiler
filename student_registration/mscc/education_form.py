@@ -647,15 +647,20 @@ class EducationServiceForm(forms.ModelForm):
         instance.education_status = validated_data.get('education_status')
         dropout_date_str = validated_data.get('dropout_date')
         if dropout_date_str:
-            dropout_date = datetime.strptime(dropout_date_str, '%Y-%m-%d')
-            instance.dropout_date = dropout_date
+            try:
+                instance.dropout_date = validate_date(dropout_date_str)
+            except ValidationError as e:
+                raise ValidationError("Dropout date error: {}".format(e))
         instance.education_program = validated_data.get('education_program')
         instance.class_section = validated_data.get('class_section')
         instance.round_id = validated_data.get('round')
+
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
-            registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
-            instance.registration_date = registration_date
+            try:
+                instance.registration_date = validate_date(registration_date_str)
+            except ValidationError as e:
+                raise ValidationError("Registration date error: {}".format(e))
 
         instance.save()
 

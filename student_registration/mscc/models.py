@@ -298,6 +298,12 @@ class Registration(TimeStampedModel):
         return 0
 
     @property
+    def child_birthday(self):
+        if self.child:
+            return self.child.birthday
+        return 0
+
+    @property
     def education_program(self):
         result = ''
         program = self.education_service.all().last()

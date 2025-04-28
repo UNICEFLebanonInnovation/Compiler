@@ -593,13 +593,8 @@ def load_dashboard_data(param, grouping):
     return rows
 
 
-
 def validate_date(date_str):
-    """
-    Validates a date input by attempting to parse it into a datetime object.
-    Supports multiple date formats.
-    Accepts both string and datetime.date types.
-    """
+
     if not date_str:
         return None
 
@@ -607,17 +602,14 @@ def validate_date(date_str):
     if isinstance(date_str, date):
         return date_str
 
-    # If it's a string, attempt to parse it
-    # formats = ['%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y']
-    formats = ['%Y-%m-%d']  # Supported formats
+    # Supported date format
+    formats = ['%Y-%m-%d']
     for fmt in formats:
         try:
             return datetime.strptime(date_str, fmt).date()
         except ValueError:
             continue
 
-    raise ValidationError("Date is not valid")
-
-
+    raise ValidationError("Date is not valid. Please use the format YYYY-MM-DD.")
 
 

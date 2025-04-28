@@ -15,8 +15,10 @@ class BootstrapTable(tables.Table):
 
 class CommonTable(tables.Table):
     child_age = tables.Column(verbose_name=_('Age'))
-    # created = tables.Column(verbose_name='Created', accessor='registration.created')
     child_birthday = tables.Column(verbose_name=_('Birthday'))
+    education_program = tables.Column(verbose_name=_('Education Program'))
+    class_section = tables.Column(verbose_name=_('Section'))
+    has_previous_registration = tables.Column(verbose_name=_('Has Previous Registration'))
 
     class Meta:
         model = Registration
@@ -28,6 +30,15 @@ class CommonTable(tables.Table):
 
     def render_child_birthday(self, record):
         return record.child.birthday
+
+    def render_education_program(self, record):
+        return record.education_program
+
+    def render_class_section(self, record):
+        return record.class_section
+
+    def render_has_previous_registration(self, record):
+        return record.has_previous_registration
 
 
 class MainTable(CommonTable):
@@ -42,9 +53,6 @@ class MainTable(CommonTable):
 
     absence_column = tables.TemplateColumn(verbose_name=_('Total Absence'), orderable=False,
                                        template_name='django_tables2/mscc/absence_column.html')
-
-    has_previous_registration = tables.Column(accessor='has_previous_registration')
-    education_program = tables.Column(verbose_name=_('Education Program'))
 
 
     # center_type = tables.Column(verbose_name=_('Center Type'), accessor='center.type')
@@ -84,9 +92,6 @@ class MainTable(CommonTable):
             'modified_by',
         )
 
-    def render_education_program(self, record):
-        return record.education_program
-
 
 class FullTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
@@ -113,7 +118,6 @@ class FullTable(CommonTable):
         },
         default="No"
     )
-    education_program = tables.Column(verbose_name=_('Education Program'))
 
     def render_deleted(self, value):
         return "Yes" if value else "No"
@@ -152,9 +156,6 @@ class FullTable(CommonTable):
             'modified_by'
         )
 
-    def render_education_program(self, record):
-        return record.education_program
-
 
 class PartnerTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
@@ -171,7 +172,6 @@ class PartnerTable(CommonTable):
     governorate = tables.Column(verbose_name=_('Governorate'), accessor='center.governorate')
     caza = tables.Column(verbose_name=_('Caza'), accessor='center.caza')
     cadaster = tables.Column(verbose_name=_('Cadaster'), accessor='center.cadaster')
-    education_program = tables.Column(verbose_name=_('Education Program'))
 
     class Meta:
         model = Registration
@@ -205,13 +205,11 @@ class PartnerTable(CommonTable):
             'modified_by'
         )
 
-    def render_education_program(self, record):
-        return record.education_program
-
 
 class YouthMainTable(CommonTable):
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                           template_name='django_tables2/mscc/action_column.html')
+
     class Meta:
         model = Registration
         fields = (
