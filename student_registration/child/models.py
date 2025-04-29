@@ -216,7 +216,7 @@ class Child(TimeStampedModel):
         verbose_name=_('Formal Education unique student ID')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
-    unicef_id = models.CharField(max_length=45, blank=True, null=True)
+    unicef_id = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Unicef ID'))
     id_type = models.ForeignKey(
         IDType,
         blank=False, null=True,

@@ -3296,11 +3296,16 @@ def get_outreach_child(outreach_id):
         elif main_caregiver == u'اخر':
             initial['main_caregiver'] = 'other'
     dob_string = instance.outreach_caregiver.caregiver_dob
-    dob = datetime.strptime(dob_string, '%Y-%m-%d')
-    initial['caretaker_dob'] = dob_string
-    initial['caretaker_birthday_year'] = dob.year
-    initial['caretaker_birthday_month'] = dob.month
-    initial['caretaker_birthday_day'] = dob.day
+    if dob_string:
+        try:
+            dob = datetime.strptime(dob_string, '%Y-%m-%d')
+            initial['caretaker_dob'] = dob
+            initial['caretaker_birthday_year'] = dob.year
+            initial['caretaker_birthday_month'] = dob.month
+            initial['caretaker_birthday_day'] = dob.day
+        except ValueError:
+            pass
+
     id_type = instance.outreach_caregiver.id_type
     if id_type == 'unhcr_registered' or id_type == 'UNHCR registered':
         initial['id_type'] = 'UNHCR Registered'
