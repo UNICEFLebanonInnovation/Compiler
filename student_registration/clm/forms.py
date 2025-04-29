@@ -8063,13 +8063,13 @@ class BridgingForm(CommonForm):
         if education_status == 'Was registered in formal school and didnt continue':
             if not miss_school_date:
                 self.add_error('miss_school_date', 'This field is required')
-        if student_nationality.id == 6:
+        if student_nationality and student_nationality.id == 6:
             if not other_nationality:
                 self.add_error('other_nationality', 'This field is required')
         if main_caregiver == 'other':
             if not other_caregiver_relationship:
                 self.add_error('other_caregiver_relationship', 'This field is required')
-        if main_caregiver_nationality.id == 6:
+        if main_caregiver_nationality and main_caregiver_nationality.id == 6:
             if not main_caregiver_nationality_other:
                 self.add_error('main_caregiver_nationality_other', 'This field is required')
         if student_have_children:
