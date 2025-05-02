@@ -1145,7 +1145,7 @@ class InclusionFollowupForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button" href="/clm/inclusion-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -1157,8 +1157,6 @@ class InclusionFollowupForm(forms.ModelForm):
         if child_dropout == 'yes':
             if not child_dropout_specify:
                 self.add_error('child_dropout_specify', 'This field is required')
-
-
 
     def save(self, instance=None, request=None):
         instance = super(InclusionFollowupForm, self).save()

@@ -67,34 +67,34 @@ $(document).ready(function(){
         }
     });
 
-    pageScripts();
+//    pageScripts();
 
-        /* Ajax page load settings */
-        $(document).on('pjax:end', pageScripts);
-        if (sessionStorage.getItem("pjax-enabled") === "0") {
-            return;
-        }
+//        /* Ajax page load settings */
+//        $(document).on('pjax:end', pageScripts);
+//        if (sessionStorage.getItem("pjax-enabled") === "0") {
+//            return;
+//        }
 
         // Comment it to disable Ajax Page load
-        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
+//        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
 
-        $(document).on('pjax:beforeReplace', function() {
-            $('.content-wrap').css('opacity', '0.1');
-            setTimeout(function() {
-                $('.content-wrap').fadeTo('100', '1');
-            }, 1);
-        });
+//        $(document).on('pjax:beforeReplace', function() {
+//            $('.content-wrap').css('opacity', '0.1');
+//            setTimeout(function() {
+//                $('.content-wrap').fadeTo('100', '1');
+//            }, 1);
+//        });
 });
 
-function pageScripts() {
-    /* Magnific Popup */
-    $('.image-link').magnificPopup({
-        type: 'image',
-        gallery: {
-            enabled: true
-        }
-    });
-}
+//function pageScripts() {
+//    /* Magnific Popup */
+//    $('.image-link').magnificPopup({
+//        type: 'image',
+//        gallery: {
+//            enabled: true
+//        }
+//    });
+//}
 
 function learning_result_next_level() {
     var registration_level = $('select#id_registration_level').val();
@@ -447,7 +447,7 @@ function reorganizeForm_post_assessment()
         $('div#div_id_followup_parent_attended').removeClass('d-none');
         $('#span_followup_parent_attended').removeClass('d-none');
     }
-    else{ 
+    else{
         $('#id_followup_session_number').val('');
         $('select#div_id_followup_session_modality').val("");
         $('#span_followup_parent_attended_other').val('');

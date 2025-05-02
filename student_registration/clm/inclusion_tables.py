@@ -14,7 +14,7 @@ class InclusionTable(tables.Table):
                                           attrs={'url': '/clm/inclusion-delete/', 'programme': 'Inclusion'})
 
     followup_column = tables.TemplateColumn(verbose_name=_('followup'), orderable=False,
-                                            template_name='django_tables2/clm_followup_column.html',
+                                            template_name='django_tables2/clm_inclusion_followup_column.html',
                                             attrs={'url': '/clm/inclusion-followup/', 'programme': 'Inclusion'})
 
     # referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
