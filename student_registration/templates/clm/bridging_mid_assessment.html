@@ -1,40 +1,73 @@
-{% extends "base2.html" %}
+{% extends "base2a.html" %}
 {% load staticfiles i18n %}
 {% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
 
-{% block head_title %}Mid-Test{% endblock %}
+{% block project_title %}Mid-test{% endblock %}
 
 {% block extra_head %}
-
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-combobox.css' %}">
-
 {% endblock %}
 
-{% block content-full-page %}
-<section>
-    <div id="resume" class="inner-content">
-        <section id="page-title" class="inline-form inner-section ui-menu-color02">
-            <div class="container-fluid nopadding">
-                <h3 class="font-accident-two-light color01 uppercase"
-                    data-animation-origin="right"
-                    data-animation-duration="400"
-                    data-animation-delay="100"
-                    data-animation-distance="50px">{% trans "Dirasa" %}</h3>
-                <input type="hidden" name="clmtype" id="id_clmtype" value="Bridging" class="col-md-3 d-none"  />
+{% block main_content %}
 
-            </div>
-        </section>
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Mid-Test
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                              <li class="breadcrumb-item">
+                                  <a href="{% url 'clm:bridging_page' %}">
+                                      <i aria-hidden="true" class="fa fa-home"></i>
+                                  </a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'clm:bridging_list' %}">Dirasa List</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                 Mid-Test
+                              </li>
 
-        <section class="inline-form inner-section light bg-color01">
-            <div class="container-fluid nopadding">
-                {{ form.errors }}
-                {% crispy form 'bootstrap4' %}
-            </div>
-        </section>
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
+</div>
 
-    </div>
-</section>
+        <!--{{ form.errors }}-->
+
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                        <div class="form-wizard-content">
+
+                                           {% crispy form 'bootstrap4' %}
+                                        </div>
+                                    </div>
+                                    <div class="divider"></div>
+
+                                    <div class="clearfix">
+                                        <a href="{% url 'schools:school_list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                    </div>
+                                </div>
+                            </div>
 
 {% endblock %}
 

@@ -5,6 +5,7 @@ import datetime
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.utils.translation import ugettext as _
 
 from student_registration.students.models import Nationality, IDType
@@ -480,6 +481,8 @@ class Child(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Please specify')
     )
+
+    cash_programmes = JSONField(blank=True, null=True)
 
     def __str__(self):
         if not self.first_name:

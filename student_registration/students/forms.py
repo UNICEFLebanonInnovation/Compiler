@@ -515,7 +515,7 @@ class TeacherForm(forms.ModelForm):
                 instance.first_name,
                 instance.father_name,
                 instance.last_name,
-                'وردة',
+                'hala',
                 '2000-01-01',
                 'lebanese',
                 instance.sex

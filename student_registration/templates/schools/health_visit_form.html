@@ -1,10 +1,16 @@
-{% extends "base6.html" %}
+{% extends "base2a.html" %}
 {% load staticfiles i18n %}
 {% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
 
-{% block head_title %}School - Health Visit{% endblock %}
+{% block project_title %}School | Health Visit form{% endblock %}
 
 {% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -18,41 +24,74 @@
             font-size: 14px;
         }
     </style>
+
 {% endblock %}
 
+{% block main_content %}
 
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Health Visit
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                              <li class="breadcrumb-item">
+                                  <a href="{% url 'clm:bridging_page' %}">
+                                      <i aria-hidden="true" class="fa fa-home"></i>
+                                  </a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:school_list' %}">School List</a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:health_visit_list' school_id %}">Health Visit List</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                 Health Visit
+                              </li>
 
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
+</div>
 
-{% block content-full-page %}
-<section>
-    <div id="resume" class="inner-content">
+        <!--{{ form.errors }}-->
 
-        <section id="page-title" class="inline-form inner-section ui-menu-color02">
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                        <div class="form-wizard-content">
 
-            <div class="container-fluid nopadding">
-                <h3 class="font-accident-two-light color01 uppercase"
-                    data-animation-origin="right"
-                    data-animation-duration="400"
-                    data-animation-delay="100"
-                    data-animation-distance="50px">{% trans "Health Visit" %}</h3>
+                                           {% crispy form 'bootstrap4' %}
+                                        </div>
+                                    </div>
+                                    <div class="divider"></div>
 
-            </div>
-        </section>
+                                    <div class="clearfix">
+                                        <a href="{% url 'schools:health_visit_list' school_id %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                    </div>
+                                </div>
+                            </div>
 
-        <section class="inline-form inner-section light bg-color01">
-            <div class="container-fluid nopadding">
-                {% crispy form %}
-            </div>
-        </section>
-
-    </div>
-</section>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $(".datepicker").datepicker({
-            dateFormat: "yy-mm-dd"
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".datepicker").datepicker({
+                dateFormat: "yy-mm-dd"
+            });
         });
-    });
-</script>
+    </script>
 
 {% endblock %}

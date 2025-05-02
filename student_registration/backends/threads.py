@@ -3,7 +3,7 @@ import datetime
 from django.utils import timezone
 import threading
 
-from student_registration.students.utils import generate_bulk_unique_id
+from student_registration.students.utils import generate_bulk_unique_id, get_bulk_programmes
 
 
 class ChildUIDThreading(object):
@@ -100,6 +100,43 @@ class AllChildUIDThreading(object):
         print("End Thread")
 
 
+class CashProgrammeThreading(object):
+    def __init__(self, interval=1):
+        self.interval = interval
+
+        thread = threading.Thread(target=self.run, args=())
+
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+        from student_registration.child.models import Child
+
+        records = Child.objects.exclude(unicef_id__isnull=True, cash_programmes__isnull=False)[0:10]
+
+        payload = {
+            "individuals": [staff.unicef_id for staff in records]
+        }
+
+        result = get_bulk_programmes(payload)
+
+        # Update Django records in bulk
+        for record in records:
+            if record.pk in result:
+                print(result[record.unicef_id])
+                record.cash_programmes = result[record.unicef_id]
+                record.save()
+            else:
+                record.cash_programmes = {}
+                record.save()
+
+        print("End Thread")
+
+
+def generate_child_programmes():
+    th = CashProgrammeThreading(interval=4)
+
+
 def generate_child_unique_id():
     th = ChildUIDThreading(interval=5)
 
@@ -183,7 +220,7 @@ class TeacherUIDThreading(object):
                     "first_name": record.first_name,
                     "father_name": record.father_name,
                     "last_name": record.last_name,
-                    "mother_name": 'وردة',
+                    "mother_name": 'hala',
                     "date_of_birth": '2000-01-01',
                     "nationality": 'lebanese',
                     "gender": record.sex

@@ -26,5 +26,10 @@ urlpatterns = [
         view=views.generate_student_unique_id,
         name='generate_student_id'
     ),
+    url(
+        regex=r'^generate-child-cash-programme/$',
+        view=views.generate_child_cash_programme,
+        name='generate_cash_programme'
+    ),
 
 ]

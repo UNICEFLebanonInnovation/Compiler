@@ -21,12 +21,6 @@ from .tables import BootstrapTable, ExporterTable
 def generate_child_unique_id(request):
     from student_registration.backends.threads import generate_child_unique_id
 
-    from student_registration.child.models import Child
-
-    # print(Child.objects.all().count())
-    # print(Child.objects.filter(unicef_id__isnull=False).count())
-    # print(Child.objects.filter(unicef_id__isnull=True).count())
-
     generate_child_unique_id()
     return HttpResponse("records saved successfully")
 
@@ -34,13 +28,14 @@ def generate_child_unique_id(request):
 def generate_all_child_unique_id(request):
     from student_registration.backends.threads import generate_all_child_unique_id
 
-    # from student_registration.child.models import Child
-
-    # print(Child.objects.all().count())
-    # print(Child.objects.filter(unicef_id__isnull=False).count())
-    # print(Child.objects.filter(unicef_id__isnull=True).count())
-
     generate_all_child_unique_id()
+    return HttpResponse("records saved successfully")
+
+
+def generate_child_cash_programme(request):
+    from student_registration.backends.threads import generate_child_programmes
+
+    generate_child_programmes()
     return HttpResponse("records saved successfully")
 
 

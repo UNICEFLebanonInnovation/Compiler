@@ -1,10 +1,16 @@
-{% extends "base6.html" %}
+{% extends "base2a.html" %}
 {% load staticfiles i18n %}
 {% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
 
-{% block head_title %}School - Meeting{% endblock %}
+{% block project_title %}School | Meeting form{% endblock %}
 
 {% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
     <!-- Load jQuery first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -25,26 +31,64 @@
     </style>
 {% endblock %}
 
-{% block content-full-page %}
-<section>
-    <div id="resume" class="inner-content">
-        <section id="page-title" class="inline-form inner-section ui-menu-color02">
-            <div class="container-fluid nopadding">
-                <h3 class="font-accident-two-light color01 uppercase"
-                    data-animation-origin="right"
-                    data-animation-duration="400"
-                    data-animation-delay="100"
-                    data-animation-distance="50px">{% trans "Meeting" %}</h3>
-            </div>
-        </section>
-        <section class="inline-form inner-section light bg-color01">
-            <div class="container-fluid nopadding">
-                {{ form.errors }}
-                {% crispy form %}
-            </div>
-        </section>
-    </div>
-</section>
+{% block main_content %}
+
+<div class="app-page-title">
+      <div class="page-title-wrapper">
+          <div class="page-title-heading">
+              <div>
+                  <div class="page-title-head center-elem page-title-heading">
+                      <span class="d-inline-block pr-2">
+                          <i class="fa fa-id-card"></i>
+                      </span>
+                      <span class="d-inline-block">
+                        Meeting
+                      </span>
+                  </div>
+                  <div class="page-title-subheading opacity-10">
+                      <nav class="" aria-label="breadcrumb">
+                          <ol class="breadcrumb">
+                              <li class="breadcrumb-item">
+                                  <a href="{% url 'clm:bridging_page' %}">
+                                      <i aria-hidden="true" class="fa fa-home"></i>
+                                  </a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:school_list' %}">School List</a>
+                              </li>
+                              <li class="breadcrumb-item">
+                                    <a href="{% url 'schools:meeting_list' school_id %}">Meeting List</a>
+                              </li>
+                               <li class="breadcrumb-item">
+                                 Meeting
+                              </li>
+
+                          </ol>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+          <div class="page-title-actions"></div>
+      </div>
+</div>
+
+        <!--{{ form.errors }}-->
+
+<div class="main-card mb-3 card">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                        <div class="form-wizard-content">
+
+                                           {% crispy form 'bootstrap4' %}
+                                        </div>
+                                    </div>
+                                    <div class="divider"></div>
+
+                                    <div class="clearfix">
+                                        <a href="{% url 'schools:meeting_list' school_id %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
+                                    </div>
+                                </div>
+                            </div>
 
 <script type="text/javascript">
     $(document).ready(function() {

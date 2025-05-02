@@ -83,6 +83,43 @@ def generate_bulk_unique_id(data):
     return {int(indiv["id"]): indiv["unicef_id"] for indiv in data}
 
 
+def get_api_programmes(token, data):
+
+    try:
+
+        headers = CaseInsensitiveDict()
+        headers["Authorization"] = token
+        json_data = json.dumps(data)
+
+        resp = requests.post(settings.UNIQUE_PROGRAMMES_API_URL, headers=headers, data=json_data)
+        print(resp)
+        print(resp.text)
+        result = json.loads(resp.text)
+
+        individuals = result["individuals"] if "individuals" in result else []
+        if len(individuals) == 1:
+            return individuals[0]
+        return individuals
+    except Exception as ex:
+        print(ex)
+        return 0
+
+
+def get_bulk_programmes(data):
+    token = get_api_token()
+    if not token:
+        return 0
+
+    data = get_api_programmes(token, data)
+
+    result = {
+        int(indiv["unique_id"]): indiv["programmes"]
+        for indiv in data
+        if "programmes" in indiv
+    }
+    return result
+
+
 def generate_id(
             first_name,
             father_name,
