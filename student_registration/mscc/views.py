@@ -804,6 +804,47 @@ def export_list_background(request):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
+def export_child_list_background(request):
+    try:
+        cursor = connection.cursor()
+
+        vw_mscc_data_str = "SELECT * FROM vw_mscc_child "
+        cursor.execute(vw_mscc_data_str)
+        mscc_data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            # Create CSV for vw_mscc_data
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
+
+            # Add BOM to handle Arabic text correctly
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)  # Write headers
+
+            for row in mscc_data:
+                encoded_row = [smart_str(cell) for cell in row]
+                csv_writer.writerow(encoded_row)
+
+            # Add CSV to ZIP
+            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
+
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        file_path = os.path.join('export', file_name)
+
+        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+
+        return HttpResponse(file_name)
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+
 class MyAzureStorage(AzureStorage):
     location = "export"
 
