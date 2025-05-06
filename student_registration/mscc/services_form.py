@@ -26,6 +26,7 @@ from .models import (
     YouthAssessment,
     YouthReferral,
     Recreational,
+    LegoService,
     YES_NO,
     AGREE_DISAGREE
 )
@@ -2564,3 +2565,146 @@ class RecreationalForm(forms.ModelForm):
     class Meta:
         model = Recreational
         fields = ()
+
+
+class LegoServiceForm(forms.ModelForm):
+    # Children 7-14 years
+    participating_lego_sessions = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Is the child participating in CBPSS LEGO sessions?')
+    )
+    # Children 3-14 years
+    participating_education_sessions = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Is the child participating in Education sessions supported by LEGO activities?')
+    )
+    # Children 3-14 years
+    participating_lego_play_sessions = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=YES_NO,
+        label=_('Is the child participating in LEGO free-play sessions?')
+    )
+
+    child_age = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        registry = kwargs.pop('registry', None)
+        instance = kwargs.pop('instance', None)
+        age = int(kwargs.pop('age', None))
+
+        super(LegoServiceForm, self).__init__(*args, **kwargs)
+
+        if 3 <= age <= 14:
+            self.fields['participating_education_sessions'].required = True
+            self.fields['participating_lego_play_sessions'].required = True
+        if 7 <= age <= 14:
+            self.fields['participating_lego_sessions'].required = True
+            self.fields['participating_education_sessions'].required = True
+            self.fields['participating_lego_play_sessions'].required = True
+
+        form_action = reverse('mscc:service_lego_add', kwargs={'registry': registry, 'age': age})
+        if instance:
+            form_action = reverse('mscc:service_lego_edit', kwargs={'registry': registry, 'age': age, 'pk': instance})
+
+        self.fields['child_age'].initial = age
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+
+        if 3 <= age <= 14:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        Div('child_age', css_class='col-md-6'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participating_education_sessions', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participating_lego_sessions', css_class='col-md-8'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('participating_lego_play_sessions', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                )
+            )
+        if 7 <= age <= 14:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        Div('child_age', css_class='col-md-6'),
+                        css_class='row card-body d-none'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participating_lego_sessions', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('participating_education_sessions', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('participating_lego_play_sessions', css_class='col-md-8'),
+                        css_class='row card-body'
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-1'
+                )
+            )
+
+    def save(self, request=None, instance=None, registry=None):
+
+        validated_data = request.POST
+
+        if not instance:
+            instance = LegoServiceForm.objects.create(registration_id=registry)
+        else:
+            instance = LegoServiceForm.objects.get(id=instance)
+
+        instance.participating_lego_sessions = validated_data.get('participating_lego_sessions')
+        instance.participating_education_sessions = validated_data.get('participating_education_sessions')
+        instance.participating_lego_play_sessions = validated_data.get('participating_lego_play_sessions')
+        instance.modified_by = request.user
+        instance.save()
+
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+        update_service(registry_id=registry, service_name='LEGO', service_id=instance.id)
+
+        return instance
+
+    registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    class Meta:
+        model = LegoService
+        fields = (
+            'participating_lego_sessions',
+            'participating_education_sessions',
+            'participating_lego_play_sessions',
+        )
+

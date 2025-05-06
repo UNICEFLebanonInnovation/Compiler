@@ -2139,3 +2139,38 @@ class Recreational(TimeStampedModel):
         ordering = ['id']
         verbose_name = "Recreational"
         verbose_name_plural = "Recreational"
+
+
+class LegoService(TimeStampedModel):
+
+    registration = models.ForeignKey(
+        Registration,
+        blank=False, null=True,
+        related_name='+',
+    )
+    participating_lego_sessions = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child participating in CBPSS LEGO sessions?')
+    )
+    participating_education_sessions = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child participating in Education sessions supported by LEGO activities?')
+    )
+    participating_lego_play_sessions = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+        verbose_name=_('Is the child participating in LEGO free-play sessions?')
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "LEGO"
+        verbose_name_plural = "LEGO"

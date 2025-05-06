@@ -476,3 +476,42 @@ class RecreationalFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry, instance=instance)
         return super(RecreationalFormView, self).form_valid(form)
+
+
+class LegoServiceFormView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      FormView):
+    template_name = 'mscc/service_lego_form.html'
+    form_class = LegoServiceForm
+    success_url = ''
+    group_required = [u"MSCC", u"MSCC_CENTER"]
+
+    def get_success_url(self):
+        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
+
+    def get_context_data(self, **kwargs):
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['registry'] = self.kwargs['registry']
+        return super(LegoServiceFormView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        registry = self.kwargs['registry']
+        age = self.kwargs['age']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        data = {}
+        if self.request.method == "POST":
+            return LegoServiceForm(self.request.POST, instance=instance, registry=registry, age=age, request=self.request)
+        else:
+            if instance:
+                data = to_array(LegoServiceForm.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                return LegoServiceForm(data, registry=registry, age=age, instance=instance, request=self.request)
+            return LegoServiceForm(registry=registry, age=age, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        registry = self.kwargs['registry']
+        instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
+        form.save(request=self.request, registry=registry, instance=instance)
+        return super(LegoServiceFormView, self).form_valid(form)
+

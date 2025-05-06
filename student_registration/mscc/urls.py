@@ -337,4 +337,15 @@ urlpatterns = [
         view=views.get_file_csv,
         name='export_download_csv'
     ),
+
+    url(
+        regex=r'^Services/Lego-Add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',
+        view=services_view.LegoServiceFormView.as_view(),
+        name='service_lego_add'
+    ),
+    url(
+        regex=r'^Services/Lego-Edit/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        view=services_view.LegoServiceFormView.as_view(),
+        name='service_lego_edit'
+    ),
 ]
