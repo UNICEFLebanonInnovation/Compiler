@@ -505,7 +505,7 @@ class LegoServiceFormView(LoginRequiredMixin,
             return LegoServiceForm(self.request.POST, instance=instance, registry=registry, age=age, request=self.request)
         else:
             if instance:
-                data = to_array(LegoServiceForm.Meta.fields, HealthNutritionService.objects.get(id=instance))
+                data = to_array(LegoServiceForm.Meta.fields, LegoService.objects.get(id=instance))
                 return LegoServiceForm(data, registry=registry, age=age, instance=instance, request=self.request)
             return LegoServiceForm(registry=registry, age=age, instance=instance, request=self.request)
 

@@ -2682,9 +2682,9 @@ class LegoServiceForm(forms.ModelForm):
         validated_data = request.POST
 
         if not instance:
-            instance = LegoServiceForm.objects.create(registration_id=registry)
+            instance = LegoService.objects.create(registration_id=registry)
         else:
-            instance = LegoServiceForm.objects.get(id=instance)
+            instance = LegoService.objects.get(id=instance)
 
         instance.participating_lego_sessions = validated_data.get('participating_lego_sessions')
         instance.participating_education_sessions = validated_data.get('participating_education_sessions')
