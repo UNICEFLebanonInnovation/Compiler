@@ -112,23 +112,28 @@ class CashProgrammeThreading(object):
     def run(self):
         from student_registration.child.models import Child
 
-        records = Child.objects.exclude(unicef_id__isnull=True, cash_programmes__isnull=False)[0:10]
+        records = Child.objects.exclude(unicef_id__isnull=True, cash_programmes__isnull=False)
 
-        payload = {
-            "individuals": [staff.unicef_id for staff in records]
-        }
+        slicing = 10
 
-        result = get_bulk_programmes(payload)
+        for key in range(1, 100):
+            batch = records[slicing * key:(key + 1) * slicing]  # Correct slicing
 
-        # Update Django records in bulk
-        for record in records:
-            if record.pk in result:
-                print(result[record.unicef_id])
-                record.cash_programmes = result[record.unicef_id]
-                record.save()
-            else:
-                record.cash_programmes = {}
-                record.save()
+            payload = {
+                "individuals": [staff.unicef_id for staff in batch]
+            }
+
+            result = get_bulk_programmes(payload)
+
+            # Update Django records in bulk
+            for record in batch:
+                if record.pk in result:
+                    print(result[record.unicef_id])
+                    record.cash_programmes = result[record.unicef_id]
+                    record.save()
+                else:
+                    record.cash_programmes = {}
+                    record.save()
 
         print("End Thread")
 

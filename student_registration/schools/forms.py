@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.shortcuts import  render
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, ButtonHolder, Reset
 
 from .models import School, PartnerOrganization, EducationYear, Evaluation, Club, ClubType,  Meeting, CommunityInitiative, HealthVisit
 from student_registration.locations.models import Location
@@ -64,52 +64,52 @@ class ProfileForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('School information') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('director_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('land_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('fax_number', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('director_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">5</span>'),
                     Div('email', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">6</span>'),
                     Div('certified_foreign_language', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">7</span>'),
                     Div('comments', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">8</span>'),
                     Div('weekend', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">9</span>'),
                     Div('it_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('it_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('coordinator', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('is_2nd_shift', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('is_alp', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('number_students_2nd_shift', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('number_students_alp', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -120,24 +120,24 @@ class ProfileForm(forms.ModelForm):
                          _('Bank Accounts Information') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('iban_base1', css_class='col-md-5'),
 
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('bank_Base1', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('branch_base1', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('iban_base2', css_class='col-md-5'),
 
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">5</span>'),
                     Div('bank_Base2', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">6</span>'),
                     Div('branch_base2', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -148,13 +148,13 @@ class ProfileForm(forms.ModelForm):
                          _('Current academic year') + ' ' + current_education_year.name + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('academic_year_start', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('academic_year_end', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('academic_year_exam_end', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -219,13 +219,13 @@ class PartnerForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('CLM round') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('bln_round', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('rs_round', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('cbece_round', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -282,10 +282,10 @@ class EvaluationForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('total_teaching_days', css_class='col-md-4'),
                     Div('total_teaching_days_tillnow', css_class='col-md-4'),
-                    css_class='row',
+                    css_class='row card-body',
                     style="background: #E3F2FC;",
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -300,14 +300,14 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">1</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">1</span>'),
                             HTML(_('Have you implemented distance education ?')),
                             Div('implemented_de_prep', css_class='col-md-3', id='implemented-de-prep'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         Div(
                             Div('reasons_no_de_prep', css_class='col-md-10', id='reasons-no-de-prep'),
-                            css_class='row',
+                            css_class='row card-body',
 
                         ),
                         css_class='bd-callout bd-callout-warning',
@@ -315,18 +315,18 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">2</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">2</span>'),
                             Div('steps_de_prep', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">3</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">3</span>'),
                             Div('challenges_de_prep', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -334,9 +334,9 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">4</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">4</span>'),
                             Div('evaluate_steps_de_prep', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -359,11 +359,11 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">1</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">1</span>'),
                             HTML(_('Have you implemented distance education ?')),
                             Div('implemented_de', css_class='col-md-3'),
                             Div('reasons_no_de', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
 
@@ -371,18 +371,18 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">2</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">2</span>'),
                             Div('steps_de', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">3</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">3</span>'),
                             Div('challenges_de', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -390,9 +390,9 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">4</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">4</span>'),
                             Div('evaluate_steps_de', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -414,11 +414,11 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">1</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">1</span>'),
                             HTML(_('Have you implemented distance education ?')),
                             Div('implemented_de_2', css_class='col-md-3'),
                             Div('reasons_no_de_2', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
 
@@ -426,18 +426,18 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">2</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">2</span>'),
                             Div('steps_de_2', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">3</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">3</span>'),
                             Div('challenges_de_2', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -445,9 +445,9 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">4</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">4</span>'),
                             Div('evaluate_steps_de_2', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -467,11 +467,11 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">1</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">1</span>'),
                             HTML(_('Have you implemented distance education ?')),
                             Div('implemented_de_3', css_class='col-md-3'),
                             Div('reasons_no_de_3', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
 
@@ -479,18 +479,18 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">2</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">2</span>'),
                             Div('steps_de_3', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">3</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">3</span>'),
                             Div('challenges_de_3', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -498,9 +498,9 @@ class EvaluationForm(forms.ModelForm):
                     Fieldset(
                         None,
                         Div(
-                            HTML('<span class="badge badge-default">4</span>'),
+                            HTML('<span class="badge-form-2 badge-pill">4</span>'),
                             Div('evaluate_steps_de_3', css_class='col-md-10'),
-                            css_class='row',
+                            css_class='row card-body',
                         ),
                         css_class='bd-callout bd-callout-warning'
                     ),
@@ -520,11 +520,11 @@ class EvaluationForm(forms.ModelForm):
                 Fieldset(
                     None,
                     Div(
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">1</span>'),
                         HTML(_('Have you implemented distance education ?')),
                         Div('implemented_de_9', css_class='col-md-3'),
                         Div('reasons_no_de_9', css_class='col-md-10'),
-                        css_class='row',
+                        css_class='row card-body',
                     ),
                     css_class='bd-callout bd-callout-warning'
 
@@ -532,18 +532,18 @@ class EvaluationForm(forms.ModelForm):
                 Fieldset(
                     None,
                     Div(
-                        HTML('<span class="badge badge-default">2</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">2</span>'),
                         Div('steps_de_9', css_class='col-md-10'),
-                        css_class='row',
+                        css_class='row card-body',
                     ),
                     css_class='bd-callout bd-callout-warning'
                 ),
                 Fieldset(
                     None,
                     Div(
-                        HTML('<span class="badge badge-default">3</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">3</span>'),
                         Div('challenges_de_9', css_class='col-md-10'),
-                        css_class='row',
+                        css_class='row card-body',
                     ),
                     css_class='bd-callout bd-callout-warning'
                 ),
@@ -551,9 +551,9 @@ class EvaluationForm(forms.ModelForm):
                 Fieldset(
                     None,
                     Div(
-                        HTML('<span class="badge badge-default">4</span>'),
+                        HTML('<span class="badge-form-2 badge-pill">4</span>'),
                         Div('evaluate_steps_de_9', css_class='col-md-10'),
-                        css_class='row',
+                        css_class='row card-body',
                     ),
                     css_class='bd-callout bd-callout-warning'
                 ),
@@ -562,9 +562,9 @@ class EvaluationForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('other_notes_de', css_class='col-md-10'),
-                    css_class='row',
+                    css_class='row card-body',
                     style="background: #E3F2FC;",
                 ),
             ),
@@ -668,7 +668,7 @@ class Classroom_Form(forms.ModelForm):
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -687,11 +687,11 @@ class Classroom_Form(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c2_ara_completed', css_class='col-md-10'),
@@ -703,11 +703,11 @@ class Classroom_Form(forms.ModelForm):
                     Div('c2_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c2_eng_completed', css_class='col-md-10'),
@@ -719,11 +719,11 @@ class Classroom_Form(forms.ModelForm):
                     Div('c2_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c2_fr_completed', css_class='col-md-10'),
@@ -735,11 +735,11 @@ class Classroom_Form(forms.ModelForm):
                     Div('c2_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c2_math_completed', css_class='col-md-10'),
@@ -751,11 +751,11 @@ class Classroom_Form(forms.ModelForm):
                     Div('c2_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c2_sc_completed', css_class='col-md-10'),
@@ -767,11 +767,11 @@ class Classroom_Form(forms.ModelForm):
                     Div('c2_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c2_civic_completed', css_class='col-md-10'),
@@ -783,11 +783,11 @@ class Classroom_Form(forms.ModelForm):
                     Div('c2_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c2_geo_completed', css_class='col-md-10'),
@@ -799,7 +799,7 @@ class Classroom_Form(forms.ModelForm):
                     Div('c2_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -905,7 +905,7 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -924,11 +924,11 @@ class Classroom_Form_c1(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c1_ara_completed', css_class='col-md-10'),
@@ -940,11 +940,11 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('c1_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c1_eng_completed', css_class='col-md-10'),
@@ -956,11 +956,11 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('c1_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c1_fr_completed', css_class='col-md-10'),
@@ -972,11 +972,11 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('c1_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c1_math_completed', css_class='col-md-10'),
@@ -988,11 +988,11 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('c1_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c1_sc_completed', css_class='col-md-10'),
@@ -1004,11 +1004,11 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('c1_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c1_civic_completed', css_class='col-md-10'),
@@ -1020,11 +1020,11 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('c1_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c1_geo_completed', css_class='col-md-10'),
@@ -1036,7 +1036,7 @@ class Classroom_Form_c1(forms.ModelForm):
                     Div('c1_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -1142,7 +1142,7 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -1161,11 +1161,11 @@ class Classroom_Form_c3(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c3_ara_completed', css_class='col-md-10'),
@@ -1177,11 +1177,11 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('c3_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c3_eng_completed', css_class='col-md-10'),
@@ -1193,11 +1193,11 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('c3_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c3_fr_completed', css_class='col-md-10'),
@@ -1209,11 +1209,11 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('c3_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c3_math_completed', css_class='col-md-10'),
@@ -1225,11 +1225,11 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('c3_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c3_sc_completed', css_class='col-md-10'),
@@ -1241,11 +1241,11 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('c3_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c3_civic_completed', css_class='col-md-10'),
@@ -1257,11 +1257,11 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('c3_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c3_geo_completed', css_class='col-md-10'),
@@ -1273,7 +1273,7 @@ class Classroom_Form_c3(forms.ModelForm):
                     Div('c3_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -1379,7 +1379,7 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -1398,11 +1398,11 @@ class Classroom_Form_c4(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c4_ara_completed', css_class='col-md-10'),
@@ -1414,11 +1414,11 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('c4_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c4_eng_completed', css_class='col-md-10'),
@@ -1430,11 +1430,11 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('c4_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c4_fr_completed', css_class='col-md-10'),
@@ -1446,11 +1446,11 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('c4_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c4_math_completed', css_class='col-md-10'),
@@ -1462,11 +1462,11 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('c4_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c4_sc_completed', css_class='col-md-10'),
@@ -1478,11 +1478,11 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('c4_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c4_civic_completed', css_class='col-md-10'),
@@ -1494,11 +1494,11 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('c4_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c4_geo_completed', css_class='col-md-10'),
@@ -1510,7 +1510,7 @@ class Classroom_Form_c4(forms.ModelForm):
                     Div('c4_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -1616,7 +1616,7 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -1635,11 +1635,11 @@ class Classroom_Form_c5(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c5_ara_completed', css_class='col-md-10'),
@@ -1651,11 +1651,11 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('c5_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c5_eng_completed', css_class='col-md-10'),
@@ -1667,11 +1667,11 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('c5_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c5_fr_completed', css_class='col-md-10'),
@@ -1683,11 +1683,11 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('c5_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c5_math_completed', css_class='col-md-10'),
@@ -1699,11 +1699,11 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('c5_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c5_sc_completed', css_class='col-md-10'),
@@ -1715,11 +1715,11 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('c5_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c5_civic_completed', css_class='col-md-10'),
@@ -1731,11 +1731,11 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('c5_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c5_geo_completed', css_class='col-md-10'),
@@ -1747,7 +1747,7 @@ class Classroom_Form_c5(forms.ModelForm):
                     Div('c5_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -1853,7 +1853,7 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -1872,11 +1872,11 @@ class Classroom_Form_c6(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c6_ara_completed', css_class='col-md-10'),
@@ -1888,11 +1888,11 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('c6_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c6_eng_completed', css_class='col-md-10'),
@@ -1904,11 +1904,11 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('c6_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c6_fr_completed', css_class='col-md-10'),
@@ -1920,11 +1920,11 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('c6_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c6_math_completed', css_class='col-md-10'),
@@ -1936,11 +1936,11 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('c6_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c6_sc_completed', css_class='col-md-10'),
@@ -1952,11 +1952,11 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('c6_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c6_civic_completed', css_class='col-md-10'),
@@ -1968,11 +1968,11 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('c6_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c6_geo_completed', css_class='col-md-10'),
@@ -1984,7 +1984,7 @@ class Classroom_Form_c6(forms.ModelForm):
                     Div('c6_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -2102,7 +2102,7 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -2121,11 +2121,11 @@ class Classroom_Form_c7(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_ara_completed', css_class='col-md-10'),
@@ -2137,11 +2137,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_eng_completed', css_class='col-md-10'),
@@ -2153,11 +2153,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_fr_completed', css_class='col-md-10'),
@@ -2169,11 +2169,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_math_completed', css_class='col-md-10'),
@@ -2185,11 +2185,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_sc_completed', css_class='col-md-10'),
@@ -2201,11 +2201,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_civic_completed', css_class='col-md-10'),
@@ -2217,11 +2217,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_geo_completed', css_class='col-md-10'),
@@ -2233,11 +2233,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Physics') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_phy_completed', css_class='col-md-10'),
@@ -2249,11 +2249,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_phy_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Chemistry') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_che_completed', css_class='col-md-10'),
@@ -2265,11 +2265,11 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_che_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'History') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c7_his_completed', css_class='col-md-10'),
@@ -2281,7 +2281,7 @@ class Classroom_Form_c7(forms.ModelForm):
                     Div('c7_his_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -2401,7 +2401,7 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -2420,11 +2420,11 @@ class Classroom_Form_c8(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_ara_completed', css_class='col-md-10'),
@@ -2436,11 +2436,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_eng_completed', css_class='col-md-10'),
@@ -2452,11 +2452,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_fr_completed', css_class='col-md-10'),
@@ -2468,11 +2468,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_math_completed', css_class='col-md-10'),
@@ -2484,11 +2484,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_sc_completed', css_class='col-md-10'),
@@ -2500,11 +2500,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_civic_completed', css_class='col-md-10'),
@@ -2516,11 +2516,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_geo_completed', css_class='col-md-10'),
@@ -2532,11 +2532,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Physics') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_phy_completed', css_class='col-md-10'),
@@ -2548,11 +2548,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_phy_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Chemistry') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_che_completed', css_class='col-md-10'),
@@ -2564,11 +2564,11 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_che_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'History') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c8_his_completed', css_class='col-md-10'),
@@ -2580,7 +2580,7 @@ class Classroom_Form_c8(forms.ModelForm):
                     Div('c8_his_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -2704,7 +2704,7 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('steps_de_prep', css_class='col-md-10 hidden', hidden="true"),
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -2723,11 +2723,11 @@ class Classroom_Form_c9(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_ara_completed', css_class='col-md-10'),
@@ -2739,11 +2739,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_eng_completed', css_class='col-md-10'),
@@ -2755,11 +2755,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_fr_completed', css_class='col-md-10'),
@@ -2771,11 +2771,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_math_completed', css_class='col-md-10'),
@@ -2787,11 +2787,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_sc_completed', css_class='col-md-10'),
@@ -2803,11 +2803,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_civic_completed', css_class='col-md-10'),
@@ -2819,11 +2819,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_geo_completed', css_class='col-md-10'),
@@ -2835,11 +2835,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Physics') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_phy_completed', css_class='col-md-10'),
@@ -2851,11 +2851,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_phy_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Chemistry') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_che_completed', css_class='col-md-10'),
@@ -2867,11 +2867,11 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_che_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'History') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('c9_his_completed', css_class='col-md-10'),
@@ -2883,7 +2883,7 @@ class Classroom_Form_c9(forms.ModelForm):
                     Div('c9_his_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                   None,
@@ -2891,22 +2891,22 @@ class Classroom_Form_c9(forms.ModelForm):
                 Div(
                     HTML('<label> ' + _('Total of teachers') + '</label>'),
                     Div('c9_total_teachers', css_class='col-md-5'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<label> ' + _('Number of teachers who have committed to distance education') + '</label>'),
                     Div('c9_total_teachers_de', css_class='col-md-5'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                   HTML('<label> '+_('Total of students')+'</label>'),
                   Div('c9_total_std', css_class='col-md-4'),
-                  css_class='row',
+                  css_class='row card-body',
                 ),
                 Div(
                     HTML('<label> ' + _('Total of students they follow distance education') + '</label>'),
                     Div('c9_total_std_de', css_class='col-md-4'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
 
                 css_class='bd-callout bd-callout-warning'
@@ -3018,7 +3018,7 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('evaluate_steps_de_prep', css_class='col-md-10', hidden="true"),
                     Div('other_notes_de', css_class='col-md-10', hidden="true"),
 
-                    css_class='row',
+                    css_class='row card-body',
                 ),
             ),
             Fieldset(
@@ -3037,11 +3037,11 @@ class Classroom_Form_cprep(forms.ModelForm):
                         'Number of lessons remaining') + '</font></label> </th>'),
 
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Arabic') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('cprep_ara_completed', css_class='col-md-10'),
@@ -3053,11 +3053,11 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('cprep_ara_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'English') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('cprep_eng_completed', css_class='col-md-10'),
@@ -3069,11 +3069,11 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('cprep_eng_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Frensh') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('cprep_fr_completed', css_class='col-md-10'),
@@ -3085,11 +3085,11 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('cprep_fr_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Math') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('cprep_math_completed', css_class='col-md-10'),
@@ -3101,11 +3101,11 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('cprep_math_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Science') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('cprep_sc_completed', css_class='col-md-10'),
@@ -3117,11 +3117,11 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('cprep_sc_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Civic Education') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('cprep_civic_completed', css_class='col-md-10'),
@@ -3133,11 +3133,11 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('cprep_civic_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
                     HTML('<table border="1" width="100%">'),
-                    HTML('<th width="25%" align="center"><span class="badge badge-default">' + _(
+                    HTML('<th width="25%" align="center"><span class="badge-form-2 badge-pill">' + _(
                         'Geography') + '</span></th>'),
                     HTML('<th width="25%" align="center">'),
                     Div('cprep_geo_completed', css_class='col-md-10'),
@@ -3149,7 +3149,7 @@ class Classroom_Form_cprep(forms.ModelForm):
                     Div('cprep_geo_remaining_de', css_class='col-md-10'),
                     HTML('</th>'),
                     HTML('</table>'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 css_class='bd-callout bd-callout-warning'
             ),
@@ -3365,167 +3365,148 @@ class SchoolForm(forms.ModelForm):
         self.helper.form_action = form_action
 
         self.helper.layout = Layout(
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School information') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('type', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('director_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">5</span>'),
                     Div('land_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">6</span>'),
                     Div('email', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">7</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">8</span>'),
                     Div('district', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">9</span>'),
                     Div('cadaster', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('longitude', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('latitude', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('is_closed', css_class='col-md-3 '),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
+                css_id='step-1'
             ),
-            Fieldset(
-                None,
-                Div(HTML('<span>B</span>'), css_class='block_tag'),
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Emrollement Information') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('registration_level', css_class='col-md-3  multiple-checbkoxes'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('school_capacity', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('empty_building', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('number_children', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">5</span>'),
                     Div('number_children_male', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">6</span>'),
                     Div('number_children_female', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">7</span>'),
                     Div('number_children_lebanese', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">8</span>'),
                     Div('number_children_non_lebanese', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">9</span>'),
                     Div('number_children_sbp', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('number_children_male_sbp', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('number_children_female_sbp', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('number_children_lebanese_sbp', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('number_children_non_lebanese_sbp', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('CWD_accessible', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('receive_supplies', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('internet_available', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">17</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('digital_learning_programme', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_school_digital_capacity">17.1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_school_digital_capacity">17.1</span>'),
                     Div('school_digital_capacity', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">18</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('number_dirasa_children_disability', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">19</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
                     Div('number_total_children_disability', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning B_right_border'
+                css_id='step-2'
             ),
             Fieldset(
-                None,
-                Div(HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('working_days', css_class='col-md-2  multiple-checbkoxes'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('academic_year_start', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('academic_year_end', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning C_right_border'
+                css_id='step-3'
             ),
-            Fieldset(
-                None,
-                Div(HTML('<span>D</span>'), css_class='block_tag'),
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('WFP') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('benefit_wfp_service', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_wfp_service_type">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_wfp_service_type">2</span>'),
                     Div('wfp_service_type', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning D_right_border'
-            ),
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
-                    'Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
-                css_class='button-group'
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-4'
             )
         )
 
@@ -3645,7 +3626,6 @@ class ClubForm(forms.ModelForm):
 
     school_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
-
     def __init__(self, *args, **kwargs):
 
         self.request = kwargs.pop('request', None)
@@ -3663,36 +3643,29 @@ class ClubForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Club information') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('club_name', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('number_clubs', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('club_type', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('number_children', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
-            ),
-
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/club-list/' + school_id + '" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
-                css_class='button-group'
-                )
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            )
         )
 
     def save(self, request=None, instance=None, school_id=None):
@@ -3760,32 +3733,23 @@ class MeetingForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Meeting Infromation') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('meeting_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('meeting_date', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('number_participants', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
-            ),
-
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-1'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/meeting-list/' + school_id +
-                     '" translation="' + _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
-                    'Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' +
-                     _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
-                    'Back to school list') + '</a>'),
-                css_class='button-group'
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
             )
         )
 
@@ -3847,29 +3811,22 @@ class CommunityInitiativeForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Club information') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('community_group_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('number_initiatives', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
-            ),
-
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/community-initiative-list/' + school_id + '" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' + _(
-                    'Are you sure you want to cancel?') + '">' + _('Back to school list') + '</a>'),
-                css_class='button-group'
-                )
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
+            )
         )
 
     def save(self, request=None, instance=None, school_id=None):
@@ -3940,41 +3897,33 @@ class HealthVisitForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Health Visit information') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('focal_point_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('number_visits', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('date_first_visit', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('date_last_visit', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">5</span>'),
                     Div('summary', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body',
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
-            ),
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-1'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/health-visit-list/' + school_id +
-                     '" translation="' + _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
-                    'Back to list') + '</a>'),
-                HTML('<a class="btn btn-info cancel-button" href="/schools/school-list/" translation="' +
-                     _('Are you sure you want to cancel?') + '" style="margin-left: 8px;">' + _(
-                    'Back to school list') + '</a>'),
-                css_class='button-group'
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
             )
         )
 

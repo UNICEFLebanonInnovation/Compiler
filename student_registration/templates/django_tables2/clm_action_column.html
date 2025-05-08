@@ -1,70 +1,53 @@
 {% load staticfiles i18n %}
 {% load util_tags %}
 
-<li class="dropdown">
-   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions</a>
-   <ul class="dropdown-menu">
-      <li>
-        {% if column.attrs.programme|is_allowed_edit %}
-            <a type="button" href="{{ column.attrs.url_edit }}{{ record.id }}">
-        {% else %}
-            <a type="button" style="opacity: 0.6; cursor: not-allowed;">
-        {% endif %}
-           <button class="btn btn-info"><i class="icon-edit-sign icon-white"> </i></button>
-           {% trans "Edit" %}
-            </a>
-      </li>
-     {% if record.owner.id == request.user.id and record.total_absent_days < 40 %}
-        <li>
-          <a type="button" href="{{ column.attrs.url_delete }}{{ record.id }}" class="dropdown-item delete-student" data-registration-id="{{ record.id }}">
-            <button id="delete-button-{{ record.id }}" class="btn btn-danger delete-button">
-              <i class="icon-trash icon-white"> </i>
-            </button>
-            {% trans "Delete" %}
-          </a>
-        </li>
+<div class="mb-2 mr-2 btn-group dropdown" style="position: relative;">
+    <button class="btn btn-outline-primary">Actions</button>
+    <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="dropdown-toggle-split dropdown-toggle btn btn-outline-primary"><span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu" x-placement="bottom-start">
+
+       {% if column.attrs.programme|is_allowed_edit %}
+        <a type="button" href="{{ column.attrs.url_edit }}{{ record.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Edit" %}</a>
       {% else %}
-        <li>
-          <a type="button" style="opacity: 0.6; cursor: not-allowed;">
-            <button class="btn btn-danger delete-button" disabled>
-              <i class="icon-trash icon-white"></i>
-            </button>
-            {% trans "Delete" %}
-          </a>
-        </li>
+        <a type="button" href="" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Edit" %}</a>
       {% endif %}
 
-     <li>
-            <a type="button" href="{{ column.attrs.url_post_assessment }}{{ record.id }}?v=2">
-           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
-           {% trans "Post-Assessment" %}
-            </a>
-      </li>
-     <li>
-            <a type="button" href="{{ column.attrs.url_mid_assessment1 }}{{ record.id }}{{ '/1' }}">
-           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
-           {% trans "Mid-Assessment 1" %}
-            </a>
-      </li>
+      {% if record.owner.id == request.user.id and record.total_absent_days < 40 %}
+        <a type="button" href="{{ column.attrs.url_delete }}{{ record.id }}" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
+          <button id="delete-button-{{ record.id }}" class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-delete btn-icon-wrapper"> </i></button>
+          {% trans "Delete" %}</a>
+      {% else %}
+        <a type="button" href="" tabindex="0" class="dropdown-item delete-student"  data-registration-id="{{ record.id }}">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-delete btn-icon-wrapper"> </i></button>
+          {% trans "Delete" %}</a>
+      {% endif %}
 
-     <li>
-            <a type="button" href="{{ column.attrs.url_mid_assessment2 }}{{ record.id }}{{ '/2' }}">
-           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
-           {% trans "Mid-Assessment 2" %}
-            </a>
-      </li>
+<div tabindex="-1" class="dropdown-divider"></div>
 
-     <li>
-            <a type="button" href="{{ column.attrs.url_followup }}{{ record.id }}">
-           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
-           {% trans "Follow-up" %}
-            </a>
-      </li>
-     <li>
-            <a type="button" href="{{ column.attrs.url_service }}{{ record.id }}">
-           <button class="btn btn-info"><i class="icon-synch-sign icon-white"> </i></button>
-           {% trans "Services" %}
-            </a>
-      </li>
-   </ul>
-</li>
+        <a type="button" href="{{ column.attrs.url_post_assessment }}{{ record.id }}?v=2" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Post-Assessment" %}</a>
+
+        <a type="button" href="{{ column.attrs.url_mid_assessment1 }}{{ record.id }}/1" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Mid-Assessment 1" %}</a>
+
+        <a type="button" href="{{ column.attrs.url_mid_assessment2 }}{{ record.id }}/2" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Mid-Assessment 2" %}</a>
+
+        <a type="button" href="{{ column.attrs.url_followup }}{{ record.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Follow-up" %}</a>
+
+        <a type="button" href="{{ column.attrs.url_service }}{{ record.id }}" tabindex="0" class="dropdown-item">
+          <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
+          {% trans "Services" %}</a>
+
+    </div>
+</div>
