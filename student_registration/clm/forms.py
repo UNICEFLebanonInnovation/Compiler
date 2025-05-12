@@ -7838,7 +7838,7 @@ class BridgingForm(CommonForm):
                     Div('math', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
-                css_id='step-4'
+                css_id='step-5'
             ),
             Div(
                 Div(
@@ -7852,7 +7852,7 @@ class BridgingForm(CommonForm):
                     Reset('reset', 'Reset',
                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
-                css_id='step-5'
+                css_id='step-6'
             )
         )
         school_id = 0

@@ -3701,7 +3701,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 class BridgingAddView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
-    template_name = 'clm/bridging_create_form.html'
+    template_name = 'clm/bridging_form.html'
     form_class = BridgingForm
     success_url = '/clm/bridging-list/'
     group_required = [u"CLM_Bridging"]
@@ -3799,7 +3799,7 @@ class BridgingAddView(LoginRequiredMixin,
 class BridgingEditView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        FormView):
-    template_name = 'clm/bridging_edit_form.html'
+    template_name = 'clm/bridging_form.html'
     form_class = BridgingForm
     success_url = '/clm/bridging-list/'
     group_required = [u"CLM_Bridging"]
