@@ -7,7 +7,7 @@
 {% load simple_tags %}
 {% bootstrap_css %}
 
-{% block project_title %}Teacher | Edit{% endblock %}
+{% block project_title %}Teacher | New{% endblock %}
 
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
@@ -89,13 +89,16 @@
 
 {% endblock %}
 
-{% block extra_js %}
 
-    <!--<script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>-->
-    <!--<script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>-->
+{% block extra_js %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <!--<script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>-->
     <!--<script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>-->
     <!--<script type="text/javascript" language="javascript" src="{% static 'js/school.js' %}?v=6"></script>-->
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=2"></script>
     <!--<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>-->
 
 {% endblock %}
+
+

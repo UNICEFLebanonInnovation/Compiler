@@ -224,7 +224,7 @@ class TeacherListView(LoginRequiredMixin,
 class TeacherAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
-    template_name = 'students/teacher_create_form.html'
+    template_name = 'students/teacher_form.html'
     form_class = TeacherForm
     success_url = '/students/teacher-list/'
     group_required = [u"CLM_TEACHER"]
@@ -273,7 +273,7 @@ class TeacherAddView(LoginRequiredMixin,
 class TeacherEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
-    template_name = 'students/teacher_edit_form.html'
+    template_name = 'students/teacher_form.html'
     form_class = TeacherForm
     success_url = '/students/teacher-list/'
     group_required = [u"CLM_TEACHER"]
