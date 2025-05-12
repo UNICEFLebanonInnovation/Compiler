@@ -1,71 +1,138 @@
-{% extends "base3.html" %}
-{% load staticfiles i18n %}
+{% extends "base2a.html" %}
+{% load static i18n %}
 {% load static %}
 {% load render_table from django_tables2 %}
 {% load bootstrap3 %}
 {% load util_tags %}
 {% bootstrap_css %}
 
-{% block head_title %}Registration - List{% endblock %}
+{% block project_title %}List{% endblock %}
 
-{% block extra_head %}
-    <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
-{% endblock %}
+{% block main_content %}
 
-{% block content-full-page %}
-<section>
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                          {{ request.user.username }}
+                                          - {{ request.user.partner }}
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'clm:bridging_page' %}">
+                                                        <i aria-hidden="true" class="fa fa-home"></i>
+                                                    </a>
+                                                </li>
+                                                <li class="breadcrumb-item">
+                                                  <a href="{% url 'clm:inclusion_list' %}">List</a></li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
+                        </div>
+</div>
 
-    <section id="page-title" class="inline-form inner-section ui-menu-color02">
-        <div class="container-fluid nopadding">
-            <h3 class="font-accident-two-light color01 uppercase"
-                data-animation-origin="right"
-                data-animation-duration="400"
-                data-animation-delay="100"
-                data-animation-distance="50px">{% trans "Disability specialized" %}
-            </h3>
+<div class="row">
+                        {% if 'Inclusion'|is_allowed_create %}
+                        <div class="col-md-6 col-lg-3">
+                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
+                                                <div>
+
+                                                    <span class="opacity-10 text-danger pr-2">
+                                                        <i class="fa fa-plus"></i>
+                                                    </span>
+                                                  <a href="{% url 'clm:inclusion_add' %}">
+                                                    Add new Child
+                                                  </a>
+                                                    <!--<small class="opacity-5 pl-1">%</small>-->
+                                                </div>
+                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
+                                                    <!--<div class="circle-progress circle-progress-danger-sm d-inline-block">-->
+                                                        <!--<small></small>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      {% endif %}
+
+                    </div>
+
+<div class="row">
+    <div class="col-lg-12">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters">
+    <div class="card">
+        <div id="headingOne" class="card-header">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+                <h5 class="m-0 p-0">
+                    <i class="pe-7s-filter text-primary"></i>
+                    Filters</h5>
+            </button>
         </div>
-    </section>
+        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
+            <div class="card-body">
+            <form action="" method="get" class="form form-inline">
+                {% bootstrap_form filter.form layout='inline' %}
 
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
-      <li class="breadcrumb-item active">{{ request.user.partner }}</li>
-      <li class="breadcrumb-item active">{{ request.user }}</li>
-    </ol>
+                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
+                  <i style="font-weight:bolder" class="pe-7s-search"></i>
+                </button>
 
-    <div class="pb-5 pr-5 list-filter" style="margin: 10px;">
-        <form action="" method="get" class="form form-inline">
-            {% bootstrap_form filter.form layout='inline' %}
-            <div class="">
-              <button class="btn btn-primary">
-                <i class="icon-validation-sign icon-white"></i>
-                {% trans "filter" %}
-              </button>
-              <a class="btn btn-warning" href="{% url 'clm:inclusion_list' %}" type="link">
-                <i class="icon-synch-sign icon-white"></i>
-                {% trans "reset" %}
-              </a>
+                <button href="" title="Cancel"
+                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
+                </button>
+
               {% if user|has_group:"EXPORT" %}
-              <a href="javascript:void(0);" class="btn btn-success" onclick="checkRoundBeforeExport()">
-                  <i class="icon-export-sign icon-white"></i>
-                  {% trans "Export data" %}
-              </a>
-              {% endif %}
-              {% if 'Inclusion'|is_allowed_create %}
-              <a href="{% url 'clm:inclusion_add' %}" class="btn btn-success">
-                  <i class="icon-plus-sign icon-white"></i>
-                  {% trans "Add new Child" %}
-              </a>
+                <a href="javascript:void(0);" onclick="checkRoundBeforeExport()" title="Download" class="btn btn-outline-success download-report">
+                    <i class="lnr-download"></i>
+                </a>
+                <div class = "downloading-message" style = "display:none">
+                  Loading...
+                </div>
               {% endif %}
 
+            </form>
             </div>
-        </form>
+        </div>
     </div>
-    <div class="" style="overflow: auto; margin: 10px;">
+</div>
+    </div>
+</div>
+
+<div class="row table-list">
+    <div class="col-lg-12">
+        <div class="card-hover-shadow-2x mb-3 card">
+            <div class="card-body">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap4">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-</section>
+{% endblock %}
+
+{% block modal %}
 
 {% endblock %}
 

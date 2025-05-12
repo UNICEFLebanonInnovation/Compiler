@@ -7,7 +7,7 @@ from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
-from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 from dal import autocomplete
 
 from student_registration.students.models import (
@@ -445,188 +445,167 @@ class InclusionForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
-                Div(
-                    HTML('<span>A.1</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search CLM student') + '</h4>')
-                ),
+            Div(
                 Div(
                     'clm_type',
                     'student_id',
                     'enrollment_id',
                     'partner_name',
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
                     HTML('<span class="badge badge-default"></span>'),
                     Div('search_clm_student', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
                     HTML('<p>' + _(
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
+                    css_class='row card-body'
                 ),
                 css_id='search_options_clm',
-                css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
+                css_class='child_data ' + display_registry
             ),
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<span>A</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
-                ),
-                Div(
-
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('new_registry', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('round', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('district', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('cadaster', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('location', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning child_data A_right_border'
+                css_class='child_data',
+                css_id='step-1'
             ),
-            Fieldset(
-                None,
-                Div(HTML('<span>B</span>'), css_class='block_tag'),
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('student_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('student_father_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('student_last_name', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('student_mother_fullname', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('student_sex', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_other_nationality">6.1</span>'),
+                    HTML('<span class="badge-form badge-pill" id="span_other_nationality">6.1</span>'),
                     Div('other_nationality', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('student_birthday_year', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge-form badge-pill">8</span>'),
                     Div('student_birthday_month', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge-form badge-pill">9</span>'),
                     Div('student_birthday_day', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('disability', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">14</span>'),
+                    # HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('first_attendance_date', css_class='col-md-3 d-none'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_rims_case_number">13.1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">13.1</span>'),
                     Div('rims_case_number', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning child_data B_right_border'
+                css_class='child_data',
+                css_id='step-2'
             ),
-            Fieldset(
-                None,
-                Div(HTML('<span>C</span>'), css_class='block_tag'),
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.1</span>'),
+                    HTML('<span class="badge-form badge-pill">3.1</span>'),
                     Div('phone_number_confirm', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3.2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3.2</span>'),
                     Div('phone_owner', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('second_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4.1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4.1</span>'),
                     Div('second_phone_number_confirm', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4.2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4.2</span>'),
                     Div('second_phone_owner', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5.1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">5.1</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_other_caregiver_relationship">5.2</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">6</span>'),
                     Div('caretaker_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">7</span>'),
                     Div('caretaker_middle_name', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">8</span>'),
                     Div('caretaker_last_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">9</span>'),
                     Div('caretaker_mother_name', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('caretaker_birthday_year', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('caretaker_birthday_month', css_class='col-md-2'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('caretaker_birthday_day', css_class='col-md-2'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('id_type', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -634,9 +613,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -644,9 +623,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
                     Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">16</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -654,9 +633,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">17</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
                     Div('recorded_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">18</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
                     Div('recorded_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
@@ -664,9 +643,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id2',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">19</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
                     Div('parent_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">20</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
                     Div('parent_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -674,9 +653,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id3',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">21</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">21</span>'),
                     Div('national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">22</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">22</span>'),
                     Div('national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -684,9 +663,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id3',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">23</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">23</span>'),
                     Div('parent_syrian_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">24</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">24</span>'),
                     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
@@ -694,9 +673,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id4',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">25</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">25</span>'),
                     Div('syrian_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">26</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">26</span>'),
                     Div('syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
@@ -704,9 +683,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id4',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">27</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">27</span>'),
                     Div('parent_sop_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">28</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">28</span>'),
                     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
@@ -714,9 +693,9 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id5',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">29</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">29</span>'),
                     Div('sop_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">30</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">30</span>'),
                     Div('sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
@@ -724,60 +703,49 @@ class InclusionForm(forms.ModelForm):
                     css_class='row child_id child_id5',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">30</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">30</span>'),
                     Div('parent_other_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">31</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">31</span>'),
                     Div('parent_other_number_confirm', css_class='col-md-4'),
                     css_class='row child_id child_id6',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">32</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">32</span>'),
                     Div('other_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">33</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">33</span>'),
                     Div('other_number_confirm', css_class='col-md-4'),
                     css_class='row child_id child_id6',
                 ),
-                css_class='bd-callout bd-callout-warning child_data C_right_border'
+                css_class='child_data',
+                css_id='step-3'
             ),
-            Fieldset(
-                None,
-                Div(HTML('<span>D</span>'), css_class='block_tag'),
+            Div(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('have_labour', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('labour_type', css_class='col-md-3', css_id='labours'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning child_data D_right_border d-none'
+                css_class='child_data',
+                css_id="step-4"
             ),
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<span>D</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Comments') + '</h4>')
-                ),
-                Div(
-                    # HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('additional_comments', css_class='col-md-12'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning child_data D_right_border'
-            ),
-
-
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
-                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/inclusion-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
-                css_class='button-group'
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-5'
             )
         )
 
@@ -1114,39 +1082,29 @@ class InclusionFollowupForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
-                ),
-            ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<span>A</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
-                ),
+            Div(
                 Div(
                     Div('clm_type', css_class='col-md-3 d-none'),
-
-                    css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('child_dropout', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_child_dropout_specify">1.1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    Div('child_dropout', css_class='col-md-6'),
+                    HTML('<span class="badge-form badge-pill" id="span_child_dropout_specify">2</span>'),
                     Div('child_dropout_specify', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('caregiver_trained_parental_engagement', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
-            ),
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/inclusion-list/" translation="' +
-                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                Div(
+                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    Div('caregiver_trained_parental_engagement', css_class='col-md-6'),
+                    css_class='row card-body'
+                ),
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
             )
         )
 
@@ -1223,31 +1181,25 @@ class InclusionAssessmentForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    HTML('<span>A</span>'), css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('participation', css_class='col-md-4'),
                     Div('barriers', css_class='col-md-4'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('learning_result', css_class='col-md-4'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
-            ),
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/inclusion-list/" translation="' +
-                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
-                css_class='button-group'
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-1'
             )
         )
 
@@ -1292,77 +1244,62 @@ class InclusionReferralForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('clm:inclusion_referral', kwargs={'pk': instance.id})
         self.helper.layout = Layout(
-            Fieldset(
-                None,
-                Div(css_class='block_tag'),
+            Div(
                 Div(
-                    Div(HTML('<span>1</span>'), css_class='block_tag'),
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 1') + '</h4>'),
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('referral_programme_type_1', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('referral_partner_1', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('referral_date_1', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('confirmation_date_1', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning A_right_border'
+                css_id='step-1'
             ),
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    Div(HTML('<span>2</span>'), css_class='block_tag'),
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 2') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('referral_programme_type_2', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('referral_partner_2', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('referral_date_2', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('confirmation_date_2', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning B_right_border'
+                css_id='step-2'
             ),
-            Fieldset(
-                None,
+            Div(
                 Div(
-                    Div(HTML('<span>3</span>'), css_class='block_tag'),
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 3') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
                     Div('referral_programme_type_3', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
                     Div('referral_partner_3', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
                     Div('referral_date_3', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
                     Div('confirmation_date_3', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row card-body'
                 ),
-                css_class='bd-callout bd-callout-warning C_right_border'
-            ),
-            FormActions(
-                Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info col-md-2" href="/clm/inclusion-list/">' + _('Back to list') + '</a>'),
-                css_class='button-group'
+                FormActions(
+                    Submit('save', 'Save',
+                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                    Reset('reset', 'Reset',
+                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                ),
+                css_id='step-3'
             )
         )
 

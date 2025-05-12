@@ -263,7 +263,6 @@ def MainMarkDeleteView(request, pk):
     return JsonResponse(result)
 
 
-from django.db.models import F, Max
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
