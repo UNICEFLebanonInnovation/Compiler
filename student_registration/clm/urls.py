@@ -2,8 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 
-from . import views, attendance_views
-from . import inclusion_views
+from . import views, attendance_views, inclusion_views, bridging_views
 
 app_name = 'clm'
 
@@ -243,22 +242,22 @@ urlpatterns = [
     ),
     url(
         'search-clm-child/$',
-        views.search_clm_child,
+        bridging_views.search_clm_child,
         name='search_clm_child'
     ),
     url(
         'search-kobo-outreach-child/$',
-        views.search_kobo_outreach_child,
+        bridging_views.search_kobo_outreach_child,
         name='search_kobo_outreach_child'
     ),
     url(
         'outreach-child/$',
-        views.outreach_child,
+        bridging_views.outreach_child,
         name='outreach_child'
     ),
     url(
         'search-clm-duplicate-registration/$',
-        views.search_clm_duplicate_registration,
+        bridging_views.search_clm_duplicate_registration,
         name='search_clm_duplicate_registration'
     ),
 
@@ -330,63 +329,63 @@ urlpatterns = [
 
     url(
         regex=r'^bridging-add/$',
-        view=views.BridgingAddView.as_view(),
+        view=bridging_views.BridgingAddView.as_view(),
         name='bridging_add'
     ),
     url(
         regex=r'^bridging-edit/(?P<pk>[\w.@+-]+)/$',
-        view=views.BridgingEditView.as_view(),
+        view=bridging_views.BridgingEditView.as_view(),
         name='bridging_edit'
     ),
     url(
         regex=r'^bridging-post-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.BridgingPostAssessmentView.as_view(),
+        view=bridging_views.BridgingPostAssessmentView.as_view(),
         name='bridging_post_assessment'
     ),
     url(
         regex=r'^bridging-mid-assessment/(?P<pk>[\w.@+-]+)/(?P<number>[\w.@+-]+)/$',
-        view=views.BridgingMidAssessmentView.as_view(),
+        view=bridging_views.BridgingMidAssessmentView.as_view(),
         name='bridging_mid_assessment'
     ),
     url(
         regex=r'^bridging-followup/(?P<pk>[\w.@+-]+)/$',
-        view=views.BridgingFollowupView.as_view(),
+        view=bridging_views.BridgingFollowupView.as_view(),
         name='bridging_followup'
     ),
     url(
         regex=r'^bridging-service/(?P<pk>[\w.@+-]+)/$',
-        view=views.BridgingServiceView.as_view(),
+        view=bridging_views.BridgingServiceView.as_view(),
         name='bridging_service'
     ),
     url(
         regex=r'^bridging-export/(?P<round>[\w.@+-]+)/$',
-        view=views.bridging_export_data,
+        view=bridging_views.bridging_export_data,
         name='bridging_export'
     ),
     url(
         regex=r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
-        view=views.bridging_school_export,
+        view=bridging_views.bridging_school_export,
         name='bridging_school_export_data'
     ),
 
     url(
         regex=r'^bridging-list/$',
-        view=views.BridgingListView.as_view(),
+        view=bridging_views.BridgingListView.as_view(),
         name='bridging_list'
     ),
     url(
         regex=r'^bridging-page/$',
-        view=views.BridgingPage.as_view(),
+        view=bridging_views.BridgingPage.as_view(),
         name='bridging_page'
     ),
     url(
         'bridging-attendance-report/$',
-        views.BridgingAttendanceReport.as_view(),
+        bridging_views.BridgingAttendanceReport.as_view(),
         name='bridging_attendance_report'
     ),
     url(
         regex=r'^bridging-delete/(?P<pk>[\w.@+-]+)/$',
-        view=views.BridgingMarkDeleteView,
+        view=bridging_views.BridgingMarkDeleteView,
         name='bridging_delete'
     ),
     url(
