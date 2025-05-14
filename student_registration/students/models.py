@@ -648,6 +648,12 @@ class Teacher(Person):
         ('PSS / Counsellor', _('PSS / Counsellor')),
         ('Physical Education', _('Physical Education')),
         ('Art', _('Art')),
+        ('Sciences', _('Sciences')),
+        ('PSS', _('PSS')),
+        ('History', _('History')),
+        ('Geography', _('Geography')),
+        ('Civics', _('Civics')),
+        ('Computer', _('Computer')),
     )
     REGISTRATION_LEVEL = (
         ('Level one', _('Level one')),
@@ -655,7 +661,13 @@ class Teacher(Person):
         ('Level three', _('Level three')),
         ('Level four', _('Level four')),
         ('Level five', _('Level five')),
-        ('Level six', _('Level six'))
+        ('Level six', _('Level six')),
+        ('grade_one', _('Grade one')),
+        ('grade_two', _('Grade two')),
+        ('grade_three', _('Grade three')),
+        ('grade_four', _('Grade four')),
+        ('grade_five', _('Grade five')),
+        ('grade_six', _('Grade six')),
     )
     TEACHER_ASSIGNMENT = Choices(
         ('Dirasa only', _('Dirasa only')),

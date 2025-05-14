@@ -45,7 +45,13 @@ class School(TimeStampedModel):
         ('Level three', _('Level three')),
         ('Level four', _('Level four')),
         ('Level five', _('Level five')),
-        ('Level six', _('Level six'))
+        ('Level six', _('Level six')),
+        ('grade_one', _('Grade one')),
+        ('grade_two', _('Grade two')),
+        ('grade_three', _('Grade three')),
+        ('grade_four', _('Grade four')),
+        ('grade_five', _('Grade five')),
+        ('grade_six', _('Grade six')),
     )
     YES_NO = Choices(
         ('', '----------'),
@@ -859,6 +865,7 @@ class CLMRound(models.Model):
 class PartnerOrganization(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
+    is_Kayany = models.BooleanField(blank=True, default=False)
 
     bln_round = models.ForeignKey(
         CLMRound,
