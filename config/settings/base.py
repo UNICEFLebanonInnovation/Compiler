@@ -106,8 +106,8 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -115,6 +115,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'student_registration.user_activity.UserActivityMiddleware',
 ]
 
 # # SECURITY CONFIGURATION
@@ -164,9 +165,6 @@ MANAGERS = ADMINS
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
-    'default': env.db('DATABASE_URL', default='postgres://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-12.postgres.database.azure.com:5432/prod_03092024'),
-    # 'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/prod_23022023_2'),
-    # 'default': env.db('DATABASE_URL', default='postgres://lebclmprod@leb-clm-prod-11:clmp!0ck3din@leb-clm-prod-11.postgres.database.azure.com:5432/prod_23022023_2'),
 }
 
 # DATABASES = {
@@ -476,6 +474,7 @@ SUIT_CONFIG = {
 
 UNIQUE_ID_API_TOKEN_URL = env('UNIQUE_ID_API_TOKEN_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/auth/getAccessToken')
 UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsUniqueIDs')
+UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsProgrammes')
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 
