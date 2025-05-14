@@ -7469,7 +7469,7 @@ class BridgingForm(CommonForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('cadaster', css_class='col-md-3'),
-                    HTML('<span class="badge-form-   badge-pill">7</span>'),
+                    HTML('<span class="badge-form badge-pill">7</span>'),
                     Div('school', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">8</span>'),
                     Div('language', css_class='col-md-3'),
@@ -7720,7 +7720,7 @@ class BridgingForm(CommonForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">9</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill" id="span_other_caregiver_relationship">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill" id="span_other_caregiver_relationship">10</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
