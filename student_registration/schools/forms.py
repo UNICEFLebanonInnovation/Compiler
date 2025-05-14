@@ -3410,7 +3410,7 @@ class SchoolForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('registration_level', css_class='col-md-3 multiple-checbkoxes'),
+                    Div('registration_level', css_class='col-md-3 multiple-choice'),
                     css_class='row card-body',
                 ),
                 Div(
@@ -3480,7 +3480,8 @@ class SchoolForm(forms.ModelForm):
             Div(
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('working_days', css_class='col-md-2 multiple-checbkoxes'),
+                    Div('working_days', css_class='col-md-3 multiple-choice'),
+
                     css_class='row card-body',
                 ),
                 Div(
