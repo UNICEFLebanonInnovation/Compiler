@@ -758,7 +758,6 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
-
         # check if date is valid
         year = 0
         month = 0
