@@ -199,7 +199,7 @@ class InclusionFollowupView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Inclusion.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = Inclusion.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:

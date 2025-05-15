@@ -1,9 +1,11 @@
-{% extends "base4.html" %}
+{% extends "mscc/base.html" %}
 {% load staticfiles i18n %}
 {% load static %}
 {% load bootstrap3 %}
 {% load util_tags %}
 {% bootstrap_css %}
+
+{% block module_name %}Makani - Attendance{% endblock %}
 {% block project_title %}Attendance Export{% endblock %}
 
 {% block content %}
