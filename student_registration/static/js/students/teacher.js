@@ -49,34 +49,9 @@ $(document).ready(function() {
         organize_form();
     });
 
-    pageScripts();
-
-    /* Ajax page load settings */
-    $(document).on('pjax:end', pageScripts);
-    if (sessionStorage.getItem("pjax-enabled") === "0") {
-        return;
-    }
-    // Comment it to disable Ajax Page load
-    //$(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
-
-    $(document).on('pjax:beforeReplace', function() {
-        $('.content-wrap').css('opacity', '0.1');
-        setTimeout(function() {
-            $('.content-wrap').fadeTo('100', '1');
-        }, 1);
-    });
 });
 
 
-function pageScripts() {
-    /* Magnific Popup */
-    $('.image-link').magnificPopup({
-        type: 'image',
-        gallery: {
-            enabled: true
-        }
-    });
-}
 
 function organize_form() {
     extra_coaching = $('#id_extra_coaching').val();
