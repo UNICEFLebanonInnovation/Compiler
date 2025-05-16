@@ -3354,6 +3354,28 @@ class SchoolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(SchoolForm, self).__init__(*args, **kwargs)
+
+        is_Kayany = False
+        if self.request.user.partner:
+            is_Kayany = self.request.user.partner.is_Kayany
+        choices = list()
+        if not is_Kayany:
+            choices.append(('level_one', _('Level one')))
+            choices.append(('level_two', _('Level two')))
+            choices.append(('level_three', _('Level three')))
+            choices.append(('level_four', _('Level four')))
+            choices.append(('level_five', _('Level five')))
+            choices.append(('level_six', _('Level six')))
+        else:
+            choices.append(('grade_one', _('Grade one')))
+            choices.append(('grade_two', _('Grade two')))
+            choices.append(('grade_three', _('Grade three')))
+            choices.append(('grade_four', _('Grade four')))
+            choices.append(('grade_five', _('Grade five')))
+            choices.append(('grade_six', _('Grade six')))
+
+        self.fields['registration_level'].choices = choices
+
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('schools:school_add')
 

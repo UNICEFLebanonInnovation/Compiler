@@ -145,15 +145,39 @@ select {
                                           <div class="form-row">
                                               <div class="col-md-6">
                                                   <div class="select-wrapper">
-                                                      <select id="registration_level" class="form-control">
-                                                          <option value="">Registration Level</option>
+                                                      <select id="registration_level" class="form-control" name="registration_level">
+                                                      <option value="">Registration Level</option>
+                                                      {% if request.user.is_staff %}
                                                           <option value="level_one" {% if registration_level == 'level_one' %}selected{% endif %}>Level one</option>
                                                           <option value="level_two" {% if registration_level == 'level_two' %}selected{% endif %}>Level two</option>
                                                           <option value="level_three" {% if registration_level == 'level_three' %}selected{% endif %}>Level three</option>
                                                           <option value="level_four" {% if registration_level == 'level_four' %}selected{% endif %}>Level four</option>
                                                           <option value="level_five" {% if registration_level == 'level_five' %}selected{% endif %}>Level five</option>
                                                           <option value="level_six" {% if registration_level == 'level_six' %}selected{% endif %}>Level six</option>
-                                                      </select>
+                                                          <option value="grade_one" {% if registration_level == 'grade_one' %}selected{% endif %}>Grade one</option>
+                                                          <option value="grade_two" {% if registration_level == 'grade_two' %}selected{% endif %}>Grade two</option>
+                                                          <option value="grade_three" {% if registration_level == 'grade_three' %}selected{% endif %}>Grade three</option>
+                                                          <option value="grade_four" {% if registration_level == 'grade_four' %}selected{% endif %}>Grade four</option>
+                                                          <option value="grade_five" {% if registration_level == 'grade_five' %}selected{% endif %}>Grade five</option>
+                                                          <option value="grade_six" {% if registration_level == 'grade_six' %}selected{% endif %}>Grade six</option>
+
+                                                      {% elif request.user.partner and not request.user.partner.is_Kayany %}
+                                                          <option value="level_one" {% if registration_level == 'level_one' %}selected{% endif %}>Level one</option>
+                                                          <option value="level_two" {% if registration_level == 'level_two' %}selected{% endif %}>Level two</option>
+                                                          <option value="level_three" {% if registration_level == 'level_three' %}selected{% endif %}>Level three</option>
+                                                          <option value="level_four" {% if registration_level == 'level_four' %}selected{% endif %}>Level four</option>
+                                                          <option value="level_five" {% if registration_level == 'level_five' %}selected{% endif %}>Level five</option>
+                                                          <option value="level_six" {% if registration_level == 'level_six' %}selected{% endif %}>Level six</option>
+                                                      {% else %}
+                                                          <option value="grade_one" {% if registration_level == 'grade_one' %}selected{% endif %}>Grade one</option>
+                                                          <option value="grade_two" {% if registration_level == 'grade_two' %}selected{% endif %}>Grade two</option>
+                                                          <option value="grade_three" {% if registration_level == 'grade_three' %}selected{% endif %}>Grade three</option>
+                                                          <option value="grade_four" {% if registration_level == 'grade_four' %}selected{% endif %}>Grade four</option>
+                                                          <option value="grade_five" {% if registration_level == 'grade_five' %}selected{% endif %}>Grade five</option>
+                                                          <option value="grade_six" {% if registration_level == 'grade_six' %}selected{% endif %}>Grade six</option>
+                                                      {% endif %}
+                                                  </select>
+
                                                   </div>
 <!--                                                  <input type="text" class="form-control disabled-input" disabled />-->
                                               </div>

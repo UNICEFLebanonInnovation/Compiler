@@ -347,6 +347,9 @@ class BridgingEditView(LoginRequiredMixin,
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
 
+                    if "Bridging_ASSESSMENT/exam1" in p_test:
+                        data['exam1'] = p_test["Bridging_ASSESSMENT/exam1"]
+
             return BridgingForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
@@ -591,6 +594,10 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
 
                     if "Bridging_ASSESSMENT/math" in p_test:
                         data['math'] = p_test["Bridging_ASSESSMENT/math"]
+
+                    if "Bridging_ASSESSMENT/exam3" in p_test:
+                        data['exam3'] = p_test["Bridging_ASSESSMENT/exam3"]
+
                     # if "Bridging_ASSESSMENT/artistic" in p_test:
                     #     data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
                     # if "Bridging_ASSESSMENT/social_emotional" in p_test:
@@ -666,6 +673,9 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
 
                 if "Bridging_ASSESSMENT/math" in p_test:
                     data['math'] = p_test["Bridging_ASSESSMENT/math"]
+
+                if "Bridging_ASSESSMENT/exam2" in p_test:
+                    data['exam2'] = p_test["Bridging_ASSESSMENT/exam2"]
 
             return form_class(data, instance=instance, number=number, request=self.request)
 

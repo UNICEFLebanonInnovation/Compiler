@@ -275,6 +275,47 @@ class TeacherForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(TeacherForm, self).__init__(*args, **kwargs)
+        is_Kayany = False
+        if self.request.user.partner:
+            is_Kayany = self.request.user.partner.is_Kayany
+        choices = list()
+        subject_choices = list()
+        if not is_Kayany:
+            choices.append(('level_one', _('Level one')))
+            choices.append(('level_two', _('Level two')))
+            choices.append(('level_three', _('Level three')))
+            choices.append(('level_four', _('Level four')))
+            choices.append(('level_five', _('Level five')))
+            choices.append(('level_six', _('Level six')))
+
+            subject_choices.append(('arabic', _('Arabic')))
+            subject_choices.append(('math', _('Math')))
+            subject_choices.append(('english', _('English')))
+            subject_choices.append(('french', _('French')))
+            subject_choices.append(('PSS / Counsellor', _('PSS / Counsellor')))
+            subject_choices.append(('Physical Education', _('Physical Education')))
+            subject_choices.append(('Art', _('Art')))
+        else:
+            choices.append(('grade_one', _('Grade one')))
+            choices.append(('grade_two', _('Grade two')))
+            choices.append(('grade_three', _('Grade three')))
+            choices.append(('grade_four', _('Grade four')))
+            choices.append(('grade_five', _('Grade five')))
+            choices.append(('grade_six', _('Grade six')))
+
+            subject_choices.append(('arabic', _('Arabic')))
+            subject_choices.append(('math', _('Math')))
+            subject_choices.append(('english', _('English')))
+            subject_choices.append(('Sciences', _('Sciences')))
+            subject_choices.append(('PSS', _('PSS')))
+            subject_choices.append(('History', _('History')))
+            subject_choices.append(('Geography', _('Geography')))
+            subject_choices.append(('Civics', _('Civics')))
+            subject_choices.append(('Computer', _('Computer')))
+
+        self.fields['registration_level'].choices = choices
+        self.fields['subjects_provided'].choices = subject_choices
+
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('students:teacher_add')
 

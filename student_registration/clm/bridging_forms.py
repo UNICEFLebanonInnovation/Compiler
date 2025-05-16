@@ -758,17 +758,17 @@ class BridgingForm(CommonForm):
     arabic_alphabet_knowledge = forms.FloatField(
         label=_('Arabic Alphabet Knowledge'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=True
+        min_value=0, required=False
     )
     arabic_familiar_words = forms.FloatField(
         label=_('Arabic Familiar words'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=True
+        min_value=0, required=False
     )
     arabic_reading_comprehension = forms.FloatField(
         label=_('Arabic Reading Comprehension'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=True
+        min_value=0, required=False
     )
     english_alphabet_knowledge = forms.FloatField(
         label=_('English Alphabet Knowledge'),
@@ -803,7 +803,12 @@ class BridgingForm(CommonForm):
     math = forms.FloatField(
         label=_('Math'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=True
+        min_value=0, required=False
+    )
+    exam1 = forms.FloatField(
+        label=_('Exam 1'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
     )
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
@@ -870,6 +875,28 @@ class BridgingForm(CommonForm):
         form_action = reverse('clm:bridging_add')
         self.fields['clm_type'].initial = 'Bridging'
         self.fields['new_registry'].initial = 'yes'
+
+        is_Kayany = False
+        if self.request.user.partner:
+            is_Kayany = self.request.user.partner.is_Kayany
+        choices = list()
+        if not is_Kayany:
+            choices.append(('level_one', _('Level one')))
+            choices.append(('level_two', _('Level two')))
+            choices.append(('level_three', _('Level three')))
+            choices.append(('level_four', _('Level four')))
+            choices.append(('level_five', _('Level five')))
+            choices.append(('level_six', _('Level six')))
+        else:
+            choices.append(('grade_one', _('Grade one')))
+            choices.append(('grade_two', _('Grade two')))
+            choices.append(('grade_three', _('Grade three')))
+            choices.append(('grade_four', _('Grade four')))
+            choices.append(('grade_five', _('Grade five')))
+            choices.append(('grade_six', _('Grade six')))
+
+        self.fields['registration_level'].choices = choices
+
         if instance:
             display_registry = ' d-none'
             form_action = reverse('clm:bridging_edit', kwargs={'pk': instance.id})
@@ -877,413 +904,805 @@ class BridgingForm(CommonForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Div(
+
+        if not is_Kayany:
+
+            self.helper.layout = Layout(
                 Div(
-                    'clm_type',
-                    'student_id',
-                    'enrollment_id',
-                    'partner_name',
-                ),
-                Div(
-                    Div('new_registry', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    Div('search_clm_student', css_class='col-md-3'),
-                    Div('search_Kobo_outreach_student', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                css_id='step-1',
-                style='display: none;'
-            ),
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('round', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('registration_date', css_class='col-md-3'),
-                    Div('round_start_date', css_class='col-md-3 d-none'),
-                    css_class='row card-body',
+                    Div(
+                        'clm_type',
+                        'student_id',
+                        'enrollment_id',
+                        'partner_name',
+                    ),
+                    Div(
+                        Div('new_registry', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        Div('search_clm_student', css_class='col-md-3'),
+                        Div('search_Kobo_outreach_student', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-1',
+                    style='display: none;'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('district', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('round', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('registration_date', css_class='col-md-3'),
+                        Div('round_start_date', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('governorate', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('district', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('cadaster', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('school', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('language', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('student_address', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('residence_type', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('registration_level', css_class='col-md-3'),
+                        Div('first_attendance_date', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('enrolled_formal_education', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-2',
+                    style='display: none;'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('cadaster', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('school', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('language', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('student_first_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('student_father_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('student_last_name', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('student_mother_fullname', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('student_sex', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('student_nationality', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill" id="span_other_nationality">7</span>'),
+                        Div('other_nationality', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('student_birthday_year', css_class='col-md-2'),
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('student_birthday_month', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('student_birthday_day', css_class='col-md-2'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('student_p_code', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('disability', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('education_status', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_miss_school_date">14</span>'),
+                        Div('miss_school_date', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('internal_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('source_of_identification', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">17</span>'),
+                        Div('rims_case_number', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_source_of_identification_specify">17</span>'),
+                        Div('source_of_identification_specify', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('id_type', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('case_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('case_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('parent_individual_case_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                        Div('parent_individual_case_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('individual_case_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('individual_case_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id1 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('recorded_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('recorded_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id2 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                        Div('parent_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                        Div('parent_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id3 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                        Div('parent_syrian_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">24</span>'),
+                        Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('syrian_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('syrian_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id4 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">27</span>'),
+                        Div('parent_sop_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">28</span>'),
+                        Div('parent_sop_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('sop_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('sop_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id5 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">31</span>'),
+                        Div('parent_other_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">32</span>'),
+                        Div('parent_other_number_confirm', css_class='col-md-4'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('other_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('other_number_confirm', css_class='col-md-4'),
+                        css_class='row child_id child_id6 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('individual_extract_record', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('individual_extract_record_confirm', css_class='col-md-4'),
+                        css_class='row child_id child_id7 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('source_of_transportation', css_class='col-md-3'),
+                        css_class='row d-none card-body',
+                    ),
+                    css_id='step-3',
+                    style='display: none;'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('residence_type', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('registration_level', css_class='col-md-3'),
-                    Div('first_attendance_date', css_class='col-md-3 d-none'),
-                    css_class='row card-body',
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('hh_educational_level', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('father_educational_level', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('phone_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('phone_number_confirm', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('phone_owner', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('second_phone_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('second_phone_number_confirm', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('second_phone_owner', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('main_caregiver', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_other_caregiver_relationship">10</span>'),
+                        Div('other_caregiver_relationship', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('main_caregiver_nationality', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_main_caregiver_nationality_other">12</span>'),
+                        Div('main_caregiver_nationality_other', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('caretaker_first_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                        Div('caretaker_middle_name', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('caretaker_last_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('caretaker_mother_name', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('caretaker_birthday_year', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                        Div('caretaker_birthday_month', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                        Div('caretaker_birthday_day', css_class='col-md-2'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-4',
+                    style='display: none;'
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('enrolled_formal_education', css_class='col-md-4'),
-                    css_class='row card-body',
-                ),
-                css_id='step-2',
-                style='display: none;'
-            ),
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('student_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('student_father_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('student_last_name', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('student_mother_fullname', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('student_sex', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill" id="span_other_nationality">7</span>'),
-                    Div('other_nationality', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('student_birthday_year', css_class='col-md-2'),
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('student_birthday_month', css_class='col-md-2'),
-                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
-                    Div('student_birthday_day', css_class='col-md-2'),
-                    css_class='row card-body',
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('student_family_status', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id=span_student_have_children">2</span>'),
+                        Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
+                        HTML('<span class="badge-form badge-pill" id="span_student_number_children">3</span>'),
+                        Div('student_number_children', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('have_labour_single_selection', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
+                        HTML('<span class="badge-form badge-pill" id="span_labours_other_specify">6</span>'),
+                        Div('labours_other_specify', css_class='col-md-3'),
+                        css_class='row card-body',
+                        id='labour_details_1'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('labour_weekly_income', css_class='col-md-3'),
+                        css_class='row card-body',
+                        id='labour_details_2'
+                    ),
+                    css_id='step-5',
+                    style='display: none;'
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">12</span>'),
-                    Div('disability', css_class='col-md-3'),
-                    css_class='row card-body',
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_arabic">1</span>'),
+                        Div('arabic_alphabet_knowledge', css_class='col-md-3'),
+                        Div('arabic_familiar_words', css_class='col-md-3'),
+                        Div('arabic_reading_comprehension', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_english">2</span>'),
+                        Div('english_alphabet_knowledge', css_class='col-md-3'),
+                        Div('english_familiar_words', css_class='col-md-3'),
+                        Div('english_reading_comprehension', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_french">3</span>'),
+                        Div('french_alphabet_knowledge', css_class='col-md-3'),
+                        Div('french_familiar_words', css_class='col-md-3'),
+                        Div('french_reading_comprehension', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_math">4</span>'),
+                        Div('math', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-6',
+                    style='display: none;'
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('education_status', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_miss_school_date">14</span>'),
-                    Div('miss_school_date', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('source_of_identification', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">17</span>'),
-                    Div('rims_case_number', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_source_of_identification_specify">17</span>'),
-                    Div('source_of_identification_specify', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('id_type', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('case_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('case_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id  d-none card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                    Div('parent_individual_case_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id  d-none card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('individual_case_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id1 card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('recorded_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('recorded_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id2 card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('parent_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">20</span>'),
-                    Div('parent_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id  d-none card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('national_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id3 card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">23</span>'),
-                    Div('parent_syrian_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">24</span>'),
-                    Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id  d-none card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('syrian_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('syrian_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id4 card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">27</span>'),
-                    Div('parent_sop_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">28</span>'),
-                    Div('parent_sop_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id  d-none card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('sop_national_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('sop_national_number_confirm', css_class='col-md-4'),
-                    HTML('<span style="padding-top: 37px;">' +
-                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
-                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id5 card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">31</span>'),
-                    Div('parent_other_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">32</span>'),
-                    Div('parent_other_number_confirm', css_class='col-md-4'),
-                    css_class='row child_id  d-none card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('other_number', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('other_number_confirm', css_class='col-md-4'),
-                    css_class='row child_id child_id6 card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('individual_extract_record', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('individual_extract_record_confirm', css_class='col-md-4'),
-                    css_class='row child_id child_id7 card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('source_of_transportation', css_class='col-md-3'),
-                    css_class='row d-none card-body',
-                ),
-                css_id='step-3',
-                style='display: none;'
-            ),
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('hh_educational_level', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">2</span>'),
-                    Div('father_educational_level', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('phone_number_confirm', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('phone_owner', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('second_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('second_phone_number_confirm', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('second_phone_owner', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">9</span>'),
-                    Div('main_caregiver', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_other_caregiver_relationship">10</span>'),
-                    Div('other_caregiver_relationship', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
-                    Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_main_caregiver_nationality_other">12</span>'),
-                    Div('main_caregiver_nationality_other', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">13</span>'),
-                    Div('caretaker_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">14</span>'),
-                    Div('caretaker_middle_name', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                    Div('caretaker_last_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                    Div('caretaker_mother_name', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                    Div('caretaker_birthday_year', css_class='col-md-2'),
-                    HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                    Div('caretaker_birthday_month', css_class='col-md-2'),
-                    HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                    Div('caretaker_birthday_day', css_class='col-md-2'),
-                    css_class='row card-body',
-                ),
-                css_id='step-4',
-                style='display: none;'
-            ),
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('student_family_status', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill" id=span_student_have_children">2</span>'),
-                    Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
-                    HTML('<span class="badge-form badge-pill" id="span_student_number_children">3</span>'),
-                    Div('student_number_children', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('have_labour_single_selection', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">5</span>'),
-                    Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
-                    HTML('<span class="badge-form badge-pill" id="span_labours_other_specify">6</span>'),
-                    Div('labours_other_specify', css_class='col-md-3'),
-                    css_class='row card-body',
-                    id='labour_details_1'
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">7</span>'),
-                    Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('labour_weekly_income', css_class='col-md-3'),
-                    css_class='row card-body',
-                    id='labour_details_2'
-                ),
-                css_id='step-5',
-                style='display: none;'
-            ),
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_arabic">1</span>'),
-                    Div('arabic_alphabet_knowledge', css_class='col-md-3'),
-                    Div('arabic_familiar_words', css_class='col-md-3'),
-                    Div('arabic_reading_comprehension', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_english">2</span>'),
-                    Div('english_alphabet_knowledge', css_class='col-md-3'),
-                    Div('english_familiar_words', css_class='col-md-3'),
-                    Div('english_reading_comprehension', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_french">3</span>'),
-                    Div('french_alphabet_knowledge', css_class='col-md-3'),
-                    Div('french_familiar_words', css_class='col-md-3'),
-                    Div('french_reading_comprehension', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_math">4</span>'),
-                    Div('math', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                css_id='step-6',
-                style='display: none;'
-            ),
-            Div(
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('consent_parents', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-                ),
-                css_id='step-7',
-                style='display: none;'
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('consent_parents', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-7',
+                    style='display: none;'
+                )
             )
-        )
+        else:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        'clm_type',
+                        'student_id',
+                        'enrollment_id',
+                        'partner_name',
+                    ),
+                    Div(
+                        Div('new_registry', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        Div('search_clm_student', css_class='col-md-3'),
+                        Div('search_Kobo_outreach_student', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-1',
+                    style='display: none;'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('round', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('registration_date', css_class='col-md-3'),
+                        Div('round_start_date', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('governorate', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('district', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('cadaster', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('school', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('language', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('student_address', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('residence_type', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('registration_level', css_class='col-md-3'),
+                        Div('first_attendance_date', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('enrolled_formal_education', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-2',
+                    style='display: none;'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('student_first_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('student_father_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('student_last_name', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('student_mother_fullname', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('student_sex', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('student_nationality', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill" id="span_other_nationality">7</span>'),
+                        Div('other_nationality', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('student_birthday_year', css_class='col-md-2'),
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('student_birthday_month', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                        Div('student_birthday_day', css_class='col-md-2'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('student_p_code', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">12</span>'),
+                        Div('disability', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('education_status', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_miss_school_date">14</span>'),
+                        Div('miss_school_date', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('internal_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('source_of_identification', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_rims_case_number">17</span>'),
+                        Div('rims_case_number', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML(
+                            '<span class="badge-form-2 badge-pill" id="span_source_of_identification_specify">17</span>'),
+                        Div('source_of_identification_specify', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('id_type', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('case_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('case_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('parent_individual_case_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                        Div('parent_individual_case_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('individual_case_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('individual_case_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id1 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('recorded_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('recorded_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id2 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                        Div('parent_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                        Div('parent_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id3 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                        Div('parent_syrian_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">24</span>'),
+                        Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('syrian_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('syrian_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id4 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">27</span>'),
+                        Div('parent_sop_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">28</span>'),
+                        Div('parent_sop_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('sop_national_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('sop_national_number_confirm', css_class='col-md-4'),
+                        HTML('<span style="padding-top: 37px;">' +
+                             '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                        css_class='row child_id child_id5 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">31</span>'),
+                        Div('parent_other_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">32</span>'),
+                        Div('parent_other_number_confirm', css_class='col-md-4'),
+                        css_class='row child_id  d-none card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('other_number', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('other_number_confirm', css_class='col-md-4'),
+                        css_class='row child_id child_id6 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('individual_extract_record', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('individual_extract_record_confirm', css_class='col-md-4'),
+                        css_class='row child_id child_id7 card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('source_of_transportation', css_class='col-md-3'),
+                        css_class='row d-none card-body',
+                    ),
+                    css_id='step-3',
+                    style='display: none;'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('hh_educational_level', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">2</span>'),
+                        Div('father_educational_level', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">3</span>'),
+                        Div('phone_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('phone_number_confirm', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('phone_owner', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('second_phone_number', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('second_phone_number_confirm', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('second_phone_owner', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">9</span>'),
+                        Div('main_caregiver', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_other_caregiver_relationship">10</span>'),
+                        Div('other_caregiver_relationship', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                        Div('main_caregiver_nationality', css_class='col-md-3'),
+                        HTML(
+                            '<span class="badge-form-2 badge-pill" id="span_main_caregiver_nationality_other">12</span>'),
+                        Div('main_caregiver_nationality_other', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">13</span>'),
+                        Div('caretaker_first_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">14</span>'),
+                        Div('caretaker_middle_name', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                        Div('caretaker_last_name', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                        Div('caretaker_mother_name', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                        Div('caretaker_birthday_year', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                        Div('caretaker_birthday_month', css_class='col-md-2'),
+                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                        Div('caretaker_birthday_day', css_class='col-md-2'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-4',
+                    style='display: none;'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('student_family_status', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id=span_student_have_children">2</span>'),
+                        Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
+                        HTML('<span class="badge-form badge-pill" id="span_student_number_children">3</span>'),
+                        Div('student_number_children', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">4</span>'),
+                        Div('have_labour_single_selection', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">5</span>'),
+                        Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
+                        HTML('<span class="badge-form badge-pill" id="span_labours_other_specify">6</span>'),
+                        Div('labours_other_specify', css_class='col-md-3'),
+                        css_class='row card-body',
+                        id='labour_details_1'
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">7</span>'),
+                        Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('labour_weekly_income', css_class='col-md-3'),
+                        css_class='row card-body',
+                        id='labour_details_2'
+                    ),
+                    css_id='step-5',
+                    style='display: none;'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_exam1">1</span>'),
+                        Div('exam1', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    css_id='step-6',
+                    style='display: none;'
+                ),
+                Div(
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('consent_parents', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    ),
+                    css_id='step-7',
+                    style='display: none;'
+                )
+            )
 
         school_id = 0
         partner_id = 0
@@ -1494,79 +1913,83 @@ class BridgingForm(CommonForm):
         registration_level = cleaned_data.get("registration_level")
         language = cleaned_data.get("language")
 
-        arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
-        arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
-        arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
+        if self.request.user.partner and not self.request.user.partner.is_Kayany:
+            arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
+            arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
+            arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
 
-        english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
-        english_familiar_words = cleaned_data.get("english_familiar_words")
-        english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
+            english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
+            english_familiar_words = cleaned_data.get("english_familiar_words")
+            english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
 
-        french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
-        french_familiar_words = cleaned_data.get("french_familiar_words")
-        french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
+            french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
+            french_familiar_words = cleaned_data.get("french_familiar_words")
+            french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
 
-        math = cleaned_data.get("math")
+            math = cleaned_data.get("math")
 
+            if arabic_alphabet_knowledge is None:
+                self.add_error('arabic_alphabet_knowledge', 'This field is required')
+            elif arabic_alphabet_knowledge > 48:
+                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
 
-        # social_emotional = cleaned_data.get("social_emotional")
-        # artistic = cleaned_data.get("artistic")
+            if arabic_familiar_words is None:
+                self.add_error('arabic_familiar_words', 'This field is required')
+            elif arabic_familiar_words > 20:
+                self.add_error('arabic_familiar_words', 'This value is greater that 20')
 
-        if arabic_alphabet_knowledge is None:
-            self.add_error('arabic_alphabet_knowledge', 'This field is required')
-        elif arabic_alphabet_knowledge > 48:
-            self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
+            if arabic_reading_comprehension is None:
+                self.add_error('arabic_reading_comprehension', 'This field is required')
+            elif arabic_reading_comprehension > 10:
+                self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
 
-        if arabic_familiar_words is None:
-            self.add_error('arabic_familiar_words', 'This field is required')
-        elif arabic_familiar_words > 20:
-            self.add_error('arabic_familiar_words', 'This value is greater that 20')
+            if language == 'english_arabic':
+                if english_alphabet_knowledge is None:
+                    self.add_error('english_alphabet_knowledge', 'This field is required')
+                elif english_alphabet_knowledge > 48:
+                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
 
-        if arabic_reading_comprehension is None:
-            self.add_error('arabic_reading_comprehension', 'This field is required')
-        elif arabic_reading_comprehension > 10:
-            self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
+                if english_familiar_words is None:
+                    self.add_error('english_familiar_words', 'This field is required')
+                elif english_familiar_words > 20:
+                    self.add_error('english_familiar_words', 'This value is greater that 20')
 
-        if language == 'english_arabic':
-            if english_alphabet_knowledge is None:
-                self.add_error('english_alphabet_knowledge', 'This field is required')
-            elif english_alphabet_knowledge > 48:
-                self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
+                if english_reading_comprehension is None:
+                    self.add_error('english_reading_comprehension', 'This field is required')
+                elif english_reading_comprehension > 10:
+                    self.add_error('english_reading_comprehension', 'This value is greater that 10')
 
-            if english_familiar_words is None:
-                self.add_error('english_familiar_words', 'This field is required')
-            elif english_familiar_words > 20:
-                self.add_error('english_familiar_words', 'This value is greater that 20')
+            elif language == 'french_arabic':
+                if french_alphabet_knowledge is None:
+                    self.add_error('french_alphabet_knowledge', 'This field is required')
+                elif french_alphabet_knowledge > 48:
+                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
 
-            if english_reading_comprehension is None:
-                self.add_error('english_reading_comprehension', 'This field is required')
-            elif english_reading_comprehension > 10:
-                self.add_error('english_reading_comprehension', 'This value is greater that 10')
+                if french_familiar_words is None:
+                    self.add_error('french_familiar_words', 'This field is required')
+                elif french_familiar_words > 20:
+                    self.add_error('french_familiar_words', 'This value is greater that 20')
 
-        elif language == 'french_arabic':
-            if french_alphabet_knowledge is None:
-                self.add_error('french_alphabet_knowledge', 'This field is required')
-            elif french_alphabet_knowledge > 48:
-                self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
+                if french_reading_comprehension is None:
+                    self.add_error('french_reading_comprehension', 'This field is required')
+                elif french_reading_comprehension > 10:
+                    self.add_error('french_reading_comprehension', 'This value is greater that 10')
 
-            if french_familiar_words is None:
-                self.add_error('french_familiar_words', 'This field is required')
-            elif french_familiar_words > 20:
-                self.add_error('french_familiar_words', 'This value is greater that 20')
+            if math is None:
+                self.add_error('math', 'This field is required')
+            elif registration_level == 'level_one' and math > 50:
+                self.add_error('math', 'This value is greater that 50')
+            elif registration_level == 'level_two' and math > 88:
+                self.add_error('math', 'This value is greater that 88')
+            elif math > 103:
+                self.add_error('math', 'This value is greater that 103')
+        else:
+            exam1 = cleaned_data.get("exam1")
+            if exam1 is None:
+                self.add_error('exam1', 'This field is required')
+            elif exam1 > 20:
+                self.add_error('exam1', 'This value is greater that 20')
 
-            if french_reading_comprehension is None:
-                self.add_error('french_reading_comprehension', 'This field is required')
-            elif french_reading_comprehension > 10:
-                self.add_error('french_reading_comprehension', 'This value is greater that 10')
-
-        if math is None:
-            self.add_error('math', 'This field is required')
-        elif registration_level == 'level_one' and math > 50:
-            self.add_error('math', 'This value is greater that 50')
-        elif registration_level == 'level_two' and math > 88:
-            self.add_error('math', 'This value is greater that 88')
-        elif math > 103:
-            self.add_error('math', 'This value is greater that 103')
 
     def save(self, request=None, instance=None, serializer=None):
 
@@ -1591,8 +2014,9 @@ class BridgingForm(CommonForm):
             "Bridging_ASSESSMENT/french_alphabet_knowledge": request.POST.get('french_alphabet_knowledge'),
             "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
             "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
+            "Bridging_ASSESSMENT/math": request.POST.get('math'),
+            "Bridging_ASSESSMENT/exam1": request.POST.get('exam1')
 
-            "Bridging_ASSESSMENT/math": request.POST.get('math')
         }
 
         instance.save()
@@ -1820,6 +2244,11 @@ class BridgingAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+    exam3 = forms.FloatField(
+        label=_('Exam 3'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
     follow_up_type = forms.ChoiceField(
         label=_('Type of follow up'),
         widget=forms.Select, required=False,
@@ -1873,6 +2302,10 @@ class BridgingAssessmentForm(forms.ModelForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         self.fields['clm_type'].initial = 'Bridging'
 
+        is_Kayany = False
+        if self.request.user.partner:
+            is_Kayany = self.request.user.partner.is_Kayany
+
         display_assessment = ''
         form_action = reverse('clm:bridging_post_assessment', kwargs={'pk': instance.id})
 
@@ -1888,91 +2321,158 @@ class BridgingAssessmentForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Div(
+        if not is_Kayany:
+
+            self.helper.layout = Layout(
                 Div(
-                    Div('registration_level', css_class='col-md-3 d-none'),
-                    Div('language', css_class='col-md-3 d-none'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('participation', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill" id="span_barriers_single">2</span>'),
-                    Div('barriers_single', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill" id="span_barriers_other">3</span>'),
-                    Div('barriers_other', css_class='col-md-2'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_community_Liaison_follow_up">4</span>'),
-                    Div('community_Liaison_follow_up', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill" id="span_community_liaison_specify">5</span>'),
-                    Div('community_liaison_specify', css_class='col-md-4'),
-                    css_class='row community_Liaison card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">6</span>'),
-                    Div('test_done', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill" id="span_round_complete">7</span>'),
-                    Div('round_complete', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">8</span>'),
-                    Div('learning_result', css_class='col-md-4'),
-                    HTML('<span class="badge-form badge-pill" id="span_learning_result_other">9</span>'),
-                    Div('learning_result_other', css_class='col-md-4'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_dropout_reason">10</span>'),
-                    Div('dropout_reason', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_dropout_date">11</span>'),
-                    Div('dropout_date', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_referral_school">12</span>'),
-                    Div('referral_school', css_class='col-md-4'),
-                    HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">13</span>'),
-                    Div('referral_school_type', css_class='col-md-4'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_arabic">14</span>'),
-                    Div('arabic_alphabet_knowledge', css_class='col-md-3'),
-                    Div('arabic_familiar_words', css_class='col-md-3'),
-                    Div('arabic_reading_comprehension', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_english">15</span>'),
-                    Div('english_alphabet_knowledge', css_class='col-md-3'),
-                    Div('english_familiar_words', css_class='col-md-3'),
-                    Div('english_reading_comprehension', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_french">16</span>'),
-                    Div('french_alphabet_knowledge', css_class='col-md-3'),
-                    Div('french_familiar_words', css_class='col-md-3'),
-                    Div('french_reading_comprehension', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form-2 badge-pill" id="span_math">17</span>'),
-                    Div('math', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    Div(
+                        Div('registration_level', css_class='col-md-3 d-none'),
+                        Div('language', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participation', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill" id="span_barriers_single">2</span>'),
+                        Div('barriers_single', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id="span_barriers_other">3</span>'),
+                        Div('barriers_other', css_class='col-md-2'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_community_Liaison_follow_up">4</span>'),
+                        Div('community_Liaison_follow_up', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id="span_community_liaison_specify">5</span>'),
+                        Div('community_liaison_specify', css_class='col-md-4'),
+                        css_class='row community_Liaison card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('test_done', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill" id="span_round_complete">7</span>'),
+                        Div('round_complete', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('learning_result', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id="span_learning_result_other">9</span>'),
+                        Div('learning_result_other', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_dropout_reason">10</span>'),
+                        Div('dropout_reason', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_dropout_date">11</span>'),
+                        Div('dropout_date', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school">12</span>'),
+                        Div('referral_school', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">13</span>'),
+                        Div('referral_school_type', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_arabic">14</span>'),
+                        Div('arabic_alphabet_knowledge', css_class='col-md-3'),
+                        Div('arabic_familiar_words', css_class='col-md-3'),
+                        Div('arabic_reading_comprehension', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_english">15</span>'),
+                        Div('english_alphabet_knowledge', css_class='col-md-3'),
+                        Div('english_familiar_words', css_class='col-md-3'),
+                        Div('english_reading_comprehension', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_french">16</span>'),
+                        Div('french_alphabet_knowledge', css_class='col-md-3'),
+                        Div('french_familiar_words', css_class='col-md-3'),
+                        Div('french_reading_comprehension', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_math">17</span>'),
+                        Div('math', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    )
                 )
             )
-        )
+        else:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        Div('registration_level', css_class='col-md-3 d-none'),
+                        Div('language', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('participation', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill" id="span_barriers_single">2</span>'),
+                        Div('barriers_single', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id="span_barriers_other">3</span>'),
+                        Div('barriers_other', css_class='col-md-2'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_community_Liaison_follow_up">4</span>'),
+                        Div('community_Liaison_follow_up', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id="span_community_liaison_specify">5</span>'),
+                        Div('community_liaison_specify', css_class='col-md-4'),
+                        css_class='row community_Liaison card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">6</span>'),
+                        Div('test_done', css_class='col-md-3'),
+                        HTML('<span class="badge-form badge-pill" id="span_round_complete">7</span>'),
+                        Div('round_complete', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">8</span>'),
+                        Div('learning_result', css_class='col-md-4'),
+                        HTML('<span class="badge-form badge-pill" id="span_learning_result_other">9</span>'),
+                        Div('learning_result_other', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_dropout_reason">10</span>'),
+                        Div('dropout_reason', css_class='col-md-3'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_dropout_date">11</span>'),
+                        Div('dropout_date', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school">12</span>'),
+                        Div('referral_school', css_class='col-md-4'),
+                        HTML('<span class="badge-form-2 badge-pill" id="span_referral_school_type">13</span>'),
+                        Div('referral_school_type', css_class='col-md-4'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form-2 badge-pill" id="span_exam3">14</span>'),
+                        Div('exam3', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    )
+                )
+            )
 
     def clean(self):
         cleaned_data = super(BridgingAssessmentForm, self).clean()
@@ -2045,62 +2545,69 @@ class BridgingAssessmentForm(forms.ModelForm):
         # artistic = cleaned_data.get("artistic")
 
         if test_done == 'yes':
-            if arabic_alphabet_knowledge is None:
-                self.add_error('arabic_alphabet_knowledge', 'This field is required')
-            elif arabic_alphabet_knowledge > 48:
-                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
+            if self.request.user.partner and not self.request.user.partner.is_Kayany:
+                if arabic_alphabet_knowledge is None:
+                    self.add_error('arabic_alphabet_knowledge', 'This field is required')
+                elif arabic_alphabet_knowledge > 48:
+                    self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
 
-            if arabic_familiar_words is None:
-                self.add_error('arabic_familiar_words', 'This field is required')
-            elif arabic_familiar_words > 20:
-                self.add_error('arabic_familiar_words', 'This value is greater that 20')
+                if arabic_familiar_words is None:
+                    self.add_error('arabic_familiar_words', 'This field is required')
+                elif arabic_familiar_words > 20:
+                    self.add_error('arabic_familiar_words', 'This value is greater that 20')
 
-            if arabic_reading_comprehension is None:
-                self.add_error('arabic_reading_comprehension', 'This field is required')
-            elif arabic_reading_comprehension > 10:
-                self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
+                if arabic_reading_comprehension is None:
+                    self.add_error('arabic_reading_comprehension', 'This field is required')
+                elif arabic_reading_comprehension > 10:
+                    self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
 
+                if language == 'english_arabic':
+                    if english_alphabet_knowledge is None:
+                        self.add_error('english_alphabet_knowledge', 'This field is required')
+                    elif english_alphabet_knowledge > 48:
+                        self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
 
-            if language == 'english_arabic':
-                if english_alphabet_knowledge is None:
-                    self.add_error('english_alphabet_knowledge', 'This field is required')
-                elif english_alphabet_knowledge > 48:
-                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
+                    if english_familiar_words is None:
+                        self.add_error('english_familiar_words', 'This field is required')
+                    elif english_familiar_words > 20:
+                        self.add_error('english_familiar_words', 'This value is greater that 20')
 
-                if english_familiar_words is None:
-                    self.add_error('english_familiar_words', 'This field is required')
-                elif english_familiar_words > 20:
-                    self.add_error('english_familiar_words', 'This value is greater that 20')
+                    if english_reading_comprehension is None:
+                        self.add_error('english_reading_comprehension', 'This field is required')
+                    elif english_reading_comprehension > 10:
+                        self.add_error('english_reading_comprehension', 'This value is greater that 10')
 
-                if english_reading_comprehension is None:
-                    self.add_error('english_reading_comprehension', 'This field is required')
-                elif english_reading_comprehension > 10:
-                    self.add_error('english_reading_comprehension', 'This value is greater that 10')
+                elif language == 'french_arabic':
+                    if french_alphabet_knowledge is None:
+                        self.add_error('french_alphabet_knowledge', 'This field is required')
+                    elif french_alphabet_knowledge > 48:
+                        self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
 
-            elif language == 'french_arabic':
-                if french_alphabet_knowledge is None:
-                    self.add_error('french_alphabet_knowledge', 'This field is required')
-                elif french_alphabet_knowledge > 48:
-                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
+                    if french_familiar_words is None:
+                        self.add_error('french_familiar_words', 'This field is required')
+                    elif french_familiar_words > 20:
+                        self.add_error('french_familiar_words', 'This value is greater that 20')
 
-                if french_familiar_words is None:
-                    self.add_error('french_familiar_words', 'This field is required')
-                elif french_familiar_words > 20:
-                    self.add_error('french_familiar_words', 'This value is greater that 20')
+                    if french_reading_comprehension is None:
+                        self.add_error('french_reading_comprehension', 'This field is required')
+                    elif french_reading_comprehension > 10:
+                        self.add_error('french_reading_comprehension', 'This value is greater that 10')
 
-                if french_reading_comprehension is None:
-                    self.add_error('french_reading_comprehension', 'This field is required')
-                elif french_reading_comprehension > 10:
-                    self.add_error('french_reading_comprehension', 'This value is greater that 10')
+                if math is None:
+                    self.add_error('math', 'This field is required')
+                elif registration_level == 'level_one' and math > 50:
+                    self.add_error('math', 'This value is greater that 50')
+                elif registration_level == 'level_two' and math > 88:
+                    self.add_error('math', 'This value is greater that 88')
+                elif math > 103:
+                    self.add_error('math', 'This value is greater that 103')
+            else:
+                exam3 = cleaned_data.get("exam3")
+                if exam3 is None:
+                    self.add_error('exam3', 'This field is required')
+                elif exam3 > 20:
+                    self.add_error('exam3', 'This value is greater that 20')
 
-            if math is None:
-                self.add_error('math', 'This field is required')
-            elif registration_level == 'level_one' and math > 50:
-                self.add_error('math', 'This value is greater that 50')
-            elif registration_level == 'level_two' and math > 88:
-                self.add_error('math', 'This value is greater that 88')
-            elif math > 103:
-                self.add_error('math', 'This value is greater that 103')
 
     def save(self, instance=None, request=None):
         instance = super(BridgingAssessmentForm, self).save()
@@ -2121,6 +2628,7 @@ class BridgingAssessmentForm(forms.ModelForm):
             "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
             "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
             "Bridging_ASSESSMENT/math": request.POST.get('math'),
+            "Bridging_ASSESSMENT/exam3": request.POST.get('exam3')
                 # "Bridging_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
                 # "Bridging_ASSESSMENT/artistic": request.POST.get('artistic'),
             }
@@ -2212,6 +2720,11 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
+    exam2 = forms.FloatField(
+        label=_('Exam 2'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
     registration_level = forms.ChoiceField(
         label=_("Registration level"),
         widget=forms.Select, required=False,
@@ -2234,11 +2747,17 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         self.fields['clm_type'].initial = 'Bridging'
+        is_Kayany = False
+        if self.request.user.partner:
+            is_Kayany = self.request.user.partner.is_Kayany
 
         display_assessment = ''
         assessment_number = int(number)
         form_action = reverse('clm:bridging_mid_assessment', kwargs={'pk': instance.id, 'number': number})
-        header_text = 'Mid Test 1'
+        if not is_Kayany:
+            header_text = 'Mid Test 1'
+        else:
+            header_text = 'Exam 2'
 
         if assessment_number == 1 and instance.post_test:
             post_test_button = ' btn-outline-success '
@@ -2261,56 +2780,89 @@ class BridgingMidAssessmentForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-        self.helper.layout = Layout(
-            Div(
+        if not is_Kayany:
+
+            self.helper.layout = Layout(
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(header_text) + '</h4>'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    Div('registration_level', css_class='col-md-3 d-none'),
-                    Div('language', css_class='col-md-3 d-none'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
-                    Div('mid_test_done', css_class='col-md-3'),
-                    css_class='row card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_arabic">2</span>'),
-                    Div('arabic_alphabet_knowledge', css_class='col-md-3'),
-                    Div('arabic_familiar_words', css_class='col-md-3'),
-                    Div('arabic_reading_comprehension', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_english">3</span>'),
-                    Div('english_alphabet_knowledge', css_class='col-md-3'),
-                    Div('english_familiar_words', css_class='col-md-3'),
-                    Div('english_reading_comprehension', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_french">4</span>'),
-                    Div('french_alphabet_knowledge', css_class='col-md-3'),
-                    Div('french_familiar_words', css_class='col-md-3'),
-                    Div('french_reading_comprehension', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                Div(
-                    HTML('<span class="badge-form badge-pill" id="span_math">5</span>'),
-                    Div('math', css_class='col-md-3'),
-                    css_class='row grades card-body',
-                ),
-                FormActions(
-                    Submit('save', 'Save',
-                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-                    Reset('reset', 'Reset',
-                          css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _(header_text) + '</h4>'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        Div('registration_level', css_class='col-md-3 d-none'),
+                        Div('language', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('mid_test_done', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_arabic">2</span>'),
+                        Div('arabic_alphabet_knowledge', css_class='col-md-3'),
+                        Div('arabic_familiar_words', css_class='col-md-3'),
+                        Div('arabic_reading_comprehension', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_english">3</span>'),
+                        Div('english_alphabet_knowledge', css_class='col-md-3'),
+                        Div('english_familiar_words', css_class='col-md-3'),
+                        Div('english_reading_comprehension', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_french">4</span>'),
+                        Div('french_alphabet_knowledge', css_class='col-md-3'),
+                        Div('french_familiar_words', css_class='col-md-3'),
+                        Div('french_reading_comprehension', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_math">5</span>'),
+                        Div('math', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    )
                 )
             )
-        )
+
+        else:
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _(header_text) + '</h4>'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        Div('registration_level', css_class='col-md-3 d-none'),
+                        Div('language', css_class='col-md-3 d-none'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill">1</span>'),
+                        Div('mid_test_done', css_class='col-md-3'),
+                        css_class='row card-body',
+                    ),
+                    Div(
+                        HTML('<span class="badge-form badge-pill" id="span_exam2">2</span>'),
+                        Div('exam2', css_class='col-md-3'),
+                        css_class='row grades card-body',
+                    ),
+                    FormActions(
+                        Submit('save', 'Save',
+                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
+                        Reset('reset', 'Reset',
+                              css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
+                    )
+                )
+            )
 
     def clean(self):
         cleaned_data = super(BridgingMidAssessmentForm, self).clean()
@@ -2322,75 +2874,82 @@ class BridgingMidAssessmentForm(forms.ModelForm):
             registration_level = cleaned_data.get("registration_level")
             language = cleaned_data.get("language")
 
-            arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
-            arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
-            arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
+            if self.request.user.partner and not self.request.user.partner.is_Kayany:
+                arabic_alphabet_knowledge = cleaned_data.get("arabic_alphabet_knowledge")
+                arabic_familiar_words = cleaned_data.get("arabic_familiar_words")
+                arabic_reading_comprehension = cleaned_data.get("arabic_reading_comprehension")
 
-            english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
-            english_familiar_words = cleaned_data.get("english_familiar_words")
-            english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
+                english_alphabet_knowledge = cleaned_data.get("english_alphabet_knowledge")
+                english_familiar_words = cleaned_data.get("english_familiar_words")
+                english_reading_comprehension = cleaned_data.get("english_reading_comprehension")
 
-            french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
-            french_familiar_words = cleaned_data.get("french_familiar_words")
-            french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
+                french_alphabet_knowledge = cleaned_data.get("french_alphabet_knowledge")
+                french_familiar_words = cleaned_data.get("french_familiar_words")
+                french_reading_comprehension = cleaned_data.get("french_reading_comprehension")
 
-            math = cleaned_data.get("math")
+                math = cleaned_data.get("math")
 
-            if arabic_alphabet_knowledge is None:
-                self.add_error('arabic_alphabet_knowledge', 'This field is required')
-            elif arabic_alphabet_knowledge > 48:
-                self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
+                if arabic_alphabet_knowledge is None:
+                    self.add_error('arabic_alphabet_knowledge', 'This field is required')
+                elif arabic_alphabet_knowledge > 48:
+                    self.add_error('arabic_alphabet_knowledge', 'This value is greater that 48')
 
-            if arabic_familiar_words is None:
-                self.add_error('arabic_familiar_words', 'This field is required')
-            elif arabic_familiar_words > 20:
-                self.add_error('arabic_familiar_words', 'This value is greater that 20')
+                if arabic_familiar_words is None:
+                    self.add_error('arabic_familiar_words', 'This field is required')
+                elif arabic_familiar_words > 20:
+                    self.add_error('arabic_familiar_words', 'This value is greater that 20')
 
-            if arabic_reading_comprehension is None:
-                self.add_error('arabic_reading_comprehension', 'This field is required')
-            elif arabic_reading_comprehension > 10:
-                self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
+                if arabic_reading_comprehension is None:
+                    self.add_error('arabic_reading_comprehension', 'This field is required')
+                elif arabic_reading_comprehension > 10:
+                    self.add_error('arabic_reading_comprehension', 'This value is greater that 10')
 
-            if language == 'english_arabic':
-                if english_alphabet_knowledge is None:
-                    self.add_error('english_alphabet_knowledge', 'This field is required')
-                elif english_alphabet_knowledge > 48:
-                    self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
+                if language == 'english_arabic':
+                    if english_alphabet_knowledge is None:
+                        self.add_error('english_alphabet_knowledge', 'This field is required')
+                    elif english_alphabet_knowledge > 48:
+                        self.add_error('english_alphabet_knowledge', 'This value is greater that 48')
 
-                if english_familiar_words is None:
-                    self.add_error('english_familiar_words', 'This field is required')
-                elif english_familiar_words > 20:
-                    self.add_error('english_familiar_words', 'This value is greater that 20')
+                    if english_familiar_words is None:
+                        self.add_error('english_familiar_words', 'This field is required')
+                    elif english_familiar_words > 20:
+                        self.add_error('english_familiar_words', 'This value is greater that 20')
 
-                if english_reading_comprehension is None:
-                    self.add_error('english_reading_comprehension', 'This field is required')
-                elif english_reading_comprehension > 10:
-                    self.add_error('english_reading_comprehension', 'This value is greater that 10')
+                    if english_reading_comprehension is None:
+                        self.add_error('english_reading_comprehension', 'This field is required')
+                    elif english_reading_comprehension > 10:
+                        self.add_error('english_reading_comprehension', 'This value is greater that 10')
 
-            elif language == 'french_arabic':
-                if french_alphabet_knowledge is None:
-                    self.add_error('french_alphabet_knowledge', 'This field is required')
-                elif french_alphabet_knowledge > 48:
-                    self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
+                elif language == 'french_arabic':
+                    if french_alphabet_knowledge is None:
+                        self.add_error('french_alphabet_knowledge', 'This field is required')
+                    elif french_alphabet_knowledge > 48:
+                        self.add_error('french_alphabet_knowledge', 'This value is greater that 48')
 
-                if french_familiar_words is None:
-                    self.add_error('french_familiar_words', 'This field is required')
-                elif french_familiar_words > 20:
-                    self.add_error('french_familiar_words', 'This value is greater that 20')
+                    if french_familiar_words is None:
+                        self.add_error('french_familiar_words', 'This field is required')
+                    elif french_familiar_words > 20:
+                        self.add_error('french_familiar_words', 'This value is greater that 20')
 
-                if french_reading_comprehension is None:
-                    self.add_error('french_reading_comprehension', 'This field is required')
-                elif french_reading_comprehension > 10:
-                    self.add_error('french_reading_comprehension', 'This value is greater that 10')
+                    if french_reading_comprehension is None:
+                        self.add_error('french_reading_comprehension', 'This field is required')
+                    elif french_reading_comprehension > 10:
+                        self.add_error('french_reading_comprehension', 'This value is greater that 10')
 
-            if math is None:
-                self.add_error('math', 'This field is required')
-            elif registration_level == 'level_one' and math > 50:
-                self.add_error('math', 'This value is greater that 50')
-            elif registration_level == 'level_two' and math > 88:
-                self.add_error('math', 'This value is greater that 88')
-            elif math > 103:
-                self.add_error('math', 'This value is greater that 103')
+                if math is None:
+                    self.add_error('math', 'This field is required')
+                elif registration_level == 'level_one' and math > 50:
+                    self.add_error('math', 'This value is greater that 50')
+                elif registration_level == 'level_two' and math > 88:
+                    self.add_error('math', 'This value is greater that 88')
+                elif math > 103:
+                    self.add_error('math', 'This value is greater that 103')
+            else:
+                exam2 = cleaned_data.get("exam2")
+                if exam2 is None:
+                    self.add_error('exam2', 'This field is required')
+                elif exam2 > 20:
+                    self.add_error('exam2', 'This value is greater that 20')
 
     def save(self, instance=None, request=None, number=None):
         instance = super(BridgingMidAssessmentForm, self).save()
@@ -2412,6 +2971,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
                 "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
                 "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
                 "Bridging_ASSESSMENT/math": request.POST.get('math'),
+                "Bridging_ASSESSMENT/exam2": request.POST.get('exam2'),
             }
         elif assessment_number == 2 and request.POST.get('mid_test_done') == 'yes':
             instance.mid_test2 = {
@@ -2429,6 +2989,7 @@ class BridgingMidAssessmentForm(forms.ModelForm):
                 "Bridging_ASSESSMENT/french_familiar_words": request.POST.get('french_familiar_words'),
                 "Bridging_ASSESSMENT/french_reading_comprehension": request.POST.get('french_reading_comprehension'),
                 "Bridging_ASSESSMENT/math": request.POST.get('math'),
+                "Bridging_ASSESSMENT/exam2": request.POST.get('exam2'),
             }
         else:
             instance.mid_test1 = {
