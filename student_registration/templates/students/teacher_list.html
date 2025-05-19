@@ -101,14 +101,13 @@
                 </button>
 
               {% if user|has_group:"EXPORT" %}
-                <a href="" title="Download" class="btn btn-outline-success download-report">
+                <a href="javascript:void(0);"  title="Download" class="btn btn-outline-success download-report" onclick="teacherExport(event)">
                     <i class="lnr-download"></i>
                 </a>
                 <div class = "downloading-message" style = "display:none">
                   Loading...
                 </div>
               {% endif %}
-
             </form>
             </div>
         </div>

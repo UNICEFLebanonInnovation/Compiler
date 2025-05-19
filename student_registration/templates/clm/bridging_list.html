@@ -101,7 +101,7 @@
                 </button>
 
               {% if user|has_group:"EXPORT" %}
-                <a href="" title="Download" class="btn btn-outline-success download-report">
+                <a href="javascript:void(0);"  title="Download" class="btn btn-outline-success download-report" onclick="checkRoundBeforeExport(event)">
                     <i class="lnr-download"></i>
                 </a>
                 <div class = "downloading-message" style = "display:none">
@@ -141,7 +141,7 @@
 {% get_user_token request.user.id as user_token %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>
+<!--    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>-->
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}?v=12"></script>
 
