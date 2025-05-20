@@ -169,14 +169,14 @@ class InclusionAssessmentView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Inclusion.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = Inclusion.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance, request=self.request)
         else:
             return form_class(instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Inclusion.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = Inclusion.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(InclusionAssessmentView, self).form_valid(form)
 
@@ -206,7 +206,7 @@ class InclusionFollowupView(LoginRequiredMixin,
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = Inclusion.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = Inclusion.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(InclusionFollowupView, self).form_valid(form)
 
