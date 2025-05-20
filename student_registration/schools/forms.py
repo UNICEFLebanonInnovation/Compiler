@@ -3360,12 +3360,12 @@ class SchoolForm(forms.ModelForm):
             is_Kayany = self.request.user.partner.is_Kayany
         choices = list()
         if not is_Kayany:
-            choices.append(('level one', _('Level one')))
-            choices.append(('level two', _('Level two')))
-            choices.append(('level three', _('Level three')))
-            choices.append(('level four', _('Level four')))
-            choices.append(('level five', _('Level five')))
-            choices.append(('level six', _('Level six')))
+            choices.append(('Level one', _('Level one')))
+            choices.append(('Level two', _('Level two')))
+            choices.append(('Level three', _('Level three')))
+            choices.append(('Level four', _('Level four')))
+            choices.append(('Level five', _('Level five')))
+            choices.append(('Level six', _('Level six')))
         else:
             choices.append(('grade_one', _('Grade one')))
             choices.append(('grade_two', _('Grade two')))
