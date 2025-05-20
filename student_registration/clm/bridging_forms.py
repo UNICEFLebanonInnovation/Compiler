@@ -414,6 +414,15 @@ class BridgingForm(CommonForm):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
+        ('grade_one', _('Grade one')),
+        ('grade_two', _('Grade two')),
+        ('grade_three', _('Grade three')),
+        ('grade_four', _('Grade four')),
+        ('grade_five', _('Grade five')),
+        ('grade_six', _('Grade six')),
+        ('grade_seven', _('Grade seven')),
+        ('grade_eight', _('Grade eight')),
+        ('grade_nine', _('Grade nine')),
         # ('level_four', _('Level four')),
         # ('level_five', _('Level five')),
         # ('level_six', _('Level six'))
@@ -894,6 +903,9 @@ class BridgingForm(CommonForm):
             choices.append(('grade_four', _('Grade four')))
             choices.append(('grade_five', _('Grade five')))
             choices.append(('grade_six', _('Grade six')))
+            choices.append(('grade_seven', _('Grade seven')))
+            choices.append(('grade_eight', _('Grade eight')))
+            choices.append(('grade_nine', _('Grade nine')))
 
         self.fields['registration_level'].choices = choices
 

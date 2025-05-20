@@ -1851,6 +1851,9 @@ class Bridging(CLM):
         ('grade_four', _('Grade four')),
         ('grade_five', _('Grade five')),
         ('grade_six', _('Grade six')),
+        ('grade_seven', _('Grade seven')),
+        ('grade_eight', _('Grade eight')),
+        ('grade_nine', _('Grade nine')),
     )
     MAIN_CAREGIVER = (
         ('', '----------'),

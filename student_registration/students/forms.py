@@ -281,12 +281,12 @@ class TeacherForm(forms.ModelForm):
         choices = list()
         subject_choices = list()
         if not is_Kayany:
-            choices.append(('level_one', _('Level one')))
-            choices.append(('level_two', _('Level two')))
-            choices.append(('level_three', _('Level three')))
-            choices.append(('level_four', _('Level four')))
-            choices.append(('level_five', _('Level five')))
-            choices.append(('level_six', _('Level six')))
+            choices.append(('level one', _('Level one')))
+            choices.append(('level two', _('Level two')))
+            choices.append(('level three', _('Level three')))
+            choices.append(('level four', _('Level four')))
+            choices.append(('level five', _('Level five')))
+            choices.append(('level six', _('Level six')))
 
             subject_choices.append(('arabic', _('Arabic')))
             subject_choices.append(('math', _('Math')))
@@ -302,6 +302,9 @@ class TeacherForm(forms.ModelForm):
             choices.append(('grade_four', _('Grade four')))
             choices.append(('grade_five', _('Grade five')))
             choices.append(('grade_six', _('Grade six')))
+            choices.append(('grade_seven', _('Grade seven')))
+            choices.append(('grade_eight', _('Grade eight')))
+            choices.append(('grade_nine', _('Grade nine')))
 
             subject_choices.append(('arabic', _('Arabic')))
             subject_choices.append(('math', _('Math')))

@@ -1107,7 +1107,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
                 if not counselling_date:
                     self.add_error('counselling_date', 'This field is required')
 
-            caregiver_ecd_counselling = cleaned_data.get("caregiver_counselling")
+            caregiver_ecd_counselling = cleaned_data.get("caregiver_ecd_counselling")
             ecd_counselling_date = cleaned_data.get("ecd_counselling_date")
 
             if caregiver_ecd_counselling and caregiver_ecd_counselling == 'Yes':
