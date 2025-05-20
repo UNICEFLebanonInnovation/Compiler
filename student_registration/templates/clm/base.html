@@ -1,3 +1,7 @@
 {% extends "base4.html" %}
 
-{% block module_name %}Dirasa - Registrations{% endblock %}
+{% block module_name %}
+Dirasa
+{% if request.user.partner.is_Kayany %} - Kayany {% endif %}
+- Registrations
+{% endblock %}

@@ -7,7 +7,7 @@
 {% load simple_tags %}
 {% bootstrap_css %}
 
-{% block project_title %}Registration | Edit{% endblock %}
+{% block project_title %}Registration | {% if form.instance.id %}Edit{% else %}New{% endif %} {% endblock %}
 
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
@@ -39,7 +39,7 @@
                                     <a href="{% url 'clm:bridging_list' %}">Dirasa List</a>
                               </li>
                                <li class="breadcrumb-item">
-                                 Edit
+                                 {% if form.instance.id %}Edit{% else %}New{% endif %}
                               </li>
 
                           </ol>

@@ -337,47 +337,23 @@
                                             Home
                                         </a>
                                     </div>
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Makani
                                         </a>
                                     </div>
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'clm:bridging_page' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-culture icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Dirasa
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'clm:inclusion_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-plugin icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Disability specialized
-                                        </a>
-                                    </div>
-                                    {% if request.user|has_group:"MSCC_FULL" %}
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'mscc:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Makani Dashboard
-                                        </a>
-                                    </div>
-                                    {% endif %}
-                                    {% if request.user|has_group:"MSCC_YOUTH" %}
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'mscc:dashboard_youth' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Youth Dashboard
-                                        </a>
-                                    </div>
-                                    {% endif %}
+                                  {% endif %}
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:attendance' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="lnr-laptop-phone icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Attendance
+                                            Makani Attendance
                                         </a>
                                     </div>
-                                    {% if request.user|has_group:"MSCC_CENTER"  and request.user.center_id %}
+                                  {% endif %}
+                                  {% if request.user|has_group:"MSCC_CENTER" and request.user.center_id %}
                                       <div class="col-sm-6 col-xl-4">
                                           <a href="{% url 'locations:center_profile' request.user.center_id %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                               <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -393,6 +369,46 @@
                                               Makani Center
                                           </a>
                                       </div>
+                                    {% endif %}
+                                    {% if request.user|has_group:"MSCC_UNICEF" %}
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'mscc:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Makani Dashboard
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                  {% if request.user|has_group:"CLM_Bridging" %}
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'clm:bridging_page' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-culture icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Dirasa
+                                        </a>
+                                    </div>
+                                  {% endif %}
+                                  {% if request.user|has_group:"CLM_Inlusion" %}
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'clm:inclusion_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-plugin icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Disability specialized
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    {% if request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" %}
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'youth:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Youth
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    {% if request.user|has_group:"YOUTH_UNICEF" %}
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'mscc:dashboard_youth' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Youth Dashboard
+                                        </a>
+                                    </div>
                                     {% endif %}
 
                                     <div class="col-sm-6 col-xl-4">
