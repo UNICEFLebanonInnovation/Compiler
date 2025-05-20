@@ -35,7 +35,7 @@ class InclusionAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
 
-    template_name = 'clm/inclusion_add_form.html'
+    template_name = 'clm/inclusion_form.html'
     form_class = InclusionForm
     success_url = '/clm/inclusion-list/'
     group_required = [u"CLM_Inclusion"]
@@ -92,7 +92,7 @@ class InclusionEditView(LoginRequiredMixin,
                         GroupRequiredMixin,
                         FormView):
 
-    template_name = 'clm/inclusion_edit_form.html'
+    template_name = 'clm/inclusion_form.html'
     form_class = InclusionForm
     success_url = '/clm/inclusion-list/'
     group_required = [u"CLM_Inclusion"]
