@@ -74,8 +74,10 @@ def login_success(request):
         return HttpResponseRedirect(reverse('mscc:list'))
     elif has_group(request.user, 'YOUTH'):
         return HttpResponseRedirect(reverse('youth:list'))
+    elif has_group(request.user, 'CLM_Inclusion'):
+        return HttpResponseRedirect(reverse('clm:inclusion_list'))
     else:
-        return HttpResponseRedirect(reverse('clm:index'))
+        return HttpResponseRedirect(reverse('clm:bridging_page'))
 
 
 def home(request):
