@@ -188,8 +188,8 @@
             top: 20px;
         }
         ul.ui-widget-content.ui-autocomplete {
-            top: 32px !important;
-            left: 0px !important;
+            /*top: 32px !important;
+            left: 0px !important;*/
             width: 315px !important;
             z-index: 9999 !important;
             overflow: scroll !important;
@@ -382,7 +382,7 @@
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'clm:bridging_page' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-culture icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Dirasa
+                                            Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}
                                         </a>
                                     </div>
                                   {% endif %}
@@ -410,19 +410,6 @@
                                         </a>
                                     </div>
                                     {% endif %}
-
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-
-                                        </a>
-                                    </div>
                                     <!--<div class="col-sm-6 col-xl-4">-->
                                         <!--<a class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">-->
                                             <!--<i class="pe-7s-browser icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"> </i>-->

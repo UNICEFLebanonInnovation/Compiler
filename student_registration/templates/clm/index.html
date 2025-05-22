@@ -1,73 +1,96 @@
-{% extends "base.html" %}
-{% load staticfiles i18n %}
-{% load util_tags %}
+{% extends "clm/base.html" %}
+{% load static i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
 
-{% block extra_head %}
+{% block project_title %}Dirasa{% endblock %}
+
+{% block main_content %}
+
+<!--<div class="app-page-title">-->
+                        <!--<div class="page-title-wrapper">-->
+                            <!--<div class="page-title-heading">-->
+                                <!--<div>-->
+                                    <!--<div class="page-title-head center-elem page-title-heading">-->
+                                        <!--<span class="d-inline-block pr-2">-->
+                                            <!--<i class="pe-7s-display1"></i>-->
+                                        <!--</span>-->
+                                        <!--<span class="d-inline-block">Dirasa</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                        <!--</div>-->
+<!--</div>-->
+
+<div class="row">
+                            <div class="col-lg-12 col-xl-12">
+                                <div class="main-card mb-3 card">
+                                    <div class="grid-menu grid-menu-2col">
+                                        <div class="no-gutters row">
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-primary"></div>
+                                                        <i class="lnr-cog text-primary"></i></div>
+                                                  <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">Dirasa Registration</a></div>
+                                                    <div class="widget-subheading">{% if request.user.partner.is_Kayany %} - Kayany {% endif %} </div>
+                                                    <div class="widget-description text-success">
+                                                        <!--<i class="fa fa-angle-up"></i>-->
+                                                        <span class="pl-1"> </span></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-info"></div>
+                                                        <i class="lnr-laptop-phone text-info"></i>
+                                                    </div>
+                                                  <div class="widget-numbers"><a href="{% url 'clm:attendance' %}">Attendance</a></div>
+                                                    <div class="widget-subheading"></div>
+                                                    <div class="widget-description text-info">
+                                                        <!--<i class="fa fa-arrow-right"></i>-->
+                                                        <span class="pl-1"></span></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-danger"></div>
+                                                        <i class="lnr-apartment text-danger"></i>
+                                                    </div>
+                                                  <div class="widget-numbers"> <a href="{% url 'schools:school_list' %}">Schools</a></div>
+                                                    <div class="widget-subheading"></div>
+                                                    <div class="widget-description text-primary"><span class="pr-1"></span>
+                                                        <!--<i class="fa fa-angle-up"></i>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover br-br">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-success"></div>
+                                                        <i class="lnr-graduation-hat"></i></div>
+                                                  <div class="widget-numbers"><a href="{% url 'students:teacher_list' %}">Teachers</a></div>
+                                                    <div class="widget-subheading"></div>
+                                                    <div class="widget-description text-warning"><span class="pr-1"></span>
+                                                        <!--<i class="fa fa-arrow-left"></i>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 {% endblock %}
-
-{% block content-full-page %}
-
-
-<div class="card-deck">
-    {% if request.user|has_group:"CLM_BLN" %}
-<div class="col-sm-4">
-  <div class="card">
-    <a href="{% url "clm:bln_list" %}">
-        <img class="card-img-top" data-src="holder.js/250px250/" alt="100%x180" src="{% static 'images/clm-bln-icon.png' %}" data-holder-rendered="true" style="height: 250px; width: 250px; display: block;">
-    </a>
-    <div class="card-block" style="border-top: 1px solid rgba(0,0,0,.125)">
-        <a href="{% url "clm:bln_list" %}" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true"><h3>BLN</h3></a>
-        <a href="{% url "clm:bln_dashboard" %}" class="btn btn-outline-primary btn-lg btn-block " role="button" aria-pressed="true">Dashboard</a>
-    </div>
-  </div>
-</div>
-    {% endif %}
-    {% if request.user|has_group:"CLM_ABLN" %}
-<div class="col-sm-4">
-  <div class="card">
-    <a href="{% url "clm:abln_list" %}">
-        <img class="card-img-top" data-src="holder.js/250px250/" alt="100%x180" src="{% static 'images/clm-bln-icon.png' %}" data-holder-rendered="true" style="height: 250px; width: 250px; display: block;">
-    </a>
-    <div class="card-block" style="border-top: 1px solid rgba(0,0,0,.125)">
-        <a href="{% url "clm:abln_list" %}" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true"><h3>ABLN</h3></a>
-        <!--<a href="{% url "clm:bln_dashboard" %}" class="btn btn-outline-primary btn-lg btn-block " role="button" aria-pressed="true">Dashboard</a>-->
-    </div>
-  </div>
-</div>
-    {% endif %}
-    {% if request.user|has_group:"CLM_RS" %}
-<div class="col-sm-4">
-  <div class="card">
-    <a href="{% url "clm:rs_list" %}">
-        <img class="card-img-top" data-src="holder.js/250px250/" alt="100%x180" src="{% static 'images/clm-rs-icon.png' %}" data-holder-rendered="true" style="height: 250px; width: 250px; display: block;">
-    </a>
-    <div class="card-block" style="border-top: 1px solid rgba(0,0,0,.125)">
-        <a href="{% url "clm:rs_list" %}" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true"><h3>RS</h3></a>
-        <a href="{% url "clm:rs_dashboard" %}" class="btn btn-outline-primary btn-lg btn-block " role="button" aria-pressed="true">Dashboard</a>
-    </div>
-  </div>
-</div>
-    {% endif %}
-    {% if request.user|has_group:"CLM_CBECE" %}
-<div class="col-sm-4">
-  <div class="card">
-    <a href="{% url "clm:cbece_list" %}">
-        <img class="card-img-top" data-src="holder.js/250px250/" alt="100%x180" src="{% static 'images/clm-cbece-icon.png' %}" data-holder-rendered="true" style="height: 250px; width: 250px; display: block;">
-    </a>
-    <div class="card-block" style="border-top: 1px solid rgba(0,0,0,.125)">
-        <a href="{% url "clm:cbece_list" %}" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true"><h3>CB-ECE</h3></a>
-        <a href="{% url "clm:cbece_dashboard" %}" class="btn btn-outline-primary btn-lg btn-block " role="button" aria-pressed="true">Dashboard</a>
-    </div>
-  </div>
-</div>
-    {% endif %}
-</div>
-
-
-
-{% endblock %}
-
 {% block extra_js %}
+
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
 
 {% endblock %}

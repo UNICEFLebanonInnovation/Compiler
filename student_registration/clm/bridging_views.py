@@ -153,7 +153,7 @@ class AssessmentSubmission(SingleObjectMixin, View):
 
 class BridgingPage(LoginRequiredMixin,
                    TemplateView):
-    template_name = 'clm/bridging.html'
+    template_name = 'clm/index.html'
 
 
 class BridgingListView(LoginRequiredMixin,

@@ -438,7 +438,6 @@ class InclusionForm(forms.ModelForm):
         self.fields['new_registry'].initial = 'yes'
 
         if instance:
-            # display_registry = ' d-none'
             form_action = reverse('clm:inclusion_edit', kwargs={'pk': instance.id})
 
         self.helper = FormHelper()
@@ -453,40 +452,28 @@ class InclusionForm(forms.ModelForm):
                     'partner_name',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default"></span>'),
-                    Div('search_clm_student', css_class='col-md-3'),
-                    css_class='row card-body ' + display_registry,
-                    css_id='search_options_clm',
-                ),
-                Div(
-                    HTML('<p>' + _(
-                        'Search by the following keywords: child first name, father name, last name, '
-                        'child number or partner internal number') + '</p>'),
-                    css_class='row card-body '+display_registry,
-                    css_id='search_options_clm',
-                ),
-                Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('new_registry', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('search_clm_student', css_class='col-md-3'),
+                    css_class='row card-body',
+                ),
+                Div(
                     HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('round', css_class='col-md-3'),
-                    css_class='row card-body'
-                ),
-                Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('district', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
+                    HTML('<span class="badge-form badge-pill">4</span>'),
+                    Div('district', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     HTML('<span class="badge-form badge-pill">6</span>'),
                     Div('location', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
-                css_class='child_data',
                 css_id='step-1'
             ),
             Div(
@@ -543,7 +530,6 @@ class InclusionForm(forms.ModelForm):
                     Div('rims_case_number', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
-                css_class='child_data',
                 css_id='step-2'
             ),
             Div(
@@ -716,7 +702,6 @@ class InclusionForm(forms.ModelForm):
                     Div('other_number_confirm', css_class='col-md-4'),
                     css_class='row child_id child_id6 card-body',
                 ),
-                css_class='child_data',
                 css_id='step-3'
             ),
             Div(
@@ -730,12 +715,11 @@ class InclusionForm(forms.ModelForm):
                     Div('labour_type', css_class='col-md-3', css_id='labours'),
                     css_class='row card-body'
                 ),
-                css_class='child_data',
                 css_id="step-4"
             ),
             Div(
                 Div(
-                    HTML('<span class="badge-form badge-pill">1</span>'),
+                    # HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('additional_comments', css_class='col-md-12'),
                     css_class='row card-body'
                 ),
@@ -745,7 +729,7 @@ class InclusionForm(forms.ModelForm):
                     Reset('reset', 'Reset',
                           css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                 ),
-                css_class='child_data',
+                style='display: none;',
                 css_id='step-5'
             )
         )

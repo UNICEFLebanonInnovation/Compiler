@@ -8,7 +8,7 @@
 {% bootstrap_css %}
 
 {% block module_name %}Disability Specialized{% endblock %}
-{% block project_title %}Disability Specialized | Edit{% endblock %}
+{% block project_title %}Disability Specialized | {% if form.instance.id %}Edit{% else %}New{% endif %}{% endblock %}
 
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
@@ -40,7 +40,7 @@
                                     <a href="{% url 'clm:inclusion_list' %}">List</a>
                               </li>
                                <li class="breadcrumb-item">
-                                 Edit
+                                 {% if form.instance.id %}Edit{% else %}New{% endif %}
                               </li>
 
                           </ol>
