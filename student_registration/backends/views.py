@@ -48,6 +48,14 @@ def generate_student_unique_id(request):
     return HttpResponse("records saved successfully")
 
 
+def generate_all_teacher_unique_id(request):
+    from student_registration.backends.threads import generate_all_teacher_unique_id
+
+    generate_all_teacher_unique_id()
+    return HttpResponse("records saved successfully")
+
+
+
 class NotificationViewSet(mixins.UpdateModelMixin,
                           viewsets.GenericViewSet):
 

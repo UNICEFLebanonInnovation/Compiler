@@ -31,5 +31,10 @@ urlpatterns = [
         view=views.generate_child_cash_programme,
         name='generate_cash_programme'
     ),
+    url(
+        regex=r'^generate-all-teacher-unique-id/$',
+        view=views.generate_all_teacher_unique_id,
+        name='generate_all_teacher_unique_id'
+    ),
 
 ]
