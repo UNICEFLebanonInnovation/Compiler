@@ -46,10 +46,11 @@
                                                     <div class="icon-wrapper rounded-circle">
                                                         <div class="icon-wrapper-bg bg-primary"></div>
                                                         <i class="lnr-cog text-primary"></i></div>
-                                                  <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">Dirasa Registration</a></div>
-                                                    <div class="widget-subheading">{% if request.user.partner.is_Kayany %} - Kayany {% endif %} </div>
+                                                  <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</a></div>
+                                                    <div class="widget-subheading"></div>
                                                     <div class="widget-description text-success">
-                                                        <!--<i class="fa fa-angle-up"></i>-->
+                                                        <i class="fa fa-arrow-right"></i>
+                                                        <a href="{% url 'clm:dashboard' %}">Dashboard</a>
                                                         <span class="pl-1"> </span></div>
                                                 </div>
                                             </div>
@@ -59,7 +60,7 @@
                                                         <div class="icon-wrapper-bg bg-danger"></div>
                                                         <i class="lnr-apartment text-danger"></i>
                                                     </div>
-                                                  <div class="widget-numbers"> <a href="{% url 'clm:inclusion_list' %}">Disability specialized</a></div>
+                                                  <div class="widget-numbers"> <a href="{% url 'clm:inclusion_list' %}">Disability Specialized</a></div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-primary"><span class="pr-1"></span>
                                                         <!--<i class="fa fa-angle-up"></i>-->
