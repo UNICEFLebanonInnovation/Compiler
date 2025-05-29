@@ -109,6 +109,7 @@ class SpecialNeedsDt(models.Model):
         blank=True,
         null=True,
         verbose_name=_('Detail Special Needs'),
+        on_delete=models.CASCADE, # Example: Ensure to choose the correct on_delete strategy (e.g., SET_NULL, PROTECT) based on application logic.
     )
 
     class Meta:
@@ -282,7 +283,8 @@ class Person(TimeStampedModel):
     id_type = models.ForeignKey(
         IDType,
         blank=True, null=True,
-        verbose_name=_('ID type')
+        verbose_name=_('ID type'),
+        on_delete=models.CASCADE, # Example: Ensure to choose the correct on_delete strategy (e.g., SET_NULL, PROTECT) based on application logic.
     )
     nationality = models.ForeignKey(
         Nationality,
@@ -433,6 +435,7 @@ class Student(Person):
     outreach_child = models.ForeignKey(
         Child,
         blank=True, null=True,
+        on_delete=models.CASCADE, # Example: Ensure to choose the correct on_delete strategy (e.g., SET_NULL, PROTECT) based on application logic.
     )
     std_image = models.ImageField(
         upload_to="profiles",

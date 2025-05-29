@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField

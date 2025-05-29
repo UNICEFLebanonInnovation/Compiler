@@ -2,14 +2,15 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
 
 from rest_framework_nested import routers
-from rest_framework_swagger.views import get_swagger_view
+# from rest_framework_swagger.views import get_swagger_view # Replaced by drf-spectacular
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 
 from student_registration.attendances.views import (
@@ -118,49 +119,54 @@ api.register(r'clm-outreach', OutreachViewSet, base_name='clm-outreach')
 # api.register(r'backend-exporter', ExporterViewSet, base_name='backend-exporter')
 api.register(r'locations', LocationViewSet, base_name='locations')
 
-schema_view = get_swagger_view(title='Compiler API')
+# schema_view = get_swagger_view(title='Compiler API') # Replaced by drf-spectacular
 
 
 urlpatterns = [
-    url(r'^$', home, name="home"),
-    # url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
-    url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
-    url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
-    url(r'login_success/$', login_success, name='login_success'),
-    url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
-    url(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
-    url(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
+    re_path(r'^$', home, name="home"),
+    # re_path(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
+    re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
+    re_path(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
+    re_path(r'login_success/$', login_success, name='login_success'),
+    re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
+    re_path(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
+    re_path(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
-    url(settings.ADMIN_URL, admin.site.urls),
+    re_path(settings.ADMIN_URL, admin.site.urls),
 
     # User management
-    url(r'^users/', include('student_registration.users.urls', namespace='users')),
-    url(r'^accounts/', include('allauth.urls')),
+    re_path(r'^users/', include('student_registration.users.urls', namespace='users')),
+    re_path(r'^accounts/', include('allauth.urls')),
 
-    url(r'^students/', include('student_registration.students.urls', namespace='students')),
-    # url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
-    url(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
-    url(r'^MSCC/', include('student_registration.mscc.urls', namespace='mscc')),
-    url(r'^youth/', include('student_registration.youth.urls', namespace='youth')),
-    url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
-    url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
-    # url(r'^staffenroll/', include('student_registration.staffenroll.urls', namespace='staffenroll')),
-    # url(r'^staffs/', include('student_registration.staffs.urls', namespace='staffs')),
-    # url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
-    url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
-    url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
-    url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
-    url(r'^backends/', include('student_registration.backends.urls', namespace='backends')),
+    re_path(r'^students/', include('student_registration.students.urls', namespace='students')),
+    # re_path(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
+    re_path(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
+    re_path(r'^MSCC/', include('student_registration.mscc.urls', namespace='mscc')),
+    re_path(r'^youth/', include('student_registration.youth.urls', namespace='youth')),
+    re_path(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
+    re_path(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
+    # re_path(r'^staffenroll/', include('student_registration.staffenroll.urls', namespace='staffenroll')),
+    # re_path(r'^staffs/', include('student_registration.staffs.urls', namespace='staffs')),
+    # re_path(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
+    re_path(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
+    re_path(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
+    re_path(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
+    re_path(r'^backends/', include('student_registration.backends.urls', namespace='backends')),
 
-    url(r'helpdesk/', include('helpdesk.urls')),
-    # url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
+    re_path(r'helpdesk/', include('helpdesk.urls')),
+    # re_path(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/docs/', schema_view),
+    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # re_path(r'^api/docs/', schema_view), # Replaced by drf-spectacular
 
-    url(r'^api/', include(api.urls)),
-    url(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")
+    # drf-spectacular URLs
+    re_path(r'^api/schema/$', SpectacularAPIView.as_view(), name='schema'),
+    re_path(r'^api/schema/swagger-ui/$', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    re_path(r'^api/schema/redoc/$', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
+    re_path(r'^api/', include(api.urls)),
+    re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -169,13 +175,13 @@ if settings.DEBUG:
     # these url in browser to see how these error pages look like.
     import debug_toolbar
     urlpatterns += [
-        url(r'^400/$', default_views.bad_request, kwargs={'exception': Exception('Bad Request!')}),
-        url(r'^403/$', default_views.permission_denied, kwargs={'exception': Exception('Permission Denied')}),
-        url(r'^404/$', default_views.page_not_found, kwargs={'exception': Exception('Page not Found')}),
-        url(r'^500/$', default_views.server_error),
+        re_path(r'^400/$', default_views.bad_request, kwargs={'exception': Exception('Bad Request!')}),
+        re_path(r'^403/$', default_views.permission_denied, kwargs={'exception': Exception('Permission Denied')}),
+        re_path(r'^404/$', default_views.page_not_found, kwargs={'exception': Exception('Page not Found')}),
+        re_path(r'^500/$', default_views.server_error),
     ]
     if 'debug_toolbar' in settings.INSTALLED_APPS:
         import debug_toolbar
         urlpatterns = [
-            url(r'^__debug__/', include(debug_toolbar.urls)),
+            re_path(r'^__debug__/', include(debug_toolbar.urls)),
         ] + urlpatterns

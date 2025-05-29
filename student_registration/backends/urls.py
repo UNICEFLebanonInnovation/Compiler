@@ -1,32 +1,32 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 urlpatterns = [
 
-    url(
+    re_path(
         regex=r'^files-list/$',
         view=views.ExporterListView.as_view(),
         name='files_list'
     ),
-    url(
+    re_path(
         regex=r'^generate-child-unique-id/$',
         view=views.generate_child_unique_id,
         name='generate_child_id'
     ),
-    url(
+    re_path(
         regex=r'^generate-all-child-unique-id/$',
         view=views.generate_all_child_unique_id,
         name='generate_all_child_unique_id'
     ),
-    url(
+    re_path(
         regex=r'^generate-student-unique-id/$',
         view=views.generate_student_unique_id,
         name='generate_student_id'
     ),
-    url(
+    re_path(
         regex=r'^generate-child-cash-programme/$',
         view=views.generate_child_cash_programme,
         name='generate_cash_programme'

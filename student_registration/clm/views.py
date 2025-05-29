@@ -20,7 +20,7 @@ from django.db import connection
 import codecs
 import logging
 import traceback
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt

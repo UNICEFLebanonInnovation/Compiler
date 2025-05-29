@@ -5,7 +5,7 @@ import datetime
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel

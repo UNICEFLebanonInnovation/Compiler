@@ -1,148 +1,148 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views, program_view, services_view
 
 urlpatterns = [
 
-    url(
+    re_path(
         regex=r'^Child-Add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
     ),
-    url(
+    re_path(
         regex=r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
         name='child_edit'
     ),
-    url(
+    re_path(
         regex=r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
         view=views.MainMarkDeleteView,
         name='child_mark_deleted'
     ),
-    url(
+    re_path(
         regex=r'^export/$',
         view=views.export_data,
         name='export'
     ),
-    url(
+    re_path(
         regex=r'^export-pd/$',
         view=views.export_pd_data,
         name='export_pd'
     ),
-    url(
+    re_path(
         regex=r'^List/$',
         view=views.MainListView.as_view(),
         name='list'
     ),
-    url(
+    re_path(
         regex=r'^PD-List/$',
         view=views.PDListView.as_view(),
         name='pd_list'
     ),
-    url(
+    re_path(
         regex=r'^PD-Add/$',
         view=views.PDListView.as_view(),
         name='pd_add'
     ),
-    url(
+    re_path(
         regex=r'^Program/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_add'
     ),
-    url(
+    re_path(
         regex=r'^Program/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_edit'
     ),
-    url(
+    re_path(
         regex=r'^Program/Program-Document-Add/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_add'
     ),
-    url(
+    re_path(
         regex=r'^Program/Program-Document-Edit/(?P<pk>[\w.@+-]+)/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_edit'
     ),
-    url(
+    re_path(
         regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='child_profile'
     ),
-    url(
+    re_path(
         regex=r'^Services/Youth-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_add'
     ),
-    url(
+    re_path(
         regex=r'^Services/Youth-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_edit'
     ),
-    url(
+    re_path(
         'Outreach-Child-Search/$',
         views.outreach_child_search,
         name='outreach_child_search'
     ),
-    url(
+    re_path(
         'Outreach-Child/$',
         views.outreach_child,
         name='outreach_child'
     ),
-    url(
+    re_path(
         'Old-Child-Search/$',
         views.old_child_search,
         name='old_child_search'
     ),
-    url(
+    re_path(
         'Get-Old-Child-Data/$',
         views.old_child_data,
         name='old_child_data'
     ),
-    url(
+    re_path(
         'Child-Duplication-Check/$',
         views.child_duplication_check,
         name='child_duplication_check'
     ),
-    url(
+    re_path(
         'Quick-Search/$',
         views.quick_search,
         name='quick_search'
     ),
-    url(
+    re_path(
         'Child-Profile-Preview/$',
         view=views.ChildProfilePreview.as_view(),
         name='child_profile_preview'
     ),
-    url(
+    re_path(
         regex=r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
         view=views.MainRegistrationCancelView,
         name='child_registration_cancel'
     ),
-    url(
+    re_path(
         'load-districts/$',
         views.load_districts,
         name='load_districts'
     ),
-    url(
+    re_path(
         'load-cadasters/$',
         views.load_cadasters,
         name='load_cadasters'
     ),
 
-    url(
+    re_path(
         'load-program-document/$',
         views.load_program_document,
         name='load_program_document'
     ),
-    url(
+    re_path(
         'load-master-program/$',
         views.load_master_program,
         name='load_master_program'
     ),
-    url(
+    re_path(
         'load-subr-program/$',
         views.load_sub_program,
         name='load_sub_program'

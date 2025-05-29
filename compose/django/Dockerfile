@@ -1,4 +1,4 @@
-FROM python:3.5
+FROM python:3.10-slim-bullseye
 
 # SSH support on Azure
 ENV SSH_PASSWD "root:Docker!"

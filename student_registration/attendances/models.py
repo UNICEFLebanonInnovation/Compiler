@@ -2,8 +2,9 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import JSONField, ArrayField
+from django.utils.translation import ugettext as _ # Will be fixed in a subsequent step
+from django.db.models import JSONField
+from django.contrib.postgres.fields import ArrayField # ArrayField is still from here
 import json
 
 from model_utils import Choices

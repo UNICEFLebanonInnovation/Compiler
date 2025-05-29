@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 from django.db import models
 # from django.contrib.gis.db import models
 from django.db.models.signals import post_save
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
@@ -138,7 +138,7 @@ def create_helpdesk_notification(sender, instance, created, **kwargs):
     school = None
     submitter_email = instance.submitter_email
     try:
-        status = force_text(dict(Ticket.STATUS_CHOICES)[instance.status]) if instance.status else ''
+        status = force_str(dict(Ticket.STATUS_CHOICES)[instance.status]) if instance.status else ''
         if instance.followup_set:
             comments = instance.followup_set.all().last().comment if instance.followup_set.all().last() else ''
             # comments = '\r\n'.join([f.comment for f in instance.followup_set.all()])
@@ -187,7 +187,7 @@ def send_ticket_email(sender, instance, created, **kwargs):
     submitter_name = None
     queue = instance.queue
     try:
-        status = force_text(dict(Ticket.STATUS_CHOICES)[instance.status]) if instance.status else ''
+        status = force_str(dict(Ticket.STATUS_CHOICES)[instance.status]) if instance.status else ''
         if instance.followup_set:
             comments = '\r\n'.join([f.comment for f in instance.followup_set.all()])
 

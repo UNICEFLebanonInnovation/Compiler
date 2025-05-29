@@ -20,7 +20,7 @@ from django.db import connection
 import codecs
 import logging
 import traceback
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -498,7 +498,7 @@ def bridging_school_export(request, **kwargs):
                     encoded_row.append(str(cell))
                 # Local 2.7
                 # if isinstance(cell, str) or isinstance(cell, unicode):  # Handle Unicode strings
-                #     encoded_row.append(force_text(cell).encode('utf-8'))
+                #     encoded_row.append(force_str(cell).encode('utf-8'))
                 # elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
                 #     encoded_row.append(cell.strftime('%Y-%m-%d'))
                 # else:  # Convert other data types to string

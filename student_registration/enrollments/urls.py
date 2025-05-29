@@ -1,137 +1,137 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 urlpatterns = [
 
-    url(
+    re_path(
         regex=r'^add/$',
         view=views.AddView.as_view(),
         name='add'
     ),
-    url(
+    re_path(
         regex=r'^edit/(?P<pk>[\w.@+-]+)/$',
         view=views.EditView.as_view(),
         name='edit'
     ),
-    url(
+    re_path(
         regex=r'^edit_region/(?P<pk>[\w.@+-]+)/$',
         view=views.Edit_RegionView.as_view(),
         name='edit_region'
     ),
-    url(
+    re_path(
         regex=r'^saveimage/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Image.as_view(),
         name='saveimage'
     ),
-    url(
+    re_path(
         regex=r'^edit-old-data/(?P<pk>[\w.@+-]+)/$',
         view=views.EditOldDataView.as_view(),
         name='edit_old_data'
     ),
-    url(
+    re_path(
         regex=r'^moved/(?P<pk>[\w.@+-]+)/(?P<moved>[\w.@+-]+)/$',
         view=views.MovedView.as_view(),
         name='moved'
     ),
-    url(
+    re_path(
         regex=r'^list/$',
         view=views.ListingView.as_view(),
         name='list'
     ),
-    url(
+    re_path(
         regex=r'^student_by_regions/$',
         view=views.Student_By_Regions.as_view(),
         name='student_by_regions'
     ),
-    url(
+    re_path(
         regex=r'^list-old-data/$',
         view=views.ListingOldDataView.as_view(),
         name='list_old_data'
     ),
-    url(
+    re_path(
         regex=r'^grading/(?P<pk>[\w.@+-]+)/(?P<term>[\w.@+-]+)/$',
         view=views.GradingView.as_view(),
         name='grading'
     ),
-    url(
+    re_path(
         regex=r'^export/$',
         view=views.ExportViewSet.as_view(),
         name='export'
     ),
-    url(
+    re_path(
         regex=r'^export-grading/$',
         view=views.ExportGradingViewSet.as_view(),
         name='export_grading'
     ),
-    url(
+    re_path(
         regex=r'^enrollment-export-by-school/$',
         view=views.ExportBySchoolView.as_view(),
         name='enrollment_export_by_school'
     ),
-    url(
+    re_path(
         regex=r'^enrollment-export-by-cycle/$',
         view=views.ExportByCycleView.as_view(),
         name='enrollment_export_by_cycle'
     ),
-    url(
+    re_path(
         regex=r'^saveimage/(?P<pk>[\w.@+-]+)/$',
         view=views.Clear_Profile.as_view(),
         name='clear-profile'
     ),
-    url(
+    re_path(
         regex=r'^modify-images/(?P<pk>[\w.@+-]+)/$',
         view=views.Modify_Images_View.as_view(),
         name='modify_images'
     ),
-    url(
+    re_path(
         regex=r'^clear-images/(?P<pk>[\w.@+-]+)/$',
         view=views.Clear_Images_View.as_view(),
         name='clear_images'
     ),
-    url(
+    re_path(
         regex=r'^empty_profile/$',
         view=views.empty_profile,
         name='empty_profile'
     ),
-    url(
+    re_path(
         regex=r'^changing_profile/$',
         view=views.changing_profile,
         name='changing_profile'
     ),
-    url(
+    re_path(
         regex=r'^empty_birthdoc/$',
         view=views.empty_birthdoc,
         name='empty_birthdoc'
     ),
-    url(
+    re_path(
         regex=r'^changing_birthdoc/$',
         view=views.changing_birthdoc,
         name='changing_birthdoc'
     ),
-    url(
+    re_path(
         regex=r'^empty_unhcr/$',
         view=views.empty_unhcr,
         name='empty_unhcr'
     ),
-    url(
+    re_path(
         regex=r'^changing_unhcr/$',
         view=views.changing_unhcr,
         name='changing_unhcr'
     ),
-    url(
+    re_path(
         regex=r'^empty_doclastyear/$',
         view=views.empty_doclastyear,
         name='empty_doclastyear'
     ),
-    url(
+    re_path(
         regex=r'^changing_doclastyear/$',
         view=views.changing_doclastyear,
         name='changing_doclastyear'
     ),
-    url(
+    re_path(
         regex=r'^clear_pic/$',
         view=views.clear_pic,
         name='clear_pic'

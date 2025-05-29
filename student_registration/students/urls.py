@@ -1,27 +1,27 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 
 urlpatterns = [
-    url(
+    re_path(
         regex=r'^teacher-list/$',
         view=views.TeacherListView.as_view(),
         name='teacher_list'
     ),
-    url(
+    re_path(
         regex=r'^teacher-add/$',
         view=views.TeacherAddView.as_view(),
         name='teacher_add'
     ),
-    url(
+    re_path(
         regex=r'^teacher-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.TeacherEditView.as_view(),
         name='teacher_edit'
     ),
-    url(
+    re_path(
         regex=r'^teacher-export/$',
         view=views.teacher_export_data,
         name='teacher_export'

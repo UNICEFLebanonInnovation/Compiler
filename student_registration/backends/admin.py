@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
 from django.utils.html import escape, format_html, format_html_join, html_safe
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from import_export import resources, fields
 from import_export import fields
@@ -202,12 +202,12 @@ class TicketSchoolResource(resources.ModelResource):
 
     def dehydrate_status_name(self, obj):
         if obj.status:
-            return force_text(dict(Ticket.STATUS_CHOICES)[obj.status])
+            return force_str(dict(Ticket.STATUS_CHOICES)[obj.status])
         return ''
 
     def dehydrate_priority_name(self, obj):
         if obj.priority:
-            return force_text(dict(Ticket.PRIORITY_CHOICES)[obj.priority])
+            return force_str(dict(Ticket.PRIORITY_CHOICES)[obj.priority])
         return ''
 
 

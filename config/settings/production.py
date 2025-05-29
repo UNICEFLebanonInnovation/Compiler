@@ -20,7 +20,7 @@ from .base import *  # noqa
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # Raises ImproperlyConfigured exception if DJANGO_SECRET_KEY not in os.environ
-SECRET_KEY = env('DJANGO_SECRET_KEY', default='l^y44io8f!zr^#n(ui099rz+w2(p^ufz3j726-^6)7g2ijcp!k')
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 
 # This ensures that Django will be able to detect a secure connection
@@ -81,6 +81,7 @@ SECURE_HSTS_PRELOAD = True
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['mdb2.uniceflebanon.org', ])
+CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=['https://mdb2.uniceflebanon.org'])
 # END SITE CONFIGURATION
 
 INSTALLED_APPS += ['gunicorn', ]
@@ -97,7 +98,7 @@ AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
 AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
 AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
 
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_blob.AzureBlobStorage' # Updated for newer django-storages
 DEFAULT_FILE_FORMAT = 'xlsx'
 DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
@@ -239,7 +240,7 @@ RAVEN_CONFIG = {
 # Custom Admin URL, use {% url 'admin:index' %}
 ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')
 
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 
 # Auto logout delay in minutes

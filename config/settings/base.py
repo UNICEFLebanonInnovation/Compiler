@@ -38,7 +38,7 @@ if READ_DOT_ENV_FILE:
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
-    'djangosecure',
+    # 'djangosecure', # Django 5.0 provides these security features natively or via other middlewares
     # Default Django apps:
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,7 +68,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
     'rest_framework',
-    'rest_framework_swagger',
+    'drf_spectacular', # Replaced django-rest-swagger
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
 
@@ -179,6 +179,8 @@ DATABASES = {
 # }
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # GENERAL CONFIGURATION
@@ -397,9 +399,17 @@ REST_FRAMEWORK = {
     )
 }
 
-SWAGGER_SETTINGS = {
-    'is_authenticated': True,
-    'is_superuser': True,
+# SWAGGER_SETTINGS = {
+#     'is_authenticated': True,
+#     'is_superuser': True,
+# }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Student Registration API',
+    'DESCRIPTION': 'API for the Student Registration project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False, # Usually True for Swagger UI/Redoc
+    # OTHER SETTINGS AS NEEDED
 }
 
 # Django Suit configuration
