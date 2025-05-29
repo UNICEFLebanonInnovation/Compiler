@@ -1,0 +1,87 @@
+{% extends "base4.html" %}
+{% load static i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
+
+{% block main_content %}
+
+<!--<div class="app-page-title">-->
+                        <!--<div class="page-title-wrapper">-->
+                            <!--<div class="page-title-heading">-->
+                                <!--<div>-->
+                                    <!--<div class="page-title-head center-elem page-title-heading">-->
+                                        <!--<span class="d-inline-block pr-2">-->
+                                            <!--<i class="pe-7s-display1"></i>-->
+                                        <!--</span>-->
+                                        <!--<span class="d-inline-block">Dirasa</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                        <!--</div>-->
+<!--</div>-->
+
+<div class="row">
+                            <div class="col-lg-12 col-xl-12">
+                                <div class="main-card mb-3 card">
+                                    <div class="grid-menu grid-menu-2col">
+                                        <div class="no-gutters row">
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-info"></div>
+                                                        <i class="lnr-laptop-phone text-info"></i>
+                                                    </div>
+                                                  <div class="widget-numbers"><a href="{% url 'mscc:list' %}">Makani</a></div>
+                                                    <div class="widget-subheading"></div>
+                                                    <div class="widget-description text-info">
+                                                        <i class="fa fa-arrow-right"></i>
+                                                        <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
+                                                        <span class="pl-1"></span></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-primary"></div>
+                                                        <i class="lnr-cog text-primary"></i></div>
+                                                  <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">Dirasa Registration</a></div>
+                                                    <div class="widget-subheading">{% if request.user.partner.is_Kayany %} - Kayany {% endif %} </div>
+                                                    <div class="widget-description text-success">
+                                                        <!--<i class="fa fa-angle-up"></i>-->
+                                                        <span class="pl-1"> </span></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-danger"></div>
+                                                        <i class="lnr-apartment text-danger"></i>
+                                                    </div>
+                                                  <div class="widget-numbers"> <a href="{% url 'clm:inclusion_list' %}">Disability specialized</a></div>
+                                                    <div class="widget-subheading"></div>
+                                                    <div class="widget-description text-primary"><span class="pr-1"></span>
+                                                        <!--<i class="fa fa-angle-up"></i>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="widget-chart widget-chart-hover br-br">
+                                                    <div class="icon-wrapper rounded-circle">
+                                                        <div class="icon-wrapper-bg bg-success"></div>
+                                                        <i class="lnr-graduation-hat"></i></div>
+                                                  <div class="widget-numbers"><a href="{% url 'youth:list' %}">Youth</a></div>
+                                                    <div class="widget-subheading"></div>
+                                                    <div class="widget-description text-warning"><span class="pr-1"></span>
+                                                        <!--<i class="fa fa-arrow-left"></i>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+{% endblock %}
