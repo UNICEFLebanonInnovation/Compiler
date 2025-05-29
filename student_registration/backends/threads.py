@@ -203,6 +203,63 @@ def generate_student_unique_id():
     return th
 
 
+def generate_all_teacher_unique_id():
+    th = AllTeacherUIDThreading(interval=6)
+
+
+class AllTeacherUIDThreading(object):
+    def __init__(self, interval=1):
+        self.interval = interval
+
+        thread = threading.Thread(target=self.run, args=())
+
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+
+        from student_registration.students.models import Teacher
+
+        records = Teacher.objects.filter(unicef_id__isnull=True)
+
+        slicing = 100
+
+        for key in range(1, 7):
+            batch = records[slicing * key:(key + 1) * slicing]  # Correct slicing
+
+            print(batch)
+
+            payload = {
+                "individuals": [
+                    {
+                        "id": record.pk,
+                        "first_name": record.first_name,
+                        "father_name": record.father_name,
+                        "last_name": record.last_name,
+                        "mother_name": 'hala',
+                        "date_of_birth": '2000-01-01',
+                        "nationality": 'lebanese',
+                        "gender": record.sex
+                    }
+                    for record in batch
+                ]
+            }
+
+            result = generate_bulk_unique_id(payload)
+
+            # Update Django records in bulk
+            for record in records:
+                if record.pk in result:
+                    print(result[record.pk])
+                    record.unicef_id = result[record.pk]
+                    record.save()
+
+        # for django >= 2.2
+        # Teacher.objects.bulk_update(records, ['unicef_id'])
+
+        print("End Thread")
+
+
 class TeacherUIDThreading(object):
     def __init__(self, interval=1):
         self.interval = interval
