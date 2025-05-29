@@ -70,6 +70,7 @@ class AdolescentSerializer(serializers.ModelSerializer):
             'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
+            'unrwa_number',
             'father_educational_level',
             'mother_educational_level',
             'first_phone_number',

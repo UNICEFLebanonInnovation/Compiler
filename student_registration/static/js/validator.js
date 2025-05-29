@@ -11,7 +11,17 @@ function checkArabicOnly(field)
         }
     );
 }
-
+function checkEnglishOnly(field) {
+    checkFieldCharacters(
+        field,
+        function(ch) {
+            var c = ch.charCodeAt(0);
+            return ((c >= 65 && c <= 90) ||    // A–Z
+                    (c >= 97 && c <= 122) ||   // a–z
+                    ch === " ");
+        }
+    );
+}
 function checkIsNumber(field)
 {
     checkFieldCharacters
