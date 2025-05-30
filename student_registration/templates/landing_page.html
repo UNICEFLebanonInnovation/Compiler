@@ -2,6 +2,9 @@
 {% load static i18n %}
 {% load static %}
 {% load bootstrap3 %}
+
+{% load util_tags %}
+
 {% bootstrap_css %}
 
 {% block main_content %}
@@ -33,12 +36,23 @@
                                                         <div class="icon-wrapper-bg bg-info"></div>
                                                         <i class="lnr-laptop-phone text-info"></i>
                                                     </div>
-                                                  <div class="widget-numbers"><a href="{% url 'mscc:list' %}">Makani</a></div>
+                                                    <div class="widget-numbers">
+                                                        {% if request.user|has_group:"MSCC" %}
+                                                            <a href="{% url 'mscc:list' %}">MSCC</a>
+                                                        {% else %}
+                                                            <span class="text-muted">MSCC</span>
+                                                        {% endif %}
+                                                    </div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-info">
                                                         <i class="fa fa-arrow-right"></i>
-                                                        <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
-                                                        <span class="pl-1"></span></div>
+                                                        {% if request.user|has_group:"MSCC" %}
+                                                            <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
+                                                        {% else %}
+                                                            <span class="text-muted">Dashboard</span>
+                                                        {% endif %}
+                                                        <span class="pl-1"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
@@ -46,11 +60,21 @@
                                                     <div class="icon-wrapper rounded-circle">
                                                         <div class="icon-wrapper-bg bg-primary"></div>
                                                         <i class="lnr-cog text-primary"></i></div>
-                                                  <div class="widget-numbers"><a href="{% url 'clm:bridging_list' %}">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</a></div>
+                                                  <div class="widget-numbers">
+                                                     {% if request.user|has_group:"CLM_Bridging" %}
+                                                    <a href="{% url 'clm:bridging_list' %}">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</a>
+                                                     {% else %}
+                                                     <span class="text-muted">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</span>
+                                                    {% endif %}
+                                                  </div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-success">
                                                         <i class="fa fa-arrow-right"></i>
-                                                        <a href="{% url 'clm:dashboard' %}">Dashboard</a>
+                                                        {% if request.user|has_group:"CLM_Bridging" %}
+                                                            <a href="{% url 'clm:dashboard' %}">Dashboard</a>
+                                                        {% else %}
+                                                            <span class="text-muted">Dashboard</span>
+                                                        {% endif %}
                                                         <span class="pl-1"> </span></div>
                                                 </div>
                                             </div>
@@ -60,7 +84,13 @@
                                                         <div class="icon-wrapper-bg bg-danger"></div>
                                                         <i class="lnr-apartment text-danger"></i>
                                                     </div>
-                                                  <div class="widget-numbers"> <a href="{% url 'clm:inclusion_list' %}">Disability Specialized</a></div>
+                                                  <div class="widget-numbers">
+                                                        {% if request.user|has_group:"CLM_Inclusion" %}
+                                                            <a href="{% url 'clm:inclusion_list' %}">Disability Specialized</a>
+                                                        {% else %}
+                                                            <span class="text-muted">Disability Specialized</span>
+                                                        {% endif %}
+                                                  </div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-primary"><span class="pr-1"></span>
                                                         <!--<i class="fa fa-angle-up"></i>-->
@@ -72,7 +102,13 @@
                                                     <div class="icon-wrapper rounded-circle">
                                                         <div class="icon-wrapper-bg bg-success"></div>
                                                         <i class="lnr-graduation-hat"></i></div>
-                                                  <div class="widget-numbers"><a href="{% url 'youth:list' %}">Youth</a></div>
+                                                    <div class="widget-numbers">
+                                                          {% if request.user|has_group:"YOUTH" %}
+                                                              <a href="{% url 'youth:list' %}">Youth</a>
+                                                          {% else %}
+                                                              <span class="text-muted">Youth</span>
+                                                          {% endif %}
+                                                    </div>
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-warning"><span class="pr-1"></span>
                                                         <!--<i class="fa fa-arrow-left"></i>-->
