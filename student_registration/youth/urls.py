@@ -147,4 +147,20 @@ urlpatterns = [
         views.load_sub_program,
         name='load_sub_program'
     ),
+    url(
+        regex=r'^Program/Program-Document-Indicators/(?P<program_document_id>[\w.@+-]+)/$',
+        view=views.program_document_indicators_view,
+        name='program_document_indicators'
+    ),
+    url(
+        regex=r'^Program/Program-Document-Indicator-List/(?P<program_document_id>[\w.@+-]+)/$',
+        view=views.program_document_indicator_list_view,
+        name='program_document_indicator_list'
+    ),
+    url(
+        regex=r'^Program/Program-Document-Indicators-Save/$',
+        view=views.save_indicators,
+        name='program_document_indicators_save'
+    ),
+
 ]

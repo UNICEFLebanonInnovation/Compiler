@@ -1,0 +1,202 @@
+{% extends "youth/base.html" %}
+{% load static i18n %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block content %}
+<style>
+    .wide-dropdown {
+        width: 200px;
+    }
+    .wide-checkbox input[type="checkbox"] {
+      width: 50px;
+    }
+</style>
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                            {{ request.user.username }} - {{ request.user.youth_partner }}
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                 <li class="breadcrumb-item">
+                                                    <a href="{% url 'youth:list' %}">
+                                                        <i aria-hidden="true" class="fa fa-home"></i>
+                                                    </a>
+                                                  </li>
+                                                  <li class="breadcrumb-item">
+                                                        <a href="{% url 'youth:list' %}">List</a>
+                                                  </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
+                        </div>
+</div>
+
+<div class="row">
+{% if request.user|has_group:"youth_CENTER" and not request.user.center %}
+  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
+{% endif %}
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body" style="height: 400px; overflow: auto;">
+        <form id="indicators-form">
+          <div id="indicators"></div>
+          <button id="add-indicator-btn" type="button" class="btn btn-primary mt-3">Add Indicator</button>
+        </form>
+      </div>
+      <div class="d-block text-center card-footer">
+        <button id="save-indicators-btn" type="button" class="btn btn-success">Save All</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/program_document_indicators.js' %}?v=1"></script>
+    <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var programDocumentId = "{{ program_document_id }}";
+    var masterIndicators = {{ master_indicators|safe }};
+    var container = $("#indicators");
+
+    function createIndicatorRow(indicator) {
+      var id = indicator.id || 'new_' + Math.random().toString(36).substring(2, 9);
+      var selected = indicator.master_indicator_id || '';
+
+      var options = '<option value="">Select Master Indicator</option>';
+      $.each(masterIndicators, function(i, item) {
+        options += '<option value="' + item.id + '"' + (item.id == selected ? ' selected' : '') + '>' + item.name + '</option>';
+      });
+
+      var row = '<div class="form-row mb-3" data-id="' + id + '">' +
+        '<div class="col-md-6">' +
+          '<select class="form-control" name="master_indicator_' + id + '">' + options + '</select>' +
+        '</div>' +
+        '<div class="col-md-3">' +
+          '<input type="number" name="baseline_' + id + '" value="' + (indicator.baseline || '') + '" class="form-control" />' +
+        '</div>' +
+        '<div class="col-md-3">' +
+          '<input type="number" name="target_' + id + '" value="' + (indicator.target || '') + '" class="form-control" />' +
+        '</div>' +
+      '</div>';
+
+<!--        '<div class="col-md-2 text-right">' +-->
+<!--          '<button type="button" class="btn btn-danger remove-indicator-btn">Remove</button>' +-->
+<!--        '</div>' +-->
+
+      container.append(row);
+    }
+
+    $.ajax({
+      url: "/youth/Program/Program-Document-Indicator-List/" + programDocumentId + "/",
+      type: "GET",
+      success: function(response) {
+        $.each(response.indicators, function(index, item) {
+          createIndicatorRow(item);
+        });
+      },
+      error: function() {
+        alert("Failed to load indicators.");
+      }
+    });
+
+    $("#add-indicator-btn").click(function() {
+      createIndicatorRow({});
+    });
+
+<!--    $(document).on('click', '.remove-indicator-btn', function() {-->
+<!--      $(this).closest('.form-row').remove();-->
+<!--    });-->
+
+$("#save-indicators-btn").click(function() {
+  var data = [];
+  var hasError = false;
+
+  $("#indicators .form-row").each(function() {
+    var row = $(this);
+    var rowId = row.attr('data-id');
+    var masterIndicator = row.find('[name^="master_indicator_"]').val();
+    var baseline = row.find('[name^="baseline_"]').val();
+    var target = row.find('[name^="target_"]').val();
+
+    if (!masterIndicator || baseline === '' || target === '') {
+      hasError = true;
+      row.css('border', '2px solid red');
+    } else {
+      row.css('border', '');
+    }
+
+    data.push({
+      id: rowId.startsWith('new_') ? null : rowId,
+      master_indicator: masterIndicator,
+      baseline: baseline,
+      target: target,
+      program_document_id: programDocumentId
+    });
+  });
+
+  if (hasError) {
+    alert("Please fill all required fields.");
+    return;
+  }
+
+  $.ajax({
+    url: "/youth/Program/Program-Document-Indicators-Save/",
+
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({ indicators: data }),
+    headers: { "X-CSRFToken": getCookie("csrftoken") },
+    success: function() {
+      alert("Indicators saved successfully.");
+      window.location.href = "/youth/PD-List/";
+    },
+    error: function() {
+      alert("Error saving indicators.");
+    }
+  });
+});
+
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = $.trim(cookies[i]);
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>
+
+{% endblock %}

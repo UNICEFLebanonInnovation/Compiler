@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from openpyxl import Workbook
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import status
 from django.db.models import F, Q
@@ -24,8 +25,7 @@ from django.db import connection
 import csv
 import io
 import zipfile
-import codecs
-from django.utils.encoding import smart_str
+import codecs 
 import logging
 import traceback
 from .filters import (
@@ -47,7 +47,8 @@ from .models import (
     MasterProgram,
     SubProgram,
     Donor,
-    EnrolledPrograms
+    EnrolledPrograms,
+    ProgramDocumentIndicator
 )
 from student_registration.locations.models import Location
 
@@ -865,3 +866,47 @@ def load_sub_program(request):
         id_master_program = request.GET.get('id_master_program')
         sub_programs = SubProgram.objects.filter(master_program_id=id_master_program).order_by('name')
     return render(request, 'youth/sub_program_dropdown_list_options.html', {'sub_programs': sub_programs})
+
+def program_document_indicators_view(request, program_document_id):
+    master_indicators = MasterProgram.objects.all().values('id', 'name')
+    return render(request, 'youth/program_document_indicator.html', {
+        'program_document_id': program_document_id,
+        'master_indicators': list(master_indicators),
+    })
+
+def program_document_indicator_list_view(request, program_document_id):
+    indicators = ProgramDocumentIndicator.objects.filter(program_document_id=program_document_id)
+    data = []
+    for ind in indicators:
+        data.append({
+            'id': ind.id,
+            'master_indicator_id': ind.master_indicator.id if ind.master_indicator else None,
+            'master_indicator_name': ind.master_indicator.name if ind.master_indicator else '',
+            'baseline': ind.baseline,
+            'target': ind.target
+        })
+    return JsonResponse({'indicators': data})
+
+@csrf_exempt
+def save_indicators(request):
+    if request.method == 'POST':
+        payload = json.loads(request.body.decode('utf-8'))
+        indicators = payload.get('indicators', [])
+        for item in indicators:
+            if item['id']:
+                try:
+                    indicator = ProgramDocumentIndicator.objects.get(id=item['id'])
+                except ProgramDocumentIndicator.DoesNotExist:
+                    continue
+            else:
+                indicator = ProgramDocumentIndicator()
+
+            indicator.program_document_id = item.get('program_document_id')
+            indicator.master_indicator_id = item.get('master_indicator') or None
+            indicator.baseline = item.get('baseline') or None
+            indicator.target = item.get('target') or None
+            indicator.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'error': 'Invalid method'}, status=400)
+
+

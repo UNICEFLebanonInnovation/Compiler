@@ -604,6 +604,37 @@ class ProgramDocument(TimeStampedModel):
             raise ValidationError({'project_code': _('Project Code cannot be empty')})
 
 
+class ProgramDocumentIndicator(TimeStampedModel):
+    YES_NO = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No"))
+    )
+    program_document = models.ForeignKey(
+        ProgramDocument,
+        blank=False, null=True,
+        related_name='indicators',
+    )
+    master_indicator = models.ForeignKey(
+        MasterProgram,
+        blank=True, null=True,
+        related_name='master_indicator',
+        verbose_name=_('Master Indicator')
+    )
+    baseline = models.IntegerField(blank=True, null=True)
+    target = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['master_indicator']
+        verbose_name = "Indicator"
+
+    def __str__(self):
+        return self.master_indicator.name
+
+    def __unicode__(self):
+        return self.master_indicator.name
+
+
 class Registration(TimeStampedModel):
 
     YES_NO = Choices(
