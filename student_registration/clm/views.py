@@ -3654,3 +3654,11 @@ class BridgingAttendanceReport(LoginRequiredMixin,
         context['rounds'] = CLMRound.objects.filter(current_year=True).all()
         return context
 
+
+class DashboardView(LoginRequiredMixin,
+                    TemplateView):
+    template_name = 'clm/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {}

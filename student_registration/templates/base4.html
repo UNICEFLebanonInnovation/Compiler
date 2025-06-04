@@ -339,7 +339,7 @@
                                     </div>
                                   {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Makani
                                         </a>
@@ -385,6 +385,13 @@
                                             Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}
                                         </a>
                                     </div>
+
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'clm:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Dirasa Dashboard
+                                        </a>
+                                    </div>
                                   {% endif %}
                                   {% if request.user|has_group:"CLM_Inclusion" %}
                                     <div class="col-sm-6 col-xl-4">
@@ -404,7 +411,7 @@
                                     {% endif %}
                                     {% if request.user|has_group:"YOUTH_UNICEF" %}
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'mscc:dashboard_youth' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Youth Dashboard
                                         </a>

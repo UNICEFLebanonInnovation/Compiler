@@ -256,7 +256,11 @@ class MainForm(forms.ModelForm):
     )
     other_number = forms.CharField(
         required=False,
-        label=_(' ID number of the youth')
+        label=_('ID number of the youth')
+    )
+    unrwa_number = forms.CharField(
+        required=False,
+        label=_('UNRWA Case number')
     )
     adolescent_id = forms.CharField(widget=forms.HiddenInput, required=False)
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -441,6 +445,11 @@ class MainForm(forms.ModelForm):
                     Div('parent_extract_record', css_class='col-md-5'),
                     css_class='row card-body child_id child_id7',
                 ),
+                Div(
+                    HTML('<span class="badge-form-0 badge-pill"></span>'),
+                    Div('unrwa_number', css_class='col-md-5'),
+                    css_class='row card-body child_id child_id8',
+                ),
                 FormActions(
                     Submit('save', 'Save',
                            css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -583,4 +592,5 @@ class MainForm(forms.ModelForm):
             'sop_national_number',
             'parent_other_number',
             'other_number',
+            'unrwa_number'
         )

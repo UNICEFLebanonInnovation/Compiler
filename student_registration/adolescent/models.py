@@ -306,6 +306,12 @@ class Adolescent(TimeStampedModel):
         null=True,
         verbose_name=_('ID number of the youth confirm')
     )
+    unrwa_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('UNRWA Case number')
+    )
     father_educational_level = models.ForeignKey(
         EducationalLevel,
         blank=True, null=True,

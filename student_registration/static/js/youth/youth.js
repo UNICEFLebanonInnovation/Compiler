@@ -1,5 +1,5 @@
 
-var arabic_fields = "#id_adolescent_first_name, #id_adolescent_father_name, #id_adolescent_last_name, #id_adolescent_mother_fullname, " +
+var english_fields = "#id_adolescent_first_name, #id_adolescent_father_name, #id_adolescent_last_name, #id_adolescent_mother_fullname, " +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 
 $(document).ready(function() {
@@ -176,8 +176,8 @@ $(document).ready(function() {
         }
     });
 
-    $(document).on('blur', arabic_fields, function(){
-        checkArabicOnly($(this));
+    $(document).on('blur', english_fields, function(){
+        checkEnglishOnly($(this));
     });
 
     $(document).on('click', '#next-page', function(e){
@@ -605,6 +605,9 @@ function reorganizeForm()
 
     if(id_type == 9){
         $('div.child_id7').removeClass('d-none');
+    }
+    if(id_type == 12){
+        $('div.child_id8').removeClass('d-none');
     }
 
     //  Labour

@@ -110,6 +110,7 @@ class MainSerializer(serializers.ModelSerializer):
     sop_national_number = serializers.CharField(source='adolescent.sop_national_number', required=False)
     parent_other_number = serializers.CharField(source='adolescent.parent_other_number', required=False)
     other_number = serializers.CharField(source='adolescent.other_number', required=False)
+    unrwa_number = serializers.CharField(source='adolescent.unrwa_number', required=False)
     father_educational_level = serializers.CharField(source='adolescent.father_educational_level', required=False)
     father_educational_level_id = serializers.CharField(source='adolescent.father_educational_level.id', required=False)
     mother_educational_level = serializers.CharField(source='adolescent.mother_educational_level', required=False)
@@ -203,4 +204,5 @@ class MainSerializer(serializers.ModelSerializer):
             'sop_national_number',
             'parent_other_number',
             'other_number',
+            'unrwa_number'
         )

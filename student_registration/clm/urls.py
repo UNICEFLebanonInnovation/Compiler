@@ -408,4 +408,9 @@ urlpatterns = [
         view=attendance_views.LoadAttendanceChild.as_view(),
         name='attendance_child'
     ),
+    url(
+        regex=r'^Dashboard/$',
+        view=views.DashboardView.as_view(),
+        name='dashboard'
+    ),
 ]
