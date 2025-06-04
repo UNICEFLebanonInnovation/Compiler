@@ -35,15 +35,15 @@ psycopg2-binary==2.9.9
 awesome-slugify==1.6.5
 
 # Time zones support
-pytz==2017.2
+pytz==2025.2
 
 # Redis support
 django-redis==4.8.0
 redis>=2.10.5
 
 celery==5.2.7
-django-celery-beat==2.5.0
-django-celery-results==2.4.0
+django-celery-beat==2.8.1
+django-celery-results==2.6.0
 honcho==1.0.1
 
 rcssmin==1.0.6
@@ -54,7 +54,7 @@ django-datatables-view==1.13.0
 django-mptt==0.16.0
 django-makemessages-xgettext==0.1.1
 djangorestframework==3.14.0
-markdown==2.6.6
+markdown==3.8
 django-filter==23.5
 drf-spectacular==0.27.2
 drf-nested-routers==0.11.1
@@ -64,7 +64,7 @@ django-import-export==0.5.0
 django-suit==0.2.21
 django-autocomplete-light==3.9.7
 django-helpdesk==0.1.18
-mongoengine==0.11.0
+#mongoengine==0.11.0
 django-admin-rangefilter==0.3.0
 django-bootstrap3==8.2.3
 bootstrap3-datetime==2.4
