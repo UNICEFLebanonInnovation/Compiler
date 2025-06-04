@@ -535,34 +535,7 @@ class ProgramDocument(TimeStampedModel):
         null=True,
         verbose_name=_('Number of Targeted PRS')
     )
-    master_programs = models.ManyToManyField(MasterProgram, blank=True, verbose_name=_('Master Programs'))
     donors = models.ManyToManyField(Donor, blank=True, verbose_name=_('Donors'))
-
-    master_program1 = models.ForeignKey(
-        MasterProgram,
-        blank=True, null=True,
-        related_name='master_program1',
-        verbose_name=_('Master Program 1')
-    )
-    master_program2 = models.ForeignKey(
-        MasterProgram,
-        blank=True, null=True,
-        related_name='master_program2',
-        verbose_name=_('Master Program 2')
-    )
-    master_program3 = models.ForeignKey(
-        MasterProgram,
-        blank=True, null=True,
-        related_name='master_program3',
-        verbose_name=_('Master Program 3')
-    )
-    baseline1 = models.IntegerField(blank=True, null=True)
-    baseline2 = models.IntegerField(blank=True, null=True)
-    baseline3 = models.IntegerField(blank=True, null=True)
-
-    target1 = models.IntegerField(blank=True, null=True)
-    target2 = models.IntegerField(blank=True, null=True)
-    target3 = models.IntegerField(blank=True, null=True)
 
     class Meta:
         ordering = ['project_name']
@@ -582,14 +555,9 @@ class ProgramDocument(TimeStampedModel):
         return ", ".join(gov.name for gov in self.population_groups.all())
 
     def get_master_program_names(self):
-        # Gather the names of the master programs if they exist
-        programs = [
-            self.master_program1.name if self.master_program1 else None,
-            self.master_program2.name if self.master_program2 else None,
-            self.master_program3.name if self.master_program3 else None
-        ]
-        # Filter out None values and join with commas
-        return ", ".join(filter(None, programs))
+        names = self.indicators.filter(master_indicator__isnull=False)\
+            .values_list('master_indicator__name', flat=True).distinct()
+        return ", ".join(names)
 
     def get_donor_names(self):
         return ", ".join(donor.name for donor in self.donors.all())

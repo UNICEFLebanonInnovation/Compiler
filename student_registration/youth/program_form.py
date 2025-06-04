@@ -324,12 +324,6 @@ class ProgramDocumentForm(forms.ModelForm):
     #     label=_('Number of Targeted PRS'),
     #     widget=forms.TextInput, required=False
     # )
-    # master_programs = forms.ModelMultipleChoiceField(
-    #     queryset=MasterProgram.objects.filter(active=True),
-    #     widget=forms.CheckboxSelectMultiple,
-    #     label=_('Master Programs'),
-    #     required=False
-    # )
     donors = forms.ModelMultipleChoiceField(
         queryset=Donor.objects.filter(active=True),
         widget=forms.CheckboxSelectMultiple,
@@ -651,7 +645,6 @@ class ProgramDocumentForm(forms.ModelForm):
             'partner',
             'governorates',
             'population_groups',
-            # 'master_programs',
             # 'donors'
         )
 

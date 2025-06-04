@@ -100,17 +100,7 @@ class ProgramDocumentFormView(LoginRequiredMixin,
                         'number_targeted_prs': instance_data.number_targeted_prs,
                         'governorates': instance_data.governorates.all(),
                         'population_groups': instance_data.population_groups.all(),
-                        'master_programs': instance_data.master_programs.all(),
                         'donors': instance_data.donors.all(),
-                        'master_program1': instance_data.master_program1_id,
-                        'baseline1': instance_data.baseline1,
-                        'target1': instance_data.target1,
-                        'master_program2': instance_data.master_program2_id,
-                        'baseline2': instance_data.baseline2,
-                        'target2': instance_data.target2,
-                        'master_program3': instance_data.master_program3_id,
-                        'baseline3': instance_data.baseline3,
-                        'target3': instance_data.target3,
                     }
                 except ProgramDocument.DoesNotExist:
                     pass

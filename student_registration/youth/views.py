@@ -25,7 +25,7 @@ from django.db import connection
 import csv
 import io
 import zipfile
-import codecs 
+import codecs
 import logging
 import traceback
 from .filters import (
@@ -609,10 +609,6 @@ def export_data(request, **kwargs):
 
         registration_ids = queryset.values_list('registration_id', flat=True).distinct()
 
-
-        print('-------registration_ids------------')
-        print(tuple(registration_ids))
-
         # vw_youth_data query
         cursor = connection.cursor()
 
@@ -847,13 +843,12 @@ def load_master_program(request):
         program_document = ProgramDocument.objects.filter(id=id_program_document).first()
 
         if program_document:
-            # Create a list of master programs to populate the dropdown
-            if program_document.master_program1:
-                master_programs.append(program_document.master_program1)
-            if program_document.master_program2:
-                master_programs.append(program_document.master_program2)
-            if program_document.master_program3:
-                master_programs.append(program_document.master_program3)
+            master_programs = MasterProgram.objects.filter(
+                id__in=program_document.indicators
+                    .filter(master_indicator__isnull=False)
+                    .values_list('master_indicator_id', flat=True)
+                    .distinct()
+            )
 
     return render(request, 'youth/master_program_dropdown_list_options.html', {
         'master_programs': master_programs
