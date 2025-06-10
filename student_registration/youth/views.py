@@ -495,7 +495,6 @@ def quick_search(request):
     return JsonResponse({'result': json.dumps(list(qs))})
 
 
-
 class ChildProfilePreview(LoginRequiredMixin,
                           TemplateView):
 
