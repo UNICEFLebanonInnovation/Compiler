@@ -1751,15 +1751,25 @@ class BridgingForm(CommonForm):
     def clean(self):
         cleaned_data = super(BridgingForm, self).clean()
 
-
         # check if date is valid
-        year = int(cleaned_data.get("student_birthday_year"))
-        month = int(cleaned_data.get("student_birthday_month"))
-        day = int(cleaned_data.get("student_birthday_day"))
-        try:
-            datetime.datetime(year, month, day)
-        except ValueError:
-            self.add_error('student_birthday_year', 'The date is not valid.')
+        year = cleaned_data.get("student_birthday_year")
+        month = cleaned_data.get("student_birthday_month")
+        day = cleaned_data.get("student_birthday_day")
+        if not year:
+            self.add_error('student_birthday_year', 'This field is required')
+        if not month:
+            self.add_error('student_birthday_month', 'This field is required')
+        if not day:
+            self.add_error('student_birthday_day', 'This field is required')
+
+        if year and month and day:
+            try:
+                year = int(year)
+                month = int(month)
+                day = int(day)
+                datetime.datetime(year, month, day)
+            except ValueError:
+                self.add_error('student_birthday_year', 'The entered date is not valid.')
 
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")

@@ -51,7 +51,7 @@ class UserResource(resources.ModelResource):
             'partner__name',
             'school__name',
             'center__name',
-            'youth_partner__name',
+            'partner__name',
             'is_active',
             'user_category',
         )
@@ -78,7 +78,6 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         'school',
         'center',
         'partner',
-        'youth_partner',
         'phone_number',
         'is_active',
         'user_category_display'
@@ -94,7 +93,6 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         'school',
         'center',
         'partner',
-        'youth_partner',
         'is_active',
         UserCategoryFilter
     )
@@ -136,7 +134,6 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (None, {'fields': ('partner',
-                           'youth_partner',
                            'center',
                            'school',
                            # 'location', 'locations', 'schools', 'regions'
@@ -149,7 +146,7 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner','youth_partner', 'center',
+        (None, {'fields': ('partner', 'center',
                            'school',
                            # 'location', 'locations', 'schools', 'regions'
                            )})

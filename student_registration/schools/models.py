@@ -890,6 +890,49 @@ class PartnerOrganization(models.Model):
     )
 
     schools = models.ManyToManyField(School,related_name='partner_schools', blank=True)
+    short_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Short Name')
+    )
+    monitoring_evaluation_focal_point_name = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name=_('Monitoring and Evaluation Focal Point Name')
+    )
+    monitoring_evaluation_focal_point_phone = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Monitoring and Evaluation Focal Point Phone')
+    )
+    monitoring_evaluation_focal_point_email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Monitoring and Evaluation Focal Point Email')
+    )
+    program_manager_focal_point_name = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name=_('Program Manager Focal Point Name')
+    )
+    program_manager_focal_point_phone = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Program Manager Focal Point Phone')
+    )
+    program_manager_focal_point_email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Program Manager Focal Point Email')
+    )
+    active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']

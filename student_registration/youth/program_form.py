@@ -22,7 +22,7 @@ from .models import (
     SubProgram,
     Donor,
     ProgramDocument,
-    Partner,
+    PartnerOrganization,
     FundedBy,
     FocalPoint,
     Plan,
@@ -211,7 +211,7 @@ class EnrolledProgramsForm(forms.ModelForm):
 
 class ProgramDocumentForm(forms.ModelForm):
     partner = forms.ModelChoiceField(
-        queryset=Partner.objects.all(), widget=forms.Select,
+        queryset=PartnerOrganization.objects.all(), widget=forms.Select,
         label=_('Partner'),
         empty_label='-------',
         required=True, to_field_name='id',

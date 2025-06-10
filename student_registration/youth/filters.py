@@ -23,7 +23,6 @@ from .models import (
     SubProgram,
     Donor,
     ProgramDocument,
-    Partner,
     FundedBy,
     ProjectStatus,
     FocalPoint,
@@ -31,6 +30,8 @@ from .models import (
 )
 from student_registration.youth.models import Adolescent
 from student_registration.clm.models import Disability, EducationalLevel
+from student_registration.schools.models import PartnerOrganization
+
 
 class MainFilter(FilterSet):
     adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
@@ -51,7 +52,7 @@ class MainFilter(FilterSet):
 
 class FullFilter(FilterSet):
     partner = ChoiceFilter(
-        choices=Partner.objects.values_list('id', 'name').order_by('name').distinct(),
+        choices=PartnerOrganization.objects.values_list('id', 'name').order_by('name').distinct(),
         empty_label='Partner'
     )
     adolescent__governorate = ChoiceFilter(
@@ -166,7 +167,7 @@ class FullFilter(FilterSet):
 
 class PDFilter(FilterSet):
     current_year = datetime.datetime.now().year
-    partner = ChoiceFilter(choices=Partner.objects.filter(active=True).values_list('id', 'short_name')
+    partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True).values_list('id', 'short_name')
                                 .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
@@ -220,7 +221,7 @@ class PDFilter(FilterSet):
 
 class PDPartnerFilter(FilterSet):
     current_year = datetime.datetime.now().year
-    partner = ChoiceFilter(choices=Partner.objects.filter(active=True).values_list('id', 'short_name')
+    partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True).values_list('id', 'short_name')
                                 .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')

@@ -14,6 +14,7 @@ from datetime import datetime
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.locations.models import Center, Location
+from student_registration.schools.models import PartnerOrganization
 
 YES_NO = Choices(
     ('', '----------'),
@@ -418,7 +419,7 @@ class ProgramDocument(TimeStampedModel):
         ('Support', _("Support"))
     )
     partner = models.ForeignKey(
-        Partner,
+        PartnerOrganization,
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Organization Name')

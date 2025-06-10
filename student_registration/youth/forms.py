@@ -518,7 +518,7 @@ class MainForm(forms.ModelForm):
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
                 instance.modified_by = request.user
-                instance.partner = request.user.youth_partner
+                instance.partner = request.user.partner
                 instance.center = request.user.center
                 # if request.POST.get("adolescent_outreach"):
                 #     instance.adolescent_outreach = request.POST.get("adolescent_outreach")

@@ -205,7 +205,7 @@ class MainListView(LoginRequiredMixin,
 
     def get_queryset(self):
         user = self.request.user
-        partner_id = user.youth_partner_id
+        partner_id = user.partner_id
 
         if has_group(user, 'YOUTH_UNICEF'):
             queryset = Registration.objects.filter(deleted=False
@@ -779,7 +779,7 @@ class PDListView(LoginRequiredMixin,
 
     def get_queryset(self):
         user = self.request.user
-        partner_id = user.youth_partner_id
+        partner_id = user.partner_id
 
         if has_group(user, 'YOUTH_UNICEF'):
             queryset = ProgramDocument.objects.all().order_by('-id')
