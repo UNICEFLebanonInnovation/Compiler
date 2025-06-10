@@ -893,7 +893,11 @@
             </div>
       <div class="app-main__outer">
                 <div class="app-main__inner">
-
+                {% if form and form.errors %}
+                  <div class="alert alert-danger">
+                    Please review and check the error messages.
+                  </div>
+                {% endif %}
                 {% block main_content %}
                 {% endblock main_content %}
 
