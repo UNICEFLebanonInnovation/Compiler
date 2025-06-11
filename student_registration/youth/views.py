@@ -7,11 +7,10 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from openpyxl import Workbook
 
 from rest_framework import status
 from django.db.models import F, Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -22,10 +21,7 @@ from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
 from django.db import connection
 import csv
-import io
-import zipfile
 import codecs
-from django.utils.encoding import smart_str
 import logging
 import traceback
 from .filters import (
@@ -35,21 +31,16 @@ from .filters import (
     PDPartnerFilter
 )
 from .tables import (
-    BootstrapTable,
     RegistrationTable,
     PDTable,
     PDPartnerTable
 
 )
 from .models import (
-    Registration,
     ProgramDocument,
-    MasterProgram,
     SubProgram,
-    Donor,
     EnrolledPrograms
 )
-from student_registration.locations.models import Location
 
 from .forms import (
     MainForm,
@@ -186,7 +177,6 @@ def MainMarkDeleteView(request, pk):
     return JsonResponse(result)
 
 
-from django.db.models import F, Max
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
@@ -197,14 +187,14 @@ class MainListView(LoginRequiredMixin,
     table_class = RegistrationTable
     model = Registration
     template_name = 'youth/list.html'
-    table = BootstrapTable(Registration.objects.all(), order_by='id')
+    table = RegistrationTable(Registration.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = MainFilter
 
     def get_queryset(self):
         user = self.request.user
-        partner_id = user.youth_partner_id
+        partner_id = user.partner_id
 
         if has_group(user, 'YOUTH_UNICEF'):
             queryset = Registration.objects.filter(deleted=False
@@ -776,14 +766,14 @@ class PDListView(LoginRequiredMixin,
     table_class = PDTable
     model = ProgramDocument
     template_name = 'youth/pd_list.html'
-    table = BootstrapTable(ProgramDocument.objects.all(), order_by='id')
+    table = PDTable(ProgramDocument.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = PDFilter
 
     def get_queryset(self):
         user = self.request.user
-        partner_id = user.youth_partner_id
+        partner_id = user.partner_id
 
         if has_group(user, 'YOUTH_UNICEF'):
             queryset = ProgramDocument.objects.all().order_by('-id')

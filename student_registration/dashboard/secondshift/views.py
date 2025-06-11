@@ -4,7 +4,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseForbidden
 from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin

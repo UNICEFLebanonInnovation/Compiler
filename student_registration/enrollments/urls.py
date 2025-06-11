@@ -4,135 +4,137 @@ from django.urls import re_path
 
 from . import views
 
+app_name = 'enrollments'
+
 urlpatterns = [
 
     re_path(
-        regex=r'^add/$',
+        r'^add/$',
         view=views.AddView.as_view(),
         name='add'
     ),
     re_path(
-        regex=r'^edit/(?P<pk>[\w.@+-]+)/$',
+        r'^edit/(?P<pk>[\w.@+-]+)/$',
         view=views.EditView.as_view(),
         name='edit'
     ),
     re_path(
-        regex=r'^edit_region/(?P<pk>[\w.@+-]+)/$',
+        r'^edit_region/(?P<pk>[\w.@+-]+)/$',
         view=views.Edit_RegionView.as_view(),
         name='edit_region'
     ),
     re_path(
-        regex=r'^saveimage/(?P<pk>[\w.@+-]+)/$',
+        r'^saveimage/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Image.as_view(),
         name='saveimage'
     ),
     re_path(
-        regex=r'^edit-old-data/(?P<pk>[\w.@+-]+)/$',
+        r'^edit-old-data/(?P<pk>[\w.@+-]+)/$',
         view=views.EditOldDataView.as_view(),
         name='edit_old_data'
     ),
     re_path(
-        regex=r'^moved/(?P<pk>[\w.@+-]+)/(?P<moved>[\w.@+-]+)/$',
+        r'^moved/(?P<pk>[\w.@+-]+)/(?P<moved>[\w.@+-]+)/$',
         view=views.MovedView.as_view(),
         name='moved'
     ),
     re_path(
-        regex=r'^list/$',
+        r'^list/$',
         view=views.ListingView.as_view(),
         name='list'
     ),
     re_path(
-        regex=r'^student_by_regions/$',
+        r'^student_by_regions/$',
         view=views.Student_By_Regions.as_view(),
         name='student_by_regions'
     ),
     re_path(
-        regex=r'^list-old-data/$',
+        r'^list-old-data/$',
         view=views.ListingOldDataView.as_view(),
         name='list_old_data'
     ),
     re_path(
-        regex=r'^grading/(?P<pk>[\w.@+-]+)/(?P<term>[\w.@+-]+)/$',
+        r'^grading/(?P<pk>[\w.@+-]+)/(?P<term>[\w.@+-]+)/$',
         view=views.GradingView.as_view(),
         name='grading'
     ),
     re_path(
-        regex=r'^export/$',
+        r'^export/$',
         view=views.ExportViewSet.as_view(),
         name='export'
     ),
     re_path(
-        regex=r'^export-grading/$',
+        r'^export-grading/$',
         view=views.ExportGradingViewSet.as_view(),
         name='export_grading'
     ),
     re_path(
-        regex=r'^enrollment-export-by-school/$',
+        r'^enrollment-export-by-school/$',
         view=views.ExportBySchoolView.as_view(),
         name='enrollment_export_by_school'
     ),
     re_path(
-        regex=r'^enrollment-export-by-cycle/$',
+        r'^enrollment-export-by-cycle/$',
         view=views.ExportByCycleView.as_view(),
         name='enrollment_export_by_cycle'
     ),
     re_path(
-        regex=r'^saveimage/(?P<pk>[\w.@+-]+)/$',
+        r'^saveimage/(?P<pk>[\w.@+-]+)/$',
         view=views.Clear_Profile.as_view(),
         name='clear-profile'
     ),
     re_path(
-        regex=r'^modify-images/(?P<pk>[\w.@+-]+)/$',
+        r'^modify-images/(?P<pk>[\w.@+-]+)/$',
         view=views.Modify_Images_View.as_view(),
         name='modify_images'
     ),
     re_path(
-        regex=r'^clear-images/(?P<pk>[\w.@+-]+)/$',
+        r'^clear-images/(?P<pk>[\w.@+-]+)/$',
         view=views.Clear_Images_View.as_view(),
         name='clear_images'
     ),
     re_path(
-        regex=r'^empty_profile/$',
+        r'^empty_profile/$',
         view=views.empty_profile,
         name='empty_profile'
     ),
     re_path(
-        regex=r'^changing_profile/$',
+        r'^changing_profile/$',
         view=views.changing_profile,
         name='changing_profile'
     ),
     re_path(
-        regex=r'^empty_birthdoc/$',
+        r'^empty_birthdoc/$',
         view=views.empty_birthdoc,
         name='empty_birthdoc'
     ),
     re_path(
-        regex=r'^changing_birthdoc/$',
+        r'^changing_birthdoc/$',
         view=views.changing_birthdoc,
         name='changing_birthdoc'
     ),
     re_path(
-        regex=r'^empty_unhcr/$',
+        r'^empty_unhcr/$',
         view=views.empty_unhcr,
         name='empty_unhcr'
     ),
     re_path(
-        regex=r'^changing_unhcr/$',
+        r'^changing_unhcr/$',
         view=views.changing_unhcr,
         name='changing_unhcr'
     ),
     re_path(
-        regex=r'^empty_doclastyear/$',
+        r'^empty_doclastyear/$',
         view=views.empty_doclastyear,
         name='empty_doclastyear'
     ),
     re_path(
-        regex=r'^changing_doclastyear/$',
+        r'^changing_doclastyear/$',
         view=views.changing_doclastyear,
         name='changing_doclastyear'
     ),
     re_path(
-        regex=r'^clear_pic/$',
+        r'^clear_pic/$',
         view=views.clear_pic,
         name='clear_pic'
     ),

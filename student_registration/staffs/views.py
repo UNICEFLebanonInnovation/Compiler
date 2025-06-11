@@ -6,7 +6,7 @@ from student_registration.staffs.models import Staffs
 from django.http import Http404, HttpResponseRedirect
 from django.template.context_processors import csrf
 from django.views.generic import ListView, FormView, TemplateView, UpdateView
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from student_registration.users.utils import force_default_language
 
 

@@ -4,30 +4,32 @@ from django.urls import re_path
 
 from . import views
 
+app_name = 'backends'
+
 urlpatterns = [
 
     re_path(
-        regex=r'^files-list/$',
+        r'^files-list/$',
         view=views.ExporterListView.as_view(),
         name='files_list'
     ),
     re_path(
-        regex=r'^generate-child-unique-id/$',
+        r'^generate-child-unique-id/$',
         view=views.generate_child_unique_id,
         name='generate_child_id'
     ),
     re_path(
-        regex=r'^generate-all-child-unique-id/$',
+        r'^generate-all-child-unique-id/$',
         view=views.generate_all_child_unique_id,
         name='generate_all_child_unique_id'
     ),
     re_path(
-        regex=r'^generate-student-unique-id/$',
+        r'^generate-student-unique-id/$',
         view=views.generate_student_unique_id,
         name='generate_student_id'
     ),
     re_path(
-        regex=r'^generate-child-cash-programme/$',
+        r'^generate-child-cash-programme/$',
         view=views.generate_child_cash_programme,
         name='generate_cash_programme'
     ),

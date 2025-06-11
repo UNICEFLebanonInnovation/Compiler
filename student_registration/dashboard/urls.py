@@ -5,160 +5,162 @@ from django.urls import re_path
 from . import views
 from student_registration.dashboard.secondshift import views as secondshift
 
+app_name = 'dashboard'
+
 urlpatterns = [
     re_path(
-        regex=r'^run-filling_data/$',
+        r'^run-filling_data/$',
         view=views.fill_data,
         name='run-filling_data'
     ),
     re_path(
-        regex=r'^exporter/$',
+        r'^exporter/$',
         view=views.ExporterView.as_view(),
         name='exporter'
     ),
     re_path(
-        regex=r'^run-exporter/$',
+        r'^run-exporter/$',
         view=views.RunExporterViewSet.as_view(),
         name='run-exporter'
     ),
     re_path(
-        regex=r'^run-exporter-attendance/$',
+        r'^run-exporter-attendance/$',
         view=views.run_attendance,# RunExporterAttendanceViewSet.as_view(),
         name='run-exporter-attendance'
     ),
     re_path(
-        regex=r'^run-to-excel-per-day/$',
+        r'^run-to-excel-per-day/$',
         view=views.run_to_excel_per_day,
         name='run-to-excel-per-day'
     ),
     re_path(
-        regex=r'^registrations-alp/$',
+        r'^registrations-alp/$',
         view=views.RegistrationsALPView.as_view(),
         name='registrations-alp'
     ),
     re_path(
-        regex=r'^alp-overall/$',
+        r'^alp-overall/$',
         view=views.RegistrationsALPOverallView.as_view(),
         name='alp-overall'
     ),
     re_path(
-        regex=r'^registrations-alp-outreach/$',
+        r'^registrations-alp-outreach/$',
         view=views.RegistrationsALPOutreachView.as_view(),
         name='registrations-alp-outreach'
     ),
     re_path(
-        regex=r'^registrations-alp-pre-test/$',
+        r'^registrations-alp-pre-test/$',
         view=views.RegistrationsALPPreTestView.as_view(),
         name='registrations-alp-pre-test'
     ),
     re_path(
-        regex=r'^registrations-alp-post-test/$',
+        r'^registrations-alp-post-test/$',
         view=views.RegistrationsALPPostTestView.as_view(),
         name='registrations-alp-post-test'
     ),
 
     re_path(
-        regex=r'^2ndshift-governorate-grade/$',
+        r'^2ndshift-governorate-grade/$',
         view=secondshift.GovernorateGradeView.as_view(),
         name='2ndshift_governorate_grade'
     ),
     re_path(
-        regex=r'^2ndshift-governorate-age/$',
+        r'^2ndshift-governorate-age/$',
         view=secondshift.GovernorateAgeView.as_view(),
         name='2ndshift_governorate_age'
     ),
     re_path(
-        regex=r'^2ndshift-governorate-nationality/$',
+        r'^2ndshift-governorate-nationality/$',
         view=secondshift.GovernorateNationalityView.as_view(),
         name='2ndshift_governorate_nationality'
     ),
     re_path(
-        regex=r'^2ndshift-grade-age/$',
+        r'^2ndshift-grade-age/$',
         view=secondshift.GradeAgeView.as_view(),
         name='2ndshift_grade_age'
     ),
     re_path(
-        regex=r'^2ndshift-grade-nationality/$',
+        r'^2ndshift-grade-nationality/$',
         view=secondshift.GradeNationalityView.as_view(),
         name='2ndshift_grade_nationality'
     ),
     re_path(
-        regex=r'^2ndshift-nationality-age/$',
+        r'^2ndshift-nationality-age/$',
         view=secondshift.NationalityAgeView.as_view(),
         name='2ndshift_nationality_age'
     ),
     re_path(
-        regex=r'^2ndshift-school-grade/$',
+        r'^2ndshift-school-grade/$',
         view=secondshift.SchoolGradeView.as_view(),
         name='2ndshift_school_grade'
     ),
     re_path(
-        regex=r'^2ndshift-school-nationality/$',
+        r'^2ndshift-school-nationality/$',
         view=secondshift.SchoolNationalityView.as_view(),
         name='2ndshift_school_nationality'
     ),
     re_path(
-        regex=r'^update_duplicatestd/$',
+        r'^update_duplicatestd/$',
         view=views.update_duplicatestd,
         name='update_duplicatestd'
     ),
     re_path(
-        regex=r'^fix_dupstd/$',
+        r'^fix_dupstd/$',
         view=views.fix_dupstd,
         name='fix_dupstd'
     ),
     re_path(
-        regex=r'^dup_id_enr/$',
+        r'^dup_id_enr/$',
         view=views.dup_id_enr,
         name='dup_id_enr'
     ),
     re_path(
-        regex=r'^dup_nb_enr/$',
+        r'^dup_nb_enr/$',
         view=views.dup_nb_enr,
         name='dup_nb_enr'
     ),
     re_path(
-        regex=r'^generate_pretest_result/$',
+        r'^generate_pretest_result/$',
         view=views.generate_pretest_result,
         name='generate_pretest_result'
     ),
     re_path(
-        regex=r'^utilities/$',
+        r'^utilities/$',
         view=views.View_Utilities.as_view(),
         name='utilities'
     ),
     re_path(
-        regex=r'^run-list-justification/$',
+        r'^run-list-justification/$',
         view=views.List_Justification.as_view(),
         name='run-list-justification'
     ),
     re_path(
-        regex=r'^run-list-justification-sec/$',
+        r'^run-list-justification-sec/$',
         view=views.List_Justification_BySection.as_view(),
         name='run-list-justification-sec'
     ),
     re_path(
-        regex=r'^run-generate-justification/$',
+        r'^run-generate-justification/$',
         view=views.Generate_Justification_number,
         name='run-generate-justification'
     ),
     re_path(
-        regex=r'^run-available-documents/$',
+        r'^run-available-documents/$',
         view=views.List_of_available_documents.as_view(),
         name='run-available-documents'
     ),
     re_path(
-        regex=r'^degenerate-list-justification/$',
+        r'^degenerate-list-justification/$',
         view=views.degenerate_list_justification,
         name='degenerate-list-justification'
     ),
     re_path(
-        regex=r'^export-summary-attendance/$',
+        r'^export-summary-attendance/$',
         view=views.export_summary_of_Attendance,
         name='export-summary-attendance'
     ),
     re_path(
-        regex=r'^evaluation/$',
+        r'^evaluation/$',
         view=views.generate_evaluation,
         name='evaluation'
     ),

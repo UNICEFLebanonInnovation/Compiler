@@ -5,7 +5,7 @@ import django.utils.timezone
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from student_registration.students.models import Student
@@ -118,6 +118,7 @@ class Enrollment(TimeStampedModel):
         Student,
         blank=False, null=True,
         related_name='student_enrollment',
+        on_delete=models.SET_NULL,
     )
     enrolled_last_year = models.CharField(
         max_length=50,
@@ -130,41 +131,48 @@ class Enrollment(TimeStampedModel):
         School,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     enrolled_last_year_location = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     school = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='ndshift_school',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
     )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Section')
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Class')
     )
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Education year')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Created by')
     )
     status = models.BooleanField(blank=True, default=True)
@@ -191,6 +199,7 @@ class Enrollment(TimeStampedModel):
         ClassRoom,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last Education level')
     )
     last_education_year = models.CharField(
@@ -228,6 +237,7 @@ class Enrollment(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last informal education level')
     )
     last_informal_edu_year = models.CharField(
@@ -248,12 +258,14 @@ class Enrollment(TimeStampedModel):
         ALPRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last informal education round'),
     )
     last_informal_edu_final_result = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last informal education status'),
     )
     last_school_type = models.CharField(
@@ -274,6 +286,7 @@ class Enrollment(TimeStampedModel):
         School,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last school'),
     )
 
@@ -525,6 +538,7 @@ class Enrollment(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Document Type'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     documentnumber = models.CharField(
         blank=True, null=True,
@@ -536,6 +550,7 @@ class Enrollment(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Document Year'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     document_lastyear = models.ImageField(
         upload_to='enr/doc',
@@ -566,6 +581,7 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Justified by'),
         max_length=30,
     )
+
     @property
     def student_fullname(self):
         if self.student:
@@ -685,24 +701,28 @@ class StudentMove(models.Model):
         Enrollment,
         blank=False, null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name='Student name',
     )
     enrolment2 = models.ForeignKey(
         Enrollment,
         blank=False, null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name='Student name',
     )
     school1 = models.ForeignKey(
         School,
         blank=False, null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name='From school',
     )
     school2 = models.ForeignKey(
         School,
         blank=False, null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name='To school',
     )
 
@@ -922,6 +942,7 @@ class LoggingStudentMove(TimeStampedModel):
         blank=False,
         null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name=_('Student'),
     )
     enrolment = models.ForeignKey(
@@ -929,6 +950,7 @@ class LoggingStudentMove(TimeStampedModel):
         blank=False,
         null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name=_('Enrollment'),
     )
     school_from = models.ForeignKey(
@@ -936,18 +958,21 @@ class LoggingStudentMove(TimeStampedModel):
         blank=False,
         null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name=_('From school'),
     )
     school_to = models.ForeignKey(
         School,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name=_('To school'),
     )
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     moved_date = models.DateField(
         blank=True,
@@ -971,30 +996,35 @@ class LoggingProgramMove(TimeStampedModel):
         blank=False,
         null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name='Student',
     )
     registry = models.ForeignKey(
         Outreach,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.CASCADE,
     )
     school_from = models.ForeignKey(
         School,
         blank=False,
         null=False,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name='From school',
     )
     school_to = models.ForeignKey(
         School,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.CASCADE,
         verbose_name='To school',
     )
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     eligibility = models.BooleanField(default=True)
     potential_move = models.BooleanField(default=False)
@@ -1012,12 +1042,14 @@ class DuplicateStd(TimeStampedModel):
     enrollment = models.ForeignKey(
         Enrollment,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='enrollment_id'
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Created by')
     )
     is_solved = models.BooleanField(default=False)
@@ -1032,6 +1064,7 @@ class DuplicateStd(TimeStampedModel):
         Coordinator,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Coordinator')
     )
     is_deleted = models.BooleanField(default=False)
@@ -1043,34 +1076,40 @@ class DuplicateStd(TimeStampedModel):
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Class Level'),
     )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Section')
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Class')
     )
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Education year')
     )
     alp_round = models.ForeignKey(
         ALPRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     outreach = models.ForeignKey(
         Outreach,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='outreach_id'
     )
 

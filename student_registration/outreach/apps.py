@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class OutreachConfig(AppConfig):
-    name = 'outreach'
+    name = 'student_registration.outreach'

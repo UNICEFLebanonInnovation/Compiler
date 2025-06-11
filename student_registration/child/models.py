@@ -5,8 +5,9 @@ import datetime
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.contrib.postgres.fields import ArrayField, JSONField
-from django.utils.translation import ugettext as _
+from django.db.models import JSONField
+
+from django.utils.translation import gettext as _
 
 from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel
@@ -115,6 +116,7 @@ class Child(TimeStampedModel):
         Nationality,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Nationality')
     )
     nationality_other = models.TextField(
@@ -167,6 +169,7 @@ class Child(TimeStampedModel):
         Disability,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Does the child have any disability or special need?')
     )
     marital_status = models.CharField(
@@ -222,6 +225,7 @@ class Child(TimeStampedModel):
         IDType,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Child ID type')
     )
     case_number = models.CharField(
@@ -384,12 +388,14 @@ class Child(TimeStampedModel):
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('What is the father\'s educational level?')
     )
     mother_educational_level = models.ForeignKey(
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('What is the father\'s educational level?')
     )
     first_phone_owner = models.CharField(
@@ -475,6 +481,7 @@ class Child(TimeStampedModel):
         Nationality,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Caregiver Nationality')
     )
     main_caregiver_nationality_other = models.TextField(

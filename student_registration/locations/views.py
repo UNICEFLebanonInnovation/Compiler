@@ -12,7 +12,7 @@ from openpyxl import Workbook
 
 from rest_framework import status
 from django.db.models import F, Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -74,7 +74,7 @@ from django.contrib.auth.decorators import login_required
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return Location.objects.none()
 
         qs = Location.objects.all()

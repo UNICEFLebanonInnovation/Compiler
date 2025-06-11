@@ -2,10 +2,10 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import ArrayField, JSONField
+# from django.utils.translation import gettext as _
+# from django.db.models import ArrayField, JSONField
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext as _
 import re
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -298,12 +298,14 @@ class MasterProgram(TimeStampedModel):
         ProgramType,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Program Type')
     )
     program_tag = models.ForeignKey(
         ProgramTag,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Program Tag')
     )
     active = models.BooleanField(blank=True, default=False)
@@ -349,6 +351,7 @@ class SubProgram(TimeStampedModel):
     master_program = models.ForeignKey(
         MasterProgram,
         blank=False, null=True,
+        on_delete=models.SET_NULL,
         related_name='master_program',
     )
     number = models.CharField(max_length=20, default='1')
@@ -421,18 +424,21 @@ class ProgramDocument(TimeStampedModel):
         Partner,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Organization Name')
     )
     funded_by = models.ForeignKey(
         FundedBy,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Funded By')
     )
     project_status = models.ForeignKey(
         ProjectStatus,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Project Status')
     )
     project_code = models.CharField(
@@ -459,6 +465,7 @@ class ProgramDocument(TimeStampedModel):
         FocalPoint,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('UNICEF Focal Point')
     )
     start_date = models.DateField(
@@ -479,18 +486,21 @@ class ProgramDocument(TimeStampedModel):
         Plan,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Plan')
     )
     sectors = models.ForeignKey(
         Sector,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('SELECT SECTORS TARGETED BY THIS PROJECT')
     )
     project_type = models.ForeignKey(
         ProjectType,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Type of Project')
     )
     public_institution_support = models.CharField(
@@ -542,18 +552,21 @@ class ProgramDocument(TimeStampedModel):
         MasterProgram,
         blank=True, null=True,
         related_name='master_program1',
+        on_delete=models.SET_NULL,
         verbose_name=_('Master Program 1')
     )
     master_program2 = models.ForeignKey(
         MasterProgram,
         blank=True, null=True,
         related_name='master_program2',
+        on_delete=models.SET_NULL,
         verbose_name=_('Master Program 2')
     )
     master_program3 = models.ForeignKey(
         MasterProgram,
         blank=True, null=True,
         related_name='master_program3',
+        on_delete=models.SET_NULL,
         verbose_name=_('Master Program 3')
     )
     baseline1 = models.IntegerField(blank=True, null=True)
@@ -615,12 +628,14 @@ class Registration(TimeStampedModel):
         Center,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Center')
     )
     adolescent = models.ForeignKey(
         Adolescent,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('adolescent')
     )
     child_outreach = models.IntegerField(blank=True, null=True)
@@ -629,23 +644,27 @@ class Registration(TimeStampedModel):
         Partner,
         blank=True, null=True,
         verbose_name=_('Partner'),
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     round = models.ForeignKey(
         Round,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Round')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
     deleted = models.BooleanField(blank=True, default=False)
@@ -674,7 +693,6 @@ class Registration(TimeStampedModel):
         if program:
             result = program.program
         return result
-
 
     def get_absolute_url(self):
         return '/YOUTH/Child-Profile/%d/' % self.pk
@@ -724,6 +742,7 @@ class EnrolledPrograms(TimeStampedModel):
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
+        on_delete=models.SET_NULL,
         related_name='enrolled_programs',
     )
 
@@ -743,21 +762,25 @@ class EnrolledPrograms(TimeStampedModel):
         MasterProgram,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     sub_program = models.ForeignKey(
         SubProgram,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     donor = models.ForeignKey(
         Donor,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     program_document = models.ForeignKey(
         ProgramDocument,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     registration_date = models.DateField(
         blank=True,
@@ -812,6 +835,7 @@ class YouthAssessment(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     undertake_post_diagnostic = models.CharField(
         max_length=100,
@@ -890,6 +914,7 @@ class YouthAssessment(TimeStampedModel):
         choices=ATTENDANCE,
         verbose_name=_('Adolescent attendance')
     )
+
     class Meta:
         ordering = ['id']
         verbose_name = "Youth Assessment"

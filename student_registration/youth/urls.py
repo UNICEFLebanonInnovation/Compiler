@@ -4,80 +4,82 @@ from django.urls import re_path
 
 from . import views, program_view, services_view
 
+app_name = 'youth'
+
 urlpatterns = [
 
     re_path(
-        regex=r'^Child-Add/$',
+        r'^Child-Add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
     ),
     re_path(
-        regex=r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
+        r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
         name='child_edit'
     ),
     re_path(
-        regex=r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
+        r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
         view=views.MainMarkDeleteView,
         name='child_mark_deleted'
     ),
     re_path(
-        regex=r'^export/$',
+        r'^export/$',
         view=views.export_data,
         name='export'
     ),
     re_path(
-        regex=r'^export-pd/$',
+        r'^export-pd/$',
         view=views.export_pd_data,
         name='export_pd'
     ),
     re_path(
-        regex=r'^List/$',
+        r'^List/$',
         view=views.MainListView.as_view(),
         name='list'
     ),
     re_path(
-        regex=r'^PD-List/$',
+        r'^PD-List/$',
         view=views.PDListView.as_view(),
         name='pd_list'
     ),
     re_path(
-        regex=r'^PD-Add/$',
+        r'^PD-Add/$',
         view=views.PDListView.as_view(),
         name='pd_add'
     ),
     re_path(
-        regex=r'^Program/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
+        r'^Program/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_add'
     ),
     re_path(
-        regex=r'^Program/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        r'^Program/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_edit'
     ),
     re_path(
-        regex=r'^Program/Program-Document-Add/$',
+        r'^Program/Program-Document-Add/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_add'
     ),
     re_path(
-        regex=r'^Program/Program-Document-Edit/(?P<pk>[\w.@+-]+)/$',
+        r'^Program/Program-Document-Edit/(?P<pk>[\w.@+-]+)/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_edit'
     ),
     re_path(
-        regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
+        r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='child_profile'
     ),
     re_path(
-        regex=r'^Services/Youth-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+        r'^Services/Youth-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_add'
     ),
     re_path(
-        regex=r'^Services/Youth-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        r'^Services/Youth-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_edit'
     ),
@@ -117,7 +119,7 @@ urlpatterns = [
         name='child_profile_preview'
     ),
     re_path(
-        regex=r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
+        r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
         view=views.MainRegistrationCancelView,
         name='child_registration_cancel'
     ),

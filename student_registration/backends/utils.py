@@ -1,6 +1,5 @@
 
 import json
-import httplib
 import datetime
 
 from time import mktime

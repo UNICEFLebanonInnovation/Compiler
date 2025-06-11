@@ -1,4 +1,4 @@
-{% load staticfiles i18n %}
+{% load static i18n %}
 {% load util_tags %}
 {% if column.attrs.programme|is_allowed_create %}
 <a href="{{ column.attrs.url }}?enrollment_id={{ record.id }}&new_registry=no&student_outreached=no&have_barcode=no" class="btn btn-info">

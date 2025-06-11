@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 from django import forms
-from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
+from django.urls import reverse
+from django.utils.translation import gettext as _
 from student_registration.students.models import Person, Nationality
 from student_registration.staffs.models import Staffs, Bank, Certificate, University
 from student_registration.locations.models import Location

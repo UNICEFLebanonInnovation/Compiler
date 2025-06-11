@@ -10,7 +10,6 @@ logging.basicConfig(level=logging.ERROR)
 import codecs
 import datetime
 import zipfile
-from django.utils.encoding import smart_str
 import os
 import uuid
 from django.core.files.storage import default_storage
@@ -22,11 +21,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Sum, Avg, F, Func, When ,OuterRef, Subquery
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib import messages
-from django_filters.views import FilterView
-from django_tables2.export.views import ExportMixin
-from dal import autocomplete
+
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
-from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.shortcuts import redirect
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -35,7 +31,7 @@ from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework import status
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.generic.edit import FormView
 
 from student_registration.schools.models import (
@@ -43,11 +39,9 @@ from student_registration.schools.models import (
     Section,
     ClassRoom,
     EducationLevel,
-    PartnerOrganization
 )
 from student_registration.enrollments.models import (
     Enrollment,
-    EducationYear,
 )
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.backends.tasks import export_attendance
@@ -55,16 +49,13 @@ from student_registration.users.utils import force_default_language
 from .utils import find_attendances, fill_attendancedt
 # calculate_absentees
 from .models import Attendance, Absentee, CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
-from student_registration.students.models import Student
 from student_registration.clm.models import Bridging
 from student_registration.schools.models import CLMRound
 from student_registration.backends.models import ExportHistory
 
 from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer
-from .tables import CLMAttendanceStudentTable, BootstrapTable
 
-from .filters import CLMAttendanceStudentFilter
-from .forms import AttendanceForm, MainAttendanceForm, AttendanceStudentForm, AttendanceAbsenceForm
+from .forms import MainAttendanceForm, AttendanceStudentForm, AttendanceAbsenceForm
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -1271,7 +1262,7 @@ def attendance_export(request, **kwargs):
                 query_params.append(request.user.school_id)
 
         vw_data_str += " ORDER BY attendance_date"
-        
+
         cursor.execute(vw_data_str, query_params)
         att_data = cursor.fetchall()
 

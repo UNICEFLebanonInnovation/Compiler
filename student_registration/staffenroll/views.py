@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from django.views.generic import FormView
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from student_registration.staffenroll.filters import StaffEnrollFilter

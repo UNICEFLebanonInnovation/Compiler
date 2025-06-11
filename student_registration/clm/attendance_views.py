@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
-from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
+from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent
 from student_registration.schools.models import (
     School,
     PartnerOrganization,

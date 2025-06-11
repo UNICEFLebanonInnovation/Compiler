@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class StaffenrollConfig(AppConfig):
-    name = 'staffenroll'
+    name = 'student_registration.staffenroll'

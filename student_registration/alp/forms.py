@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.contrib import messages
 

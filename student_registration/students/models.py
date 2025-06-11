@@ -1,14 +1,13 @@
 from __future__ import unicode_literals, absolute_import, division
 from django.conf import settings
-from datetime import datetime
 from django.db import models
-from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.utils.translation import gettext as _
+from django.contrib.postgres.fields import ArrayField
+
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
 from django.core.exceptions import ValidationError
-from django import forms
 
 
 def validate_file_size(value):
@@ -109,7 +108,7 @@ class SpecialNeedsDt(models.Model):
         blank=True,
         null=True,
         verbose_name=_('Detail Special Needs'),
-        on_delete=models.CASCADE, # Example: Ensure to choose the correct on_delete strategy (e.g., SET_NULL, PROTECT) based on application logic.
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
@@ -284,18 +283,20 @@ class Person(TimeStampedModel):
         IDType,
         blank=True, null=True,
         verbose_name=_('ID type'),
-        on_delete=models.CASCADE, # Example: Ensure to choose the correct on_delete strategy (e.g., SET_NULL, PROTECT) based on application logic.
+        on_delete=models.SET_NULL,
     )
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Nationality')
     )
     mother_nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Mother nationality')
     )
     address = models.TextField(
@@ -435,7 +436,7 @@ class Student(Person):
     outreach_child = models.ForeignKey(
         Child,
         blank=True, null=True,
-        on_delete=models.CASCADE, # Example: Ensure to choose the correct on_delete strategy (e.g., SET_NULL, PROTECT) based on application logic.
+        on_delete=models.SET_NULL,
     )
     std_image = models.ImageField(
         upload_to="profiles",
@@ -454,6 +455,7 @@ class Student(Person):
         Birth_DocumentType,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Document Type'),
         related_name='documenttype'
     )
@@ -461,6 +463,7 @@ class Student(Person):
         SpecialNeeds,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Types Special Needs'),
         related_name='specialneeds'
     )
@@ -468,6 +471,7 @@ class Student(Person):
         SpecialNeedsDt,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Details Special Needs')
     )
     id_image = models.ImageField(
@@ -515,6 +519,7 @@ class Student(Person):
         FinancialSupport,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Financial Support Program'),
         related_name='financialsupport'
     )
@@ -606,11 +611,13 @@ class StudentMatching(models.Model):
         Student,
         blank=False, null=False,
         related_name='+',
+        on_delete=models.CASCADE,
     )
     enrolment = models.ForeignKey(
         Student,
         blank=False, null=False,
         related_name='+',
+        on_delete=models.CASCADE,
     )
 
 
@@ -688,12 +695,14 @@ class Teacher(Person):
         'schools.CLMRound',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Round')
     )
     school = models.ForeignKey(
         'schools.School',
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
     )
     email = models.CharField(
@@ -783,6 +792,7 @@ class Teacher(Person):
     attach_type_1 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='attach_type_1',
         verbose_name=_('Type')
     )
@@ -801,6 +811,7 @@ class Teacher(Person):
     attach_type_2 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='attach_type_2',
         verbose_name=_('Type')
     )
@@ -819,6 +830,7 @@ class Teacher(Person):
     attach_type_3 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='attach_type_3',
         verbose_name=_('Type')
     )
@@ -837,6 +849,7 @@ class Teacher(Person):
     attach_type_4 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='attach_type_4',
         verbose_name=_('Type')
     )
@@ -855,17 +868,20 @@ class Teacher(Person):
     attach_type_5 = models.ForeignKey(
         AttachmentType,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='attach_type_5',
         verbose_name=_('Type')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
+        on_delete=models.SET_NULL,
         related_name='+',
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )

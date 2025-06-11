@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.views.generic import ListView, FormView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status

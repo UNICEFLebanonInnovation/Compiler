@@ -2,7 +2,7 @@ __author__ = 'achamseddine'
 
 import time
 import tablib
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
 from .file import store_file

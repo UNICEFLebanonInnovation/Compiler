@@ -18,15 +18,11 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from student_registration.backends.djqscsv import render_to_csv_response
-from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import Child
-from student_registration.outreach.serializers import ChildSerializer
 
-from .tables import BootstrapTable
 from .inclusion_tables import InclusionTable
 from .inclusion_filters import InclusionFilter
-from .models import Inclusion, CLMRound
-from .inclusion_forms import InclusionForm, InclusionReferralForm, InclusionAssessmentForm, InclusionFollowupForm
+from .models import Inclusion
+from .inclusion_forms import InclusionForm, InclusionAssessmentForm, InclusionFollowupForm
 from .utils import is_allowed_create, is_allowed_edit
 from .inclusion_serializers import InclusionSerializer
 
@@ -48,7 +44,6 @@ class InclusionAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -105,7 +100,6 @@ class InclusionEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -137,13 +131,12 @@ class InclusionListView(LoginRequiredMixin,
     table_class = InclusionTable
     model = Inclusion
     template_name = 'clm/inclusion_list.html'
-    table = BootstrapTable(Inclusion.objects.all(), order_by='id')
+    table = InclusionTable(Inclusion.objects.all(), order_by='id')
     group_required = [u"CLM_Inclusion"]
     filterset_class = InclusionFilter
 
     def get_queryset(self):
         partner_id = self.request.user.partner_id
-        force_default_language(self.request)
         if not self.request.user.is_staff and partner_id:
             return Inclusion.objects.filter(round__current_year_inclusion=True,partner=partner_id).order_by('-id')
         elif self.request.user.is_staff:
@@ -161,7 +154,6 @@ class InclusionAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_Inclusion"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -191,7 +183,6 @@ class InclusionFollowupView(LoginRequiredMixin,
     group_required = [u"CLM_Inclusion"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()

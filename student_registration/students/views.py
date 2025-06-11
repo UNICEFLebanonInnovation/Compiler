@@ -160,7 +160,7 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
 
 class StudentAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return Student.objects.none()
 
         qs = Student.objects.all()

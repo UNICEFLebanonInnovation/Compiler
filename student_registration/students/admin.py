@@ -14,10 +14,6 @@ from .models import (
     IDType,
     Labour,
     Teacher,
-    FinancialSupport,
-    SpecialNeeds,
-    SpecialNeedsDt,
-    Birth_DocumentType,
     Training,
     AttachmentType
 )
@@ -572,8 +568,8 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 
 class StudentResource(resources.ModelResource):
-    enrollment_school = fields.Field(column_name='enrollment_school')
-    enrollment_education_year = fields.Field(column_name='enrollment_education_year')
+    # enrollment_school = fields.Field(column_name='enrollment_school')
+    # enrollment_education_year = fields.Field(column_name='enrollment_education_year')
 
     class Meta:
         model = Student
@@ -616,8 +612,8 @@ class StudentResource(resources.ModelResource):
 
         )
         export_order = (
-            'enrollment_school',
-            'enrollment_education_year',
+            # 'enrollment_school',
+            # 'enrollment_education_year',
             'first_name',
             'father_name',
             'last_name',
@@ -638,11 +634,11 @@ class StudentResource(resources.ModelResource):
             'phone_prefix',
         )
 
-    def dehydrate_enrollment_school(self, obj):
-        return obj.enrollment_school
-
-    def dehydrate_enrollment_education_year(self, obj):
-        return obj.enrollment_education_year
+    # def dehydrate_enrollment_school(self, obj):
+    #     return obj.enrollment_school
+    #
+    # def dehydrate_enrollment_education_year(self, obj):
+    #     return obj.enrollment_education_year
 
 
 class StudentAdmin(ImportExportModelAdmin):

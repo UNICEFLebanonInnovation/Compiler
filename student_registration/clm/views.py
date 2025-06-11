@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
 from django.db.models.expressions import RawSQL
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 
 from rest_framework import status
@@ -52,7 +52,6 @@ from .filters import (
     BridgingFilter
 )
 from .tables import (
-    BootstrapTable,
     BLNTable,
     ABLNTable,
     RSTable,
@@ -409,7 +408,7 @@ class BLNListView(LoginRequiredMixin,
     table_class = BLNTable
     model = BLN
     template_name = 'clm/bln_list.html'
-    table = BootstrapTable(BLN.objects.all(), order_by='id')
+    table = BLNTable(BLN.objects.all(), order_by='id')
     group_required = [u"CLM_BLN"]
 
     filterset_class = BLNFilter
@@ -784,7 +783,7 @@ class ABLNListView(LoginRequiredMixin,
     table_class = ABLNTable
     model = ABLN
     template_name = 'clm/abln_list.html'
-    table = BootstrapTable(ABLN.objects.all(), order_by='id')
+    table = ABLNTable(ABLN.objects.all(), order_by='id')
     group_required = [u"CLM_ABLN"]
 
     filterset_class = ABLNFilter
@@ -2240,7 +2239,7 @@ class RSListView(LoginRequiredMixin,
     table_class = RSTable
     model = RS
     template_name = 'clm/rs_list.html'
-    table = BootstrapTable(RS.objects.all(), order_by='id')
+    table = RSTable(RS.objects.all(), order_by='id')
     group_required = [u"CLM_RS"]
 
     filterset_class = RSFilter
@@ -2478,7 +2477,7 @@ class CBECEListView(LoginRequiredMixin,
     table_class = CBECETable
     model = CBECE
     template_name = 'clm/cbece_list.html'
-    table = BootstrapTable(CBECE.objects.all(), order_by='id')
+    table = CBECETable(CBECE.objects.all(), order_by='id')
     group_required = [u"CLM_CBECE"]
 
     filterset_class = CBECEFilter
@@ -2502,7 +2501,7 @@ class GeneralQuestionnaireListView(LoginRequiredMixin,
     table_class = GeneralQuestionnaireTable
     model = GeneralQuestionnaire
     template_name = 'clm/general_questionnaire_list.html'
-    table = BootstrapTable(GeneralQuestionnaire.objects.all(), order_by='id')
+    table = GeneralQuestionnaireTable(GeneralQuestionnaire.objects.all(), order_by='id')
     group_required = [u"CLM_General_Questionnaire"]
 
     filterset_class = GeneralQuestionnaireFilter
@@ -3246,7 +3245,7 @@ class OutreachListView(LoginRequiredMixin,
     table_class = OutreachTable
     model = Outreach
     template_name = 'clm/outreach_list.html'
-    table = BootstrapTable(Outreach.objects.all(), order_by='id')
+    table = OutreachTable(Outreach.objects.all(), order_by='id')
     group_required = [u"CLM_outreach"]
 
     filterset_class = OutreachFilter
@@ -3453,7 +3452,7 @@ class BridgingListView(LoginRequiredMixin,
     table_class = BridgingTable
     model = Bridging
     template_name = 'clm/bridging_list.html'
-    table = BootstrapTable(Bridging.objects.all(), order_by='student__full_name')
+    table = BridgingTable(Bridging.objects.all(), order_by='student__full_name')
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingFilter

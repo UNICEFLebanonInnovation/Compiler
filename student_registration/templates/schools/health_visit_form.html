@@ -1,8 +1,7 @@
 {% extends "schools/base.html" %}
-{% load staticfiles i18n %}
 {% load crispy_forms_tags %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% load simple_tags %}
 {% bootstrap_css %}
@@ -75,7 +74,7 @@
                                     <div id="smartwizard3" class="forms-wizard-vertical">
                                         <div class="form-wizard-content">
 
-                                           {% crispy form 'bootstrap4' %}
+                                           {% crispy form 'bootstrap5' %}
                                         </div>
                                     </div>
                                     <div class="divider"></div>

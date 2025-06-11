@@ -34,7 +34,6 @@ if READ_DOT_ENV_FILE:
     print('The .env file has been loaded. See base.py for more information')
 
 
-#USE_TZ = False
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
@@ -54,31 +53,40 @@ DJANGO_APPS = [
     'dal_select2',
 
     # Admin
-    'suit',
+    # 'suit',
+    'jazzmin',
     'django.contrib.admin',
     'markdown_deux',  # Required for Knowledgebase item formatting
-    'bootstrapform',  # Required for nicer formatting of forms with the default templates
-    'helpdesk',  # This is us!
+    # 'bootstrapform',  # Required for nicer formatting of forms with the default templates
+    # 'helpdesk',  # This is us!
     'prettyjson',
     #'storages'
 ]
 THIRD_PARTY_APPS = [
-    'crispy_forms',  # Form layouts
+    "crispy_forms",
+    "crispy_bootstrap5",
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
     'rest_framework',
+    'rest_framework_swagger',
     'drf_spectacular', # Replaced django-rest-swagger
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
 
-    'bootstrap3',
+    'django_bootstrap5',
     'bootstrap3_datetime',
     'import_export',
     'django_tables2',
     'django_celery_beat',
     'django_celery_results',
+    'six',
+#     "social_django",
+#     'tellme',
+#     'reversion',
+#     'django_json_widget',
 ]
+
 
 # Apps specific for this project go here.
 LOCAL_APPS = [
@@ -92,7 +100,7 @@ LOCAL_APPS = [
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
-    'student_registration.winterization',  # custom winterization app
+    # 'student_registration.winterization',  # custom winterization app
     'student_registration.backends',  # custom storage app
     'student_registration.staffenroll',
     'student_registration.staffs',
@@ -106,17 +114,23 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    # 'student_registration.lockout_middleware.StudentLockoutMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'student_registration.user_activity.UserActivityMiddleware',
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.common.BrokenLinkEmailsMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # 'student_registration.user_activity.UserActivityMiddleware',
+    # "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # # SECURITY CONFIGURATION
 # X_FRAME_OPTIONS = 'DENY'
@@ -165,7 +179,10 @@ MANAGERS = ADMINS
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
+    'default': env.db('DATABASE_URL',
+    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-12.postgres.database.azure.com:5432/new_staging_11062025'),
 }
+DJANGO_READ_DOT_ENV_FILE = True
 
 # DATABASES = {
 #     'default': {
@@ -178,7 +195,7 @@ DATABASES = {
 #     }
 # }
 
-DATABASES['default']['ATOMIC_REQUESTS'] = True
+# DATABASES['default']['ATOMIC_REQUESTS'] = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -190,20 +207,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'Asia/Beirut'
-
-# LANGUAGE_COOKIE_NAME = 'default_language'
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-# LANGUAGE_CODE = 'en-us'
-# LANGUAGE_CODE = 'ar-ar'
-
-# LANGUAGES = (
-#     ('ar-ar', 'arabic'),
-#     ('en-us', 'english'),
-    # ('fr-fr', 'french'),
-# )
-
-# LANGUAGES_BIDI = ["ar-ar"]
-# LANGUAGES_BIDI = ["en-us"]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -245,7 +248,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
-                'django.template.context_processors.tz',
+                # 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 # Your stuff: custom template context processors go here
             ],
@@ -254,7 +257,9 @@ TEMPLATES = [
 ]
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -300,8 +305,6 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     'django.contrib.auth.hashers.BCryptPasswordHasher',
 ]
-#Turn Timezone off
-#USE_TZ = False
 
 # PASSWORD VALIDATION
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
@@ -412,6 +415,20 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS AS NEEDED
 }
 
+JAZZMIN_SETTINGS = {
+    "site_title": "BMA",
+    "site_header": "BMA-2",
+    "welcome_sign": "Welcome, Admin",
+    "copyright": "UNICEF",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+}
+
 # Django Suit configuration
 SUIT_CONFIG = {
     'ADMIN_NAME': 'MAKANI',
@@ -487,12 +504,3 @@ UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azure
 UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsProgrammes')
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
-
-HELPDESK_TRANSLATE_TICKET_COMMENTS = True
-HELPDESK_SHOW_DELETE_BUTTON_SUPERUSER_FOLLOW_UP = True
-HELPDESK_STAFF_ONLY_TICKET_OWNERS = True
-HELPDESK_STAFF_ONLY_TICKET_CC = True
-HELPDESK_CREATE_TICKET_HIDE_ASSIGNED_TO = True
-HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
-HELPDESK_VIEW_A_TICKET_PUBLIC = False
-HELPDESK_SUBMIT_A_TICKET_PUBLIC = False

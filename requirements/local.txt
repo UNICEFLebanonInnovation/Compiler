@@ -5,10 +5,10 @@
 Sphinx==7.3.7
 
 # Django Extensions for additional management commands
-django-extensions==3.2.3
+django-extensions==4.1
 
 # Django Debug Toolbar for debugging
-django-debug-toolbar==4.0.4
+django-debug-toolbar==5.2.0
 
 # Werkzeug (often a dependency, keeping an eye on it)
 # #Werkzeug==0.12.2 # Example if it were active, updated to 3.0.3

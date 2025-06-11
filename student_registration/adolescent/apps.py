@@ -5,4 +5,4 @@ from django.apps import AppConfig
 
 
 class AdolescentConfig(AppConfig):
-    name = 'adolescent'
+    name = 'student_registration.adolescent'

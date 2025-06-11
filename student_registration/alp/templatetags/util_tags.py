@@ -1,40 +1,38 @@
 import json
 from django import template
-from django.utils.safestring import mark_safe
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import resolve
 import datetime
 
 register = template.Library()
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_range(start, end):
     return (str(x) for x in range(start, end))
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_range_int(start, end):
     return (x for x in range(start, end))
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_range_str(start, end):
     return (str(x-1)+'/'+str(x) for x in range(start, end))
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_range_years(start=1990, end=2051):
     return (str(x) for x in range(start, end))
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_range_months(start=1, end=13):
     return (str(x) for x in range(start, end))
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_range_days(start=1, end=31):
     return (str(x) for x in range(start, end))
 
@@ -44,7 +42,7 @@ def json_loads(data):
     return json.loads(data)
 
 
-@register.assignment_tag
+@register.simple_tag
 def json_load_value(data, key):
     key = key.replace("column", "field")
     list = json.loads(data)
@@ -53,7 +51,7 @@ def json_load_value(data, key):
     return ''
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_user_token(user_id):
     # token = Token.objects.get_or_create(user_id=user_id)
     try:
@@ -124,7 +122,7 @@ def percentage_int(number, total):
     return 0
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_gov_by_grade_by_gender(registrations, gov, level=None, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -135,7 +133,7 @@ def enrollment_by_gov_by_grade_by_gender(registrations, gov, level=None, gender=
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_school_by_grade_by_gender(registrations, school, level=None, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -146,7 +144,7 @@ def enrollment_by_school_by_grade_by_gender(registrations, school, level=None, g
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_school_by_nationality_by_gender(registrations, school, nationality=None, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -157,7 +155,7 @@ def enrollment_by_school_by_nationality_by_gender(registrations, school, nationa
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_gov_by_nationality_by_gender(registrations, gov, nationality=None, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -168,7 +166,7 @@ def enrollment_by_gov_by_nationality_by_gender(registrations, gov, nationality=N
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_gov_by_nationality_by_gender_by_grade(registrations, gov, nationality=None, gender=None, level=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -181,7 +179,7 @@ def enrollment_by_gov_by_nationality_by_gender_by_grade(registrations, gov, nati
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_gov_by_age_by_gender(registrations, gov, age=None, gender=None):
     now = datetime.datetime.now()
     if gender:
@@ -193,7 +191,7 @@ def enrollment_by_gov_by_age_by_gender(registrations, gov, age=None, gender=None
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_grade_by_age_by_gender(registrations, grade, age=None, gender=None):
     now = datetime.datetime.now()
     if gender:
@@ -205,7 +203,7 @@ def enrollment_by_grade_by_age_by_gender(registrations, grade, age=None, gender=
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_grade_by_nationality_by_gender(registrations, grade=None, nationality=None, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -216,7 +214,7 @@ def enrollment_by_grade_by_nationality_by_gender(registrations, grade=None, nati
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def enrollment_by_nationality_by_age_by_gender(registrations, nationality=None, age=None, gender=None):
     now = datetime.datetime.now()
     if gender:
@@ -228,7 +226,7 @@ def enrollment_by_nationality_by_age_by_gender(registrations, nationality=None, 
     return registrations.count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_gov_by_grade(registrations, gov, level):
     if not gov:
         return registrations.filter(registered_in_level=level).count()
@@ -237,7 +235,7 @@ def alp_by_gov_by_grade(registrations, gov, level):
     return registrations.filter(school__location__parent_id=gov, registered_in_level=level).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_gov_by_grade_by_gender(registrations, gov, level, gender):
     registrations = registrations.filter(student__sex=gender)
     if not gov:
@@ -247,7 +245,7 @@ def alp_by_gov_by_grade_by_gender(registrations, gov, level, gender):
     return registrations.filter(school__location__parent_id=gov, registered_in_level=level).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_gov_by_assignedlevel_by_gender(registrations, gov, level, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -258,7 +256,7 @@ def alp_by_gov_by_assignedlevel_by_gender(registrations, gov, level, gender=None
     return registrations.filter(school__location__parent_id=gov, assigned_to_level=level).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_gov_by_referredlevel_by_gender(registrations, gov, level, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
@@ -269,7 +267,7 @@ def alp_by_gov_by_referredlevel_by_gender(registrations, gov, level, gender=None
     return registrations.filter(school__location__parent_id=gov, refer_to_level=level).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_gov_by_age(registrations, gov, age=None):
     now = datetime.datetime.now()
     if not gov:
@@ -281,7 +279,7 @@ def alp_by_gov_by_age(registrations, gov, age=None):
     return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_grade_by_age(registrations, level, age=None):
     now = datetime.datetime.now()
     if age == None:
@@ -291,7 +289,7 @@ def alp_by_grade_by_age(registrations, level, age=None):
     return registrations.filter(registered_in_level=level, student__birthday_year=(now.year - age)).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_assignedlevel_by_age(registrations, level, age=None, and_above=False):
     now = datetime.datetime.now()
     if age == None:
@@ -305,7 +303,7 @@ def alp_by_assignedlevel_by_age(registrations, level, age=None, and_above=False)
     return registrations.filter(assigned_to_level=level, student__birthday_year=(now.year - age)).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def alp_by_referredlevel_by_age(registrations, level, age=None):
     now = datetime.datetime.now()
     if age == None:
@@ -315,7 +313,7 @@ def alp_by_referredlevel_by_age(registrations, level, age=None):
     return registrations.filter(refer_to_level=level, student__birthday_year=(now.year - age)).count()
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_item_by_key(dictionary, level, age):
     key = str(level)+'-'+str(age)
     return dictionary.get(key)

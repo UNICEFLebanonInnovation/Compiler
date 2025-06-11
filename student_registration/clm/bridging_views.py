@@ -20,14 +20,12 @@ from django.db import connection
 import codecs
 import logging
 import traceback
-from django.utils.encoding import force_str
 import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
-from django.db.models.expressions import RawSQL
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 
 from rest_framework import status
@@ -46,7 +44,6 @@ from .filters import (
     BridgingFilter
 )
 from .tables import (
-    BootstrapTable,
     BridgingTable
 )
 from .models import (
@@ -54,14 +51,7 @@ from .models import (
     ABLN,
     RS,
     CBECE,
-    SelfPerceptionGrades,
-    Disability,
     Assessment,
-    ABLN_FC,
-    BLN_FC,
-    CBECE_FC,
-    RS_FC,
-    GeneralQuestionnaire,
     Outreach,
     Bridging,
     Inclusion
@@ -165,7 +155,7 @@ class BridgingListView(LoginRequiredMixin,
     table_class = BridgingTable
     model = Bridging
     template_name = 'clm/bridging_list.html'
-    table = BootstrapTable(Bridging.objects.all(), order_by='student__full_name')
+    table = BridgingTable(Bridging.objects.all(), order_by='student__full_name')
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingFilter

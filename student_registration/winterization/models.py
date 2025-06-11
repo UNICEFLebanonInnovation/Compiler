@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from model_utils import Choices
-from django.contrib.postgres.fields import JSONField,  ArrayField
+from django.db.models import JSONField
 
 
 class Beneficiary(models.Model):

@@ -54,7 +54,6 @@ from .serializers import (
     SectionSerializer
 )
 from .tables import (
-    BootstrapTable,
     SchoolTable,
     SchoolExportTable,
     ClubTable,
@@ -73,7 +72,6 @@ from .forms import ProfileForm,SchoolForm, ClubForm, MeetingForm, CommunityIniti
     Classroom_Form_c4, Classroom_Form_c5, Classroom_Form_c6, Classroom_Form_c7, Classroom_Form_c8, \
     Classroom_Form_c9, Classroom_Form_cprep
 from .utils import *
-
 
 
 class SchoolViewSet(mixins.ListModelMixin,
@@ -196,7 +194,7 @@ class PublicDocumentView(LoginRequiredMixin,
 
 class AutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return School.objects.none()
 
         qs = School.objects.all()
@@ -537,7 +535,7 @@ class SchoolListView(LoginRequiredMixin,
     table_class = SchoolTable
     model = School
     template_name = 'schools/school_list.html'
-    table = BootstrapTable(School.objects.all(), order_by='id')
+    table = SchoolTable(School.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
     filterset_class = SchoolFilter
 
@@ -683,7 +681,7 @@ class ClubListView(LoginRequiredMixin,
     table_class = ClubTable
     model = Club
     template_name = 'schools/club_list.html'
-    table = BootstrapTable(Club.objects.all(), order_by='id')
+    table = ClubTable(Club.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
@@ -758,7 +756,7 @@ class MeetingListView(LoginRequiredMixin,
     table_class = MeetingTable
     model = Meeting
     template_name = 'schools/meeting_list.html'
-    table = BootstrapTable(Meeting.objects.all(), order_by='id')
+    table = MeetingTable(Meeting.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
@@ -833,7 +831,7 @@ class CommunityInitiativeListView(LoginRequiredMixin,
     table_class = CommunityInitiativeTable
     model = CommunityInitiative
     template_name = 'schools/community_initiative_list.html'
-    table = BootstrapTable(CommunityInitiative.objects.all(), order_by='id')
+    table = CommunityInitiativeTable(CommunityInitiative.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
@@ -885,7 +883,6 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
         return super(CommunityInitiativeFormView, self).form_valid(form)
 
 
-
 def community_initiative_delete(request, pk):
     if request.user.is_authenticated:
         try:
@@ -909,7 +906,7 @@ class HealthVisitListView(LoginRequiredMixin,
     table_class = HealthVisitTable
     model = HealthVisit
     template_name = 'schools/health_visit_list.html'
-    table = BootstrapTable(HealthVisit.objects.all(), order_by='id')
+    table = HealthVisitTable(HealthVisit.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
@@ -1049,7 +1046,7 @@ def export_school_background(request):
 
 class SchoolAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return School.objects.none()
 
         qs = School.objects.all()

@@ -12,7 +12,7 @@ class UserActivityMiddleware(MiddlewareMixin):
     def __call__(self, request):
         response = self.get_response(request)
         try:
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 if request.method == "POST":
                     data = request.POST.copy()
                 else:

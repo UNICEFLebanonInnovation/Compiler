@@ -2,9 +2,9 @@ from django import forms
 from student_registration.attendances.models import AttendanceDt
 from datetime import date, datetime, timedelta
 from .widgets import DatePickerInput
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.forms import inlineformset_factory,HiddenInput
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import (

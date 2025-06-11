@@ -7,10 +7,10 @@ from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from rest_framework import viewsets, mixins, permissions
 import tablib
 from rest_framework import status
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.db.models import Q
 from import_export.formats import base_formats
-from braces.views import GroupRequiredMixin
+from django.contrib.auth.mixins import GroupRequiredMixin
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
