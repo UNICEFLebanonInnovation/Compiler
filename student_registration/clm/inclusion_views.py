@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin

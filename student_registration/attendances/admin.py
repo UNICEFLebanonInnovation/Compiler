@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
 from django.db import models
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
@@ -52,8 +50,8 @@ class SchoolFilter(admin.SimpleListFilter):
         in the right sidebar.
         """
         if has_group(request.user, 'COORDINATOR'):
-            return ((l.id, l.__unicode__()) for l in School.objects.filter(id__in=request.user.schools.all()))
-        return ((l.id, l.__unicode__()) for l in School.objects.all())
+            return ((l.id, str(l)) for l in School.objects.filter(id__in=request.user.schools.all()))
+        return ((l.id, str(l)) for l in School.objects.all())
 
     def queryset(self, request, queryset):
         """

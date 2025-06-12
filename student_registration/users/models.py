@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
-
 from django.contrib.auth.models import AbstractUser
 # from django.urls import reverse
 from django.urls import reverse
@@ -9,7 +6,6 @@ from django.db import models
 from django.utils.translation import gettext as _
 
 
-# @python_2_unicode_compatible
 class User(AbstractUser):
     # from student_registration.locations.models import Location, Center
     # from student_registration.schools.models import PartnerOrganization, School
@@ -92,7 +88,7 @@ class Login(models.Model):
     )
     active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
 
         return u'{} {}'.format(
             self.user,

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Django settings for Student Registration project.
 
@@ -8,8 +7,6 @@ https://docs.djangoproject.com/en/dev/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
-from __future__ import absolute_import, unicode_literals
-
 import environ
 
 ROOT_DIR = environ.Path(__file__) - 3  # (student_registration/config/settings/base.py - 3 = student_registration/)
@@ -118,7 +115,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware", # For efficient static file serving in production
     # "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",

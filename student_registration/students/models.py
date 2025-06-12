@@ -1,4 +1,3 @@
-from __future__ import unicode_literals, absolute_import, division
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
@@ -27,9 +26,6 @@ class Birth_DocumentType(models.Model):
         verbose_name_plural = "Documents Type"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -68,9 +64,6 @@ class Nationality(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class IDType(models.Model):
     name = models.CharField(max_length=45, unique=True)
@@ -84,9 +77,6 @@ class IDType(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class SpecialNeeds(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -95,9 +85,6 @@ class SpecialNeeds(models.Model):
         verbose_name_plural = 'Special Needs'
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -118,17 +105,11 @@ class SpecialNeedsDt(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class FinancialSupport(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -140,9 +121,6 @@ class Labour(models.Model):
         verbose_name = "Labour"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -318,16 +296,6 @@ class Person(TimeStampedModel):
     recordnumber = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Identity record number'))
 
     def __str__(self):
-        if not self.first_name:
-            return 'No name'
-
-        return u'{} {} {}'.format(
-            self.first_name,
-            self.father_name,
-            self.last_name,
-        )
-
-    def __unicode__(self):
         if not self.first_name:
             return 'No name'
 
@@ -628,9 +596,6 @@ class Training(models.Model):
         ordering = ['name']
         verbose_name = "Topics of teacher training"
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
         return self.name
 
@@ -641,9 +606,6 @@ class AttachmentType(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = "Attachment Type"
-
-    def __unicode__(self):
-        return self.name
 
     def __str__(self):
         return self.name

@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.db import models
 from django.db.models import JSONField
 from django.contrib.postgres.fields import ArrayField
@@ -68,9 +66,6 @@ class HouseHold(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -311,9 +306,6 @@ class OutreachCaregiver(models.Model):
     def __str__(self):
         return self.father_name
 
-    def __unicode__(self):
-        return self.father_name
-
 
 class OutreachChild(models.Model):
     MONTHS = Choices(
@@ -366,9 +358,6 @@ class OutreachChild(models.Model):
         verbose_name_plural = "Outreach Children"
 
     def __str__(self):
-        return self.first_name
-
-    def __unicode__(self):
         return self.first_name
 
     @property

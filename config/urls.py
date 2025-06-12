@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.urls import include, re_path
 from django.conf.urls.static import static
@@ -9,7 +6,7 @@ from django.views.generic import TemplateView
 from django.views import defaults as default_views
 
 from rest_framework_nested import routers
-# from rest_framework_swagger.views import get_swagger_view # Replaced by drf-spectacular
+# from rest_framework_swagger.views import get_swagger_view # Replaced by drf-spectacular # Replaced by drf-spectacular
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 
@@ -119,7 +116,7 @@ api.register(r'clm-outreach', OutreachViewSet, basename='clm-outreach')
 # api.register(r'backend-exporter', ExporterViewSet, basename='backend-exporter')
 api.register(r'locations', LocationViewSet, basename='locations')
 
-# schema_view = get_swagger_view(title='Compiler API') # Replaced by drf-spectacular
+# schema_view = get_swagger_view(title='Compiler API') # Replaced by drf-spectacular # Replaced by drf-spectacular
 
 
 urlpatterns = [
@@ -158,7 +155,7 @@ urlpatterns = [
     # re_path(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # re_path(r'^api/docs/', schema_view), # Replaced by drf-spectacular
+    # re_path(r'^api/docs/', schema_view), # Replaced by drf-spectacular # Replaced by drf-spectacular
 
     # drf-spectacular URLs
     re_path(r'^api/schema/$', SpectacularAPIView.as_view(), name='schema'),

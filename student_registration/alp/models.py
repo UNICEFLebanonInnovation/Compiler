@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import, division
-
 from django.db import models
 from model_utils import Choices
 from django.utils.translation import gettext as _
@@ -42,7 +40,7 @@ class ALPRound(models.Model):
         ordering = ['name']
         verbose_name = "ALP Round"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -592,7 +590,7 @@ class Outreach(TimeStampedModel):
     def calculate_post_result(self):
         self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.student:
-            return self.student.__unicode__()
+            return str(self.student) # Use str() for robust conversion
         return str(self.id)

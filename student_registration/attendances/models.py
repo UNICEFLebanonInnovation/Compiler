@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import, division
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _ # Will be fixed in a subsequent step
@@ -138,8 +136,8 @@ class Attendance(TimeStampedModel):
     def student_gender(self):
         return self.student.sex
 
-    def __unicode__(self):
-        return self.school.__unicode__()
+    def __str__(self):
+        return str(self.school)
 
     def save(self, **kwargs):
         """
@@ -230,8 +228,8 @@ class Absentee(TimeStampedModel):
     section = models.CharField(max_length=100, blank=True, null=True)
     section_name = models.CharField(max_length=100, blank=True, null=True)
 
-    def __unicode__(self):
-        return '{} - {}'.format(self.student, self.school)
+    def __str__(self):
+        return '{} - {}'.format(str(self.student), str(self.school))
 
     def absence_type(self):
         if 10 > self.absent_days >= 5:
@@ -307,7 +305,7 @@ class AttendanceSyncLog(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.processed_date)
 
     class Meta:
@@ -376,8 +374,8 @@ class CLMAttendance(TimeStampedModel):
         ordering = ['attendance_date']
         verbose_name = "Dirasa Attendance"
 
-    def __unicode__(self):
-        return self.school.__unicode__()
+    def __str__(self):
+        return str(self.school)
 
 
 class CLMAttendanceStudent(TimeStampedModel):
@@ -668,9 +666,6 @@ class MSCCAttendance(TimeStampedModel):
     def __str__(self):
         return '{} - {}'.format(self.center, self.attendance_date)
 
-    def __unicode__(self):
-        return '{} - {}'.format(self.center, self.attendance_date)
-
 
 class MSCCAttendanceChild(TimeStampedModel):
     readonly_fields = ('child_name', )
@@ -751,8 +746,5 @@ class MSCCAttendanceChild(TimeStampedModel):
         return ''
 
     def __str__(self):
-        return '{} - {}'.format(self.child, self.attendance_day)
-
-    def __unicode__(self):
         return '{} - {}'.format(self.child, self.attendance_day)
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import, division
 import datetime
 
 from django.db import models
@@ -38,9 +36,6 @@ class Assessment(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class Cycle(models.Model):
     name = models.CharField(max_length=100)
@@ -54,9 +49,6 @@ class Cycle(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class RSCycle(models.Model):
     name = models.CharField(max_length=100)
@@ -66,9 +58,6 @@ class RSCycle(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -84,9 +73,6 @@ class Site(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class Referral(models.Model):
     name = models.CharField(max_length=100)
@@ -97,9 +83,6 @@ class Referral(models.Model):
         verbose_name_plural = "Referrals"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -114,9 +97,6 @@ class Disability(models.Model):
         verbose_name_plural = "Disabilities"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -137,9 +117,6 @@ class Center(models.Model):
         verbose_name_plural = "Sites / Centers"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -1549,12 +1526,7 @@ class CLM(TimeStampedModel):
 
     def __str__(self):
         if self.student:
-            return self.student.__str__()
-        return str(self.id)
-
-    def __unicode__(self):
-        if self.student:
-            return self.student.__unicode__()
+            return str(self.student) # Use str() for robust conversion
         return str(self.id)
 
     def score(self, keys, stage):
@@ -3828,11 +3800,8 @@ class SelfPerceptionGrades(models.Model):
         verbose_name = "Child perception grade"
         verbose_name_plural = "Child perception grades"
 
-    def __unicode__(self):
-        return self.enrollment
-
     def __str__(self):
-        return self.enrollment
+        return str(self.enrollment) # Use str() for robust conversion
 
 
 class Inclusion(TimeStampedModel):
@@ -4524,14 +4493,9 @@ class Inclusion(TimeStampedModel):
     def get_absolute_url(self):
         return '/inclusion/edit/%d/' % self.pk
 
-    def __unicode__(self):
-        if self.student:
-            return self.student.__unicode__()
-        return str(self.id)
-
     def __str__(self):
         if self.student:
-            return self.student.__str__()
+            return str(self.student) # Use str() for robust conversion
         return str(self.id)
 
     class Meta:

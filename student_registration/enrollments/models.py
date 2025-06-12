@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import, division
-
 import datetime
 import django.utils.timezone
 
@@ -50,7 +48,7 @@ class DocumentType(models.Model):
         verbose_name = "Document Type"
         verbose_name_plural = "Documents Type"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description
 
 
@@ -689,9 +687,9 @@ class Enrollment(TimeStampedModel):
     class Meta:
         ordering = ['-student__first_name']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.student:
-            return self.student.__unicode__()
+            return str(self.student)
         return str(self.id)
 
 
@@ -731,7 +729,7 @@ class StudentMove(models.Model):
         verbose_name = "Auto search student moves"
         verbose_name_plural = "Auto search student moves"
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.id)
 
 
@@ -931,7 +929,7 @@ class EnrollmentGrading(models.Model):
             }[str(self.exam_term)]
         return ''
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.id)
 
 
@@ -985,7 +983,7 @@ class LoggingStudentMove(TimeStampedModel):
         verbose_name = "Student moves logs"
         verbose_name_plural = "Student moves logs"
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.id)
 
 
@@ -1034,7 +1032,7 @@ class LoggingProgramMove(TimeStampedModel):
         verbose_name = "Student moves from ALP"
         verbose_name_plural = "Student moves from ALP"
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.id)
 
 

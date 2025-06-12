@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
 from datetime import date
 import tablib
 from django.http import Http404, HttpResponse, HttpResponseForbidden

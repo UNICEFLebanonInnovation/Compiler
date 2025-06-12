@@ -76,7 +76,7 @@ class MemorySavingQuerysetIterator(object):
         self.max_obj_num = max_obj_num
 
     def _setup(self):
-        for i in xrange(0, self._base_queryset.count(), self.max_obj_num):
+        for i in range(0, self._base_queryset.count(), self.max_obj_num):
             # By making a copy of the queryset and using that to actually access
             # the objects we ensure that there are only `max_obj_num` objects in
             # memory at any given time

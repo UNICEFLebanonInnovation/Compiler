@@ -126,7 +126,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'Enrollment instance': ex.message})
+            raise serializers.ValidationError({'Enrollment instance': str(ex)})
 
         return instance
 
@@ -145,7 +145,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'Enrollment instance': ex.message})
+            raise serializers.ValidationError({'Enrollment instance': str(ex)})
 
         return instance
 
@@ -280,7 +280,7 @@ class GradingSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'Enrollment instance': ex.message})
+            raise serializers.ValidationError({'Enrollment instance': str(ex)})
 
         return instance
 
@@ -328,7 +328,7 @@ class LoggingProgramMoveSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'LoggingStudentMove instance': ex.message})
+            raise serializers.ValidationError({'LoggingStudentMove instance': str(ex)})
 
         return instance
 

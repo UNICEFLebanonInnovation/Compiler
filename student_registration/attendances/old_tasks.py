@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 __author__ = 'jcranwellward'
 
 import json
@@ -152,7 +151,7 @@ def set_app_attendances(school_number=None, school_type=None):
         for enrolled in total_enrolled:
             student = {
                 "student_id": str(enrolled.student.id),
-                "student_name": enrolled.student.__unicode__(),
+                "student_name": str(enrolled.student),
                 "gender": enrolled.student.sex,
                 "status": enrolled.student.status
             }

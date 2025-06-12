@@ -58,20 +58,19 @@ django-mptt==0.16.0
 django-makemessages-xgettext==0.1.1
 djangorestframework==3.14.0
 
-django-rest-swagger==2.2.0
-djangorestframework-jwt-5==1.13.0
+#djangorestframework-jwt-5==1.13.0
 
 markdown==3.8
 django-filter==25.1
 drf-spectacular==0.27.2
 drf-nested-routers==0.11.1
 xlsxwriter==0.9.2
-tablib==0.11.5
+tablib
 django-import-export==4.3.7
 #django-suit==0.2.28
 django-jazzmin==3.0.1
 django-autocomplete-light==3.9.7
-django-helpdesk==0.1.18
+#django-helpdesk==0.1.18
 #mongoengine==0.11.0
 django-admin-rangefilter==0.3.0
 #django-bootstrap5==25.1

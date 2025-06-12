@@ -1,4 +1,3 @@
-from __future__ import unicode_literals, absolute_import, division
 from django.conf import settings
 from django.db import models
 from model_utils import Choices
@@ -18,9 +17,6 @@ class Coordinator(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-            return self.name
-
 
 class PublicHolidays(models.Model):
     holiday = models.DateField(
@@ -29,9 +25,6 @@ class PublicHolidays(models.Model):
     )
 
     def __str__(self):
-        return self.holiday.strftime("%m/%d/%Y")
-
-    def __unicode__(self):
         return self.holiday.strftime("%m/%d/%Y")
 
 
@@ -564,11 +557,8 @@ class School(TimeStampedModel):
             return False
         return True
 
-    def __unicode__(self):
-        return u'{} - {}'.format(self.number, self.name)
-
     def __str__(self):
-        return self.name
+        return u'{} - {}'.format(self.number, self.name)
 
 
 class ClubType(models.Model):
@@ -577,9 +567,6 @@ class ClubType(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = "Club Type"
-
-    def __unicode__(self):
-        return self.name
 
     def __str__(self):
         return self.name
@@ -773,9 +760,6 @@ class EducationLevel(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class ClassLevel(models.Model):
     name = models.CharField(max_length=45, unique=True)
@@ -787,9 +771,6 @@ class ClassLevel(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class Section(models.Model):
     name = models.CharField(max_length=45, unique=True)
@@ -798,9 +779,6 @@ class Section(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -819,9 +797,6 @@ class ClassRoom(models.Model):
         verbose_name = "Formal Education Level"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -881,9 +856,6 @@ class CLMRound(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class PartnerOrganization(models.Model):
 
@@ -920,9 +892,6 @@ class PartnerOrganization(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class ALPReferMatrix(models.Model):
     level = models.ForeignKey(
@@ -951,9 +920,6 @@ class ALPReferMatrix(models.Model):
         verbose_name = "ALP Post-test Refer Matrix"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return str(self.id)
 
 
@@ -966,9 +932,6 @@ class EducationYear(models.Model):
         verbose_name = "Education Year"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -1003,9 +966,6 @@ class ALPAssignmentMatrix(models.Model):
         verbose_name = "ALP Pre-test Refer Matrix"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return str(self.id)
 
 
@@ -1016,9 +976,6 @@ class EducationalLevel(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -1033,9 +990,6 @@ class Holiday(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
 
 class PublicDocument(TimeStampedModel):
 
@@ -1047,9 +1001,6 @@ class PublicDocument(TimeStampedModel):
         ordering = ['created']
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -2733,9 +2684,6 @@ class Evaluation(TimeStampedModel):
     )
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
             return self.school.name
 
 
@@ -2750,9 +2698,6 @@ class Schl_Subject(models.Model):
         verbose_name_plural = "Subjects"
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
