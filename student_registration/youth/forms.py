@@ -132,6 +132,7 @@ class MainForm(forms.ModelForm):
         label=_("Does the youth have any disability or special need?"),
         queryset=Disability.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=1
     )
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
@@ -181,10 +182,12 @@ class MainForm(forms.ModelForm):
         widget=forms.TextInput, required=True
     )
     id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.filter(active =True),
+        queryset=IDType.objects.filter(active=True),
+        initial=13,
         widget=forms.Select,
         label=_('ID type of the caregiver'),
-        required=True, to_field_name='id'
+        required=True, to_field_name='id',
+
     )
     case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a))-[0-9]{2}[C-](?:\d{5}|\d{6})$',

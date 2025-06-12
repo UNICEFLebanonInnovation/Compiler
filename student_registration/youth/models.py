@@ -49,67 +49,6 @@ class Round(models.Model):
         return self.name
 
 
-class Partner(models.Model):
-
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Full Name')
-    )
-    short_name = models.CharField(
-        max_length=100,
-        blank=True,
-        unique=True,
-        verbose_name=_('Short Name')
-    )
-    monitoring_evaluation_focal_point_name = models.CharField(
-        blank=True,
-        null=True,
-        max_length=100,
-        verbose_name=_('Monitoring and Evaluation Focal Point Name')
-    )
-    monitoring_evaluation_focal_point_phone = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Monitoring and Evaluation Focal Point Phone')
-    )
-    monitoring_evaluation_focal_point_email = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Monitoring and Evaluation Focal Point Email')
-    )
-    program_manager_focal_point_name = models.CharField(
-        blank=True,
-        null=True,
-        max_length=100,
-        verbose_name=_('Program Manager Focal Point Name')
-    )
-    program_manager_focal_point_phone = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Program Manager Focal Point Phone')
-    )
-    program_manager_focal_point_email = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Program Manager Focal Point Email')
-    )
-    active = models.BooleanField(blank=True, default=False)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
 class FundedBy(models.Model):
 
     name = models.CharField(
@@ -626,7 +565,7 @@ class Registration(TimeStampedModel):
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
-        Partner,
+        PartnerOrganization,
         blank=True, null=True,
         verbose_name=_('Partner'),
         related_name='+'

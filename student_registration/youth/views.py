@@ -120,7 +120,7 @@ class MainEditView(LoginRequiredMixin,
                    FormView):
     template_name = 'youth/main_form.html'
     form_class = MainForm
-    success_url = '/YOUTH/List/'
+    success_url = '/youth/List/'
     group_required = [u"YOUTH"]
 
     def get_success_url(self):
@@ -263,7 +263,7 @@ def MainRegistrationCancelView(request, pk):
             registration = Registration.objects.get(id=pk)
             registration.deleted = True
             registration.save()
-            return redirect('/YOUTH/List/')
+            return redirect('/youth/List/')
         except Registration.DoesNotExist:
             result = {"isSuccessful": False}
     else:

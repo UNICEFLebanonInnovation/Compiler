@@ -7,7 +7,29 @@
 {% bootstrap_css %}
 
 {% block content %}
+<style>
+    .wide-dropdown {
+        width: 200px;
+    }
+    .wide-checkbox input[type="checkbox"] {
+      width: 50px;
+    }
+    /* Wider select box */
+    .long-select {
+        width: 100% !important;
+        white-space: nowrap; /* Prevents text from wrapping */
+        overflow-x: auto; /* Enables horizontal scroll */
+    }
 
+    /* Optional: improve scrollbar appearance */
+    .long-select::-webkit-scrollbar {
+        height: 6px;
+    }
+    .long-select::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 3px;
+    }
+</style>
 <div class="app-page-title">
                         <div class="page-title-wrapper">
                             <div class="page-title-heading">

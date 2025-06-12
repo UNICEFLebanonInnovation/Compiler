@@ -71,7 +71,6 @@ class FullFilter(FilterSet):
     adolescent__first_name = CharFilter(lookup_expr='icontains')
     adolescent__father_name = CharFilter(lookup_expr='icontains')
     adolescent__last_name = CharFilter(lookup_expr='icontains')
-    adolescent__number = CharFilter(lookup_expr='icontains')
     adolescent__unicef_id = CharFilter(lookup_expr='icontains')
     adolescent__gender = ChoiceFilter(choices=Adolescent.GENDER, empty_label='Gender')
     adolescent__nationality = ChoiceFilter(
@@ -84,43 +83,6 @@ class FullFilter(FilterSet):
         empty_label='Disability'
     )
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
-
-    master_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in MasterProgram.objects.filter(active=True
-                                                   # , created__year=datetime.datetime.now().year
-                                                   )
-        ],
-        field_name='enrolled_programs__master_program',
-        label='Master Program',
-        method='filter_by_master_program',
-        widget=forms.SelectMultiple(attrs={'class': 'wide-dropdown'})
-    )
-
-    sub_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (sp.id, "{} - {}".format(sp.number, sp.name))
-            for sp in SubProgram.objects.filter(master_program__active=True
-                                                # ,created__year=datetime.datetime.now().year
-                                                )
-        ],
-        field_name='enrolled_programs__sub_program',
-        label='Sub Program',
-        method='filter_by_sub_program',
-        widget=forms.SelectMultiple(attrs={'class': 'wide-dropdown'})
-    )
-
-    # sub_program = MultipleChoiceFilter(
-    #     choices=lambda: [
-    #         (sp.id, "{} - {}".format(sp.number, sp.name))
-    #         for sp in SubProgram.objects.filter(created__year=datetime.datetime.now().year)
-    #     ],
-    #     field_name='enrolled_programs__sub_program',
-    #     label='Sub Program',
-    #     method='filter_by_sub_program',
-    #     widget=forms.CheckboxSelectMultiple(attrs={'class': 'wide-checkbox'})
-    # )
 
     donor = ChoiceFilter(
         field_name='enrolled_programs__donor',
@@ -142,6 +104,31 @@ class FullFilter(FilterSet):
     end_date = DateFilter(
         field_name='enrolled_programs__completion_date',
         lookup_expr='lte', label='End Date'
+    )
+    master_program = MultipleChoiceFilter(
+        choices=lambda: [
+            (mp.id, "{} - {}".format(mp.number, mp.name))
+            for mp in MasterProgram.objects.filter(active=True
+                                                   # , created__year=datetime.datetime.now().year
+                                                   )
+        ],
+        field_name='enrolled_programs__master_program',
+        label='Master Program',
+        method='filter_by_master_program',
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
+    )
+
+    sub_program = MultipleChoiceFilter(
+        choices=lambda: [
+            (sp.id, "{} - {}".format(sp.number, sp.name))
+            for sp in SubProgram.objects.filter(master_program__active=True
+                                                # ,created__year=datetime.datetime.now().year
+                                                )
+        ],
+        field_name='enrolled_programs__sub_program',
+        label='Sub Program',
+        method='filter_by_sub_program',
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
     )
 
     class Meta:
@@ -203,7 +190,8 @@ class PDFilter(FilterSet):
         label='Master Program',
         required=False,
         method='filter_by_master_program',
-        widget=forms.SelectMultiple(attrs={'class': 'wide-checkbox'})
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
+
     )
 
     class Meta:
@@ -252,7 +240,7 @@ class PDPartnerFilter(FilterSet):
         label='Master Program',
         required=False,
         method='filter_by_master_program',
-        widget=forms.SelectMultiple(attrs={'class': 'wide-checkbox'})
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
     )
 
     class Meta:

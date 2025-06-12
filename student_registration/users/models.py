@@ -12,7 +12,6 @@ from django.utils.translation import ugettext_lazy as _
 class User(AbstractUser):
     from student_registration.locations.models import Location,Center
     from student_registration.schools.models import PartnerOrganization, School
-    from student_registration.youth.models import Partner
 
     # First Name and Last Name do not cover name patterns
     # around the globe.

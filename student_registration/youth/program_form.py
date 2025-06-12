@@ -211,7 +211,8 @@ class EnrolledProgramsForm(forms.ModelForm):
 
 class ProgramDocumentForm(forms.ModelForm):
     partner = forms.ModelChoiceField(
-        queryset=PartnerOrganization.objects.all(), widget=forms.Select,
+        queryset=PartnerOrganization.objects.filter(is_youth=True),
+        widget=forms.Select,
         label=_('Partner'),
         empty_label='-------',
         required=True, to_field_name='id',
