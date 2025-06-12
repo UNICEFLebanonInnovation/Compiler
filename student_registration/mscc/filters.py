@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from django.db.models import Q
 
 from django_filters import (
@@ -8,8 +7,6 @@ from django_filters import (
     CharFilter,
     BooleanFilter
 )
-
-from django import forms
 
 from student_registration.locations.models import Center, Location
 from student_registration.students.models import Nationality

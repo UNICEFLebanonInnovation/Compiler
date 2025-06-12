@@ -62,7 +62,7 @@ class HouseHold(models.Model):
     village = models.CharField(max_length=200, blank=True, null=True)
     interview_date = models.CharField(max_length=200, blank=True, null=True)
 
-    children = JSONField(blank=True, null=True)
+    children = JSONField(default=dict)
 
     class Meta:
         ordering = ['id']

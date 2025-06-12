@@ -102,14 +102,14 @@ class Assessment(models.Model):
         blank=True,
         null=True,
     )
-    assistance_type = JSONField(blank=True, null=True)
+    assistance_type = JSONField(default=dict)
     barcode_num = models.CharField(
         max_length=45,
         blank=True,
         null=True,
     )
-    channels = JSONField(blank=True, null=True)
-    child_list = JSONField(blank=True, null=True)
+    channels = JSONField(default=dict)
+    child_list = JSONField(default=dict)
 
     completed = models.BooleanField(default=False)
     completion_date = models.CharField(
@@ -142,7 +142,7 @@ class Assessment(models.Model):
         blank=True,
         null=True,
     )
-    family_list = JSONField(blank=True, null=True)
+    family_list = JSONField(default=dict)
     family_name = models.CharField(
         max_length=100,
         blank=True,
@@ -158,14 +158,14 @@ class Assessment(models.Model):
         blank=True,
         null=True,
     )
-    history = JSONField(blank=True, null=True)
+    history = JSONField(default=dict)
     id_type = models.CharField(
         max_length=45,
         blank=True,
         null=True,
     )
-    location = JSONField(blank=True, null=True)
-    location_distribution = JSONField(blank=True, null=True)
+    location = JSONField(default=dict)
+    location_distribution = JSONField(default=dict)
     marital_status = models.CharField(
         max_length=45,
         blank=True,

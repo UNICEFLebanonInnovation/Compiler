@@ -62,11 +62,11 @@ class AutoLogout:
                 if datetime.now() - last_touch > timedelta(minutes=settings.AUTO_LOGOUT_DELAY):
                     auth.logout(request)
                     request.session.flush()  # Clears the session completely
-                    return redirect('login')  # Replace with your login URL name
+                    return
             except ValueError:
                 # Invalid date format — reset session
                 request.session.flush()
-                return redirect('login')
+                return
 
         request.session['last_touch'] = datetime.now().isoformat()
 

@@ -64,7 +64,8 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
-    "crispy_bootstrap5",
+    # "crispy_bootstrap5",
+    "crispy_bootstrap4",
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
@@ -74,7 +75,8 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
 
-    'django_bootstrap5',
+    # 'django_bootstrap5',
+    'bootstrap4',
     'bootstrap3_datetime',
     'import_export',
     'django_tables2',
@@ -257,9 +259,8 @@ TEMPLATES = [
 ]
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-
-CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -342,8 +343,10 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Some really nice defaults
+# ACCOUNT_LOGIN_METHODS = 'username'
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = False
+# ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
@@ -427,76 +430,6 @@ JAZZMIN_SETTINGS = {
         "auth.User": "fas fa-user",
         "auth.Group": "fas fa-users",
     },
-}
-
-# Django Suit configuration
-SUIT_CONFIG = {
-    'ADMIN_NAME': 'MAKANI',
-    'CONFIRM_UNSAVED_CHANGES': False,
-
-    'MENU': (
-        {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
-        # {'app': 'helpdesk', 'label': 'HelpDesk Config', 'icon': 'icon-info-sign'},
-        # {'label': 'HelpDesk Public', 'icon': 'icon-info-sign', 'url': '/helpdesk/dashboard/'},
-        # {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
-        #     {'url': '/dashboard/exporter/', 'label': 'Full data export'},
-        #     {'url': '/dashboard/2ndshift-governorate-grade/', 'label': '2nd Shift by Governorate by Grade'},
-        #     {'url': '/dashboard/2ndshift-governorate-age/', 'label': '2nd Shift by Governorate by Age'},
-        #     {'url': '/dashboard/2ndshift-governorate-nationality/', 'label': '2nd Shift by Governorate by Nationality'},
-        #     {'url': '/dashboard/2ndshift-grade-age/', 'label': '2nd Shift by Grade by Age'},
-        #     {'url': '/dashboard/2ndshift-grade-nationality/', 'label': '2nd Shift by Grade by Nationality'},
-        #     {'url': '/dashboard/2ndshift-nationality-age/', 'label': '2nd Shift by Nationality by Age'},
-        #     {'url': '/dashboard/2ndshift-school-grade/', 'label': '2nd Shift by School by Grade'},
-        #     {'url': '/dashboard/2ndshift-school-nationality/', 'label': '2nd Shift by School by Nationality'},
-            # {'url': '/dashboard/2ndshift-overall/', 'label': '2nd Shift Overall'},
-            # {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},
-            # {'url': '/dashboard/registrations-alp/', 'label': 'ALP Current round'},
-            # {'url': '/dashboard/registrations-alp-outreach/', 'label': 'ALP Outreach'},
-            # {'url': '/dashboard/registrations-alp-pre-test/', 'label': 'ALP Pre-test'},
-            # {'url': '/dashboard/registrations-alp-post-test/', 'label': 'ALP Post-test'},
-        # ]},
-        {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
-        {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
-        {'app': 'clm', 'label': 'CLM', 'icon': 'icon-th-list'},
-        {'app': 'mscc', 'label': 'MAKANI', 'icon': 'icon-th-list'},
-        {'app': 'youth', 'label': 'YOUTH', 'icon': 'icon-th-list'},
-        # {'label': 'ALP', 'icon': 'icon-th-list', 'models': (
-        #     'alp.CurrentRound',
-        #     'alp.CurrentOutreach',
-        #     'alp.PreTest',
-        #     'alp.PostTest',
-        #     'alp.outreach',
-        #     'alp.ALPRound',
-        # )},
-        # {'label': '2nd Shift', 'icon': 'icon-th-list', 'models': (
-        #     'enrollments.enrollment',
-        #     'enrollments.enrollmentgrading',
-        #     'enrollments.dropout',
-        #     'enrollments.disabled',
-        #     'enrollments.LoggingStudentMove',
-        #     'enrollments.LoggingProgramMove',
-        # )},
-        {'label': 'Students', 'icon': 'icon-th-list', 'models': (
-            'students.Student',
-            'students.Nationality',
-            'students.IDType',
-            'students.Language',
-            # 'students.StudentMatching',
-        )},
-        {'label': 'Schools', 'icon': 'icon-th-list', 'models': (
-            'schools.School',
-            # 'schools.EducationLevel',
-            # 'schools.ClassLevel',
-            # 'schools.ALPReferMatrix',
-            # 'schools.ALPAssignmentMatrix',
-            # 'schools.ClassRoom',
-            # 'schools.EducationYear',
-            # 'schools.Section',
-        )},
-        # {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
-        # {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
-        {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
-    )
 }
 
 UNIQUE_ID_API_TOKEN_URL = env('UNIQUE_ID_API_TOKEN_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/auth/getAccessToken')

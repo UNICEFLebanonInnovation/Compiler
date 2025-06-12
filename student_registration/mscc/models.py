@@ -1582,9 +1582,9 @@ class EducationProgrammeAssessment(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
     )
-    pre_test = JSONField(blank=True, null=True)
-    post_test = JSONField(blank=True, null=True)
-    school_test = JSONField(blank=True, null=True)
+    pre_test = JSONField(default=dict)
+    post_test = JSONField(default=dict)
+    school_test = JSONField(default=dict)
     programme_type = models.CharField(
         max_length=100,
         blank=True,
@@ -1795,7 +1795,7 @@ class YouthService(TimeStampedModel):
         verbose_name=_('Service Type')
     )
 
-    service_values = JSONField(blank=True, null=True)
+    service_values = JSONField(default=dict)
 
     class Meta:
         ordering = ['id']
@@ -2163,7 +2163,7 @@ class Recreational(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
     )
-    assessment = JSONField(blank=True, null=True)
+    assessment = JSONField(default=dict)
 
     class Meta:
         ordering = ['id']

@@ -101,7 +101,7 @@ class Attendance(TimeStampedModel):
         choices=CLOSE_REASON
     )
 
-    students = JSONField(blank=True, null=True)
+    students = JSONField(default=dict)
 
     total_enrolled = models.IntegerField(blank=True, null=True)
     total_attended = models.IntegerField(blank=True, null=True)
@@ -494,7 +494,7 @@ class CLMStudentAbsences(TimeStampedModel):
     )
     absence_starting_date = models.DateField(blank=True, null=True)
     absence_ending_date = models.DateField(blank=True, null=True)
-    absence_dates = JSONField(blank=True, null=True)
+    absence_dates = JSONField(default=dict)
     consecutive_absence_days = models.IntegerField(blank=True, null=True)
 
     def update_absence_statisics(self, consecutive_absences, ending_date, consecutive_dates):

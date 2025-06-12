@@ -489,7 +489,7 @@ class Child(TimeStampedModel):
         verbose_name=_('Please specify')
     )
 
-    cash_programmes = JSONField(blank=True, null=True)
+    cash_programmes = JSONField(default=dict)
 
     def __str__(self):
         if not self.first_name:

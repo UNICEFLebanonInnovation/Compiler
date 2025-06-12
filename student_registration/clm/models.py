@@ -433,14 +433,14 @@ class CLM(TimeStampedModel):
     )
 
     status = models.CharField(max_length=50, choices=STATUS, default=STATUS.enrolled)
-    pre_test = JSONField(blank=True, null=True)
+    pre_test = JSONField(default=dict)
     pre_test_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Pre-assessment')
     )
-    post_test = JSONField(blank=True, null=True)
+    post_test = JSONField(default=dict)
     post_test_score = models.CharField(
         max_length=45,
         blank=True,
@@ -2148,8 +2148,8 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Registration Date')
     )
-    mid_test1 = JSONField(blank=True, null=True)
-    mid_test2 = JSONField(blank=True, null=True)
+    mid_test1 = JSONField(default=dict)
+    mid_test2 = JSONField(default=dict)
 
     enrolled_formal_education = models.CharField(
         max_length=10,
@@ -3036,14 +3036,14 @@ class RS(CLM):
         verbose_name=_('Science')
     )
 
-    pre_reading = JSONField(blank=True, null=True)
+    pre_reading = JSONField(default=dict)
     pre_reading_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Arabic reading - Pre')
     )
-    post_reading = JSONField(blank=True, null=True)
+    post_reading = JSONField(default=dict)
     post_reading_score = models.CharField(
         max_length=45,
         blank=True,
@@ -3051,14 +3051,14 @@ class RS(CLM):
         verbose_name=_('Arabic reading - Post')
     )
 
-    pre_self_assessment = JSONField(blank=True, null=True)
+    pre_self_assessment = JSONField(default=dict)
     pre_self_assessment_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Self-assessment - Pre')
     )
-    post_self_assessment = JSONField(blank=True, null=True)
+    post_self_assessment = JSONField(default=dict)
     post_self_assessment_score = models.CharField(
         max_length=45,
         blank=True,
@@ -3066,14 +3066,14 @@ class RS(CLM):
         verbose_name=_('Self-assessment - Post')
     )
 
-    pre_motivation = JSONField(blank=True, null=True)
+    pre_motivation = JSONField(default=dict)
     pre_motivation_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Motivation - Pre')
     )
-    post_motivation = JSONField(blank=True, null=True)
+    post_motivation = JSONField(default=dict)
     post_motivation_score = models.CharField(
         max_length=45,
         blank=True,
@@ -3654,7 +3654,7 @@ class CBECE(CLM):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         verbose_name=_('test_done')
     )
-    mid_test = JSONField(blank=True, null=True)
+    mid_test = JSONField(default=dict)
 
     main_caregiver_nationality_other = models.CharField(
         max_length=500,
