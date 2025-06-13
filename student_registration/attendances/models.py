@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+#from django.db.models import Index
 from django.conf import settings
 from django.utils.translation import gettext as _ # Will be fixed in a subsequent step
 from django.db.models import JSONField
@@ -279,11 +280,11 @@ class AttendanceDt(models.Model):
     is_present = models.BooleanField(default=False)
     attendance_date = models.DateField(blank=True, null=True, db_index=True)
     levelname = models.CharField(max_length=100, blank=True, null=True, default=None)
-
-    class Meta:
-        index_together = (
-            ('attendance_date', 'school'),
-        )
+    #
+    # class Meta:
+    # indexes = [
+    #     Index(fields=['attendance_date', 'school']),
+    # ]
 
 
 class AttendanceSyncLog(models.Model):

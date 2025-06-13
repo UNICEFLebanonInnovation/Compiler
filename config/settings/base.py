@@ -56,7 +56,7 @@ DJANGO_APPS = [
     # 'suit',
     'jazzmin',
     'django.contrib.admin',
-    'markdown_deux',  # Required for Knowledgebase item formatting
+    #'markdown_deux',  # Required for Knowledgebase item formatting
     # 'bootstrapform',  # Required for nicer formatting of forms with the default templates
     # 'helpdesk',  # This is us!
     'prettyjson',
@@ -344,9 +344,10 @@ AUTHENTICATION_BACKENDS = [
 
 # Some really nice defaults
 # ACCOUNT_LOGIN_METHODS = 'username'
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_EMAIL_REQUIRED = False
-# ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
+ACCOUNT_LOGIN_METHODS = {'username'}
+# ACCOUNT_AUTHENTICATION_METHOD = 'username'
+# ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
