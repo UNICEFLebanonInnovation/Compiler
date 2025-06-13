@@ -1,4 +1,3 @@
-web: gunicorn config.wsgi -w 4 -b "0.0.0.0:$PORT" --log-level=info --timeout=3200
-worker: celery worker --app=student_registration.taskapp --loglevel=info
-beater: celery beat --app=student_registration.taskapp --loglevel=info
-
+web: gunicorn config.wsgi:application --workers=4 --bind=0.0.0.0:$PORT --timeout=60 --log-level=info
+worker: celery -A student_registration.taskapp.celery worker --loglevel=info
+beater: celery -A student_registration.taskapp.celery beat --loglevel=info

@@ -33,8 +33,17 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
 application = get_wsgi_application()
-if os.environ.get('DJANGO_SETTINGS_MODULE') == 'config.settings.production':
-    application = Sentry(application)
+# if os.environ.get('DJANGO_SETTINGS_MODULE') == 'config.settings.production':
+#     import sentry_sdk
+#     from sentry_sdk.integrations.django import DjangoIntegration
+#
+#     sentry_sdk.init(
+#         dsn="your-sentry-dsn",
+#         integrations=[DjangoIntegration()],
+#         traces_sample_rate=1.0,
+#         send_default_pii=True
+#     )
+
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)

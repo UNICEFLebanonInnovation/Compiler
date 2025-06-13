@@ -294,8 +294,16 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 AUTO_LOGOUT_DELAY = 30  # equivalent to 30 minutes
 CSRF_USE_SESSIONS = True
 
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 600
+# ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+# ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 600
+ACCOUNT_RATE_LIMITS = {
+    "login_user": "10/m",
+    "login_failed": "5/5m",
+    "signup": "3/h",
+    "email": "10/m",
+    "password_change": "5/h",
+}
+
 CSRF_COOKIE_AGE = None
 
 # Your production stuff: Below this line define 3rd party library settings
