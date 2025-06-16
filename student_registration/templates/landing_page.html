@@ -62,7 +62,7 @@
                                                         <i class="lnr-cog text-primary"></i></div>
                                                   <div class="widget-numbers">
                                                      {% if request.user|has_group:"CLM_Bridging" %}
-                                                    <a href="{% url 'clm:bridging_list' %}">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</a>
+                                                    <a href="{% url 'clm:bridging_page' %}">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</a>
                                                      {% else %}
                                                      <span class="text-muted">Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}</span>
                                                     {% endif %}
