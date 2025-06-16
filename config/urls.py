@@ -57,7 +57,7 @@ from student_registration.locations.views import (
     ProgramStaffViewSet
 )
 
-from student_registration.users.views import LoginRedirectView, home, login_success
+from student_registration.users.views import LoginRedirectView, home, login_success, LandingPage
 from student_registration.enrollments.views import (
     EnrollmentViewSet,
     EnrollmentImportViewSet,
@@ -127,6 +127,7 @@ urlpatterns = [
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
     url(r'login_success/$', login_success, name='login_success'),
+    url(r'^landing_page/$', LandingPage.as_view(), name='landing_page'),
     url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
     url(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
     url(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),

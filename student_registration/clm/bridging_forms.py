@@ -243,7 +243,8 @@ class CommonForm(forms.ModelForm):
     )
     student_p_code = forms.CharField(
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=False,
+        max_length=50,
     )
     # student_id_number = forms.CharField(
     #     label=_('ID number'),
@@ -2035,7 +2036,9 @@ class BridgingForm(CommonForm):
             elif exam1 > 20:
                 self.add_error('exam1', 'This value is greater that 20')
 
-        # return cleaned_data
+        student_p_code = cleaned_data.get("student_p_code")
+        if student_p_code and len(student_p_code) > 50:
+            self.add_error('student_p_code', _('P-Code must not exceed 50 characters.'))
 
     def save(self, request=None, instance=None, serializer=None):
 

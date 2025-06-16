@@ -79,10 +79,16 @@ def login_success(request):
     # else:
     #     return HttpResponseRedirect(reverse('clm:bridging_page'))
 
-    args = {
-        'user': request.user,
-               }
-    return render(request, 'landing_page.html', args)
+    if request.user.is_authenticated:
+        return redirect('/landing_page/')
+    else:
+        return redirect('/accounts/login/')
+
+
+class LandingPage(LoginRequiredMixin,
+                   TemplateView):
+    template_name = 'landing_page.html'
+
 
 
 def home(request):

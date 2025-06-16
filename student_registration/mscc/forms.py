@@ -106,7 +106,8 @@ class MainForm(forms.ModelForm):
     )
     child_p_code = forms.CharField(
         label=_('Insert Pcode if the child lives in Internal Settlement/Camp'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=False,
+        max_length=50
     )
     child_address = forms.CharField(
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
@@ -758,6 +759,10 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
+        child_p_code = cleaned_data.get("child_p_code")
+        if child_p_code and len(child_p_code) > 50:
+            self.add_error('child_p_code', _('P-Code must not exceed 50 characters.'))
+
         # check if date is valid
         year = 0
         month = 0
@@ -1013,6 +1018,7 @@ class MainForm(forms.ModelForm):
             cash_support_programmes = cleaned_data.get("caregiver_mother_name")
             if not cash_support_programmes:
                 self.add_error('cash_support_programmes', 'This field is required')
+
 
     def save(self, request=None, instance=None):
 
