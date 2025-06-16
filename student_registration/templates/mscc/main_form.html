@@ -34,13 +34,13 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
+                                                    <a href="{% url 'mscc:list' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {% if form.instance.id == None %}
-                                                      <a href="/">List</a>
+                                                      <a href="{% url 'mscc:list' %}">List</a>
                                                     {% else %}
                                                       <a href="/MSCC/Child-Profile/{{ form.instance.id }}">Child Profile</a>
                                                     {% endif %}
@@ -79,11 +79,6 @@
                                 <div class="card-body">
                                     <div id="smartwizard3" class="forms-wizard-vertical">
                                         <ul class="forms-wizard">
-                                            <!--<li>-->
-                                                <!--<a href="#step-1">-->
-                                                    <!--<em>1</em><span>General Information</span>-->
-                                                <!--</a>-->
-                                            <!--</li>-->
                                             <li>
                                                 <a href="#step-1">
                                                     <em>1</em><span>Child Information</span>
@@ -114,10 +109,10 @@
                                         <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
                                         <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
 
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary" style="display: none;">Next</button>
-                                        <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
+                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
                                         <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
                                     </div>
+
                                 </div>
                             </div>
 {% if form.instance.id == None %}

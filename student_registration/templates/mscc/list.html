@@ -29,12 +29,12 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
+                                                    <a href="{% url 'mscc:list' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                      <a href="/">List</a>
+                                                      <a href="{% url 'mscc:list' %}">List</a>
                                                 </li>
                                               {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
 
