@@ -1,6 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
 
-import traceback
 
 from django.utils.translation import ugettext as _
 from django import forms
@@ -2035,12 +2034,6 @@ class BridgingForm(CommonForm):
                 self.add_error('exam1', 'This field is required')
             elif exam1 > 20:
                 self.add_error('exam1', 'This value is greater that 20')
-
-        # Print only fields with errors
-        if self.errors:
-            print("===== FIELDS WITH ERRORS =====")
-            for field, errors in self.errors.items():
-                print("  {}: {}".format(field, errors))
 
         # return cleaned_data
 
