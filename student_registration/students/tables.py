@@ -33,19 +33,17 @@ class CommonTable(tables.Table):
 
 class TeacherTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit teacher'), orderable=False,
-                                        template_name='django_tables2/teacher_edit_column.html',
-                                        attrs={'url': '/students/teacher-edit/', 'programme': 'Bridging'})
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete teacher'), orderable=False,
-                                          template_name='django_tables2/teacher_delete_column.html',
-                                          attrs={'url': '/api/teacher/', 'programme': 'Bridging'})
+    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
+                                        template_name='django_tables2/students/teacher_action_column.html',
+                                        attrs={'url_edit': '/students/teacher-edit/',
+                                               'url_delete': '/students/teacher-delete/',
+                                               'programme': 'Bridging'})
 
     class Meta:
         model = Teacher
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'edit_column',
-            'delete_column',
+            'action_column',
             'first_name',
             'father_name',
             'last_name',
