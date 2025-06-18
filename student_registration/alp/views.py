@@ -115,7 +115,7 @@ class AddView(LoginRequiredMixin,
               GroupRequiredMixin,
               FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = RegistrationForm
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
@@ -165,7 +165,7 @@ class EditView(LoginRequiredMixin,
                GroupRequiredMixin,
                FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = RegistrationForm
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
@@ -269,7 +269,7 @@ class PreTestAddView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER", u"CERD"]
@@ -295,7 +295,7 @@ class PreTestAdd_allView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = PreTest_allForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER", u"CERD"]
@@ -321,7 +321,7 @@ class PreTestEditView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER", u"CERD"]
@@ -463,7 +463,7 @@ class OutreachAddView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]
@@ -489,7 +489,7 @@ class OutreachEditView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]

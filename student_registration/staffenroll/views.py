@@ -40,7 +40,7 @@ class AddView(LoginRequiredMixin,
               GroupRequiredMixin,
               FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     #`form_class = StaffEnrollForm
     success_url = '/staffenroll/list/'
     group_required = [u"ENROL_CREATE"]

@@ -61,7 +61,7 @@ class AddView(LoginRequiredMixin,
               GroupRequiredMixin,
               FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
     group_required = [u"ENROL_CREATE"]
@@ -143,7 +143,7 @@ class EditView(LoginRequiredMixin,
                GroupRequiredMixin,
                FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
     group_required = [u"ENROL_EDIT"]
@@ -190,7 +190,7 @@ class EditView(LoginRequiredMixin,
 class Edit_RegionView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = EnrollmentRegion_Form
     success_url = '/enrollments/student_by_regions/'
     group_required = [u"ENROL_EDIT"]
@@ -232,7 +232,7 @@ class EditOldDataView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
 
-    template_name = 'bootstrap4/common_form.html'
+    template_name = 'bootstrap5/common_form.html'
     form_class = EditOldDataForm
     success_url = '/enrollments/list-old-data/'
     group_required = [u"ENROL_EDIT_OLD"]

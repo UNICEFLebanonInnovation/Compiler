@@ -9,7 +9,7 @@ class BootstrapTable(tables.Table):
 
     class Meta:
         model = Registration
-        template = 'django_tables2/bootstrap4.html'
+        template = 'django_tables2/bootstrap5.html'
         attrs = {'class': 'table table-bordered table-striped table-hover'}
 
 
@@ -22,7 +22,7 @@ class CommonTable(tables.Table):
 
     class Meta:
         model = Registration
-        template = 'django_tables2/bootstrap4.html'
+        template = 'django_tables2/bootstrap5.html'
         fields = ()
 
     def render_child_age(self, record):
