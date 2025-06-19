@@ -131,6 +131,16 @@ $(document).ready(function() {
 
     });
 
+    $(document).on('change', 'input#id_phone_number', function() {
+        var student_first_name= $('#id_student_first_name').val();
+        // var student_father_name= $('#id_student_father_name').val();
+        var phone_number= $('#id_phone_number').val();
+
+        if (student_first_name!='' && phone_number!='' )
+        {
+            duplicate_search('phone');
+        }
+    });
     $(document).on('change', 'select#id_new_registry', function(){
         reorganizeForm();
     });
@@ -1450,6 +1460,7 @@ function duplicate_search(search_by) {
     var student_father_name = $('#id_student_father_name').val();
     var student_last_name = $('#id_student_last_name').val();
     var student_mother_fullname = $('#id_student_mother_fullname').val();
+    var phone_number = $('#id_phone_number').val();
     var id_type = $('#id_id_type').val();
     var case_number = $('#id_case_number').val();
     var recorded_number = $('#id_recorded_number').val();
@@ -1468,6 +1479,7 @@ function duplicate_search(search_by) {
         student_father_name: student_father_name,
         student_last_name: student_last_name,
         student_mother_fullname: student_mother_fullname,
+        phone_number: phone_number,
         id_type: id_type,
         case_number: case_number,
         recorded_number: recorded_number,
