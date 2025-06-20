@@ -72,6 +72,12 @@ $(document).ready(function() {
             "children_attendance": children_attendance
         };
 
+        if (attendance_day_off === 'No' && children_attendance.length === 0) {
+            alert("Cannot save attendance: no children attendance was provided.");
+            $('.app-drawer-overlay').addClass('d-none');
+            return false;
+        }
+        
         $.ajax({
             type: "POST",
             url: $(this).attr('href'),
