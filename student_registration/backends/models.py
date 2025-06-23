@@ -14,6 +14,8 @@ from helpdesk.models import Ticket
 from .mailer import send_messaage
 from student_registration.users.models import User
 from student_registration.schools.models import School
+from student_registration.adolescent.models import Adolescent
+
 
 
 class Exporter(TimeStampedModel):
@@ -219,3 +221,23 @@ def send_ticket_email(sender, instance, created, **kwargs):
 
 # post_save.connect(send_ticket_email, sender=Ticket)
 post_save.connect(create_helpdesk_notification, sender=Ticket)
+
+
+class AdolescentUpload(TimeStampedModel):
+    file = models.FileField(upload_to='uploads/adolescent_imports')
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name=_('Uploaded by')
+    )
+    processed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created']
+        verbose_name = 'Adolescent upload'
+        verbose_name_plural = 'Adolescent uploads'
+
+    def __str__(self):
+        return self.file.name

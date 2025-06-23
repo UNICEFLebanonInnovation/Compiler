@@ -9,10 +9,18 @@ from rest_framework import viewsets, mixins, permissions
 from django_filters.views import FilterView
 from django_tables2 import RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
+from django.views import View
+from django.shortcuts import render, redirect
+from openpyxl import load_workbook
+
+from student_registration.adolescent.models import Adolescent
+from student_registration.students.models import Nationality, IDType
+from student_registration.clm.models import Disability, EducationalLevel
+from student_registration.locations.models import Location
 
 
 from .exporter import export_full_data
-from .models import Notification, Exporter
+from .models import Notification, Exporter, AdolescentUpload
 from .serializers import NotificationSerializer, ExporterSerializer
 from .filters import ExporterFilter
 from .tables import BootstrapTable, ExporterTable
@@ -113,3 +121,129 @@ class ExporterViewSet(LoginRequiredMixin,
             }
             export_full_data(data)
         return JsonResponse({'status': status.HTTP_200_OK})
+
+
+class AdolescentUploadView(LoginRequiredMixin, View):
+    template_name = 'backends/adolescent_upload.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        excel_file = request.FILES.get('file')
+        if not excel_file:
+            return render(request, self.template_name, {'error': 'No file selected'})
+
+        upload = AdolescentUpload.objects.create(file=excel_file, uploaded_by=request.user)
+        self.handle_file(upload.file.path)
+        upload.processed = True
+        upload.save()
+        return redirect('files_list')
+
+    def handle_file(self, path):
+        wb = load_workbook(filename=path, read_only=True)
+        ws = wb.active
+        headers = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
+        mapping = {
+            'Adolescent First Name': 'first_name',
+            'Adolescent Father Name': 'father_name',
+            'Adolescent Last Name': 'last_name',
+            'Adolescent Birthday Year': 'birthday_year',
+            'Adolescent Birthday Month': 'birthday_month',
+            'Adolescent Birthday Day': 'birthday_day',
+            'Gender': 'gender',
+            'Adolescent Mother Fullname': 'mother_fullname',
+            'Adolescent Nationality': 'nationality',
+            'Adolescent Nationality Other': 'nationality_other',
+            'Governorate': 'governorate',
+            'District': 'district',
+            'Cadaster': 'cadaster',
+            'Adolescent Address': 'address',
+            'Disability': 'disability',
+            'Father Educational Level': 'father_educational_level',
+            'Mother Educational Level': 'mother_educational_level',
+            'First Phone Number': 'first_phone_number',
+            'Second Phone Number': 'second_phone_number',
+            'Main Caregiver': 'main_caregiver',
+            'Main Caregiver Other': 'main_caregiver_other',
+            'Caregiver First Name': 'caregiver_first_name',
+            'Caregiver Middle Name': 'caregiver_middle_name',
+            'Caregiver Last Name': 'caregiver_last_name',
+            'Caregiver Mother Name': 'caregiver_mother_name',
+            'Main Caregiver Nationality Name': 'main_caregiver_nationality',
+            'Main Caregiver Nationality Other': 'main_caregiver_nationality_other',
+            'ID Type': 'id_type',
+            'UNHCR Case Number': 'case_number',
+            'Cargiver Individual ID': 'parent_individual_case_number',
+            'Individual ID of the youth': 'individual_case_number',
+            'UNHCR Barcode number (Shifra number)': 'recorded_number',
+            'unrwa_number': 'unrwa_number',
+            'Syrian National ID number of the Cargiver': 'parent_syrian_national_number',
+            'Syrian National ID number of the youth': 'syrian_national_number',
+            'Palestinian ID number of the Cargiver': 'parent_sop_national_number',
+            'Palestinian ID number of the youth': 'sop_national_number',
+            'Lebanese ID number of the Cargiver': 'parent_national_number',
+            'Lebanese ID number of the youth': 'national_number',
+            'ID number of the Cargiver': 'parent_other_number',
+            'ID number of the youth': 'other_number',
+        }
+
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            if not any(row):
+                continue
+            values = {mapping.get(headers[i]): row[i] for i in range(len(headers)) if headers[i] in mapping}
+
+            nationality = Nationality.objects.filter(name=values.get('nationality')).first() if values.get('nationality') else None
+            gov = Location.objects.filter(name=values.get('governorate')).first() if values.get('governorate') else None
+            dist = Location.objects.filter(name=values.get('district')).first() if values.get('district') else None
+            cad = Location.objects.filter(name=values.get('cadaster')).first() if values.get('cadaster') else None
+            disability = Disability.objects.filter(name=values.get('disability')).first() if values.get('disability') else None
+            father_ed = EducationalLevel.objects.filter(name=values.get('father_educational_level')).first() if values.get('father_educational_level') else None
+            mother_ed = EducationalLevel.objects.filter(name=values.get('mother_educational_level')).first() if values.get('mother_educational_level') else None
+            caregiver_nat = Nationality.objects.filter(name=values.get('main_caregiver_nationality')).first() if values.get('main_caregiver_nationality') else None
+            id_type = IDType.objects.filter(name=values.get('id_type')).first() if values.get('id_type') else None
+
+            Adolescent.objects.create(
+                first_name=values.get('first_name'),
+                father_name=values.get('father_name'),
+                last_name=values.get('last_name'),
+                birthday_year=values.get('birthday_year'),
+                birthday_month=values.get('birthday_month'),
+                birthday_day=values.get('birthday_day'),
+                gender=values.get('gender'),
+                mother_fullname=values.get('mother_fullname'),
+                nationality=nationality,
+                nationality_other=values.get('nationality_other'),
+                governorate=gov,
+                district=dist,
+                cadaster=cad,
+                address=values.get('address'),
+                disability=disability,
+                father_educational_level=father_ed,
+                mother_educational_level=mother_ed,
+                first_phone_number=values.get('first_phone_number'),
+                second_phone_number=values.get('second_phone_number'),
+                main_caregiver=values.get('main_caregiver'),
+                main_caregiver_other=values.get('main_caregiver_other'),
+                caregiver_first_name=values.get('caregiver_first_name'),
+                caregiver_middle_name=values.get('caregiver_middle_name'),
+                caregiver_last_name=values.get('caregiver_last_name'),
+                caregiver_mother_name=values.get('caregiver_mother_name'),
+                main_caregiver_nationality=caregiver_nat,
+                main_caregiver_nationality_other=values.get('main_caregiver_nationality_other'),
+                id_type=id_type,
+                case_number=values.get('case_number'),
+                parent_individual_case_number=values.get('parent_individual_case_number'),
+                individual_case_number=values.get('individual_case_number'),
+                recorded_number=values.get('recorded_number'),
+                unrwa_number=values.get('unrwa_number'),
+                parent_syrian_national_number=values.get('parent_syrian_national_number'),
+                syrian_national_number=values.get('syrian_national_number'),
+                parent_sop_national_number=values.get('parent_sop_national_number'),
+                sop_national_number=values.get('sop_national_number'),
+                parent_national_number=values.get('parent_national_number'),
+                national_number=values.get('national_number'),
+                parent_other_number=values.get('parent_other_number'),
+                other_number=values.get('other_number'),
+            )
+

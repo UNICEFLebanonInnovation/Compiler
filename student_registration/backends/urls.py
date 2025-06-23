@@ -36,5 +36,10 @@ urlpatterns = [
         view=views.generate_all_teacher_unique_id,
         name='generate_all_teacher_unique_id'
     ),
+    url(
+        regex=r'^adolescent-upload/$',
+        view=views.AdolescentUploadView.as_view(),
+        name='adolescent_upload'
+    ),
 
 ]
