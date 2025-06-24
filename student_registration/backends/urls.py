@@ -41,5 +41,10 @@ urlpatterns = [
         view=views.AdolescentUploadView.as_view(),
         name='adolescent_upload'
     ),
+    url(
+        regex=r'^adolescent-upload/confirm/(?P<pk>\d+)/$',
+        view=views.AdolescentUploadConfirmView.as_view(),
+        name='adolescent_upload_confirm'
+    ),
 
 ]
