@@ -202,17 +202,8 @@
                 return;
             }
 
-            requestHeaders = getHeader();
-
-            $.ajax({
-                url: '/clm/bridging-new-round/',
-                type: 'POST',
-                headers: requestHeaders,
-                data: { 'ids': ids },
-                traditional: true,
-                success: function() { location.reload(); },
-                error: function() { alert('Error registering children.'); }
-            });
+            var url = '/clm/bridging-new-round/?ids=' + ids.join(',');
+            window.location.href = url;
         });
     </script>
 {% endblock %}

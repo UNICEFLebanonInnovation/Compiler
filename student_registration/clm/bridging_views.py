@@ -812,24 +812,51 @@ def BridgingMarkDeleteView(request, pk):
     return JsonResponse(result)
 
 
-@login_required(login_url='/users/login')
-@csrf_exempt
-def bridging_bulk_new_round(request):
-    if request.method == 'POST':
-        ids = request.POST.getlist('ids[]')
-        for bridging_id in ids:
+class BridgingBulkNewRoundView(LoginRequiredMixin,
+                               GroupRequiredMixin,
+                               TemplateView):
+    template_name = 'clm/bridging_new_round.html'
+    group_required = [u"CLM_Bridging"]
+
+    def get_context_data(self, **kwargs):
+        ids_param = self.request.GET.get('ids', '')
+        ids = [int(i) for i in ids_param.split(',') if i]
+        registrations = Bridging.objects.filter(id__in=ids)
+        rounds = CLMRound.objects.filter(current_round_bridging=True)
+        return {
+            'registrations': registrations,
+            'ids': ids_param,
+            'rounds': rounds
+        }
+
+
+class BridgingBulkNewRoundRedirectView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self):
+        ids_param = self.request.GET.get('ids', '')
+        round_id = self.request.GET.get('round')
+
+        if self.request.GET.get('confirm') == 'yes' and ids_param and round_id:
+            ids = [int(i) for i in ids_param.split(',') if i]
             try:
-                instance = Bridging.objects.get(id=int(bridging_id))
-                new_instance = copy.copy(instance)
-                new_instance.pk = None
-                new_instance.round = None
-                new_instance.owner = request.user
-                new_instance.modified_by = request.user
-                new_instance.save()
-            except Bridging.DoesNotExist:
-                continue
-        return JsonResponse({'status': 'ok'})
-    return JsonResponse({'status': 'invalid'}, status=400)
+                round_obj = CLMRound.objects.get(id=round_id)
+            except CLMRound.DoesNotExist:
+                round_obj = None
+
+            for bridging_id in ids:
+                try:
+                    instance = Bridging.objects.get(id=bridging_id)
+                    new_instance = copy.copy(instance)
+                    new_instance.pk = None
+                    new_instance.round = round_obj
+                    new_instance.owner = self.request.user
+                    new_instance.modified_by = self.request.user
+                    new_instance.save()
+                except Bridging.DoesNotExist:
+                    continue
+
+        return reverse('clm:bridging_list')
 
 
 def load_districts(request):

@@ -370,8 +370,13 @@ urlpatterns = [
 
     url(
         regex=r'^bridging-new-round/$',
-        view=bridging_views.bridging_bulk_new_round,
+        view=bridging_views.BridgingBulkNewRoundView.as_view(),
         name='bridging_new_round'
+    ),
+    url(
+        regex=r'^bridging-new-round-redirect/$',
+        view=bridging_views.BridgingBulkNewRoundRedirectView.as_view(),
+        name='bridging_new_round_redirect'
     ),
 
     url(

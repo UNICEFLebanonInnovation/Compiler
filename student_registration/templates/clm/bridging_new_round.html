@@ -1,0 +1,60 @@
+{% extends "clm/base.html" %}
+{% load static i18n %}
+
+{% block project_title %}New Round{% endblock %}
+
+{% block main_content %}
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div>
+                <div class="page-title-head center-elem page-title-heading">
+                    <span class="d-inline-block pr-2">
+                        <i class="fa fa-id-card"></i>
+                    </span>
+                    <span class="d-inline-block">
+                        Register the Children in a new Round
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <h5>Selected Children</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Child Name</th>
+                    <th>Previous Round</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for reg in registrations %}
+                <tr>
+                    <td>{{ reg.student.full_name }}</td>
+                    <td>{{ reg.round.name }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <form method="get" action="{% url 'clm:bridging_new_round_redirect' %}">
+            <input type="hidden" name="ids" value="{{ ids }}">
+            <div class="form-group">
+                <label for="id_round">New Round</label>
+                <select name="round" id="id_round" class="form-control" required>
+                    {% for r in rounds %}
+                        <option value="{{ r.id }}">{{ r.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <a href="{% url 'clm:bridging_list' %}" class="btn btn-warning">Cancel</a>
+                <button type="submit" name="confirm" value="yes" class="btn btn-success">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
