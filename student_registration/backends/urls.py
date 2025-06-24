@@ -46,5 +46,10 @@ urlpatterns = [
         view=views.AdolescentUploadConfirmView.as_view(),
         name='adolescent_upload_confirm'
     ),
+    url(
+        regex=r'^adolescent-upload/failed/(?P<pk>\d+)/$',
+        view=views.AdolescentUploadFailedView.as_view(),
+        name='adolescent_upload_failed'
+    ),
 
 ]

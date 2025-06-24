@@ -12,6 +12,9 @@ from django_tables2.export.views import ExportMixin
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from openpyxl import load_workbook
+from django.core.files.base import ContentFile
+import csv
+import io
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.students.models import Nationality, IDType
@@ -158,6 +161,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'Cadaster': 'cadaster',
         'Adolescent Address': 'address',
         'Disability': 'disability',
+        'Special Need': 'disability',
         'Father Educational Level': 'father_educational_level',
         'Mother Educational Level': 'mother_educational_level',
         'First Phone Number': 'first_phone_number',
@@ -186,6 +190,23 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'ID number of the youth': 'other_number',
     }
 
+    mandatory_fields = [
+        'first_name',
+        'father_name',
+        'last_name',
+        'birthday_year',
+        'birthday_month',
+        'birthday_day',
+        'gender',
+        'mother_fullname',
+        'nationality',
+        'governorate',
+        'district',
+        'cadaster',
+        'disability',
+        'first_phone_number',
+    ]
+
     def get(self, request, pk, *args, **kwargs):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
         data = self.parse_file(upload.file.path)
@@ -195,13 +216,14 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
         data = self.parse_file(upload.file.path)
-        imported, not_imported = self.import_data(data)
+        imported, not_imported = self.import_data(data, upload)
         upload.processed = True
         upload.save()
         return render(request, self.result_template, {
             'imported': imported,
             'failed': len(not_imported),
             'not_imported': not_imported,
+            'upload': upload,
         })
 
     def parse_file(self, path):
@@ -215,21 +237,35 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             rows.append({self.mapping.get(headers[i]): row[i] for i in range(len(headers)) if headers[i] in self.mapping})
         return rows
 
-    def import_data(self, data):
+    def import_data(self, data, upload):
         not_imported = []
         imported = 0
         for index, values in enumerate(data, start=2):
-            try:
-                nationality = Nationality.objects.filter(name=values.get('nationality')).first() if values.get('nationality') else None
-                gov = Location.objects.filter(name=values.get('governorate')).first() if values.get('governorate') else None
-                dist = Location.objects.filter(name=values.get('district')).first() if values.get('district') else None
-                cad = Location.objects.filter(name=values.get('cadaster')).first() if values.get('cadaster') else None
-                disability = Disability.objects.filter(name=values.get('disability')).first() if values.get('disability') else None
-                father_ed = EducationalLevel.objects.filter(name=values.get('father_educational_level')).first() if values.get('father_educational_level') else None
-                mother_ed = EducationalLevel.objects.filter(name=values.get('mother_educational_level')).first() if values.get('mother_educational_level') else None
-                caregiver_nat = Nationality.objects.filter(name=values.get('main_caregiver_nationality')).first() if values.get('main_caregiver_nationality') else None
-                id_type = IDType.objects.filter(name=values.get('id_type')).first() if values.get('id_type') else None
+            missing = [f for f in self.mandatory_fields if not values.get(f)]
+            if missing:
+                values['row'] = index
+                values['error'] = 'Missing fields: ' + ', '.join(missing)
+                not_imported.append(values)
+                continue
 
+            nationality = Nationality.objects.filter(name=values.get('nationality')).first()
+            gov = Location.objects.filter(name=values.get('governorate')).first()
+            dist = Location.objects.filter(name=values.get('district')).first()
+            cad = Location.objects.filter(name=values.get('cadaster')).first()
+            disability = Disability.objects.filter(name=values.get('disability')).first()
+
+            if not all([nationality, gov, dist, cad, disability]):
+                values['row'] = index
+                values['error'] = 'Invalid reference'
+                not_imported.append(values)
+                continue
+
+            father_ed = EducationalLevel.objects.filter(name=values.get('father_educational_level')).first() if values.get('father_educational_level') else None
+            mother_ed = EducationalLevel.objects.filter(name=values.get('mother_educational_level')).first() if values.get('mother_educational_level') else None
+            caregiver_nat = Nationality.objects.filter(name=values.get('main_caregiver_nationality')).first() if values.get('main_caregiver_nationality') else None
+            id_type = IDType.objects.filter(name=values.get('id_type')).first() if values.get('id_type') else None
+
+            try:
                 Adolescent.objects.create(
                     first_name=values.get('first_name'),
                     father_name=values.get('father_name'),
@@ -274,9 +310,27 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     other_number=values.get('other_number'),
                 )
                 imported += 1
-            except Exception:
+            except Exception as ex:
                 values['row'] = index
+                values['error'] = str(ex)
                 not_imported.append(values)
 
+        if not_imported:
+            csv_buffer = io.StringIO()
+            writer = csv.DictWriter(csv_buffer, fieldnames=not_imported[0].keys())
+            writer.writeheader()
+            writer.writerows(not_imported)
+            upload.failed_file.save(f'failed_{upload.pk}.csv', ContentFile(csv_buffer.getvalue()))
+
         return imported, not_imported
+
+
+class AdolescentUploadFailedView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+        upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
+        if not upload.failed_file:
+            return HttpResponse(status=404)
+        response = HttpResponse(upload.failed_file, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=%s' % upload.failed_file.name.split('/')[-1]
+        return response
 

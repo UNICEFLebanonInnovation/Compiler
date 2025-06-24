@@ -232,6 +232,11 @@ class AdolescentUpload(TimeStampedModel):
         related_name='+',
         verbose_name=_('Uploaded by')
     )
+    failed_file = models.FileField(
+        upload_to='uploads/adolescent_imports',
+        blank=True,
+        null=True,
+    )
     processed = models.BooleanField(default=False)
 
     class Meta:
