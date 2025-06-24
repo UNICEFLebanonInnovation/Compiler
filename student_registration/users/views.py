@@ -66,23 +66,25 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
 
 
 def login_success(request):
-    """
-    Redirects users based on whether they are in the admins group
-    """
+    """Redirect users to their platform if only one is available."""
 
-    # if has_group(request.user, 'MSCC'):
-    #     return HttpResponseRedirect(reverse('mscc:list'))
-    # elif has_group(request.user, 'YOUTH'):
-    #     return HttpResponseRedirect(reverse('youth:list'))
-    # elif has_group(request.user, 'CLM_Inclusion'):
-    #     return HttpResponseRedirect(reverse('clm:inclusion_list'))
-    # else:
-    #     return HttpResponseRedirect(reverse('clm:bridging_page'))
-
-    if request.user.is_authenticated:
-        return redirect('/landing_page/')
-    else:
+    if not request.user.is_authenticated:
         return redirect('/accounts/login/')
+
+    destinations = []
+    if has_group(request.user, 'MSCC'):
+        destinations.append(reverse('mscc:list'))
+    if has_group(request.user, 'YOUTH'):
+        destinations.append(reverse('youth:list'))
+    if has_group(request.user, 'CLM_Inclusion'):
+        destinations.append(reverse('clm:inclusion_list'))
+    if has_group(request.user, 'CLM_Bridging'):
+        destinations.append(reverse('clm:bridging_page'))
+
+    if len(destinations) == 1:
+        return HttpResponseRedirect(destinations[0])
+
+    return redirect('/landing_page/')
 
 
 class LandingPage(LoginRequiredMixin,
