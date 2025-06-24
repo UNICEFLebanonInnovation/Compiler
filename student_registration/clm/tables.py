@@ -503,6 +503,9 @@ class OutreachTable(CommonTable):
 
 class BridgingTable(CommonTable):
 
+    select_column = tables.TemplateColumn(verbose_name='', orderable=False,
+                                          template_name='django_tables2/select_checkbox_column.html')
+
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/clm_action_column.html',
                                         attrs={'url_edit': '/clm/bridging-edit/',
@@ -523,6 +526,7 @@ class BridgingTable(CommonTable):
     class Meta:
         model = Bridging
         fields = (
+            'select_column',
             'action_column',
             'clm_absence_column',
             'clm_max_consecutive_column',

@@ -369,6 +369,12 @@ urlpatterns = [
     ),
 
     url(
+        regex=r'^bridging-new-round/$',
+        view=bridging_views.bridging_bulk_new_round,
+        name='bridging_new_round'
+    ),
+
+    url(
         regex=r'^bridging-list/$',
         view=bridging_views.BridgingListView.as_view(),
         name='bridging_list'

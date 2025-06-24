@@ -14,6 +14,7 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 import os
 import uuid
+import copy
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db import connection
@@ -809,6 +810,26 @@ def BridgingMarkDeleteView(request, pk):
     else:
         result = {"isSuccessful": False}
     return JsonResponse(result)
+
+
+@login_required(login_url='/users/login')
+@csrf_exempt
+def bridging_bulk_new_round(request):
+    if request.method == 'POST':
+        ids = request.POST.getlist('ids[]')
+        for bridging_id in ids:
+            try:
+                instance = Bridging.objects.get(id=int(bridging_id))
+                new_instance = copy.copy(instance)
+                new_instance.pk = None
+                new_instance.round = None
+                new_instance.owner = request.user
+                new_instance.modified_by = request.user
+                new_instance.save()
+            except Bridging.DoesNotExist:
+                continue
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'invalid'}, status=400)
 
 
 def load_districts(request):

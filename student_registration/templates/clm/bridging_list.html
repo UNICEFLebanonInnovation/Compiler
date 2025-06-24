@@ -109,6 +109,10 @@
                 </div>
               {% endif %}
 
+              <button type="button" id="register-new-round" class="btn btn-outline-primary ml-2">
+                  Register Selected in New Round
+              </button>
+
             </form>
             </div>
         </div>
@@ -187,5 +191,28 @@
                 $('.download-report').removeClass('disabled');
             }
         }
+
+        $('#register-new-round').on('click', function() {
+            var ids = [];
+            $('.child-select:checked').each(function() {
+                ids.push($(this).val());
+            });
+            if(ids.length === 0) {
+                alert('No children selected');
+                return;
+            }
+
+            requestHeaders = getHeader();
+
+            $.ajax({
+                url: '/clm/bridging-new-round/',
+                type: 'POST',
+                headers: requestHeaders,
+                data: { 'ids': ids },
+                traditional: true,
+                success: function() { location.reload(); },
+                error: function() { alert('Error registering children.'); }
+            });
+        });
     </script>
 {% endblock %}
