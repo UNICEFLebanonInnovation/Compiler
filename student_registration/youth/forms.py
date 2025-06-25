@@ -64,7 +64,7 @@ class MainForm(forms.ModelForm):
     )
     adolescent_mother_fullname = forms.CharField(
         label=_("Mother Full Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     adolescent_gender = forms.ChoiceField(
         label=_("Youth\'s Gender"),

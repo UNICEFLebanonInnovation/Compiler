@@ -529,6 +529,12 @@ class ProgramDocumentIndicator(TimeStampedModel):
         related_name='master_indicator',
         verbose_name=_('Master Indicator')
     )
+    sub_indicator = models.ForeignKey(
+        SubProgram,
+        blank=True, null=True,
+        related_name='sub_indicator',
+        verbose_name=_('Sub Indicator')
+    )
     baseline = models.IntegerField(blank=True, null=True)
     target = models.IntegerField(blank=True, null=True)
 

@@ -542,9 +542,6 @@ def export_data(request, **kwargs):
         if partner:
             queryset = queryset.filter(registration__partner__id=partner)
 
-
-        print("governorate: " + str(governorate))
-
         if governorate:
             queryset = queryset.filter(registration__governorate__id=governorate)
 
@@ -626,10 +623,6 @@ def export_data(request, **kwargs):
             query_params.append(partner_id)
         else:
             vw_youth_data_str += " AND id = 0"
-
-        # Log the query to the console before execution
-        print("Executing Query:")
-        print(cursor.mogrify(vw_youth_data_str, query_params).decode('utf-8'))  # Ensure compatibility with Python 3
 
 
         # Execute the query
@@ -715,9 +708,6 @@ def export_pd_data(request, **kwargs):
                 queryset = queryset.filter(master_program__id__in=master_program_ids)
 
         pd_ids = queryset.values_list('id', flat=True).distinct()
-
-        # print('---------------ids------------')
-        # print(tuple(pd_ids))
 
         cursor = connection.cursor()
 
@@ -861,31 +851,52 @@ def load_sub_program(request):
         sub_programs = SubProgram.objects.filter(master_program_id=id_master_program).order_by('name')
     return render(request, 'youth/sub_program_dropdown_list_options.html', {'sub_programs': sub_programs})
 
+
 def program_document_indicators_view(request, program_document_id):
-    master_indicators = MasterProgram.objects.all().values('id', 'name')
+    master_indicators = list(MasterProgram.objects.filter(active=True).values('id', 'name'))
+    sub_indicator_map = {
+        mp.id: list(
+            SubProgram.objects.filter(master_program=mp).order_by('name').values('id', 'name')
+        )
+        for mp in MasterProgram.objects.filter(active=True)
+    }
+
     return render(request, 'youth/program_document_indicator.html', {
         'program_document_id': program_document_id,
-        'master_indicators': list(master_indicators),
+        'master_indicators': master_indicators,
+        'sub_indicators': json.dumps(sub_indicator_map),
     })
 
 def program_document_indicator_list_view(request, program_document_id):
-    indicators = ProgramDocumentIndicator.objects.filter(program_document_id=program_document_id)
-    data = []
-    for ind in indicators:
-        data.append({
-            'id': ind.id,
-            'master_indicator_id': ind.master_indicator.id if ind.master_indicator else None,
-            'master_indicator_name': ind.master_indicator.name if ind.master_indicator else '',
-            'baseline': ind.baseline,
-            'target': ind.target
-        })
-    return JsonResponse({'indicators': data})
+    try:
+        indicators = ProgramDocumentIndicator.objects.filter(program_document_id=program_document_id)
+        data = []
+        for ind in indicators:
+            data.append({
+                'id': ind.id,
+                'master_indicator_id': ind.master_indicator.id if ind.master_indicator else None,
+                'master_indicator_name': ind.master_indicator.name if ind.master_indicator else '',
+                'sub_indicator_id': ind.sub_indicator.id if ind.sub_indicator else None,
+                'sub_indicator_name': ind.sub_indicator.name if ind.sub_indicator else '',
+                'baseline': ind.baseline,
+                'target': ind.target
+            })
+        return JsonResponse({'indicators': data})
+    except Exception as e:
+        print("Error in program_document_indicator_list_view:", e)
+        # return JsonResponse({'error': 'Internal server error'}, status=500)
+
 
 @csrf_exempt
 def save_indicators(request):
     if request.method == 'POST':
         payload = json.loads(request.body.decode('utf-8'))
         indicators = payload.get('indicators', [])
+        deleted_ids = payload.get('deleted_ids', [])
+
+        if deleted_ids:
+            ProgramDocumentIndicator.objects.filter(id__in=deleted_ids).delete()
+
         for item in indicators:
             if item['id']:
                 try:
@@ -897,10 +908,11 @@ def save_indicators(request):
 
             indicator.program_document_id = item.get('program_document_id')
             indicator.master_indicator_id = item.get('master_indicator') or None
+            indicator.sub_indicator_id = item.get('sub_indicator') or None
             indicator.baseline = item.get('baseline') or None
             indicator.target = item.get('target') or None
             indicator.save()
+
         return JsonResponse({'status': 'success'})
+
     return JsonResponse({'error': 'Invalid method'}, status=400)
-
-
