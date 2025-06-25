@@ -831,30 +831,12 @@ class MainForm(forms.ModelForm):
             if main_caregiver == 'Other' and not main_caregiver_other:
                 self.add_error('main_caregiver_other', 'This field is required')
 
-            main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
-            main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
-            if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
-                self.add_error('main_caregiver_nationality_other', 'This field is required')
 
             children_number_under18 = cleaned_data.get("children_number_under18")
             if not children_number_under18:
                 self.add_error('children_number_under18', 'This field is required')
 
-            caregiver_first_name = cleaned_data.get("caregiver_first_name")
-            if not caregiver_first_name:
-                self.add_error('caregiver_first_name', 'This field is required')
 
-            caregiver_middle_name = cleaned_data.get("caregiver_middle_name")
-            if not caregiver_middle_name:
-                self.add_error('caregiver_middle_name', 'This field is required')
-
-            caregiver_last_name = cleaned_data.get("caregiver_last_name")
-            if not caregiver_last_name:
-                self.add_error('caregiver_last_name', 'This field is required')
-
-            caregiver_mother_name = cleaned_data.get("caregiver_mother_name")
-            if not caregiver_mother_name:
-                self.add_error('caregiver_mother_name', 'This field is required')
 
             have_labour = cleaned_data.get("have_labour")
             labour_type = cleaned_data.get("labour_type")
