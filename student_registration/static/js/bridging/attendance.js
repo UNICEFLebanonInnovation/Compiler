@@ -77,7 +77,7 @@ $(document).ready(function() {
             $('.app-drawer-overlay').addClass('d-none');
             return false;
         }
-        
+
         $.ajax({
             type: "POST",
             url: $(this).attr('href'),
@@ -151,7 +151,21 @@ $(document).on('click', '#load_attendance_children', function(e) {
     $('#attendance_date').click(function(e) {
         setTimeout(function() {
             $('#attendance_children').empty("");
+            $('#children_count').text(0);
+            $('#save_attendance_children').addClass('disabled');
             $('#load_attendance_children').removeClass('disabled');
         }, 500);
+    });
+
+    function resetAttendanceUI() {
+        $('#attendance_children').empty("");
+        $('#children_count').text(0);
+        $('#save_attendance_children').addClass('disabled');
+        $('#load_attendance_children').removeClass('disabled');
+    }
+
+    // Trigger on all critical field changes
+    $('#round, #school, #registration_level').on('change', function() {
+        resetAttendanceUI();
     });
 });
