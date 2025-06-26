@@ -64,13 +64,14 @@ class MainForm(forms.ModelForm):
     )
     adolescent_mother_fullname = forms.CharField(
         label=_("Mother Full Name"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     adolescent_gender = forms.ChoiceField(
         label=_("Youth\'s Gender"),
         widget=forms.Select, required=True,
         choices=Adolescent.GENDER
     )
+    
     adolescent_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
         label=_('Youth\'s Nationality'),
@@ -179,7 +180,7 @@ class MainForm(forms.ModelForm):
     )
     caregiver_mother_name = forms.CharField(
         label=_("Caregiver Mother Full Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     id_type = forms.ModelChoiceField(
         queryset=IDType.objects.filter(active=True),
