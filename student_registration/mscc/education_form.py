@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, absolute_import, division
 
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
@@ -560,29 +561,40 @@ class EducationServiceForm(forms.ModelForm):
             child_id = Registration.objects.filter(id=registry).values_list('child_id', flat=True).first()
 
             if instance:
-                current_round_id = EducationService.objects.filter(registration_id=registry).values_list('round_id',
-                                                                                                         flat=True).first()
+                try:
+                    education_service = EducationService.objects.get(pk=instance)
+                    current_round_id = education_service.round_id
+                except EducationService.DoesNotExist:
+                    current_round_id = None
+            else:
+                current_round_id = None
 
-                # Get all rounds this child is registered for and exclude the current round
-                rounds_registered = Registration.objects.filter(
-                    child_id=child_id,
-                    deleted=False
+            # Get rounds already registered excluding the current
+            if current_round_id:
+                rounds_registered = EducationService.objects.filter(
+                    registration__child_id=child_id,
+                    registration__deleted=False
                 ).exclude(
-                    round_id=current_round_id  # Exclude current round
+                    round_id=current_round_id
                 ).values_list('round_id', flat=True)
-
-                # Remove any None values from rounds_registered
-                rounds_registered = [round for round in rounds_registered if round is not None]
-
             else:
                 rounds_registered = EducationService.objects.filter(
                     registration__child_id=child_id,
                     registration__deleted=False
                 ).values_list('round_id', flat=True)
 
+            # Remove any None values
+            rounds_registered = [r for r in rounds_registered if r is not None]
 
-            all_rounds = Round.objects.filter(current_year=True)
-            available_rounds = all_rounds.exclude(id__in=rounds_registered)
+            #  rounds for current_year, excluding already registered and including current round.
+            if current_round_id:
+                available_rounds = Round.objects.filter(
+                    Q(current_year=True) & (
+                        ~Q(id__in=rounds_registered) | Q(id=current_round_id)
+                    )
+                )
+            else:
+                available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
 
             self.fields['round'].queryset = available_rounds
 
