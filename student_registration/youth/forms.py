@@ -71,7 +71,6 @@ class MainForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=Adolescent.GENDER
     )
-    
     adolescent_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
         label=_('Youth\'s Nationality'),
