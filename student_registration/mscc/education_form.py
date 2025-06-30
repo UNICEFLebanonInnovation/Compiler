@@ -1046,7 +1046,7 @@ class EducationGradingForm(forms.ModelForm):
             self.fields['chemistry_grade'].hidden_widget()
             self.fields['physics_grade'].hidden_widget()
 
-        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
             field_init(self.fields['language_grade'], 'Foreign Language', 20)
             field_init(self.fields['math_grade'], 'Mathematics', 20)
@@ -1293,7 +1293,7 @@ class EducationGradingForm(forms.ModelForm):
                     css_id='step-1'
                 ),
             )
-        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             self.helper.layout = Layout(
                 Div(
                     Div(
@@ -1491,6 +1491,22 @@ class EducationGradingForm(forms.ModelForm):
                 "physics_grade": 20,
             },
             "RS Grade 9": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "YFS Level 1 - RS Grade 9": {
+                "arabic_grade": 20,
+                "language_grade": 20,
+                "math_grade": 20,
+                "biology_grade": 20,
+                "chemistry_grade": 20,
+                "physics_grade": 20,
+            },
+            "YFS Level 2 - RS Grade 9": {
                 "arabic_grade": 20,
                 "language_grade": 20,
                 "math_grade": 20,
@@ -1733,7 +1749,7 @@ class YouthScoringForm(forms.ModelForm):
                 ),
             )
 
-        if programme_type in ["YFS Level 1", "YFS Level 2"]:
+        if programme_type in ["YFS Level 1", "YFS Level 2", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             self.helper.layout = Layout(
                 Div(
                     Div(
@@ -1856,7 +1872,7 @@ class EducationSchoolGradingForm(forms.ModelForm):
         form_action = reverse('mscc:service_school_grading',
                               kwargs={'registry': registry, 'programme_type': programme_type, 'pk': instance})
 
-        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             field_init(self.fields['arabic_grade'], 'Arabic Language', 20)
             field_init(self.fields['language_grade'], 'Foreign Language', 20)
             field_init(self.fields['math_grade'], 'Mathematics', 20)
@@ -1879,7 +1895,7 @@ class EducationSchoolGradingForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
 
-        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9"]:
+        if programme_type in ["RS Grade 7", "RS Grade 8", "RS Grade 9", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             self.helper.layout = Layout(
                 Div(
                     Div(

@@ -137,7 +137,8 @@ def have_education_programme(programme_type):
     try:
         programmes = ['BLN Level 1', 'BLN Level 2', 'BLN Level 3','BLN Catch-up' ,'ABLN Level 1', 'ABLN Level 2',
                       'ABLN Catch-up', 'CBECE Level 1', 'CBECE Level 2', 'CBECE Level 3', 'RS Grade 1', 'RS Grade 2',
-                      'RS Grade 3', 'RS Grade 4', 'RS Grade 5', 'RS Grade 6', 'RS Grade 7', 'RS Grade 8', 'RS Grade 9']
+                      'RS Grade 3', 'RS Grade 4', 'RS Grade 5', 'RS Grade 6', 'RS Grade 7', 'RS Grade 8', 'RS Grade 9',
+                      'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9']
         if programme_type in programmes:
             return True
     except Exception as ex:
