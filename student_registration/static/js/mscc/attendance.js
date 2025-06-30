@@ -25,97 +25,106 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#save_attendance_children', function(e){
-        e.preventDefault();
+    e.preventDefault();
 
-        $('.app-drawer-overlay').removeClass('d-none');
+    let isValid = true;
+    $('.is-invalid').removeClass('is-invalid'); // reset styles
 
-        $('#save_attendance_children').addClass('disabled');
+    var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
+    var attendance_date = $("#attendance_date").val();
+    var education_program = $("#education_program").val();
+    var class_section = $("#class_section").val();
+    var close_reason = $("#close_reason").val();
+    var round_id = $("#round").val();
+    children_attendance = [];
 
-        var attendance_day_off = $("input[name='attendance_day_off']:checked").val();
-        var attendance_date = $("#attendance_date").val();
-        var education_program = $("#education_program").val();
-        var class_section = $("#class_section").val();
-        var close_reason = $("#close_reason").val();
-        var round_id = $("#round").val();
-        children_attendance = [];
+    $(".list-group-item").each(function () {
+        var $item = $(this);
+        var child_id = $item.find(".child_id").val();
+        var registration_id = $item.find(".registration_id").val();
+        var attended = $item.find("input.status:checked").val() || "Yes";
+        var absence_reason = $item.find(".absence_reason").val();
+        var absence_reason_other = $item.find(".absence_reason_other").val();
 
-        $(".list-group-item")
-        .each
-        (
-            function()
-            {
-               var attended = "Yes";
-               var child_id = $(this).find(".child_id").val();
-               var registration_id = $(this).find(".registration_id").val();
-               var checkedValue = $(this).find("input.status:checked").val();
-               if (checkedValue) {
-                    attended = checkedValue;
-               }
-               var absence_reason = $(this).find(".absence_reason").val();
-               var absence_reason_other = $(this).find(".absence_reason_other").val();
-
-               children_attendance.push
-               (
-                  {
-                     "child_id": child_id,
-                     "registration_id": registration_id,
-                     "attended": attended,
-                     "absence_reason": absence_reason,
-                     "absence_reason_other": absence_reason_other
-                  }
-               );
+        // Validation logic
+        if (attended === 'No') {
+            if (!absence_reason) {
+                $item.find(".absence_reason").addClass("is-invalid");
+                isValid = false;
+            } else if (absence_reason === 'Other' && !absence_reason_other.trim()) {
+                $item.find(".absence_reason_other").addClass("is-invalid");
+                isValid = false;
             }
-        );
+        }
 
-
-        var attendance_information =
-        {
-           "attendance_date": attendance_date,
-           "attendance_day_off": attendance_day_off,
-           "close_reason": close_reason,
-           "education_program": education_program,
-           "class_section": class_section,
-           "round_id": round_id,
-           "children_attendance": children_attendance
-        };
-
-        $.ajax({
-            type: "POST",
-            url: $(this).attr('href'),
-            cache: false,
-            headers: getHeader(),
-            data: JSON.stringify(attendance_information),
-            async: true,
-            dataType: 'json',
-            success: function (response) {
-                if (response.result) {
-                    $('.app-drawer-overlay').addClass('d-none');
-                    $('#formSuccessModal').modal('show');
-//                    $('#attendance_children').empty("");
-//                    $('#save_attendance_children').addClass('disabled');
-//                    $('#load_attendance_children').removeClass('disabled');
-                }
-                console.log(response);
-            },
-            error: function(response) {
-                console.log(response);
-                $('.app-drawer-overlay').addClass('d-none');
-            },
-            complete: function() {
-                $('#save_attendance_children').removeClass('disabled');
-                $('.app-drawer-overlay').addClass('d-none');
-            }
+        children_attendance.push({
+            "child_id": child_id,
+            "registration_id": registration_id,
+            "attended": attended,
+            "absence_reason": absence_reason,
+            "absence_reason_other": absence_reason_other
         });
     });
+
+    if (!isValid) {
+        $('#formErrorModal').modal('show');
+        return;
+    }
+
+    $('.app-drawer-overlay').removeClass('d-none');
+    $('#save_attendance_children').addClass('disabled');
+
+    var attendance_information = {
+       "attendance_date": attendance_date,
+       "attendance_day_off": attendance_day_off,
+       "close_reason": close_reason,
+       "education_program": education_program,
+       "class_section": class_section,
+       "round_id": round_id,
+       "children_attendance": children_attendance
+    };
+
+    $.ajax({
+        type: "POST",
+        url: $(this).attr('href'),
+        cache: false,
+        headers: getHeader(),
+        data: JSON.stringify(attendance_information),
+        async: true,
+        dataType: 'json',
+        success: function (response) {
+            if (response.result) {
+                $('.app-drawer-overlay').addClass('d-none');
+                $('#formSuccessModal').modal('show');
+            }
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+            $('.app-drawer-overlay').addClass('d-none');
+        },
+        complete: function() {
+            $('#save_attendance_children').removeClass('disabled');
+            $('.app-drawer-overlay').addClass('d-none');
+        }
+    });
+});
 
     $(document).on('click', '#load_attendance_children', function(e){
         e.preventDefault();
 
-        $('#attendance_children').empty("");
-        $('#attendance_children').append("Loading...");
-        $('.app-drawer-overlay').removeClass('d-none');
+        var education_program = $('#education_program').val();
+        var round_id = $('#round').val();
+        var class_section = $('#class_section').val();
 
-       $.ajax({
+        if (!education_program || !round_id || !class_section) {
+             alert("Please fill: Attendance Date, Round, School, and Registration Level.");
+             return false;
+        }
+
+        $('#attendance_children').empty().append("Loading...");
+
+        $.ajax({
             type: "GET",
             url: $(this).attr('href'),
             cache: false,
@@ -123,16 +132,14 @@ $(document).ready(function() {
             data: {
                 'attendance_date': $("#attendance_date").val(),
                 'center_id': $('#center_id').val(),
-                'round_id': $('#round').val(),
-                'education_program': $('#education_program').val(),
-                'class_section': $('#class_section').val()
+                'round_id': round_id,
+                'education_program': education_program,
+                'class_section': class_section
             },
             dataType: 'html',
             success: function (response) {
-                $('#attendance_children').empty("");
-                $('#attendance_children').append(response);
+                $('#attendance_children').empty().append(response);
 
-                // Count and display number of children loaded
                 var childrenCount = $(".list-group-item").length;
                 $('#children_count').text(childrenCount);
 
@@ -175,8 +182,23 @@ $(document).ready(function() {
           {
             $('#attendance_children').empty("");
             $('#load_attendance_children').removeClass('disabled');
+            $('#save_attendance_children').addClass('disabled');
+            $('#load_attendance_children').removeClass('disabled');
           }, 500);
 
     });
+
+
+        function resetAttendanceUI() {
+            $('#attendance_children').empty("");
+            $('#children_count').text(0);
+            $('#save_attendance_children').addClass('disabled');
+            $('#load_attendance_children').removeClass('disabled');
+        }
+
+        // Trigger on all critical field changes
+        $('#round, #education_program, #class_section').on('change', function() {
+            resetAttendanceUI();
+        });
 
 });

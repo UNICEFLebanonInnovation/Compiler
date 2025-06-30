@@ -537,7 +537,8 @@ class EducationServiceForm(forms.ModelForm):
         if service_ecd:
             choices.append(('ECD', _('ECD')))
         if service_rs_yfs:
-            choices.append(('RS-YFS', _('RS-YFS')))
+            choices.append(('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')))
+            choices.append(('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')))
 
         self.fields['education_program'].choices = choices
 
@@ -1658,8 +1659,7 @@ class YouthScoringForm(forms.ModelForm):
             self.fields['english_development'].hidden_widget()
             self.fields['financial_development'].hidden_widget()
             self.fields['it_development'].hidden_widget()
-
-        if programme_type in ["YFS Level 1", "YFS Level 2"]:
+        if programme_type in ["YFS Level 1", "YFS Level 2","YFS Level 1 - RS Grade 9","YFS Level 2 - RS Grade 9"]:
             field_init(self.fields['english_development'], 'English Development', 100)
             field_init(self.fields['financial_development'], 'Financial Literacy Development', 100)
             field_init(self.fields['it_development'], 'IT Development', 100)

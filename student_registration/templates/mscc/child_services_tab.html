@@ -8,7 +8,7 @@
   <!--RS-->
 {% get_service instance 'RS' as result %}
   {% service_data 'EducationService' instance as result1 %}
-  {% if result and result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9' %}
+  {% if result and result1.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Level 9, YFS Level 2 - RS Level 9' %}
 
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'EducationRSService' instance as result %}
@@ -1782,7 +1782,7 @@
                                                             </div>
                                                           {% endif %}
 
-                                                           {% if result1.education_program  == 'YFS Level 1'  %}
+                                                           {% if result1.education_program  in 'YFS Level 1, YFS Level 1 - RS Level 9'  %}
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -1808,7 +1808,7 @@
                                                             </div>
                                                           {% endif %}
 
-                                                           {% if result1.education_program  == 'YFS Level 2'  %}
+                                                           {% if result1.education_program  in 'YFS Level 2, YFS Level 2 - RS Level 9'  %}
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -1947,7 +1947,7 @@
                                                                 </div>
                                                           {% endif %}
 
-                                                           {% if result1.education_program  == 'YFS Level 1'  %}
+                                                           {% if result1.education_program  in 'YFS Level 1, YFS Level 1 - RS Level 9'  %}
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -1973,7 +1973,7 @@
                                                             </div>
                                                           {% endif %}
 
-                                                           {% if result1.education_program  == 'YFS Level 2'  %}
+                                                           {% if result1.education_program  in 'YFS Level 2, YFS Level 2 - RS Level 9'  %}
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -2052,7 +2052,7 @@
                                                                     </div>
                                                                 </div>
                                                           {% endif %}
-                                                           {% if result1.education_program  == 'YFS Level 1' or result1.education_program  == 'YFS Level 2'  %}
+                                                           {% if result1.education_program  in 'YFS Level 1, YFS Level 2, YFS Level 1 - RS Level 9, YFS Level 2 - RS Level 9'  %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
                                                                         <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">English Development</h4>
@@ -2634,7 +2634,7 @@
 
   <!--Adolescents kit-->
   {% get_education_service  instance  as service %}
-  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2' %}
+  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|YFS Level 1 - RS Level 9|YFS Level 2 - RS Level 9' %}
 <!--  {{service}}-->
     {% get_service instance 'Adolescents kit' as result %}
       {% if result %}
@@ -2868,7 +2868,7 @@
   {% get_service instance 'Maharati' as result %}
   {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
-  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
+  {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|YFS Level 1 - RS Level 9|YFS Level 2 - RS Level 9'|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_youth_data 'YouthService' instance  'Maharati' as result %}
                                 <div class="mb-3 card">
@@ -2977,7 +2977,7 @@
   {% get_service instance 'GIL' as result %}
    {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
-  {% if service in 'YBLN Level 1|YBLN Level 2|YBLN Catch-up|YFS Level 1|YFS Level 2|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
+  {% if service in 'YBLN Level 1|YBLN Level 2|YBLN Catch-up|YFS Level 1|YFS Level 2|YFS Level 1 - RS Level 9|YFS Level 2 - RS Level 9'|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
   <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_youth_data 'YouthService' instance  'GIL' as result %}
                                 <div class="mb-3 card">

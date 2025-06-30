@@ -1131,6 +1131,8 @@ class EducationService(TimeStampedModel):
         ('YBLN Catch-up', _('YBLN Catch-up')),
         ('YFS Level 1', _('YFS Level 1')),
         ('YFS Level 2', _('YFS Level 2')),
+        ('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')),
+        ('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')),
         ('CBECE Level 1', _('CBECE Level 1')),
         ('CBECE Level 2', _('CBECE Level 2')),
         ('CBECE Level 3', _('CBECE Level 3')),
