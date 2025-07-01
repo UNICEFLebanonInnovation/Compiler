@@ -10,17 +10,6 @@
 {% block module_name %}Makani - Dashboard{% endblock %}
 
 {% block content %}
-<div id="dashboardApp"></div>
-{% endblock content %}
-
-{% block extra_js %}
-<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-<script type="text/babel">
-function DashboardApp() {
-  return (
-    <>
 
 <style>
   .filter-package-type {
@@ -29,15 +18,15 @@ function DashboardApp() {
 
 </style>
 
-<div className="app-page-title">
-                        <div className="page-title-wrapper">
-                            <div className="page-title-heading">
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
                                 <div>
-                                    <div className="page-title-head center-elem page-title-heading">
-                                        <span className="d-inline-block pr-2">
-                                            <i className="pe-7s-display1"></i>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="pe-7s-display1"></i>
                                         </span>
-                                        <span className="d-inline-block">Dashboard</span>
+                                        <span class="d-inline-block">Dashboard</span>
                                     </div>
                                 </div>
                             </div>
@@ -45,20 +34,20 @@ function DashboardApp() {
                         </div>
 </div>
 
-<div className="row">
-                        <div className="col-md-6 col-lg-3">
-                            <div className="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
-                                <div className="widget-chat-wrapper-outer">
-                                    <div className="widget-chart-content">
-                                        <div className="widget-title opacity-5 text-uppercase">Total Registration</div>
-                                        <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div className="widget-chart-flex align-items-center">
+<div class="row">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">Total Registration</div>
+                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
                                                 <div>
-                                                    <span className="opacity-10 text-success pr-2">
-                                                        <i className="pe-7s-graph3"></i>
+                                                    <span class="opacity-10 text-success pr-2">
+                                                        <i class="pe-7s-graph3"></i>
                                                     </span>
                                                     {{ total }}
-                                                    <small className="opacity-5 pl-1"></small>
+                                                    <small class="opacity-5 pl-1"></small>
                                                 </div>
                                             </div>
                                         </div>
@@ -66,19 +55,19 @@ function DashboardApp() {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-md-6 col-lg-3">
-                            <div className="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div className="widget-chat-wrapper-outer">
-                                    <div className="widget-chart-content">
-                                        <div className="widget-title opacity-5 text-uppercase">Core-Package</div>
-                                        <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div className="widget-chart-flex align-items-center">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">Core-Package</div>
+                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
                                                 <div>
-                                                    <span className="opacity-10 text-info pr-2">
-                                                        <i className="pe-7s-graph2"></i>
+                                                    <span class="opacity-10 text-info pr-2">
+                                                        <i class="pe-7s-graph2"></i>
                                                     </span>
                                                     {{ total_corepackage }}
-                                                    <small className="opacity-5 pl-1"></small>
+                                                    <small class="opacity-5 pl-1"></small>
                                                 </div>
                                             </div>
                                         </div>
@@ -86,19 +75,19 @@ function DashboardApp() {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-md-6 col-lg-3">
-                            <div className="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
-                                <div className="widget-chat-wrapper-outer">
-                                    <div className="widget-chart-content">
-                                        <div className="widget-title opacity-5 text-uppercase">Walk-in</div>
-                                        <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                                            <div className="widget-chart-flex align-items-center">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="filter-package-type widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
+                                <div class="widget-chat-wrapper-outer">
+                                    <div class="widget-chart-content">
+                                        <div class="widget-title opacity-5 text-uppercase">Walk-in</div>
+                                        <div class="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                                            <div class="widget-chart-flex align-items-center">
                                                 <div>
-                                                    <span className="opacity-10 text-danger pr-2">
-                                                        <i className="pe-7s-display1"></i>
+                                                    <span class="opacity-10 text-danger pr-2">
+                                                        <i class="pe-7s-display1"></i>
                                                     </span>
                                                     {{ total_walkin }}
-                                                    <small className="opacity-5 pr-1"></small>
+                                                    <small class="opacity-5 pr-1"></small>
                                                 </div>
                                             </div>
                                         </div>
@@ -108,13 +97,13 @@ function DashboardApp() {
                         </div>
                     </div>
 
-<div className="row">
+<div class="row">
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-body">
-                  <h5 className="card-title">Select one or more center</h5>
-                  <select multiple="multiple" className="multiselect-dropdown form-control">
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <h5 class="card-title">Select one or more center</h5>
+                  <select multiple="multiple" class="multiselect-dropdown form-control">
                     {% for item in centers %}
                       <option value="{{ item.id }}">{{ item }}</option>
                     {% endfor %}
@@ -122,11 +111,11 @@ function DashboardApp() {
               </div>
           </div>
       </div>
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-body">
-                  <h5 className="card-title">Select one or more governorate</h5>
-                  <select multiple="multiple" className="multiselect-dropdown form-control">
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <h5 class="card-title">Select one or more governorate</h5>
+                  <select multiple="multiple" class="multiselect-dropdown form-control">
                     {% for item in governorates %}
                       <option value="{{ item.id }}">{{ item }}</option>
                     {% endfor %}
@@ -135,11 +124,11 @@ function DashboardApp() {
           </div>
       </div>
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-body">
-                  <h5 className="card-title">Select one or more partner</h5>
-                  <select multiple="multiple" className="multiselect-dropdown form-control">
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <h5 class="card-title">Select one or more partner</h5>
+                  <select multiple="multiple" class="multiselect-dropdown form-control">
                     {% for item in partners %}
                       <option value="{{ item.id }}">{{ item }}</option>
                     {% endfor %}
@@ -150,95 +139,93 @@ function DashboardApp() {
 
 </div>
 
-<div className="row">
+<div class="row">
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Children per Nationality</div>
-              <div className="card-body" id="children_per_nationality"></div>
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Nationality</div>
+              <div class="card-body" id="children_per_nationality"></div>
           </div>
       </div>
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Children per Gender</div>
-              <div className="card-body" id="children_per_gender"></div>
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Gender</div>
+              <div class="card-body" id="children_per_gender"></div>
           </div>
       </div>
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Children per Programme</div>
-              <div className="card-body" id="children_per_programme"></div>
-          </div>
-      </div>
-
-</div>
-
-<div className="row">
-
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Children per Source of Identification</div>
-              <div className="card-body" id="children_per_source"></div>
-          </div>
-      </div>
-
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Children per Family Status</div>
-              <div className="card-body" id="children_per_status"></div>
-          </div>
-      </div>
-
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Cash Support</div>
-              <div className="card-body" id="children_cash_support"></div>
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Programme</div>
+              <div class="card-body" id="children_per_programme"></div>
           </div>
       </div>
 
 </div>
 
-<div className="row">
+<div class="row">
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Children per Disability Type</div>
-              <div className="card-body" id="children_per_disability"></div>
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Source of Identification</div>
+              <div class="card-body" id="children_per_source"></div>
           </div>
       </div>
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Children Vulnerability</div>
-              <div className="card-body" id="children_per_vulnerability"></div>
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Family Status</div>
+              <div class="card-body" id="children_per_status"></div>
           </div>
       </div>
 
-      <div className="col-md-4">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Volunteering</div>
-              <div className="card-body" id="children_volunteering"></div>
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Cash Support</div>
+              <div class="card-body" id="children_cash_support"></div>
           </div>
       </div>
 
 </div>
 
-<div className="row">
-      <div className="col-md-12">
-          <div className="main-card mb-3 card">
-              <div className="card-header">Attendance trends</div>
-              <div className="card-body" id="attendance"></div>
+<div class="row">
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children per Disability Type</div>
+              <div class="card-body" id="children_per_disability"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Children Vulnerability</div>
+              <div class="card-body" id="children_per_vulnerability"></div>
+          </div>
+      </div>
+
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Volunteering</div>
+              <div class="card-body" id="children_volunteering"></div>
+          </div>
+      </div>
+
+</div>
+
+<div class="row">
+      <div class="col-md-12">
+          <div class="main-card mb-3 card">
+              <div class="card-header">Attendance trends</div>
+              <div class="card-body" id="attendance"></div>
           </div>
       </div>
 </div>
 
-    </>
-  );
-}
-ReactDOM.render(<DashboardApp />, document.getElementById('dashboardApp'));
-</script>
+{% endblock content %}
+
+{% block extra_js %}
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/heatmap.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
@@ -247,10 +234,18 @@ ReactDOM.render(<DashboardApp />, document.getElementById('dashboardApp'));
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
 <script type="text/javascript" src="{% static 'js/Highcharts.chart.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/mscc/dashboard.js' %}"></script>
+
 <script>
+  <!--call ajax to get data-->
+  <!--create chart-->
+  <!--update chart on change / click-->
+  <!--add loader-->
+
   function load_data(url, params) {
+
         return $.ajax({
             type: "GET",
             url: url,
@@ -266,6 +261,9 @@ ReactDOM.render(<DashboardApp />, document.getElementById('dashboardApp'));
                 console.log(response);
             }
         });
+
   }
 </script>
+
+
 {% endblock %}
