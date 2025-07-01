@@ -2,7 +2,7 @@
 {% load static i18n %}
 {% load render_table from django_tables2 %}
 {% load util_tags %}
-{% load bootstrap4 %}
+{% load django_bootstrap5 %}
 {% bootstrap_css %}
 
 {% block project_title %}List{% endblock %}
@@ -225,7 +225,7 @@ function ListApp() {
             <div className="card-body">
                 <div className="table-responsive dataTables_wrapper dt-bootstrap4">
         {% csrf_token %}
-        {% render_table table 'django_tables2/bootstrap4.html' %}
+        {% render_table table 'django_tables2/bootstrap5.html' %}
                 </div>
             </div>
         </div>
