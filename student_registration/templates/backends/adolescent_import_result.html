@@ -25,7 +25,7 @@
         <p>{% blocktrans with imported=imported failed=failed %}Imported {{ imported }} records. {{ failed }} records failed.{% endblocktrans %}</p>
         {% if not_imported %}
             <h4>{% trans "Not Imported Records" %}</h4>
-            <p><a href="{% url 'adolescent_upload_failed' upload.pk %}" class="btn btn-default">{% trans 'Download Rejected Records' %}</a></p>
+            <p><a href="{% url 'backends:adolescent_upload_failed' upload.pk %}" class="btn btn-default">{% trans 'Download Rejected Records' %}</a></p>
             <table class="table table-striped">
                 <thead>
                     <tr>{% for key in not_imported.0.keys %}<th>{{ key }}</th>{% endfor %}</tr>

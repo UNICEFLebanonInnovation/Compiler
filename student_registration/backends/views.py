@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
 
@@ -210,12 +211,26 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
         data = self.parse_file(upload.file.path)
+
+        if isinstance(data, dict) and data.get("error"):
+            messages.error(request, data["error"])
+            return redirect("backends:adolescent_upload")
+
         preview = data[:5]
-        return render(request, self.template_name, {'upload': upload, 'count': len(data), 'preview': preview})
+        return render(request, self.template_name, {
+            'upload': upload,
+            'count': len(data),
+            'preview': preview,
+        })
 
     def post(self, request, pk, *args, **kwargs):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
         data = self.parse_file(upload.file.path)
+
+        if isinstance(data, dict) and data.get("error"):
+            messages.error(request, data["error"])
+            return redirect("backends:adolescent_upload")
+
         imported, not_imported = self.import_data(data, upload)
         upload.processed = True
         upload.save()
@@ -239,20 +254,24 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
         if not wb.sheetnames:
             raise ValueError("The Excel file has no sheets.")
+            # return {"error": "The uploaded Excel file has no sheets. Please check the file content."}
 
         if 'Registrations' not in wb.sheetnames:
             raise ValueError("Sheet 'Registrations' not found. Available sheets: {}".format(wb.sheetnames))
 
         ws = wb['Registrations']
 
-        headers = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
-        rows = []
+        # Extract headers from the first row
+        header_row = next(ws.iter_rows(min_row=1, max_row=1))
+        headers = [cell.value for cell in header_row]
 
-        for row in ws.iter_rows(min_row=2, values_only=True):
-            if not any(row):
+        rows = []
+        for row in ws.iter_rows(min_row=2):
+            values = [cell.value for cell in row]
+            if not any(values):
                 continue
             rows.append({
-                self.mapping.get(headers[i]): row[i]
+                self.mapping.get(headers[i]): values[i]
                 for i in range(len(headers))
                 if headers[i] in self.mapping
             })
