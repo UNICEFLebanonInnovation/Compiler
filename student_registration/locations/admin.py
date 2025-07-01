@@ -44,16 +44,28 @@ class LocationAdmin(ImportExportModelAdmin):
 class CenterResource(resources.ModelResource):
     class Meta:
         model = Center
+        import_id_fields = ('id',)
         fields = (
+            'id',
             'name',
+            'partner',
+            'type',
             'governorate',
             'caza',
             'cadaster',
+            'longitude',
+            'latitude',
+            'manager_name',
+            'phone_number',
+            'email',
+            'is_active',
             'p_code',
-            'type',
-            'partner'
         )
-        export_order = ('name', )
+        export_order = fields
+
+    def before_save_instance(self, instance, using_transactions, dry_run):
+        if not instance.email:
+            instance.email = ''
 
 
 class CenterAdmin(ImportExportModelAdmin):
