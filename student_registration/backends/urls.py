@@ -36,5 +36,20 @@ urlpatterns = [
         view=views.generate_all_teacher_unique_id,
         name='generate_all_teacher_unique_id'
     ),
+    url(
+        regex=r'^adolescent-upload/$',
+        view=views.AdolescentUploadView.as_view(),
+        name='adolescent_upload'
+    ),
+    url(
+        regex=r'^adolescent-upload/confirm/(?P<pk>\d+)/$',
+        view=views.AdolescentUploadConfirmView.as_view(),
+        name='adolescent_upload_confirm'
+    ),
+    url(
+        regex=r'^adolescent-upload/failed/(?P<pk>\d+)/$',
+        view=views.AdolescentUploadFailedView.as_view(),
+        name='adolescent_upload_failed'
+    ),
 
 ]
