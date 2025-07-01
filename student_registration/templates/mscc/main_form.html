@@ -13,27 +13,16 @@
 {% endblock %}
 
 {% block content %}
-<div id="mainFormApp"></div>
-{% endblock %}
 
-{% block extra_js %}
-<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-<script type="text/babel">
-function MainFormApp() {
-  return (
-    <>
-
-<div className="app-page-title">
-                        <div className="page-title-wrapper">
-                            <div className="page-title-heading">
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
                                 <div>
-                                    <div className="page-title-head center-elem page-title-heading">
-                                        <span className="d-inline-block pr-2">
-                                            <i className="fa fa-child"></i>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-child"></i>
                                         </span>
-                                        <span className="d-inline-block">
+                                        <span class="d-inline-block">
                                           {% if form.instance.id == None %}
                                             Add New Child
                                           {% else %}
@@ -41,31 +30,31 @@ function MainFormApp() {
                                           {% endif %}
                                         </span>
                                     </div>
-                                    <div className="page-title-subheading opacity-10">
-                                        <nav className="" aria-label="breadcrumb">
-                                            <ol className="breadcrumb">
-                                                <li className="breadcrumb-item">
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item">
                                                     <a href="/">
-                                                        <i aria-hidden="true" className="fa fa-home"></i>
+                                                        <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
-                                                <li className="breadcrumb-item">
+                                                <li class="breadcrumb-item">
                                                     {% if form.instance.id == None %}
                                                       <a href="/">List</a>
                                                     {% else %}
                                                       <a href="/MSCC/Child-Profile/{{ form.instance.id }}">Child Profile</a>
                                                     {% endif %}
                                                 </li>
-                                                <li className="breadcrumb-item">
+                                                <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
                                                 </li>
-                                                <li className="breadcrumb-item">
+                                                <li class="breadcrumb-item">
                                                     {{ request.user.center.caza }}
                                                 </li>
-                                                <li className="breadcrumb-item">
+                                                <li class="breadcrumb-item">
                                                     {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
                                                 </li>
-                                                <li className="breadcrumb-item">
+                                                <li class="breadcrumb-item">
                                                     {{ request.user.center.name }} - {{ request.user.center.type }}
                                                 </li>
                                             </ol>
@@ -73,23 +62,28 @@ function MainFormApp() {
                                     </div>
                                 </div>
                             </div>
-                        <div className="page-title-actions"></div>
+                        <div class="page-title-actions"></div>
 
                         </div>
 </div>
 
 {{ form.errors }}
 
-<div className="" style="display:none;" id="child-duplication-error">
-  <div className="alert alert-danger fade show" role="alert" id="child-duplication-error-text"></div>
+<div class="" style="display:none;" id="child-duplication-error">
+  <div class="alert alert-danger fade show" role="alert" id="child-duplication-error-text"></div>
 </div>
 
-<div className="row">
+<div class="row">
 
-<div className="main-card mb-3 card {% if form.instance.id == None %}col-md-9{% else %}col-md-12{% endif %}">
-                                <div className="card-body">
-                                    <div id="smartwizard3" className="forms-wizard-vertical">
-                                        <ul className="forms-wizard">
+<div class="main-card mb-3 card {% if form.instance.id == None %}col-md-9{% else %}col-md-12{% endif %}">
+                                <div class="card-body">
+                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                        <ul class="forms-wizard">
+                                            <!--<li>-->
+                                                <!--<a href="#step-1">-->
+                                                    <!--<em>1</em><span>General Information</span>-->
+                                                <!--</a>-->
+                                            <!--</li>-->
                                             <li>
                                                 <a href="#step-1">
                                                     <em>1</em><span>Child Information</span>
@@ -106,30 +100,33 @@ function MainFormApp() {
                                                 </a>
                                             </li>
                                         </ul>
-                                        <div className="form-wizard-content">
+                                        <div class="form-wizard-content">
 
                                            {% crispy form 'bootstrap5' %}
                                         </div>
                                     </div>
-                                    <div className="divider"></div>
+                                    <div class="divider"></div>
 
-                                    <div className="clearfix">
-                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" className="btn-shadow float-left btn btn-link">Back to list</a>
+                                    <div class="clearfix">
+                                        <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
+                                        <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
 
+                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
+                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
 
-                                        <button type="button" id="next-btn22" className="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary" style="display: none;">Next</button>
-                                        <button type="button" id="next-page" className="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
-                                        <button type="button" id="prev-btn22" className="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary" style="display: none;">Next</button>
+                                        <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
+                                        <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
                                     </div>
                                 </div>
                             </div>
 {% if form.instance.id == None %}
-  <div className="col-md-3" id="outreach-nfe-result">
-    <div className="main-card mb-3 card">
-      <div className="card-header"><i className="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Outreach filter result</div>
-                                                  <div id="search_loader" className="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
-                                                    <div className="loader">
-                                                        <div className="ball-spin-fade-loader">
+  <div class="col-md-3" id="outreach-nfe-result">
+    <div class="main-card mb-3 card">
+      <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Outreach filter result</div>
+                                                  <div id="search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
+                                                    <div class="loader">
+                                                        <div class="ball-spin-fade-loader">
                                                             <div></div>
                                                             <div></div>
                                                             <div></div>
@@ -141,17 +138,32 @@ function MainFormApp() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                        <div className="card-body" style="height: 225px; overflow: auto;">
-                                            <div className="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="outreach_search_result">
+                                        <div class="card-body" style="height: 225px; overflow: auto;">
+                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="outreach_search_result">
+                                                <!--<div class="vertical-timeline-item vertical-timeline-element">-->
+                                                    <!--<div>-->
+                                                        <!--<div class="vertical-timeline-element-icon bounce-in">-->
+                                                            <!--<div class="timeline-icon border-success bg-success">-->
+                                                                <!--<i class="fa fa-child text-white"></i>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="vertical-timeline-element-content bounce-in">-->
+                                                            <!--<h4 class="timeline-title text-success">FontAwesome Icons</h4>-->
+                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
+                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
+                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
 
                                             </div>
                                         </div>
                                     </div>
-    <div className="main-card mb-3 card">
-      <div className="card-header"><i className="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Previous data</div>
-                                                  <div id="nfe_search_loader" className="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
-                                                    <div className="loader">
-                                                        <div className="ball-spin-fade-loader">
+    <div class="main-card mb-3 card">
+      <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Previous data</div>
+                                                  <div id="nfe_search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
+                                                    <div class="loader">
+                                                        <div class="ball-spin-fade-loader">
                                                             <div></div>
                                                             <div></div>
                                                             <div></div>
@@ -163,8 +175,23 @@ function MainFormApp() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                        <div className="card-body" style="height: 225px; overflow: auto;">
-                                            <div className="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="nfe_search_result">
+                                        <div class="card-body" style="height: 225px; overflow: auto;">
+                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="nfe_search_result">
+                                                <!--<div class="vertical-timeline-item vertical-timeline-element">-->
+                                                    <!--<div>-->
+                                                        <!--<div class="vertical-timeline-element-icon bounce-in">-->
+                                                            <!--<div class="timeline-icon border-success bg-success">-->
+                                                                <!--<i class="fa fa-child text-white"></i>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="vertical-timeline-element-content bounce-in">-->
+                                                            <!--<h4 class="timeline-title text-success">FontAwesome Icons</h4>-->
+                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
+                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
+                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
 
                                             </div>
                                         </div>
@@ -173,12 +200,12 @@ function MainFormApp() {
 {% endif %}
 </div>
 
-    </>
-  );
-}
-ReactDOM.render(<MainFormApp />, document.getElementById('mainFormApp'));
-</script>
-<script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
-<script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=33"></script>
-<script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=33"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
 {% endblock %}
