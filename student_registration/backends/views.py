@@ -138,7 +138,7 @@ class AdolescentUploadView(LoginRequiredMixin, View):
             return render(request, self.template_name, {'error': 'No file selected'})
 
         upload = AdolescentUpload.objects.create(file=excel_file, uploaded_by=request.user)
-        return redirect('adolescent_upload_confirm', pk=upload.pk)
+        return redirect('backends:adolescent_upload_confirm', pk=upload.pk)
 
 
 class AdolescentUploadConfirmView(LoginRequiredMixin, View):
@@ -226,15 +226,37 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             'upload': upload,
         })
 
-    def parse_file(self, path):
-        wb = load_workbook(filename=path, read_only=True)
-        ws = wb.active
+    def parse_file(self, uploaded_file_path):
+        from openpyxl import load_workbook
+
+        try:
+            wb = load_workbook(filename=uploaded_file_path, read_only=True)
+        except Exception as e:
+            raise ValueError("Failed to read Excel file: {}".format(e))
+
+        # DEBUG: print available sheet names
+        print("DEBUG Sheetnames: {}".format(wb.sheetnames))
+
+        if not wb.sheetnames:
+            raise ValueError("The Excel file has no sheets.")
+
+        if 'Registrations' not in wb.sheetnames:
+            raise ValueError("Sheet 'Registrations' not found. Available sheets: {}".format(wb.sheetnames))
+
+        ws = wb['Registrations']
+
         headers = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
         rows = []
+
         for row in ws.iter_rows(min_row=2, values_only=True):
             if not any(row):
                 continue
-            rows.append({self.mapping.get(headers[i]): row[i] for i in range(len(headers)) if headers[i] in self.mapping})
+            rows.append({
+                self.mapping.get(headers[i]): row[i]
+                for i in range(len(headers))
+                if headers[i] in self.mapping
+            })
+
         return rows
 
     def import_data(self, data, upload):
@@ -320,7 +342,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             writer = csv.DictWriter(csv_buffer, fieldnames=not_imported[0].keys())
             writer.writeheader()
             writer.writerows(not_imported)
-            upload.failed_file.save(f'failed_{upload.pk}.csv', ContentFile(csv_buffer.getvalue()))
+            upload.failed_file.save('failed_{}.csv'.format(upload.pk), ContentFile(csv_buffer.getvalue()))
 
         return imported, not_imported
 

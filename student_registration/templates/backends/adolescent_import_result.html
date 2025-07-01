@@ -1,7 +1,20 @@
-{% extends "base.html" %}
+{% extends "youth/base.html" %}
 {% load staticfiles i18n %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
 
-{% block content-full-page %}
+{% block project_title %}Upload{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
+{% block content %}
+
 <section>
     <section id="page-title" class="inline-form inner-section ui-menu-color02">
         <div class="container-fluid nopadding">
@@ -26,4 +39,13 @@
         {% endif %}
     </section>
 </section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
 {% endblock %}
