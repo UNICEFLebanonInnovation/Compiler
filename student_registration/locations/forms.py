@@ -347,7 +347,7 @@ class ProgramStaffForm(forms.ModelForm):
     facilitator_name = forms.CharField(
         label=_("Facilitator Name"),
         widget=forms.TextInput,
-        required=False
+        required=True
     )
     gender = forms.ChoiceField(
         label=_('Gender'),
