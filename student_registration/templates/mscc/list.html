@@ -8,45 +8,59 @@
 {% block project_title %}List{% endblock %}
 
 {% block content %}
+<div id="listApp"></div>
+{% endblock %}
 
-<div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
+{% block modal %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script type="text/babel">
+function ListApp() {
+  return (
+    <>
+
+<div className="app-page-title">
+                        <div className="page-title-wrapper">
+                            <div className="page-title-heading">
                                 <div>
-                                    <div class="page-title-head center-elem page-title-heading">
-                                        <span class="d-inline-block pr-2">
-                                            <i class="fa fa-user"></i>
+                                    <div className="page-title-head center-elem page-title-heading">
+                                        <span className="d-inline-block pr-2">
+                                            <i className="fa fa-user"></i>
                                         </span>
-                                        <span class="d-inline-block">
+                                        <span className="d-inline-block">
                                           {{ request.user.username }}
                                           {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_CENTER"  %}
                                           - {{ request.user.partner }}
                                           {% endif %}
                                         </span>
                                     </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <nav class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
+                                    <div className="page-title-subheading opacity-10">
+                                        <nav className="" aria-label="breadcrumb">
+                                            <ol className="breadcrumb">
+                                                <li className="breadcrumb-item">
                                                     <a href="/">
-                                                        <i aria-hidden="true" class="fa fa-home"></i>
+                                                        <i aria-hidden="true" className="fa fa-home"></i>
                                                     </a>
                                                 </li>
-                                                <li class="breadcrumb-item">
+                                                <li className="breadcrumb-item">
                                                       <a href="/">List</a>
                                                 </li>
                                               {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
 
-                                                <li class="breadcrumb-item">
+                                                <li className="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
                                                 </li>
-                                                <li class="breadcrumb-item">
+                                                <li className="breadcrumb-item">
                                                     {{ request.user.center.caza }}
                                                 </li>
-                                                <li class="breadcrumb-item">
+                                                <li className="breadcrumb-item">
                                                     {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}
                                                 </li>
-                                                <li class="breadcrumb-item">
+                                                <li className="breadcrumb-item">
                                                     {{ request.user.center.name }} - {{ request.user.center.type }}
                                                 </li>
                                               {% endif %}
@@ -56,68 +70,56 @@
                                     </div>
                                 </div>
                             </div>
-                        <div class="page-title-actions"></div>
+                        <div className="page-title-actions"></div>
                         </div>
 </div>
 
-<div class="row">
+<div className="row">
 {% if request.user|has_group:"MSCC_CENTER" and not request.user.center %}
-  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
+  <div className="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
 {% endif %}
 </div>
 
-<div class="row">
+<div className="row">
 {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
+                        <div className="col-md-6 col-lg-3">
+                            <div className="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
+                                <div className="widget-chat-wrapper-outer">
+                                    <div className="widget-chart-content">
+                                        <div className="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div className="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div className="widget-chart-flex align-items-center">
                                                 <div>
 
-                                                    <span class="opacity-10 text-primary pr-2">
-                                                        <i class="fa fa-plus"></i>
+                                                    <span className="opacity-10 text-primary pr-2">
+                                                        <i className="fa fa-plus"></i>
                                                     </span>
                                                   <a href="{% url 'mscc:child_add' %}?type=Core-Package">
                                                     Core Package
                                                   </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
+                        <div className="col-md-6 col-lg-3">
+                            <div className="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
+                                <div className="widget-chat-wrapper-outer">
+                                    <div className="widget-chart-content">
+                                        <div className="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div className="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div className="widget-chart-flex align-items-center">
                                                 <div>
 
-                                                    <span class="opacity-10 text-danger pr-2">
-                                                        <i class="fa fa-plus"></i>
+                                                    <span className="opacity-10 text-danger pr-2">
+                                                        <i className="fa fa-plus"></i>
                                                     </span>
                                                   <a href="{% url 'mscc:child_add' %}?type=Walk-in">
                                                     Walk-in
                                                   </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-danger-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
@@ -126,28 +128,22 @@
                         </div>
 {% endif %}
 {% if request.user|has_group:"MSCC_YOUTH" %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
+                        <div className="col-md-6 col-lg-3">
+                            <div className="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
+                                <div className="widget-chat-wrapper-outer">
+                                    <div className="widget-chart-content">
+                                        <div className="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div className="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div className="widget-chart-flex align-items-center">
                                                 <div>
 
-                                                    <span class="opacity-10 text-primary pr-2">
-                                                        <i class="fa fa-plus"></i>
+                                                    <span className="opacity-10 text-primary pr-2">
+                                                        <i className="fa fa-plus"></i>
                                                     </span>
                                                   <a href="{% url 'mscc:child_add' %}?type=Core-Package">
                                                     Add new Beneficiary
                                                   </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
@@ -156,28 +152,22 @@
                         </div>
 {% endif %}
 {% if request.user|has_group:"MSCC_CENTER" and request.user.center.id or request.user|has_group:"MSCC_PARTNER" %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Attendance</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
+                        <div className="col-md-6 col-lg-3">
+                            <div className="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
+                                <div className="widget-chat-wrapper-outer">
+                                    <div className="widget-chart-content">
+                                        <div className="widget-title opacity-5 text-uppercase">Attendance</div>
+                                        <div className="widget-numbers mt-2 fsize-3 mb-0 w-100">
+                                            <div className="widget-chart-flex align-items-center">
                                                 <div>
-                                                    <span class="opacity-10 text-success pr-2">
-                                                        <i class="fa fa-list"></i>
+                                                    <span className="opacity-10 text-success pr-2">
+                                                        <i className="fa fa-list"></i>
                                                     </span>
                                                     <a href="{% url 'mscc:attendance' %}">
                                                       Daily Attendance
                                                     </a>
 
-                                                  <!--<small class="opacity-5 pr-1">%</small>-->
                                                 </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-warning-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
@@ -186,60 +176,37 @@
                         </div>
 {% endif %}
 
-                          <!--<div class="col-md-6 col-lg-3">-->
-                              <!--<div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">-->
-                                  <!--<div class="widget-chat-wrapper-outer">-->
-                                      <!--<div class="widget-chart-content">-->
-                                          <!--<div class="widget-title opacity-5 text-uppercase">Need RS support</div>-->
-                                          <!--<div class="widget-numbers mt-2 fsize-4 mb-0 w-100">-->
-                                              <!--<div class="widget-chart-flex align-items-center">-->
-                                                  <!--<div>-->
-                                                      <!--<small class="text-success pr-1">+</small>-->
-                                                      <!--34-->
-                                                      <!--<small class="opacity-5 pl-1">%</small>-->
-                                                  <!--</div>-->
-                                                  <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                      <!--<div class="circle-progress circle-progress-success-sm d-inline-block">-->
-                                                          <!--<small></small>-->
-                                                      <!--</div>-->
-                                                  <!--</div>-->
-                                              <!--</div>-->
-                                          <!--</div>-->
-                                      <!--</div>-->
-                                  <!--</div>-->
-                              <!--</div>-->
-                          <!--</div>-->
                     </div>
 
-<div class="row">
-    <div class="col-lg-12">
-<div id="accordion" class="accordion-wrapper mb-3 form-filters">
-    <div class="card">
-        <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
-                <h5 class="m-0 p-0">
-                    <i class="pe-7s-filter text-primary"></i>
+<div className="row">
+    <div className="col-lg-12">
+<div id="accordion" className="accordion-wrapper mb-3 form-filters">
+    <div className="card">
+        <div id="headingOne" className="card-header">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" className="text-left m-0 p-0 btn btn-link btn-block collapsed">
+                <h5 className="m-0 p-0">
+                    <i className="pe-7s-filter text-primary"></i>
                     Filters</h5>
             </button>
         </div>
-        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
-            <div class="card-body">
-            <form action="" method="get" class="form form-inline">
+        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" className="collapse" style="">
+            <div className="card-body">
+            <form action="" method="get" className="form form-inline">
                 {% bootstrap_form filter.form layout='inline' %}
 
-                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
-                  <i style="font-weight:bolder" class="pe-7s-search"></i>
+                <button className="btn btn-outline-primary mr-left-5 filter-report" title="Search">
+                  <i style="font-weight:bolder" className="pe-7s-search"></i>
                 </button>
 
                 <button href="" title="Cancel"
-                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
+                 className="btn btn-outline-warning"><i className="fa fa-fw" aria-hidden="true"></i>
                 </button>
 
               {% if user|has_group:"EXPORT" %}
-                <a href="" title="Download" class="btn btn-outline-success download-report">
-                    <i class="lnr-download"></i>
+                <a href="" title="Download" className="btn btn-outline-success download-report">
+                    <i className="lnr-download"></i>
                 </a>
-                <div class = "downloading-message" style = "display:none">
+                <div className= "downloading-message" style = "display:none">
                   Loading...
                 </div>
               {% endif %}
@@ -252,11 +219,11 @@
     </div>
 </div>
 
-<div class="row table-list">
-    <div class="col-lg-12">
-        <div class="card-hover-shadow-2x mb-3 card">
-            <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap4">
+<div className="row table-list">
+    <div className="col-lg-12">
+        <div className="card-hover-shadow-2x mb-3 card">
+            <div className="card-body">
+                <div className="table-responsive dataTables_wrapper dt-bootstrap4">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap4.html' %}
                 </div>
@@ -264,18 +231,12 @@
         </div>
     </div>
 </div>
-
-{% endblock %}
-
-{% block modal %}
-
-{% endblock %}
-
-{% block extra_js %}
-
-    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>
-    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
-
-
+    </>
+  );
+}
+ReactDOM.render(<ListApp />, document.getElementById('listApp'));
+</script>
+<script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+<script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>
+<script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
 {% endblock %}
