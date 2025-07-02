@@ -36,7 +36,6 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from student_registration.users.utils import force_default_language
 from student_registration.outreach.models import Child, OutreachChild
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.locations.models import Location
@@ -84,10 +83,6 @@ class CLMView(LoginRequiredMixin,
     template_name = 'pages/home.old.html'
 
     group_required = [u"CLM"]
-
-    def get_context_data(self, **kwargs):
-        force_default_language(self.request)
-        return {}
 
 
 def assessment_form(instance_id, stage, enrollment_model, assessment_slug, callback=''):
@@ -196,7 +191,6 @@ class BridgingAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -294,7 +288,6 @@ class BridgingEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -540,7 +533,6 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -601,7 +593,6 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
         return super(BridgingPostAssessmentView, self).form_valid(form)
 
 
-
 class BridgingMidAssessmentView(LoginRequiredMixin,
                             GroupRequiredMixin,
                             FormView):
@@ -611,7 +602,6 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -685,7 +675,6 @@ class BridgingFollowupView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -717,7 +706,6 @@ class BridgingServiceView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -741,8 +729,6 @@ class BridgingServiceView(LoginRequiredMixin,
 
 
 ####################### API VIEWS #############################
-
-
 
 
 class BridgingViewSet(mixins.RetrieveModelMixin,

@@ -17,6 +17,7 @@ django-braces==1.17.0
 django-crispy-forms==2.4
 crispy-bootstrap5==2025.6
 #crispy-bootstrap4==2025.6
+crispy-bootstrap3==2024.1
 
 # Models
 django-model-utils==4.3.1

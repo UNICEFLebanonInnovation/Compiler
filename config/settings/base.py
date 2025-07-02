@@ -64,7 +64,8 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
-    "crispy_bootstrap5",
+    "crispy_bootstrap3",
+    # "crispy_bootstrap5",
     # "crispy_bootstrap4",
     'allauth',  # registration
     'allauth.account',  # registration
@@ -182,7 +183,7 @@ MANAGERS = ADMINS
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
     'default': env.db('DATABASE_URL',
-    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-12.postgres.database.azure.com:5432/new_staging_11062025'),
+    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/new_staging_13062025'),
 }
 DJANGO_READ_DOT_ENV_FILE = True
 
@@ -259,8 +260,9 @@ TEMPLATES = [
 ]
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap3", "bootstrap5"]
+# CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap3"
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
