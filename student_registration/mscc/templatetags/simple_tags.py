@@ -148,7 +148,9 @@ def have_education_programme(programme_type):
 @register.simple_tag
 def have_youth_programme(programme_type):
     try:
-        programmes = ['YBLN Level 1', 'YBLN Level 2','YBLN Catch-up', 'YFS Level 1', 'YFS Level 2']
+        programmes = ['YBLN Level 1', 'YBLN Level 2','YBLN Catch-up',
+                      'YFS Level 1', 'YFS Level 2',
+                      'YFS Level 1 - RS Grade 9', 'YFS Level 2 - RS Grade 9']
         if programme_type in programmes:
             return True
     except Exception as ex:
