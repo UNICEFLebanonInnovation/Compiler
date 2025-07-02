@@ -209,7 +209,9 @@ function validateMainForm(showModal) {
         var parent_extract_confirm = $('#id_parent_extract_record_confirm').val();
 
         Object.keys(regexMap).forEach(function(selector) {
-            var val = $(selector).val();
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
             if (val && !regexMap[selector].test(val)) {
                 var placeholder = $(selector).attr('placeholder');
                 var msg = 'Please enter a valid value';
@@ -224,7 +226,9 @@ function validateMainForm(showModal) {
         });
 
         Object.keys(minValueMap).forEach(function(selector) {
-            var val = $(selector).val();
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
             var min = minValueMap[selector];
             if (val && parseInt(val, 10) < min) {
                 showError(selector, 'Value must be at least ' + min);
@@ -233,7 +237,9 @@ function validateMainForm(showModal) {
         });
 
         Object.keys(maxLengthMap).forEach(function(selector) {
-            var val = $(selector).val();
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
             var maxLen = maxLengthMap[selector];
             if (val && val.length > maxLen) {
                 showError(selector, 'Ensure this value has at most ' + maxLen + ' characters.');
