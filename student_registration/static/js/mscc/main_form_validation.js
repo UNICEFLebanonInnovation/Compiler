@@ -19,6 +19,41 @@ function showError(selector, message) {
 function validateMainForm(showModal) {
     if (showModal === undefined) showModal = true;
     var valid = true;
+    var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
+    var regexMap = {
+        '#id_first_phone_number': phoneRegex,
+        '#id_first_phone_number_confirm': phoneRegex,
+        '#id_second_phone_number': phoneRegex,
+        '#id_second_phone_number_confirm': phoneRegex,
+        '#id_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
+        '#id_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
+        '#id_parent_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
+        '#id_parent_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
+        '#id_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
+        '#id_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
+        '#id_recorded_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
+        '#id_recorded_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
+        '#id_national_number': /^\d{12}$/,
+        '#id_national_number_confirm': /^\d{12}$/,
+        '#id_syrian_national_number': /^\d{11}$/,
+        '#id_syrian_national_number_confirm': /^\d{11}$/,
+        '#id_parent_national_number': /^\d{12}$/,
+        '#id_parent_national_number_confirm': /^\d{12}$/,
+        '#id_parent_syrian_national_number': /^\d{11}$/,
+        '#id_parent_syrian_national_number_confirm': /^\d{11}$/
+    };
+
+    var minValueMap = {
+        '#id_child_children_number': 0,
+        '#id_children_number_under18': 0,
+        '#id_labour_hours': 0
+    };
+
+    var maxLengthMap = {
+        '#id_child_children_number': 4,
+        '#id_children_number_under18': 4,
+        '#id_labour_hours': 4
+    };
     clearErrors();
 
     // Date validation
@@ -173,6 +208,45 @@ function validateMainForm(showModal) {
         var parent_extract = $('#id_parent_extract_record').val();
         var parent_extract_confirm = $('#id_parent_extract_record_confirm').val();
 
+        Object.keys(regexMap).forEach(function(selector) {
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
+            if (val && !regexMap[selector].test(val)) {
+                var placeholder = $(selector).attr('placeholder');
+                var msg = 'Please enter a valid value';
+                if (selector.indexOf('phone') !== -1) {
+                    msg = 'Please enter a valid phone number (XX-XXXXXX)';
+                } else if (placeholder) {
+                    msg = 'Please follow the format ' + placeholder.replace('Format:', '').trim();
+                }
+                showError(selector, msg);
+                valid = false;
+            }
+        });
+
+        Object.keys(minValueMap).forEach(function(selector) {
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
+            var min = minValueMap[selector];
+            if (val && parseInt(val, 10) < min) {
+                showError(selector, 'Value must be at least ' + min);
+                valid = false;
+            }
+        });
+
+        Object.keys(maxLengthMap).forEach(function(selector) {
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
+            var maxLen = maxLengthMap[selector];
+            if (val && val.length > maxLen) {
+                showError(selector, 'Ensure this value has at most ' + maxLen + ' characters.');
+                valid = false;
+            }
+        });
+
         if (id_type == '1') {
             if (case_number === '') {
                 showError('#id_case_number', 'This field is required');
@@ -202,12 +276,12 @@ function validateMainForm(showModal) {
             }
         }
         if (id_type == '3') {
-            if (parent_syrian === '' || parent_syrian.length !== 11) {
-                showError('#id_parent_syrian_national_number', 'Please enter a valid number (11 digits)');
+            if (parent_syrian === '') {
+                showError('#id_parent_syrian_national_number', 'This field is required');
                 valid = false;
             }
-            if (parent_syrian_confirm === '' || parent_syrian_confirm.length !== 11) {
-                showError('#id_parent_syrian_national_number_confirm', 'Please enter a valid number (11 digits)');
+            if (parent_syrian_confirm === '') {
+                showError('#id_parent_syrian_national_number_confirm', 'This field is required');
                 valid = false;
             }
             if (parent_syrian !== parent_syrian_confirm) {
@@ -238,14 +312,6 @@ function validateMainForm(showModal) {
             }
         }
         if (id_type == '5') {
-            if (parent_nat && parent_nat.length !== 12) {
-                showError('#id_parent_national_number', 'Please enter a valid number (12 digits)');
-                valid = false;
-            }
-            if (parent_nat_confirm && parent_nat_confirm.length !== 12) {
-                showError('#id_parent_national_number_confirm', 'Please enter a valid number (12 digits)');
-                valid = false;
-            }
             if (parent_nat !== parent_nat_confirm) {
                 showError('#id_parent_national_number_confirm', 'The national numbers are not matched');
                 valid = false;
