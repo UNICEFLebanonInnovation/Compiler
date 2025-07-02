@@ -52,7 +52,7 @@ class EditStaffView(UpdateView, FormView):
     context_object_name = 'staff'
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
