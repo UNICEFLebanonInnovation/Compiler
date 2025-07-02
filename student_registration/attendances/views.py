@@ -157,7 +157,7 @@ class AttendanceView(LoginRequiredMixin,
     group_required = [u"ATTENDANCE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         level = 0
         section = 0
         school = 0
@@ -348,7 +348,7 @@ class AttendanceALPView(LoginRequiredMixin,
     group_required = [u"ATTENDANCE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         level = 0
         section = 0
         school = 0
@@ -734,7 +734,7 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         # return reverse('attendances:main_attendance_edit', args=[self.kwargs['pk']])
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()

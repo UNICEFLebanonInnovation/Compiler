@@ -108,7 +108,7 @@ class ProfileView(LoginRequiredMixin,
     group_required = [u"SCHOOL", u"ALP_SCHOOL"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -154,7 +154,7 @@ class PartnerView(LoginRequiredMixin,
     group_required = [u"CLM"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -183,7 +183,7 @@ class PublicDocumentView(LoginRequiredMixin,
     group_required = [u"SCHOOL", u"ALP_SCHOOL"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         return {
             'documents': self.queryset
         }
@@ -241,7 +241,7 @@ class Update_Class(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -268,7 +268,7 @@ class Update_Class_c1(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -295,7 +295,7 @@ class Update_Class_C3(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -322,7 +322,7 @@ class Update_Class_c4(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -349,7 +349,7 @@ class Update_Class_c5(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -376,7 +376,7 @@ class Update_Class_c6(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -403,7 +403,7 @@ class Update_Class_c7(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -430,7 +430,7 @@ class Update_Class_c8(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -457,7 +457,7 @@ class Update_Class_c9(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -484,7 +484,7 @@ class Update_Class_cprep(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -537,7 +537,7 @@ class SchoolListView(LoginRequiredMixin,
     filterset_class = SchoolFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         is_staff = self.request.user.is_staff
 
@@ -598,7 +598,7 @@ class SchoolAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -647,7 +647,7 @@ class SchoolEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -682,7 +682,7 @@ class ClubListView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return Club.objects.filter(school_id=school_id).order_by('-id')
 
@@ -757,7 +757,7 @@ class MeetingListView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return Meeting.objects.filter(school_id=school_id).order_by('-id')
 
@@ -832,7 +832,7 @@ class CommunityInitiativeListView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return CommunityInitiative.objects.filter(school_id=school_id).order_by('-id')
 
@@ -907,7 +907,7 @@ class HealthVisitListView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return HealthVisit.objects.filter(school_id=school_id).order_by('-id')
 

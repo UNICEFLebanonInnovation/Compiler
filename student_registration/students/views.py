@@ -185,7 +185,7 @@ class TeacherListView(LoginRequiredMixin,
     filterset_class = TeacherFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         is_staff = self.request.user.is_staff
 
@@ -234,7 +234,7 @@ class TeacherAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -283,7 +283,7 @@ class TeacherEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -316,7 +316,7 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
 
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
         is_staff = self.request.user.is_staff
 

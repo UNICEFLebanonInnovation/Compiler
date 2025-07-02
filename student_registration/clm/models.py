@@ -424,7 +424,7 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Post-assessment')
     )
-    scores = JSONField(blank=True, null=True, default=dict)
+    scores = JSONField(default=dict)
 
     participation = models.CharField(
         max_length=100,
@@ -3791,7 +3791,7 @@ class SelfPerceptionGrades(models.Model):
     answers = JSONField(
         blank=True,
         null=True,
-        default={},
+        default=dict,
         verbose_name=_('Assessment answers')
     )
 

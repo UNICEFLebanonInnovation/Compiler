@@ -70,7 +70,7 @@ class AddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -152,7 +152,7 @@ class EditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -194,7 +194,7 @@ class Edit_RegionView(LoginRequiredMixin,
     group_required = [u"ENROL_EDIT"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -236,7 +236,7 @@ class EditOldDataView(LoginRequiredMixin,
     group_required = [u"ENROL_EDIT_OLD"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -271,7 +271,7 @@ class ListingOldDataView(LoginRequiredMixin,
     group_required = [u"ENROL_EDIT_OLD"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         education_year = EducationYear.objects.get(current_year=True)
         return Enrollment.objects.exclude(moved=True).filter(
             education_year__id__lt=education_year.id,
@@ -289,7 +289,7 @@ class MovedView(LoginRequiredMixin,
     group_required = [u"SCHOOL"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -326,7 +326,7 @@ class ListingView(LoginRequiredMixin,
     group_required = [u"SCHOOL"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         education_year = EducationYear.objects.get(current_year=True)
         return Enrollment.objects.exclude(moved=True).filter(
             education_year=education_year,
@@ -345,7 +345,7 @@ class GradingView(LoginRequiredMixin,
     group_required = [u"ENROL_GRADING"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -773,7 +773,7 @@ class Update_Image(UpdateView):
     context_object_name = 'student_detail'
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -816,7 +816,7 @@ class Clear_Profile(UpdateView):
     context_object_name = 'student_detail'
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -868,7 +868,7 @@ class Clear_Images_View(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1001,7 +1001,7 @@ class Student_By_Regions(LoginRequiredMixin,
     group_required = [u"ADMIN_RE"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         education_year = EducationYear.objects.get(current_year=True)
         return Enrollment.objects.filter(
             education_year=education_year,

@@ -123,5 +123,5 @@ class UserActivity(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "{} - {} {}".format(self.user, self.method, self.path)
+        return "{} - {} {}".format(self.username, self.method, self.path)
 
