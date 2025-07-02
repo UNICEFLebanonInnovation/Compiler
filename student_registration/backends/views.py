@@ -21,6 +21,7 @@ from student_registration.adolescent.models import Adolescent
 from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.locations.models import Location
+from student_registration.youth.models import Registration
 
 
 from .exporter import export_full_data
@@ -161,7 +162,6 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'District': 'district',
         'Cadaster': 'cadaster',
         'Adolescent Address': 'address',
-        'Disability': 'disability',
         'Special Need': 'disability',
         'Father Educational Level': 'father_educational_level',
         'Mother Educational Level': 'mother_educational_level',
@@ -172,7 +172,6 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         'Caregiver First Name': 'caregiver_first_name',
         'Caregiver Middle Name': 'caregiver_middle_name',
         'Caregiver Last Name': 'caregiver_last_name',
-        'Caregiver Mother Name': 'caregiver_mother_name',
         'Main Caregiver Nationality Name': 'main_caregiver_nationality',
         'Main Caregiver Nationality Other': 'main_caregiver_nationality_other',
         'ID Type': 'id_type',
@@ -231,7 +230,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             messages.error(request, data["error"])
             return redirect("backends:adolescent_upload")
 
-        imported, not_imported = self.import_data(data, upload)
+        imported, not_imported = self.import_data(data, upload, request)
         upload.processed = True
         upload.save()
         return render(request, self.result_template, {
@@ -249,19 +248,14 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
         except Exception as e:
             raise ValueError("Failed to read Excel file: {}".format(e))
 
-        # DEBUG: print available sheet names
-        print("DEBUG Sheetnames: {}".format(wb.sheetnames))
-
         if not wb.sheetnames:
-            raise ValueError("The Excel file has no sheets.")
-            # return {"error": "The uploaded Excel file has no sheets. Please check the file content."}
+            raise ValueError("The uploaded Excel file has no sheets. Please check the file content.")
 
         if 'Registrations' not in wb.sheetnames:
-            raise ValueError("Sheet 'Registrations' not found. Available sheets: {}".format(wb.sheetnames))
+            raise ValueError("Sheet 'Registrations' not found.")
 
         ws = wb['Registrations']
 
-        # Extract headers from the first row
         header_row = next(ws.iter_rows(min_row=1, max_row=1))
         headers = [cell.value for cell in header_row]
 
@@ -278,7 +272,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
         return rows
 
-    def import_data(self, data, upload):
+    def import_data(self, data, upload, request):
         not_imported = []
         imported = 0
         for index, values in enumerate(data, start=2):
@@ -307,7 +301,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             id_type = IDType.objects.filter(name=values.get('id_type')).first() if values.get('id_type') else None
 
             try:
-                Adolescent.objects.create(
+                adolescent = Adolescent.objects.create(
                     first_name=values.get('first_name'),
                     father_name=values.get('father_name'),
                     last_name=values.get('last_name'),
@@ -332,7 +326,6 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     caregiver_first_name=values.get('caregiver_first_name'),
                     caregiver_middle_name=values.get('caregiver_middle_name'),
                     caregiver_last_name=values.get('caregiver_last_name'),
-                    caregiver_mother_name=values.get('caregiver_mother_name'),
                     main_caregiver_nationality=caregiver_nat,
                     main_caregiver_nationality_other=values.get('main_caregiver_nationality_other'),
                     id_type=id_type,
@@ -349,6 +342,13 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     national_number=values.get('national_number'),
                     parent_other_number=values.get('parent_other_number'),
                     other_number=values.get('other_number'),
+                )
+
+                Registration.objects.create(
+                    adolescent=adolescent,
+                    owner=request.user,
+                    partner_id=getattr(request.user, 'partner_id', None),
+                    center_id=getattr(request.user, 'center_id', None),
                 )
                 imported += 1
             except Exception as ex:
