@@ -43,6 +43,21 @@ function validateMainForm(showModal) {
         '#id_parent_syrian_national_number_confirm': /^\d{11}$/
     };
 
+    var requiredFields = [
+        '#id_child_first_name',
+        '#id_child_father_name',
+        '#id_child_last_name',
+        '#id_child_mother_fullname',
+        '#id_child_gender',
+        '#id_child_nationality',
+        '#id_child_disability',
+        '#id_child_marital_status',
+        '#id_child_have_children',
+        '#id_child_have_sibling',
+        '#id_child_mother_pregnant_expecting',
+        '#id_source_of_identification'
+    ];
+
     var minValueMap = {
         '#id_child_children_number': 0,
         '#id_children_number_under18': 0,
@@ -56,6 +71,15 @@ function validateMainForm(showModal) {
     };
     clearErrors();
 
+    requiredFields.forEach(function(selector) {
+        var field = $(selector);
+        if (!field.is(':visible')) return;
+        if (!field.val()) {
+            showError(selector, 'This field is required');
+            valid = false;
+        }
+    });
+
     // Date validation
     var year = parseInt($('#id_child_birthday_year').val()) || 0;
     var month = parseInt($('#id_child_birthday_month').val()) || 0;
@@ -67,7 +91,9 @@ function validateMainForm(showModal) {
             valid = false;
         }
     } else {
-        showError('#id_child_birthday_year', 'The date is not valid.');
+        if (!year) showError('#id_child_birthday_year', 'This field is required');
+        if (!month) showError('#id_child_birthday_month', 'This field is required');
+        if (!day) showError('#id_child_birthday_day', 'This field is required');
         valid = false;
     }
 
