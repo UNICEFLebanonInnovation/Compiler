@@ -161,7 +161,7 @@
                                                         <div class="col-md-4">{{ form.child_fe_unique_id|as_crispy_field }}</div>
                                                     </div>
                                                 </div>
-                                                <div id="step-2" style="display:none;">
+                                                <div id="step-2">
                                                     <div class="row card-body">
                                                         <div class="col-md-5">{{ form.father_educational_level|as_crispy_field }}</div>
                                                         <div class="col-md-6">{{ form.mother_educational_level|as_crispy_field }}</div>
@@ -249,7 +249,7 @@
                                                         <div class="col-md-6">{{ form.parent_extract_record_confirm|as_crispy_field }}</div>
                                                     </div>
                                                 </div>
-                                                <div id="step-3" style="display:none;">
+                                                <div id="step-3">
                                                     <div class="row card-body">
                                                         <div class="col-md-5">{{ form.have_labour|as_crispy_field }}</div>
                                                         <div class="col-md-6">{{ form.labour_type|as_crispy_field }}</div>
@@ -264,8 +264,13 @@
                                                     <div class="row card-body" id="labour_details_3">
                                                         <div class="col-md-7">{{ form.labour_condition|as_crispy_field }}</div>
                                                     </div>
+                                                    <div class="form-group">
+                                                      <div class="controls">
+                                                        <input type="submit" name="save" value="Save" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">
+                                                        <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/MSCC/Child-Registration-Cancel/71591/">Cancel</a>
+                                                      </div>
+                                                    </div>
                                                 </div>
-                                                <button type="submit" class="d-none" id="submit-btn22"></button>
                                             </form>
                                       </div>
                                     </div>
@@ -275,11 +280,8 @@
                                         <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
                                         <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
 
-                                        <!--<button type="submit" id="submit-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save</button>-->
-                                        <!--<button type="submit" id="submit-btn22-1" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success">Save & add another</button>-->
-
-                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary" style="display: none;">Next</button>
-                                        <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-primary">Next</button>
+                                        <button type="button" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
+                                        <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">Next</button>
                                         <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
                                     </div>
                                 </div>
