@@ -20,8 +20,8 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from .filters import EnrollmentFilter, EnrollmentOldDataFilter, Enrollment_by_region_Filter
-from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable, Enrollment_By_School_Table
+from .filters import EnrollmentFilter, EnrollmentOldDataFilter, EnrollmentByRegionFilter
+from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable, EnrollmentBySchoolTable
 from django.shortcuts import redirect
 from student_registration.alp.models import Outreach
 from student_registration.alp.serializers import OutreachSerializer
@@ -38,13 +38,13 @@ from .models import (
 )
 from .forms import (
     EnrollmentForm,
-    EnrollmentRegion_Form,
+    EnrollmentRegionForm,
     GradingTermForm,
     GradingIncompleteForm,
     StudentMovedForm,
     EditOldDataForm,
     ImageStudentForm,
-    Modify_Images_Form,
+    ModifyImagesForm,
 )
 from .serializers import (
     EnrollmentSerializer,
@@ -187,11 +187,11 @@ class EditView(LoginRequiredMixin,
         return super(EditView, self).form_valid(form)
 
 
-class Edit_RegionView(LoginRequiredMixin,
+class EditRegionView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
     template_name = 'bootstrap4/common_form.html'
-    form_class = EnrollmentRegion_Form
+    form_class = EnrollmentRegionForm
     success_url = '/enrollments/student_by_regions/'
     group_required = [u"ENROL_EDIT"]
 
@@ -200,18 +200,18 @@ class Edit_RegionView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(Edit_RegionView, self).get_context_data(**kwargs)
+        return super(EditRegionView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            return EnrollmentRegion_Form(self.request.POST, self.request.FILES, instance=instance)
+            return EnrollmentRegionForm(self.request.POST, self.request.FILES, instance=instance)
         else:
             data = EnrollmentSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
             data['student_mother_nationality'] = data['student_mother_nationality_id']
             data['student_id_type'] = data['student_id_type_id']
-            return EnrollmentRegion_Form(data, instance=instance)
+            return EnrollmentRegionForm(data, instance=instance)
 
     def form_valid(self, form):
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
@@ -225,7 +225,7 @@ class Edit_RegionView(LoginRequiredMixin,
                 instance.document_lastyear = v
                 instance.save()
         form.save(request=self.request, instance=instance)
-        return super(Edit_RegionView, self).form_valid(form)
+        return super(EditRegionView, self).form_valid(form)
 
 
 class EditOldDataView(LoginRequiredMixin,
@@ -766,7 +766,7 @@ class ExportByCycleView(LoginRequiredMixin, ListView):
         return response
 
 
-class Update_Image(UpdateView):
+class UpdateImage(UpdateView):
     model = Student
     form_class = ImageStudentForm
 
@@ -779,7 +779,7 @@ class Update_Image(UpdateView):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(Update_Image, self).get_context_data(**kwargs)
+        return super(UpdateImage, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         instance = Student.objects.get(id=self.kwargs['pk'])
@@ -809,7 +809,7 @@ class Update_Image(UpdateView):
             return ImageStudentForm(instance=instance)
 
 
-class Clear_Profile(UpdateView):
+class ClearProfile(UpdateView):
     model = Student
     form_class = ImageStudentForm
 
@@ -822,7 +822,7 @@ class Clear_Profile(UpdateView):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(Update_Image, self).get_context_data(**kwargs)
+        return super(UpdateImage, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         instance = Student.objects.get(id=self.kwargs['pk'])
@@ -835,7 +835,7 @@ class Clear_Profile(UpdateView):
             return ImageStudentForm(instance=instance)
 
 
-class Modify_Images_View(UpdateView):
+class ModifyImagesView(UpdateView):
     template_name = 'enrollments/modifying_images.html'
     success_url = '/enrollments/list/'
     context_object_name = 'student_images'
@@ -855,12 +855,12 @@ class Modify_Images_View(UpdateView):
     def get_form(self, form_class=None):
         instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
         if self.request.method == "POST":
-            return Modify_Images_View(self.request.POST, self.request.FILES, instance=instance)
+            return ModifyImagesView(self.request.POST, self.request.FILES, instance=instance)
         else:
-            return Modify_Images_View(instance=instance)
+            return ModifyImagesView(instance=instance)
 
 
-class Clear_Images_View(UpdateView):
+class ClearImagesView(UpdateView):
     template_name = 'enrollments/clear_images.html'
     success_url = '/enrollments/list/'
     context_object_name = 'student_images'
@@ -874,14 +874,14 @@ class Clear_Images_View(UpdateView):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(Clear_Images_View, self).get_context_data(**kwargs)
+        return super(ClearImagesView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
         if self.request.method == "POST":
-            return Clear_Images_View(self.request.POST, self.request.FILES, instance=instance)
+            return ClearImagesView(self.request.POST, self.request.FILES, instance=instance)
         else:
-            return Clear_Images_View(instance=instance)
+            return ClearImagesView(instance=instance)
 
 
 def empty_profile(request, *args):
@@ -896,7 +896,7 @@ def empty_profile(request, *args):
 def changing_profile(request, *args):
     from student_registration.students.models import Student
     if request.method == 'POST':
-        form = Modify_Images_Form(request.POST, request.FILES)
+        form = ModifyImagesForm(request.POST, request.FILES)
         if request.FILES:
             std = Student.objects.get(pk=request.POST['txt_id_img'])
             std.std_image = request.FILES['image_profile']
@@ -916,7 +916,7 @@ def empty_birthdoc(request, *args):
 def changing_birthdoc(request, *args):
     from student_registration.students.models import Student, Birth_DocumentType
     if request.method == 'POST':
-        form = Modify_Images_Form(request.POST, request.FILES)
+        form = ModifyImagesForm(request.POST, request.FILES)
         std = Student.objects.get(pk=request.POST['txt_id_img_birthdoc'])
         if request.FILES:
             std.birthdoc_image = request.FILES['image_birthdoc']
@@ -938,7 +938,7 @@ def empty_unhcr(request, *args):
 def changing_unhcr(request, *args):
     from student_registration.students.models import Student
     if request.method == 'POST':
-        form = Modify_Images_Form(request.POST, request.FILES)
+        form = ModifyImagesForm(request.POST, request.FILES)
         if request.FILES:
             std = Student.objects.get(pk=request.POST['txt_id_img_unhcr'])
             std.unhcr_image = request.FILES['image_unhcr']
@@ -958,7 +958,7 @@ def empty_doclastyear(request, *args):
 def changing_doclastyear(request, *args):
     from student_registration.enrollments.models import Enrollment, DocumentType
     if request.method == 'POST':
-        form = Modify_Images_Form(request.POST, request.FILES)
+        form = ModifyImagesForm(request.POST, request.FILES)
         enr = Enrollment.objects.get(pk=request.POST['txt_id_img_doclastyear'])
         if request.FILES:
             enr.document_lastyear = request.FILES['image_doclastyear']
@@ -988,18 +988,18 @@ def clear_pic(request, *args):
     return HttpResponse('Picture has been successfully cleaned ')
 
 
-class Student_By_Regions(LoginRequiredMixin,
+class StudentByRegions(LoginRequiredMixin,
                          GroupRequiredMixin,
                          FilterView,
                          ExportMixin,
                          SingleTableView,
                          RequestConfig):
 
-    table_class = Enrollment_By_School_Table
+    table_class = EnrollmentBySchoolTable
     model = Enrollment
     template_name = 'enrollments/list.html'
     table = BootstrapTable(Enrollment.objects.all(), order_by='id')
-    filterset_class = Enrollment_by_region_Filter
+    filterset_class = EnrollmentByRegionFilter
     group_required = [u"ADMIN_RE"]
 
     def get_queryset(self):

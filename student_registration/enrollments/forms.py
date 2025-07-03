@@ -1669,7 +1669,7 @@ class ImageStudentForm(forms.ModelForm):
         ]
 
 
-class Modify_Images_Form(forms.ModelForm):
+class ModifyImagesForm(forms.ModelForm):
     image = forms.ImageField()
 
     class Meta:
@@ -1679,7 +1679,7 @@ class Modify_Images_Form(forms.ModelForm):
         )
 
 
-class EnrollmentRegion_Form(forms.ModelForm):
+class EnrollmentRegionForm(forms.ModelForm):
     new_registry = forms.ChoiceField(
         label=_("First time registered?"),
         widget=forms.Select, required=True,
@@ -1885,7 +1885,7 @@ class EnrollmentRegion_Form(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
-        super(EnrollmentRegion_Form, self).__init__(*args, **kwargs)
+        super(EnrollmentRegionForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
 

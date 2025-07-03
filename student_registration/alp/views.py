@@ -17,10 +17,10 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from .models import Outreach, ALPRound
-from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm, PreTest_allForm
+from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm, PreTestAllForm
 from .serializers import OutreachSerializer, GeneralSerializer, OutreachSmallSerializer, GradingSerializer
 from .tables import BootstrapTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
-from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter, PreTest_allFilter
+from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter, PreTestAllFilter
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.users.utils import force_default_language
@@ -224,7 +224,7 @@ class SchoolView(LoginRequiredMixin,
         return Outreach.objects.filter(alp_round=alp_round, school=self.request.user.school_id)
 
 
-class PreTest_allView(LoginRequiredMixin,
+class PreTestAllView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FilterView,
                   ExportMixin,
@@ -237,7 +237,7 @@ class PreTest_allView(LoginRequiredMixin,
     template_name = 'alp/pre_test.html'
     table = BootstrapTable(Outreach.objects.all(), order_by='id')
 
-    filterset_class = PreTest_allFilter
+    filterset_class = PreTestAllFilter
 
     def get_queryset(self):
 
@@ -291,12 +291,12 @@ class PreTestAddView(LoginRequiredMixin,
         return super(PreTestAddView, self).form_valid(form)
 
 
-class PreTestAdd_allView(LoginRequiredMixin,
+class PreTestAddAllView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      FormView):
 
     template_name = 'bootstrap4/common_form.html'
-    form_class = PreTest_allForm
+    form_class = PreTestAllForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER", u"CERD"]
 
@@ -310,11 +310,11 @@ class PreTestAdd_allView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(PreTestAdd_allView, self).get_context_data(**kwargs)
+        return super(PreTestAddAllView, self).get_context_data(**kwargs)
 
     def form_valid(self, form):
         form.save(request=self.request)
-        return super(PreTestAdd_allView, self).form_valid(form)
+        return super(PreTestAddAllView, self).form_valid(form)
 
 
 class PreTestEditView(LoginRequiredMixin,
@@ -338,7 +338,7 @@ class PreTestEditView(LoginRequiredMixin,
         if self.request.method == "POST":
 
             if has_group(self.request.user, 'ALP_PRE_SCHL_ALL'):
-                return PreTest_allForm(self.request.POST, instance=instance)
+                return PreTestAllForm(self.request.POST, instance=instance)
             else:
                 return PreTestForm(self.request.POST, instance=instance)
         else:
@@ -347,7 +347,7 @@ class PreTestEditView(LoginRequiredMixin,
             data['student_mother_nationality'] = data['student_mother_nationality_id']
             data['student_id_type'] = data['student_id_type_id']
             if has_group(self.request.user, 'ALP_PRE_SCHL_ALL'):
-                return PreTest_allForm(data, instance=instance)
+                return PreTestAllForm(data, instance=instance)
             else:
                 return PreTestForm(data, instance=instance)
 

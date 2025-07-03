@@ -126,37 +126,37 @@ urlpatterns = [
     ),
     re_path(
         r'^utilities/$',
-        view=views.View_Utilities.as_view(),
+        view=views.UtilitiesView.as_view(),
         name='utilities'
     ),
     re_path(
         r'^run-list-justification/$',
-        view=views.List_Justification.as_view(),
+        view=views.JustificationListView.as_view(),
         name='run-list-justification'
     ),
     re_path(
         r'^run-list-justification-sec/$',
-        view=views.List_Justification_BySection.as_view(),
+        view=views.JustificationBySectionListView.as_view(),
         name='run-list-justification-sec'
     ),
     re_path(
         r'^run-generate-justification/$',
-        view=views.Generate_Justification_number,
+        view=views.generate_justification_number,
         name='run-generate-justification'
     ),
     re_path(
         r'^run-available-documents/$',
-        view=views.List_of_available_documents.as_view(),
+        view=views.AvailableDocumentsListView.as_view(),
         name='run-available-documents'
     ),
     re_path(
         r'^degenerate-list-justification/$',
-        view=views.degenerate_list_justification,
+        view=views.degenerate_justification_list,
         name='degenerate-list-justification'
     ),
     re_path(
         r'^export-summary-attendance/$',
-        view=views.export_summary_of_Attendance,
+        view=views.export_summary_of_attendance,
         name='export-summary-attendance'
     ),
     re_path(
