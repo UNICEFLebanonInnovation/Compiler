@@ -389,22 +389,22 @@ urlpatterns = [
         name='bridging_delete'
     ),
     re_path(
-        r'^Attendance/$',
+        r'^attendance/$',
         view=attendance_views.AttendanceView.as_view(),
         name='attendance'
     ),
     re_path(
-        'Load-Attendance-Children/$',
+        r'^load-attendance-children/$',
         view=attendance_views.LoadAttendanceChildren.as_view(),
         name='load_attendance_children'
     ),
     re_path(
-        'Save-Attendance-Children/$',
+        r'^save-attendance-children/$',
         view=attendance_views.save_attendance_children,
         name='save_attendance_children'
     ),
     re_path(
-        'Attendance-Child/(?P<child>[\w.@+-]+)/$',
+        r'^attendance-child/(?P<child>[\w.@+-]+)/$',
         view=attendance_views.LoadAttendanceChild.as_view(),
         name='attendance_child'
     ),

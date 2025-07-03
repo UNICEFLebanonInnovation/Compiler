@@ -9,17 +9,17 @@ app_name = 'youth'
 urlpatterns = [
 
     re_path(
-        r'^Child-Add/$',
+        r'^child-add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
     ),
     re_path(
-        r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
+        r'^child-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
         name='child_edit'
     ),
     re_path(
-        r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
+        r'^child-mark-delete/(?P<pk>[\w.@+-]+)/$',
         view=views.main_mark_delete_view,
         name='child_mark_deleted'
     ),
@@ -34,42 +34,42 @@ urlpatterns = [
         name='export_pd'
     ),
     re_path(
-        r'^List/$',
+        r'^list/$',
         view=views.MainListView.as_view(),
         name='list'
     ),
     re_path(
-        r'^PD-List/$',
+        r'^pd-list/$',
         view=views.PDListView.as_view(),
         name='pd_list'
     ),
     re_path(
-        r'^PD-Add/$',
+        r'^pd-add/$',
         view=views.PDListView.as_view(),
         name='pd_add'
     ),
     re_path(
-        r'^Program/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
+        r'^program/enrolled-programs-add/(?P<registry>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_add'
     ),
     re_path(
-        r'^Program/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        r'^program/enrolled-programs-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_edit'
     ),
     re_path(
-        r'^Program/Program-Document-Add/$',
+        r'^program/program-document-add/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_add'
     ),
     re_path(
-        r'^Program/Program-Document-Edit/(?P<pk>[\w.@+-]+)/$',
+        r'^program/program-document-edit/(?P<pk>[\w.@+-]+)/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_edit'
     ),
     re_path(
-        r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
+        r'^child-profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='child_profile'
     ),
@@ -84,42 +84,42 @@ urlpatterns = [
         name='service_youth_assessment_edit'
     ),
     re_path(
-        'Outreach-Child-Search/$',
+        r'^outreach-child-search/$',
         views.outreach_child_search,
         name='outreach_child_search'
     ),
     re_path(
-        'Outreach-Child/$',
+        r'^outreach-child/$',
         views.outreach_child,
         name='outreach_child'
     ),
     re_path(
-        'Old-Child-Search/$',
+        r'^old-child-search/$',
         views.old_child_search,
         name='old_child_search'
     ),
     re_path(
-        'Get-Old-Child-Data/$',
+        r'^get-old-child-data/$',
         views.old_child_data,
         name='old_child_data'
     ),
     re_path(
-        'Child-Duplication-Check/$',
+        r'^child-duplication-check/$',
         views.child_duplication_check,
         name='child_duplication_check'
     ),
     re_path(
-        'Quick-Search/$',
+        r'^quick-search/$',
         views.quick_search,
         name='quick_search'
     ),
     re_path(
-        'Child-Profile-Preview/$',
+        r'^child-profile-preview/$',
         view=views.ChildProfilePreview.as_view(),
         name='child_profile_preview'
     ),
     re_path(
-        r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
+        r'^child-registration-cancel/(?P<pk>[\w.@+-]+)/$',
         view=views.main_registration_cancel_view,
         name='child_registration_cancel'
     ),
