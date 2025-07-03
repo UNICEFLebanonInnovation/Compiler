@@ -92,8 +92,8 @@ def get_api_programmes(token, data):
         json_data = json.dumps(data)
 
         resp = requests.post(settings.UNIQUE_PROGRAMMES_API_URL, headers=headers, data=json_data)
-        print(resp)
-        print(resp.text)
+        logger.info(resp)
+        logger.info(resp.text)
         result = json.loads(resp.text)
 
         individuals = result["individuals"] if "individuals" in result else []
@@ -101,7 +101,7 @@ def get_api_programmes(token, data):
             return individuals[0]
         return individuals
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return 0
 
 

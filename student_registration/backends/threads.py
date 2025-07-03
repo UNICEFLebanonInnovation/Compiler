@@ -1,9 +1,12 @@
 import time
 import datetime
+import logging
 from django.utils import timezone
 import threading
 
 from student_registration.students.utils import generate_bulk_unique_id, get_bulk_programmes
+
+logger = logging.getLogger(__name__)
 
 
 class ChildUIDThreading(object):
@@ -47,7 +50,7 @@ class ChildUIDThreading(object):
         # for django >= 2.2
         # Student.objects.bulk_update(records, ['unicef_id'])
 
-        print("End Thread")
+        logger.info("End Thread")
 
 
 class AllChildUIDThreading(object):
@@ -89,7 +92,7 @@ class AllChildUIDThreading(object):
             result = generate_bulk_unique_id(payload)
 
             # Update Django records in bulk
-            for record in records:
+            for record in batch:
                 if record.pk in result:
                     record.unicef_id = result[record.pk]
                     record.save()
@@ -97,7 +100,7 @@ class AllChildUIDThreading(object):
         # for django >= 2.2
         # Student.objects.bulk_update(records, ['unicef_id'])
 
-        print("End Thread")
+        logger.info("End Thread")
 
 
 class CashProgrammeThreading(object):
@@ -128,14 +131,14 @@ class CashProgrammeThreading(object):
             # Update Django records in bulk
             for record in batch:
                 if record.pk in result:
-                    print(result[record.unicef_id])
+                    logger.info(result[record.unicef_id])
                     record.cash_programmes = result[record.unicef_id]
                     record.save()
                 else:
                     record.cash_programmes = {}
                     record.save()
 
-        print("End Thread")
+        logger.info("End Thread")
 
 
 def generate_child_programmes():
@@ -156,7 +159,7 @@ class StudentUIDThreading(object):
 
         thread = threading.Thread(target=self.run, args=())
 
-        print("Start Thread")
+        logger.info("Start Thread")
         thread.daemon = True
         thread.start()
 
@@ -193,7 +196,7 @@ class StudentUIDThreading(object):
         # for django >= 2.2
         # Student.objects.bulk_update(records, ['unicef_id'])
 
-        print("End Thread")
+        logger.info("End Thread")
 
         return True
 
@@ -209,7 +212,7 @@ class TeacherUIDThreading(object):
 
         thread = threading.Thread(target=self.run, args=())
 
-        print("Start Thread")
+        logger.info("Start Thread")
         thread.daemon = True
         thread.start()
 
@@ -246,7 +249,7 @@ class TeacherUIDThreading(object):
         # for django >= 2.2
         # Student.objects.bulk_update(records, ['unicef_id'])
 
-        print("End Thread")
+        logger.info("End Thread")
 
         return True
 

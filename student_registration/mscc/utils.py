@@ -1,5 +1,6 @@
 # -- coding: utf-8 --
 from itertools import chain
+import logging
 
 from datetime import datetime, date
 from django.core.exceptions import ValidationError
@@ -18,6 +19,8 @@ from student_registration.clm.models import (
 )
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.mscc.models import Registration, EducationService, Referral
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -358,7 +361,7 @@ def create_attendance(data, center_id):
             attendance_child.save()
         return True
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return False
 
 
@@ -437,7 +440,7 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
         return result
 
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 
@@ -480,11 +483,11 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
                         old_attendance.delete()
 
                     except MSCCAttendance.DoesNotExist:
-                        print("Old attendance does not exist.")
+                        logger.warning("Old attendance does not exist.")
 
 
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 

@@ -4,6 +4,9 @@ import os
 from celery import Celery
 from django.apps import apps, AppConfig
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 if not settings.configured:
@@ -64,4 +67,4 @@ class CeleryConfig(AppConfig):
 
 @app.task(bind=True)
 def debug_task(self):
-    print('Request: {0!r}'.format(self.request))  # pragma: no cover
+    logger.info('Request: {0!r}'.format(self.request))  # pragma: no cover

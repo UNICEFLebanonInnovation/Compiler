@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 from __future__ import absolute_import, unicode_literals
 
 import environ
+import logging
+
+logger = logging.getLogger(__name__)
 
 ROOT_DIR = environ.Path(__file__) - 3  # (student_registration/config/settings/base.py - 3 = student_registration/)
 APPS_DIR = ROOT_DIR.path('student_registration')
@@ -29,9 +32,9 @@ if READ_DOT_ENV_FILE:
     # that is to say variables from the .env files will only be used if not defined
     # as environment variables.
     env_file = str(ROOT_DIR.path('.env'))
-    print('Loading : {}'.format(env_file))
+    logger.info('Loading : %s', env_file)
     env.read_env(env_file)
-    print('The .env file has been loaded. See base.py for more information')
+    logger.info('The .env file has been loaded. See base.py for more information')
 
 
 # APP CONFIGURATION

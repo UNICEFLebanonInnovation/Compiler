@@ -2,12 +2,15 @@ __author__ = 'achamseddine'
 
 import time
 import tablib
+import logging
 from django.utils.translation import gettext as _
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
 from .file import store_file
 from openpyxl import load_workbook
 from student_registration.backends.djqscsv import render_to_csv_response
+
+logger = logging.getLogger(__name__)
 
 
 @app.task
@@ -640,7 +643,7 @@ def import_attendance_by_student():
 
         except Exception as ex:
             pass
-    print(ctr)
+    logger.info(ctr)
 
 
 @app.task
