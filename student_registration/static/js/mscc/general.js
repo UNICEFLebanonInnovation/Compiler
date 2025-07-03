@@ -1,8 +1,22 @@
 
 $(document).ready(function() {
     $("#submit-id-save").click(function(e){
-        $(this).prop('disabled', true);
-        $('form').submit();
+        var form = $(this).closest('form')[0];
+        var valid = form.checkValidity();
+
+        if (typeof validateMainForm === 'function') {
+            valid = validateMainForm(true) && valid;
+        }
+
+        if (valid) {
+            $(this).prop('disabled', true);
+            form.submit();
+        } else {
+            if (typeof form.reportValidity === 'function') {
+                form.reportValidity();
+            }
+            e.preventDefault();
+        }
     });
 
     $(document).on('click', '#next-page', function(e){
