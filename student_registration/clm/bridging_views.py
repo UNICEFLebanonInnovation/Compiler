@@ -1245,3 +1245,48 @@ def search_duplicate_case(model, round_id, id_type, student_first_name, case_num
     return qs
 
 
+ 
+import sys
+if sys.version_info[0] >= 3:
+    unicode = str
+
+@login_required(login_url='/users/login')
+def bridging_export_all(request, **kwargs):
+    try:
+        cursor = connection.cursor()
+        query = 'SELECT * FROM vw_bridging_extract WHERE id > 0'
+        cursor.execute(query)
+        data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        # Create CSV in memory
+        csv_output = io.StringIO()
+        csv_output.write(u'\ufeff')  # UTF-8 BOM for Arabic Excel support
+        writer = csv.writer(csv_output)
+
+        writer.writerow(headers)
+        for row in data:
+            encoded_row = []
+            for cell in row:
+                if isinstance(cell, (datetime.date, datetime.datetime)):
+                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                elif isinstance(cell, bytes):
+                    # Decode byte strings safely
+                    encoded_row.append(cell.decode('utf-8', errors='replace'))
+                elif cell is None:
+                    encoded_row.append('')
+                else:
+                    encoded_row.append(unicode(cell))  # Ensure proper Unicode text
+            writer.writerow(encoded_row)
+
+        # Prepare downloadable response
+        file_name = "bridging_{}.csv".format(uuid.uuid4().hex)
+        response = HttpResponse(csv_output.getvalue().encode('utf-8'), content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+        return response
+
+    except Exception as e:
+        logging.error("Export failed: %s", traceback.format_exc())
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+

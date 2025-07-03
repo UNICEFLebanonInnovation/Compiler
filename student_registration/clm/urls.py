@@ -363,6 +363,11 @@ urlpatterns = [
         name='bridging_export'
     ),
     url(
+        regex=r'^bridging-export-all/$',
+        view=bridging_views.bridging_export_all,
+        name='bridging_export_all'
+    ),
+    url(
         regex=r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
         view=bridging_views.bridging_school_export,
         name='bridging_school_export_data'
