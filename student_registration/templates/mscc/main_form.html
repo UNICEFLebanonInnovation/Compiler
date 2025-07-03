@@ -34,15 +34,15 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
+                                                    <a href="{% url 'home' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {% if form.instance.id == None %}
-                                                      <a href="/">List</a>
+                                                      <a href="{% url 'mscc:list' %}">List</a>
                                                     {% else %}
-                                                      <a href="/MSCC/Child-Profile/{{ form.instance.id }}">Child Profile</a>
+                                                      <a href="{% url 'mscc:child_profile' form.instance.id %}">Child Profile</a>
                                                     {% endif %}
                                                 </li>
                                                 <li class="breadcrumb-item">
