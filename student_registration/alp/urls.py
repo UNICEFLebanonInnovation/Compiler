@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     re_path(
         r'^pre-test-all/$',
-        view=views.PreTest_allView.as_view(),
+        view=views.PreTestAllView.as_view(),
         name='pre_test_all'
     ),
     re_path(
@@ -40,7 +40,7 @@ urlpatterns = [
     ),
     re_path(
         r'^pre-test-add-all/$',
-        view=views.PreTestAdd_allView.as_view(),
+        view=views.PreTestAddAllView.as_view(),
         name='pre_test_add_all'
     ),
     re_path(

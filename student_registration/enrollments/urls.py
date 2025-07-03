@@ -20,12 +20,12 @@ urlpatterns = [
     ),
     re_path(
         r'^edit_region/(?P<pk>[\w.@+-]+)/$',
-        view=views.Edit_RegionView.as_view(),
+        view=views.EditRegionView.as_view(),
         name='edit_region'
     ),
     re_path(
         r'^saveimage/(?P<pk>[\w.@+-]+)/$',
-        view=views.Update_Image.as_view(),
+        view=views.UpdateImage.as_view(),
         name='saveimage'
     ),
     re_path(
@@ -45,7 +45,7 @@ urlpatterns = [
     ),
     re_path(
         r'^student_by_regions/$',
-        view=views.Student_By_Regions.as_view(),
+        view=views.StudentByRegions.as_view(),
         name='student_by_regions'
     ),
     re_path(
@@ -80,17 +80,17 @@ urlpatterns = [
     ),
     re_path(
         r'^saveimage/(?P<pk>[\w.@+-]+)/$',
-        view=views.Clear_Profile.as_view(),
+        view=views.ClearProfile.as_view(),
         name='clear-profile'
     ),
     re_path(
         r'^modify-images/(?P<pk>[\w.@+-]+)/$',
-        view=views.Modify_Images_View.as_view(),
+        view=views.ModifyImagesView.as_view(),
         name='modify_images'
     ),
     re_path(
         r'^clear-images/(?P<pk>[\w.@+-]+)/$',
-        view=views.Clear_Images_View.as_view(),
+        view=views.ClearImagesView.as_view(),
         name='clear_images'
     ),
     re_path(

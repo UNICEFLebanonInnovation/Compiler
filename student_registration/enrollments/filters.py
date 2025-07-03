@@ -48,14 +48,14 @@ class EnrollmentOldDataFilter(CommonFilter):
         }
 
 
-class Common_ByRegion_Filter(FilterSet):
+class CommonByRegionFilter(FilterSet):
     school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
     classroom = ModelChoiceFilter(queryset=ClassRoom.objects.all(), empty_label=_('Class'))
     section = ModelChoiceFilter(queryset=Section.objects.all(), empty_label=_('Section'))
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.all(), empty_label=_('Nationality'))
 
 
-class Enrollment_by_region_Filter(Common_ByRegion_Filter):
+class EnrollmentByRegionFilter(CommonByRegionFilter):
     class Meta:
         model = Enrollment
         fields = {

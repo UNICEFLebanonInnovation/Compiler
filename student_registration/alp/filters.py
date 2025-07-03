@@ -19,7 +19,7 @@ class OutreachFilter(FilterSet):
         }
 
 
-class PreTest_allFilter(FilterSet):
+class PreTestAllFilter(FilterSet):
     level = ModelChoiceFilter(queryset=EducationLevel.objects.all(), empty_label=_('Entrance test'))
     school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
 

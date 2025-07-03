@@ -577,7 +577,7 @@ class PreTestForm(forms.ModelForm):
         )
 
 
-class PreTest_allForm(forms.ModelForm):
+class PreTestAllForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
         label=_('School'),
@@ -669,7 +669,7 @@ class PreTest_allForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(PreTest_allForm, self).__init__(*args, **kwargs)
+        super(PreTestAllForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
 

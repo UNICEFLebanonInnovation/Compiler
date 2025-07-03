@@ -202,7 +202,7 @@ class InclusionFollowupView(LoginRequiredMixin,
         return super(InclusionFollowupView, self).form_valid(form)
 
 
-def InclusionDeleteView(request, pk):
+def inclusion_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration =  Inclusion.objects.get(pk=pk)

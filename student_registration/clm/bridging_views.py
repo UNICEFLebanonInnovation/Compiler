@@ -773,7 +773,7 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 #     return JsonResponse(result)
 
 
-def BridgingMarkDeleteView(request, pk):
+def bridging_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Bridging.objects.get(id=pk)

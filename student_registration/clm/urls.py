@@ -303,7 +303,7 @@ urlpatterns = [
     ),
     re_path(
         r'^inclusion-delete/(?P<pk>[\w.@+-]+)/$',
-        view=inclusion_views.InclusionDeleteView,
+        view=inclusion_views.inclusion_delete_view,
         name='inclusion_delete'
     ),
     re_path(
@@ -385,7 +385,7 @@ urlpatterns = [
     ),
     re_path(
         r'^bridging-delete/(?P<pk>[\w.@+-]+)/$',
-        view=bridging_views.BridgingMarkDeleteView,
+        view=bridging_views.bridging_mark_delete_view,
         name='bridging_delete'
     ),
     re_path(

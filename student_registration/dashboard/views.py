@@ -630,7 +630,7 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
         }
 
 
-class View_Utilities(TemplateView):
+class UtilitiesView(TemplateView):
     template_name = 'dashboard/utilities.html'
 
     group_required = [u"MEHE"]
@@ -692,7 +692,7 @@ def generate_pretest_result(request):
     return render(request, "dashboard/exporter.html", context)
 
 
-class List_Justification(TemplateView):
+class JustificationListView(TemplateView):
     template_name = 'dashboard/list_justification.html'
     group_required = [u"MEHE"]
 
@@ -734,7 +734,7 @@ class List_Justification(TemplateView):
         }
 
 
-class List_Justification_BySection(TemplateView):
+class JustificationBySectionListView(TemplateView):
     template_name = 'dashboard/list_justification.html'
     group_required = [u"MEHE"]
 
@@ -775,7 +775,7 @@ class List_Justification_BySection(TemplateView):
             'rep_groupby': 'SECTION',
         }
 
-class List_of_available_documents(TemplateView):
+class AvailableDocumentsListView(TemplateView):
     template_name = 'dashboard/available_documents.html'
 
     def handle_no_permission(self, request):
@@ -796,7 +796,7 @@ class List_of_available_documents(TemplateView):
         }
 
 
-def Generate_Justification_number(request):
+def generate_justification_number(request):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
     education_year = EducationYear.objects.get(current_year=True)
@@ -828,7 +828,7 @@ def Generate_Justification_number(request):
     return render(request, "dashboard/utilities.html", context)
 
 
-def degenerate_list_justification(request):
+def degenerate_justification_list(request):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
     education_year = EducationYear.objects.get(current_year=True)
@@ -856,7 +856,7 @@ def degenerate_list_justification(request):
     return render(request, "dashboard/exporter.html", context)
 
 
-class List_of_Attendance(TemplateView):
+class AttendanceListView(TemplateView):
 
     def handle_no_permission(self, request):
         return HttpResponseForbidden()
@@ -906,7 +906,7 @@ class List_of_Attendance(TemplateView):
                 return {'v_data': list_data}
 
 
-def export_summary_of_Attendance(request):
+def export_summary_of_attendance(request):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
     from_school = request.GET['att_fromschool']

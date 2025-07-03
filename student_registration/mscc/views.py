@@ -248,7 +248,7 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
         return reverse('mscc:new_round', kwargs={'registry': registry})
 
 
-def MainMarkDeleteView(request, pk):
+def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
@@ -357,7 +357,7 @@ class MainViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-def MainRegistrationCancelView(request, pk):
+def main_registration_cancel_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)

@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     re_path(
         r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
-        view=views.MainMarkDeleteView,
+        view=views.main_mark_delete_view,
         name='child_mark_deleted'
     ),
     re_path(
@@ -120,7 +120,7 @@ urlpatterns = [
     ),
     re_path(
         r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
-        view=views.MainRegistrationCancelView,
+        view=views.main_registration_cancel_view,
         name='child_registration_cancel'
     ),
     re_path(
