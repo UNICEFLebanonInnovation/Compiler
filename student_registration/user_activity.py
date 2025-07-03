@@ -1,8 +1,11 @@
 # middleware/user_activity.py
 import json
+import logging
 from django.utils.deprecation import MiddlewareMixin
 
 from student_registration.backends.models import UserActivity
+
+logger = logging.getLogger(__name__)
 
 
 class UserActivityMiddleware(MiddlewareMixin):
@@ -31,7 +34,7 @@ class UserActivityMiddleware(MiddlewareMixin):
                     data=serialized_data
                 )
         except Exception as e:
-            print(e)
+            logger.exception(e)
             pass  # Optional: log the error to avoid breaking the app
 
         return response

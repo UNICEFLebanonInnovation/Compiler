@@ -1,11 +1,13 @@
 from django import template
 from django.apps import apps
+import logging
 
 from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration, EducationService, Round, Packages
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 
 
 register = template.Library()
+logger = logging.getLogger(__name__)
 
 
 @register.simple_tag
@@ -228,7 +230,7 @@ def get_educations_data(obj):
             })
         return educations
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 
@@ -238,7 +240,7 @@ def child_attendance(child_id):
         return MSCCAttendanceChild.objects.filter(child_id=child_id)
 
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 
@@ -260,7 +262,7 @@ def child_attendance_history(child_id):
 
         return details
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 

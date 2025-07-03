@@ -24,6 +24,8 @@ import csv
 import codecs
 import logging
 import traceback
+
+logger = logging.getLogger(__name__)
 from .filters import (
     MainFilter,
     FullFilter,
@@ -533,7 +535,7 @@ def export_data(request, **kwargs):
             queryset = queryset.filter(registration__partner__id=partner)
 
 
-        print("governorate: " + str(governorate))
+        logger.debug("governorate: %s", governorate)
 
         if governorate:
             queryset = queryset.filter(registration__governorate__id=governorate)
@@ -599,8 +601,8 @@ def export_data(request, **kwargs):
         registration_ids = queryset.values_list('registration_id', flat=True).distinct()
 
 
-        print('-------registration_ids------------')
-        print(tuple(registration_ids))
+        logger.debug('-------registration_ids------------')
+        logger.debug(tuple(registration_ids))
 
         # vw_youth_data query
         cursor = connection.cursor()
@@ -622,8 +624,8 @@ def export_data(request, **kwargs):
             vw_youth_data_str += " AND id = 0"
 
         # Log the query to the console before execution
-        print("Executing Query:")
-        print(cursor.mogrify(vw_youth_data_str, query_params).decode('utf-8'))  # Ensure compatibility with Python 3
+        logger.debug("Executing Query:")
+        logger.debug(cursor.mogrify(vw_youth_data_str, query_params).decode('utf-8'))  # Ensure compatibility with Python 3
 
 
         # Execute the query

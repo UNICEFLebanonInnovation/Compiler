@@ -1,5 +1,8 @@
 from django import template
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 register = template.Library()
 
@@ -43,6 +46,5 @@ def check_field_value(record, field):
         if record.removed_fields and field in record.removed_fields:
             return 'badge-danger'
     except Exception as ex:
-        # pass
-        print(ex)
+        logger.exception(ex)
     return ''

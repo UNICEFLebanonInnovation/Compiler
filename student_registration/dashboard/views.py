@@ -18,6 +18,9 @@ from django.shortcuts import render
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext as _
 from import_export.formats import base_formats
+import logging
+
+logger = logging.getLogger(__name__)
 from student_registration.locations.models import (
     Location,
 )
@@ -700,10 +703,10 @@ class JustificationListView(TemplateView):
         return HttpResponseForbidden()
 
     def get_queryset(self):
-        if (self.request.GET.get('rb_groupby') == 'BYSECTION'):
-            print('Section')
+        if self.request.GET.get('rb_groupby') == 'BYSECTION':
+            logger.debug('Section')
         else:
-            print ('class')
+            logger.debug('class')
 
     def get_context_data(self, **kwargs):
         from student_registration.enrollments.models import Enrollment
@@ -742,10 +745,10 @@ class JustificationBySectionListView(TemplateView):
         return HttpResponseForbidden()
 
     def get_queryset(self):
-        if (self.request.GET.get('rb_groupby') == 'BYSECTION'):
-            print('Section')
+        if self.request.GET.get('rb_groupby') == 'BYSECTION':
+            logger.debug('Section')
         else:
-            print ('class')
+            logger.debug('class')
 
     def get_context_data(self, **kwargs):
         from student_registration.enrollments.models import Enrollment
