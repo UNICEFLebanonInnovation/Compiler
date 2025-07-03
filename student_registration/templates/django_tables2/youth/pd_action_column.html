@@ -7,7 +7,7 @@
     <button type="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown" class="dropdown-toggle-split dropdown-toggle btn btn-outline-primary"><span class="sr-only">Toggle Dropdown</span>
     </button>
     <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu" x-placement="bottom-start">
-        <a type="button" href="/youth/Program/Program-Document-Edit/{{ record.id }}" tabindex="0" class="dropdown-item">
+        <a type="button" href="{% url 'youth:program_program_document_edit' record.id %}" tabindex="0" class="dropdown-item">
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-create btn-icon-wrapper"> </i></button>
           {% trans "Edit" %}</a>
     </div>
