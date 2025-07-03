@@ -83,7 +83,7 @@ def login_success(request):
 def home(request):
 
     if request.user.is_authenticated:
-        return redirect('/login_success/')
+        return redirect('/login-success/')
     else:
         return redirect('/accounts/login/')
 
