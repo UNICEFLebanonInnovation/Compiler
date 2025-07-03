@@ -796,6 +796,14 @@
 <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/project.js' %}?v=1"></script>
+<script type="text/javascript">
+  $(function () {
+    // Show loading overlay when any form is submitted
+    $(document).on('submit', 'form', function () {
+      $('.app-drawer-overlay').removeClass('d-none');
+    });
+  });
+</script>
 
 {% block extra_js %}{% endblock %}
 
