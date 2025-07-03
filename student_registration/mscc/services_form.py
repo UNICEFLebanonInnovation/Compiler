@@ -448,7 +448,11 @@ class DigitalServiceForm(forms.ModelForm):
         using_akelius = validated_data.get('using_akelius')
         instance.using_akelius = using_akelius
         if using_akelius == 'Yes':
-            instance.akelius_sessions_number = validated_data.get('akelius_sessions_number')
+            akelius_sessions_number = validated_data.get('akelius_sessions_number')
+            if akelius_sessions_number:
+                instance.akelius_sessions_number = int(akelius_sessions_number)
+            else:
+                instance.akelius_sessions_number = 0
             instance.akelius_access = validated_data.get('akelius_access')
             instance.akelius_child_equipped = validated_data.get('akelius_child_equipped')
             instance.akelius_change_literacy = validated_data.get('akelius_change_literacy')
@@ -465,7 +469,11 @@ class DigitalServiceForm(forms.ModelForm):
         using_lp = validated_data.get('using_lp')
         instance.using_lp = using_lp
         if using_lp == 'Yes':
-            instance.lp_sessions_number = validated_data.get('lp_sessions_number')
+            lp_sessions_number = validated_data.get('lp_sessions_number')
+            if lp_sessions_number:
+                instance.lp_sessions_number = int(lp_sessions_number)
+            else:
+                instance.lp_sessions_number = 0
             instance.lp_access = validated_data.get('lp_access')
             instance.lp_child_equipped = validated_data.get('lp_child_equipped')
             instance.lp_change_literacy = validated_data.get('lp_change_literacy')
@@ -490,7 +498,7 @@ class DigitalServiceForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(DigitalServiceForm, self).clean()
         # akelius
-        using_akelius = cleaned_data.get("akelius_sessions_number")
+        using_akelius = cleaned_data.get("using_akelius")
         akelius_sessions_number = cleaned_data.get("akelius_sessions_number")
         akelius_access = cleaned_data.get("akelius_access")
         akelius_child_equipped = cleaned_data.get("akelius_child_equipped")
