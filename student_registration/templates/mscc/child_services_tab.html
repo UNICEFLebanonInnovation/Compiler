@@ -103,7 +103,11 @@
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">{{ result1.education_program }} - Grading</h5>
+                                                  {% if result and es_result.education_program  in 'YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
+                                                    <h5 class="menu-header-title">RS Grade 9 - Grading</h5>
+                                                  {% else %}
+                                                      <h5 class="menu-header-title">{{ result1.education_program }} - Grading</h5>
+                                                  {% endif %}
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
                                                         <!--<b class="text-info">21 </b>-->
@@ -1677,7 +1681,13 @@
                                             <div class="dropdown-menu-header-inner bg-heavy-rain">
                                                 <div class="menu-header-image opacity-1"></div>
                                                 <div class="menu-header-content text-dark">
-                                                    <h5 class="menu-header-title">{{ result1.education_program }} - Scoring</h5>
+                                                  {% if result1.education_program == 'YFS Level 1 - RS Grade 9' %}
+                                                      <h5 class="menu-header-title">YFS Level 1 - Scoring</h5>
+                                                  {% elif result1.education_program == 'YFS Level 2 - RS Grade 9' %}
+                                                      <h5 class="menu-header-title">YFS Level 2 - Scoring</h5>
+                                                  {% else %}
+                                                      <h5 class="menu-header-title">{{ result1.education_program }} - Grading</h5>
+                                                  {% endif %}
                                                     <!--<h6 class="menu-header-subtitle">-->
                                                         <!--You have-->
                                                         <!--<b class="text-info">21 </b>-->
