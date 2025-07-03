@@ -224,7 +224,7 @@
 <div class="app-container app-theme-white body-tabs-shadow fixed-header closed-sidebar">
     <div class="app-header header-shadow bg-night-sky header-text-light">
         <div class="app-header__logo">
-          <a href="/"><div class="logo-src"></div></a>
+          <a href="{% url 'home' %}"><div class="logo-src"></div></a>
             <div class="header__pane ml-auto" style="display: none;">
                 <div>
                     <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
@@ -331,13 +331,13 @@
                             <div class="grid-menu grid-menu-xl grid-menu-3col">
                                 <div class="no-gutters row">
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'home' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-home icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Home
                                         </a>
                                     </div>
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'home' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Makani
                                         </a>
@@ -395,13 +395,13 @@
                                     {% endif %}
 
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'home' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
 
                                         </a>
                                     </div>
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'home' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
 
                                         </a>
@@ -744,7 +744,7 @@
                                                     <!--</li>-->
                                                     {% if request.user.is_superuser %}
                                                     <li class="nav-item">
-                                                        <a href="/admin" class="nav-link">Admin
+                                                        <a href="{% url 'admin:index' %}" class="nav-link">Admin
                                                             <!--<div class="ml-auto badge badge-success">New-->
                                                             <!--</div>-->
                                                         </a>
