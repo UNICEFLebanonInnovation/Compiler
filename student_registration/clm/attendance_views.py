@@ -85,16 +85,31 @@ class AttendanceView(LoginRequiredMixin,
 
 
 def save_attendance_children(request):
-    body_unicode = request.body.decode('utf-8')
+    """Persist attendance for CLM children.
 
-    if body_unicode.strip():
-        try:
-            data = json.loads(body_unicode)
-            result = create_attendance(data)
-            return JsonResponse({'result': result})
+    The previous implementation silently swallowed exceptions and returned
+    ``None`` when the request body was empty or invalid which resulted in the
+    Django ``ValueError`` reported in Sentry.  This function now validates the
+    request body and gracefully handles JSON errors or processing failures,
+    always returning an ``HttpResponse`` instance.
+    """
 
-        except Exception as e:
-            pass
+    body_unicode = request.body.decode("utf-8")
+
+    if not body_unicode.strip():
+        return HttpResponseBadRequest("Empty request body")
+
+    try:
+        data = json.loads(body_unicode)
+    except ValueError:
+        return HttpResponseBadRequest("Invalid JSON payload")
+
+    try:
+        result = create_attendance(data)
+    except Exception:  # pragma: no cover - safety net
+        return HttpResponseBadRequest("Failed to save attendance")
+
+    return JsonResponse({"result": result})
 
 
 class LoadAttendanceChildren(LoginRequiredMixin, TemplateView):
