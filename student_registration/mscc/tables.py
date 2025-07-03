@@ -14,11 +14,26 @@ class BootstrapTable(tables.Table):
 
 
 class CommonTable(tables.Table):
-    child_age = tables.Column(verbose_name=_('Age'))
-    child_birthday = tables.Column(verbose_name=_('Birthday'))
-    education_program = tables.Column(verbose_name=_('Education Program'))
-    class_section = tables.Column(verbose_name=_('Section'))
-    has_previous_registration = tables.Column(verbose_name=_('Has Previous Registration'))
+    child_age = tables.Column(
+        verbose_name=_('Age'),
+        orderable=False,
+    )
+    child_birthday = tables.Column(
+        verbose_name=_('Birthday'),
+        orderable=False,
+    )
+    education_program = tables.Column(
+        verbose_name=_('Education Program'),
+        orderable=False,
+    )
+    class_section = tables.Column(
+        verbose_name=_('Section'),
+        orderable=False,
+    )
+    has_previous_registration = tables.Column(
+        verbose_name=_('Has Previous Registration'),
+        orderable=False,
+    )
 
     class Meta:
         model = Registration
