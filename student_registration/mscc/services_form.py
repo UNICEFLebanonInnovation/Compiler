@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from django import forms
 from django.urls import reverse
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from crispy_forms.helper import FormHelper
 
@@ -13,7 +14,7 @@ from crispy_forms.bootstrap import (
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 
-from .utils import update_service
+from .utils import update_service, validate_date, TrimmedDateField
 from .models import (
     PSSService,
     InclusionService,
@@ -715,7 +716,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
         label=_('Title of the session')
     )
     # Caregivers of children 0-5 years
-    health_nutrition_session_date = forms.DateField(
+    health_nutrition_session_date = TrimmedDateField(
         label=_("Date of the session"),
         required=False
     )
@@ -1071,7 +1072,14 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.attended_health_nutrition_session = attended_health_nutrition_session
         if attended_health_nutrition_session == 'Yes':
             instance.health_nutrition_session_title = validated_data.get('health_nutrition_session_title')
-            instance.health_nutrition_session_date = validated_data.get('health_nutrition_session_date')
+            session_date_str = validated_data.get('health_nutrition_session_date')
+            if session_date_str:
+                try:
+                    instance.health_nutrition_session_date = validate_date(session_date_str)
+                except ValidationError as e:
+                    raise ValidationError('Session date error: {}'.format(e))
+            else:
+                instance.health_nutrition_session_date = None
         else:
             instance.health_nutrition_session_title = ''
             instance.health_nutrition_session_date = None

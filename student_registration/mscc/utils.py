@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, date
 from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef, Subquery
+from django import forms
 from import_export import resources, fields
 
 from student_registration.outreach.models import OutreachChild
@@ -596,6 +597,15 @@ def load_dashboard_data(param, grouping):
     return rows
 
 
+class TrimmedDateField(forms.DateField):
+    """DateField that strips whitespace before parsing."""
+
+    def to_python(self, value):
+        if hasattr(value, 'strip'):
+            value = value.strip()
+        return super().to_python(value)
+
+
 def validate_date(date_str):
 
     if not date_str:
@@ -604,6 +614,10 @@ def validate_date(date_str):
     # If the value is already a date object, return it as is
     if isinstance(date_str, date):
         return date_str
+
+    # Trim white spaces from the provided value
+    if hasattr(date_str, 'strip'):
+        date_str = date_str.strip()
 
     # Supported date format
     formats = ['%Y-%m-%d']
