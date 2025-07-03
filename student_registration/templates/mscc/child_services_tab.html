@@ -155,9 +155,9 @@
                                           <div class="tab-pane active show" id="tab-animated-11" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                      <a href="/MSCC/Services/Education-Grading-Edit/{{ instance.id }}/{{ result1.education_program }}/pre/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades"><i class="pe-7s-pen"></i></a>
+                                                      <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'pre' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Pre Grades"><i class="pe-7s-pen"></i></a>
                                                     {% else %}
-                                                      <a href="/MSCC/Services/Education-Grading-Add/{{ instance.id }}/{{ result1.education_program }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades"><i class="pe-7s-plus"></i></a>
+                                                      <a href="{% url 'mscc:service_education_grading_add' instance.id result1.education_program %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Pre Grades"><i class="pe-7s-plus"></i></a>
                                                     {% endif %}
                                                     </div>
 
@@ -573,7 +573,7 @@
                                           <div class="tab-pane" id="tab-animated-12" role="tabpanel">
                                                     <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                     {% if result %}
-                                                      <a href="/MSCC/Services/Education-Grading-Edit/{{ instance.id }}/{{ result1.education_program }}/post/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades"><i class="pe-7s-pen"></i></a>
+                                                      <a href="{% url 'mscc:service_education_grading_edit' instance.id result1.education_program 'post' result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Post Grades"><i class="pe-7s-pen"></i></a>
                                                     {% endif %}
                                                     </div>
 
@@ -2116,9 +2116,9 @@
                                                     <h5 class="menu-header-title">Digital Component
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Digital-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Digital Component Data"><i class="pe-7s-pen"></i></a>
+                                                              <a href="{% url 'mscc:service_digital_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Digital Component Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Digital-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Digital Component Data"><i class="pe-7s-plus"></i></a>
+                                                              <a href="{% url 'mscc:service_digital_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Digital Component Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>

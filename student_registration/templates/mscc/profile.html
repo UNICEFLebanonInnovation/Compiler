@@ -29,7 +29,7 @@
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">List</a>
+                                                    <a href="{% url 'mscc:list' %}">List</a>
                                                 </li>
                                                 <li class="active breadcrumb-item" aria-current="page">
                                                     Child Profile and Provided Services
@@ -65,7 +65,7 @@
 
                                 {% endif %}
 
-                                <a href="/MSCC/New-Round/{{ instance.id }}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
+                                <a href="{% url 'mscc:new_round' instance.id %}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
 
                                 <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">
                                     {{ instance.type }}
