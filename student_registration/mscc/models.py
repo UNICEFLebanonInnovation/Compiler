@@ -1186,9 +1186,9 @@ class EducationService(TimeStampedModel):
         ('Z', _('Z')),
     )
     CATCH_UP_REGISTERED = Choices(
+        ('', '----------'),
         ('Yes-New Comers programme', _('Yes-New Comers programme')),
-        ('Yes-Undocumented programme', _('Yes-Undocumented programme')),
-        ('No', _('No')),
+        ('Yes-Undocumented programme', _('Yes-Undocumented programme'))
     )
     registration = models.ForeignKey(
         Registration,
