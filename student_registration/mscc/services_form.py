@@ -490,7 +490,7 @@ class DigitalServiceForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(DigitalServiceForm, self).clean()
         # akelius
-        using_akelius = cleaned_data.get("akelius_sessions_number")
+        using_akelius = cleaned_data.get("using_akelius")
         akelius_sessions_number = cleaned_data.get("akelius_sessions_number")
         akelius_access = cleaned_data.get("akelius_access")
         akelius_child_equipped = cleaned_data.get("akelius_child_equipped")

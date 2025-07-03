@@ -29,6 +29,7 @@ from .models import Notification, Exporter, AdolescentUpload
 from .serializers import NotificationSerializer, ExporterSerializer
 from .filters import ExporterFilter
 from .tables import BootstrapTable, ExporterTable
+from collections import OrderedDict
 
 
 def generate_child_unique_id(request):
@@ -209,7 +210,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
     def get(self, request, pk, *args, **kwargs):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
-        data = self.parse_file(upload.file.path)
+        data = self.parse_file(upload.file)
 
         if isinstance(data, dict) and data.get("error"):
             messages.error(request, data["error"])
@@ -224,7 +225,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
     def post(self, request, pk, *args, **kwargs):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
-        data = self.parse_file(upload.file.path)
+        data = self.parse_file(upload.file)
 
         if isinstance(data, dict) and data.get("error"):
             messages.error(request, data["error"])
@@ -240,11 +241,10 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             'upload': upload,
         })
 
-    def parse_file(self, uploaded_file_path):
+    def parse_file(self, uploaded_file):
         from openpyxl import load_workbook
-
         try:
-            wb = load_workbook(filename=uploaded_file_path, read_only=True)
+            wb = load_workbook(filename=uploaded_file, read_only=True)
         except Exception as e:
             raise ValueError("Failed to read Excel file: {}".format(e))
 
@@ -264,15 +264,16 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             values = [cell.value for cell in row]
             if not any(values):
                 continue
-            rows.append({
-                self.mapping.get(headers[i]): values[i]
+            rows.append(OrderedDict(
+                (self.mapping.get(headers[i]), values[i])
                 for i in range(len(headers))
                 if headers[i] in self.mapping
-            })
+            ))
 
         return rows
 
     def import_data(self, data, upload, request):
+        from student_registration.students.utils import generate_one_unique_id
         not_imported = []
         imported = 0
         for index, values in enumerate(data, start=2):
@@ -343,13 +344,25 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                     parent_other_number=values.get('parent_other_number'),
                     other_number=values.get('other_number'),
                 )
+                if adolescent:
+                    adolescent.unicef_id = generate_one_unique_id(
+                        str(adolescent.pk),
+                        adolescent.first_name,
+                        adolescent.father_name,
+                        adolescent.last_name,
+                        adolescent.mother_fullname,
+                        adolescent.birthdate,
+                        adolescent.nationality_name_en,
+                        adolescent.gender
+                    )
+                    adolescent.save()
 
-                Registration.objects.create(
-                    adolescent=adolescent,
-                    owner=request.user,
-                    partner_id=getattr(request.user, 'partner_id', None),
-                    center_id=getattr(request.user, 'center_id', None),
-                )
+                    Registration.objects.create(
+                        adolescent=adolescent,
+                        owner=request.user,
+                        partner_id=getattr(request.user, 'partner_id', None),
+                        center_id=getattr(request.user, 'center_id', None),
+                    )
                 imported += 1
             except Exception as ex:
                 values['row'] = index
