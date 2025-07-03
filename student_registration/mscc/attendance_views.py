@@ -62,16 +62,28 @@ class AttendanceView(LoginRequiredMixin,
 
 
 def save_attendance_children(request):
-    body_unicode = request.body.decode('utf-8')
+    """Persist attendance for MSCC children.
 
-    if body_unicode.strip():
-        try:
-            data = json.loads(body_unicode)
-            result = create_attendance(data, request.GET.get('center_id'))
-            return JsonResponse({'result': result})
+    Similar to the CLM view, this now validates the request body and ensures an
+    ``HttpResponse`` is always returned even when errors occur.
+    """
 
-        except Exception as e:
-            pass
+    body_unicode = request.body.decode("utf-8")
+
+    if not body_unicode.strip():
+        return HttpResponseBadRequest("Empty request body")
+
+    try:
+        data = json.loads(body_unicode)
+    except ValueError:
+        return HttpResponseBadRequest("Invalid JSON payload")
+
+    try:
+        result = create_attendance(data, request.GET.get("center_id"))
+    except Exception:  # pragma: no cover - safety net
+        return HttpResponseBadRequest("Failed to save attendance")
+
+    return JsonResponse({"result": result})
 
 
 class LoadAttendanceChildren(LoginRequiredMixin,
