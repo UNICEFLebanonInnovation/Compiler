@@ -428,7 +428,7 @@ $(document).ready(function() {
     });
 });
 
-$(document).load(function() {
+$(window).on('load', function() {
     var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_child_mother_fullname";
 
     $(document).on('blur', arabic_fields, function(){
