@@ -93,7 +93,7 @@
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'users:profile' %}" title="Profile">Profile</a></li>
 
-                            <li><a href="/admin/" title="Settings">Settings</a></li>
+                            <li><a href="{% url 'admin:index' %}" title="Settings">Settings</a></li>
 
                             <li><a href="{% url 'account_logout' %}" title="Logout">Logout</a></li>
                           {% else %}
@@ -169,7 +169,7 @@
                     {% if request.user.is_authenticated %}
                     <li><a href="{% url 'users:profile' %}" title="Profile">Profile</a></li>
 
-                    <li><a href="/admin/" title="Settings">Settings</a></li>
+                    <li><a href="{% url 'admin:index' %}" title="Settings">Settings</a></li>
 
                     <li><a href="{% url 'account_logout' %}" title="Logout">Logout</a></li>
                   {% else %}

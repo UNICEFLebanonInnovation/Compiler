@@ -16,7 +16,7 @@
             <h5 class="card-title" style="display: inline-block; margin-right: 10px;">Program Staff List</h5>
               {% if request.user|has_group:"MSCC_CENTER" %}
                   <th>
-                    <a href="/locations/Program-Staff-Add/{{ instance.id }}" data-toggle="tooltip" data-placement="top" data-original-title="Add Program Staff." style="display: inline-block;"><i class="pe-7s-plus"></i></a>
+                    <a href="{% url 'locations:program_staff_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Program Staff." style="display: inline-block;"><i class="pe-7s-plus"></i></a>
                   </th>
               {% endif %}
 
@@ -42,7 +42,7 @@
                     <tr>
                         {% if request.user|has_group:"MSCC_CENTER" %}
                           <th>
-                            <a href="/locations/Program-Staff-Edit/{{ program_staff.center.id }}/{{ program_staff.id }}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Program Staff."><i class="pe-7s-pen"></i></a>
+                            <a href="{% url 'locations:program_staff_edit' program_staff.center.id program_staff.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Program Staff."><i class="pe-7s-pen"></i></a>
                             <a href="" class="delete-program-staff" data-id="{{ program_staff.id }}" data-toggle="tooltip" data-placement="top" data-original-title="Delete Program Staff."><i class="pe-7s-trash" style="color: red;"></i></a>
                           </th>
                         {% endif %}

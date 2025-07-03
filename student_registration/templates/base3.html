@@ -119,12 +119,12 @@
                 <ul id="nav" class="row nopadding cd-side-navigation">
                     <li class="col-xs-4 col-sm-3 nopadding menuitem ui-menu-color01" data-animation-duration="1000"
                         data-animation-delay="100">
-                        <a href="/clm/bridging-page/" class="hvr-sweep-to-bottom"><i class="flaticon-insignia"></i><span>{% trans 'home' %}</span></a>
+                        <a href="{% url 'clm:bridging_page' %}" class="hvr-sweep-to-bottom"><i class="flaticon-insignia"></i><span>{% trans 'home' %}</span></a>
                     </li>
                   {% if request.user.is_authenticated %}
                     <li class="col-xs-4 col-sm-3 nopadding menuitem ui-menu-color02" data-animation-duration="1000"
                         data-animation-delay="1100">
-                        <a href="/admin/" class="hvr-sweep-to-bottom"><i
+                        <a href="{% url 'admin:index' %}" class="hvr-sweep-to-bottom"><i
                                 class="flaticon-tool-1"></i><span>{% trans 'Admin' %}</span></a>
                     </li>
                     <li class="col-xs-4 col-sm-3 nopadding menuitem ui-menu-color03" data-animation-duration="1000"

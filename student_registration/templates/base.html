@@ -79,7 +79,7 @@
 
                     	<h1>
 
-                        	<a href="/" title="CLM +"><img src="{% static 'images/logo-gray.png' %}" style="width: 80px; height: 40px;" title="CLM +" alt="CLM +"/></a>
+                                <a href="{% url 'home' %}" title="CLM +"><img src="{% static 'images/logo-gray.png' %}" style="width: 80px; height: 40px;" title="CLM +" alt="CLM +"/></a>
 
                       </h1>
 
@@ -93,7 +93,7 @@
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'users:profile' %}" title="Profile">Profile</a></li>
 
-                            <li><a href="/admin/" title="Settings">Settings</a></li>
+                            <li><a href="{% url 'admin:index' %}" title="Settings">Settings</a></li>
 
                             <li><a href="{% url 'account_logout' %}" title="Logout">Logout</a></li>
                           {% else %}

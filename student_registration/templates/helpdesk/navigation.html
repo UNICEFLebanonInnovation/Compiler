@@ -3,7 +3,7 @@
 {% load util_tags %}
 
 <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse navbar-fixed-top" role="navigation" style="margin-bottom: 0">
-  <a class="navbar-brand mr-15" href="/">
+  <a class="navbar-brand mr-15" href="{% url 'home' %}">
         <img src="{% static 'images/logo.png' %}" style="float: left; width: 30px; height: 30px;" class="mr-10" />
           {% trans "Compiler" %} 2.0
   </a>

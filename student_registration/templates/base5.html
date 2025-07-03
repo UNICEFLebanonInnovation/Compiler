@@ -202,7 +202,7 @@
 <div class="app-container app-theme-white body-tabs-shadow fixed-header closed-sidebar">
     <div class="app-header header-shadow bg-night-sky header-text-light">
         <div class="app-header__logo">
-          <a href="/"><div class="logo-src"></div></a>
+          <a href="{% url 'home' %}"><div class="logo-src"></div></a>
             <div class="header__pane ml-auto" style="display: none;">
                 <div>
                     <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
@@ -618,7 +618,7 @@
                                                     <!--</li>-->
                                                     {% if request.user.is_superuser %}
                                                     <li class="nav-item">
-                                                        <a href="/admin" class="nav-link">Admin
+                                                        <a href="{% url 'admin:index' %}" class="nav-link">Admin
                                                             <!--<div class="ml-auto badge badge-success">New-->
                                                             <!--</div>-->
                                                         </a>

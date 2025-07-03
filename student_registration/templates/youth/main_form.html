@@ -40,7 +40,7 @@
                                                     {% if form.instance.id == None %}
                                                       <a href="{% url 'youth:list' %}">List</a>
                                                     {% else %}
-                                                      <a href="/youth/Child-Profile/{{ form.instance.id }}">Youth Profile</a>
+                                                      <a href="{% url 'youth:child_profile' form.instance.id %}">Youth Profile</a>
                                                     {% endif %}
                                                 </li>
 <!--                                                <li class="breadcrumb-item">-->

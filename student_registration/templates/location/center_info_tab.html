@@ -21,7 +21,7 @@
                                                     <h5 class="menu-header-title">Center Info.
                                                       {% if request.user|has_group:"MSCC_CENTER" and  request.user.center %}
                                                           <div style="float:right;">
-                                                                <a href="/locations/Center-Edit/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Center Info."><i class="pe-7s-pen"></i></a>
+                                                                <a href="{% url 'locations:center_edit' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Center Info."><i class="pe-7s-pen"></i></a>
                                                           </div>
                                                       {% endif %}
                                                     </h5>

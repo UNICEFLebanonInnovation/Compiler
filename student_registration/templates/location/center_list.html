@@ -25,12 +25,12 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
+                                                    <a href="{% url 'home' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                      <a href="/">Center List</a>
+                                                      <a href="{% url 'locations:center_list' %}">Center List</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
