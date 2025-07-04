@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Setup Two-Factor Authentication</h2>
+<p>Scan the QR code with Google Authenticator and enter the current code to confirm.</p>
+<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={{ qr_url }}" alt="QR Code">
+<p>Secret: {{ secret }}</p>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Verify</button>
+</form>
+{% endblock %}

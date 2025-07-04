@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 # from django.urls import reverse
 from django.urls import reverse
 from django.db import models
+import pyotp
 # from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import gettext as _
 
@@ -101,3 +102,12 @@ class Login(models.Model):
 
     class Meta:
         verbose_name_plural = "Login"
+
+
+class UserOTP(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='otp_device')
+    secret = models.CharField(max_length=32, default=pyotp.random_base32)
+    confirmed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"OTP for {self.user.username}"

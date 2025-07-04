@@ -6,11 +6,14 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.utils import translation
 from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.users.utils import force_default_language
 from django.shortcuts import redirect, render
-from .models import User
+from .models import User, UserOTP
+from .forms import OTPVerifyForm
+import pyotp
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -71,13 +74,19 @@ def login_success(request):
     """
 
     if has_group(request.user, 'MSCC'):
-        return HttpResponseRedirect(reverse('mscc:list'))
+        target = reverse('mscc:list')
     elif has_group(request.user, 'YOUTH'):
-        return HttpResponseRedirect(reverse('youth:list'))
+        target = reverse('youth:list')
     elif has_group(request.user, 'CLM_Inclusion'):
-        return HttpResponseRedirect(reverse('clm:inclusion_list'))
+        target = reverse('clm:inclusion_list')
     else:
-        return HttpResponseRedirect(reverse('clm:bridging_page'))
+        target = reverse('clm:bridging_page')
+
+    if hasattr(request.user, 'otp_device') and request.user.otp_device.confirmed and not request.session.get('otp_verified'):
+        request.session['post_2fa_redirect'] = target
+        return redirect('users:two_factor_verify')
+
+    return HttpResponseRedirect(target)
 
 
 def home(request):
@@ -107,3 +116,37 @@ def user_overview(request):
         'user': request.user,
                }
     return render(request, 'users/profile.html', args)
+
+
+@login_required
+def two_factor_setup(request):
+    otp_device, _ = UserOTP.objects.get_or_create(user=request.user)
+    totp = pyotp.TOTP(otp_device.secret)
+    qr_url = totp.provisioning_uri(request.user.username, issuer_name="Compiler")
+    if request.method == 'POST':
+        form = OTPVerifyForm(request.POST)
+        if form.is_valid() and totp.verify(form.cleaned_data['token']):
+            otp_device.confirmed = True
+            otp_device.save()
+            return redirect('users:redirect')
+    else:
+        form = OTPVerifyForm()
+    return render(request, 'users/two_factor_setup.html', {'form': form, 'qr_url': qr_url, 'secret': otp_device.secret})
+
+
+@login_required
+def two_factor_verify(request):
+    try:
+        otp_device = request.user.otp_device
+    except UserOTP.DoesNotExist:
+        return redirect('login_success')
+    totp = pyotp.TOTP(otp_device.secret)
+    if request.method == 'POST':
+        form = OTPVerifyForm(request.POST)
+        if form.is_valid() and totp.verify(form.cleaned_data['token']):
+            request.session['otp_verified'] = True
+            redirect_url = request.session.pop('post_2fa_redirect', 'login_success')
+            return redirect(redirect_url)
+    else:
+        form = OTPVerifyForm()
+    return render(request, 'users/two_factor_verify.html', {'form': form})

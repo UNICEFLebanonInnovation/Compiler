@@ -26,3 +26,8 @@ class UserAdminForm(UserChangeForm):
     class Meta:
         model = User
         fields = '__all__'
+
+
+class OTPVerifyForm(forms.Form):
+    token = forms.CharField(label='OTP Token')
+
