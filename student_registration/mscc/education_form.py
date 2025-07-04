@@ -1658,6 +1658,12 @@ class YouthScoringForm(forms.ModelForm):
                                   kwargs={'registry': registry, 'programme_type': programme_type, 'pre_post': pre_post,
                                           'pk': instance})
 
+        if programme_type:
+            self.fields['programme_type'].initial = programme_type
+            if self.data:
+                self.data = self.data.copy()
+                self.data['programme_type'] = programme_type
+
         if programme_type == "YBLN Level 1":
             field_init(self.fields['arabic_grade'], 'Arabic Language Development', 12)
             field_init(self.fields['language_grade'], 'Foreign Language Development', 0)
@@ -1675,7 +1681,8 @@ class YouthScoringForm(forms.ModelForm):
             self.fields['english_development'].hidden_widget()
             self.fields['financial_development'].hidden_widget()
             self.fields['it_development'].hidden_widget()
-        if programme_type in ["YFS Level 1", "YFS Level 2","YFS Level 1 - RS Grade 9","YFS Level 2 - RS Grade 9"]:
+
+        if programme_type in ["YFS Level 1", "YFS Level 2", "YFS Level 1 - RS Grade 9", "YFS Level 2 - RS Grade 9"]:
             field_init(self.fields['english_development'], 'English Development', 100)
             field_init(self.fields['financial_development'], 'Financial Literacy Development', 100)
             field_init(self.fields['it_development'], 'IT Development', 100)
@@ -1809,6 +1816,54 @@ class YouthScoringForm(forms.ModelForm):
         messages.success(request, _('Your data has been sent successfully to the server'))
 
         return instance
+
+    def clean(self):
+        cleaned_data = super(YouthScoringForm, self).clean()
+        programme_type = cleaned_data.get("programme_type") or self.initial.get("programme_type")
+        thresholds = {
+            "YBLN Level 1": {
+                "arabic_grade": 12,
+                "language_grade": 0,
+                "math_grade": 15,
+                "life_skills": 12,
+            },
+            "YBLN Level 2": {
+                "arabic_grade": 12,
+                "language_grade": 12,
+                "math_grade": 21,
+                "life_skills": 12,
+            },
+            "YFS Level 1": {
+                "english_development": 100,
+                "financial_development": 100,
+                "it_development": 100,
+            },
+            "YFS Level 2": {
+                "english_development": 100,
+                "financial_development": 100,
+                "it_development": 100,
+            },
+            "YFS Level 1 - RS Grade 9": {
+                "english_development": 100,
+                "financial_development": 100,
+                "it_development": 100,
+            },
+            "YFS Level 2 - RS Grade 9": {
+                "english_development": 100,
+                "financial_development": 100,
+                "it_development": 100,
+            }
+        }
+
+        if programme_type in thresholds:
+            programme_thresholds = thresholds[programme_type]
+
+            for field, max_value in programme_thresholds.items():
+                field_value = cleaned_data.get(field)
+                if field_value is not None and field_value > max_value:
+                    self.add_error(field, "This value is greater than {}".format(max_value))
+
+        return cleaned_data
 
     class Meta:
         model = EducationProgrammeAssessment

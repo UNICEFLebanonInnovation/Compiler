@@ -162,8 +162,9 @@ class StudentUIDThreading(object):
 
     def run(self):
         from student_registration.students.models import Student
+        from student_registration.clm.models import Bridging
 
-        records = Student.objects.exclude(unicef_id__isnull=False)[0:10000]
+        records = Student.objects.filter(id__in=Bridging.objects.values('student_id'), unicef_id__isnull=True)[:1000]
 
         payload = {
             "individuals": [

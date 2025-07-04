@@ -867,6 +867,7 @@ class MainForm(forms.ModelForm):
             individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
 
             # UNHCR Registered
+
             if id_type and id_type.id == 1:
                 if not case_number:
                     self.add_error('case_number', 'This field is required')
@@ -993,11 +994,11 @@ class MainForm(forms.ModelForm):
                     msg = "The Parent Extract Record are not matched"
                     self.add_error('parent_extract_record_confirm', msg)
 
-            child_living_arrangement = cleaned_data.get("caregiver_mother_name")
+            child_living_arrangement = cleaned_data.get("child_living_arrangement")
             if not child_living_arrangement:
                 self.add_error('child_living_arrangement', 'This field is required')
 
-            cash_support_programmes = cleaned_data.get("caregiver_mother_name")
+            cash_support_programmes = cleaned_data.get("cash_support_programmes")
             if not cash_support_programmes:
                 self.add_error('cash_support_programmes', 'This field is required')
 
