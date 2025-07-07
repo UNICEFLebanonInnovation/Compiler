@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Enable Two-Factor Authentication</h2>
+<ol>
+  <li>Install Google Authenticator on your mobile device.</li>
+  <li>Click <strong>Begin Setup</strong> to scan a QR code.</li>
+  <li>Enter the 6-digit code from the app to confirm.</li>
+</ol>
+<form method="post">
+  {% csrf_token %}
+  <button name="setup" type="submit" class="btn btn-primary">Begin Setup</button>
+  <button name="skip" type="submit" class="btn btn-secondary">Skip for now</button>
+</form>
+{% endblock %}

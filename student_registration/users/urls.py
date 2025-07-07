@@ -52,6 +52,11 @@ urlpatterns = [
         name='two_factor_setup'
     ),
     re_path(
+        r'^two-factor/prompt/$',
+        view=views.two_factor_prompt,
+        name='two_factor_prompt'
+    ),
+    re_path(
         r'^two-factor/verify/$',
         view=views.two_factor_verify,
         name='two_factor_verify'

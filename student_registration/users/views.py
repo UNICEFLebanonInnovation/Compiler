@@ -85,6 +85,9 @@ def login_success(request):
     if hasattr(request.user, 'otp_device') and request.user.otp_device.confirmed and not request.session.get('otp_verified'):
         request.session['post_2fa_redirect'] = target
         return redirect('users:two_factor_verify')
+    elif not hasattr(request.user, 'otp_device') or not request.user.otp_device.confirmed:
+        request.session['post_2fa_redirect'] = target
+        return redirect('users:two_factor_prompt')
 
     return HttpResponseRedirect(target)
 
@@ -119,6 +122,17 @@ def user_overview(request):
 
 
 @login_required
+def two_factor_prompt(request):
+    """Prompt the user to enable two-factor authentication."""
+    if request.method == 'POST':
+        if 'skip' in request.POST:
+            redirect_url = request.session.pop('post_2fa_redirect', 'login_success')
+            return redirect(redirect_url)
+        return redirect('users:two_factor_setup')
+    return render(request, 'users/two_factor_prompt.html')
+
+
+@login_required
 def two_factor_setup(request):
     otp_device, _ = UserOTP.objects.get_or_create(user=request.user)
     totp = pyotp.TOTP(otp_device.secret)
@@ -128,6 +142,9 @@ def two_factor_setup(request):
         if form.is_valid() and totp.verify(form.cleaned_data['token']):
             otp_device.confirmed = True
             otp_device.save()
+            redirect_url = request.session.pop('post_2fa_redirect', None)
+            if redirect_url:
+                return redirect(redirect_url)
             return redirect('users:redirect')
     else:
         form = OTPVerifyForm()
