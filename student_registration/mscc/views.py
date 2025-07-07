@@ -38,6 +38,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import re
 from django.contrib.auth.decorators import login_required
+from .tasks import export_mscc_data_async
 
 from .filters import (
     MainFilter,
@@ -699,6 +700,15 @@ class ChildProfilePreview(LoginRequiredMixin, TemplateView):
 
         context['instance'] = instance
         return context
+
+
+@login_required(login_url='/users/login')
+def export_list_async(request):
+    round_id = request.GET.get('round', '')
+    if not round_id:
+        return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'}, status=400)
+    export_mscc_data_async.delay(request.user.id, round_id)
+    return JsonResponse({'status': 'processing'})
 
 
 @login_required(login_url='/users/login')

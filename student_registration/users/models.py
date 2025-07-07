@@ -30,6 +30,12 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
+    fcm_token = models.CharField(
+        _('FCM token'),
+        max_length=255,
+        null=True,
+        blank=True
+    )
     school = models.ForeignKey(
         'schools.School',
         blank=True, null=True,
