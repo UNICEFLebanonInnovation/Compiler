@@ -12,7 +12,11 @@ from django.core.files.base import ContentFile
 
 from student_registration.taskapp.celery import app
 from student_registration.mscc.views import has_group  # reuse existing function
-from student_registration.backends.models import ExportHistory, Notification
+from student_registration.backends.models import (
+    ExportHistory,
+    Notification,
+    ExportRequest,
+)
 from student_registration.utility.firebase import send_push
 
 @app.task
@@ -101,5 +105,10 @@ def export_mscc_data_async(user_id, round_id):
             'Your export file is ready.',
             data={'file': file_name}
         )
+
+    ExportRequest.objects.create(
+        user=user,
+        file_link=f'/MSCC/export-download/{file_name}/'
+    )
 
     return file_name

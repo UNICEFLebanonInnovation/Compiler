@@ -125,3 +125,25 @@ class UserActivity(models.Model):
     def __str__(self):
         return "{} - {} {}".format(self.username, self.method, self.path)
 
+
+class ExportRequest(TimeStampedModel):
+    """Record background export requests for later reference."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='+',
+        verbose_name=_('Requested by'),
+    )
+    file_link = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ['-created']
+        verbose_name = 'Export Request'
+        verbose_name_plural = 'Export Requests'
+
+    def __str__(self):
+        username = self.user.username if self.user else 'unknown'
+        return f"{username} -> {self.file_link}"
+

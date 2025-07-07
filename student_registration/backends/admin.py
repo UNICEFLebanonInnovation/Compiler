@@ -10,7 +10,13 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 # from helpdesk.models import Ticket
-from .models import Exporter, Notification, ExportHistory, UserActivity
+from .models import (
+    Exporter,
+    Notification,
+    ExportHistory,
+    UserActivity,
+    ExportRequest,
+)
 from student_registration.users.models import User
 from student_registration.schools.models import School
 
@@ -386,6 +392,18 @@ class UserActivityAdmin(admin.ModelAdmin):
         'path'
     )
 
+
+class ExportRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'file_link',
+        'created',
+    )
+    search_fields = (
+        'user__username',
+        'file_link',
+    )
+
 # admin.site.register(LogEntry)
 # admin.site.register(Exporter, ExporterAdmin)
 # admin.site.register(Notification, NotificationAdmin)
@@ -395,3 +413,4 @@ class UserActivityAdmin(admin.ModelAdmin):
 
 admin.site.register(ExportHistory, ExportHistoryAdmin)
 admin.site.register(UserActivity, UserActivityAdmin)
+admin.site.register(ExportRequest, ExportRequestAdmin)
