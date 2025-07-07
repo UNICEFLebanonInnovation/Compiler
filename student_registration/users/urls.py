@@ -46,4 +46,9 @@ urlpatterns = [
         view=views.user_overview,
         name='profile'
     ),
+    re_path(
+        r'^save-fcm-token/$',
+        view=views.save_fcm_token,
+        name='save_fcm_token'
+    ),
 ]

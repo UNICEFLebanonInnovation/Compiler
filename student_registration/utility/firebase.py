@@ -14,7 +14,7 @@ def _get_app():
     return _app
 
 
-def send_push(token, title, body):
+def send_push(token, title, body, data=None):
     if not token:
         return
     app = _get_app()
@@ -23,6 +23,7 @@ def send_push(token, title, body):
     message = messaging.Message(
         notification=messaging.Notification(title=title, body=body),
         token=token,
+        data=data or {},
     )
     try:
         messaging.send(message, app=app)

@@ -413,10 +413,26 @@
                                                         <div class="vertical-timeline-item dot-dark vertical-timeline-element">
                                                             <div><span class="vertical-timeline-element-icon bounce-in"></span>
                                                                 <div class="vertical-timeline-element-content bounce-in"><h4 class="timeline-title">This dot has a dark state</h4><span class="vertical-timeline-element-date"></span></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+</div>
+</div>
+</div>
+</div>
+<div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Export Ready</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p id="downloadModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" id="downloadLink" href="#" target="_blank">Download</a>
+            </div>
+        </div>
+    </div>
+</div>
                                             </div>
                                         </div>
                                     </div>
@@ -796,6 +812,13 @@
 <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
 
 <script type="text/javascript" src="{% static 'js/project.js' %}?v=1"></script>
+<script>
+  window.firebaseConfig = {{ FIREBASE_CONFIG|default:'{}'|safe }};
+  window.firebaseVapidKey = '{{ FIREBASE_VAPID_KEY|default:"" }}';
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging-compat.js"></script>
+<script type="text/javascript" src="{% static 'js/push_notifications.js' %}?v=1"></script>
 <script type="text/javascript">
   $(function () {
     // Show loading overlay when any form is submitted

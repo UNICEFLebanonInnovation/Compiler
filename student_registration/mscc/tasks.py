@@ -95,6 +95,11 @@ def export_mscc_data_async(user_id, round_id):
         notification.schools.add(user.school_id)
 
     if user.fcm_token:
-        send_push(user.fcm_token, 'MSCC export ready', 'Your export file is ready.')
+        send_push(
+            user.fcm_token,
+            'MSCC export ready',
+            'Your export file is ready.',
+            data={'file': file_name}
+        )
 
     return file_name

@@ -11,6 +11,8 @@ from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.users.utils import force_default_language
 from django.shortcuts import redirect, render
 from .models import User
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -107,3 +109,16 @@ def user_overview(request):
         'user': request.user,
                }
     return render(request, 'users/profile.html', args)
+
+
+@login_required
+@require_POST
+def save_fcm_token(request):
+    token = request.POST.get('token')
+    if not token:
+        return JsonResponse({'error': 'invalid token'}, status=400)
+    user = request.user
+    if user.fcm_token != token:
+        user.fcm_token = token
+        user.save(update_fields=['fcm_token'])
+    return JsonResponse({'status': 'ok'})
