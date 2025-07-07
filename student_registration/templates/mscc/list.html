@@ -243,6 +243,12 @@
                 <div class = "downloading-message" style = "display:none">
                   Loading...
                 </div>
+                <a href="" title="Async Download" class="btn btn-outline-info download-report-async ms-2">
+                    <i class="lnr-cloud-download"></i>
+                </a>
+                <div class="async-message" style="display:none">
+                  Processing...
+                </div>
               {% endif %}
 
             </form>
@@ -275,7 +281,7 @@
 {% block extra_js %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=20"></script>
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
 
 

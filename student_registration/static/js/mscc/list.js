@@ -113,5 +113,36 @@ $(document).ready(function() {
 
     });
 
+    $(document).on('click', '.download-report-async', function(e){
+        e.preventDefault();
+
+        var round = $("#id_round").val();
+        if(!round){
+            alert("Cycle is not selected. Please select a cycle before exporting data.");
+            return;
+        }
+
+        requestHeaders = getHeader();
+
+        $(".async-message").show();
+        $('.download-report-async').addClass('disabled');
+
+        $.ajax({
+            url: "/MSCC/export-list-async/?round=" + round,
+            type: "GET",
+            headers: requestHeaders,
+            success: function(data) {
+                $(".async-message").hide();
+                $('.download-report-async').removeClass('disabled');
+                alert("Export started. You will be notified when it is ready.");
+            },
+            error: function(error) {
+                $(".async-message").hide();
+                $('.download-report-async').removeClass('disabled');
+            }
+        });
+
+    });
+
 });
 
