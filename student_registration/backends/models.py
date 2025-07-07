@@ -137,6 +137,8 @@ class ExportRequest(TimeStampedModel):
         verbose_name=_('Requested by'),
     )
     file_link = models.CharField(max_length=255)
+    selected_fields = models.TextField(blank=True, null=True)
+    file_format = models.CharField(max_length=10, default='csv')
 
     class Meta:
         ordering = ['-created']

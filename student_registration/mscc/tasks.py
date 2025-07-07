@@ -18,9 +18,10 @@ from student_registration.backends.models import (
     ExportRequest,
 )
 from student_registration.utility.firebase import send_push
+from openpyxl import Workbook
 
 @app.task
-def export_mscc_data_async(user_id, round_id):
+def export_mscc_data_async(user_id, round_id, fields=None, file_format='csv'):
     cursor = connection.cursor()
     User = get_user_model()
     user = User.objects.get(id=user_id)
@@ -50,16 +51,32 @@ def export_mscc_data_async(user_id, round_id):
     mscc_data = cursor.fetchall()
     headers = [col[0] for col in cursor.description]
 
+    if fields:
+        selected_fields = [f for f in fields if f in headers]
+    else:
+        selected_fields = headers
+    indices = [headers.index(f) for f in selected_fields]
+
     zip_output = io.BytesIO()
     with zipfile.ZipFile(zip_output, 'w') as zf:
-        csv_mscc_output = io.StringIO()
-        csv_writer = csv.writer(csv_mscc_output)
-        csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
-        csv_writer.writerow(headers)
-        for row in mscc_data:
-            encoded_row = [smart_str(cell) for cell in row]
-            csv_writer.writerow(encoded_row)
-        zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
+        if file_format == 'xlsx':
+            wb = Workbook()
+            ws = wb.active
+            ws.append(selected_fields)
+            for row in mscc_data:
+                ws.append([smart_str(row[i]) for i in indices])
+            buf = io.BytesIO()
+            wb.save(buf)
+            buf.seek(0)
+            zf.writestr('mscc_data.xlsx', buf.getvalue())
+        else:
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(selected_fields)
+            for row in mscc_data:
+                csv_writer.writerow([smart_str(row[i]) for i in indices])
+            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
 
         registration_ids = [row[0] for row in mscc_data]
         if registration_ids:
@@ -108,7 +125,9 @@ def export_mscc_data_async(user_id, round_id):
 
     ExportRequest.objects.create(
         user=user,
-        file_link=f'/MSCC/export-download/{file_name}/'
+        file_link=f'/MSCC/export-download/{file_name}/',
+        selected_fields=','.join(selected_fields),
+        file_format=file_format,
     )
 
     return file_name

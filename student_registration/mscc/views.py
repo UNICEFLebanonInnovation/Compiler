@@ -707,7 +707,10 @@ def export_list_async(request):
     round_id = request.GET.get('round', '')
     if not round_id:
         return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'}, status=400)
-    export_mscc_data_async.delay(request.user.id, round_id)
+    fields_param = request.GET.get('fields', '')
+    fields = [f for f in fields_param.split(',') if f]
+    file_format = request.GET.get('format', 'csv')
+    export_mscc_data_async.delay(request.user.id, round_id, fields, file_format)
     return JsonResponse({'status': 'processing'})
 
 

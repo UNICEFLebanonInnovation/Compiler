@@ -397,6 +397,7 @@ class ExportRequestAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'file_link',
+        'file_format',
         'created',
     )
     search_fields = (

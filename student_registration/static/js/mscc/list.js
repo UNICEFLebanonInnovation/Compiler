@@ -127,8 +127,11 @@ $(document).ready(function() {
         $(".async-message").show();
         $('.download-report-async').addClass('disabled');
 
+        var fields = $("#id_export_fields").val() || [];
+        var format = $("#id_export_format").val() || 'csv';
+
         $.ajax({
-            url: "/MSCC/export-list-async/?round=" + round,
+            url: "/MSCC/export-list-async/?round=" + round + "&fields=" + fields.join(',') + "&format=" + format,
             type: "GET",
             headers: requestHeaders,
             success: function(data) {
