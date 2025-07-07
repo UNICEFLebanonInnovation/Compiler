@@ -374,7 +374,10 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             writer = csv.DictWriter(csv_buffer, fieldnames=not_imported[0].keys())
             writer.writeheader()
             writer.writerows(not_imported)
-            upload.failed_file.save('failed_{}.csv'.format(upload.pk), ContentFile(csv_buffer.getvalue()))
+            upload.failed_file.save(
+                'failed_{}.csv'.format(upload.pk),
+                ContentFile(csv_buffer.getvalue().encode('utf-8'))  # convert str to bytes
+            )
 
         return imported, not_imported
 
