@@ -78,6 +78,24 @@ class Notification(TimeStampedModel):
         return self.name
 
 
+class UserActivity(TimeStampedModel):
+    """Store details about each authenticated user request."""
+
+    username = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        on_delete=models.SET_NULL,
+    )
+    path = models.CharField(max_length=255)
+    method = models.CharField(max_length=10)
+    data = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['created']
+
+
 def create_helpdesk_notification(sender, instance, created, **kwargs):
     title = ''
     comments = ''

@@ -107,6 +107,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'student_registration.lockout_middleware.StudentLockoutMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'student_registration.user_activity.UserActivityMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

@@ -45,6 +45,11 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
+    last_activity = models.DateTimeField(
+        _('last activity'),
+        null=True,
+        blank=True
+    )
     def __str__(self):
         return self.username
 
