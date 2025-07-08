@@ -209,68 +209,98 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
     ]
 
     def get(self, request, pk, *args, **kwargs):
-        upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
-        data = self.parse_file(upload.file)
+        try:
+            upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
+            data = self.parse_file(upload.file)
 
-        if isinstance(data, dict) and data.get("error"):
-            messages.error(request, data["error"])
+            if isinstance(data, dict) and data.get("error"):
+                messages.error(request, data["error"], extra_tags='import')
+                return redirect("backends:adolescent_upload")
+
+            preview = data[:5]
+            return render(request, self.template_name, {
+                'upload': upload,
+                'count': len(data),
+                'preview': preview,
+            })
+        except Exception as e:
+            messages.error(request, "An unexpected error occurred while processing the file", extra_tags='import')
             return redirect("backends:adolescent_upload")
-
-        preview = data[:5]
-        return render(request, self.template_name, {
-            'upload': upload,
-            'count': len(data),
-            'preview': preview,
-        })
 
     def post(self, request, pk, *args, **kwargs):
-        upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
-        data = self.parse_file(upload.file)
+        try:
+            upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
+            data = self.parse_file(upload.file)
 
-        if isinstance(data, dict) and data.get("error"):
-            messages.error(request, data["error"])
+            if isinstance(data, dict) and data.get("error"):
+                messages.error(request, data["error"], extra_tags='import')
+                return redirect("backends:adolescent_upload")
+
+            imported, not_imported = self.import_data(data, upload, request)
+            upload.processed = True
+            upload.save()
+            return render(request, self.result_template, {
+                'imported': imported,
+                'failed': len(not_imported),
+                'not_imported': not_imported,
+                'upload': upload,
+            })
+        except Exception as e:
+            messages.error(request, "An unexpected error occurred while importing the file", extra_tags='import')
             return redirect("backends:adolescent_upload")
-
-        imported, not_imported = self.import_data(data, upload, request)
-        upload.processed = True
-        upload.save()
-        return render(request, self.result_template, {
-            'imported': imported,
-            'failed': len(not_imported),
-            'not_imported': not_imported,
-            'upload': upload,
-        })
 
     def parse_file(self, uploaded_file):
         from openpyxl import load_workbook
+        from collections import OrderedDict
+
         try:
             wb = load_workbook(filename=uploaded_file, read_only=True)
-        except Exception as e:
-            raise ValueError("Failed to read Excel file: {}".format(e))
 
-        if not wb.sheetnames:
-            raise ValueError("The uploaded Excel file has no sheets. Please check the file content.")
+            if not wb.sheetnames:
+                return {"error": "The uploaded Excel file has no sheets. Please check the file content."}
 
-        if 'Registrations' not in wb.sheetnames:
-            raise ValueError("Sheet 'Registrations' not found.")
+            if 'Registrations' not in wb.sheetnames:
+                return {"error": "Sheet 'Registrations' not found in Excel file."}
 
-        ws = wb['Registrations']
+            ws = wb['Registrations']
 
-        header_row = next(ws.iter_rows(min_row=1, max_row=1))
-        headers = [cell.value for cell in header_row]
+            try:
+                header_row = next(ws.iter_rows(min_row=1, max_row=1))
+                headers = [cell.value for cell in header_row]
+            except Exception:
+                return {"error": "Failed to read header row in 'Registrations' sheet."}
 
-        rows = []
-        for row in ws.iter_rows(min_row=2):
-            values = [cell.value for cell in row]
-            if not any(values):
-                continue
-            rows.append(OrderedDict(
-                (self.mapping.get(headers[i]), values[i])
-                for i in range(len(headers))
-                if headers[i] in self.mapping
-            ))
+            rows = []
+            skipped_rows = []
 
-        return rows
+            for row_index, row in enumerate(ws.iter_rows(min_row=2), start=2):
+                try:
+                    values = [cell.value for cell in row]
+                    if not any(values):
+                        continue
+                    row_data = OrderedDict(
+                        (self.mapping.get(headers[i]), values[i])
+                        for i in range(len(headers))
+                        if headers[i] in self.mapping
+                    )
+                    row_data['row'] = row_index
+                    rows.append(row_data)
+                except Exception:
+                    skipped_rows.append(row_index)
+                    continue
+
+            if skipped_rows:
+                return {
+                    "error": "Failed to parse rows: {}. Please check the file format.".format(
+                        ", ".join(map(str, skipped_rows))
+                    ),
+                    "skipped": skipped_rows
+                }
+
+            return rows
+
+        except Exception:
+            return {"error": "Unexpected error while processing Excel file"}
 
     def import_data(self, data, upload, request):
         from student_registration.students.utils import generate_one_unique_id
