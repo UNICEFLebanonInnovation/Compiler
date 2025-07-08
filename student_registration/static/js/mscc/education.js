@@ -48,9 +48,12 @@ function reorganizeForm()
       'BLN Catch-up',
       'ABLN Catch-up',
       'CBECE Catch-up',
-      'YBLN Catch-up'
+      'YBLN Catch-up                                              '
     ];
-    
+    console.log(CatchUpPrograms)
+    console.log(education_program)
+
+
     if (CatchUpPrograms.includes(education_program)) {
         $('#div_id_catch_up_registered').removeClass('d-none');
         $('#span_catch_up_registered').removeClass('d-none');
