@@ -7,7 +7,6 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import status
 from django.db.models import F, Q
@@ -486,7 +485,6 @@ def quick_search(request):
                         'child__father_name', 'child__mother_fullname').distinct()
 
     return JsonResponse({'result': json.dumps(list(qs))})
-
 
 
 class ChildProfilePreview(LoginRequiredMixin,

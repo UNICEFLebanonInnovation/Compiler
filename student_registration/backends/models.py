@@ -6,6 +6,8 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
 from student_registration.schools.models import School
+from student_registration.adolescent.models import Adolescent
+
 
 
 class Exporter(TimeStampedModel):
