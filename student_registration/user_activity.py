@@ -1,6 +1,7 @@
 # middleware/user_activity.py
 import json
 import logging
+
 from django.utils.deprecation import MiddlewareMixin
 
 from student_registration.backends.models import UserActivity
@@ -9,32 +10,50 @@ logger = logging.getLogger(__name__)
 
 
 class UserActivityMiddleware(MiddlewareMixin):
+    """Middleware to log user activity for authenticated users."""
+
     def __init__(self, get_response=None):
         self.get_response = get_response
+        super().__init__(get_response)
+
+    def _extract_data(self, request):
+        if request.method in {"POST", "PUT", "PATCH"}:
+            content_type = request.META.get("CONTENT_TYPE", "").lower()
+            if "application/json" in content_type:
+                try:
+                    body = request.body.decode(request.encoding or "utf-8")
+                    return json.loads(body)
+                except Exception:  # pragma: no cover - fall back to POST
+                    return {}
+            return request.POST.copy()
+        return request.GET.copy()
 
     def __call__(self, request):
         response = self.get_response(request)
         try:
-            if request.user.is_authenticated:
-                if request.method == "POST":
-                    data = request.POST.copy()
+            if request.user.is_authenticated and not request.path.startswith("/admin"):
+                data = self._extract_data(request)
+                if hasattr(data, "lists"):
+                    data_dict = dict(data.lists())
                 else:
-                    data = request.GET.copy()
+                    data_dict = data
 
-                if request.path.startswith('/admin'):
-                   return response
+                data_dict.update(
+                    {
+                        "ip": request.META.get("REMOTE_ADDR"),
+                        "user_agent": request.META.get("HTTP_USER_AGENT", ""),
+                    }
+                )
 
-                # Serialize to JSON string (handle complex data manually if needed)
-                serialized_data = json.dumps(dict(data.lists()))
+                serialized_data = json.dumps(data_dict)
 
                 UserActivity.objects.create(
-                    username=request.user,
-                    path=request.path,
+                    username=request.user.username,
+                    path=request.get_full_path(),
                     method=request.method,
-                    data=serialized_data
+                    data=serialized_data,
                 )
-        except Exception as e:
+        except Exception as e:  # pragma: no cover - logging should not break request
             logger.exception(e)
-            pass  # Optional: log the error to avoid breaking the app
 
         return response
