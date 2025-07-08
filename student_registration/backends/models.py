@@ -6,8 +6,6 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
 from student_registration.schools.models import School
-from student_registration.adolescent.models import Adolescent
-
 
 
 class Exporter(TimeStampedModel):
@@ -135,6 +133,7 @@ class AdolescentUpload(TimeStampedModel):
         blank=True,
         null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Uploaded by')
     )
     failed_file = models.FileField(

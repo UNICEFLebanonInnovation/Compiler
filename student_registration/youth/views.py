@@ -6,6 +6,8 @@ import json
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from rest_framework import status
@@ -890,7 +892,7 @@ def program_document_indicator_list_view(request, program_document_id):
         # return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
-@csrf_exempt
+@method_decorator(csrf_exempt, name='dispatch')
 def save_indicators(request):
     if request.method == 'POST':
         payload = json.loads(request.body.decode('utf-8'))

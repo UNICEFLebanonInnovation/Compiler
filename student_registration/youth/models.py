@@ -531,18 +531,21 @@ class ProgramDocumentIndicator(TimeStampedModel):
     program_document = models.ForeignKey(
         ProgramDocument,
         blank=False, null=True,
+        on_delete=models.SET_NULL,
         related_name='indicators',
     )
     master_indicator = models.ForeignKey(
         MasterProgram,
         blank=True, null=True,
         related_name='master_indicator',
+        on_delete=models.SET_NULL,
         verbose_name=_('Master Indicator')
     )
     sub_indicator = models.ForeignKey(
         SubProgram,
         blank=True, null=True,
         related_name='sub_indicator',
+        on_delete=models.SET_NULL,
         verbose_name=_('Sub Indicator')
     )
     baseline = models.IntegerField(blank=True, null=True)
