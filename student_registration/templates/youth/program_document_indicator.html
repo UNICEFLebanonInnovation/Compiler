@@ -1,0 +1,275 @@
+{% extends "youth/base.html" %}
+{% load static i18n %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% bootstrap_css %}
+
+{% block content %}
+<style>
+    .wide-dropdown {
+        width: 200px;
+    }
+    .wide-checkbox input[type="checkbox"] {
+      width: 50px;
+    }
+</style>
+<div class="app-page-title">
+                        <div class="page-title-wrapper">
+                            <div class="page-title-heading">
+                                <div>
+                                    <div class="page-title-head center-elem page-title-heading">
+                                        <span class="d-inline-block pr-2">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                        <span class="d-inline-block">
+                                            {{ request.user.username }} - {{ request.user.partner }}
+                                        </span>
+                                    </div>
+                                    <div class="page-title-subheading opacity-10">
+                                        <nav class="" aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                 <li class="breadcrumb-item">
+                                                    <a href="{% url 'youth:list' %}">
+                                                        <i aria-hidden="true" class="fa fa-home"></i>
+                                                    </a>
+                                                  </li>
+                                                  <li class="breadcrumb-item">
+                                                        <a href="{% url 'youth:list' %}">List</a>
+                                                  </li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="page-title-actions"></div>
+                        </div>
+</div>
+
+<div class="row">
+{% if request.user|has_group:"youth_CENTER" and not request.user.center %}
+  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
+{% endif %}
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body" style="height: 400px; overflow: auto;">
+        <form id="indicators-form">
+          <div class="form-row font-weight-bold mb-2">
+            <div class="col-md-3">Master Indicator</div>
+            <div class="col-md-3">Sub Indicator</div>
+            <div class="col-md-2">Baseline</div>
+            <div class="col-md-2">Target</div>
+            <div class="col-md-2">Actions</div>
+          </div>
+
+          <div id="indicators"></div>
+          <button id="add-indicator-btn" type="button" class="btn btn-primary my-3">Add Indicator</button>
+
+          <button id="save-indicators-btn" type="button" class="btn btn-success">Save Indicators</button>
+        </form>
+      </div>
+      <div class="d-block text-center card-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/youth/program_document_indicators.js' %}?v=1"></script>
+    <script type="text/javascript" src="{% static 'js/youth/general.js' %}?v=1"></script>
+
+    <script>
+
+    var indicatorListUrl = "{% url 'youth:program_document_indicator_list' program_document_id=program_document_id %}";
+    var saveIndicatorsUrl = "{% url 'youth:program_document_indicators_save' %}";
+
+    var subIndicators = {{ sub_indicators|safe }};
+    var masterIndicators = {{ master_indicators|safe }};
+    var programDocumentId = "{{ program_document_id }}";
+    let deletedIndicatorIds = [];
+
+  $(document).ready(function () {
+    var container = $("#indicators");
+
+    function createIndicatorRow(indicator = {}) {
+      const id = indicator.id || 'new_' + Math.random().toString(36).substring(2, 9);
+      const selectedMaster = indicator.master_indicator_id || '';
+      const selectedSub = indicator.sub_indicator_id || '';
+      const baseline = indicator.baseline || '';
+      const target = indicator.target || '';
+
+      let masterOptions = '<option value="">Select Master Indicator</option>';
+      $.each(masterIndicators, function (i, item) {
+        masterOptions += `<option value="${item.id}" ${item.id == selectedMaster ? 'selected' : ''}>${item.name}</option>`;
+      });
+
+      let subOptions = '<option value="">Select Sub Indicator</option>';
+      let isSubEnabled = false;
+
+      if (selectedMaster && subIndicators[selectedMaster]) {
+        isSubEnabled = true;
+        $.each(subIndicators[selectedMaster], function (i, item) {
+          subOptions += `<option value="${item.id}" ${item.id == selectedSub ? 'selected' : ''}>${item.name}</option>`;
+        });
+      }
+
+      const row = `
+        <div class="form-row mb-3" data-id="${id}">
+          <div class="col-md-3">
+            <select class="form-control required-field master-select" name="master_indicator_${id}" data-row-id="${id}">
+              ${masterOptions}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select class="form-control required-field sub-select" name="sub_indicator_${id}" id="sub_${id}" ${isSubEnabled ? '' : 'disabled'}>
+              ${subOptions}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input type="number" class="form-control required-field" name="baseline_${id}" value="${baseline}" />
+          </div>
+          <div class="col-md-2">
+            <input type="number" class="form-control required-field" name="target_${id}" value="${target}" />
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-danger remove-indicator-btn">Remove</button>
+          </div>
+        </div>
+      `;
+      container.append(row);
+    }
+
+    // Load existing indicators
+    $.ajax({
+      url: indicatorListUrl,
+      type: "GET",
+      success: function (response) {
+        $.each(response.indicators, function (index, item) {
+          createIndicatorRow(item);
+        });
+      },
+      error: function () {
+        alert("Failed to load indicators.");
+      }
+    });
+
+    $("#add-indicator-btn").click(function () {
+      createIndicatorRow();
+    });
+
+    $(document).on('click', '.remove-indicator-btn', function () {
+      const confirmed = confirm("Are you sure you want to remove this indicator?");
+      if (confirmed) {
+        const row = $(this).closest('.form-row');
+        const rowId = row.data('id');
+
+        if (rowId && !rowId.toString().startsWith('new_')) {
+          deletedIndicatorIds.push(rowId);
+        }
+
+        row.remove();
+      }
+    });
+
+    $(document).on('change', '.master-select', function () {
+      const masterId = $(this).val();
+      const rowId = $(this).data('row-id');
+      const subSelect = $(`#sub_${rowId}`);
+
+      let subOptions = '<option value="">Select Sub Indicator</option>';
+      if (masterId && subIndicators[masterId]) {
+        $.each(subIndicators[masterId], function (i, item) {
+          subOptions += `<option value="${item.id}">${item.name}</option>`;
+        });
+        subSelect.prop('disabled', false);
+      } else {
+        subSelect.prop('disabled', true);
+      }
+      subSelect.html(subOptions);
+    });
+
+    $("#save-indicators-btn").click(function () {
+      let data = [];
+      let hasError = false;
+
+      $("#indicators .form-row").each(function () {
+        const row = $(this);
+        const rowId = row.attr('data-id');
+        const masterIndicator = row.find('[name^="master_indicator_"]').val()?.trim();
+        const subIndicator = row.find('[name^="sub_indicator_"]').val()?.trim();
+        const baseline = row.find('[name^="baseline_"]').val()?.trim();
+        const target = row.find('[name^="target_"]').val()?.trim();
+
+        // reset
+        row.find('.form-control').css('border', '');
+
+        if (!masterIndicator || !subIndicator || baseline === '' || target === '') {
+          hasError = true;
+          row.find('.form-control').each(function () {
+            if (!$(this).val()?.trim()) {
+              $(this).css('border', '2px solid red');
+            }
+          });
+        }
+
+        data.push({
+          id: rowId.startsWith('new_') ? null : rowId,
+          master_indicator: masterIndicator,
+          sub_indicator: subIndicator,
+          baseline: baseline,
+          target: target,
+          program_document_id: programDocumentId
+        });
+      });
+
+      if (hasError) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      $.ajax({
+        url: saveIndicatorsUrl,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          indicators: data,
+          deleted_ids: deletedIndicatorIds
+        }),
+        headers: { "X-CSRFToken": getCookie("csrftoken") },
+        success: function () {
+          alert("Indicators saved successfully.");
+          window.location.href = "/youth/PD-List/";
+        },
+        error: function () {
+          alert("Error saving indicators.");
+        }
+      });
+    });
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = $.trim(cookies[i]);
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>
+
+{% endblock %}

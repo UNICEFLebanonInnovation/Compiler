@@ -44,6 +44,12 @@ class School(TimeStampedModel):
         ('Level four', _('Level four')),
         ('Level five', _('Level five')),
         ('Level six', _('Level six')),
+        ('level_one_pm', _('Level one PM shift')),
+        ('level_two_pm', _('Level two PM shift')),
+        ('level_three_pm', _('Level three PM shift')),
+        ('level_four_pm', _('Level four PM shift')),
+        ('level_five_pm', _('Level five PM shift')),
+        ('level_six_pm', _('Level six PM shift')),
         ('grade_one', _('Grade one')),
         ('grade_two', _('Grade two')),
         ('grade_three', _('Grade three')),
@@ -889,6 +895,7 @@ class PartnerOrganization(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
     is_Kayany = models.BooleanField(blank=True, default=False)
+    is_youth = models.BooleanField(blank=True, default=False)
 
     bln_round = models.ForeignKey(
         'CLMRound',
@@ -913,6 +920,49 @@ class PartnerOrganization(models.Model):
     )
 
     schools = models.ManyToManyField('School', related_name='partner_schools', blank=True)
+    short_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Short Name')
+    )
+    monitoring_evaluation_focal_point_name = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name=_('Monitoring and Evaluation Focal Point Name')
+    )
+    monitoring_evaluation_focal_point_phone = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Monitoring and Evaluation Focal Point Phone')
+    )
+    monitoring_evaluation_focal_point_email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Monitoring and Evaluation Focal Point Email')
+    )
+    program_manager_focal_point_name = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name=_('Program Manager Focal Point Name')
+    )
+    program_manager_focal_point_phone = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Program Manager Focal Point Phone')
+    )
+    program_manager_focal_point_email = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Program Manager Focal Point Email')
+    )
+    active = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['name']

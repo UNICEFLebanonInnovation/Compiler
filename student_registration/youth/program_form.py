@@ -22,7 +22,7 @@ from .models import (
     SubProgram,
     Donor,
     ProgramDocument,
-    Partner,
+    PartnerOrganization,
     FundedBy,
     FocalPoint,
     Plan,
@@ -211,7 +211,8 @@ class EnrolledProgramsForm(forms.ModelForm):
 
 class ProgramDocumentForm(forms.ModelForm):
     partner = forms.ModelChoiceField(
-        queryset=Partner.objects.all(), widget=forms.Select,
+        queryset=PartnerOrganization.objects.filter(is_youth=True),
+        widget=forms.Select,
         label=_('Partner'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -324,64 +325,11 @@ class ProgramDocumentForm(forms.ModelForm):
     #     label=_('Number of Targeted PRS'),
     #     widget=forms.TextInput, required=False
     # )
-    # master_programs = forms.ModelMultipleChoiceField(
-    #     queryset=MasterProgram.objects.filter(active=True),
-    #     widget=forms.CheckboxSelectMultiple,
-    #     label=_('Master Programs'),
-    #     required=False
-    # )
     donors = forms.ModelMultipleChoiceField(
         queryset=Donor.objects.filter(active=True),
         widget=forms.CheckboxSelectMultiple,
         label=_('Donors'),
         required=False
-    )
-    master_program1 = forms.ModelChoiceField(
-        queryset=MasterProgram.objects.all(),
-        widget=forms.Select,
-        label=_('Master Program 1'),
-        empty_label='-------',
-        required=False, to_field_name='id',
-    )
-    master_program2 = forms.ModelChoiceField(
-        queryset=MasterProgram.objects.all(),
-        widget=forms.Select,
-        label=_('Master Program 2'),
-        empty_label='-------',
-        required=False, to_field_name='id',
-    )
-    master_program3 = forms.ModelChoiceField(
-        queryset=MasterProgram.objects.all(),
-        widget=forms.Select,
-        label=_('Master Program 3'),
-        empty_label='-------',
-        required=False, to_field_name='id',
-    )
-
-    baseline1 = forms.IntegerField(
-        label=_('baseline 1'),
-        widget=forms.TextInput, required=False
-    )
-    baseline2 = forms.IntegerField(
-        label=_('baseline 2'),
-        widget=forms.TextInput, required=False
-    )
-    baseline3 = forms.IntegerField(
-        label=_('baseline 3'),
-        widget=forms.TextInput, required=False
-    )
-
-    target1 = forms.IntegerField(
-        label=_('Target 1'),
-        widget=forms.TextInput, required=False
-    )
-    target2 = forms.IntegerField(
-        label=_('Target 2'),
-        widget=forms.TextInput, required=False
-    )
-    target3 = forms.IntegerField(
-        label=_('Target 3'),
-        widget=forms.TextInput, required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -399,107 +347,6 @@ class ProgramDocumentForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
-
-        # self.helper.layout = Layout(
-        #     Div(
-        #         Div(
-        #             HTML('<span class="badge-form badge-pill">1</span>'),
-        #             Div('partner', css_class='col-md-5'),
-        #             HTML('<span class="badge-form badge-pill">2</span>'),
-        #             Div('funded_by', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form badge-pill">3</span>'),
-        #             Div('project_status', css_class='col-md-5'),
-        #             HTML('<span class="badge-form badge-pill">4</span>'),
-        #             Div('project_code', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form badge-pill">5</span>'),
-        #             Div('project_name', css_class='col-md-5'),
-        #             HTML('<span class="badge-form badge-pill">6</span>'),
-        #             Div('project_description', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form badge-pill">7</span>'),
-        #             Div('implementing_partners', css_class='col-md-5'),
-        #             HTML('<span class="badge-form badge-pill">8</span>'),
-        #             Div('focal_point', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form badge-pill">9</span>'),
-        #             Div('start_date', css_class='col-md-5'),
-        #             HTML('<span class="badge-form-2 badge-pill">10</span>'),
-        #             Div('end_date', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">11</span>'),
-        #             Div('plan', css_class='col-md-5'),
-        #             HTML('<span class="badge-form-2 badge-pill">12</span>'),
-        #             Div('sectors', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">13</span>'),
-        #             Div('project_type', css_class='col-md-5'),
-        #             HTML('<span class="badge-form-2 badge-pill">14</span>'),
-        #             Div('public_institution_support', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">15</span>'),
-        #             Div('governorates', css_class='col-md-5  multiple-choice checkbox'),
-        #             HTML('<span class="badge-form-2 badge-pill">16</span>'),
-        #             Div('comment', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">17</span>'),
-        #             Div('budget', css_class='col-md-5'),
-        #             HTML('<span class="badge-form-2 badge-pill">18</span>'),
-        #             Div('cash_assistance', css_class='col-md-5'),
-        #             css_class='row card-body'
-        #         ),
-        #         Div(
-        #             HTML('<span class="badge-form-2 badge-pill">19</span>'),
-        #             Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
-        #             css_class='row card-body'
-        #         ),
-        #         css_id='step-1'
-        #         ),
-        #         Div(
-        #         HTML("""
-        #             <table class="table table-bordered">
-        #                 <thead>
-        #                     <tr>
-        #                         <th>Indicator</th>
-        #                         <th>Baseline</th>
-        #                         <th>Target</th>
-        #                     </tr>
-        #                 </thead>
-        #                 <tbody>
-        #                     <tr>
-        #                         <td># of youth enrolled in learning path or courses on the NammiSkills Platform</td>
-        #                         <td>0</td>
-        #                         <td>50</td>
-        #                     </tr>
-        #                 </tbody>
-        #             </table>
-        #         """),
-        #             FormActions(
-        #                 Submit('save', 'Save',
-        #                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
-        #                 Reset('reset', 'Reset',
-        #                       css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
-        #             ),
-        #             css_id='step-2'
-        #         )
-        #     )
 
         if display_donor:
             self.fields['donors'].required = True
@@ -601,38 +448,13 @@ class ProgramDocumentForm(forms.ModelForm):
                         Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
                         css_class='row card-body'
                     ),
-                    css_id='step-2'
-                ),
-                Div(
-                    Div(
-                        HTML('<span class="badge-form badge-pill">1</span>'),
-                        Div('master_program1', css_class='col-md-3'),
-                        Div('baseline1', css_class='col-md-3'),
-                        Div('target1', css_class='col-md-3'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form badge-pill">2</span>'),
-                        Div('master_program2', css_class='col-md-3'),
-                        Div('baseline2', css_class='col-md-3'),
-                        Div('target2', css_class='col-md-3'),
-                        css_class='row card-body'
-                    ),
-
-                    Div(
-                        HTML('<span class="badge-form badge-pill">3</span>'),
-                        Div('master_program3', css_class='col-md-3'),
-                        Div('baseline3', css_class='col-md-3'),
-                        Div('target3', css_class='col-md-3'),
-                        css_class='row card-body'
-                    ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                         Reset('reset', 'Reset',
                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
-                    css_id='step-3'
+                    css_id='step-2'
                 )
             )
         else:
@@ -726,39 +548,13 @@ class ProgramDocumentForm(forms.ModelForm):
                     #     Div('number_targeted_prs', css_class='col-md-5'),
                     #     css_class='row card-body'
                     # ),
-                    css_id='step-1'
-                ),
-                Div(
-
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">1</span>'),
-                        Div('master_program1', css_class='col-md-3'),
-                        Div('baseline1', css_class='col-md-3'),
-                        Div('target1', css_class='col-md-3'),
-                        css_class='row card-body'
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">2</span>'),
-                        Div('master_program2', css_class='col-md-3'),
-                        Div('baseline2', css_class='col-md-3'),
-                        Div('target2', css_class='col-md-3'),
-                        css_class='row card-body'
-                    ),
-
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">3</span>'),
-                        Div('master_program3', css_class='col-md-3'),
-                        Div('baseline3', css_class='col-md-3'),
-                        Div('target3', css_class='col-md-3'),
-                        css_class='row card-body'
-                    ),
                     FormActions(
                         Submit('save', 'Save',
                                css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
                         Reset('reset', 'Reset',
                               css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning'),
                     ),
-                    css_id='step-2'
+                    css_id='step-1'
                 ),
                 Div(
                     Div(
@@ -766,7 +562,7 @@ class ProgramDocumentForm(forms.ModelForm):
                         Div('donors', css_class='col-md-6 multiple-choice-options checkbox'),
                         css_class='row card-body'
                     ),
-                    css_id='step-3',
+                    css_id='step-2',
                     css_class='d-none'
                 ),
 
@@ -799,32 +595,22 @@ class ProgramDocumentForm(forms.ModelForm):
         instance.project_description = validated_data.get('project_description')
         instance.implementing_partners = validated_data.get('implementing_partners')
         instance.focal_point_id = validated_data.get('focal_point')
-        instance.start_date = validated_data.get('start_date')
-        instance.end_date = validated_data.get('end_date')
+        instance.start_date = None if validated_data.get('start_date') == '' else validated_data.get('start_date')
+        instance.end_date = None if validated_data.get('end_date') == '' else validated_data.get('end_date')
+
         instance.comment = validated_data.get('comment')
         instance.plan_id = validated_data.get('plan')
         instance.sectors_id = validated_data.get('sectors')
         instance.project_type_id = validated_data.get('project_type')
         instance.public_institution_support = validated_data.get('public_institution_support')
-        instance.budget = validated_data.get('budget')
+
+        instance.budget = 0 if validated_data.get('budget') == '' else validated_data.get('budget')
+
         instance.cash_assistance = validated_data.get('cash_assistance')
         # instance.number_targeted_syrians = validated_data.get('number_targeted_syrians')
         # instance.number_targeted_lebanese = validated_data.get('number_targeted_lebanese')
         # instance.number_targeted_prl = validated_data.get('number_targeted_prl')
         # instance.number_targeted_prs = validated_data.get('number_targeted_prs')
-
-        instance.master_program1_id = blank_int(validated_data.get('master_program1'))
-        instance.baseline1 = blank_int(validated_data.get('baseline1'))
-        instance.target1 = blank_int(validated_data.get('target1'))
-
-        instance.master_program2_id = blank_int(validated_data.get('master_program2'))
-        instance.baseline2 = blank_int(validated_data.get('baseline2'))
-        instance.target2 = blank_int(validated_data.get('target2'))
-
-        instance.master_program3_id = blank_int(validated_data.get('master_program3'))
-        instance.baseline3 = blank_int(validated_data.get('baseline3'))
-        instance.target3 = blank_int(validated_data.get('target3'))
-
 
         # Assign the governorates from the form data
         governorates_ids = validated_data.getlist('governorates')
@@ -835,11 +621,6 @@ class ProgramDocumentForm(forms.ModelForm):
         population_groups_ids = validated_data.getlist('population_groups')
         population_groups = PopulationGroups.objects.filter(id__in=population_groups_ids)
         instance.population_groups.set(population_groups)
-
-        # # Assign the master_programs from the form data
-        # master_programs_ids = validated_data.getlist('master_programs')
-        # master_programs = MasterProgram.objects.filter(id__in=master_programs_ids)
-        # instance.master_programs.set(master_programs)
 
         # Assign the donors from the form data
         donor_ids = validated_data.getlist('donors')
@@ -856,7 +637,7 @@ class ProgramDocumentForm(forms.ModelForm):
         cleaned_data = super(ProgramDocumentForm, self).clean()
         start_date = cleaned_data.get("start_date")
         end_date = cleaned_data.get("end_date")
-        if start_date >= end_date:
+        if start_date and end_date and start_date >= end_date:
             self.add_error('start_date', 'Start Date must be less than End Date')
 
     class Meta:
@@ -865,7 +646,6 @@ class ProgramDocumentForm(forms.ModelForm):
             'partner',
             'governorates',
             'population_groups',
-            # 'master_programs',
             # 'donors'
         )
 

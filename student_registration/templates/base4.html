@@ -168,7 +168,7 @@
                                     </div>
                                   {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'home' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Makani
                                         </a>
@@ -212,6 +212,13 @@
                                         <a href="{% url 'clm:bridging_page' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-culture icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Dirasa {% if request.user.partner.is_Kayany %} - Kayany {% endif %}
+                                        </a>
+                                    </div>
+
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'clm:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Dirasa Dashboard
                                         </a>
                                     </div>
                                   {% endif %}
@@ -577,7 +584,7 @@
                                                     <!--</li>-->
                                                     {% if request.user.is_superuser %}
                                                     <li class="nav-item">
-                                                        <a href="{% url 'admin:index' %}" class="nav-link">Admin
+                                                        <a href="/admin" class="nav-link">Admin
                                                             <!--<div class="ml-auto badge badge-success">New-->
                                                             <!--</div>-->
                                                         </a>
@@ -715,7 +722,11 @@
             </div>
       <div class="app-main__outer">
                 <div class="app-main__inner">
-
+                {% if form and form.errors %}
+                  <div class="alert alert-danger">
+                    Please review and check the error messages.
+                  </div>
+                {% endif %}
                 {% block main_content %}
                 {% endblock main_content %}
 
@@ -734,7 +745,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <div class="nav-link">
-                                            BMA - Beneficiary Monitoring & Assessment  2022 - Version 2.29
+                                            BMA - Beneficiary Monitoring & Assessment  2022 - Version 2.32
                                         </div>
                                     </li>
                                 </ul>

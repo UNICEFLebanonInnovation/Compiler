@@ -125,3 +125,27 @@ class UserActivity(models.Model):
     def __str__(self):
         return "{} - {} {}".format(self.username, self.method, self.path)
 
+
+class AdolescentUpload(TimeStampedModel):
+    file = models.FileField(upload_to='uploads/adolescent_imports')
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name=_('Uploaded by')
+    )
+    failed_file = models.FileField(
+        upload_to='uploads/adolescent_imports',
+        blank=True,
+        null=True,
+    )
+    processed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created']
+        verbose_name = 'Adolescent upload'
+        verbose_name_plural = 'Adolescent uploads'
+
+    def __str__(self):
+        return self.file.name

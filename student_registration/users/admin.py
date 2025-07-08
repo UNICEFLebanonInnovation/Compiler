@@ -50,6 +50,7 @@ class UserResource(resources.ModelResource):
             'partner__name',
             'school__name',
             'center__name',
+            'partner__name',
             'is_active',
             'user_category',
         )

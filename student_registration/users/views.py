@@ -70,14 +70,25 @@ def login_success(request):
     Redirects users based on whether they are in the admins group
     """
 
-    if has_group(request.user, 'MSCC'):
-        return HttpResponseRedirect(reverse('mscc:list'))
-    elif has_group(request.user, 'YOUTH'):
-        return HttpResponseRedirect(reverse('youth:list'))
-    elif has_group(request.user, 'CLM_Inclusion'):
-        return HttpResponseRedirect(reverse('clm:inclusion_list'))
+    # if has_group(request.user, 'MSCC'):
+    #     return HttpResponseRedirect(reverse('mscc:list'))
+    # elif has_group(request.user, 'YOUTH'):
+    #     return HttpResponseRedirect(reverse('youth:list'))
+    # elif has_group(request.user, 'CLM_Inclusion'):
+    #     return HttpResponseRedirect(reverse('clm:inclusion_list'))
+    # else:
+    #     return HttpResponseRedirect(reverse('clm:bridging_page'))
+
+    if request.user.is_authenticated:
+        return redirect('/landing_page/')
     else:
-        return HttpResponseRedirect(reverse('clm:bridging_page'))
+        return redirect('/accounts/login/')
+
+
+class LandingPage(LoginRequiredMixin,
+                   TemplateView):
+    template_name = 'landing_page.html'
+
 
 
 def home(request):

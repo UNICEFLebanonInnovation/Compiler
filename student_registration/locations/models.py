@@ -175,7 +175,12 @@ class Center(TimeStampedModel):
         null=True,
         verbose_name=_('Phone number')
     )
-    email = models.EmailField(blank=True, max_length=254, verbose_name='Email')
+    email = models.EmailField(
+        blank=True,
+        null = True,
+        max_length=254,
+        verbose_name='Email'
+    )
 
     type = models.CharField(
         max_length=100,

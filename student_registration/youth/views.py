@@ -7,6 +7,7 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import status
 from django.db.models import F, Q
@@ -41,7 +42,8 @@ from .tables import (
 from .models import (
     ProgramDocument,
     SubProgram,
-    EnrolledPrograms
+    EnrolledPrograms,
+    ProgramDocumentIndicator
 )
 
 from .forms import (
@@ -112,7 +114,7 @@ class MainEditView(LoginRequiredMixin,
                    FormView):
     template_name = 'youth/main_form.html'
     form_class = MainForm
-    success_url = '/YOUTH/List/'
+    success_url = '/youth/List/'
     group_required = [u"YOUTH"]
 
     def get_success_url(self):
@@ -254,7 +256,7 @@ def main_registration_cancel_view(request, pk):
             registration = Registration.objects.get(id=pk)
             registration.deleted = True
             registration.save()
-            return redirect('/YOUTH/List/')
+            return redirect('/youth/List/')
         except Registration.DoesNotExist:
             result = {"isSuccessful": False}
     else:
@@ -712,9 +714,6 @@ def export_pd_data(request, **kwargs):
 
         pd_ids = queryset.values_list('id', flat=True).distinct()
 
-        # print('---------------ids------------')
-        # print(tuple(pd_ids))
-
         cursor = connection.cursor()
 
         query_params = []
@@ -838,13 +837,12 @@ def load_master_program(request):
         program_document = ProgramDocument.objects.filter(id=id_program_document).first()
 
         if program_document:
-            # Create a list of master programs to populate the dropdown
-            if program_document.master_program1:
-                master_programs.append(program_document.master_program1)
-            if program_document.master_program2:
-                master_programs.append(program_document.master_program2)
-            if program_document.master_program3:
-                master_programs.append(program_document.master_program3)
+            master_programs = MasterProgram.objects.filter(
+                id__in=program_document.indicators
+                    .filter(master_indicator__isnull=False)
+                    .values_list('master_indicator_id', flat=True)
+                    .distinct()
+            )
 
     return render(request, 'youth/master_program_dropdown_list_options.html', {
         'master_programs': master_programs
@@ -857,3 +855,69 @@ def load_sub_program(request):
         id_master_program = request.GET.get('id_master_program')
         sub_programs = SubProgram.objects.filter(master_program_id=id_master_program).order_by('name')
     return render(request, 'youth/sub_program_dropdown_list_options.html', {'sub_programs': sub_programs})
+
+
+def program_document_indicators_view(request, program_document_id):
+    master_indicators = list(MasterProgram.objects.filter(active=True).values('id', 'name'))
+    sub_indicator_map = {
+        mp.id: list(
+            SubProgram.objects.filter(master_program=mp).order_by('name').values('id', 'name')
+        )
+        for mp in MasterProgram.objects.filter(active=True)
+    }
+
+    return render(request, 'youth/program_document_indicator.html', {
+        'program_document_id': program_document_id,
+        'master_indicators': master_indicators,
+        'sub_indicators': json.dumps(sub_indicator_map),
+    })
+
+def program_document_indicator_list_view(request, program_document_id):
+    try:
+        indicators = ProgramDocumentIndicator.objects.filter(program_document_id=program_document_id)
+        data = []
+        for ind in indicators:
+            data.append({
+                'id': ind.id,
+                'master_indicator_id': ind.master_indicator.id if ind.master_indicator else None,
+                'master_indicator_name': ind.master_indicator.name if ind.master_indicator else '',
+                'sub_indicator_id': ind.sub_indicator.id if ind.sub_indicator else None,
+                'sub_indicator_name': ind.sub_indicator.name if ind.sub_indicator else '',
+                'baseline': ind.baseline,
+                'target': ind.target
+            })
+        return JsonResponse({'indicators': data})
+    except Exception as e:
+        print("Error in program_document_indicator_list_view:", e)
+        # return JsonResponse({'error': 'Internal server error'}, status=500)
+
+
+@csrf_exempt
+def save_indicators(request):
+    if request.method == 'POST':
+        payload = json.loads(request.body.decode('utf-8'))
+        indicators = payload.get('indicators', [])
+        deleted_ids = payload.get('deleted_ids', [])
+
+        if deleted_ids:
+            ProgramDocumentIndicator.objects.filter(id__in=deleted_ids).delete()
+
+        for item in indicators:
+            if item['id']:
+                try:
+                    indicator = ProgramDocumentIndicator.objects.get(id=item['id'])
+                except ProgramDocumentIndicator.DoesNotExist:
+                    continue
+            else:
+                indicator = ProgramDocumentIndicator()
+
+            indicator.program_document_id = item.get('program_document_id')
+            indicator.master_indicator_id = item.get('master_indicator') or None
+            indicator.sub_indicator_id = item.get('sub_indicator') or None
+            indicator.baseline = item.get('baseline') or None
+            indicator.target = item.get('target') or None
+            indicator.save()
+
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'error': 'Invalid method'}, status=400)

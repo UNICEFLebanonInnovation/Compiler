@@ -23,13 +23,15 @@ from .models import (
     SubProgram,
     Donor,
     ProgramDocument,
-    Partner,
     FundedBy,
     ProjectStatus,
-    FocalPoint
+    FocalPoint,
+    ProgramDocumentIndicator
 )
 from student_registration.youth.models import Adolescent
 from student_registration.clm.models import Disability, EducationalLevel
+from student_registration.schools.models import PartnerOrganization
+
 
 class MainFilter(FilterSet):
     adolescent__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
@@ -50,7 +52,7 @@ class MainFilter(FilterSet):
 
 class FullFilter(FilterSet):
     partner = ChoiceFilter(
-        choices=Partner.objects.values_list('id', 'name').order_by('name').distinct(),
+        choices=PartnerOrganization.objects.values_list('id', 'name').order_by('name').distinct(),
         empty_label='Partner'
     )
     adolescent__governorate = ChoiceFilter(
@@ -69,7 +71,6 @@ class FullFilter(FilterSet):
     adolescent__first_name = CharFilter(lookup_expr='icontains')
     adolescent__father_name = CharFilter(lookup_expr='icontains')
     adolescent__last_name = CharFilter(lookup_expr='icontains')
-    adolescent__number = CharFilter(lookup_expr='icontains')
     adolescent__unicef_id = CharFilter(lookup_expr='icontains')
     adolescent__gender = ChoiceFilter(choices=Adolescent.GENDER, empty_label='Gender')
     adolescent__nationality = ChoiceFilter(
@@ -82,43 +83,6 @@ class FullFilter(FilterSet):
         empty_label='Disability'
     )
     adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
-
-    master_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in MasterProgram.objects.filter(active=True
-                                                   # , created__year=datetime.datetime.now().year
-                                                   )
-        ],
-        field_name='enrolled_programs__master_program',
-        label='Master Program',
-        method='filter_by_master_program',
-        widget=forms.SelectMultiple(attrs={'class': 'wide-dropdown'})
-    )
-
-    sub_program = MultipleChoiceFilter(
-        choices=lambda: [
-            (sp.id, "{} - {}".format(sp.number, sp.name))
-            for sp in SubProgram.objects.filter(master_program__active=True
-                                                # ,created__year=datetime.datetime.now().year
-                                                )
-        ],
-        field_name='enrolled_programs__sub_program',
-        label='Sub Program',
-        method='filter_by_sub_program',
-        widget=forms.SelectMultiple(attrs={'class': 'wide-dropdown'})
-    )
-
-    # sub_program = MultipleChoiceFilter(
-    #     choices=lambda: [
-    #         (sp.id, "{} - {}".format(sp.number, sp.name))
-    #         for sp in SubProgram.objects.filter(created__year=datetime.datetime.now().year)
-    #     ],
-    #     field_name='enrolled_programs__sub_program',
-    #     label='Sub Program',
-    #     method='filter_by_sub_program',
-    #     widget=forms.CheckboxSelectMultiple(attrs={'class': 'wide-checkbox'})
-    # )
 
     donor = ChoiceFilter(
         field_name='enrolled_programs__donor',
@@ -140,6 +104,31 @@ class FullFilter(FilterSet):
     end_date = DateFilter(
         field_name='enrolled_programs__completion_date',
         lookup_expr='lte', label='End Date'
+    )
+    master_program = MultipleChoiceFilter(
+        choices=lambda: [
+            (mp.id, "{} - {}".format(mp.number, mp.name))
+            for mp in MasterProgram.objects.filter(active=True
+                                                   # , created__year=datetime.datetime.now().year
+                                                   )
+        ],
+        field_name='enrolled_programs__master_program',
+        label='Master Program',
+        method='filter_by_master_program',
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
+    )
+
+    sub_program = MultipleChoiceFilter(
+        choices=lambda: [
+            (sp.id, "{} - {}".format(sp.number, sp.name))
+            for sp in SubProgram.objects.filter(master_program__active=True
+                                                # ,created__year=datetime.datetime.now().year
+                                                )
+        ],
+        field_name='enrolled_programs__sub_program',
+        label='Sub Program',
+        method='filter_by_sub_program',
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
     )
 
     class Meta:
@@ -165,7 +154,7 @@ class FullFilter(FilterSet):
 
 class PDFilter(FilterSet):
     current_year = datetime.datetime.now().year
-    partner = ChoiceFilter(choices=Partner.objects.filter(active=True).values_list('id', 'short_name')
+    partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True).values_list('id', 'short_name')
                                 .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
@@ -189,8 +178,11 @@ class PDFilter(FilterSet):
     )
     master_program = MultipleChoiceFilter(
         choices=lambda: [
-            (mp.id, "{} - {}".format(mp.number, mp.name))  # Format as "number - name"
+            (mp.id, "{} - {}".format(mp.number, mp.name))
             for mp in MasterProgram.objects.filter(
+                id__in=ProgramDocumentIndicator.objects.filter(
+                    master_indicator__isnull=False
+                ).values_list('master_indicator_id', flat=True).distinct(),
                 active=True
                 # , created__year=datetime.datetime.now().year
             )
@@ -198,7 +190,8 @@ class PDFilter(FilterSet):
         label='Master Program',
         required=False,
         method='filter_by_master_program',
-        widget=forms.SelectMultiple(attrs={'class': 'wide-checkbox'})
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
+
     )
 
     class Meta:
@@ -209,16 +202,14 @@ class PDFilter(FilterSet):
     def filter_by_master_program(self, queryset, name, value):
         if value:
             return queryset.filter(
-                Q(master_program1__in=value) |
-                Q(master_program2__in=value) |
-                Q(master_program3__in=value)
-            )
+                indicators__master_indicator__in=value
+            ).distinct()
         return queryset
 
 
 class PDPartnerFilter(FilterSet):
     current_year = datetime.datetime.now().year
-    partner = ChoiceFilter(choices=Partner.objects.filter(active=True).values_list('id', 'short_name')
+    partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True).values_list('id', 'short_name')
                                 .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
@@ -236,13 +227,20 @@ class PDPartnerFilter(FilterSet):
                           lookup_expr='lte', label='End Date')
 
     master_program = MultipleChoiceFilter(
-        choices=lambda: [(mp.id, mp.name) for mp in MasterProgram.objects.filter(
-            active=True
-            # ,created__year=datetime.datetime.now().year
-        )],
+        choices=lambda: [
+            (mp.id, "{} - {}".format(mp.number, mp.name))
+            for mp in MasterProgram.objects.filter(
+                id__in=ProgramDocumentIndicator.objects.filter(
+                    master_indicator__isnull=False
+                ).values_list('master_indicator_id', flat=True).distinct(),
+                active=True
+                # , created__year=datetime.datetime.now().year
+            )
+        ],
         label='Master Program',
         required=False,
-        method='filter_by_master_program'
+        method='filter_by_master_program',
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
     )
 
     class Meta:
@@ -253,8 +251,6 @@ class PDPartnerFilter(FilterSet):
     def filter_by_master_program(self, queryset, name, value):
         if value:
             return queryset.filter(
-                Q(master_program1__in=value) |
-                Q(master_program2__in=value) |
-                Q(master_program3__in=value)
-            )
+                indicators__master_indicator__in=value
+            ).distinct()
         return queryset

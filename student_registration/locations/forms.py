@@ -347,7 +347,7 @@ class ProgramStaffForm(forms.ModelForm):
     facilitator_name = forms.CharField(
         label=_("Facilitator Name"),
         widget=forms.TextInput,
-        required=False
+        required=True
     )
     gender = forms.ChoiceField(
         label=_('Gender'),
@@ -489,7 +489,8 @@ class ProgramStaffForm(forms.ModelForm):
         instance.email = validated_data.get('email')
         instance.subject = validated_data.getlist('subject')
         instance.programs = validated_data.getlist('programs')
-        instance.weekly_hours_taught = validated_data.get('weekly_hours_taught')
+        weekly_hours = validated_data.get('weekly_hours_taught')
+        instance.weekly_hours_taught = int(weekly_hours) if weekly_hours.strip() else 0
         instance.attendance_training = validated_data.get('attendance_training')
         instance.training_topics = validated_data.getlist('training_topics')
         attach_cv = request.FILES.get('attach_cv', False)
@@ -504,6 +505,7 @@ class ProgramStaffForm(forms.ModelForm):
 
         messages.success(request, _('Your data has been sent successfully to the server'))
         return instance
+
     class Meta:
         model = ProgramStaff
         fields = (

@@ -106,7 +106,8 @@ class MainForm(forms.ModelForm):
     )
     child_p_code = forms.CharField(
         label=_('Insert Pcode if the child lives in Internal Settlement/Camp'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=False,
+        max_length=50
     )
     child_address = forms.CharField(
         label=_("Registered child Home Address (Village, Street, Building/Camp, Cadaster)"),
@@ -471,6 +472,10 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
+        child_p_code = cleaned_data.get("child_p_code")
+        if child_p_code and len(child_p_code) > 50:
+            self.add_error('child_p_code', _('P-Code must not exceed 50 characters.'))
+
         # check if date is valid
         year = 0
         month = 0
@@ -539,30 +544,12 @@ class MainForm(forms.ModelForm):
             if main_caregiver == 'Other' and not main_caregiver_other:
                 self.add_error('main_caregiver_other', 'This field is required')
 
-            main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
-            main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
-            if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
-                self.add_error('main_caregiver_nationality_other', 'This field is required')
 
             children_number_under18 = cleaned_data.get("children_number_under18")
             if not children_number_under18:
                 self.add_error('children_number_under18', 'This field is required')
 
-            caregiver_first_name = cleaned_data.get("caregiver_first_name")
-            if not caregiver_first_name:
-                self.add_error('caregiver_first_name', 'This field is required')
 
-            caregiver_middle_name = cleaned_data.get("caregiver_middle_name")
-            if not caregiver_middle_name:
-                self.add_error('caregiver_middle_name', 'This field is required')
-
-            caregiver_last_name = cleaned_data.get("caregiver_last_name")
-            if not caregiver_last_name:
-                self.add_error('caregiver_last_name', 'This field is required')
-
-            caregiver_mother_name = cleaned_data.get("caregiver_mother_name")
-            if not caregiver_mother_name:
-                self.add_error('caregiver_mother_name', 'This field is required')
 
             have_labour = cleaned_data.get("have_labour")
             labour_type = cleaned_data.get("labour_type")
@@ -593,6 +580,7 @@ class MainForm(forms.ModelForm):
             individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
 
             # UNHCR Registered
+
             if id_type and id_type.id == 1:
                 if not case_number:
                     self.add_error('case_number', 'This field is required')
@@ -719,13 +707,14 @@ class MainForm(forms.ModelForm):
                     msg = "The Parent Extract Record are not matched"
                     self.add_error('parent_extract_record_confirm', msg)
 
-            child_living_arrangement = cleaned_data.get("caregiver_mother_name")
+            child_living_arrangement = cleaned_data.get("child_living_arrangement")
             if not child_living_arrangement:
                 self.add_error('child_living_arrangement', 'This field is required')
 
-            cash_support_programmes = cleaned_data.get("caregiver_mother_name")
+            cash_support_programmes = cleaned_data.get("cash_support_programmes")
             if not cash_support_programmes:
                 self.add_error('cash_support_programmes', 'This field is required')
+
 
     def save(self, request=None, instance=None):
 

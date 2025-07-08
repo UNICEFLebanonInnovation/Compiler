@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
-from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent
+from student_registration.attendances.models import CLMAttendance, CLMAttendanceStudent, CLMStudentAbsences, CLMStudentTotalAttendance
 from student_registration.schools.models import (
     School,
     PartnerOrganization,
@@ -85,31 +85,20 @@ class AttendanceView(LoginRequiredMixin,
 
 
 def save_attendance_children(request):
-    """Persist attendance for CLM children.
 
-    The previous implementation silently swallowed exceptions and returned
-    ``None`` when the request body was empty or invalid which resulted in the
-    Django ``ValueError`` reported in Sentry.  This function now validates the
-    request body and gracefully handles JSON errors or processing failures,
-    always returning an ``HttpResponse`` instance.
-    """
+    body_unicode = request.body.decode('utf-8')
 
-    body_unicode = request.body.decode("utf-8")
+    if body_unicode.strip():
+        try:
+            data = json.loads(body_unicode)
+            result = create_attendance(data)
+            return JsonResponse({'result': result})
+        except Exception as e:
+            return JsonResponse({'error': 'Failed to save attendance.'}, status=500)
+            # return JsonResponse({'error': 'Error processing attendance', 'details': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Empty request body'}, status=400)
 
-    if not body_unicode.strip():
-        return HttpResponseBadRequest("Empty request body")
-
-    try:
-        data = json.loads(body_unicode)
-    except ValueError:
-        return HttpResponseBadRequest("Invalid JSON payload")
-
-    try:
-        result = create_attendance(data)
-    except Exception:  # pragma: no cover - safety net
-        return HttpResponseBadRequest("Failed to save attendance")
-
-    return JsonResponse({"result": result})
 
 
 class LoadAttendanceChildren(LoginRequiredMixin, TemplateView):

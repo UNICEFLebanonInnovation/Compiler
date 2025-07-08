@@ -1146,6 +1146,8 @@ class EducationService(TimeStampedModel):
         ('YBLN Catch-up', _('YBLN Catch-up')),
         ('YFS Level 1', _('YFS Level 1')),
         ('YFS Level 2', _('YFS Level 2')),
+        ('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')),
+        ('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')),
         ('CBECE Level 1', _('CBECE Level 1')),
         ('CBECE Level 2', _('CBECE Level 2')),
         ('CBECE Level 3', _('CBECE Level 3')),
@@ -1159,13 +1161,15 @@ class EducationService(TimeStampedModel):
         ('RS Grade 7', _('RS Grade 7')),
         ('RS Grade 8', _('RS Grade 8')),
         ('RS Grade 9', _('RS Grade 9')),
-        ('ECD', _('ECD'))
+        ('ECD', _('ECD')),
     )
     YOUTH_PROGRAM = Choices(
         ('YBLN Level 1', _('YBLN Level 1')),
         ('YBLN Level 2', _('YBLN Level 2')),
         ('YFS Level 1', _('YFS Level 1')),
         ('YFS Level 2', _('YFS Level 2')),
+        ('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')),
+        ('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')),
     )
     CLASS_SECTION = Choices(
         ('', '----------'),
@@ -1196,6 +1200,11 @@ class EducationService(TimeStampedModel):
         ('Y', _('Y')),
         ('Z', _('Z')),
     )
+    CATCH_UP_REGISTERED = Choices(
+        ('', '----------'),
+        ('Yes-New Comers programme', _('Yes-New Comers programme')),
+        ('Yes-Undocumented programme', _('Yes-Undocumented programme'))
+    )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
@@ -1220,6 +1229,13 @@ class EducationService(TimeStampedModel):
         null=True,
         choices=EDUCATION_PROGRAM,
         verbose_name=_('Education Program')
+    )
+    catch_up_registered = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        choices=CATCH_UP_REGISTERED,
+        verbose_name=_('Is the child registered in catch-up program')
     )
     class_section = models.CharField(
         max_length=50,

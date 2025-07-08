@@ -134,11 +134,6 @@ class SubProgramAdmin(admin.ModelAdmin):
     list_filter = (CreationYearFilter,)
 
 
-class PartnerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'short_name', 'active')
-    search_fields = ('name', 'short_name', 'active')
-
-
 class FundedByAdmin(admin.ModelAdmin):
     list_display = ('name', 'active')
     search_fields = ('name', 'active')
@@ -198,7 +193,6 @@ class EnrolledProgramAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Partner, PartnerAdmin)
 admin.site.register(FundedBy, FundedByAdmin)
 admin.site.register(FocalPoint, FocalPointAdmin)
 admin.site.register(Plan, PlanAdmin)

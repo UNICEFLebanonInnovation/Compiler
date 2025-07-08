@@ -230,7 +230,7 @@ class CommonForm(forms.ModelForm):
     main_caregiver_nationality = forms.ModelChoiceField(
         label=_("Nationality"),
         queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
-        required=True, to_field_name='id',
+        required=False, to_field_name='id',
     )
     student_mother_fullname = forms.CharField(
         label=_("Mother fullname"),
@@ -242,7 +242,8 @@ class CommonForm(forms.ModelForm):
     )
     student_p_code = forms.CharField(
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=False,
+        max_length=50,
     )
     # student_id_number = forms.CharField(
     #     label=_('ID number'),
@@ -269,20 +270,35 @@ class CommonForm(forms.ModelForm):
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     partner_name = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
-
+    caretaker_first_name = forms.CharField(
+        label=_("Caregiver First Name"),
+        widget=forms.TextInput, required=False
+    )
+    caretaker_middle_name = forms.CharField(
+        label=_("Caregiver Middle Name"),
+        widget=forms.TextInput, required=False
+    )
+    caretaker_last_name = forms.CharField(
+        label=_("Caregiver Last Name"),
+        widget=forms.TextInput, required=False
+    )
+    caretaker_mother_name = forms.CharField(
+        label=_("Caregiver Mother Name"),
+        widget=forms.TextInput, required=False
+    )
     caretaker_birthday_year = forms.ChoiceField(
         label=_("Caregiver birthday year"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices = YEARS_CT,
     )
     caretaker_birthday_month = forms.ChoiceField(
         label=_("Caregiver birthday month"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=MONTHS
     )
     caretaker_birthday_day = forms.ChoiceField(
         label=_("Caregiver birthday day"),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=DAYS
     )
 
@@ -414,6 +430,12 @@ class BridgingForm(CommonForm):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
         ('level_three', _('Level three')),
+        ('level_one_pm', _('Level one PM shift')),
+        ('level_two_pm', _('Level two PM shift')),
+        ('level_three_pm', _('Level three PM shift')),
+        ('level_four_pm', _('Level four PM shift')),
+        ('level_five_pm', _('Level five PM shift')),
+        ('level_six_pm', _('Level six PM shift')),
         ('grade_one', _('Grade one')),
         ('grade_two', _('Grade two')),
         ('grade_three', _('Grade three')),
@@ -479,6 +501,7 @@ class BridgingForm(CommonForm):
         required=False, to_field_name='id',
         initial=0
     )
+
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -575,6 +598,7 @@ class BridgingForm(CommonForm):
         required=False,
         label=_('Second Phone Number confirm')
     )
+
     id_type = forms.ChoiceField(
         label=_("ID type of the Child"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
@@ -592,32 +616,32 @@ class BridgingForm(CommonForm):
         ),
         initial=''
     )
-    case_number = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
-        required=False,
-        label=_('UNHCR Case Number')
-    )
-    case_number_confirm = forms.RegexField(
-        regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
-        required=False,
-        label=_('Confirm UNHCR Case Number')
-    )
-    parent_individual_case_number = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
-        required=False,
-        label=_(
-            'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
-    )
-    parent_individual_case_number_confirm = forms.RegexField(
-        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
-        required=False,
-        label=_(
-            'Confirm Caregiver Individual ID from the certificate')
-    )
+    # case_number = forms.RegexField(
+    #     regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
+    #     required=False,
+    #     label=_('UNHCR Case Number')
+    # )
+    # case_number_confirm = forms.RegexField(
+    #     regex = r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{2}[C-](?:\d{5}|\d{6})$',
+    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX or XXX-XX-XXXXXX'}),
+    #     required=False,
+    #     label=_('Confirm UNHCR Case Number')
+    # )
+    # parent_individual_case_number = forms.RegexField(
+    #     regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
+    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+    #     required=False,
+    #     label=_(
+    #         'Caregiver Individual ID from the certificate (Optional, in case not listed in the certificate)')
+    # )
+    # parent_individual_case_number_confirm = forms.RegexField(
+    #     regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
+    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+    #     required=False,
+    #     label=_(
+    #         'Confirm Caregiver Individual ID from the certificate')
+    # )
     individual_case_number = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(781)|(LEB)|(leb)|(LB1)|(LB2)|(lb2)|(LBE)|(lbe)|(b6a)|(B6A))-[0-9]{8}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
@@ -675,47 +699,47 @@ class BridgingForm(CommonForm):
         required=False,
         label=_('Confirm Palestinian ID number of the child')
     )
-    parent_national_number = forms.RegexField(
-        regex=r'^\d{12}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
-        required=False,
-        label=_('Lebanese ID number of the Caregiver')
-    )
-    parent_national_number_confirm = forms.RegexField(
-        regex=r'^\d{12}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
-        required=False,
-        label=_('Confirm Lebanese ID number of the Caregiver')
-    )
-    parent_syrian_national_number = forms.RegexField(
-        regex=r'^\d{11}$',
-        required=False,
-        label=_('National ID number of the Caregiver (Mandatory)')
-    )
-    parent_syrian_national_number_confirm = forms.RegexField(
-        regex=r'^\d{11}$',
-        required=False,
-        label=_('Confirm National ID number of the Caregiver (Mandatory)')
-    )
-    parent_sop_national_number = forms.CharField(
-        # regex=r'^\d{11}$',
-        required=False,
-        label=_('Palestinian ID number of the Caregiver (Mandatory)')
-    )
-    parent_sop_national_number_confirm = forms.CharField(
-        # regex=r'^\d{11}$',
-        required=False,
-        label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
-    )
-
-    parent_other_number = forms.CharField(
-        required=False,
-        label=_('ID number of the Caregiver (Mandatory)')
-    )
-    parent_other_number_confirm = forms.CharField(
-        required=False,
-        label=_('Confirm ID number of the Caregiver (Mandatory)')
-    )
+    # parent_national_number = forms.RegexField(
+    #     regex=r'^\d{12}$',
+    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+    #     required=False,
+    #     label=_('Lebanese ID number of the Caregiver')
+    # )
+    # parent_national_number_confirm = forms.RegexField(
+    #     regex=r'^\d{12}$',
+    #     widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+    #     required=False,
+    #     label=_('Confirm Lebanese ID number of the Caregiver')
+    # )
+    # parent_syrian_national_number = forms.RegexField(
+    #     regex=r'^\d{11}$',
+    #     required=False,
+    #     label=_('National ID number of the Caregiver (Mandatory)')
+    # )
+    # parent_syrian_national_number_confirm = forms.RegexField(
+    #     regex=r'^\d{11}$',
+    #     required=False,
+    #     label=_('Confirm National ID number of the Caregiver (Mandatory)')
+    # )
+    # parent_sop_national_number = forms.CharField(
+    #     # regex=r'^\d{11}$',
+    #     required=False,
+    #     label=_('Palestinian ID number of the Caregiver (Mandatory)')
+    # )
+    # parent_sop_national_number_confirm = forms.CharField(
+    #     # regex=r'^\d{11}$',
+    #     required=False,
+    #     label=_('Confirm Palestinian ID number of the Caregiver (Mandatory)')
+    # )
+    #
+    # parent_other_number = forms.CharField(
+    #     required=False,
+    #     label=_('ID number of the Caregiver (Mandatory)')
+    # )
+    # parent_other_number_confirm = forms.CharField(
+    #     required=False,
+    #     label=_('Confirm ID number of the Caregiver (Mandatory)')
+    # )
     other_number = forms.CharField(
         required=False,
         label=_(' ID number of the child')
@@ -896,6 +920,12 @@ class BridgingForm(CommonForm):
             choices.append(('level_four', _('Level four')))
             choices.append(('level_five', _('Level five')))
             choices.append(('level_six', _('Level six')))
+            choices.append(('level_one_pm', _('Level one PM shift')))
+            choices.append(('level_two_pm', _('Level two PM shift')))
+            choices.append(('level_three_pm', _('Level three PM shift')))
+            choices.append(('level_four_pm', _('Level four PM shift')))
+            choices.append(('level_five_pm', _('Level five PM shift')))
+            choices.append(('level_six_pm', _('Level six PM shift')))
         else:
             choices.append(('grade_one', _('Grade one')))
             choices.append(('grade_two', _('Grade two')))
@@ -906,6 +936,11 @@ class BridgingForm(CommonForm):
             choices.append(('grade_seven', _('Grade seven')))
             choices.append(('grade_eight', _('Grade eight')))
             choices.append(('grade_nine', _('Grade nine')))
+
+            # add year 2010 if Kayany
+            years = list(((str(y), y) for y in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 5)))
+            years.insert(0, ('', '---------'))
+            self.fields['student_birthday_year'].choices = years
 
         self.fields['registration_level'].choices = choices
 
@@ -1051,26 +1086,26 @@ class BridgingForm(CommonForm):
                         Div('id_type', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                        Div('case_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                        Div('case_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                        Div('parent_individual_case_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                        Div('parent_individual_case_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    #     Div('case_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    #     Div('case_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    #     Div('parent_individual_case_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                    #     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('individual_case_number', css_class='col-md-4'),
@@ -1091,16 +1126,16 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id2 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                        Div('parent_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">20</span>'),
-                        Div('parent_national_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    #     Div('parent_national_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    #     Div('parent_national_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('national_number', css_class='col-md-4'),
@@ -1111,16 +1146,16 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id3 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">23</span>'),
-                        Div('parent_syrian_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">24</span>'),
-                        Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                    #     Div('parent_syrian_national_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">24</span>'),
+                    #     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('syrian_national_number', css_class='col-md-4'),
@@ -1131,16 +1166,16 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id4 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">27</span>'),
-                        Div('parent_sop_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">28</span>'),
-                        Div('parent_sop_national_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">27</span>'),
+                    #     Div('parent_sop_national_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">28</span>'),
+                    #     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('sop_national_number', css_class='col-md-4'),
@@ -1151,13 +1186,13 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id5 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">31</span>'),
-                        Div('parent_other_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">32</span>'),
-                        Div('parent_other_number_confirm', css_class='col-md-4'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">31</span>'),
+                    #     Div('parent_other_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">32</span>'),
+                    #     Div('parent_other_number_confirm', css_class='col-md-4'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('other_number', css_class='col-md-4'),
@@ -1460,26 +1495,26 @@ class BridgingForm(CommonForm):
                         Div('id_type', css_class='col-md-3'),
                         css_class='row card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">15</span>'),
-                        Div('case_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">16</span>'),
-                        Div('case_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">17</span>'),
-                        Div('parent_individual_case_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                        Div('parent_individual_case_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">15</span>'),
+                    #     Div('case_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">16</span>'),
+                    #     Div('case_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">17</span>'),
+                    #     Div('parent_individual_case_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">18</span>'),
+                    #     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('individual_case_number', css_class='col-md-4'),
@@ -1500,16 +1535,16 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id2 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                        Div('parent_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">20</span>'),
-                        Div('parent_national_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">19</span>'),
+                    #     Div('parent_national_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">20</span>'),
+                    #     Div('parent_national_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('national_number', css_class='col-md-4'),
@@ -1520,16 +1555,16 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id3 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">23</span>'),
-                        Div('parent_syrian_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">24</span>'),
-                        Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">23</span>'),
+                    #     Div('parent_syrian_national_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">24</span>'),
+                    #     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('syrian_national_number', css_class='col-md-4'),
@@ -1540,16 +1575,16 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id4 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">27</span>'),
-                        Div('parent_sop_national_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">28</span>'),
-                        Div('parent_sop_national_number_confirm', css_class='col-md-4'),
-                        HTML('<span style="padding-top: 37px;">' +
-                             '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
-                             '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">27</span>'),
+                    #     Div('parent_sop_national_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">28</span>'),
+                    #     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
+                    #     HTML('<span style="padding-top: 37px;">' +
+                    #          '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
+                    #          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('sop_national_number', css_class='col-md-4'),
@@ -1560,13 +1595,13 @@ class BridgingForm(CommonForm):
                              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                         css_class='row child_id child_id5 card-body',
                     ),
-                    Div(
-                        HTML('<span class="badge-form-2 badge-pill">31</span>'),
-                        Div('parent_other_number', css_class='col-md-4'),
-                        HTML('<span class="badge-form-2 badge-pill">32</span>'),
-                        Div('parent_other_number_confirm', css_class='col-md-4'),
-                        css_class='row child_id  d-none card-body',
-                    ),
+                    # Div(
+                    #     HTML('<span class="badge-form-2 badge-pill">31</span>'),
+                    #     Div('parent_other_number', css_class='col-md-4'),
+                    #     HTML('<span class="badge-form-2 badge-pill">32</span>'),
+                    #     Div('parent_other_number_confirm', css_class='col-md-4'),
+                    #     css_class='row child_id  d-none card-body',
+                    # ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">16</span>'),
                         Div('other_number', css_class='col-md-4'),
@@ -1751,15 +1786,25 @@ class BridgingForm(CommonForm):
     def clean(self):
         cleaned_data = super(BridgingForm, self).clean()
 
-
         # check if date is valid
-        year = int(cleaned_data.get("student_birthday_year"))
-        month = int(cleaned_data.get("student_birthday_month"))
-        day = int(cleaned_data.get("student_birthday_day"))
-        try:
-            datetime.datetime(year, month, day)
-        except ValueError:
-            self.add_error('student_birthday_year', 'The date is not valid.')
+        year = cleaned_data.get("student_birthday_year")
+        month = cleaned_data.get("student_birthday_month")
+        day = cleaned_data.get("student_birthday_day")
+        if not year:
+            self.add_error('student_birthday_year', 'This field is required')
+        if not month:
+            self.add_error('student_birthday_month', 'This field is required')
+        if not day:
+            self.add_error('student_birthday_day', 'This field is required')
+
+        if year and month and day:
+            try:
+                year = int(year)
+                month = int(month)
+                day = int(day)
+                datetime.datetime(year, month, day)
+            except ValueError:
+                self.add_error('student_birthday_year', 'The entered date is not valid.')
 
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
@@ -1867,7 +1912,7 @@ class BridgingForm(CommonForm):
 
             if syrian_national_number_confirm and not len(syrian_national_number_confirm) == 11:
                 msg = "Please enter a valid number (11 digits)"
-                self.add_error('parent_syrian_national_number_confirm', msg)
+                self.add_error('syrian_national_number_confirm', msg)
 
             if syrian_national_number != syrian_national_number_confirm:
                 msg = "The national numbers are not matched"
@@ -2002,6 +2047,9 @@ class BridgingForm(CommonForm):
             elif exam1 > 20:
                 self.add_error('exam1', 'This value is greater that 20')
 
+        student_p_code = cleaned_data.get("student_p_code")
+        if student_p_code and len(student_p_code) > 50:
+            self.add_error('student_p_code', _('P-Code must not exceed 50 characters.'))
 
     def save(self, request=None, instance=None, serializer=None):
 
@@ -2066,12 +2114,12 @@ class BridgingForm(CommonForm):
             'second_phone_number_confirm',
             'second_phone_owner',
             'id_type',
-            'case_number',
-            'case_number_confirm',
+            # 'case_number',
+            # 'case_number_confirm',
             'individual_case_number',
             'individual_case_number_confirm',
-            'parent_individual_case_number',
-            'parent_individual_case_number_confirm',
+            # 'parent_individual_case_number',
+            # 'parent_individual_case_number_confirm',
             'recorded_number',
             'recorded_number_confirm',
             'national_number',
@@ -2080,14 +2128,14 @@ class BridgingForm(CommonForm):
             'syrian_national_number_confirm',
             'sop_national_number',
             'sop_national_number_confirm',
-            'parent_national_number',
-            'parent_national_number_confirm',
-            'parent_syrian_national_number',
-            'parent_syrian_national_number_confirm',
-            'parent_sop_national_number',
-            'parent_sop_national_number_confirm',
-            'parent_other_number',
-            'parent_other_number_confirm',
+            # 'parent_national_number',
+            # 'parent_national_number_confirm',
+            # 'parent_syrian_national_number',
+            # 'parent_syrian_national_number_confirm',
+            # 'parent_sop_national_number',
+            # 'parent_sop_national_number_confirm',
+            # 'parent_other_number',
+            # 'parent_other_number_confirm',
             'other_number',
             'other_number_confirm',
             'individual_extract_record',

@@ -91,6 +91,15 @@ class DashboardView(LoginRequiredMixin,
     template_name = 'mscc/dashboard.html'
 
     def get_context_data(self, **kwargs):
+
+        return {}
+
+
+class DashboardCustomView(LoginRequiredMixin,
+                    TemplateView):
+    template_name = 'mscc/dashboard.html'
+
+    def get_context_data(self, **kwargs):
         from student_registration.locations.models import Center, Location
         from student_registration.clm.models import PartnerOrganization
 

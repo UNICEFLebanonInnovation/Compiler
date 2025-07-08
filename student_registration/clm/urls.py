@@ -363,6 +363,11 @@ urlpatterns = [
         name='bridging_export'
     ),
     re_path(
+        r'^bridging-export-all/$',
+        view=bridging_views.bridging_export_all,
+        name='bridging_export_all'
+    ),
+    re_path(
         r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
         view=bridging_views.bridging_school_export,
         name='bridging_school_export_data'
@@ -407,5 +412,10 @@ urlpatterns = [
         r'^attendance-child/(?P<child>[\w.@+-]+)/$',
         view=attendance_views.LoadAttendanceChild.as_view(),
         name='attendance_child'
+    ),
+    re_path(
+        r'^Dashboard/$',
+        view=views.DashboardView.as_view(),
+        name='dashboard'
     ),
 ]

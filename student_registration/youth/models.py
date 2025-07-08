@@ -14,6 +14,7 @@ from datetime import datetime
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.locations.models import Center, Location
+from student_registration.schools.models import PartnerOrganization
 
 YES_NO = Choices(
     ('', '----------'),
@@ -40,67 +41,6 @@ class Round(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = "Round"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
-
-
-class Partner(models.Model):
-
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Full Name')
-    )
-    short_name = models.CharField(
-        max_length=100,
-        blank=True,
-        unique=True,
-        verbose_name=_('Short Name')
-    )
-    monitoring_evaluation_focal_point_name = models.CharField(
-        blank=True,
-        null=True,
-        max_length=100,
-        verbose_name=_('Monitoring and Evaluation Focal Point Name')
-    )
-    monitoring_evaluation_focal_point_phone = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Monitoring and Evaluation Focal Point Phone')
-    )
-    monitoring_evaluation_focal_point_email = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Monitoring and Evaluation Focal Point Email')
-    )
-    program_manager_focal_point_name = models.CharField(
-        blank=True,
-        null=True,
-        max_length=100,
-        verbose_name=_('Program Manager Focal Point Name')
-    )
-    program_manager_focal_point_phone = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Program Manager Focal Point Phone')
-    )
-    program_manager_focal_point_email = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Program Manager Focal Point Email')
-    )
-    active = models.BooleanField(blank=True, default=False)
-
-    class Meta:
-        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -421,7 +361,7 @@ class ProgramDocument(TimeStampedModel):
         ('Support', _("Support"))
     )
     partner = models.ForeignKey(
-        Partner,
+        PartnerOrganization,
         blank=True, null=True,
         related_name='+',
         on_delete=models.SET_NULL,
@@ -545,37 +485,7 @@ class ProgramDocument(TimeStampedModel):
         null=True,
         verbose_name=_('Number of Targeted PRS')
     )
-    master_programs = models.ManyToManyField(MasterProgram, blank=True, verbose_name=_('Master Programs'))
     donors = models.ManyToManyField(Donor, blank=True, verbose_name=_('Donors'))
-
-    master_program1 = models.ForeignKey(
-        MasterProgram,
-        blank=True, null=True,
-        related_name='master_program1',
-        on_delete=models.SET_NULL,
-        verbose_name=_('Master Program 1')
-    )
-    master_program2 = models.ForeignKey(
-        MasterProgram,
-        blank=True, null=True,
-        related_name='master_program2',
-        on_delete=models.SET_NULL,
-        verbose_name=_('Master Program 2')
-    )
-    master_program3 = models.ForeignKey(
-        MasterProgram,
-        blank=True, null=True,
-        related_name='master_program3',
-        on_delete=models.SET_NULL,
-        verbose_name=_('Master Program 3')
-    )
-    baseline1 = models.IntegerField(blank=True, null=True)
-    baseline2 = models.IntegerField(blank=True, null=True)
-    baseline3 = models.IntegerField(blank=True, null=True)
-
-    target1 = models.IntegerField(blank=True, null=True)
-    target2 = models.IntegerField(blank=True, null=True)
-    target3 = models.IntegerField(blank=True, null=True)
 
     class Meta:
         ordering = ['project_name']
@@ -595,14 +505,9 @@ class ProgramDocument(TimeStampedModel):
         return ", ".join(gov.name for gov in self.population_groups.all())
 
     def get_master_program_names(self):
-        # Gather the names of the master programs if they exist
-        programs = [
-            self.master_program1.name if self.master_program1 else None,
-            self.master_program2.name if self.master_program2 else None,
-            self.master_program3.name if self.master_program3 else None
-        ]
-        # Filter out None values and join with commas
-        return ", ".join(filter(None, programs))
+        names = self.indicators.filter(master_indicator__isnull=False)\
+            .values_list('master_indicator__name', flat=True).distinct()
+        return ", ".join(names)
 
     def get_donor_names(self):
         return ", ".join(donor.name for donor in self.donors.all())
@@ -615,6 +520,43 @@ class ProgramDocument(TimeStampedModel):
             raise ValidationError({'project_name': _('Project Name cannot be empty')})
         if not self.project_code:
             raise ValidationError({'project_code': _('Project Code cannot be empty')})
+
+
+class ProgramDocumentIndicator(TimeStampedModel):
+    YES_NO = Choices(
+        ('', '----------'),
+        ('Yes', _("Yes")),
+        ('No', _("No"))
+    )
+    program_document = models.ForeignKey(
+        ProgramDocument,
+        blank=False, null=True,
+        related_name='indicators',
+    )
+    master_indicator = models.ForeignKey(
+        MasterProgram,
+        blank=True, null=True,
+        related_name='master_indicator',
+        verbose_name=_('Master Indicator')
+    )
+    sub_indicator = models.ForeignKey(
+        SubProgram,
+        blank=True, null=True,
+        related_name='sub_indicator',
+        verbose_name=_('Sub Indicator')
+    )
+    baseline = models.IntegerField(blank=True, null=True)
+    target = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['master_indicator']
+        verbose_name = "Indicator"
+
+    def __str__(self):
+        return self.master_indicator.name
+
+    def __unicode__(self):
+        return self.master_indicator.name
 
 
 class Registration(TimeStampedModel):
@@ -641,7 +583,7 @@ class Registration(TimeStampedModel):
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
-        Partner,
+        PartnerOrganization,
         blank=True, null=True,
         verbose_name=_('Partner'),
         related_name='+',

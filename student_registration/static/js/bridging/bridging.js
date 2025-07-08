@@ -133,10 +133,11 @@ $(document).ready(function() {
 
     $(document).on('change', 'input#id_phone_number', function() {
         var student_first_name= $('#id_student_first_name').val();
-        // var student_father_name= $('#id_student_father_name').val();
+        var student_father_name= $('#id_student_father_name').val();
+        var student_last_name= $('#id_student_last_name').val();
         var phone_number= $('#id_phone_number').val();
 
-        if (student_first_name!='' && phone_number!='' )
+        if (student_first_name!='' && student_father_name!='' && student_last_name!=''  && phone_number!='')
         {
             duplicate_search('phone');
         }

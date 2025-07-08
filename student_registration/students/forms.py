@@ -286,6 +286,12 @@ class TeacherForm(forms.ModelForm):
             choices.append(('Level four', _('Level four')))
             choices.append(('Level five', _('Level five')))
             choices.append(('Level six', _('Level six')))
+            choices.append(('level_one_pm', _('Level one PM shift')))
+            choices.append(('level_two_pm', _('Level two PM shift')))
+            choices.append(('level_three_pm', _('Level three PM shift')))
+            choices.append(('level_four_pm', _('Level four PM shift')))
+            choices.append(('level_five_pm', _('Level five PM shift')))
+            choices.append(('level_six_pm', _('Level six PM shift')))
 
             subject_choices.append(('arabic', _('Arabic')))
             subject_choices.append(('math', _('Math')))

@@ -10,10 +10,13 @@ $(document).ready(function() {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
-    $(document).on('change', '#id_education_status', function(){
+    $(document).on('change', '#id_education_program', function(){
         reorganizeForm();
     });
 
+    $(document).on('change', '#id_education_status', function(){
+        reorganizeForm();
+    });
 });
 
 function reorganizeForm()
@@ -34,6 +37,33 @@ function reorganizeForm()
         $('div#div_id_dropout_date').addClass('d-none');
         $('#id_dropout_date').removeClass('error-field');
         $('#id_dropout_date').val('');
+    }
+
+//   Education Program
+   var education_program = $('select#id_education_program').val();
+    $('div#div_id_catch_up_registered').addClass('d-none');
+    $('#span_catch_up_registered').addClass('d-none');
+
+    const CatchUpPrograms = [
+      'BLN Catch-up',
+      'ABLN Catch-up',
+      'CBECE Catch-up',
+      'YBLN Catch-up                                              '
+    ];
+    console.log(CatchUpPrograms)
+    console.log(education_program)
+
+
+    if (CatchUpPrograms.includes(education_program)) {
+        $('#div_id_catch_up_registered').removeClass('d-none');
+        $('#span_catch_up_registered').removeClass('d-none');
+        $('#id_catch_up_registered').addClass('error-field');
+    }
+    else
+    {
+        $('div#div_id_catch_up_registered').addClass('d-none');
+        $('#id_catch_up_registered').removeClass('error-field');
+        $('#id_catch_up_registered').val('');
     }
 }
 

@@ -1,0 +1,51 @@
+{% extends "youth/base.html" %}
+{% load staticfiles i18n %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% load util_tags %}
+{% load simple_tags %}
+{% bootstrap_css %}
+
+{% block project_title %}Upload{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section>
+    <section id="page-title" class="inline-form inner-section ui-menu-color02">
+        <div class="container-fluid nopadding">
+            <h3 class="font-accident-two-light color01 uppercase" data-animation-origin="right" data-animation-duration="400" data-animation-delay="100" data-animation-distance="50px">{% trans "Import Result" %}</h3>
+        </div>
+    </section>
+    <section style="padding-top:10px;">
+        <p>{% blocktrans with imported=imported failed=failed %}Imported {{ imported }} records. {{ failed }} records failed.{% endblocktrans %}</p>
+        {% if not_imported %}
+            <h4>{% trans "Not Imported Records" %}</h4>
+            <p><a href="{% url 'backends:adolescent_upload_failed' upload.pk %}" class="btn btn-default">{% trans 'Download Rejected Records' %}</a></p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>{% for key in not_imported.0.keys %}<th>{{ key }}</th>{% endfor %}</tr>
+                </thead>
+                <tbody>
+                    {% for row in not_imported %}
+                    <tr>{% for val in row.values %}<td>{{ val }}</td>{% endfor %}</tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </section>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
+
+{% endblock %}

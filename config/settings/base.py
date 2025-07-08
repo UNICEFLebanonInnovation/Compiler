@@ -132,7 +132,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # 'student_registration.user_activity.UserActivityMiddleware',
+    "student_registration.user_activity.UserActivityMiddleware",
     # "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 

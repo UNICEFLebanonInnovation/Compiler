@@ -92,51 +92,31 @@ class MainSerializer(serializers.ModelSerializer):
     id_type = serializers.CharField(source='adolescent.id_type', required=False)
     id_type_id = serializers.CharField(source='adolescent.id_type.id', required=False)
     case_number = serializers.CharField(source='adolescent.case_number', required=False)
-    case_number_confirm = serializers.CharField(source='adolescent.case_number_confirm', required=False)
     parent_individual_case_number = serializers.CharField(source='adolescent.parent_individual_case_number',
                                                           required=False)
-    parent_individual_case_number_confirm = serializers.CharField(source='adolescent.parent_individual_case_number_confirm',
-                                                                  required=False)
     individual_case_number = serializers.CharField(source='adolescent.individual_case_number', required=False)
-    individual_case_number_confirm = serializers.CharField(source='adolescent.individual_case_number_confirm',
-                                                           required=False)
     recorded_number = serializers.CharField(source='adolescent.recorded_number', required=False)
-    recorded_number_confirm = serializers.CharField(source='adolescent.recorded_number_confirm', required=False)
     parent_national_number = serializers.CharField(source='adolescent.parent_national_number', required=False)
-    parent_national_number_confirm = serializers.CharField(source='adolescent.parent_national_number_confirm',
-                                                           required=False)
     national_number = serializers.CharField(source='adolescent.national_number', required=False)
-    national_number_confirm = serializers.CharField(source='adolescent.national_number_confirm', required=False)
 
 
     parent_extract_record = serializers.CharField(source='adolescent.parent_extract_record', required=False)
-    parent_extract_record_confirm = serializers.CharField(source='adolescent.parent_extract_record_confirm', required=False)
 
 
     parent_syrian_national_number = serializers.CharField(source='adolescent.parent_syrian_national_number',
                                                           required=False)
-    parent_syrian_national_number_confirm = serializers.CharField(source='adolescent.parent_syrian_national_number_confirm',
-                                                                  required=False)
     syrian_national_number = serializers.CharField(source='adolescent.syrian_national_number', required=False)
-    syrian_national_number_confirm = serializers.CharField(source='adolescent.syrian_national_number_confirm',
-                                                           required=False)
     parent_sop_national_number = serializers.CharField(source='adolescent.parent_sop_national_number', required=False)
-    parent_sop_national_number_confirm = serializers.CharField(source='adolescent.parent_sop_national_number_confirm',
-                                                               required=False)
     sop_national_number = serializers.CharField(source='adolescent.sop_national_number', required=False)
-    sop_national_number_confirm = serializers.CharField(source='adolescent.sop_national_number_confirm', required=False)
     parent_other_number = serializers.CharField(source='adolescent.parent_other_number', required=False)
-    parent_other_number_confirm = serializers.CharField(source='adolescent.parent_other_number_confirm', required=False)
     other_number = serializers.CharField(source='adolescent.other_number', required=False)
-    other_number_confirm = serializers.CharField(source='adolescent.other_number_confirm', required=False)
+    unrwa_number = serializers.CharField(source='adolescent.unrwa_number', required=False)
     father_educational_level = serializers.CharField(source='adolescent.father_educational_level', required=False)
     father_educational_level_id = serializers.CharField(source='adolescent.father_educational_level.id', required=False)
     mother_educational_level = serializers.CharField(source='adolescent.mother_educational_level', required=False)
     mother_educational_level_id = serializers.CharField(source='adolescent.mother_educational_level.id', required=False)
     first_phone_number = serializers.CharField(source='adolescent.first_phone_number', required=False)
-    first_phone_number_confirm = serializers.CharField(source='adolescent.first_phone_number_confirm', required=False)
     second_phone_number = serializers.CharField(source='adolescent.second_phone_number', required=False)
-    second_phone_number_confirm = serializers.CharField(source='adolescent.second_phone_number_confirm', required=False)
     main_caregiver = serializers.CharField(source='adolescent.main_caregiver', required=False)
     main_caregiver_other = serializers.CharField(source='adolescent.main_caregiver_other', required=False)
     caregiver_first_name = serializers.CharField(source='adolescent.caregiver_first_name', required=False)
@@ -202,9 +182,7 @@ class MainSerializer(serializers.ModelSerializer):
             'mother_educational_level',
             'mother_educational_level_id',
             'first_phone_number',
-            'first_phone_number_confirm',
             'second_phone_number',
-            'second_phone_number_confirm',
             'main_caregiver',
             'main_caregiver_other',
             'caregiver_first_name',
@@ -214,29 +192,17 @@ class MainSerializer(serializers.ModelSerializer):
             'id_type',
             'id_type_id',
             'case_number',
-            'case_number_confirm',
             'parent_individual_case_number',
-            'parent_individual_case_number_confirm',
             'individual_case_number',
-            'individual_case_number_confirm',
             'parent_extract_record',
-            'parent_extract_record_confirm',
             'recorded_number',
-            'recorded_number_confirm',
             'parent_national_number',
-            'parent_national_number_confirm',
             'national_number',
-            'national_number_confirm',
             'parent_syrian_national_number',
-            'parent_syrian_national_number_confirm',
             'syrian_national_number',
-            'syrian_national_number_confirm',
             'parent_sop_national_number',
-            'parent_sop_national_number_confirm',
             'sop_national_number',
-            'sop_national_number_confirm',
             'parent_other_number',
-            'parent_other_number_confirm',
             'other_number',
-            'other_number_confirm',
+            'unrwa_number'
         )

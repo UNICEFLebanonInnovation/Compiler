@@ -26,6 +26,11 @@ urlpatterns = [
         r'^teacher-export/$',
         view=views.teacher_export_data,
         name='teacher_export'
-    )
+    ),
+    url(
+        regex=r'^teacher-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.TeacherDeleteView.as_view(),
+        name='teacher_delete'
+    ),
 ]
 
