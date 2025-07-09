@@ -329,6 +329,14 @@ class SubProgram(TimeStampedModel):
         return self.created.year if self.created else 'Unknown'
     creation_year.short_description = 'Creation Year'
 
+    def master_active_status(self):
+        if self.master_program:
+            return "Yes" if self.master_program.active else "No"
+        return "No"
+    master_active_status.short_description = 'Master Active'
+    master_active_status.admin_order_field = 'master_program__active'
+
+
 
 class Donor(models.Model):
 
