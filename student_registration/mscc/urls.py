@@ -329,6 +329,11 @@ urlpatterns = [
         name='export_list_background'
     ),
     re_path(
+        r'^export-list-async/$',
+        view=views.export_list_async,
+        name='export_list_async'
+    ),
+    re_path(
         r"^export-download/(?P<file_name>.+)/$",
         view=views.get_file,
         name='export_download'

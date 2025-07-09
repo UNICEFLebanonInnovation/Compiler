@@ -53,7 +53,8 @@ from .tables import (
 from .models import (
     Registration,
     Referral,
-    EducationHistory
+    EducationHistory,
+    MSCCExportRequest,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -68,6 +69,7 @@ from .serializers import (
 from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
+from .tasks import generate_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
 
 
@@ -851,6 +853,19 @@ def export_child_list_background(request):
         logging.error(traceback.format_exc())
 
         return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+@login_required(login_url='/users/login')
+def export_list_async(request):
+    fields = request.GET.getlist('fields')
+    file_format = request.GET.get('format', 'csv')
+    export_req = MSCCExportRequest.objects.create(
+        user=request.user,
+        fields=fields,
+        file_format=file_format,
+    )
+    generate_mscc_export.delay(export_req.id)
+    return JsonResponse({'request_id': export_req.id})
 
 
 class MyAzureStorage(AzureStorage):
