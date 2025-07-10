@@ -108,9 +108,12 @@ class FullFilter(FilterSet):
     master_program = MultipleChoiceFilter(
         choices=lambda: [
             (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in MasterProgram.objects.filter(active=True
-                                                   # , created__year=datetime.datetime.now().year
-                                                   )
+            for mp in sorted(
+                MasterProgram.objects.filter(active=True
+                                             # , created__year=datetime.datetime.now().year
+                                             ),
+                key=lambda m: [int(p) for p in m.number.split('.')]
+            )
         ],
         field_name='enrolled_programs__master_program',
         label='Master Program',
@@ -121,9 +124,10 @@ class FullFilter(FilterSet):
     sub_program = MultipleChoiceFilter(
         choices=lambda: [
             (sp.id, "{} - {}".format(sp.number, sp.name))
-            for sp in SubProgram.objects.filter(master_program__active=True
-                                                # ,created__year=datetime.datetime.now().year
-                                                )
+            for sp in sorted(
+                SubProgram.objects.filter(master_program__active=True),
+                key=lambda s: [int(p) for p in s.number.split('.')]
+            )
         ],
         field_name='enrolled_programs__sub_program',
         label='Sub Program',
@@ -179,19 +183,15 @@ class PDFilter(FilterSet):
     master_program = MultipleChoiceFilter(
         choices=lambda: [
             (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in MasterProgram.objects.filter(
-                id__in=ProgramDocumentIndicator.objects.filter(
-                    master_indicator__isnull=False
-                ).values_list('master_indicator_id', flat=True).distinct(),
-                active=True
-                # , created__year=datetime.datetime.now().year
+            for mp in sorted(
+                MasterProgram.objects.filter(active=True),
+                key=lambda m: [int(p) for p in m.number.split('.')]
             )
         ],
         label='Master Program',
         required=False,
         method='filter_by_master_program',
         widget=forms.SelectMultiple(attrs={'class': 'long-select'})
-
     )
 
     class Meta:
@@ -229,12 +229,9 @@ class PDPartnerFilter(FilterSet):
     master_program = MultipleChoiceFilter(
         choices=lambda: [
             (mp.id, "{} - {}".format(mp.number, mp.name))
-            for mp in MasterProgram.objects.filter(
-                id__in=ProgramDocumentIndicator.objects.filter(
-                    master_indicator__isnull=False
-                ).values_list('master_indicator_id', flat=True).distinct(),
-                active=True
-                # , created__year=datetime.datetime.now().year
+            for mp in sorted(
+                MasterProgram.objects.filter(active=True),
+                key=lambda m: [int(p) for p in m.number.split('.')]
             )
         ],
         label='Master Program',

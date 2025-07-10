@@ -233,7 +233,7 @@ class ProgramTag(models.Model):
 
 class MasterProgram(TimeStampedModel):
     number = models.CharField(max_length=20, default='1')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
     program_type = models.ForeignKey(
         ProgramType,
         blank=True, null=True,
@@ -272,12 +272,20 @@ class MasterProgram(TimeStampedModel):
         # Extract the year from the creation date
         creation_year = self.created.year if self.created else datetime.now().year
 
-        # Check for duplicates within the same year
-        duplicates = MasterProgram.objects.exclude(id=self.id).filter(created__year=creation_year)
+        duplicates = MasterProgram.objects.exclude(id=self.id).filter(
+            number=self.number.strip(),
+            created__year=creation_year
+        )
+
         for program in duplicates:
-            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
-            if normalized_name == normalized_duplicate_name:
-                raise ValidationError({'name': _('A Master Program with a similar name already exists in the same year: %s') % program.name})
+            existing_normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
+            if normalized_name == existing_normalized_name:
+                raise ValidationError({
+                    'name': _('A Master Program with number "%(number)s" and a similar name already exists in the same year: "%(existing)s".') % {
+                        'number': self.number.strip(),
+                        'existing': program.name
+                    }
+                })
 
     def creation_year(self):
         return self.created.year if self.created else 'Unknown'
@@ -292,7 +300,7 @@ class SubProgram(TimeStampedModel):
         related_name='master_program',
     )
     number = models.CharField(max_length=20, default='1')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
 
     class Meta:
         ordering = ['name']
@@ -318,12 +326,21 @@ class SubProgram(TimeStampedModel):
         # Extract the year from the creation date
         creation_year = self.created.year if self.created else datetime.now().year
 
-        # Check for duplicates within the same year
-        duplicates = SubProgram.objects.exclude(id=self.id).filter(created__year=creation_year)
+        # Look for SubPrograms with same number and similar normalized name in same year
+        duplicates = SubProgram.objects.exclude(id=self.id).filter(
+            number=self.number.strip(),
+            created__year=creation_year
+        )
         for program in duplicates:
-            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
-            if normalized_name == normalized_duplicate_name:
-                raise ValidationError({'name': _('A Sub Program with a similar name already exists in the same year: %s') % program.name})
+            existing_normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
+            if normalized_name == existing_normalized_name:
+                raise ValidationError({
+                    'name': _(
+                        'A Sub Program with number "%(number)s" and a similar name already exists under the same Master Program in the same year: "%(existing)s".') % {
+                                'number': self.number.strip(),
+                                'existing': program.name
+                            }
+                })
 
     def creation_year(self):
         return self.created.year if self.created else 'Unknown'
