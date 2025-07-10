@@ -24,6 +24,7 @@ from student_registration.schools.models import (
 from collections import OrderedDict
 from django.template.loader import render_to_string
 
+from django.core.exceptions import ValidationError
 
 class UserAdminForm(UserChangeForm):
 
@@ -35,6 +36,16 @@ class UserAdminForm(UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super(UserAdminForm, self).__init__(*args, **kwargs)
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            qs = User.objects.filter(username__iexact=username)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("A user with this username already exists.")
+        return username
 
     class Meta:
         model = User
