@@ -1,6 +1,8 @@
 __author__ = 'achamseddine'
 
 from django.db.models import Q
+from django.utils import timezone
+import logging
 from student_registration.taskapp.celery import app
 from student_registration.students.utils import generate_id
 
@@ -155,3 +157,17 @@ def move_data_from_registry_to_students(registry_type='alp'):
         student = registry.student
         student.registered_in_unhcr = registry.registered_in_unhcr
         student.save()
+
+
+@app.task
+def daily_student_data_check():
+    """Check daily for students missing a unique number and log the count."""
+    from .models import Student
+
+    missing = Student.objects.filter(number__isnull=True).count()
+    logger = logging.getLogger(__name__)
+    logger.info(
+        "Daily data check at %s: %d students missing ID numbers",
+        timezone.now(),
+        missing,
+    )

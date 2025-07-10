@@ -12,6 +12,7 @@ from __future__ import absolute_import, unicode_literals
 
 import environ
 import logging
+from celery.schedules import crontab
 
 logger = logging.getLogger(__name__)
 
@@ -374,6 +375,12 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 INSTALLED_APPS += ['student_registration.taskapp.celery.CeleryConfig']
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BEAT_SCHEDULE = {
+    'daily-student-data-check': {
+        'task': 'student_registration.students.tasks.daily_student_data_check',
+        'schedule': crontab(minute=0, hour=0),
+    },
+}
 ########## END CELERY
 
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
