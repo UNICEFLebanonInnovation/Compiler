@@ -61,8 +61,8 @@
                             <span class="hamburger-inner"></span>
                         </span>
                     </button>
-                </div>
-            </div>
+</div>
+</div>
         </div>
         <div class="app-header__mobile-menu">
             <div>
@@ -134,9 +134,15 @@
                                 </div>
                             </div>
                            <ul class="nav flex-column">
-                                <li class="nav-item-divider nav-item"></li>
-                                <li class="nav-item-btn text-center nav-item">
+                                {% for export in request.user.mscc_export_requests.filter(status='done')|slice:':5' %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ export.file_url }}" target="_blank">MSCC export {{ export.created|date:"Y-m-d H:i" }}</a>
                                 </li>
+                                {% empty %}
+                                <li class="nav-item">
+                                    <span class="nav-link">No notifications</span>
+                                </li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
@@ -924,3 +930,28 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="downloadReadyModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">File Ready</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Your export is ready. <a class="download-link" href="#" target="_blank">Download</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  if(window.firebaseMessaging){
+    firebaseMessaging.onMessage(function(payload){
+        if(payload.data && payload.data.type === 'mscc_export_ready'){
+            $('#downloadReadyModal .download-link').attr('href', payload.data.url);
+            $('#downloadReadyModal').modal('show');
+        }
+    });
+  }
+</script>
