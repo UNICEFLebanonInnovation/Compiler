@@ -5,6 +5,9 @@ from __future__ import absolute_import, unicode_literals
 import requests
 from requests.structures import CaseInsensitiveDict
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 from django.db.models import Max
 from django.views.generic import DetailView, ListView, RedirectView,FormView, TemplateView, UpdateView, View
@@ -34,8 +37,13 @@ def outreach_import_data(request):
     url = "https://eu.kobotoolbox.org/api/v2/assets/aLkUps4YnMc43ATvTr9JB3/data.json?sort=%7B%22_id%22%3A+1%7D&query=%7B%22_id%22%3A+%7B%22%24gt%22%3A+" + last_loaded_identifier_str + "%7D%7D"
     headers = CaseInsensitiveDict()
     headers["Authorization"] = "Token 96d9b5c22e092b684544167a136fba0b62df4c25"
-    resp = requests.get(url, headers=headers)
-    data = json.loads(resp.text)
+    try:
+        resp = requests.get(url, headers=headers)
+        resp.raise_for_status()
+        data = json.loads(resp.text)
+    except Exception as ex:
+        logger.exception("Failed to fetch outreach data")
+        return HttpResponse("Error fetching data", status=500)
 
     for record in data["results"]:
         try:

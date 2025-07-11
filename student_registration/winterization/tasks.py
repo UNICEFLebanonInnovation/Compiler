@@ -6,9 +6,12 @@ import tablib
 import requests
 from django.conf import settings
 from django.db import connection
+import logging
 from requests.auth import HTTPBasicAuth
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
+
+logger = logging.getLogger(__name__)
 
 
 @app.task
@@ -63,10 +66,16 @@ def import_docs(**kwargs):
     from .models import Assessment
     from .serializers import AssessmentSerializer
 
-    data = requests.get(
-        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
-        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
-    ).json()
+    try:
+        response = requests.get(
+            os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+            auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+        )
+        response.raise_for_status()
+        data = response.json()
+    except Exception:
+        logger.exception('Failed to fetch documents')
+        return
 
     for row in data['rows']:
         if 'doc' in row:

@@ -7,6 +7,7 @@ import io
 import csv
 import logging
 logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 import os
 import uuid
 from django.core.files.storage import default_storage
@@ -457,7 +458,11 @@ def serve_file(request, file_path):
     from pathlib import Path
     file_name = Path(file_path).name
     storage = MyAzureStorage()
-    file = storage.open(file_path, "rb")
+    try:
+        file = storage.open(file_path, "rb")
+    except Exception as ex:
+        logger.exception("Failed to open file %s", file_path)
+        return HttpResponse("File not found", status=404)
     response = FileResponse(file)
     response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
     return response
