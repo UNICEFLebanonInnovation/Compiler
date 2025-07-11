@@ -1,4 +1,2 @@
-<option value="">---------</option>
-{% for city in cities %}
-<option value="{{ city.pk }}">{{ city.name }}</option>
-{% endfor %}
+{# Include common cadaster dropdown to avoid duplication #}
+{% include "clm/cadaster_dropdown_list_options.html" %}
