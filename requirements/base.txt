@@ -23,7 +23,7 @@ crispy-bootstrap3==2024.1
 django-model-utils==4.3.1
 
 # Images
-Pillow==11.2.1
+Pillow==11.3.0
 
 # Password storage
 argon2-cffi==21.3.0
