@@ -721,39 +721,4 @@ def find_attendances_gap_grouped(days):
     file_object.close()
 
 
-@app.task
-def dropout_students(from_date, to_date):
-    from .models import Attendance, Absentee
-
-    queryset = Attendance.objects.exclude(total_absences=0).exclude(close_reason__isnull=False)
-    # queryset = queryset.filter(
-    #     attendance_date__gte=from_date,
-    #     attendance_date__lte=to_date
-    # )
-
-    for line in queryset:
-        if not line.students:
-            continue
-        for level_section in line.students:
-            attendances = line.students[level_section]
-            students = attendances['students']
-            for student in students:
-                continue
-
-
-@app.task
-def calculate_attendances_by_student():
-    from .utils import calculate_absentees
-    from .models import Attendance, Absentee
-
-    Absentee.objects.all().delete()
-    queryset = Attendance.objects.all()
-
-    for line in queryset:
-        if not line.students:
-            continue
-        for level_section in line.students:
-            attendances = line.students[level_section]
-            students = attendances['students']
-            calculate_absentees(attendance=line, students=students)
 
