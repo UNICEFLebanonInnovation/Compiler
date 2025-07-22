@@ -128,7 +128,7 @@ urlpatterns = [
     re_path(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     re_path(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
     re_path(r'^login-success/$', login_success, name='login_success'),
-    re_path(r'^landing_page/$', LandingPage.as_view(), name='landing_page'),
+    re_path(r'^landing-page/$', LandingPage.as_view(), name='landing_page'),
     re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
     re_path(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
     re_path(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),

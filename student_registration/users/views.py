@@ -80,7 +80,7 @@ def login_success(request):
     #     return HttpResponseRedirect(reverse('clm:bridging_page'))
 
     if request.user.is_authenticated:
-        return redirect('/landing_page/')
+        return redirect('/landing-page/')
     else:
         return redirect('/accounts/login/')
 
@@ -88,7 +88,6 @@ def login_success(request):
 class LandingPage(LoginRequiredMixin,
                    TemplateView):
     template_name = 'landing_page.html'
-
 
 
 def home(request):

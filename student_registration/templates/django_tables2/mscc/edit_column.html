@@ -1,4 +1,7 @@
 {% load static i18n %}
+{% load util_tags %}
+{% load simple_tags %}
+
 {% if user|has_group:"MSCC_CENTER" and user.center %}
 <a href="{% url 'mscc:child_edit' record.id %}" class="btn btn-info">
     <i class="icon-edit-sign icon-white"></i>

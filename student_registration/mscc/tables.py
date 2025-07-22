@@ -37,6 +37,11 @@ class CommonTable(tables.Table):
         orderable=False,
     )
 
+    child_unicef_id = tables.Column(
+        verbose_name=_('UNICEF ID'),
+        orderable=False,
+    )
+
     class Meta:
         model = Registration
         template = 'django_tables2/bootstrap4.html'
@@ -57,11 +62,9 @@ class CommonTable(tables.Table):
     def render_has_previous_registration(self, record):
         return record.has_previous_registration
 
-    def render_child__unicef_id(self, value, record):
-        if value:
-            url = reverse('mscc:child_profile', kwargs={'pk': record.id})
-            return format_html('<a href="{}" target="_blank">{}</a>', url, value)
-        return ''
+    def render_child_unicef_id(self, record):
+        url = reverse('mscc:child_profile', kwargs={'pk': record.id})
+        return format_html('<a href="{}" target="_blank">{}</a>', url, record.child.unicef_id)
 
 
 class MainTable(CommonTable):
@@ -94,6 +97,7 @@ class MainTable(CommonTable):
             'round',
             'child.number',
             'child.unicef_id',
+            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -156,6 +160,7 @@ class FullTable(CommonTable):
             'round',
             'child.number',
             'child.unicef_id',
+            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -207,6 +212,7 @@ class PartnerTable(CommonTable):
             'round',
             'child.number',
             'child.unicef_id',
+            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
@@ -242,6 +248,7 @@ class YouthMainTable(CommonTable):
             'edit_column',
             'child.number',
             'child.unicef_id',
+            # 'child_unicef_id',
             'child.first_name',
             'child.father_name',
             'child.last_name',
