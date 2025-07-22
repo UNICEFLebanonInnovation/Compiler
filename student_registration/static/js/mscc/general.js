@@ -39,5 +39,26 @@ $(document).ready(function() {
             $('#formErrorModal').modal('show');
          }
     });
+
+    // Handle forms where the visible "Next" button uses the id "next-btn22" directly
+    // instead of the generic "next-page" id. Apply the same validation logic when
+    // the button is clicked and only allow progressing if validation succeeds.
+    $(document).on('click', '#next-btn22', function(e){
+        $(this).removeClass('error-field');
+        var error_fields = false;
+        $('input, select').filter('[required]:visible').each(function(){
+            if($(this).val() == null || $(this).val() == ''){
+                $(this).addClass('error-field');
+                error_fields = true;
+            }
+        });
+        if(typeof validateMainForm === 'function' && !validateMainForm(false)){
+            error_fields = true;
+        }
+        if(error_fields){
+            e.preventDefault();
+            $('#formErrorModal').modal('show');
+        }
+    });
 });
 
