@@ -1,6 +1,8 @@
 # coding: utf-8
 import django_tables2 as tables
 from django.utils.translation import gettext as _
+from django.urls import reverse
+from django.utils.html import format_html
 
 from .models import Registration
 
@@ -55,12 +57,19 @@ class CommonTable(tables.Table):
     def render_has_previous_registration(self, record):
         return record.has_previous_registration
 
+    def render_child__unicef_id(self, value, record):
+        if value:
+            url = reverse('mscc:child_profile', kwargs={'pk': record.id})
+            return format_html('<a href="{}" target="_blank">{}</a>', url, value)
+        return ''
+
 
 class MainTable(CommonTable):
-    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html')
-    status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
-                                          template_name='django_tables2/mscc/status_column.html')
+    edit_column = tables.TemplateColumn(
+        verbose_name=_('Edit'),
+        orderable=False,
+        template_name='django_tables2/mscc/edit_column.html'
+    )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
@@ -78,8 +87,7 @@ class MainTable(CommonTable):
     class Meta:
         model = Registration
         fields = (
-            'action_column',
-            'status_column',
+            'edit_column',
             'type_column',
             'outreached',
             'absence_column',
@@ -109,10 +117,11 @@ class MainTable(CommonTable):
 
 
 class FullTable(CommonTable):
-    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html')
-    status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
-                                          template_name='django_tables2/mscc/status_column.html')
+    edit_column = tables.TemplateColumn(
+        verbose_name=_('Edit'),
+        orderable=False,
+        template_name='django_tables2/mscc/edit_column.html'
+    )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
@@ -140,8 +149,7 @@ class FullTable(CommonTable):
     class Meta:
         model = Registration
         fields = (
-            'action_column',
-            'status_column',
+            'edit_column',
             'type_column',
             'outreached',
             'absence_column',
@@ -173,10 +181,11 @@ class FullTable(CommonTable):
 
 
 class PartnerTable(CommonTable):
-    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html')
-    status_column = tables.TemplateColumn(verbose_name=_('Status'), orderable=False,
-                                          template_name='django_tables2/mscc/status_column.html')
+    edit_column = tables.TemplateColumn(
+        verbose_name=_('Edit'),
+        orderable=False,
+        template_name='django_tables2/mscc/edit_column.html'
+    )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
     outreached = tables.TemplateColumn(verbose_name=_('Outreach Child?'), orderable=False,
@@ -191,8 +200,7 @@ class PartnerTable(CommonTable):
     class Meta:
         model = Registration
         fields = (
-            'action_column',
-            'status_column',
+            'edit_column',
             'type_column',
             'outreached',
             'absence_column',
@@ -222,13 +230,16 @@ class PartnerTable(CommonTable):
 
 
 class YouthMainTable(CommonTable):
-    action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
-                                          template_name='django_tables2/mscc/action_column.html')
+    edit_column = tables.TemplateColumn(
+        verbose_name=_('Edit'),
+        orderable=False,
+        template_name='django_tables2/mscc/edit_column.html'
+    )
 
     class Meta:
         model = Registration
         fields = (
-            'action_column',
+            'edit_column',
             'child.number',
             'child.unicef_id',
             'child.first_name',
