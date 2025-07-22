@@ -60,7 +60,7 @@ class CommonTable(tables.Table):
     def render_child__unicef_id(self, value, record):
         if value:
             url = reverse('mscc:child_profile', kwargs={'pk': record.id})
-            return format_html('<a href="{}">{}</a>', url, value)
+            return format_html('<a href="{}" target="_blank">{}</a>', url, value)
         return ''
 
 
