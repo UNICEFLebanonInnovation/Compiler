@@ -857,8 +857,12 @@ def export_child_list_background(request):
 
 @login_required(login_url='/users/login')
 def export_list_async(request):
-    fields = request.GET.getlist('fields')
-    file_format = request.GET.get('format', 'csv')
+    if request.method == 'POST':
+        fields = request.POST.getlist('fields')
+        file_format = request.POST.get('format', 'csv')
+    else:
+        fields = request.GET.getlist('fields')
+        file_format = request.GET.get('format', 'csv')
     export_req = MSCCExportRequest.objects.create(
         user=request.user,
         fields=fields,

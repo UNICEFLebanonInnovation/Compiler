@@ -147,13 +147,16 @@ $(document).on('click', '.download-report', function(e){
         requestHeaders = getHeader();
         $.ajax({
             url: '/MSCC/export-list-async/',
-            type: 'GET',
+            type: 'POST',
+            contentType: 'application/json',
             headers: requestHeaders,
-            traditional: true,
-            data: {fields: fields, format: format},
+            data: JSON.stringify({fields: fields, format: format}),
             success: function(){
                 $('#exportOptionsModal').modal('hide');
                 alert('Export started. You will be notified when ready.');
+            },
+            error: function(){
+                alert('Failed to start export. Please try again later.');
             }
         });
     });
