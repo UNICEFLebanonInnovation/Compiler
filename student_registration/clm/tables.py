@@ -1,6 +1,7 @@
 # coding: utf-8
 import django_tables2 as tables
 from django.utils.translation import gettext as _
+from django.utils.safestring import mark_safe
 
 from .models import CLM, BLN, ABLN, RS, CBECE, GeneralQuestionnaire, Outreach, Bridging
 
@@ -496,6 +497,12 @@ class OutreachTable(CommonTable):
 
 class BridgingTable(CommonTable):
 
+    select_column = tables.TemplateColumn(
+        verbose_name=mark_safe('<input type="checkbox" id="select-all-bridging"/>'),
+        orderable=False,
+        template_code='<input type="checkbox" class="bridging-select" value="{{ record.id }}" />'
+    )
+
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/clm_action_column.html',
                                         attrs={'url_edit': '/clm/bridging-edit/',
@@ -516,6 +523,7 @@ class BridgingTable(CommonTable):
     class Meta:
         model = Bridging
         fields = (
+            'select_column',
             'action_column',
             'clm_absence_column',
             'clm_max_consecutive_column',

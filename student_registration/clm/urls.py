@@ -379,6 +379,11 @@ urlpatterns = [
         name='bridging_list'
     ),
     re_path(
+        r'^bridging-new-round/$',
+        view=bridging_views.bridging_new_round,
+        name='bridging_new_round'
+    ),
+    re_path(
         r'^bridging-page/$',
         view=bridging_views.BridgingPage.as_view(),
         name='bridging_page'

@@ -14,6 +14,7 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 import os
 import uuid
+import copy
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db import connection
@@ -759,6 +760,32 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
+
+
+@login_required
+def bridging_new_round(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+        except Exception:
+            data = {}
+        ids = data.get('ids', [])
+        created = []
+        current_round = CLMRound.objects.filter(current_round_bridging=True).first()
+        for reg_id in ids:
+            try:
+                registration = Bridging.objects.get(id=reg_id)
+                new_registration = copy.copy(registration)
+                new_registration.pk = None
+                new_registration.round = current_round
+                new_registration.owner = request.user
+                new_registration.modified_by = request.user
+                new_registration.save()
+                created.append(new_registration.id)
+            except Bridging.DoesNotExist:
+                continue
+        return JsonResponse({'created': created})
+    return JsonResponse({'created': []})
 
 # def BridgingDeleteView(request, pk):
 #     if request.user.is_authenticated:
