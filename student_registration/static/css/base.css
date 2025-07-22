@@ -62,9 +62,7 @@ form .radio {
     padding-top: 0px;
 }
 .table-list .dropdown-menu.show {
-    position: fixed !important;
-    top: 500px !important;
-    left: 0px !important;
+    position: absolute !important;
 }
 .form-wizard-content #step-1, .form-wizard-content #step-2, .form-wizard-content #step-3, .form-wizard-content #step-4 {
     height: 400px;
