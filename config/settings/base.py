@@ -74,7 +74,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
     'rest_framework',
-    'rest_framework_swagger',
+    #'rest_framework_swagger',
     'drf_spectacular', # Replaced django-rest-swagger
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
@@ -397,6 +397,7 @@ LOCALE_PATHS = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # this setting fixes the bug where user can be logged in as AnonymousUser
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_PERMISSION_CLASSES': (
