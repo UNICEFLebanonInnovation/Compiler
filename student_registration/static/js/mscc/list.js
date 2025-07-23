@@ -120,40 +120,21 @@ $(document).on('click', '.download-report', function(e){
         $('#exportOptionsModal').modal('show');
     });
 
-    $('#exportOptionsModal').on('show.bs.modal', function(){
-        var container = $(this).find('.fields-checkboxes');
-        if(container.data('filled')) return;
-        container.empty();
-        var headers = $('table').first().find('thead th');
-        headers.each(function(){
-            var text = $(this).text().trim();
-            var value = text;
-            var id = 'field_' + value.replace(/\s+/g,'_');
-            var html = '<div class="form-check">' +
-                '<input class="form-check-input" type="checkbox" id="'+id+'" value="'+value+'" checked>' +
-                '<label class="form-check-label" for="'+id+'">'+text+'</label>' +
-                '</div>';
-            container.append(html);
-        });
-        container.data('filled', true);
-    });
-
     $('#exportOptionsModal .start-export').on('click', function(){
-        var fields = [];
-        $('#exportOptionsModal .fields-checkboxes input:checked').each(function(){
-            fields.push($(this).val());
-        });
         var format = $('#exportOptionsModal select.export-format').val();
         requestHeaders = getHeader();
         $.ajax({
             url: '/MSCC/export-list-async/',
-            type: 'GET',
+            type: 'POST',
+            contentType: 'application/json',
             headers: requestHeaders,
-            traditional: true,
-            data: {fields: fields, format: format},
+            data: JSON.stringify({format: format}),
             success: function(){
                 $('#exportOptionsModal').modal('hide');
                 alert('Export started. You will be notified when ready.');
+            },
+            error: function(){
+                alert('Failed to start export. Please try again later.');
             }
         });
     });
