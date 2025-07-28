@@ -1,46 +1,36 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from model_utils import Choices
 from django.db.models import JSONField
+from model_utils import Choices
 
 
 class Beneficiary(models.Model):
 
     REGISTRATION_STATUS = Choices(
-        ('Registered', 'Registered'),
-        ('Recorded', 'Recorded'),
-        ('Unregistered', 'Unregistered'),
+        ("Registered", "Registered"),
+        ("Recorded", "Recorded"),
+        ("Unregistered", "Unregistered"),
     )
     LOCATION_TYPE = Choices(
-        ('CS', 'CS'),
-        ('IS', 'IS'),
+        ("CS", "CS"),
+        ("IS", "IS"),
     )
     CARD_DISTRIBUTION_STATUS = Choices(
-        ('Distributed', 'Distributed'),
-        ('Not Distributed', 'Not Distributed'),
+        ("Distributed", "Distributed"),
+        ("Not Distributed", "Not Distributed"),
     )
     CARD_LOADED = Choices(
-        ('Yes', 'Yes'),
-        ('No', 'No'),
+        ("Yes", "Yes"),
+        ("No", "No"),
     )
 
-    case_number = models.CharField(
-        max_length=45,
-        unique=True,
-        primary_key=True
-    )
+    case_number = models.CharField(max_length=45, unique=True, primary_key=True)
     registration_status = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        choices=REGISTRATION_STATUS
+        max_length=45, blank=True, null=True, choices=REGISTRATION_STATUS
     )
     location_type = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        choices=LOCATION_TYPE
+        max_length=45, blank=True, null=True, choices=LOCATION_TYPE
     )
     governorate = models.CharField(max_length=45)
     district = models.CharField(max_length=45)
@@ -48,25 +38,19 @@ class Beneficiary(models.Model):
     phone_number = models.CharField(max_length=45)
     total_children = models.IntegerField()
     card_distributed = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        choices=CARD_DISTRIBUTION_STATUS
+        max_length=45, blank=True, null=True, choices=CARD_DISTRIBUTION_STATUS
     )
     card_loaded = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        choices=CARD_LOADED
+        max_length=45, blank=True, null=True, choices=CARD_LOADED
     )
 
     class Meta:
-        ordering = ['case_number']
+        ordering = ["case_number"]
         verbose_name_plural = "Beneficiaries"
 
     @property
     def amount(self):
-        return '{} {}'.format(self.total_children * 40, 'USD')
+        return "{} {}".format(self.total_children * 40, "USD")
 
     def __unicode__(self):
         return self.case_number
@@ -75,28 +59,24 @@ class Beneficiary(models.Model):
 class Assessment(models.Model):
 
     REGISTRATION_STATUS = Choices(
-        ('Registered', 'Registered'),
-        ('Recorded', 'Recorded'),
-        ('Unregistered', 'Unregistered'),
+        ("Registered", "Registered"),
+        ("Recorded", "Recorded"),
+        ("Unregistered", "Unregistered"),
     )
     LOCATION_TYPE = Choices(
-        ('CS', 'CS'),
-        ('IS', 'IS'),
+        ("CS", "CS"),
+        ("IS", "IS"),
     )
     CARD_DISTRIBUTION_STATUS = Choices(
-        ('Distributed', 'Distributed'),
-        ('Not Distributed', 'Not Distributed'),
+        ("Distributed", "Distributed"),
+        ("Not Distributed", "Not Distributed"),
     )
     CARD_LOADED = Choices(
-        ('Yes', 'Yes'),
-        ('No', 'No'),
+        ("Yes", "Yes"),
+        ("No", "No"),
     )
 
-    _id = models.CharField(
-        max_length=45,
-        unique=True,
-        primary_key=True
-    )
+    _id = models.CharField(max_length=45, unique=True, primary_key=True)
     _rev = models.CharField(
         max_length=45,
         blank=True,
@@ -238,10 +218,7 @@ class Assessment(models.Model):
     )
 
     registration_status = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        choices=REGISTRATION_STATUS
+        max_length=45, blank=True, null=True, choices=REGISTRATION_STATUS
     )
     location_type = models.CharField(
         max_length=45,
@@ -294,16 +271,10 @@ class Assessment(models.Model):
         null=True,
     )
     card_distributed = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        choices=CARD_DISTRIBUTION_STATUS
+        max_length=45, blank=True, null=True, choices=CARD_DISTRIBUTION_STATUS
     )
     card_loaded = models.CharField(
-        max_length=45,
-        blank=True,
-        null=True,
-        choices=CARD_LOADED
+        max_length=45, blank=True, null=True, choices=CARD_LOADED
     )
 
     _0_to_3_months = models.IntegerField(
@@ -446,13 +417,13 @@ class Assessment(models.Model):
         blank=True,
         null=True,
     )
-    _14_years_kit_completed  = models.IntegerField(
+    _14_years_kit_completed = models.IntegerField(
         blank=True,
         null=True,
     )
 
     class Meta:
-        ordering = ['id_type']
+        ordering = ["id_type"]
         verbose_name_plural = "Assessments"
 
     @property
@@ -668,45 +639,45 @@ class Assessment(models.Model):
 
     @property
     def location_p_code(self):
-        if self.location and self.location['p_code']:
-            return self.location['p_code']
+        if self.location and self.location["p_code"]:
+            return self.location["p_code"]
         return self.p_code
 
     @property
     def location_p_code_name(self):
-        if self.location and self.location['p_code_name']:
-            return self.location['p_code_name']
+        if self.location and self.location["p_code_name"]:
+            return self.location["p_code_name"]
         return self.p_code_name
 
     @property
     def location_district(self):
-        if self.location and self.location['cadastral']:
-            return self.location['cadastral']
-        return ''
+        if self.location and self.location["cadastral"]:
+            return self.location["cadastral"]
+        return ""
 
     @property
     def location_cadastral(self):
-        if self.location and self.location['cadastral']:
-            return self.location['cadastral']
-        return ''
+        if self.location and self.location["cadastral"]:
+            return self.location["cadastral"]
+        return ""
 
     @property
     def location_latitude(self):
-        if self.location and self.location['latitude']:
-            return self.location['latitude']
-        return ''
+        if self.location and self.location["latitude"]:
+            return self.location["latitude"]
+        return ""
 
     @property
     def location_longitude(self):
-        if self.location and self.location['longitude']:
-            return self.location['longitude']
-        return ''
+        if self.location and self.location["longitude"]:
+            return self.location["longitude"]
+        return ""
 
     @property
     def locations_type(self):
-        if self.location and self.location['location_type']:
-            return self.location['location_type']
-        return ''
+        if self.location and self.location["location_type"]:
+            return self.location["location_type"]
+        return ""
 
     def __unicode__(self):
         return self._id

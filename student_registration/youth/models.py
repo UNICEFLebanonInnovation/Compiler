@@ -1,32 +1,28 @@
-from __future__ import unicode_literals, absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
 
-from django.db import models
+import re
+from datetime import datetime
+
 from django.conf import settings
 # from django.utils.translation import gettext as _
 # from django.db.models import ArrayField, JSONField
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils.translation import gettext as _
-import re
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from datetime import datetime
-
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.locations.models import Center, Location
 from student_registration.schools.models import PartnerOrganization
 
-YES_NO = Choices(
-    ('', '----------'),
-    ('Yes', _("Yes")),
-    ('No', _("No"))
-)
+YES_NO = Choices(("", "----------"), ("Yes", _("Yes")), ("No", _("No")))
 
 AGREE_DISAGREE = Choices(
-    ('Strongly Agree', _("Strongly Agree")),
-    ('Agree', _("Agree")),
-    ('Don\'t Agree', _("Don\'t Agree")),
-    ('Strongly Disagree', _("Strongly Disagree"))
+    ("Strongly Agree", _("Strongly Agree")),
+    ("Agree", _("Agree")),
+    ("Don't Agree", _("Don't Agree")),
+    ("Strongly Disagree", _("Strongly Disagree")),
 )
 
 
@@ -39,7 +35,7 @@ class Round(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
         verbose_name = "Round"
 
     def __str__(self):
@@ -51,15 +47,11 @@ class Round(models.Model):
 
 class FundedBy(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Funded By')
-    )
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Funded By"))
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -71,13 +63,11 @@ class FundedBy(models.Model):
 class ProjectStatus(models.Model):
 
     name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Project Status')
+        max_length=100, unique=True, verbose_name=_("Project Status")
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -89,24 +79,20 @@ class ProjectStatus(models.Model):
 class FocalPoint(models.Model):
 
     name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Name of Focal Point')
+        max_length=100, unique=True, verbose_name=_("Name of Focal Point")
     )
     phone = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        verbose_name=_('Focal Point Phone Number')
+        verbose_name=_("Focal Point Phone Number"),
     )
     email = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name=_('Focal Point Email')
+        max_length=100, blank=True, null=True, verbose_name=_("Focal Point Email")
     )
+
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -117,15 +103,11 @@ class FocalPoint(models.Model):
 
 class Plan(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Plan')
-    )
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Plan"))
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -136,16 +118,11 @@ class Plan(models.Model):
 
 class Sector(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Sector')
-    )
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Sector"))
     default = models.BooleanField(blank=True, default=False)
 
-
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -156,14 +133,10 @@ class Sector(models.Model):
 
 class ProjectType(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Project Type')
-    )
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Project Type"))
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -174,19 +147,13 @@ class ProjectType(models.Model):
 
 class PopulationGroups(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Full Name')
-    )
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Full Name"))
     short_name = models.CharField(
-        max_length=100,
-        blank=True, null=True,
-        verbose_name=_('Short Name')
+        max_length=100, blank=True, null=True, verbose_name=_("Short Name")
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -197,14 +164,10 @@ class PopulationGroups(models.Model):
 
 class ProgramType(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Program Type')
-    )
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Program Type"))
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -215,14 +178,10 @@ class ProgramType(models.Model):
 
 class ProgramTag(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Program Tag')
-    )
+    name = models.CharField(max_length=100, unique=True, verbose_name=_("Program Tag"))
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -232,105 +191,132 @@ class ProgramTag(models.Model):
 
 
 class MasterProgram(TimeStampedModel):
-    number = models.CharField(max_length=20, default='1')
+    number = models.CharField(max_length=20, default="1")
     name = models.CharField(max_length=100)
     program_type = models.ForeignKey(
         ProgramType,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Program Type')
+        verbose_name=_("Program Type"),
     )
     program_tag = models.ForeignKey(
         ProgramTag,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Program Tag')
+        verbose_name=_("Program Tag"),
     )
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
         verbose_name = "Master Program"
 
     def __str__(self):
-        return self.number + ' - ' + self.name
+        return self.number + " - " + self.name
 
     def __unicode__(self):
-        return self.number + ' - ' + self.name
+        return self.number + " - " + self.name
 
     def clean(self):
         super(MasterProgram, self).clean()
 
         if not self.number:
-            raise ValidationError({'number': _('Number cannot be empty')})
+            raise ValidationError({"number": _("Number cannot be empty")})
         if not self.name:
-            raise ValidationError({'name': _('Name cannot be empty')})
+            raise ValidationError({"name": _("Name cannot be empty")})
 
         # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
-        normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
+        normalized_name = re.sub(r"\s*(?:&|and)\s*", " ", self.name.lower().strip())
 
         # Extract the year from the creation date
         creation_year = self.created.year if self.created else datetime.now().year
 
         # Check for duplicates within the same year
-        duplicates = MasterProgram.objects.exclude(id=self.id).filter(created__year=creation_year)
+        duplicates = MasterProgram.objects.exclude(id=self.id).filter(
+            created__year=creation_year
+        )
         for program in duplicates:
-            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
+            normalized_duplicate_name = re.sub(
+                r"\s*(?:&|and)\s*", " ", program.name.lower().strip()
+            )
             if normalized_name == normalized_duplicate_name:
-                raise ValidationError({'name': _('A Master Program with a similar name already exists in the same year: %s') % program.name})
+                raise ValidationError(
+                    {
+                        "name": _(
+                            "A Master Program with a similar name already exists in the same year: %s"
+                        )
+                        % program.name
+                    }
+                )
 
     def creation_year(self):
-        return self.created.year if self.created else 'Unknown'
-    creation_year.short_description = 'Creation Year'
+        return self.created.year if self.created else "Unknown"
+
+    creation_year.short_description = "Creation Year"
 
 
 class SubProgram(TimeStampedModel):
 
     master_program = models.ForeignKey(
         MasterProgram,
-        blank=False, null=True,
+        blank=False,
+        null=True,
         on_delete=models.SET_NULL,
-        related_name='master_program',
+        related_name="master_program",
     )
-    number = models.CharField(max_length=20, default='1')
+    number = models.CharField(max_length=20, default="1")
     name = models.CharField(max_length=100)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
         verbose_name = "Sub Program"
 
     def __str__(self):
-        return self.number + ' - ' + self.name
+        return self.number + " - " + self.name
 
     def __unicode__(self):
-        return self.number + ' - ' + self.name
+        return self.number + " - " + self.name
 
     def clean(self):
         super(SubProgram, self).clean()
 
         if not self.number:
-            raise ValidationError({'number': _('Number cannot be empty')})
+            raise ValidationError({"number": _("Number cannot be empty")})
         if not self.name:
-            raise ValidationError({'name': _('Name cannot be empty')})
+            raise ValidationError({"name": _("Name cannot be empty")})
 
         # Normalize the name to ignore slight variations and equivalence of '&' and 'and'
-        normalized_name = re.sub(r'\s*(?:&|and)\s*', ' ', self.name.lower().strip())
+        normalized_name = re.sub(r"\s*(?:&|and)\s*", " ", self.name.lower().strip())
 
         # Extract the year from the creation date
         creation_year = self.created.year if self.created else datetime.now().year
 
         # Check for duplicates within the same year
-        duplicates = SubProgram.objects.exclude(id=self.id).filter(created__year=creation_year)
+        duplicates = SubProgram.objects.exclude(id=self.id).filter(
+            created__year=creation_year
+        )
         for program in duplicates:
-            normalized_duplicate_name = re.sub(r'\s*(?:&|and)\s*', ' ', program.name.lower().strip())
+            normalized_duplicate_name = re.sub(
+                r"\s*(?:&|and)\s*", " ", program.name.lower().strip()
+            )
             if normalized_name == normalized_duplicate_name:
-                raise ValidationError({'name': _('A Sub Program with a similar name already exists in the same year: %s') % program.name})
+                raise ValidationError(
+                    {
+                        "name": _(
+                            "A Sub Program with a similar name already exists in the same year: %s"
+                        )
+                        % program.name
+                    }
+                )
 
     def creation_year(self):
-        return self.created.year if self.created else 'Unknown'
-    creation_year.short_description = 'Creation Year'
+        return self.created.year if self.created else "Unknown"
+
+    creation_year.short_description = "Creation Year"
 
 
 class Donor(models.Model):
@@ -339,7 +325,7 @@ class Donor(models.Model):
     active = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
         verbose_name = "Donor"
 
     def __str__(self):
@@ -350,145 +336,128 @@ class Donor(models.Model):
 
 
 class ProgramDocument(TimeStampedModel):
-    YES_NO = Choices(
-        ('', '----------'),
-        ('Yes', _("Yes")),
-        ('No', _("No"))
-    )
+    YES_NO = Choices(("", "----------"), ("Yes", _("Yes")), ("No", _("No")))
     SUPPORT = Choices(
-        ('', '----------'),
-        ('No Support', _("No Support")),
-        ('Support', _("Support"))
+        ("", "----------"), ("No Support", _("No Support")), ("Support", _("Support"))
     )
     partner = models.ForeignKey(
         PartnerOrganization,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Organization Name')
+        verbose_name=_("Organization Name"),
     )
     funded_by = models.ForeignKey(
         FundedBy,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Funded By')
+        verbose_name=_("Funded By"),
     )
     project_status = models.ForeignKey(
         ProjectStatus,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Project Status')
+        verbose_name=_("Project Status"),
     )
     project_code = models.CharField(
-        max_length=100,
-        default='project_code',
-        verbose_name=_('Project Code')
+        max_length=100, default="project_code", verbose_name=_("Project Code")
     )
     project_name = models.CharField(
-        max_length=250,
-        default='project_name',
-        verbose_name=_('Project Name')
+        max_length=250, default="project_name", verbose_name=_("Project Name")
     )
     project_description = models.CharField(
-        max_length=300,
-        blank=True, null=True,
-        verbose_name=_('Project Description')
+        max_length=300, blank=True, null=True, verbose_name=_("Project Description")
     )
     implementing_partners = models.CharField(
         max_length=100,
-        blank=True, null=True,
-        verbose_name=_('Key Implementing Partner(s)')
+        blank=True,
+        null=True,
+        verbose_name=_("Key Implementing Partner(s)"),
     )
     focal_point = models.ForeignKey(
         FocalPoint,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('UNICEF Focal Point')
+        verbose_name=_("UNICEF Focal Point"),
     )
-    start_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Start Date')
-    )
-    end_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('End Date')
-    )
-    comment = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Comment')
-    )
+    start_date = models.DateField(blank=True, null=True, verbose_name=_("Start Date"))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_("End Date"))
+    comment = models.TextField(blank=True, null=True, verbose_name=_("Comment"))
     plan = models.ForeignKey(
         Plan,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Plan')
+        verbose_name=_("Plan"),
     )
     sectors = models.ForeignKey(
         Sector,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('SELECT SECTORS TARGETED BY THIS PROJECT')
+        verbose_name=_("SELECT SECTORS TARGETED BY THIS PROJECT"),
     )
     project_type = models.ForeignKey(
         ProjectType,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Type of Project')
+        verbose_name=_("Type of Project"),
     )
     public_institution_support = models.CharField(
         max_length=100,
-        blank=True, null=True,
-        choices=SUPPORT,
-        verbose_name=_('Support of Public Institution')
-    )
-    governorates = models.ManyToManyField(Location, blank=True, related_name='+', verbose_name=_('Governorate of Coverage'))
-
-    budget = models.FloatField(
         blank=True,
         null=True,
-        verbose_name=_('Please add the Project Budget in USD')
+        choices=SUPPORT,
+        verbose_name=_("Support of Public Institution"),
+    )
+    governorates = models.ManyToManyField(
+        Location,
+        blank=True,
+        related_name="+",
+        verbose_name=_("Governorate of Coverage"),
+    )
+
+    budget = models.FloatField(
+        blank=True, null=True, verbose_name=_("Please add the Project Budget in USD")
     )
     cash_assistance = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Does this Project have any Cash Assistance Component')
+        verbose_name=_("Does this Project have any Cash Assistance Component"),
     )
-    population_groups = models.ManyToManyField(PopulationGroups, blank=True, verbose_name=_('Population Groups Targeted'))
+    population_groups = models.ManyToManyField(
+        PopulationGroups, blank=True, verbose_name=_("Population Groups Targeted")
+    )
 
     number_targeted_syrians = models.IntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('Number of Targeted Displaced Syrians')
+        blank=True, null=True, verbose_name=_("Number of Targeted Displaced Syrians")
     )
     number_targeted_lebanese = models.IntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('Number of Targeted Lebanese')
+        blank=True, null=True, verbose_name=_("Number of Targeted Lebanese")
     )
     number_targeted_prl = models.IntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('Number of Targeted PRL')
+        blank=True, null=True, verbose_name=_("Number of Targeted PRL")
     )
     number_targeted_prs = models.IntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('Number of Targeted PRS')
+        blank=True, null=True, verbose_name=_("Number of Targeted PRS")
     )
-    donors = models.ManyToManyField(Donor, blank=True, verbose_name=_('Donors'))
+    donors = models.ManyToManyField(Donor, blank=True, verbose_name=_("Donors"))
 
     class Meta:
-        ordering = ['project_name']
+        ordering = ["project_name"]
         verbose_name = "Program Document"
 
     def __str__(self):
@@ -499,14 +468,18 @@ class ProgramDocument(TimeStampedModel):
 
     def get_governorate_names(self):
         return ", ".join(pop.name for pop in self.governorates.all())
+
     # get_governorate_names.short_description = _('Governorates')
 
     def get_population_groups_name(self):
         return ", ".join(gov.name for gov in self.population_groups.all())
 
     def get_master_program_names(self):
-        names = self.indicators.filter(master_indicator__isnull=False)\
-            .values_list('master_indicator__name', flat=True).distinct()
+        names = (
+            self.indicators.filter(master_indicator__isnull=False)
+            .values_list("master_indicator__name", flat=True)
+            .distinct()
+        )
         return ", ".join(names)
 
     def get_donor_names(self):
@@ -517,42 +490,41 @@ class ProgramDocument(TimeStampedModel):
         super(ProgramDocument, self).clean()
 
         if not self.project_name:
-            raise ValidationError({'project_name': _('Project Name cannot be empty')})
+            raise ValidationError({"project_name": _("Project Name cannot be empty")})
         if not self.project_code:
-            raise ValidationError({'project_code': _('Project Code cannot be empty')})
+            raise ValidationError({"project_code": _("Project Code cannot be empty")})
 
 
 class ProgramDocumentIndicator(TimeStampedModel):
-    YES_NO = Choices(
-        ('', '----------'),
-        ('Yes', _("Yes")),
-        ('No', _("No"))
-    )
+    YES_NO = Choices(("", "----------"), ("Yes", _("Yes")), ("No", _("No")))
     program_document = models.ForeignKey(
         ProgramDocument,
-        blank=False, null=True,
+        blank=False,
+        null=True,
         on_delete=models.SET_NULL,
-        related_name='indicators',
+        related_name="indicators",
     )
     master_indicator = models.ForeignKey(
         MasterProgram,
-        blank=True, null=True,
-        related_name='master_indicator',
+        blank=True,
+        null=True,
+        related_name="master_indicator",
         on_delete=models.SET_NULL,
-        verbose_name=_('Master Indicator')
+        verbose_name=_("Master Indicator"),
     )
     sub_indicator = models.ForeignKey(
         SubProgram,
-        blank=True, null=True,
-        related_name='sub_indicator',
+        blank=True,
+        null=True,
+        related_name="sub_indicator",
         on_delete=models.SET_NULL,
-        verbose_name=_('Sub Indicator')
+        verbose_name=_("Sub Indicator"),
     )
     baseline = models.IntegerField(blank=True, null=True)
     target = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        ordering = ['master_indicator']
+        ordering = ["master_indicator"]
         verbose_name = "Indicator"
 
     def __str__(self):
@@ -564,53 +536,55 @@ class ProgramDocumentIndicator(TimeStampedModel):
 
 class Registration(TimeStampedModel):
 
-    YES_NO = Choices(
-        ('', '----------'),
-        ('Yes', _("Yes")),
-        ('No', _("No"))
-    )
+    YES_NO = Choices(("", "----------"), ("Yes", _("Yes")), ("No", _("No")))
     center = models.ForeignKey(
         Center,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Center')
+        verbose_name=_("Center"),
     )
     adolescent = models.ForeignKey(
         Adolescent,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('adolescent')
+        verbose_name=_("adolescent"),
     )
     child_outreach = models.IntegerField(blank=True, null=True)
     student_old = models.IntegerField(blank=True, null=True)
     partner = models.ForeignKey(
         PartnerOrganization,
-        blank=True, null=True,
-        verbose_name=_('Partner'),
-        related_name='+',
+        blank=True,
+        null=True,
+        verbose_name=_("Partner"),
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     round = models.ForeignKey(
         Round,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Round')
+        verbose_name=_("Round"),
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Modified by'),
+        verbose_name=_("Modified by"),
     )
     deleted = models.BooleanField(blank=True, default=False)
     # registration_date = models.DateField(
@@ -623,7 +597,7 @@ class Registration(TimeStampedModel):
     def adolescent_fullname(self):
         if self.adolescent:
             return self.adolescent.full_name
-        return ''
+        return ""
 
     @property
     def adolescent_age(self):
@@ -633,14 +607,14 @@ class Registration(TimeStampedModel):
 
     @property
     def enrolled_programs(self):
-        result = ''
+        result = ""
         program = self.enrolled_programs.all()
         if program:
             result = program.program
         return result
 
     def get_absolute_url(self):
-        return '/YOUTH/Child-Profile/%d/' % self.pk
+        return "/YOUTH/Child-Profile/%d/" % self.pk
 
     def __str__(self):
         if self.adolescent:
@@ -653,7 +627,7 @@ class Registration(TimeStampedModel):
         return str(self.id)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
         verbose_name = "YOUTH Registration"
         verbose_name_plural = "YOUTH Registrations"
 
@@ -661,34 +635,55 @@ class Registration(TimeStampedModel):
 class EnrolledPrograms(TimeStampedModel):
 
     EDUCATION_STATUS = Choices(
-        ('', '----------'),
-        ('Never registered in any formal school before', _('Never registered in any formal school before')),
-        ('Was registered in formal school but didn\'t continue',
-         _('Was registered in formal school but didn\'t continue')),
-        ('Was registered in non formal program and was referred to MSCC',
-         _('Was registered in non formal program and was referred to MSCC')),
-        ('Was registered in non formal program but didn\'t continue',
-         _('Was registered in non formal program but didn\'t continue')),
-        ('Was enrolled in TVET Programs', _('Was enrolled in TVET Programs')),
-        ('Was Registered in Formal Education but not attending',
-         _('Was Registered in Formal Education but not attending')),
-        ('Currently registered in Formal Education school', _('Currently registered in Formal Education school')),
-        ('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')),
-        ('No', _('No')),
+        ("", "----------"),
+        (
+            "Never registered in any formal school before",
+            _("Never registered in any formal school before"),
+        ),
+        (
+            "Was registered in formal school but didn't continue",
+            _("Was registered in formal school but didn't continue"),
+        ),
+        (
+            "Was registered in non formal program and was referred to MSCC",
+            _("Was registered in non formal program and was referred to MSCC"),
+        ),
+        (
+            "Was registered in non formal program but didn't continue",
+            _("Was registered in non formal program but didn't continue"),
+        ),
+        ("Was enrolled in TVET Programs", _("Was enrolled in TVET Programs")),
+        (
+            "Was Registered in Formal Education but not attending",
+            _("Was Registered in Formal Education but not attending"),
+        ),
+        (
+            "Currently registered in Formal Education school",
+            _("Currently registered in Formal Education school"),
+        ),
+        (
+            "Currently registered in Formal Education school but not attending",
+            _("Currently registered in Formal Education school but not attending"),
+        ),
+        ("No", _("No")),
     )
     DROPOUT_PROGRAM = Choices(
-        ('', '----------'),
-        ('Was registered in CBECE level 1-2', _('Was registered in CBECE level 1-2')),
-        ('Was registered in BLN program', _('Was registered in BLN program')),
-        ('Was registered in ALP program and didn\'t continue', _('Was registered in ALP program and didn\'t continue')),
-        ('Was enrolled in Dirasa', _('Was enrolled in Dirasa')),
-        ('Other', _('Other')),
+        ("", "----------"),
+        ("Was registered in CBECE level 1-2", _("Was registered in CBECE level 1-2")),
+        ("Was registered in BLN program", _("Was registered in BLN program")),
+        (
+            "Was registered in ALP program and didn't continue",
+            _("Was registered in ALP program and didn't continue"),
+        ),
+        ("Was enrolled in Dirasa", _("Was enrolled in Dirasa")),
+        ("Other", _("Other")),
     )
     registration = models.ForeignKey(
         Registration,
-        blank=False, null=True,
+        blank=False,
+        null=True,
         on_delete=models.SET_NULL,
-        related_name='enrolled_programs',
+        related_name="enrolled_programs",
     )
 
     education_status = models.CharField(
@@ -696,90 +691,98 @@ class EnrolledPrograms(TimeStampedModel):
         blank=True,
         null=True,
         choices=EDUCATION_STATUS,
-        verbose_name=_('Child\'s educational level when registering')
+        verbose_name=_("Child's educational level when registering"),
     )
     dropout_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Please Specify dropout date from school')
+        blank=True, null=True, verbose_name=_("Please Specify dropout date from school")
     )
     master_program = models.ForeignKey(
         MasterProgram,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     sub_program = models.ForeignKey(
         SubProgram,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     donor = models.ForeignKey(
         Donor,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     program_document = models.ForeignKey(
         ProgramDocument,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     registration_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Date of registration')
+        blank=True, null=True, verbose_name=_("Date of registration")
     )
     completion_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Date of completion')
+        blank=True, null=True, verbose_name=_("Date of completion")
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "Enrolled Program"
         verbose_name_plural = "Enrolled Programs"
 
 
 class YouthAssessment(TimeStampedModel):
     VOLUNTEERING_OPPORTUNITY = Choices(
-        ('', '----------'),
-        ('Outreach', _('Outreach')),
-        ('Data entry', _('Data entry')),
-        ('Admin work', _('Admin work')),
-        ('Awareness raising sessions', _('Awareness raising sessions')),
-        ('Empowerment and leadership', _('Empowerment and leadership')),
-        ('Other', _('Other')),
+        ("", "----------"),
+        ("Outreach", _("Outreach")),
+        ("Data entry", _("Data entry")),
+        ("Admin work", _("Admin work")),
+        ("Awareness raising sessions", _("Awareness raising sessions")),
+        ("Empowerment and leadership", _("Empowerment and leadership")),
+        ("Other", _("Other")),
     )
     TRAINING_MATERIAL = Choices(
-        ('', '----------'),
-        ('Printed workbook', _('Printed workbook')),
-        ('Tablets', _('Tablets')),
-        ('Access to digital content (learning Passport)', _('Access to digital content (learning Passport)')),
-        ('Other', _('Other')),
+        ("", "----------"),
+        ("Printed workbook", _("Printed workbook")),
+        ("Tablets", _("Tablets")),
+        (
+            "Access to digital content (learning Passport)",
+            _("Access to digital content (learning Passport)"),
+        ),
+        ("Other", _("Other")),
     )
     FUTURE_PATH = Choices(
-        ('', '----------'),
-        ('Transition to FE', _('Transition to FE')),
-        ('Repeat the school year', _('Repeat the school year')),
-        ('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL...)', _('Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL...)')),
-        ('Transition to TVET', _('Transition to TVET')),
-        ('Internship or volunteering opportunity', _('Internship or volunteering opportunity')),
+        ("", "----------"),
+        ("Transition to FE", _("Transition to FE")),
+        ("Repeat the school year", _("Repeat the school year")),
+        (
+            "Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL...)",
+            _("Refer to a UNICEF Youth Programme (skills tranining, CBT, GIL...)"),
+        ),
+        ("Transition to TVET", _("Transition to TVET")),
+        (
+            "Internship or volunteering opportunity",
+            _("Internship or volunteering opportunity"),
+        ),
     )
     ATTENDANCE = Choices(
-        ('', '----------'),
-        ('Full attendance', _('Full attendance')),
-        ('Absence for less than 5 days', _('Absence for less than 5 days')),
-        ('Absence for more than 5 days', _('Absence for more than 5 days')),
-        ('Dropout', _('Dropout')),
+        ("", "----------"),
+        ("Full attendance", _("Full attendance")),
+        ("Absence for less than 5 days", _("Absence for less than 5 days")),
+        ("Absence for more than 5 days", _("Absence for more than 5 days")),
+        ("Dropout", _("Dropout")),
     )
     registration = models.ForeignKey(
         Registration,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     undertake_post_diagnostic = models.CharField(
@@ -787,81 +790,86 @@ class YouthAssessment(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent undertake any Post Diagnotic tests?')
+        verbose_name=_("Did the adolescent undertake any Post Diagnotic tests?"),
     )
     receive_passing_grade = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent receive a passing grade for the tests?')
+        verbose_name=_("Did the adolescent receive a passing grade for the tests?"),
     )
     complete_life_skills = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent complete the life skills package?')
+        verbose_name=_("Did the adolescent complete the life skills package?"),
     )
     participate_volunteering = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent participate in any volunteering opportunity during the course of the program?')
+        verbose_name=_(
+            "Did the adolescent participate in any volunteering opportunity during the course of the program?"
+        ),
     )
     volunteering_opportunity = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=VOLUNTEERING_OPPORTUNITY,
-        verbose_name=_('Is yes, please specify the volunteering opportunity')
+        verbose_name=_("Is yes, please specify the volunteering opportunity"),
     )
     benefit_innovation_course = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent benefit from any social innovation/entrepreneurship course?')
+        verbose_name=_(
+            "Did the adolescent benefit from any social innovation/entrepreneurship course?"
+        ),
     )
     compelete_yfs_course = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent complete the YFS course?')
+        verbose_name=_("Did the adolescent complete the YFS course?"),
     )
     training_material = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=TRAINING_MATERIAL,
-        verbose_name=_('What training material was provided?')
+        verbose_name=_("What training material was provided?"),
     )
     future_path = models.CharField(
         max_length=200,
         blank=True,
         null=True,
         choices=FUTURE_PATH,
-        verbose_name=_('What is the recommended future path for the adolescent?')
+        verbose_name=_("What is the recommended future path for the adolescent?"),
     )
     participate_community_initiatives = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Did the adolescent participate/come up in community based initiatives?')
+        verbose_name=_(
+            "Did the adolescent participate/come up in community based initiatives?"
+        ),
     )
     attendance = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=ATTENDANCE,
-        verbose_name=_('Adolescent attendance')
+        verbose_name=_("Adolescent attendance"),
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "Youth Assessment"
         verbose_name_plural = "Youth Assessments"
-

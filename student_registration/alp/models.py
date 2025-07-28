@@ -1,45 +1,39 @@
-from __future__ import unicode_literals, absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
 
-from django.db import models
-from model_utils import Choices
-from django.utils.translation import gettext as _
-from model_utils.models import TimeStampedModel
 from django.conf import settings
+from django.db import models
 from django.db.models import JSONField
-from student_registration.students.models import (
-    Person,
-    Student,
-)
-from student_registration.schools.models import (
-    School,
-    EducationLevel,
-    ClassLevel,
-    PartnerOrganization,
-    ClassRoom,
-    Section,
-)
+from django.utils.translation import gettext as _
+from model_utils import Choices
+from model_utils.models import TimeStampedModel
+
+from student_registration.alp.utils import assign_to_level, refer_to_level
 from student_registration.locations.models import Location
-from student_registration.alp.utils import refer_to_level, assign_to_level
+from student_registration.schools.models import (
+    ClassLevel,
+    ClassRoom,
+    EducationLevel,
+    PartnerOrganization,
+    School,
+    Section
+)
+from student_registration.students.models import Person, Student
 
 
 class ALPRound(models.Model):
     name = models.CharField(max_length=45, unique=True)
     current_round = models.BooleanField(blank=True, default=False)
     round_start_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Round start date')
+        blank=True, null=True, verbose_name=_("Round start date")
     )
     round_end_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Round end date')
+        blank=True, null=True, verbose_name=_("Round end date")
     )
     current_pre_test = models.BooleanField(blank=True, default=False)
     current_post_test = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
         verbose_name = "ALP Round"
 
     def __unicode__(self):
@@ -48,128 +42,131 @@ class ALPRound(models.Model):
 
 class OutreachManager(models.Manager):
     def get_queryset(self):
-        return super(OutreachManager, self).get_queryset().exclude(deleted=True).exclude(dropout_status=True)
+        return (
+            super(OutreachManager, self)
+            .get_queryset()
+            .exclude(deleted=True)
+            .exclude(dropout_status=True)
+        )
 
 
 class OutreachDropoutManager(models.Manager):
     def get_queryset(self):
-        return super(OutreachDropoutManager, self).get_queryset().exclude(deleted=True).filter(dropout_status=True)
+        return (
+            super(OutreachDropoutManager, self)
+            .get_queryset()
+            .exclude(deleted=True)
+            .filter(dropout_status=True)
+        )
 
 
 class Outreach(TimeStampedModel):
 
-    EAV_TYPE = 'outreach'
+    EAV_TYPE = "outreach"
 
-    RESULT = Choices(
-        ('graduated', _('Graduated')),
-        ('failed', _('Failed'))
+    RESULT = Choices(("graduated", _("Graduated")), ("failed", _("Failed")))
+
+    LANGUAGES = Choices(("english", _("English")), ("french", _("French")))
+
+    YES_NO = Choices(("na", _("n/a")), ("yes", _("Yes")), ("no", _("No")))
+
+    EDUCATION_YEARS = list(
+        (str(x - 1) + "/" + str(x), str(x - 1) + "/" + str(x))
+        for x in range(2001, 2050)
     )
-
-    LANGUAGES = Choices(
-        ('english', _('English')),
-        ('french', _('French'))
-    )
-
-    YES_NO = Choices(
-        ('na', _('n/a')),
-        ('yes', _('Yes')),
-        ('no', _('No'))
-    )
-
-    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
-    EDUCATION_YEARS.append(('na', 'N/A'))
+    EDUCATION_YEARS.append(("na", "N/A"))
 
     student = models.ForeignKey(
         Student,
-        blank=False, null=True,
-        related_name='alp_enrollment',
+        blank=False,
+        null=True,
+        related_name="alp_enrollment",
         on_delete=models.SET_NULL,
     )
     partner = models.ForeignKey(
         PartnerOrganization,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Created by')
+        verbose_name=_("Created by"),
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        related_name='modifications',
-        verbose_name=_('Modified by'),
+        blank=True,
+        null=True,
+        related_name="modifications",
+        verbose_name=_("Modified by"),
         on_delete=models.SET_NULL,
     )
     school = models.ForeignKey(
         School,
-        blank=True, null=True,
-        related_name='alp_school',
+        blank=True,
+        null=True,
+        related_name="alp_school",
         on_delete=models.SET_NULL,
-        verbose_name=_('School')
+        verbose_name=_("School"),
     )
     location = models.ForeignKey(
         Location,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Location'),
+        blank=True,
+        null=True,
+        related_name="+",
+        verbose_name=_("Location"),
         on_delete=models.SET_NULL,
     )
     last_class_level = models.ForeignKey(
         ClassLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     average_distance = models.CharField(
         max_length=10,
         blank=True,
         null=True,
-        choices=Choices(
-            u'<= 2.5km',
-            u'> 2.5km',
-            u'> 10km'
-        )
+        choices=Choices("<= 2.5km", "> 2.5km", "> 10km"),
     )
     exam_year = models.CharField(
         max_length=4,
         blank=True,
         null=True,
-        choices=((str(x), x) for x in range(1990, 2051))
+        choices=((str(x), x) for x in range(1990, 2051)),
     )
     exam_month = models.CharField(
-        max_length=2,
-        blank=True,
-        null=True,
-        choices=Person.MONTHS
+        max_length=2, blank=True, null=True, choices=Person.MONTHS
     )
     exam_day = models.CharField(
-        max_length=2,
-        blank=True,
-        null=True,
-        choices=((str(x), x) for x in range(1, 33))
+        max_length=2, blank=True, null=True, choices=((str(x), x) for x in range(1, 33))
     )
     alp_round = models.ForeignKey(
         ALPRound,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     section = models.ForeignKey(
         Section,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Current Section'),
+        verbose_name=_("Current Section"),
     )
     classroom = models.ForeignKey(
         ClassRoom,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     alp_year = models.CharField(
@@ -181,13 +178,13 @@ class Outreach(TimeStampedModel):
         max_length=45,
         blank=True,
         null=True,
-        verbose_name=_('Pre test room'),
+        verbose_name=_("Pre test room"),
     )
     post_test_room = models.CharField(
         max_length=45,
         blank=True,
         null=True,
-        verbose_name=_('Post test room'),
+        verbose_name=_("Post test room"),
     )
 
     status = models.BooleanField(blank=True, default=True)
@@ -195,161 +192,151 @@ class Outreach(TimeStampedModel):
     not_enrolled_in_this_school = models.BooleanField(blank=True, default=False)
     exam_not_exist_in_school = models.BooleanField(blank=True, default=False)
     registered_in_unhcr = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=YES_NO
+        max_length=50, blank=True, null=True, choices=YES_NO
     )
 
     last_education_level = models.ForeignKey(
         ClassRoom,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last Education level'),
+        verbose_name=_("Last Education level"),
     )
     last_education_year = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=EDUCATION_YEARS,
-        verbose_name=_('Last Education year'),
+        verbose_name=_("Last Education year"),
     )
     last_year_result = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=RESULT,
-        verbose_name=_('Last Education result'),
+        verbose_name=_("Last Education result"),
     )
     participated_in_alp = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=YES_NO,
-        verbose_name=_('Participated in ALP'),
+        verbose_name=_("Participated in ALP"),
     )
     last_informal_edu_level = models.ForeignKey(
         EducationLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last informal education level'),
+        verbose_name=_("Last informal education level"),
     )
     last_informal_edu_year = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=EDUCATION_YEARS,
-        verbose_name=_('Last informal education year'),
+        verbose_name=_("Last informal education year"),
     )
     last_informal_edu_result = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=RESULT,
-        verbose_name=_('Last informal education result'),
+        verbose_name=_("Last informal education result"),
     )
     last_informal_edu_round = models.ForeignKey(
         ALPRound,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last informal education round'),
+        verbose_name=_("Last informal education round"),
     )
     last_informal_edu_final_result = models.ForeignKey(
         ClassLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last informal education status'),
+        verbose_name=_("Last informal education status"),
     )
     exam_result_arabic = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Arabic'),
+        verbose_name=_("Arabic"),
     )
     exam_result_language = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Foreign Language'),
+        verbose_name=_("Foreign Language"),
     )
     exam_result_math = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Math'),
+        verbose_name=_("Math"),
     )
     exam_result_science = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Science'),
+        verbose_name=_("Science"),
     )
     exam_language = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=LANGUAGES,
-        verbose_name=_('Exam language'),
+        verbose_name=_("Exam language"),
     )
     exam_corrector_arabic = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     exam_corrector_language = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     exam_corrector_math = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     exam_corrector_science = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     registered_in_school = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=YES_NO
+        max_length=50, blank=True, null=True, choices=YES_NO
     )
     level = models.ForeignKey(
         EducationLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Entrance Test (Pre-Test)'),
+        verbose_name=_("Entrance Test (Pre-Test)"),
     )
     registered_in_level = models.ForeignKey(
         EducationLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Current Level'),
+        verbose_name=_("Current Level"),
     )
     assigned_to_level = models.ForeignKey(
         EducationLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Pre-test result'),
+        verbose_name=_("Pre-test result"),
     )
     exam_school = models.ForeignKey(
         School,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     deleted = models.BooleanField(blank=True, default=False)
@@ -358,120 +345,100 @@ class Outreach(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Arabic'),
+        verbose_name=_("Arabic"),
     )
     post_exam_result_language = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Foreign Language'),
+        verbose_name=_("Foreign Language"),
     )
     post_exam_result_math = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Math'),
+        verbose_name=_("Math"),
     )
     post_exam_result_science = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        verbose_name=_('Science'),
+        verbose_name=_("Science"),
     )
     post_exam_language = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=LANGUAGES,
-        verbose_name=_('Exam language'),
+        verbose_name=_("Exam language"),
     )
     post_exam_corrector_arabic = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     post_exam_corrector_language = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     post_exam_corrector_math = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     post_exam_corrector_science = models.IntegerField(
-        blank=True,
-        null=True,
-        default=0,
-        choices=((x, x) for x in range(0, 101))
+        blank=True, null=True, default=0, choices=((x, x) for x in range(0, 101))
     )
     refer_to_level = models.ForeignKey(
         ClassLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Post-test result'),
+        verbose_name=_("Post-test result"),
     )
     dropout_status = models.BooleanField(blank=True, default=False)
     outreach_barcode = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        verbose_name=_('Outreach barcode')
+        max_length=50, blank=True, null=True, verbose_name=_("Outreach barcode")
     )
     new_registry = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
-        verbose_name=_('First time registered?')
+        choices=Choices(("yes", _("Yes")), ("no", _("No"))),
+        verbose_name=_("First time registered?"),
     )
     student_outreached = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
-        verbose_name=_('Student outreached?')
+        choices=Choices(("yes", _("Yes")), ("no", _("No"))),
+        verbose_name=_("Student outreached?"),
     )
     have_barcode = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
-        verbose_name=_('Have barcode with him?')
+        choices=Choices(("yes", _("Yes")), ("no", _("No"))),
+        verbose_name=_("Have barcode with him?"),
     )
 
-    pre_comment = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Comments')
-    )
-    post_comment = models.TextField(
-        blank=True, null=True,
-        verbose_name=_('Comments')
-    )
+    pre_comment = models.TextField(blank=True, null=True, verbose_name=_("Comments"))
+    post_comment = models.TextField(blank=True, null=True, verbose_name=_("Comments"))
 
     objects = OutreachManager()
     drop_objects = OutreachDropoutManager()
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "All ALP data"
 
     @property
     def student_fullname(self):
         if self.student:
             return self.student.__unicode__()
-        return ''
+        return ""
 
     @property
     def student_mother_fullname(self):
         if self.student:
             return self.student.mother_fullname
-        return ''
+        return ""
 
     @property
     def exam_total(self):
@@ -502,7 +469,6 @@ class Outreach(TimeStampedModel):
                         total += self.exam_result_science
                 return total
 
-
     @property
     def pretest_total(self):
         if self.level:
@@ -512,14 +478,14 @@ class Outreach(TimeStampedModel):
     @property
     def posttest_total(self):
         if self.level:
-            return "{}/{}".format(self.post_exam_total, '80')
+            return "{}/{}".format(self.post_exam_total, "80")
         return 0
 
     @property
     def next_level(self):
         if self.refer_to_level:
             return self.refer_to_level
-        return ''
+        return ""
 
     @property
     def post_exam_total(self):
@@ -544,19 +510,19 @@ class Outreach(TimeStampedModel):
     def student_sex(self):
         if self.student:
             return self.student.sex
-        return ''
+        return ""
 
     @property
     def student_number(self):
         if self.student:
             return self.student.number
-        return ''
+        return ""
 
     @property
     def student_nationality(self):
         if self.student:
             return self.student.nationality
-        return ''
+        return ""
 
     @property
     def student_birthday(self):
@@ -590,7 +556,9 @@ class Outreach(TimeStampedModel):
         self.assigned_to_level = assign_to_level(self.level, self.exam_total)
 
     def calculate_post_result(self):
-        self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        self.refer_to_level = refer_to_level(
+            self.student_age, self.registered_in_level, self.post_exam_total
+        )
 
     def __unicode__(self):
         if self.student:

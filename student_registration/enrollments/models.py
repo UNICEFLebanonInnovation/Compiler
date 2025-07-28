@@ -1,26 +1,27 @@
-from __future__ import unicode_literals, absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
 
 import datetime
-import django.utils.timezone
 
-from django.db import models
+import django.utils.timezone
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils.translation import gettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from student_registration.students.models import Student
+
+from student_registration.alp.models import ALPRound, Outreach
+from student_registration.locations.models import Location
 from student_registration.schools.models import (
-    School,
-    EducationLevel,
     ClassLevel,
     ClassRoom,
-    Section,
-    EducationYear,
     Coordinator,
+    EducationLevel,
+    EducationYear,
+    School,
+    Section
 )
-from student_registration.locations.models import Location
-from student_registration.alp.models import ALPRound, Outreach
-from django.core.exceptions import ValidationError
+from student_registration.students.models import Student
 
 
 class EnrollmentManager(models.Manager):
@@ -30,14 +31,22 @@ class EnrollmentManager(models.Manager):
 
 class EnrollmentDropoutManager(models.Manager):
     def get_queryset(self):
-        return super(EnrollmentDropoutManager, self).get_queryset().exclude(deleted=True).filter(dropout_status=True)
+        return (
+            super(EnrollmentDropoutManager, self)
+            .get_queryset()
+            .exclude(deleted=True)
+            .filter(dropout_status=True)
+        )
 
 
 class EnrollmentDisabledManager(models.Manager):
     def get_queryset(self):
-        return super(EnrollmentDisabledManager, self).get_queryset()\
-            .exclude(deleted=True)\
+        return (
+            super(EnrollmentDisabledManager, self)
+            .get_queryset()
+            .exclude(deleted=True)
             .filter(disabled=True, dropout_status=False)
+        )
 
 
 class DocumentType(models.Model):
@@ -46,7 +55,7 @@ class DocumentType(models.Model):
     description2 = models.CharField(blank=True, null=True, max_length=200)
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "Document Type"
         verbose_name_plural = "Documents Type"
 
@@ -66,44 +75,43 @@ class Enrollment(TimeStampedModel):
     """
     Captures the details of the child in the cash pilot
     """
+
     ENROLLMENT_TYPE = Choices(
-        ('no', _('No')),
-        ('second', _('Yes - in 2nd shift')),
-        ('first', _('Yes - in 1st shift')),
-        ('private', _('Yes - in private school')),
-        ('other', _('Yes - in another type of school')),
+        ("no", _("No")),
+        ("second", _("Yes - in 2nd shift")),
+        ("first", _("Yes - in 1st shift")),
+        ("private", _("Yes - in private school")),
+        ("other", _("Yes - in another type of school")),
     )
 
     RESULT = Choices(
-        ('na', 'n/a'),
-        ('graduated', _('Graduated')),
-        ('failed', _('Failed'))
+        ("na", "n/a"), ("graduated", _("Graduated")), ("failed", _("Failed"))
     )
 
     EXAM_RESULT = Choices(
-        ('na', _('n/a')),
-        ('graduated', _('Graduated')),
-        ('failed', _('Failed')),
-        ('uncompleted', _('Uncompleted')),
+        ("na", _("n/a")),
+        ("graduated", _("Graduated")),
+        ("failed", _("Failed")),
+        ("uncompleted", _("Uncompleted")),
     )
 
     YES_NO = Choices(
-        ('yes', _('Yes')),
-        ('no', _('No')),
+        ("yes", _("Yes")),
+        ("no", _("No")),
     )
 
     SCHOOL_TYPE = Choices(
-        ('na', 'n/a'),
-        ('out_the_country', _('School out of the country')),
-        ('public_in_country', _('Public school in the country')),
-        ('private_in_country', _('Private school in the country')),
-        ('CB_ECE', _('CB ECE')),
+        ("na", "n/a"),
+        ("out_the_country", _("School out of the country")),
+        ("public_in_country", _("Public school in the country")),
+        ("private_in_country", _("Private school in the country")),
+        ("CB_ECE", _("CB ECE")),
     )
 
     SCHOOL_SHIFT = Choices(
-        ('na', 'n/a'),
-        ('first', _('First shift')),
-        ('second', _('Second shift')),
+        ("na", "n/a"),
+        ("first", _("First shift")),
+        ("second", _("Second shift")),
         # ('alp', _('ALP')),
     )
 
@@ -111,69 +119,77 @@ class Enrollment(TimeStampedModel):
 
     YEARS = ((str(x), x) for x in range(2016, CURRENT_YEAR))
 
-    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
-    EDUCATION_YEARS.append(('na', 'N/A'))
+    EDUCATION_YEARS = list(
+        (str(x - 1) + "/" + str(x), str(x - 1) + "/" + str(x))
+        for x in range(2001, 2050)
+    )
+    EDUCATION_YEARS.append(("na", "N/A"))
 
     student = models.ForeignKey(
         Student,
-        blank=False, null=True,
-        related_name='student_enrollment',
+        blank=False,
+        null=True,
+        related_name="student_enrollment",
         on_delete=models.SET_NULL,
     )
     enrolled_last_year = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=ENROLLMENT_TYPE
+        max_length=50, blank=True, null=True, choices=ENROLLMENT_TYPE
     )
 
     enrolled_last_year_school = models.ForeignKey(
         School,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     enrolled_last_year_location = models.ForeignKey(
         Location,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
 
     school = models.ForeignKey(
         School,
-        blank=False, null=True,
-        related_name='ndshift_school',
+        blank=False,
+        null=True,
+        related_name="ndshift_school",
         on_delete=models.SET_NULL,
-        verbose_name=_('School')
+        verbose_name=_("School"),
     )
     section = models.ForeignKey(
         Section,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Current Section')
+        verbose_name=_("Current Section"),
     )
     classroom = models.ForeignKey(
         ClassRoom,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Current Class')
+        verbose_name=_("Current Class"),
     )
     education_year = models.ForeignKey(
         EducationYear,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Education year')
+        verbose_name=_("Education year"),
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Created by')
+        verbose_name=_("Created by"),
     )
     status = models.BooleanField(blank=True, default=True)
     age_min_restricted = models.BooleanField(blank=True, default=False)
@@ -182,182 +198,152 @@ class Enrollment(TimeStampedModel):
     related_to_family = models.BooleanField(blank=True, default=False)
     enrolled_in_this_school = models.BooleanField(blank=True, default=True)
     registered_in_unhcr = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=YES_NO
+        max_length=50, blank=True, null=True, choices=YES_NO
     )
 
     number_in_previous_school = models.CharField(
         max_length=200,
         blank=True,
         null=True,
-        verbose_name=_('Serial number in previous school')
+        verbose_name=_("Serial number in previous school"),
     )
 
     last_education_level = models.ForeignKey(
         ClassRoom,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last Education level')
+        verbose_name=_("Last Education level"),
     )
     last_education_year = models.CharField(
         max_length=10,
         blank=True,
         null=True,
         choices=EDUCATION_YEARS,
-        verbose_name=_('Last Education year')
+        verbose_name=_("Last Education year"),
     )
     last_year_result = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=RESULT,
-        verbose_name=_('Last Education result')
+        verbose_name=_("Last Education result"),
     )
-    result = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=RESULT
-    )
+    result = models.CharField(max_length=50, blank=True, null=True, choices=RESULT)
     participated_in_alp = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=Choices(
-            ('na', 'n/a'),
-            ('yes', _('Yes')),
-            ('no', _('No')),
+            ("na", "n/a"),
+            ("yes", _("Yes")),
+            ("no", _("No")),
         ),
-        verbose_name=_('Participated in ALP')
+        verbose_name=_("Participated in ALP"),
     )
     last_informal_edu_level = models.ForeignKey(
         EducationLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last informal education level')
+        verbose_name=_("Last informal education level"),
     )
     last_informal_edu_year = models.CharField(
         max_length=10,
         blank=True,
         null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, CURRENT_YEAR)),
-        verbose_name=_('Last informal education year')
+        choices=(
+            (str(x - 1) + "/" + str(x), str(x - 1) + "/" + str(x))
+            for x in range(2001, CURRENT_YEAR)
+        ),
+        verbose_name=_("Last informal education year"),
     )
     last_informal_edu_result = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=RESULT,
-        verbose_name=_('Last informal education result')
+        verbose_name=_("Last informal education result"),
     )
     last_informal_edu_round = models.ForeignKey(
         ALPRound,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last informal education round'),
+        verbose_name=_("Last informal education round"),
     )
     last_informal_edu_final_result = models.ForeignKey(
         ClassLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last informal education status'),
+        verbose_name=_("Last informal education status"),
     )
     last_school_type = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=SCHOOL_TYPE,
-        verbose_name=_('Last school type'),
+        verbose_name=_("Last school type"),
     )
     last_school_shift = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=SCHOOL_SHIFT,
-        verbose_name=_('Last school shift'),
+        verbose_name=_("Last school shift"),
     )
     last_school = models.ForeignKey(
         School,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Last school'),
+        verbose_name=_("Last school"),
     )
 
     exam_result_arabic = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Arabic')
+        max_length=4, blank=True, null=True, verbose_name=_("Arabic")
     )
 
     exam_result_language = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Foreign Language')
+        max_length=4, blank=True, null=True, verbose_name=_("Foreign Language")
     )
 
     exam_result_education = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Education')
+        max_length=4, blank=True, null=True, verbose_name=_("Education")
     )
 
     exam_result_geo = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Geography')
+        max_length=4, blank=True, null=True, verbose_name=_("Geography")
     )
 
     exam_result_history = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('History')
+        max_length=4, blank=True, null=True, verbose_name=_("History")
     )
 
     exam_result_math = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Math')
+        max_length=4, blank=True, null=True, verbose_name=_("Math")
     )
 
     exam_result_science = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Science')
+        max_length=4, blank=True, null=True, verbose_name=_("Science")
     )
 
     exam_result_physic = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Physic')
+        max_length=4, blank=True, null=True, verbose_name=_("Physic")
     )
 
     exam_result_chemistry = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Chemistry')
+        max_length=4, blank=True, null=True, verbose_name=_("Chemistry")
     )
 
     exam_result_bio = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        verbose_name=_('Biology')
+        max_length=4, blank=True, null=True, verbose_name=_("Biology")
     )
 
     exam_result_linguistic_ar = models.CharField(
@@ -365,14 +351,14 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Linguistic field/Arabic')
+        verbose_name=_("Linguistic field/Arabic"),
     )
     exam_result_linguistic_en = models.CharField(
         max_length=4,
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Linguistic field/Foreign language')
+        verbose_name=_("Linguistic field/Foreign language"),
     )
 
     exam_result_sociology = models.CharField(
@@ -380,7 +366,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Sociology field')
+        verbose_name=_("Sociology field"),
     )
 
     exam_result_physical = models.CharField(
@@ -388,7 +374,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Physical field')
+        verbose_name=_("Physical field"),
     )
 
     exam_result_artistic = models.CharField(
@@ -396,7 +382,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Artistic field')
+        verbose_name=_("Artistic field"),
     )
 
     exam_result_mathematics = models.CharField(
@@ -404,7 +390,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Scientific domain/Mathematics')
+        verbose_name=_("Scientific domain/Mathematics"),
     )
 
     exam_result_sciences = models.CharField(
@@ -412,14 +398,11 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Scientific domain/Sciences')
+        verbose_name=_("Scientific domain/Sciences"),
     )
 
     exam_total = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
-        verbose_name=_('Final Grade')
+        max_length=20, blank=True, null=True, verbose_name=_("Final Grade")
     )
 
     exam_result = models.CharField(
@@ -427,15 +410,11 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         choices=EXAM_RESULT,
-        verbose_name=_('Student status')
+        verbose_name=_("Student status"),
     )
 
     exam_result_arabic_cmplt = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        default=None,
-        verbose_name=_('Arabic')
+        max_length=4, blank=True, null=True, default=None, verbose_name=_("Arabic")
     )
 
     exam_result_language_cmplt = models.CharField(
@@ -443,22 +422,15 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Foreign Language')
+        verbose_name=_("Foreign Language"),
     )
 
     exam_result_math_cmplt = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        default=None,
-        verbose_name=_('Math')
+        max_length=4, blank=True, null=True, default=None, verbose_name=_("Math")
     )
 
     exam_total_cmplt = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
-        verbose_name=_('Final Grade')
+        max_length=20, blank=True, null=True, verbose_name=_("Final Grade")
     )
 
     exam_result_final = models.CharField(
@@ -466,119 +438,105 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         choices=EXAM_RESULT,
-        verbose_name=_('Final Student status')
+        verbose_name=_("Final Student status"),
     )
 
-    deleted = models.BooleanField(
-        blank=True, default=False,
-        verbose_name=_('deleted')
-    )
+    deleted = models.BooleanField(blank=True, default=False, verbose_name=_("deleted"))
     disabled = models.BooleanField(
-        blank=True, default=False,
-        verbose_name=_('Disabled?')
+        blank=True, default=False, verbose_name=_("Disabled?")
     )
     last_attendance_date = models.DateField(blank=True, null=True)
     last_absent_date = models.DateField(blank=True, null=True)
-    nb_consecutiveabsences =models.IntegerField(blank=True, null=True)
+    nb_consecutiveabsences = models.IntegerField(blank=True, null=True)
     dropout_status = models.BooleanField(
-        blank=True, default=False,
-        verbose_name=_('Dropout?')
+        blank=True, default=False, verbose_name=_("Dropout?")
     )
-    moved = models.BooleanField(
-        blank=True, default=False,
-        verbose_name=_('Moved?')
-    )
+    moved = models.BooleanField(blank=True, default=False, verbose_name=_("Moved?"))
     outreach_barcode = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        verbose_name=_('Outreach barcode')
+        max_length=50, blank=True, null=True, verbose_name=_("Outreach barcode")
     )
     new_registry = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
-        verbose_name=_('First time registered?')
+        choices=Choices(("yes", _("Yes")), ("no", _("No"))),
+        verbose_name=_("First time registered?"),
     )
     student_outreached = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
-        verbose_name=_('Student outreached?')
+        choices=Choices(("yes", _("Yes")), ("no", _("No"))),
+        verbose_name=_("Student outreached?"),
     )
     have_barcode = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
-        verbose_name=_('Have barcode with him?')
+        choices=Choices(("yes", _("Yes")), ("no", _("No"))),
+        verbose_name=_("Have barcode with him?"),
     )
     registration_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Registration date')
+        blank=True, null=True, verbose_name=_("Registration date")
     )
     last_moved_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Last moved date')
+        blank=True, null=True, verbose_name=_("Last moved date")
     )
     dropout_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('dropout date')
+        blank=True, null=True, verbose_name=_("dropout date")
     )
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
     disabled_objects = EnrollmentDisabledManager()
     documenttype = models.ForeignKey(
         DocumentType,
-        blank=True, null=True,
-        verbose_name=_('Document Type'),
-        related_name='+',
+        blank=True,
+        null=True,
+        verbose_name=_("Document Type"),
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     documentnumber = models.CharField(
-        blank=True, null=True,
+        blank=True,
+        null=True,
         max_length=20,
-        verbose_name=_('Document Nunber'),
+        verbose_name=_("Document Nunber"),
     )
     documentyear = models.ForeignKey(
         EducationYear,
-        blank=True, null=True,
-        verbose_name=_('Document Year'),
-        related_name='+',
+        blank=True,
+        null=True,
+        verbose_name=_("Document Year"),
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     document_lastyear = models.ImageField(
-        upload_to='enr/doc',
+        upload_to="enr/doc",
         blank=True,
         null=True,
-        help_text=_('picture of previous education'),
-        validators=[validate_file_size]
+        help_text=_("picture of previous education"),
+        validators=[validate_file_size],
     )
     justificationnumber = models.CharField(
-        blank=True, null=True,
-        verbose_name=_('Justification Number'),
+        blank=True,
+        null=True,
+        verbose_name=_("Justification Number"),
         max_length=25,
     )
     signature_cert_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('Signature Date')
+        blank=True, null=True, verbose_name=_("Signature Date")
     )
     is_justified = models.BooleanField(default=False)
     justified_date = models.DateField(
         blank=True,
         null=True,
         default=django.utils.timezone.now,
-        verbose_name=_('Justified Date')
+        verbose_name=_("Justified Date"),
     )
     justified_by = models.CharField(
-        blank=True, null=True,
-        verbose_name=_('Justified by'),
+        blank=True,
+        null=True,
+        verbose_name=_("Justified by"),
         max_length=30,
     )
 
@@ -586,7 +544,7 @@ class Enrollment(TimeStampedModel):
     def student_fullname(self):
         if self.student:
             return self.student.full_name
-        return ''
+        return ""
 
     @property
     def student_birthday(self):
@@ -596,7 +554,7 @@ class Enrollment(TimeStampedModel):
     def student_sex(self):
         if self.student:
             return self.student.sex
-        return ''
+        return ""
 
     @property
     def student_age(self):
@@ -608,7 +566,7 @@ class Enrollment(TimeStampedModel):
     def student_nationality(self):
         if self.student and self.student.nationality:
             return self.student.nationality
-        return ''
+        return ""
 
     @property
     def student_id_type(self):
@@ -622,7 +580,7 @@ class Enrollment(TimeStampedModel):
     def student_mother_fullname(self):
         if self.student:
             return self.student.mother_fullname
-        return ''
+        return ""
 
     @property
     def student_mother_nationality(self):
@@ -643,14 +601,14 @@ class Enrollment(TimeStampedModel):
     @property
     def cycle(self):
         if self.classroom_id in [2, 3, 4]:
-            return 'Cycle 1'
+            return "Cycle 1"
         if self.classroom_id in [5, 6, 7]:
-            return 'Cycle 2'
+            return "Cycle 2"
         if self.classroom_id in [8, 9, 10]:
-            return 'Cycle 3'
+            return "Cycle 3"
         if self.classroom_id == 1:
-            return 'KG'
-        return ''
+            return "KG"
+        return ""
 
     def grading(self, term):
         if self.enrollment_gradings.count():
@@ -673,7 +631,7 @@ class Enrollment(TimeStampedModel):
     def last_year_grading_result(self):
         if self.enrollment_gradings.count():
             return self.enrollment_gradings.get(exam_term=3).exam_result
-        return ''
+        return ""
 
     @property
     def incomplete_grading(self):
@@ -684,10 +642,10 @@ class Enrollment(TimeStampedModel):
         return False
 
     def get_absolute_url(self):
-        return '/enrollments/edit/%d/' % self.pk
+        return "/enrollments/edit/%d/" % self.pk
 
     class Meta:
-        ordering = ['-student__first_name']
+        ordering = ["-student__first_name"]
 
     def __unicode__(self):
         if self.student:
@@ -699,35 +657,39 @@ class StudentMove(models.Model):
 
     enrolment1 = models.ForeignKey(
         Enrollment,
-        blank=False, null=False,
-        related_name='+',
+        blank=False,
+        null=False,
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name='Student name',
+        verbose_name="Student name",
     )
     enrolment2 = models.ForeignKey(
         Enrollment,
-        blank=False, null=False,
-        related_name='+',
+        blank=False,
+        null=False,
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name='Student name',
+        verbose_name="Student name",
     )
     school1 = models.ForeignKey(
         School,
-        blank=False, null=False,
-        related_name='+',
+        blank=False,
+        null=False,
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name='From school',
+        verbose_name="From school",
     )
     school2 = models.ForeignKey(
         School,
-        blank=False, null=False,
-        related_name='+',
+        blank=False,
+        null=False,
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name='To school',
+        verbose_name="To school",
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "Auto search student moves"
         verbose_name_plural = "Auto search student moves"
 
@@ -738,80 +700,50 @@ class StudentMove(models.Model):
 class EnrollmentGrading(models.Model):
 
     EXAM_RESULT = Choices(
-        ('na', _('n/a')),
-        ('graduated', _('Graduated')),
-        ('failed', _('Failed')),
-        ('uncompleted', _('Uncompleted')),
+        ("na", _("n/a")),
+        ("graduated", _("Graduated")),
+        ("failed", _("Failed")),
+        ("uncompleted", _("Uncompleted")),
     )
 
     exam_result_arabic = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Arabic')
+        max_length=6, blank=True, null=True, verbose_name=_("Arabic")
     )
 
     exam_result_language = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Foreign language')
+        max_length=6, blank=True, null=True, verbose_name=_("Foreign language")
     )
 
     exam_result_education = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Education')
+        max_length=6, blank=True, null=True, verbose_name=_("Education")
     )
 
     exam_result_geo = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Geography')
+        max_length=6, blank=True, null=True, verbose_name=_("Geography")
     )
 
     exam_result_history = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('History')
+        max_length=6, blank=True, null=True, verbose_name=_("History")
     )
 
     exam_result_math = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Math')
+        max_length=6, blank=True, null=True, verbose_name=_("Math")
     )
 
     exam_result_science = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Science')
+        max_length=6, blank=True, null=True, verbose_name=_("Science")
     )
 
     exam_result_physic = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Physic')
+        max_length=6, blank=True, null=True, verbose_name=_("Physic")
     )
 
     exam_result_chemistry = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Chemistry')
+        max_length=6, blank=True, null=True, verbose_name=_("Chemistry")
     )
 
     exam_result_bio = models.CharField(
-        max_length=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Biology')
+        max_length=6, blank=True, null=True, verbose_name=_("Biology")
     )
 
     exam_result_linguistic_ar = models.CharField(
@@ -819,14 +751,14 @@ class EnrollmentGrading(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Linguistic field/Arabic')
+        verbose_name=_("Linguistic field/Arabic"),
     )
     exam_result_linguistic_en = models.CharField(
         max_length=6,
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Linguistic field/Foreign language')
+        verbose_name=_("Linguistic field/Foreign language"),
     )
 
     exam_result_sociology = models.CharField(
@@ -834,7 +766,7 @@ class EnrollmentGrading(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Sociology field')
+        verbose_name=_("Sociology field"),
     )
 
     exam_result_physical = models.CharField(
@@ -842,7 +774,7 @@ class EnrollmentGrading(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Physical field')
+        verbose_name=_("Physical field"),
     )
 
     exam_result_artistic = models.CharField(
@@ -850,7 +782,7 @@ class EnrollmentGrading(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Artistic field')
+        verbose_name=_("Artistic field"),
     )
 
     exam_result_mathematics = models.CharField(
@@ -858,7 +790,7 @@ class EnrollmentGrading(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Scientific domain/Mathematics')
+        verbose_name=_("Scientific domain/Mathematics"),
     )
 
     exam_result_sciences = models.CharField(
@@ -866,14 +798,11 @@ class EnrollmentGrading(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Scientific domain/Sciences')
+        verbose_name=_("Scientific domain/Sciences"),
     )
 
     exam_total = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
-        verbose_name=_('Total Grade')
+        max_length=20, blank=True, null=True, verbose_name=_("Total Grade")
     )
 
     exam_result = models.CharField(
@@ -881,24 +810,22 @@ class EnrollmentGrading(models.Model):
         blank=True,
         null=True,
         choices=EXAM_RESULT,
-        verbose_name=_('Student status')
+        verbose_name=_("Student status"),
     )
 
     exam_term = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        verbose_name=_('Term')
+        max_length=50, blank=True, null=True, verbose_name=_("Term")
     )
     enrollment = models.ForeignKey(
         Enrollment,
-        blank=False, null=False,
-        related_name='enrollment_gradings',
-        on_delete=models.CASCADE
+        blank=False,
+        null=False,
+        related_name="enrollment_gradings",
+        on_delete=models.CASCADE,
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
 
     @property
     def enrollment_student(self):
@@ -924,12 +851,12 @@ class EnrollmentGrading(models.Model):
     def exam_term_name(self):
         if self.exam_term:
             return {
-                '1': _('Term1'),
-                '2': _('Term2'),
-                '3': _('Term3'),
-                '4': _('Term4'),
+                "1": _("Term1"),
+                "2": _("Term2"),
+                "3": _("Term3"),
+                "4": _("Term4"),
             }[str(self.exam_term)]
-        return ''
+        return ""
 
     def __unicode__(self):
         return str(self.id)
@@ -941,47 +868,45 @@ class LoggingStudentMove(TimeStampedModel):
         Student,
         blank=False,
         null=False,
-        related_name='+',
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name=_('Student'),
+        verbose_name=_("Student"),
     )
     enrolment = models.ForeignKey(
         Enrollment,
         blank=False,
         null=False,
-        related_name='+',
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name=_('Enrollment'),
+        verbose_name=_("Enrollment"),
     )
     school_from = models.ForeignKey(
         School,
         blank=False,
         null=False,
-        related_name='+',
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name=_('From school'),
+        verbose_name=_("From school"),
     )
     school_to = models.ForeignKey(
         School,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name=_('To school'),
+        verbose_name=_("To school"),
     )
     education_year = models.ForeignKey(
         EducationYear,
-        blank=True, null=True,
-        related_name='+',
-        on_delete=models.SET_NULL,
-    )
-    moved_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('Moved date')
+        related_name="+",
+        on_delete=models.SET_NULL,
     )
+    moved_date = models.DateField(blank=True, null=True, verbose_name=_("Moved date"))
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "Student moves logs"
         verbose_name_plural = "Student moves logs"
 
@@ -995,42 +920,45 @@ class LoggingProgramMove(TimeStampedModel):
         Student,
         blank=False,
         null=False,
-        related_name='+',
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name='Student',
+        verbose_name="Student",
     )
     registry = models.ForeignKey(
         Outreach,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.CASCADE,
     )
     school_from = models.ForeignKey(
         School,
         blank=False,
         null=False,
-        related_name='+',
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name='From school',
+        verbose_name="From school",
     )
     school_to = models.ForeignKey(
         School,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.CASCADE,
-        verbose_name='To school',
+        verbose_name="To school",
     )
     education_year = models.ForeignKey(
         EducationYear,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     eligibility = models.BooleanField(default=True)
     potential_move = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "Student moves from ALP"
         verbose_name_plural = "Student moves from ALP"
 
@@ -1041,16 +969,18 @@ class LoggingProgramMove(TimeStampedModel):
 class DuplicateStd(TimeStampedModel):
     enrollment = models.ForeignKey(
         Enrollment,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         on_delete=models.SET_NULL,
-        related_name='enrollment_id'
+        related_name="enrollment_id",
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=False, null=True,
-        related_name='+',
+        blank=False,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Created by')
+        verbose_name=_("Created by"),
     )
     is_solved = models.BooleanField(default=False)
     remark = models.CharField(
@@ -1065,52 +995,55 @@ class DuplicateStd(TimeStampedModel):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        verbose_name=_('Coordinator')
+        verbose_name=_("Coordinator"),
     )
     is_deleted = models.BooleanField(default=False)
-    current_year = models.CharField(
-        max_length=10,
-        default=datetime.datetime.now().year
-    )
+    current_year = models.CharField(max_length=10, default=datetime.datetime.now().year)
     Level = models.ForeignKey(
         ClassLevel,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Class Level'),
+        verbose_name=_("Class Level"),
     )
     section = models.ForeignKey(
         Section,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Current Section')
+        verbose_name=_("Current Section"),
     )
     classroom = models.ForeignKey(
         ClassRoom,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Current Class')
+        verbose_name=_("Current Class"),
     )
     education_year = models.ForeignKey(
         EducationYear,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Education year')
+        verbose_name=_("Education year"),
     )
     alp_round = models.ForeignKey(
         ALPRound,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     outreach = models.ForeignKey(
         Outreach,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         on_delete=models.SET_NULL,
-        related_name='outreach_id'
+        related_name="outreach_id",
     )
 
     @property
@@ -1122,7 +1055,7 @@ class DuplicateStd(TimeStampedModel):
             if self.outreach:
                 if self.outreach.student:
                     return self.outreach.student.full_name
-        return ''
+        return ""
 
     @property
     def student_birthday(self):
@@ -1141,7 +1074,7 @@ class DuplicateStd(TimeStampedModel):
             if self.outreach:
                 if self.outreach.student:
                     return self.outreach.student.mother_fullname
-        return ''
+        return ""
 
     @property
     def school_name(self):
@@ -1152,7 +1085,7 @@ class DuplicateStd(TimeStampedModel):
             if self.outreach:
                 if self.outreach.school:
                     return self.outreach.school.name
-        return ''
+        return ""
 
     @property
     def student_id_number(self):
@@ -1163,7 +1096,7 @@ class DuplicateStd(TimeStampedModel):
             if self.outreach:
                 if self.outreach.student:
                     return self.outreach.student.id_number
-        return ''
+        return ""
 
     @property
     def student_number(self):
@@ -1174,7 +1107,7 @@ class DuplicateStd(TimeStampedModel):
             if self.outreach:
                 if self.outreach.student:
                     return self.outreach.student.number
-        return ''
+        return ""
 
     @property
     def student_sex(self):
@@ -1185,7 +1118,7 @@ class DuplicateStd(TimeStampedModel):
             if self.outreach:
                 if self.outreach.student:
                     return self.outreach.student.sex
-        return ''
+        return ""
 
     @property
     def school_location(self):
@@ -1198,7 +1131,7 @@ class DuplicateStd(TimeStampedModel):
                 if self.outreach.school:
                     if self.outreach.school.location:
                         return self.outreach.school.location.name
-        return ''
+        return ""
 
     @property
     def school_number(self):
@@ -1209,31 +1142,31 @@ class DuplicateStd(TimeStampedModel):
             if self.outreach:
                 if self.outreach.school:
                     return self.outreach.school.number
-        return ''
+        return ""
 
     @property
     def classroom_name(self):
         if self.classroom:
             return self.classroom.name
-        return ''
+        return ""
 
     @property
     def section_name(self):
         if self.section:
             return self.section.name
-        return ''
+        return ""
 
     @property
     def level_name(self):
         if self.Level:
             return self.level.name
-        return ''
+        return ""
 
     @property
     def coordinator_name(self):
         if self.coordinator:
             return self.coordinator.name
-        return ''
+        return ""
 
     class Meta:
-        verbose_name = 'Duplicated Students'
+        verbose_name = "Duplicated Students"
