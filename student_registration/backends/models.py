@@ -1,10 +1,13 @@
-from __future__ import unicode_literals, absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
 
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.db import models
-from model_utils.models import TimeStampedModel
+from django.utils.translation import gettext as _
 from model_utils import Choices
+from model_utils.models import TimeStampedModel
+
 from student_registration.schools.models import School
 
 
@@ -14,14 +17,15 @@ class Exporter(TimeStampedModel):
     file_url = models.URLField(blank=True, null=True)
     exported_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Exported by')
+        verbose_name=_("Exported by"),
     )
 
     class Meta:
-        ordering = ['created']
+        ordering = ["created"]
         verbose_name = "Exported file"
         verbose_name_plural = "Exported files"
 
@@ -34,37 +38,41 @@ class Notification(TimeStampedModel):
     name = models.CharField(max_length=500, blank=False, null=True)
     type = models.CharField(
         choices=Choices(
-            ('general', 'General'),
-            ('helpdesk', 'Helpdesk'),
+            ("general", "General"),
+            ("helpdesk", "Helpdesk"),
         ),
         max_length=50,
-        blank=True, null=True
+        blank=True,
+        null=True,
     )
     school_type = models.CharField(
         choices=Choices(
-            ('2ndshift', '2nd-shift'),
-            ('ALP', 'ALP'),
+            ("2ndshift", "2nd-shift"),
+            ("ALP", "ALP"),
         ),
         max_length=50,
-        blank=True, null=True
+        blank=True,
+        null=True,
     )
     status = models.BooleanField(blank=True, default=False)
     description = models.TextField(max_length=500, blank=True, null=True)
     comments = models.TextField(max_length=500, blank=True, null=True)
     school = models.ForeignKey(
         School,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     schools = models.ManyToManyField(School, blank=True)
     ticket = models.CharField(
         max_length=100,
-        blank=True, null=True,
+        blank=True,
+        null=True,
     )
 
     class Meta:
-        ordering = ['created']
+        ordering = ["created"]
         verbose_name = "Notification"
         verbose_name_plural = "Notifications"
 
@@ -75,42 +83,44 @@ class Notification(TimeStampedModel):
 class ExportHistory(TimeStampedModel):
 
     EXPORT_TYPE = Choices(
-        ('', '----------'),
-        ('Makani List', _('Makani List')),
-        ('Makani Raw Attendance', _('Makani Raw Attendance')),
-        ('Makani Total Attendance', _('Makani Total Attendance')),
-        ('Center List', _('Center List')),
-        ('Bridging Absence Raw Data', _('Bridging Absence Raw Data')),
-        ('Bridging Attendance Total', _('Bridging Attendance Total')),
-        ('Bridging Absence Consecutive', _('Bridging Absence Consecutive')),
-        ('Teacher List', _('Teacher List')),
-        ('Bridging List', _('Bridging List')),
-        ('School List - Bridging', _('School List - Bridging')),
-        ('School List', _('School List')),
+        ("", "----------"),
+        ("Makani List", _("Makani List")),
+        ("Makani Raw Attendance", _("Makani Raw Attendance")),
+        ("Makani Total Attendance", _("Makani Total Attendance")),
+        ("Center List", _("Center List")),
+        ("Bridging Absence Raw Data", _("Bridging Absence Raw Data")),
+        ("Bridging Attendance Total", _("Bridging Attendance Total")),
+        ("Bridging Absence Consecutive", _("Bridging Absence Consecutive")),
+        ("Teacher List", _("Teacher List")),
+        ("Bridging List", _("Bridging List")),
+        ("School List - Bridging", _("School List - Bridging")),
+        ("School List", _("School List")),
     )
     export_type = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=EXPORT_TYPE,
-        verbose_name=_('Export Type')
+        verbose_name=_("Export Type"),
     )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        related_name='+',
+        blank=True,
+        null=True,
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Modified by'),
+        verbose_name=_("Modified by"),
     )
     partner_name = models.CharField(
         max_length=64,
         db_index=True,
-        blank=True, null=True,
-        verbose_name=_('Partner name')
+        blank=True,
+        null=True,
+        verbose_name=_("Partner name"),
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = "Export History"
         verbose_name_plural = "Export History"
 
@@ -126,27 +136,41 @@ class UserActivity(models.Model):
         return "{} - {} {}".format(self.username, self.method, self.path)
 
 
+def validate_file_content_type(value):
+    if value.file.content_type not in [
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ]:
+        raise ValidationError(_("Invalid file type."))
+
+
 class AdolescentUpload(TimeStampedModel):
-    file = models.FileField(upload_to='uploads/adolescent_imports')
+    file = models.FileField(
+        upload_to="uploads/adolescent_imports",
+        validators=[
+            FileExtensionValidator(allowed_extensions=["xls", "xlsx"]),
+            validate_file_content_type,
+        ],
+    )
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True,
         null=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
-        verbose_name=_('Uploaded by')
+        verbose_name=_("Uploaded by"),
     )
     failed_file = models.FileField(
-        upload_to='uploads/adolescent_imports',
+        upload_to="uploads/adolescent_imports",
         blank=True,
         null=True,
     )
     processed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-created']
-        verbose_name = 'Adolescent upload'
-        verbose_name_plural = 'Adolescent uploads'
+        ordering = ["-created"]
+        verbose_name = "Adolescent upload"
+        verbose_name_plural = "Adolescent uploads"
 
     def __str__(self):
         return self.file.name
