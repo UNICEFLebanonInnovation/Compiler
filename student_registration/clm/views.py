@@ -1,222 +1,217 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+import csv
+import io
 import json
+import logging
 from datetime import datetime
 
-from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-import io
-import csv
-import logging
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
+from django.views.generic import FormView, ListView, TemplateView, UpdateView, View
+
 logging.basicConfig(level=logging.ERROR)
-import os
-import uuid
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.db import connection
 import codecs
-import logging
-import traceback
-from django.utils.encoding import force_str
 import datetime
+import logging
+import os
+import traceback
+import uuid
+
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.db import connection
+from django.db.models import Avg, F, Func, Q, Sum, When
+from django.db.models.expressions import RawSQL
+from django.shortcuts import render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_str
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
-from django.db.models import Q, Sum, Avg, F, Func, When
-from django.db.models.expressions import RawSQL
-from django.urls import reverse
-from django.shortcuts import render
-
-from rest_framework import status
-from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
-
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
+from rest_framework import mixins, permissions, status, viewsets
 
-from student_registration.users.utils import force_default_language
+from student_registration.backends.models import ExportHistory
+from student_registration.locations.models import Location
 from student_registration.outreach.models import Child, OutreachChild
 from student_registration.outreach.serializers import ChildSerializer
-from student_registration.locations.models import Location
+from student_registration.schools.models import CLMRound, School
+from student_registration.users.templatetags.custom_tags import has_group
+from student_registration.users.utils import force_default_language
+
 from .filters import (
-    BLNFilter,
     ABLNFilter,
-    RSFilter,
+    BLNFilter,
+    BridgingFilter,
     CBECEFilter,
     GeneralQuestionnaireFilter,
     OutreachFilter,
-    BridgingFilter
+    RSFilter
 )
-from .tables import (
-    BLNTable,
-    ABLNTable,
-    RSTable,
-    CBECETable,
-    GeneralQuestionnaireTable,
-    OutreachTable,
-    BridgingTable
-)
-from .models import (
-    BLN,
-    ABLN,
-    RS,
-    CBECE,
-    SelfPerceptionGrades,
-    Disability,
-    Assessment,
-    ABLN_FC,
-    BLN_FC,
-    CBECE_FC,
-    RS_FC,
-    GeneralQuestionnaire,
-    Outreach,
-    Bridging,
-    Inclusion
-)
-from student_registration.schools.models import (
-    School,
-    CLMRound,
-)
-from student_registration.backends.models import ExportHistory
 from .forms import (
-    BLNForm,
-    ABLNForm,
-    RSForm,
-    RSAssessmentForm,
-    CBECEForm,
-    BLNReferralForm,
-    BLNFollowupForm,
-    ABLNReferralForm,
-    ABLNFollowupForm,
-    BLNAssessmentForm,
     ABLNAssessmentForm,
-    CBECEAssessmentForm,
-    BridgingAssessmentForm,
-    BridgingMidAssessmentForm,
-    BridgingFollowupForm,
-    BridgingServiceForm,
-    CBECEMidAssessmentForm,
-    CBECEFollowupForm,
-    CBECEReferralForm,
-    CBECEMonitoringQuestionerForm,
-    BLNMonitoringQuestionerForm,
-    ABLNMonitoringQuestionerForm,
     ABLNFCForm,
+    ABLNFollowupForm,
+    ABLNForm,
+    ABLNMonitoringQuestionerForm,
+    ABLNReferralForm,
+    BLNAssessmentForm,
     BLNFCForm,
-    RSFCForm,
+    BLNFollowupForm,
+    BLNForm,
+    BLNMonitoringQuestionerForm,
+    BLNReferralForm,
+    BridgingAssessmentForm,
+    BridgingFollowupForm,
+    BridgingForm,
+    BridgingMidAssessmentForm,
+    BridgingServiceForm,
+    CBECEAssessmentForm,
     CBECEFCForm,
+    CBECEFollowupForm,
+    CBECEForm,
+    CBECEMidAssessmentForm,
+    CBECEMonitoringQuestionerForm,
+    CBECEReferralForm,
     GeneralQuestionnaireForm,
     OutreachForm,
-    BridgingForm
+    RSAssessmentForm,
+    RSFCForm,
+    RSForm
+)
+from .models import (
+    ABLN,
+    ABLN_FC,
+    BLN,
+    BLN_FC,
+    CBECE,
+    CBECE_FC,
+    RS,
+    RS_FC,
+    Assessment,
+    Bridging,
+    Disability,
+    GeneralQuestionnaire,
+    Inclusion,
+    Outreach,
+    SelfPerceptionGrades
 )
 from .serializers import (
-    BLNSerializer,
-    ABLNSerializer,
-    RSSerializer,
-    CBECESerializer,
-    SelfPerceptionGradesSerializer,
     ABLN_FCSerializer,
+    ABLNSerializer,
     BLN_FCSerializer,
+    BLNSerializer,
+    BridgingSerializer,
     CBECE_FCSerializer,
-    RS_FCSerializer,
+    CBECESerializer,
     GeneralQuestionnaireSerializer,
     OutreachSerializer,
-    BridgingSerializer
+    RS_FCSerializer,
+    RSSerializer,
+    SelfPerceptionGradesSerializer
 )
-from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
-    cbece_build_xls_extraction, rs_build_xls_extraction, outreach_build_xls_extraction
-from student_registration.users.templatetags.custom_tags import has_group
+from .tables import ABLNTable, BLNTable, BridgingTable, CBECETable, GeneralQuestionnaireTable, OutreachTable, RSTable
+from .utils import (
+    abln_build_xls_extraction,
+    bln_build_xls_extraction,
+    cbece_build_xls_extraction,
+    is_allowed_create,
+    is_allowed_edit,
+    outreach_build_xls_extraction,
+    rs_build_xls_extraction
+)
 
 
-class CLMView(LoginRequiredMixin,
-              GroupRequiredMixin,
-              TemplateView):
-    template_name = 'pages/home.old.html'
+class CLMView(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    template_name = "pages/home.old.html"
 
-    group_required = [u"CLM"]
+    group_required = ["CLM"]
 
     def get_context_data(self, **kwargs):
 
         return {}
 
 
-def assessment_form(instance_id, stage, enrollment_model, assessment_slug, callback=''):
+def assessment_form(instance_id, stage, enrollment_model, assessment_slug, callback=""):
     try:
         assessment = Assessment.objects.get(slug=assessment_slug)
-        return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]={enrollment_model}&returnURL={callback}'.format(
+        return "{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]={enrollment_model}&returnURL={callback}".format(
             form=assessment.assessment_form,
             status=stage,
             enrollment_model=enrollment_model,
             enrollment_id=instance_id,
-            callback=callback
+            callback=callback,
         )
     except Assessment.DoesNotExist:
-        return ''
+        return ""
 
 
-class BLNAddView(LoginRequiredMixin,
-                 GroupRequiredMixin,
-                 FormView):
-    template_name = 'clm/bln_create_form.html'
+class BLNAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bln_create_form.html"
     form_class = BLNForm
-    success_url = '/clm/bln-list/'
-    group_required = [u"CLM_BLN"]
+    success_url = "/clm/bln-list/"
+    group_required = ["CLM_BLN"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/bln-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/bln-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/bln-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return "/clm/bln-edit/" + str(self.request.session.get("instance_id")) + "/"
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='BLN',
-                assessment_slug='bln_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="BLN",
+                assessment_slug="bln_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:bln_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('BLN')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_create"] = is_allowed_create("BLN")
         return super(BLNAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(BLNAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', ''),
-            'student_outreached': self.request.GET.get('student_outreached', ''),
-            'have_barcode': self.request.GET.get('have_barcode', '')
+            "new_registry": self.request.GET.get("new_registry", ""),
+            "student_outreached": self.request.GET.get("student_outreached", ""),
+            "have_barcode": self.request.GET.get("have_barcode", ""),
         }
-        if self.request.GET.get('enrollment_id'):
-            instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
+        if self.request.GET.get("enrollment_id"):
+            instance = BLN.objects.get(id=self.request.GET.get("enrollment_id"))
             data = BLNSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
+            data["student_nationality"] = data["student_nationality_id"]
+            data["learning_result"] = ""
 
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+        if self.request.GET.get("child_id"):
+            instance = Child.objects.get(id=int(self.request.GET.get("child_id")))
             data = ChildSerializer(instance).data
 
-        if self.request.GET.get('outreach_id'):
-            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+        if self.request.GET.get("outreach_id"):
+            instance = Outreach.objects.get(id=self.request.GET.get("outreach_id"))
             data = BLNSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
+            data["student_nationality"] = data["student_nationality_id"]
+            data["learning_result"] = ""
 
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
-            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+            data["new_registry"] = self.request.GET.get("new_registry", "yes")
+            data["student_outreached"] = self.request.GET.get("student_outreached", "")
+            data["have_barcode"] = self.request.GET.get("have_barcode", "")
         initial = data
 
         return initial
@@ -229,162 +224,192 @@ class BLNAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return BLNForm(self.request.POST, instance=None, request=self.request)
         else:
-            return BLNForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return BLNForm(
+                None, instance=None, request=self.request, initial=self.get_initial()
+            )
 
 
-class BLNEditView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
-    template_name = 'clm/bln_edit_form.html'
+class BLNEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bln_edit_form.html"
     form_class = BLNForm
-    success_url = '/clm/bln-list/'
-    group_required = [u"CLM_BLN"]
+    success_url = "/clm/bln-list/"
+    group_required = ["CLM_BLN"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/bln-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/bln-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/bln-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return "/clm/bln-edit/" + str(self.request.session.get("instance_id")) + "/"
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='BLN',
-                assessment_slug='bln_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="BLN",
+                assessment_slug="bln_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:bln_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('BLN')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_edit"] = is_allowed_edit("BLN")
         return super(BLNEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = BLN.objects.get(id=self.kwargs['pk'])
+        instance = BLN.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
             return BLNForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = BLNSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            if 'pre_test' in data:
-                p_test = data['pre_test']
+            data["student_nationality"] = data["student_nationality_id"]
+            if "pre_test" in data:
+                p_test = data["pre_test"]
                 if p_test:
                     if "BLN_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["BLN_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "BLN_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["BLN_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "BLN_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "BLN_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["BLN_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["BLN_ASSESSMENT/arabic"]
 
                     if "BLN_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["BLN_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "BLN_ASSESSMENT/attended_english"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["BLN_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "BLN_ASSESSMENT/modality_english"
+                        ]
 
                     if "BLN_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["BLN_ASSESSMENT/english"]
+                        data["english"] = p_test["BLN_ASSESSMENT/english"]
 
                     if "BLN_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["BLN_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["BLN_ASSESSMENT/attended_math"]
 
                     if "BLN_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["BLN_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["BLN_ASSESSMENT/modality_math"]
 
                     if "BLN_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["BLN_ASSESSMENT/math"]
+                        data["math"] = p_test["BLN_ASSESSMENT/math"]
 
                     if "BLN_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["BLN_ASSESSMENT/attended_social"]
+                        data["attended_social"] = p_test[
+                            "BLN_ASSESSMENT/attended_social"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["BLN_ASSESSMENT/modality_social"]
+                        data["modality_social"] = p_test[
+                            "BLN_ASSESSMENT/modality_social"
+                        ]
 
                     if "BLN_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["BLN_ASSESSMENT/social_emotional"]
+                        data["social_emotional"] = p_test[
+                            "BLN_ASSESSMENT/social_emotional"
+                        ]
 
                     if "BLN_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_artistic"]
+                        data["attended_artistic"] = p_test[
+                            "BLN_ASSESSMENT/attended_artistic"
+                        ]
                     elif "BLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+                        data["attended_artistic"] = p_test[
+                            "BLN_ASSESSMENT/attended_psychomotor"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_artistic"]
+                        data["modality_artistic"] = p_test[
+                            "BLN_ASSESSMENT/modality_artistic"
+                        ]
                     elif "BLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
+                        data["modality_artistic"] = p_test[
+                            "BLN_ASSESSMENT/modality_psychomotor"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_artistic" in p_test:
-                        data['artistic'] = p_test["BLN_ASSESSMENT/artistic"]
+                        data["artistic"] = p_test["BLN_ASSESSMENT/artistic"]
                     elif "BLN_ASSESSMENT/psychomotor" in p_test:
-                        data['artistic'] = p_test["BLN_ASSESSMENT/psychomotor"]
+                        data["artistic"] = p_test["BLN_ASSESSMENT/psychomotor"]
 
             return BLNForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = BLN.objects.get(id=self.kwargs['pk'])
+        instance = BLN.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(BLNEditView, self).form_valid(form)
 
 
-class BLNMonitoringQuestionerView(LoginRequiredMixin,
-                                  GroupRequiredMixin,
-                                  FormView):
-    template_name = 'clm/bln_monitoring_questioner.html'
+class BLNMonitoringQuestionerView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bln_monitoring_questioner.html"
     form_class = BLNMonitoringQuestionerForm
-    success_url = '/clm/bln-list/'
-    group_required = [u"CLM_BLN"]
+    success_url = "/clm/bln-list/"
+    group_required = ["CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BLNMonitoringQuestionerView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(BLNMonitoringQuestionerView, self).form_valid(form)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name="dispatch")
 class AssessmentSubmission(SingleObjectMixin, View):
     model = RS
-    slug_url_kwarg = 'status'
+    slug_url_kwarg = "status"
 
     def post(self, request, *args, **kwargs):
 
-        if 'status' not in request.body and \
-            'enrollment_id' not in request.body and \
-            'enrollment_model' not in request.body:
+        if (
+            "status" not in request.body
+            and "enrollment_id" not in request.body
+            and "enrollment_model" not in request.body
+        ):
             return HttpResponseBadRequest()
 
-        payload = json.loads(request.body.decode('utf-8'))
-        status = payload['status']
-        enrollment_id = payload['enrollment_id']
-        model = payload['enrollment_model']
-        static_model_value = payload['static_model_value'] if 'static_model_value' in payload else ''
+        payload = json.loads(request.body.decode("utf-8"))
+        status = payload["status"]
+        enrollment_id = payload["enrollment_id"]
+        model = payload["enrollment_model"]
+        static_model_value = (
+            payload["static_model_value"] if "static_model_value" in payload else ""
+        )
 
-        if model == 'BLN' or 'BLN_ASSESSMENT/arabic' in payload:
+        if model == "BLN" or "BLN_ASSESSMENT/arabic" in payload:
             enrollment = BLN.objects.get(id=int(enrollment_id))
-        elif model == 'ABLN' or 'ABLN_ASSESSMENT/arabic' in payload:
+        elif model == "ABLN" or "ABLN_ASSESSMENT/arabic" in payload:
             enrollment = ABLN.objects.get(id=int(enrollment_id))
-        elif model == 'CBECE':
+        elif model == "CBECE":
             enrollment = CBECE.objects.get(id=int(enrollment_id))
         # elif model == 'RS':
         #     enrollment = RS.objects.get(id=int(enrollment_id))
@@ -399,97 +424,98 @@ class AssessmentSubmission(SingleObjectMixin, View):
         return HttpResponse()
 
 
-class BLNListView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FilterView,
-                  ExportMixin,
-                  SingleTableView,
-                  RequestConfig):
+class BLNListView(
+    LoginRequiredMixin,
+    GroupRequiredMixin,
+    FilterView,
+    ExportMixin,
+    SingleTableView,
+    RequestConfig,
+):
     table_class = BLNTable
     model = BLN
-    template_name = 'clm/bln_list.html'
-    table = BLNTable(BLN.objects.all(), order_by='id')
-    group_required = [u"CLM_BLN"]
+    template_name = "clm/bln_list.html"
+    table = BLNTable(BLN.objects.all(), order_by="id")
+    group_required = ["CLM_BLN"]
 
     filterset_class = BLNFilter
 
     def get_queryset(self):
 
-
-        return BLN.objects.filter(partner=self.request.user.partner_id,
-                                  round__current_year=True).order_by('-id')
+        return BLN.objects.filter(
+            partner=self.request.user.partner_id, round__current_year=True
+        ).order_by("-id")
         # return BLN.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
         # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
-class BLNReferralView(LoginRequiredMixin,
-                      GroupRequiredMixin,
-                      FormView):
-    template_name = 'clm/bln_referral.html'
+class BLNReferralView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bln_referral.html"
     form_class = BLNReferralForm
-    success_url = '/clm/bln-list/'
-    group_required = [u"CLM_BLN"]
+    success_url = "/clm/bln-list/"
+    group_required = ["CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BLNReferralView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(BLNReferralView, self).form_valid(form)
 
 
-class BLNFollowupView(LoginRequiredMixin,
-                      GroupRequiredMixin,
-                      FormView):
-    template_name = 'clm/bln_followup.html'
+class BLNFollowupView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bln_followup.html"
     form_class = BLNFollowupForm
-    success_url = '/clm/bln-list/'
-    group_required = [u"CLM_BLN"]
+    success_url = "/clm/bln-list/"
+    group_required = ["CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BLNFollowupView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(BLNFollowupView, self).form_valid(form)
 
 
-class BLNDashboardView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       TemplateView):
-    template_name = 'clm/bln_dashboard.html'
+class BLNDashboardView(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    template_name = "clm/bln_dashboard.html"
     model = BLN
-    group_required = [u"CLM_BLN"]
+    group_required = ["CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-
 
         per_gov = []
         clm_round = self.request.user.partner.bln_round
@@ -498,20 +524,20 @@ class BLNDashboardView(LoginRequiredMixin,
 
         # queryset = BLN.objects.filter(round=clm_round)
         queryset = self.model.objects.all()
-        total_male = queryset.filter(student__sex='Male')
-        total_female = queryset.filter(student__sex='Female')
+        total_male = queryset.filter(student__sex="Male")
+        total_female = queryset.filter(student__sex="Female")
 
-        completion = queryset.exclude(learning_result='repeat_level')
-        completion_male = completion.filter(student__sex='Male')
-        completion_female = completion.filter(student__sex='Female')
+        completion = queryset.exclude(learning_result="repeat_level")
+        completion_male = completion.filter(student__sex="Male")
+        completion_female = completion.filter(student__sex="Female")
 
         attendance = queryset.filter(participation__isnull=False)
-        attendances_male = attendance.filter(student__sex='Male')
-        attendances_female = attendance.filter(student__sex='Female')
+        attendances_male = attendance.filter(student__sex="Male")
+        attendances_female = attendance.filter(student__sex="Female")
 
-        repeat_class = queryset.filter(learning_result='repeat_level')
-        repeat_class_male = repeat_class.filter(student__sex='Male')
-        repeat_class_female = repeat_class.filter(student__sex='Female')
+        repeat_class = queryset.filter(learning_result="repeat_level")
+        repeat_class_male = repeat_class.filter(student__sex="Male")
+        repeat_class_female = repeat_class.filter(student__sex="Female")
 
         for gov in governorates:
             total_gov = queryset.filter(governorate=gov).count()
@@ -527,114 +553,241 @@ class BLNDashboardView(LoginRequiredMixin,
             attendances_female_gov = attendances_female.filter(governorate=gov)
 
             repeat_class_male_gov = repeat_class_male.filter(governorate=gov).count()
-            repeat_class_female_gov = repeat_class_female.filter(governorate=gov).count()
+            repeat_class_female_gov = repeat_class_female.filter(
+                governorate=gov
+            ).count()
 
-            per_gov.append({
-                'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov),
-                                         2) if total_male_gov else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov),
-                                           2) if total_female_gov else 0.0,
+            per_gov.append(
+                {
+                    "governorate": gov.name,
+                    "completion_male": (
+                        round(
+                            (float(completion_male_gov) * 100.0)
+                            / float(total_male_gov),
+                            2,
+                        )
+                        if total_male_gov
+                        else 0.0
+                    ),
+                    "completion_female": (
+                        round(
+                            (float(completion_female_gov) * 100.0)
+                            / float(total_female_gov),
+                            2,
+                        )
+                        if total_female_gov
+                        else 0.0
+                    ),
+                    "attendance_male_1": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="less_than_5days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_1": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="less_than_5days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_2": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="5_10_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_2": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="5_10_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_3": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="10_15_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_3": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="10_15_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_4": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="more_than_15days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_4": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="more_than_15days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "repetition_male": (
+                        round(
+                            (float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                    "repetition_female": (
+                        round(
+                            (float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                            2,
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                }
+            )
 
-                'attendance_male_1': round((float(attendances_male_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_1': round((float(attendances_female_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'attendance_male_2': round((float(attendances_male_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_2': round((float(attendances_female_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'attendance_male_3': round((float(attendances_male_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_3': round((float(attendances_female_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'attendance_male_4': round((float(attendances_male_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_4': round((float(attendances_female_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
-                                         2) if total_gov else 0.0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
-                                           2) if total_gov else 0.0,
-            })
-
-        return {
-            'clm_round': clm_round,
-            'clm_rounds': clm_rounds,
-            'per_gov': per_gov
-        }
+        return {"clm_round": clm_round, "clm_rounds": clm_rounds, "per_gov": per_gov}
 
 
-class ABLNAddView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
-    template_name = 'clm/abln_create_form.html'
+class ABLNAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/abln_create_form.html"
     form_class = ABLNForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
+    success_url = "/clm/abln-list/"
+    group_required = ["CLM_ABLN"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/abln-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/abln-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/abln-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/abln-edit/" + str(self.request.session.get("instance_id")) + "/"
+            )
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='ABLN',
-                assessment_slug='abln_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="ABLN",
+                assessment_slug="abln_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:abln_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('ABLN')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_create"] = is_allowed_create("ABLN")
         return super(ABLNAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(ABLNAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', ''),
-            'student_outreached': self.request.GET.get('student_outreached', ''),
-            'have_barcode': self.request.GET.get('have_barcode', '')
+            "new_registry": self.request.GET.get("new_registry", ""),
+            "student_outreached": self.request.GET.get("student_outreached", ""),
+            "have_barcode": self.request.GET.get("have_barcode", ""),
         }
-        if self.request.GET.get('enrollment_id'):
-            instance = ABLN.objects.get(id=self.request.GET.get('enrollment_id'))
+        if self.request.GET.get("enrollment_id"):
+            instance = ABLN.objects.get(id=self.request.GET.get("enrollment_id"))
             data = ABLNSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
+            data["student_nationality"] = data["student_nationality_id"]
+            data["learning_result"] = ""
 
-        if self.request.GET.get('outreach_id'):
-            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+        if self.request.GET.get("outreach_id"):
+            instance = Outreach.objects.get(id=self.request.GET.get("outreach_id"))
             data = BLNSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
+            data["student_nationality"] = data["student_nationality_id"]
+            data["learning_result"] = ""
 
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+        if self.request.GET.get("child_id"):
+            instance = Child.objects.get(id=int(self.request.GET.get("child_id")))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
-            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+            data["new_registry"] = self.request.GET.get("new_registry", "yes")
+            data["student_outreached"] = self.request.GET.get("student_outreached", "")
+            data["have_barcode"] = self.request.GET.get("have_barcode", "")
         initial = data
 
         return initial
@@ -647,152 +800,178 @@ class ABLNAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return ABLNForm(self.request.POST, instance=None, request=self.request)
         else:
-            return ABLNForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return ABLNForm(
+                None, instance=None, request=self.request, initial=self.get_initial()
+            )
 
 
-class ABLNEditView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   FormView):
-    template_name = 'clm/abln_edit_form.html'
+class ABLNEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/abln_edit_form.html"
     form_class = ABLNForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
+    success_url = "/clm/abln-list/"
+    group_required = ["CLM_ABLN"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/abln-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/abln-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/abln-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/abln-edit/" + str(self.request.session.get("instance_id")) + "/"
+            )
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='ABLN',
-                assessment_slug='abln_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="ABLN",
+                assessment_slug="abln_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:abln_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('ABLN')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_edit"] = is_allowed_edit("ABLN")
         return super(ABLNEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = ABLN.objects.get(id=self.kwargs['pk'])
+        instance = ABLN.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
             return ABLNForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = ABLNSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            if 'pre_test' in data:
-                p_test = data['pre_test']
+            data["student_nationality"] = data["student_nationality_id"]
+            if "pre_test" in data:
+                p_test = data["pre_test"]
                 if p_test:
                     if "ABLN_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["ABLN_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "ABLN_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["ABLN_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "ABLN_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "ABLN_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["ABLN_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["ABLN_ASSESSMENT/arabic"]
 
                     if "ABLN_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["ABLN_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "ABLN_ASSESSMENT/attended_english"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["ABLN_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "ABLN_ASSESSMENT/modality_english"
+                        ]
 
                     if "ABLN_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["ABLN_ASSESSMENT/english"]
+                        data["english"] = p_test["ABLN_ASSESSMENT/english"]
 
                     if "ABLN_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["ABLN_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["ABLN_ASSESSMENT/attended_math"]
 
                     if "ABLN_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["ABLN_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["ABLN_ASSESSMENT/modality_math"]
 
                     if "ABLN_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["ABLN_ASSESSMENT/math"]
+                        data["math"] = p_test["ABLN_ASSESSMENT/math"]
 
                     if "ABLN_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["ABLN_ASSESSMENT/attended_social"]
+                        data["attended_social"] = p_test[
+                            "ABLN_ASSESSMENT/attended_social"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["ABLN_ASSESSMENT/modality_social"]
+                        data["modality_social"] = p_test[
+                            "ABLN_ASSESSMENT/modality_social"
+                        ]
 
                     if "ABLN_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
+                        data["social_emotional"] = p_test[
+                            "ABLN_ASSESSMENT/social_emotional"
+                        ]
 
                     if "ABLN_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["ABLN_ASSESSMENT/attended_artistic"]
+                        data["attended_artistic"] = p_test[
+                            "ABLN_ASSESSMENT/attended_artistic"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["ABLN_ASSESSMENT/modality_artistic"]
+                        data["modality_artistic"] = p_test[
+                            "ABLN_ASSESSMENT/modality_artistic"
+                        ]
 
                     if "ABLN_ASSESSMENT/artistic" in p_test:
-                        data['artistic'] = p_test["ABLN_ASSESSMENT/artistic"]
+                        data["artistic"] = p_test["ABLN_ASSESSMENT/artistic"]
 
             return ABLNForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = ABLN.objects.get(id=self.kwargs['pk'])
+        instance = ABLN.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(ABLNEditView, self).form_valid(form)
 
 
-class ABLNMonitoringQuestionerView(LoginRequiredMixin,
-                                   GroupRequiredMixin,
-                                   FormView):
-    template_name = 'clm/abln_monitoring_questioner.html'
+class ABLNMonitoringQuestionerView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/abln_monitoring_questioner.html"
     form_class = ABLNMonitoringQuestionerForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
+    success_url = "/clm/abln-list/"
+    group_required = ["CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(ABLNMonitoringQuestionerView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(ABLNMonitoringQuestionerView, self).form_valid(form)
 
 
-class ABLNListView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   FilterView,
-                   ExportMixin,
-                   SingleTableView,
-                   RequestConfig):
+class ABLNListView(
+    LoginRequiredMixin,
+    GroupRequiredMixin,
+    FilterView,
+    ExportMixin,
+    SingleTableView,
+    RequestConfig,
+):
     table_class = ABLNTable
     model = ABLN
-    template_name = 'clm/abln_list.html'
-    table = ABLNTable(ABLN.objects.all(), order_by='id')
-    group_required = [u"CLM_ABLN"]
+    template_name = "clm/abln_list.html"
+    table = ABLNTable(ABLN.objects.all(), order_by="id")
+    group_required = ["CLM_ABLN"]
 
     filterset_class = ABLNFilter
 
     def get_queryset(self):
 
-
-        return ABLN.objects.filter(partner=self.request.user.partner_id,
-                                   round__current_year=True).order_by('-id')
+        return ABLN.objects.filter(
+            partner=self.request.user.partner_id, round__current_year=True
+        ).order_by("-id")
 
         # return ABLN.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
@@ -800,168 +979,198 @@ class ABLNListView(LoginRequiredMixin,
         #     '-id')
 
 
-class ABLNReferralView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FormView):
-    template_name = 'clm/abln_referral.html'
+class ABLNReferralView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/abln_referral.html"
     form_class = ABLNReferralForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
+    success_url = "/clm/abln-list/"
+    group_required = ["CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(ABLNReferralView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(ABLNReferralView, self).form_valid(form)
 
 
-class ABLNPostAssessmentView(LoginRequiredMixin,
-                             GroupRequiredMixin,
-                             FormView):
-    template_name = 'clm/abln_post_assessment.html'
+class ABLNPostAssessmentView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/abln_post_assessment.html"
     form_class = ABLNAssessmentForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
+    success_url = "/clm/abln-list/"
+    group_required = ["CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(ABLNPostAssessmentView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = ABLN.objects.get(id=self.kwargs['pk'])
+        instance = ABLN.objects.get(id=self.kwargs["pk"])
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = ABLNSerializer(instance).data
-            if 'post_test' in data:
-                p_test = data['post_test']
+            if "post_test" in data:
+                p_test = data["post_test"]
                 if p_test:
                     if "ABLN_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["ABLN_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "ABLN_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["ABLN_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "ABLN_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "ABLN_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["ABLN_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["ABLN_ASSESSMENT/arabic"]
 
                     if "ABLN_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["ABLN_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "ABLN_ASSESSMENT/attended_english"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["ABLN_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "ABLN_ASSESSMENT/modality_english"
+                        ]
 
                     if "ABLN_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["ABLN_ASSESSMENT/english"]
+                        data["english"] = p_test["ABLN_ASSESSMENT/english"]
 
                     if "ABLN_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["ABLN_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["ABLN_ASSESSMENT/attended_math"]
 
                     if "ABLN_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["ABLN_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["ABLN_ASSESSMENT/modality_math"]
 
                     if "ABLN_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["ABLN_ASSESSMENT/math"]
+                        data["math"] = p_test["ABLN_ASSESSMENT/math"]
 
                     if "ABLN_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["ABLN_ASSESSMENT/attended_social"]
+                        data["attended_social"] = p_test[
+                            "ABLN_ASSESSMENT/attended_social"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["ABLN_ASSESSMENT/modality_social"]
+                        data["modality_social"] = p_test[
+                            "ABLN_ASSESSMENT/modality_social"
+                        ]
 
                     if "ABLN_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["ABLN_ASSESSMENT/social_emotional"]
+                        data["social_emotional"] = p_test[
+                            "ABLN_ASSESSMENT/social_emotional"
+                        ]
 
                     if "ABLN_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["ABLN_ASSESSMENT/attended_artistic"]
+                        data["attended_artistic"] = p_test[
+                            "ABLN_ASSESSMENT/attended_artistic"
+                        ]
 
                     if "ABLN_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["ABLN_ASSESSMENT/modality_artistic"]
+                        data["modality_artistic"] = p_test[
+                            "ABLN_ASSESSMENT/modality_artistic"
+                        ]
 
                     if "ABLN_ASSESSMENT/artistic" in p_test:
-                        data['artistic'] = p_test["ABLN_ASSESSMENT/artistic"]
+                        data["artistic"] = p_test["ABLN_ASSESSMENT/artistic"]
 
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(ABLNPostAssessmentView, self).form_valid(form)
 
 
-class ABLNFCAddView(LoginRequiredMixin,
-                    GroupRequiredMixin,
-                    FormView):
-    template_name = 'clm/abln_fc_form.html'
+class ABLNFCAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/abln_fc_form.html"
     form_class = ABLNFCForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
+    success_url = "/clm/abln-list/"
+    group_required = ["CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(ABLNFCAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(ABLNFCAddView, self).get_initial()
         data = {
-            'enrollment_id': self.kwargs['enrollment_id'],
-            'fc_type': self.kwargs['fc_type']
+            "enrollment_id": self.kwargs["enrollment_id"],
+            "fc_type": self.kwargs["fc_type"],
         }
 
-        data['enrollment_id'] = self.kwargs['enrollment_id']
-        data['fc_type'] = self.kwargs['fc_type']
+        data["enrollment_id"] = self.kwargs["enrollment_id"]
+        data["fc_type"] = self.kwargs["fc_type"]
         initial = data
 
         return initial
 
     def get_form(self, form_class=None):
 
-        instance = ABLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
-                                          fc_type=self.kwargs['fc_type']).first()
+        instance = ABLN_FC.objects.filter(
+            enrollment_id=self.kwargs["enrollment_id"], fc_type=self.kwargs["fc_type"]
+        ).first()
 
         if self.request.method == "POST":
-            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
+            data = {
+                "enrollment_id": self.kwargs["enrollment_id"],
+                "fc_type": self.kwargs["fc_type"],
+            }
 
-            return ABLNFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
+            return ABLNFCForm(
+                self.request.POST, initial=data, instance=instance, request=self.request
+            )
         else:
             if instance:
                 data = ABLN_FCSerializer(instance).data
 
-                return ABLNFCForm(data, initial=data, instance=instance, request=self.request)
+                return ABLNFCForm(
+                    data, initial=data, instance=instance, request=self.request
+                )
 
             else:
-                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
-                fc_type = self.kwargs['fc_type'].split('-')
+                data = {
+                    "enrollment_id": self.kwargs["enrollment_id"],
+                    "fc_type": self.kwargs["fc_type"],
+                }
+                fc_type = self.kwargs["fc_type"].split("-")
                 if len(fc_type) >= 1:
-                    data['subject_taught'] = fc_type[0]
+                    data["subject_taught"] = fc_type[0]
                 return ABLNFCForm(initial=data, request=self.request)
 
     def form_valid(self, form):
-        instance = ABLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
-                                          fc_type=self.kwargs['fc_type']).first()
+        instance = ABLN_FC.objects.filter(
+            enrollment_id=int(self.kwargs["enrollment_id"]),
+            fc_type=self.kwargs["fc_type"],
+        ).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -971,57 +1180,67 @@ class ABLNFCAddView(LoginRequiredMixin,
         return super(ABLNFCAddView, self).form_valid(form)
 
 
-class BLNFCAddView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   FormView):
-    template_name = 'clm/bln_fc_form.html'
+class BLNFCAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bln_fc_form.html"
     form_class = BLNFCForm
-    success_url = '/clm/bln-list/'
-    group_required = [u"CLM_BLN"]
+    success_url = "/clm/bln-list/"
+    group_required = ["CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BLNFCAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(BLNFCAddView, self).get_initial()
         data = {
-            'enrollment_id': self.kwargs['enrollment_id'],
-            'fc_type': self.kwargs['fc_type']
+            "enrollment_id": self.kwargs["enrollment_id"],
+            "fc_type": self.kwargs["fc_type"],
         }
 
-        data['enrollment_id'] = self.kwargs['enrollment_id']
-        data['fc_type'] = self.kwargs['fc_type']
+        data["enrollment_id"] = self.kwargs["enrollment_id"]
+        data["fc_type"] = self.kwargs["fc_type"]
         initial = data
 
         return initial
 
     def get_form(self, form_class=None):
 
-        instance = BLN_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
-                                         fc_type=self.kwargs['fc_type']).first()
+        instance = BLN_FC.objects.filter(
+            enrollment_id=self.kwargs["enrollment_id"], fc_type=self.kwargs["fc_type"]
+        ).first()
 
         if self.request.method == "POST":
-            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
-            return BLNFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
+            data = {
+                "enrollment_id": self.kwargs["enrollment_id"],
+                "fc_type": self.kwargs["fc_type"],
+            }
+            return BLNFCForm(
+                self.request.POST, initial=data, instance=instance, request=self.request
+            )
         else:
             if instance:
                 data = BLN_FCSerializer(instance).data
-                return BLNFCForm(data, initial=data, instance=instance, request=self.request)
+                return BLNFCForm(
+                    data, initial=data, instance=instance, request=self.request
+                )
 
             else:
-                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
-                splittedFCType = self.kwargs['fc_type'].split('-')
+                data = {
+                    "enrollment_id": self.kwargs["enrollment_id"],
+                    "fc_type": self.kwargs["fc_type"],
+                }
+                splittedFCType = self.kwargs["fc_type"].split("-")
                 if len(splittedFCType) >= 1:
-                    data['subject_taught'] = splittedFCType[0]
+                    data["subject_taught"] = splittedFCType[0]
                 return BLNFCForm(initial=data, request=self.request)
 
     def form_valid(self, form):
-        instance = BLN_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
-                                         fc_type=self.kwargs['fc_type']).first()
+        instance = BLN_FC.objects.filter(
+            enrollment_id=int(self.kwargs["enrollment_id"]),
+            fc_type=self.kwargs["fc_type"],
+        ).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -1031,59 +1250,69 @@ class BLNFCAddView(LoginRequiredMixin,
         return super(BLNFCAddView, self).form_valid(form)
 
 
-class RSFCAddView(LoginRequiredMixin,
-                  GroupRequiredMixin,
-                  FormView):
-    template_name = 'clm/rs_fc_form.html'
+class RSFCAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/rs_fc_form.html"
     form_class = RSFCForm
-    success_url = '/clm/rs-list/'
-    group_required = [u"CLM_RS"]
+    success_url = "/clm/rs-list/"
+    group_required = ["CLM_RS"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(RSFCAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(RSFCAddView, self).get_initial()
         data = {
-            'enrollment_id': self.kwargs['enrollment_id'],
-            'fc_type': self.kwargs['fc_type']
+            "enrollment_id": self.kwargs["enrollment_id"],
+            "fc_type": self.kwargs["fc_type"],
         }
 
-        data['enrollment_id'] = self.kwargs['enrollment_id']
-        data['fc_type'] = self.kwargs['fc_type']
+        data["enrollment_id"] = self.kwargs["enrollment_id"]
+        data["fc_type"] = self.kwargs["fc_type"]
         initial = data
 
         return initial
 
     def get_form(self, form_class=None):
 
-        instance = RS_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
-                                        fc_type=self.kwargs['fc_type']).first()
+        instance = RS_FC.objects.filter(
+            enrollment_id=self.kwargs["enrollment_id"], fc_type=self.kwargs["fc_type"]
+        ).first()
 
         if self.request.method == "POST":
-            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
+            data = {
+                "enrollment_id": self.kwargs["enrollment_id"],
+                "fc_type": self.kwargs["fc_type"],
+            }
 
-            return RSFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
+            return RSFCForm(
+                self.request.POST, initial=data, instance=instance, request=self.request
+            )
         else:
             if instance:
                 data = RS_FCSerializer(instance).data
 
-                return RSFCForm(data, initial=data, instance=instance, request=self.request)
+                return RSFCForm(
+                    data, initial=data, instance=instance, request=self.request
+                )
 
             else:
-                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
-                splittedFCType = self.kwargs['fc_type'].split('-')
+                data = {
+                    "enrollment_id": self.kwargs["enrollment_id"],
+                    "fc_type": self.kwargs["fc_type"],
+                }
+                splittedFCType = self.kwargs["fc_type"].split("-")
                 if len(splittedFCType) >= 1:
-                    data['subject_taught'] = splittedFCType[0]
+                    data["subject_taught"] = splittedFCType[0]
                 return RSFCForm(initial=data, request=self.request)
 
     def form_valid(self, form):
-        instance = RS_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
-                                        fc_type=self.kwargs['fc_type']).first()
+        instance = RS_FC.objects.filter(
+            enrollment_id=int(self.kwargs["enrollment_id"]),
+            fc_type=self.kwargs["fc_type"],
+        ).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -1093,59 +1322,69 @@ class RSFCAddView(LoginRequiredMixin,
         return super(RSFCAddView, self).form_valid(form)
 
 
-class CBECEFCAddView(LoginRequiredMixin,
-                     GroupRequiredMixin,
-                     FormView):
-    template_name = 'clm/cbece_fc_form.html'
+class CBECEFCAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_fc_form.html"
     form_class = CBECEFCForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(CBECEFCAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(CBECEFCAddView, self).get_initial()
         data = {
-            'enrollment_id': self.kwargs['enrollment_id'],
-            'fc_type': self.kwargs['fc_type']
+            "enrollment_id": self.kwargs["enrollment_id"],
+            "fc_type": self.kwargs["fc_type"],
         }
 
-        data['enrollment_id'] = self.kwargs['enrollment_id']
-        data['fc_type'] = self.kwargs['fc_type']
+        data["enrollment_id"] = self.kwargs["enrollment_id"]
+        data["fc_type"] = self.kwargs["fc_type"]
         initial = data
 
         return initial
 
     def get_form(self, form_class=None):
 
-        instance = CBECE_FC.objects.filter(enrollment_id=self.kwargs['enrollment_id'],
-                                           fc_type=self.kwargs['fc_type']).first()
+        instance = CBECE_FC.objects.filter(
+            enrollment_id=self.kwargs["enrollment_id"], fc_type=self.kwargs["fc_type"]
+        ).first()
 
         if self.request.method == "POST":
-            data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
+            data = {
+                "enrollment_id": self.kwargs["enrollment_id"],
+                "fc_type": self.kwargs["fc_type"],
+            }
 
-            return CBECEFCForm(self.request.POST, initial=data, instance=instance, request=self.request)
+            return CBECEFCForm(
+                self.request.POST, initial=data, instance=instance, request=self.request
+            )
         else:
             if instance:
                 data = CBECE_FCSerializer(instance).data
 
-                return CBECEFCForm(data, initial=data, instance=instance, request=self.request)
+                return CBECEFCForm(
+                    data, initial=data, instance=instance, request=self.request
+                )
 
             else:
-                data = {'enrollment_id': self.kwargs['enrollment_id'], 'fc_type': self.kwargs['fc_type']}
-                splittedFCType = self.kwargs['fc_type'].split('-')
+                data = {
+                    "enrollment_id": self.kwargs["enrollment_id"],
+                    "fc_type": self.kwargs["fc_type"],
+                }
+                splittedFCType = self.kwargs["fc_type"].split("-")
                 if len(splittedFCType) >= 1:
-                    data['subject_taught'] = splittedFCType[0]
+                    data["subject_taught"] = splittedFCType[0]
                 return CBECEFCForm(initial=data, request=self.request)
 
     def form_valid(self, form):
-        instance = CBECE_FC.objects.filter(enrollment_id=int(self.kwargs['enrollment_id']),
-                                           fc_type=self.kwargs['fc_type']).first()
+        instance = CBECE_FC.objects.filter(
+            enrollment_id=int(self.kwargs["enrollment_id"]),
+            fc_type=self.kwargs["fc_type"],
+        ).first()
 
         if instance:
             form.save(request=self.request, instance=instance)
@@ -1155,145 +1394,182 @@ class CBECEFCAddView(LoginRequiredMixin,
         return super(CBECEFCAddView, self).form_valid(form)
 
 
-class BLNPostAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
-    template_name = 'clm/bln_post_assessment.html'
+class BLNPostAssessmentView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bln_post_assessment.html"
     form_class = BLNAssessmentForm
-    success_url = '/clm/bln-list/'
-    group_required = [u"CLM_BLN"]
+    success_url = "/clm/bln-list/"
+    group_required = ["CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BLNPostAssessmentView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = BLN.objects.get(id=self.kwargs['pk'])
+        instance = BLN.objects.get(id=self.kwargs["pk"])
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = BLNSerializer(instance).data
-            if 'post_test' in data:
-                p_test = data['post_test']
+            if "post_test" in data:
+                p_test = data["post_test"]
                 if p_test:
                     if "BLN_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["BLN_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "BLN_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["BLN_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "BLN_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "BLN_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["BLN_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["BLN_ASSESSMENT/arabic"]
 
                     if "BLN_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["BLN_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "BLN_ASSESSMENT/attended_english"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["BLN_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "BLN_ASSESSMENT/modality_english"
+                        ]
 
                     if "BLN_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["BLN_ASSESSMENT/english"]
+                        data["english"] = p_test["BLN_ASSESSMENT/english"]
 
                     if "BLN_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["BLN_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["BLN_ASSESSMENT/attended_math"]
 
                     if "BLN_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["BLN_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["BLN_ASSESSMENT/modality_math"]
 
                     if "BLN_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["BLN_ASSESSMENT/math"]
+                        data["math"] = p_test["BLN_ASSESSMENT/math"]
 
                     if "BLN_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["BLN_ASSESSMENT/attended_social"]
+                        data["attended_social"] = p_test[
+                            "BLN_ASSESSMENT/attended_social"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["BLN_ASSESSMENT/modality_social"]
+                        data["modality_social"] = p_test[
+                            "BLN_ASSESSMENT/modality_social"
+                        ]
 
                     if "BLN_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["BLN_ASSESSMENT/social_emotional"]
+                        data["social_emotional"] = p_test[
+                            "BLN_ASSESSMENT/social_emotional"
+                        ]
 
                     if "BLN_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_artistic"]
+                        data["attended_artistic"] = p_test[
+                            "BLN_ASSESSMENT/attended_artistic"
+                        ]
                     elif "BLN_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_artistic'] = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+                        data["attended_artistic"] = p_test[
+                            "BLN_ASSESSMENT/attended_psychomotor"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_artistic"]
+                        data["modality_artistic"] = p_test[
+                            "BLN_ASSESSMENT/modality_artistic"
+                        ]
                     elif "BLN_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_artistic'] = p_test["BLN_ASSESSMENT/modality_psychomotor"]
+                        data["modality_artistic"] = p_test[
+                            "BLN_ASSESSMENT/modality_psychomotor"
+                        ]
 
                     if "BLN_ASSESSMENT/modality_artistic" in p_test:
-                        data['artistic'] = p_test["BLN_ASSESSMENT/artistic"]
+                        data["artistic"] = p_test["BLN_ASSESSMENT/artistic"]
                     elif "BLN_ASSESSMENT/psychomotor" in p_test:
-                        data['artistic'] = p_test["BLN_ASSESSMENT/psychomotor"]
+                        data["artistic"] = p_test["BLN_ASSESSMENT/psychomotor"]
 
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = BLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(BLNPostAssessmentView, self).form_valid(form)
 
 
-class BridgingPostAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
-    template_name = 'clm/bridging_post_assessment.html'
+class BridgingPostAssessmentView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bridging_post_assessment.html"
     form_class = BridgingAssessmentForm
-    success_url = '/clm/bridging-list/'
-    group_required = [u"CLM_Bridging"]
+    success_url = "/clm/bridging-list/"
+    group_required = ["CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BridgingPostAssessmentView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = BridgingSerializer(instance).data
-            if 'post_test' in data:
-                p_test = data['post_test']
+            if "post_test" in data:
+                p_test = data["post_test"]
                 if p_test:
                     if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
-                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+                        data["arabic_alphabet_knowledge"] = p_test[
+                            "Bridging_ASSESSMENT/arabic_alphabet_knowledge"
+                        ]
                     if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
-                        data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
+                        data["arabic_familiar_words"] = p_test[
+                            "Bridging_ASSESSMENT/arabic_familiar_words"
+                        ]
                     if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
-                        data['arabic_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/arabic_reading_comprehension"]
+                        data["arabic_reading_comprehension"] = p_test[
+                            "Bridging_ASSESSMENT/arabic_reading_comprehension"
+                        ]
 
                     if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
-                        data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
+                        data["english_alphabet_knowledge"] = p_test[
+                            "Bridging_ASSESSMENT/english_alphabet_knowledge"
+                        ]
                     if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
-                        data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
+                        data["english_familiar_words"] = p_test[
+                            "Bridging_ASSESSMENT/english_familiar_words"
+                        ]
                     if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
-                        data['english_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/english_reading_comprehension"]
+                        data["english_reading_comprehension"] = p_test[
+                            "Bridging_ASSESSMENT/english_reading_comprehension"
+                        ]
 
                     if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
-                        data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
+                        data["french_alphabet_knowledge"] = p_test[
+                            "Bridging_ASSESSMENT/french_alphabet_knowledge"
+                        ]
                     if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
-                        data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
+                        data["french_familiar_words"] = p_test[
+                            "Bridging_ASSESSMENT/french_familiar_words"
+                        ]
                     if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
-                        data['french_reading_comprehension'] = p_test[
-                            "Bridging_ASSESSMENT/french_reading_comprehension"]
+                        data["french_reading_comprehension"] = p_test[
+                            "Bridging_ASSESSMENT/french_reading_comprehension"
+                        ]
 
                     if "Bridging_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["Bridging_ASSESSMENT/math"]
+                        data["math"] = p_test["Bridging_ASSESSMENT/math"]
                     # if "Bridging_ASSESSMENT/artistic" in p_test:
                     #     data['artistic'] = p_test["Bridging_ASSESSMENT/artistic"]
                     # if "Bridging_ASSESSMENT/social_emotional" in p_test:
@@ -1302,480 +1578,573 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(BridgingPostAssessmentView, self).form_valid(form)
 
 
-
-class BridgingMidAssessmentView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
-    template_name = 'clm/bridging_mid_assessment.html'
+class BridgingMidAssessmentView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bridging_mid_assessment.html"
     form_class = BridgingMidAssessmentForm
-    success_url = '/clm/bridging-list/'
-    group_required = [u"CLM_Bridging"]
+    success_url = "/clm/bridging-list/"
+    group_required = ["CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['number'] = self.kwargs['number'] if 'number' in self.kwargs else None
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["number"] = self.kwargs["number"] if "number" in self.kwargs else None
         return super(BridgingMidAssessmentView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
-        number = int(self.kwargs.get('number', 1))
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
+        number = int(self.kwargs.get("number", 1))
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance,number=number, request=self.request)
+            return form_class(
+                self.request.POST,
+                instance=instance,
+                number=number,
+                request=self.request,
+            )
         else:
             data = BridgingSerializer(instance).data
-            p_test = ''
-            if number == 1 and 'mid_test1' in data:
-                p_test = data['mid_test1']
-            elif number == 2 and 'mid_test2' in data:
-                p_test = data['mid_test2']
+            p_test = ""
+            if number == 1 and "mid_test1" in data:
+                p_test = data["mid_test1"]
+            elif number == 2 and "mid_test2" in data:
+                p_test = data["mid_test2"]
 
             if p_test:
                 if "Bridging_ASSESSMENT/mid_test_done" in p_test:
-                    data['mid_test_done'] = p_test["Bridging_ASSESSMENT/mid_test_done"]
+                    data["mid_test_done"] = p_test["Bridging_ASSESSMENT/mid_test_done"]
 
                 if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
-                    data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+                    data["arabic_alphabet_knowledge"] = p_test[
+                        "Bridging_ASSESSMENT/arabic_alphabet_knowledge"
+                    ]
                 if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
-                    data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
+                    data["arabic_familiar_words"] = p_test[
+                        "Bridging_ASSESSMENT/arabic_familiar_words"
+                    ]
                 if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
-                    data['arabic_reading_comprehension'] = p_test[
-                        "Bridging_ASSESSMENT/arabic_reading_comprehension"]
+                    data["arabic_reading_comprehension"] = p_test[
+                        "Bridging_ASSESSMENT/arabic_reading_comprehension"
+                    ]
 
                 if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
-                    data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
+                    data["english_alphabet_knowledge"] = p_test[
+                        "Bridging_ASSESSMENT/english_alphabet_knowledge"
+                    ]
                 if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
-                    data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
+                    data["english_familiar_words"] = p_test[
+                        "Bridging_ASSESSMENT/english_familiar_words"
+                    ]
                 if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
-                    data['english_reading_comprehension'] = p_test[
-                        "Bridging_ASSESSMENT/english_reading_comprehension"]
+                    data["english_reading_comprehension"] = p_test[
+                        "Bridging_ASSESSMENT/english_reading_comprehension"
+                    ]
 
                 if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
-                    data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
+                    data["french_alphabet_knowledge"] = p_test[
+                        "Bridging_ASSESSMENT/french_alphabet_knowledge"
+                    ]
                 if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
-                    data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
+                    data["french_familiar_words"] = p_test[
+                        "Bridging_ASSESSMENT/french_familiar_words"
+                    ]
                 if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
-                    data['french_reading_comprehension'] = p_test[
-                        "Bridging_ASSESSMENT/french_reading_comprehension"]
+                    data["french_reading_comprehension"] = p_test[
+                        "Bridging_ASSESSMENT/french_reading_comprehension"
+                    ]
 
                 if "Bridging_ASSESSMENT/math" in p_test:
-                    data['math'] = p_test["Bridging_ASSESSMENT/math"]
+                    data["math"] = p_test["Bridging_ASSESSMENT/math"]
 
-            return form_class(data, instance=instance, number=number, request=self.request)
+            return form_class(
+                data, instance=instance, number=number, request=self.request
+            )
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
-        number = self.kwargs['number'] if 'number' in self.kwargs else None
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
+        number = self.kwargs["number"] if "number" in self.kwargs else None
         form.save(request=self.request, number=number, instance=instance)
         return super(BridgingMidAssessmentView, self).form_valid(form)
 
 
-class BridgingFollowupView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
-    template_name = 'clm/bridging_followup.html'
+class BridgingFollowupView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bridging_followup.html"
     form_class = BridgingFollowupForm
-    success_url = '/clm/bridging-list/'
-    group_required = [u"CLM_Bridging"]
+    success_url = "/clm/bridging-list/"
+    group_required = ["CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BridgingFollowupView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = BridgingSerializer(instance).data
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(BridgingFollowupView, self).form_valid(form)
 
 
-class BridgingServiceView(LoginRequiredMixin,
-                            GroupRequiredMixin,
-                            FormView):
-    template_name = 'clm/bridging_service.html'
+class BridgingServiceView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bridging_service.html"
     form_class = BridgingServiceForm
-    success_url = '/clm/bridging-list/'
-    group_required = [u"CLM_Bridging"]
+    success_url = "/clm/bridging-list/"
+    group_required = ["CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(BridgingServiceView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = BridgingSerializer(instance).data
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(BridgingServiceView, self).form_valid(form)
 
 
-class CBECEPostAssessmentView(LoginRequiredMixin,
-                              GroupRequiredMixin,
-                              FormView):
-    template_name = 'clm/cbece_post_assessment.html'
+class CBECEPostAssessmentView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_post_assessment.html"
     form_class = CBECEAssessmentForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(CBECEPostAssessmentView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = CBECE.objects.get(id=self.kwargs['pk'])
+        instance = CBECE.objects.get(id=self.kwargs["pk"])
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = CBECESerializer(instance).data
-            if 'post_test' in data:
-                p_test = data['post_test']
+            if "post_test" in data:
+                p_test = data["post_test"]
                 if p_test:
                     if "CBECE_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["CBECE_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "CBECE_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["CBECE_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "CBECE_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "CBECE_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["CBECE_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["CBECE_ASSESSMENT/arabic"]
 
                     if "CBECE_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["CBECE_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "CBECE_ASSESSMENT/attended_english"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["CBECE_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "CBECE_ASSESSMENT/modality_english"
+                        ]
 
                     if "CBECE_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["CBECE_ASSESSMENT/english"]
+                        data["english"] = p_test["CBECE_ASSESSMENT/english"]
 
                     if "CBECE_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["CBECE_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["CBECE_ASSESSMENT/attended_math"]
 
                     if "CBECE_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["CBECE_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["CBECE_ASSESSMENT/modality_math"]
 
                     if "CBECE_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["CBECE_ASSESSMENT/math"]
+                        data["math"] = p_test["CBECE_ASSESSMENT/math"]
 
                     if "CBECE_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["CBECE_ASSESSMENT/attended_social"]
+                        data["attended_social"] = p_test[
+                            "CBECE_ASSESSMENT/attended_social"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["CBECE_ASSESSMENT/modality_social"]
+                        data["modality_social"] = p_test[
+                            "CBECE_ASSESSMENT/modality_social"
+                        ]
 
                     if "CBECE_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["CBECE_ASSESSMENT/social_emotional"]
+                        data["social_emotional"] = p_test[
+                            "CBECE_ASSESSMENT/social_emotional"
+                        ]
 
                     if "CBECE_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+                        data["attended_psychomotor"] = p_test[
+                            "CBECE_ASSESSMENT/attended_psychomotor"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+                        data["modality_psychomotor"] = p_test[
+                            "CBECE_ASSESSMENT/modality_psychomotor"
+                        ]
 
                     if "CBECE_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["CBECE_ASSESSMENT/psychomotor"]
+                        data["psychomotor"] = p_test["CBECE_ASSESSMENT/psychomotor"]
 
                     if "CBECE_ASSESSMENT/attended_science" in p_test:
-                        data['attended_science'] = p_test["CBECE_ASSESSMENT/attended_science"]
+                        data["attended_science"] = p_test[
+                            "CBECE_ASSESSMENT/attended_science"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_science" in p_test:
-                        data['modality_science'] = p_test["CBECE_ASSESSMENT/modality_science"]
+                        data["modality_science"] = p_test[
+                            "CBECE_ASSESSMENT/modality_science"
+                        ]
 
                     if "CBECE_ASSESSMENT/science" in p_test:
-                        data['science'] = p_test["CBECE_ASSESSMENT/science"]
+                        data["science"] = p_test["CBECE_ASSESSMENT/science"]
 
                     if "CBECE_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["CBECE_ASSESSMENT/attended_artistic"]
+                        data["attended_artistic"] = p_test[
+                            "CBECE_ASSESSMENT/attended_artistic"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["CBECE_ASSESSMENT/modality_artistic"]
+                        data["modality_artistic"] = p_test[
+                            "CBECE_ASSESSMENT/modality_artistic"
+                        ]
 
                     if "CBECE_ASSESSMENT/artistic" in p_test:
-                        data['artistic'] = p_test["CBECE_ASSESSMENT/artistic"]
+                        data["artistic"] = p_test["CBECE_ASSESSMENT/artistic"]
 
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(CBECEPostAssessmentView, self).form_valid(form)
 
 
-class CBECEMidAssessmentView(LoginRequiredMixin,
-                             GroupRequiredMixin,
-                             FormView):
-    template_name = 'clm/cbece_mid_assessment.html'
+class CBECEMidAssessmentView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_mid_assessment.html"
     form_class = CBECEMidAssessmentForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(CBECEMidAssessmentView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = CBECE.objects.get(id=self.kwargs['pk'])
+        instance = CBECE.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = CBECESerializer(instance).data
-            if 'mid_test' in data:
-                p_test = data['mid_test']
+            if "mid_test" in data:
+                p_test = data["mid_test"]
 
                 if p_test:
                     if "CBECE_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["CBECE_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "CBECE_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["CBECE_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "CBECE_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "CBECE_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["CBECE_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["CBECE_ASSESSMENT/arabic"]
 
                     if "CBECE_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["CBECE_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "CBECE_ASSESSMENT/attended_english"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["CBECE_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "CBECE_ASSESSMENT/modality_english"
+                        ]
 
                     if "CBECE_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["CBECE_ASSESSMENT/english"]
+                        data["english"] = p_test["CBECE_ASSESSMENT/english"]
 
                     if "CBECE_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["CBECE_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["CBECE_ASSESSMENT/attended_math"]
 
                     if "CBECE_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["CBECE_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["CBECE_ASSESSMENT/modality_math"]
 
                     if "CBECE_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["CBECE_ASSESSMENT/math"]
+                        data["math"] = p_test["CBECE_ASSESSMENT/math"]
 
                     if "CBECE_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["CBECE_ASSESSMENT/attended_social"]
+                        data["attended_social"] = p_test[
+                            "CBECE_ASSESSMENT/attended_social"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["CBECE_ASSESSMENT/modality_social"]
+                        data["modality_social"] = p_test[
+                            "CBECE_ASSESSMENT/modality_social"
+                        ]
 
                     if "CBECE_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["CBECE_ASSESSMENT/social_emotional"]
+                        data["social_emotional"] = p_test[
+                            "CBECE_ASSESSMENT/social_emotional"
+                        ]
 
                     if "CBECE_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+                        data["attended_psychomotor"] = p_test[
+                            "CBECE_ASSESSMENT/attended_psychomotor"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+                        data["modality_psychomotor"] = p_test[
+                            "CBECE_ASSESSMENT/modality_psychomotor"
+                        ]
 
                     if "CBECE_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["CBECE_ASSESSMENT/psychomotor"]
+                        data["psychomotor"] = p_test["CBECE_ASSESSMENT/psychomotor"]
 
                     if "CBECE_ASSESSMENT/attended_science" in p_test:
-                        data['attended_science'] = p_test["CBECE_ASSESSMENT/attended_science"]
+                        data["attended_science"] = p_test[
+                            "CBECE_ASSESSMENT/attended_science"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_science" in p_test:
-                        data['modality_science'] = p_test["CBECE_ASSESSMENT/modality_science"]
+                        data["modality_science"] = p_test[
+                            "CBECE_ASSESSMENT/modality_science"
+                        ]
 
                     if "CBECE_ASSESSMENT/science" in p_test:
-                        data['science'] = p_test["CBECE_ASSESSMENT/science"]
+                        data["science"] = p_test["CBECE_ASSESSMENT/science"]
 
                     if "CBECE_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["CBECE_ASSESSMENT/attended_artistic"]
+                        data["attended_artistic"] = p_test[
+                            "CBECE_ASSESSMENT/attended_artistic"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["CBECE_ASSESSMENT/modality_artistic"]
+                        data["modality_artistic"] = p_test[
+                            "CBECE_ASSESSMENT/modality_artistic"
+                        ]
 
                     if "CBECE_ASSESSMENT/artistic" in p_test:
-                        data['artistic'] = p_test["CBECE_ASSESSMENT/artistic"]
+                        data["artistic"] = p_test["CBECE_ASSESSMENT/artistic"]
 
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(CBECEMidAssessmentView, self).form_valid(form)
 
 
-class RSPostAssessmentView(LoginRequiredMixin,
-                           GroupRequiredMixin,
-                           FormView):
-    template_name = 'clm/rs_post_assessment.html'
+class RSPostAssessmentView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/rs_post_assessment.html"
     form_class = RSAssessmentForm
-    success_url = '/clm/rs-list/'
-    group_required = [u"CLM_RS"]
+    success_url = "/clm/rs-list/"
+    group_required = ["CLM_RS"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(RSPostAssessmentView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = RS.objects.get(id=self.kwargs['pk'])
+        instance = RS.objects.get(id=self.kwargs["pk"])
 
         if self.request.method == "POST":
-            return form_class(self.request.POST, instance=instance, request=self.request)
+            return form_class(
+                self.request.POST, instance=instance, request=self.request
+            )
 
         else:
             data = RSSerializer(instance).data
-            if 'post_test' in data:
-                p_test = data['post_test']
+            if "post_test" in data:
+                p_test = data["post_test"]
                 if p_test:
 
                     if "RS_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["RS_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "RS_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "RS_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["RS_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "RS_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "RS_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["RS_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["RS_ASSESSMENT/arabic"]
 
                     if "RS_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["RS_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "RS_ASSESSMENT/attended_english"
+                        ]
 
                     if "RS_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["RS_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "RS_ASSESSMENT/modality_english"
+                        ]
 
                     if "RS_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["RS_ASSESSMENT/english"]
+                        data["english"] = p_test["RS_ASSESSMENT/english"]
 
                     if "RS_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["RS_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["RS_ASSESSMENT/attended_math"]
 
                     if "RS_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["RS_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["RS_ASSESSMENT/modality_math"]
 
                     if "RS_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["RS_ASSESSMENT/math"]
+                        data["math"] = p_test["RS_ASSESSMENT/math"]
 
                     if "RS_ASSESSMENT/attended_science" in p_test:
-                        data['attended_science'] = p_test["RS_ASSESSMENT/attended_science"]
+                        data["attended_science"] = p_test[
+                            "RS_ASSESSMENT/attended_science"
+                        ]
 
                     if "RS_ASSESSMENT/modality_science" in p_test:
-                        data['modality_science'] = p_test["RS_ASSESSMENT/modality_science"]
+                        data["modality_science"] = p_test[
+                            "RS_ASSESSMENT/modality_science"
+                        ]
 
                     if "RS_ASSESSMENT/science" in p_test:
-                        data['science'] = p_test["RS_ASSESSMENT/science"]
+                        data["science"] = p_test["RS_ASSESSMENT/science"]
 
                     if "RS_ASSESSMENT/attended_biology" in p_test:
-                        data['attended_biology'] = p_test["RS_ASSESSMENT/attended_biology"]
+                        data["attended_biology"] = p_test[
+                            "RS_ASSESSMENT/attended_biology"
+                        ]
 
                     if "RS_ASSESSMENT/modality_biology" in p_test:
-                        data['modality_biology'] = p_test["RS_ASSESSMENT/modality_biology"]
+                        data["modality_biology"] = p_test[
+                            "RS_ASSESSMENT/modality_biology"
+                        ]
 
                     if "RS_ASSESSMENT/biology" in p_test:
-                        data['biology'] = p_test["RS_ASSESSMENT/biology"]
+                        data["biology"] = p_test["RS_ASSESSMENT/biology"]
 
                     if "RS_ASSESSMENT/attended_chemistry" in p_test:
-                        data['attended_chemistry'] = p_test["RS_ASSESSMENT/attended_chemistry"]
+                        data["attended_chemistry"] = p_test[
+                            "RS_ASSESSMENT/attended_chemistry"
+                        ]
 
                     if "RS_ASSESSMENT/modality_chemistry" in p_test:
-                        data['modality_chemistry'] = p_test["RS_ASSESSMENT/modality_chemistry"]
+                        data["modality_chemistry"] = p_test[
+                            "RS_ASSESSMENT/modality_chemistry"
+                        ]
 
                     if "RS_ASSESSMENT/chemistry" in p_test:
-                        data['chemistry'] = p_test["RS_ASSESSMENT/chemistry"]
+                        data["chemistry"] = p_test["RS_ASSESSMENT/chemistry"]
 
                     if "RS_ASSESSMENT/attended_physics" in p_test:
-                        data['attended_physics'] = p_test["RS_ASSESSMENT/attended_physics"]
+                        data["attended_physics"] = p_test[
+                            "RS_ASSESSMENT/attended_physics"
+                        ]
 
                     if "RS_ASSESSMENT/modality_physics" in p_test:
-                        data['modality_physics'] = p_test["RS_ASSESSMENT/modality_physics"]
+                        data["modality_physics"] = p_test[
+                            "RS_ASSESSMENT/modality_physics"
+                        ]
 
                     if "RS_ASSESSMENT/physics" in p_test:
-                        data['physics'] = p_test["RS_ASSESSMENT/physics"]
+                        data["physics"] = p_test["RS_ASSESSMENT/physics"]
 
             return form_class(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = RS.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = RS.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(RSPostAssessmentView, self).form_valid(form)
 
 
-class ABLNFollowupView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FormView):
-    template_name = 'clm/abln_followup.html'
+class ABLNFollowupView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/abln_followup.html"
     form_class = ABLNFollowupForm
-    success_url = '/clm/abln-list/'
-    group_required = [u"CLM_ABLN"]
+    success_url = "/clm/abln-list/"
+    group_required = ["CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(ABLNFollowupView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = ABLN.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(ABLNFollowupView, self).form_valid(form)
 
 
-class RSDashboardView(LoginRequiredMixin,
-                      GroupRequiredMixin,
-                      TemplateView):
-    template_name = 'clm/rs_dashboard.html'
+class RSDashboardView(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    template_name = "clm/rs_dashboard.html"
     model = RS
-    group_required = [u"CLM_RS"]
+    group_required = ["CLM_RS"]
 
     def get_context_data(self, **kwargs):
-
 
         per_gov = []
         clm_round = self.request.user.partner.rs_round
@@ -1785,23 +2154,23 @@ class RSDashboardView(LoginRequiredMixin,
 
         # queryset = self.model.objects.filter(round=clm_round)
         queryset = self.model.objects.all()
-        total_male = queryset.filter(student__sex='Male')
-        total_female = queryset.filter(student__sex='Female')
+        total_male = queryset.filter(student__sex="Male")
+        total_female = queryset.filter(student__sex="Female")
 
-        completion = queryset.exclude(learning_result='repeat_level')
-        completion_male = completion.filter(student__sex='Male')
-        completion_female = completion.filter(student__sex='Female')
+        completion = queryset.exclude(learning_result="repeat_level")
+        completion_male = completion.filter(student__sex="Male")
+        completion_female = completion.filter(student__sex="Female")
 
         attendance = queryset.filter(participation__isnull=False)
-        attendances_male = attendance.filter(student__sex='Male')
-        attendances_female = attendance.filter(student__sex='Female')
+        attendances_male = attendance.filter(student__sex="Male")
+        attendances_female = attendance.filter(student__sex="Female")
 
-        repeat_class = queryset.filter(learning_result='repeat_level')
-        repeat_class_male = repeat_class.filter(student__sex='Male')
-        repeat_class_female = repeat_class.filter(student__sex='Female')
+        repeat_class = queryset.filter(learning_result="repeat_level")
+        repeat_class_male = repeat_class.filter(student__sex="Male")
+        repeat_class_female = repeat_class.filter(student__sex="Female")
 
-        student_male = queryset.filter(student__sex='Male')
-        student_female = queryset.filter(student__sex='Female')
+        student_male = queryset.filter(student__sex="Male")
+        student_female = queryset.filter(student__sex="Female")
 
         dis_gov = []
 
@@ -1820,82 +2189,220 @@ class RSDashboardView(LoginRequiredMixin,
             attendances_female_gov = attendances_female.filter(governorate=gov)
 
             repeat_class_male_gov = repeat_class_male.filter(governorate=gov).count()
-            repeat_class_female_gov = repeat_class_female.filter(governorate=gov).count()
+            repeat_class_female_gov = repeat_class_female.filter(
+                governorate=gov
+            ).count()
 
-            per_gov.append({
-                'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov),
-                                         2) if total_male_gov else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov),
-                                           2) if total_female_gov else 0.0,
-
-                'attendance_male_1': round((float(attendances_male_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_1': round((float(attendances_female_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'attendance_male_2': round((float(attendances_male_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_2': round((float(attendances_female_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'attendance_male_3': round((float(attendances_male_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_3': round((float(attendances_female_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'attendance_male_4': round((float(attendances_male_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_4': round((float(attendances_female_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
-                                         2) if total_gov else 0.0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
-                                           2) if total_gov else 0.0,
-
-                'repetition_male1': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
-                                          2) if total_gov else 0.0,
-                'repetition_female1': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
-                                            2) if total_gov else 0.0,
-            })
+            per_gov.append(
+                {
+                    "governorate": gov.name,
+                    "completion_male": (
+                        round(
+                            (float(completion_male_gov) * 100.0)
+                            / float(total_male_gov),
+                            2,
+                        )
+                        if total_male_gov
+                        else 0.0
+                    ),
+                    "completion_female": (
+                        round(
+                            (float(completion_female_gov) * 100.0)
+                            / float(total_female_gov),
+                            2,
+                        )
+                        if total_female_gov
+                        else 0.0
+                    ),
+                    "attendance_male_1": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="less_than_5days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_1": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="less_than_5days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_2": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="5_10_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_2": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="5_10_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_3": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="10_15_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_3": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="10_15_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_4": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="more_than_15days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_4": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="more_than_15days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "repetition_male": (
+                        round(
+                            (float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                    "repetition_female": (
+                        round(
+                            (float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                            2,
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                    "repetition_male1": (
+                        round(
+                            (float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                    "repetition_female1": (
+                        round(
+                            (float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                            2,
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                }
+            )
 
             dis_count = []
             for dis in disability:
-                dis_count.append({
-                    'student_male_dis': student_male.filter(governorate=gov, disability=dis).count(),
-                    'student_female_dis': student_female.filter(governorate=gov, disability=dis).count(),
-                })
-            dis_gov.append({
-                'governorate': gov.name,
-                'dis': dis_count
-            })
+                dis_count.append(
+                    {
+                        "student_male_dis": student_male.filter(
+                            governorate=gov, disability=dis
+                        ).count(),
+                        "student_female_dis": student_female.filter(
+                            governorate=gov, disability=dis
+                        ).count(),
+                    }
+                )
+            dis_gov.append({"governorate": gov.name, "dis": dis_count})
         return {
-            'clm_round': clm_round,
-            'clm_rounds': clm_rounds,
-            'per_gov': per_gov,
-            'disability': disability,
-            'dis_gov': dis_gov
+            "clm_round": clm_round,
+            "clm_rounds": clm_rounds,
+            "per_gov": per_gov,
+            "disability": disability,
+            "dis_gov": dis_gov,
         }
 
 
-class CBECEDashboardView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
-    template_name = 'clm/cbece_dashboard.html'
+class CBECEDashboardView(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    template_name = "clm/cbece_dashboard.html"
     model = CBECE
-    group_required = [u"CLM_CBECE"]
+    group_required = ["CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-
 
         per_gov = []
         domain_gov = []
@@ -1905,20 +2412,20 @@ class CBECEDashboardView(LoginRequiredMixin,
 
         # queryset = self.model.objects.filter(round=clm_round)
         queryset = self.model.objects.all()
-        total_male = queryset.filter(student__sex='Male')
-        total_female = queryset.filter(student__sex='Female')
+        total_male = queryset.filter(student__sex="Male")
+        total_female = queryset.filter(student__sex="Female")
 
-        completion = queryset.exclude(learning_result='repeat_level')
-        completion_male = completion.filter(student__sex='Male')
-        completion_female = completion.filter(student__sex='Female')
+        completion = queryset.exclude(learning_result="repeat_level")
+        completion_male = completion.filter(student__sex="Male")
+        completion_female = completion.filter(student__sex="Female")
 
         attendance = queryset.filter(participation__isnull=False)
-        attendances_male = attendance.filter(student__sex='Male')
-        attendances_female = attendance.filter(student__sex='Female')
+        attendances_male = attendance.filter(student__sex="Male")
+        attendances_female = attendance.filter(student__sex="Female")
 
-        repeat_class = queryset.filter(learning_result='repeat_level')
-        repeat_class_male = repeat_class.filter(student__sex='Male')
-        repeat_class_female = repeat_class.filter(student__sex='Female')
+        repeat_class = queryset.filter(learning_result="repeat_level")
+        repeat_class_male = repeat_class.filter(student__sex="Male")
+        repeat_class_female = repeat_class.filter(student__sex="Female")
 
         for gov in governorates:
             total_gov = queryset.filter(governorate=gov).count()
@@ -1934,173 +2441,327 @@ class CBECEDashboardView(LoginRequiredMixin,
             attendances_female_gov = attendances_female.filter(governorate=gov)
 
             repeat_class_male_gov = repeat_class_male.filter(governorate=gov).count()
-            repeat_class_female_gov = repeat_class_female.filter(governorate=gov).count()
+            repeat_class_female_gov = repeat_class_female.filter(
+                governorate=gov
+            ).count()
 
-            per_gov.append({
-                'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov.count()),
-                                         2) if total_male_gov.count() else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.count()),
-                                           2) if total_female_gov.count() else 0.0,
+            per_gov.append(
+                {
+                    "governorate": gov.name,
+                    "completion_male": (
+                        round(
+                            (float(completion_male_gov) * 100.0)
+                            / float(total_male_gov.count()),
+                            2,
+                        )
+                        if total_male_gov.count()
+                        else 0.0
+                    ),
+                    "completion_female": (
+                        round(
+                            (float(completion_female_gov) * 100.0)
+                            / float(total_female_gov.count()),
+                            2,
+                        )
+                        if total_female_gov.count()
+                        else 0.0
+                    ),
+                    "attendance_male_1": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="less_than_5days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_1": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="less_than_5days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_2": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="5_10_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_2": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="5_10_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_3": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="10_15_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_3": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="10_15_days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_male_4": (
+                        round(
+                            (
+                                float(
+                                    attendances_male_gov.filter(
+                                        participation="more_than_15days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "attendance_female_4": (
+                        round(
+                            (
+                                float(
+                                    attendances_female_gov.filter(
+                                        participation="more_than_15days"
+                                    ).count()
+                                )
+                                / float(attendance_gov)
+                            )
+                            * 100.0,
+                            2,
+                        )
+                        if attendance_gov
+                        else 0.0
+                    ),
+                    "repetition_male": (
+                        round(
+                            (float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                    "repetition_female": (
+                        round(
+                            (float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                            2,
+                        )
+                        if total_gov
+                        else 0.0
+                    ),
+                }
+            )
 
-                'attendance_male_1': round((float(attendances_male_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_1': round((float(attendances_female_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
+            d1_male = total_male_gov.annotate(
+                pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
+            d1_female = total_female_gov.annotate(
+                pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
 
-                'attendance_male_2': round((float(attendances_male_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_2': round((float(attendances_female_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
+            d3_male = total_male_gov.annotate(
+                pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
+            d3_female = total_female_gov.annotate(
+                pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
 
-                'attendance_male_3': round((float(attendances_male_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_3': round((float(attendances_female_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'attendance_male_4': round((float(attendances_male_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
-                                           2) if attendance_gov else 0.0,
-                'attendance_female_4': round((float(attendances_female_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
-                                             2) if attendance_gov else 0.0,
-
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
-                                         2) if total_gov else 0.0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
-                                           2) if total_gov else 0.0,
-            })
-
-            d1_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]),
-                                              post=RawSQL("((scores->>'post_LanguageArtDomain')::float)",
-                                                          params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d1_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]),
-                                                  post=RawSQL("((scores->>'post_LanguageArtDomain')::float)",
-                                                              params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-
-            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]),
-                                              post=RawSQL("((scores->>'post_CognitiveDomain')::float)",
-                                                          params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]),
-                                                  post=RawSQL("((scores->>'post_CognitiveDomain')::float)",
-                                                              params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-
-            d4_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]),
-                                              post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)",
-                                                          params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d4_male = total_male_gov.annotate(
+                pre=RawSQL(
+                    "((scores->>'pre_SocialEmotionalDomain')::float)", params=[]
+                ),
+                post=RawSQL(
+                    "((scores->>'post_SocialEmotionalDomain')::float)", params=[]
+                ),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
             d4_female = total_female_gov.annotate(
-                pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]),
-                post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+                pre=RawSQL(
+                    "((scores->>'pre_SocialEmotionalDomain')::float)", params=[]
+                ),
+                post=RawSQL(
+                    "((scores->>'post_SocialEmotionalDomain')::float)", params=[]
+                ),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
 
-            d5_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]),
-                                              post=RawSQL("((scores->>'post_PsychomotorDomain')::float)",
-                                                          params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d5_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]),
-                                                  post=RawSQL("((scores->>'post_PsychomotorDomain')::float)",
-                                                              params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d5_male = total_male_gov.annotate(
+                pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
+            d5_female = total_female_gov.annotate(
+                pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
 
-            d6_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]),
-                                              post=RawSQL("((scores->>'post_ArtisticDomain')::float)",
-                                                          params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d6_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]),
-                                                  post=RawSQL("((scores->>'post_ArtisticDomain')::float)",
-                                                              params=[])).aggregate(
-                total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d6_male = total_male_gov.annotate(
+                pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
+            d6_female = total_female_gov.annotate(
+                pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]),
+                post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[]),
+            ).aggregate(total=((Sum("post") - Sum("pre")) / Sum("pre")) * 100.0)
 
-            domain_gov.append({
-                'governorate': gov.name,
-
-                'art_improvement_male': d1_male['total'] if d1_male['total'] != None else 0.0,
-                'art_improvement_female': d1_female['total'] if d1_female['total'] != None else 0.0,
-
-                'cognitive_improvement_male': d3_male['total'] if d3_male['total'] != None else 0.0,
-                'cognitive_improvement_female': d3_female['total'] if d3_female['total'] != None else 0.0,
-
-                'social_improvement_male': d4_male['total'] if d4_male['total'] != None else 0.0,
-                'social_improvement_female': d4_female['total'] if d4_female['total'] != None else 0.0,
-
-                'psycho_improvement_male': d5_male['total'] if d5_male['total'] != None else 0.0,
-                'psycho_improvement_female': d5_female['total'] if d5_female['total'] != None else 0.0,
-
-                'artistic_improvement_male': d6_male['total'] if d6_male['total'] != None else 0.0,
-                'artistic_improvement_female': d6_female['total'] if d6_female['total'] != None else 0.0
-            })
+            domain_gov.append(
+                {
+                    "governorate": gov.name,
+                    "art_improvement_male": (
+                        d1_male["total"] if d1_male["total"] != None else 0.0
+                    ),
+                    "art_improvement_female": (
+                        d1_female["total"] if d1_female["total"] != None else 0.0
+                    ),
+                    "cognitive_improvement_male": (
+                        d3_male["total"] if d3_male["total"] != None else 0.0
+                    ),
+                    "cognitive_improvement_female": (
+                        d3_female["total"] if d3_female["total"] != None else 0.0
+                    ),
+                    "social_improvement_male": (
+                        d4_male["total"] if d4_male["total"] != None else 0.0
+                    ),
+                    "social_improvement_female": (
+                        d4_female["total"] if d4_female["total"] != None else 0.0
+                    ),
+                    "psycho_improvement_male": (
+                        d5_male["total"] if d5_male["total"] != None else 0.0
+                    ),
+                    "psycho_improvement_female": (
+                        d5_female["total"] if d5_female["total"] != None else 0.0
+                    ),
+                    "artistic_improvement_male": (
+                        d6_male["total"] if d6_male["total"] != None else 0.0
+                    ),
+                    "artistic_improvement_female": (
+                        d6_female["total"] if d6_female["total"] != None else 0.0
+                    ),
+                }
+            )
 
         return {
-            'clm_round': clm_round,
-            'clm_rounds': clm_rounds,
-            'per_gov': per_gov,
-            'domain_gov': domain_gov
+            "clm_round": clm_round,
+            "clm_rounds": clm_rounds,
+            "per_gov": per_gov,
+            "domain_gov": domain_gov,
         }
 
 
-class RSAddView(LoginRequiredMixin,
-                GroupRequiredMixin,
-                FormView):
-    template_name = 'clm/rs_create_form.html'
+class RSAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/rs_create_form.html"
     form_class = RSForm
-    success_url = '/clm/rs-list/'
-    group_required = [u"CLM_RS"]
+    success_url = "/clm/rs-list/"
+    group_required = ["CLM_RS"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/rs-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/rs-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/rs-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return "/clm/rs-edit/" + str(self.request.session.get("instance_id")) + "/"
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='RS',
-                assessment_slug='rs_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:rs_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="RS",
+                assessment_slug="rs_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:rs_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('RS')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_create"] = is_allowed_create("RS")
         return super(RSAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(RSAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', ''),
-            'student_outreached': self.request.GET.get('student_outreached', ''),
-            'have_barcode': self.request.GET.get('have_barcode', '')
+            "new_registry": self.request.GET.get("new_registry", ""),
+            "student_outreached": self.request.GET.get("student_outreached", ""),
+            "have_barcode": self.request.GET.get("have_barcode", ""),
         }
-        if self.request.GET.get('enrollment_id'):
-            instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
+        if self.request.GET.get("enrollment_id"):
+            instance = RS.objects.get(id=self.request.GET.get("enrollment_id"))
             data = RSSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
+            data["student_nationality"] = data["student_nationality_id"]
 
-            data['learning_result'] = ''
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+            data["learning_result"] = ""
+        if self.request.GET.get("child_id"):
+            instance = Child.objects.get(id=int(self.request.GET.get("child_id")))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
-            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+            data["new_registry"] = self.request.GET.get("new_registry", "yes")
+            data["student_outreached"] = self.request.GET.get("student_outreached", "")
+            data["have_barcode"] = self.request.GET.get("have_barcode", "")
         initial = data
 
         return initial
@@ -2113,203 +2774,235 @@ class RSAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return RSForm(self.request.POST, instance=None, request=self.request)
         else:
-            return RSForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return RSForm(
+                None, instance=None, request=self.request, initial=self.get_initial()
+            )
 
 
-class RSEditView(LoginRequiredMixin,
-                 GroupRequiredMixin,
-                 FormView):
-    template_name = 'clm/rs_edit_form.html'
+class RSEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/rs_edit_form.html"
     form_class = RSForm
-    success_url = '/clm/rs-list/'
-    group_required = [u"CLM_RS"]
+    success_url = "/clm/rs-list/"
+    group_required = ["CLM_RS"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/rs-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/rs-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/rs-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return "/clm/rs-edit/" + str(self.request.session.get("instance_id")) + "/"
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='RS',
-                assessment_slug='rs_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:rs_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="RS",
+                assessment_slug="rs_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:rs_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('RS')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_edit"] = is_allowed_edit("RS")
         return super(RSEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = RS.objects.get(id=self.kwargs['pk'])
+        instance = RS.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
             return RSForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = RSSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
+            data["student_nationality"] = data["student_nationality_id"]
 
-            if 'pre_test' in data:
-                p_test = data['pre_test']
+            if "pre_test" in data:
+                p_test = data["pre_test"]
                 if p_test:
                     if "RS_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["RS_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "RS_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "RS_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["RS_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "RS_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "RS_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["RS_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["RS_ASSESSMENT/arabic"]
 
                     if "RS_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["RS_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "RS_ASSESSMENT/attended_english"
+                        ]
 
                     if "RS_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["RS_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "RS_ASSESSMENT/modality_english"
+                        ]
 
                     if "RS_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["RS_ASSESSMENT/english"]
+                        data["english"] = p_test["RS_ASSESSMENT/english"]
 
                     if "RS_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["RS_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["RS_ASSESSMENT/attended_math"]
 
                     if "RS_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["RS_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["RS_ASSESSMENT/modality_math"]
 
                     if "RS_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["RS_ASSESSMENT/math"]
+                        data["math"] = p_test["RS_ASSESSMENT/math"]
 
                     if "RS_ASSESSMENT/attended_science" in p_test:
-                        data['attended_science'] = p_test["RS_ASSESSMENT/attended_science"]
+                        data["attended_science"] = p_test[
+                            "RS_ASSESSMENT/attended_science"
+                        ]
 
                     if "RS_ASSESSMENT/modality_science" in p_test:
-                        data['modality_science'] = p_test["RS_ASSESSMENT/modality_science"]
+                        data["modality_science"] = p_test[
+                            "RS_ASSESSMENT/modality_science"
+                        ]
 
                     if "RS_ASSESSMENT/science" in p_test:
-                        data['science'] = p_test["RS_ASSESSMENT/science"]
+                        data["science"] = p_test["RS_ASSESSMENT/science"]
 
                     if "RS_ASSESSMENT/attended_biology" in p_test:
-                        data['attended_biology'] = p_test["RS_ASSESSMENT/attended_biology"]
+                        data["attended_biology"] = p_test[
+                            "RS_ASSESSMENT/attended_biology"
+                        ]
 
                     if "RS_ASSESSMENT/modality_biology" in p_test:
-                        data['modality_biology'] = p_test["RS_ASSESSMENT/modality_biology"]
+                        data["modality_biology"] = p_test[
+                            "RS_ASSESSMENT/modality_biology"
+                        ]
 
                     if "RS_ASSESSMENT/biology" in p_test:
-                        data['biology'] = p_test["RS_ASSESSMENT/biology"]
+                        data["biology"] = p_test["RS_ASSESSMENT/biology"]
 
                     if "RS_ASSESSMENT/attended_chemistry" in p_test:
-                        data['attended_chemistry'] = p_test["RS_ASSESSMENT/attended_chemistry"]
+                        data["attended_chemistry"] = p_test[
+                            "RS_ASSESSMENT/attended_chemistry"
+                        ]
 
                     if "RS_ASSESSMENT/modality_chemistry" in p_test:
-                        data['modality_chemistry'] = p_test["RS_ASSESSMENT/modality_chemistry"]
+                        data["modality_chemistry"] = p_test[
+                            "RS_ASSESSMENT/modality_chemistry"
+                        ]
 
                     if "RS_ASSESSMENT/chemistry" in p_test:
-                        data['chemistry'] = p_test["RS_ASSESSMENT/chemistry"]
+                        data["chemistry"] = p_test["RS_ASSESSMENT/chemistry"]
 
                     if "RS_ASSESSMENT/attended_physics" in p_test:
-                        data['attended_physics'] = p_test["RS_ASSESSMENT/attended_physics"]
+                        data["attended_physics"] = p_test[
+                            "RS_ASSESSMENT/attended_physics"
+                        ]
 
                     if "RS_ASSESSMENT/modality_physics" in p_test:
-                        data['modality_physics'] = p_test["RS_ASSESSMENT/modality_physics"]
+                        data["modality_physics"] = p_test[
+                            "RS_ASSESSMENT/modality_physics"
+                        ]
 
                     if "RS_ASSESSMENT/physics" in p_test:
-                        data['physics'] = p_test["RS_ASSESSMENT/physics"]
+                        data["physics"] = p_test["RS_ASSESSMENT/physics"]
 
             return RSForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = RS.objects.get(id=self.kwargs['pk'])
+        instance = RS.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(RSEditView, self).form_valid(form)
 
 
-class RSListView(LoginRequiredMixin,
-                 GroupRequiredMixin,
-                 FilterView,
-                 ExportMixin,
-                 SingleTableView,
-                 RequestConfig):
+class RSListView(
+    LoginRequiredMixin,
+    GroupRequiredMixin,
+    FilterView,
+    ExportMixin,
+    SingleTableView,
+    RequestConfig,
+):
     table_class = RSTable
     model = RS
-    template_name = 'clm/rs_list.html'
-    table = RSTable(RS.objects.all(), order_by='id')
-    group_required = [u"CLM_RS"]
+    template_name = "clm/rs_list.html"
+    table = RSTable(RS.objects.all(), order_by="id")
+    group_required = ["CLM_RS"]
 
     filterset_class = RSFilter
 
     def get_queryset(self):
 
-
-        return RS.objects.filter(partner=self.request.user.partner_id,
-                                 round__current_year=True).order_by('-id')
+        return RS.objects.filter(
+            partner=self.request.user.partner_id, round__current_year=True
+        ).order_by("-id")
         # return RS.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
         # return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
-class CBECEAddView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   FormView):
-    template_name = 'clm/cbece_create_form.html'
+class CBECEAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_create_form.html"
     form_class = CBECEForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/cbece-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/cbece-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/cbece-edit/" + str(self.request.session.get("instance_id")) + "/"
+            )
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='CBECE',
-                assessment_slug='cbece_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="CBECE",
+                assessment_slug="cbece_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:cbece_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('CBECE')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_create"] = is_allowed_create("CBECE")
         return super(CBECEAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(CBECEAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', ''),
-            'student_outreached': self.request.GET.get('student_outreached', ''),
-            'have_barcode': self.request.GET.get('have_barcode', '')
+            "new_registry": self.request.GET.get("new_registry", ""),
+            "student_outreached": self.request.GET.get("student_outreached", ""),
+            "have_barcode": self.request.GET.get("have_barcode", ""),
         }
-        if self.request.GET.get('enrollment_id'):
-            instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
+        if self.request.GET.get("enrollment_id"):
+            instance = CBECE.objects.get(id=self.request.GET.get("enrollment_id"))
             data = CBECESerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
-        if self.request.GET.get('outreach_id'):
-            instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+            data["student_nationality"] = data["student_nationality_id"]
+            data["learning_result"] = ""
+        if self.request.GET.get("outreach_id"):
+            instance = Outreach.objects.get(id=self.request.GET.get("outreach_id"))
             data = BLNSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+            data["student_nationality"] = data["student_nationality_id"]
+            data["learning_result"] = ""
+        if self.request.GET.get("child_id"):
+            instance = Child.objects.get(id=int(self.request.GET.get("child_id")))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
-            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+            data["new_registry"] = self.request.GET.get("new_registry", "yes")
+            data["student_outreached"] = self.request.GET.get("student_outreached", "")
+            data["have_barcode"] = self.request.GET.get("have_barcode", "")
         initial = data
 
         return initial
@@ -2322,228 +3015,268 @@ class CBECEAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return CBECEForm(self.request.POST, instance=None, request=self.request)
         else:
-            return CBECEForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return CBECEForm(
+                None, instance=None, request=self.request, initial=self.get_initial()
+            )
 
 
-class CBECEEditView(LoginRequiredMixin,
-                    GroupRequiredMixin,
-                    FormView):
-    template_name = 'clm/cbece_edit_form.html'
+class CBECEEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_edit_form.html"
     form_class = CBECEForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/cbece-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/cbece-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/cbece-edit/" + str(self.request.session.get("instance_id")) + "/"
+            )
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='CBECE',
-                assessment_slug='cbece_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="CBECE",
+                assessment_slug="cbece_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:cbece_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('CBECE')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_edit"] = is_allowed_edit("CBECE")
         return super(CBECEEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = CBECE.objects.get(id=self.kwargs['pk'])
+        instance = CBECE.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
             return CBECEForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = CBECESerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
+            data["student_nationality"] = data["student_nationality_id"]
 
-            if 'pre_test' in data:
-                p_test = data['pre_test']
+            if "pre_test" in data:
+                p_test = data["pre_test"]
                 if p_test:
                     if "CBECE_ASSESSMENT/attended_arabic" in p_test:
-                        data['attended_arabic'] = p_test["CBECE_ASSESSMENT/attended_arabic"]
+                        data["attended_arabic"] = p_test[
+                            "CBECE_ASSESSMENT/attended_arabic"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_arabic" in p_test:
-                        data['modality_arabic'] = p_test["CBECE_ASSESSMENT/modality_arabic"]
+                        data["modality_arabic"] = p_test[
+                            "CBECE_ASSESSMENT/modality_arabic"
+                        ]
 
                     if "CBECE_ASSESSMENT/arabic" in p_test:
-                        data['arabic'] = p_test["CBECE_ASSESSMENT/arabic"]
+                        data["arabic"] = p_test["CBECE_ASSESSMENT/arabic"]
 
                     if "CBECE_ASSESSMENT/attended_english" in p_test:
-                        data['attended_english'] = p_test["CBECE_ASSESSMENT/attended_english"]
+                        data["attended_english"] = p_test[
+                            "CBECE_ASSESSMENT/attended_english"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_english" in p_test:
-                        data['modality_english'] = p_test["CBECE_ASSESSMENT/modality_english"]
+                        data["modality_english"] = p_test[
+                            "CBECE_ASSESSMENT/modality_english"
+                        ]
 
                     if "CBECE_ASSESSMENT/english" in p_test:
-                        data['english'] = p_test["CBECE_ASSESSMENT/english"]
+                        data["english"] = p_test["CBECE_ASSESSMENT/english"]
 
                     if "CBECE_ASSESSMENT/attended_math" in p_test:
-                        data['attended_math'] = p_test["CBECE_ASSESSMENT/attended_math"]
+                        data["attended_math"] = p_test["CBECE_ASSESSMENT/attended_math"]
 
                     if "CBECE_ASSESSMENT/modality_math" in p_test:
-                        data['modality_math'] = p_test["CBECE_ASSESSMENT/modality_math"]
+                        data["modality_math"] = p_test["CBECE_ASSESSMENT/modality_math"]
 
                     if "CBECE_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["CBECE_ASSESSMENT/math"]
+                        data["math"] = p_test["CBECE_ASSESSMENT/math"]
 
                     if "CBECE_ASSESSMENT/attended_social" in p_test:
-                        data['attended_social'] = p_test["CBECE_ASSESSMENT/attended_social"]
+                        data["attended_social"] = p_test[
+                            "CBECE_ASSESSMENT/attended_social"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_social" in p_test:
-                        data['modality_social'] = p_test["CBECE_ASSESSMENT/modality_social"]
+                        data["modality_social"] = p_test[
+                            "CBECE_ASSESSMENT/modality_social"
+                        ]
 
                     if "CBECE_ASSESSMENT/social_emotional" in p_test:
-                        data['social_emotional'] = p_test["CBECE_ASSESSMENT/social_emotional"]
+                        data["social_emotional"] = p_test[
+                            "CBECE_ASSESSMENT/social_emotional"
+                        ]
 
                     if "CBECE_ASSESSMENT/attended_psychomotor" in p_test:
-                        data['attended_psychomotor'] = p_test["CBECE_ASSESSMENT/attended_psychomotor"]
+                        data["attended_psychomotor"] = p_test[
+                            "CBECE_ASSESSMENT/attended_psychomotor"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_psychomotor" in p_test:
-                        data['modality_psychomotor'] = p_test["CBECE_ASSESSMENT/modality_psychomotor"]
+                        data["modality_psychomotor"] = p_test[
+                            "CBECE_ASSESSMENT/modality_psychomotor"
+                        ]
 
                     if "CBECE_ASSESSMENT/psychomotor" in p_test:
-                        data['psychomotor'] = p_test["CBECE_ASSESSMENT/psychomotor"]
+                        data["psychomotor"] = p_test["CBECE_ASSESSMENT/psychomotor"]
 
                     if "CBECE_ASSESSMENT/attended_science" in p_test:
-                        data['attended_science'] = p_test["CBECE_ASSESSMENT/attended_science"]
+                        data["attended_science"] = p_test[
+                            "CBECE_ASSESSMENT/attended_science"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_science" in p_test:
-                        data['modality_science'] = p_test["CBECE_ASSESSMENT/modality_science"]
+                        data["modality_science"] = p_test[
+                            "CBECE_ASSESSMENT/modality_science"
+                        ]
 
                     if "CBECE_ASSESSMENT/science" in p_test:
-                        data['science'] = p_test["CBECE_ASSESSMENT/science"]
+                        data["science"] = p_test["CBECE_ASSESSMENT/science"]
 
                     if "CBECE_ASSESSMENT/attended_artistic" in p_test:
-                        data['attended_artistic'] = p_test["CBECE_ASSESSMENT/attended_artistic"]
+                        data["attended_artistic"] = p_test[
+                            "CBECE_ASSESSMENT/attended_artistic"
+                        ]
 
                     if "CBECE_ASSESSMENT/modality_artistic" in p_test:
-                        data['modality_artistic'] = p_test["CBECE_ASSESSMENT/modality_artistic"]
+                        data["modality_artistic"] = p_test[
+                            "CBECE_ASSESSMENT/modality_artistic"
+                        ]
 
                     if "CBECE_ASSESSMENT/artistic" in p_test:
-                        data['artistic'] = p_test["CBECE_ASSESSMENT/artistic"]
+                        data["artistic"] = p_test["CBECE_ASSESSMENT/artistic"]
 
             return CBECEForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = CBECE.objects.get(id=self.kwargs['pk'])
+        instance = CBECE.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(CBECEEditView, self).form_valid(form)
 
 
-class CBECEMonitoringQuestionerView(LoginRequiredMixin,
-                                    GroupRequiredMixin,
-                                    FormView):
-    template_name = 'clm/cbece_monitoring_questioner.html'
+class CBECEMonitoringQuestionerView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_monitoring_questioner.html"
     form_class = CBECEMonitoringQuestionerForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(CBECEMonitoringQuestionerView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(CBECEMonitoringQuestionerView, self).form_valid(form)
 
 
-class CBECEListView(LoginRequiredMixin,
-                    GroupRequiredMixin,
-                    FilterView,
-                    ExportMixin,
-                    SingleTableView,
-                    RequestConfig):
+class CBECEListView(
+    LoginRequiredMixin,
+    GroupRequiredMixin,
+    FilterView,
+    ExportMixin,
+    SingleTableView,
+    RequestConfig,
+):
     table_class = CBECETable
     model = CBECE
-    template_name = 'clm/cbece_list.html'
-    table = CBECETable(CBECE.objects.all(), order_by='id')
-    group_required = [u"CLM_CBECE"]
+    template_name = "clm/cbece_list.html"
+    table = CBECETable(CBECE.objects.all(), order_by="id")
+    group_required = ["CLM_CBECE"]
 
     filterset_class = CBECEFilter
 
     def get_queryset(self):
 
-        return CBECE.objects.filter(partner=self.request.user.partner_id,
-                                    round__current_year=True).order_by('-id')
+        return CBECE.objects.filter(
+            partner=self.request.user.partner_id, round__current_year=True
+        ).order_by("-id")
 
         # return CBECE.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
         # return CBECE.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
-class GeneralQuestionnaireListView(LoginRequiredMixin,
-                                   GroupRequiredMixin,
-                                   FilterView,
-                                   ExportMixin,
-                                   SingleTableView,
-                                   RequestConfig):
+class GeneralQuestionnaireListView(
+    LoginRequiredMixin,
+    GroupRequiredMixin,
+    FilterView,
+    ExportMixin,
+    SingleTableView,
+    RequestConfig,
+):
     table_class = GeneralQuestionnaireTable
     model = GeneralQuestionnaire
-    template_name = 'clm/general_questionnaire_list.html'
-    table = GeneralQuestionnaireTable(GeneralQuestionnaire.objects.all(), order_by='id')
-    group_required = [u"CLM_General_Questionnaire"]
+    template_name = "clm/general_questionnaire_list.html"
+    table = GeneralQuestionnaireTable(GeneralQuestionnaire.objects.all(), order_by="id")
+    group_required = ["CLM_General_Questionnaire"]
 
     filterset_class = GeneralQuestionnaireFilter
 
     def get_queryset(self):
 
-        return GeneralQuestionnaire.objects.all().order_by('-id')
+        return GeneralQuestionnaire.objects.all().order_by("-id")
 
 
-class GeneralQuestionnaireAddView(LoginRequiredMixin,
-                                  GroupRequiredMixin,
-                                  FormView):
-    template_name = 'clm/general_questionnaire_create_form.html'
+class GeneralQuestionnaireAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/general_questionnaire_create_form.html"
     form_class = GeneralQuestionnaireForm
-    success_url = '/clm/general-questionnaire-list/'
-    group_required = [u"CLM_General_Questionnaire"]
+    success_url = "/clm/general-questionnaire-list/"
+    group_required = ["CLM_General_Questionnaire"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/general-questionnairen-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/general-questionnaire-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/general-questionnairen-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/general-questionnaire-edit/"
+                + str(self.request.session.get("instance_id"))
+                + "/"
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('GeneralQuestionnaire')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_create"] = is_allowed_create("GeneralQuestionnaire")
         return super(GeneralQuestionnaireAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(GeneralQuestionnaireAddView, self).get_initial()
         data = {
-            'new_questionnaire': self.request.GET.get('new_questionnaire', ''),
+            "new_questionnaire": self.request.GET.get("new_questionnaire", ""),
         }
-        if self.request.GET.get('questionnaire_id'):
-            instance = GeneralQuestionnaire.objects.get(id=self.request.GET.get('questionnaire_id'))
+        if self.request.GET.get("questionnaire_id"):
+            instance = GeneralQuestionnaire.objects.get(
+                id=self.request.GET.get("questionnaire_id")
+            )
             data = GeneralQuestionnaireSerializer(instance).data
         if data:
-            data['new_questionnaire'] = self.request.GET.get('new_questionnaire', 'yes')
+            data["new_questionnaire"] = self.request.GET.get("new_questionnaire", "yes")
         initial = data
 
         return initial
@@ -2554,102 +3287,113 @@ class GeneralQuestionnaireAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            return GeneralQuestionnaireForm(self.request.POST, instance=None, request=self.request)
+            return GeneralQuestionnaireForm(
+                self.request.POST, instance=None, request=self.request
+            )
         else:
-            return GeneralQuestionnaireForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return GeneralQuestionnaireForm(
+                None, instance=None, request=self.request, initial=self.get_initial()
+            )
 
 
-class GeneralQuestionnaireEditView(LoginRequiredMixin,
-                                   GroupRequiredMixin,
-                                   FormView):
-    template_name = 'clm/general_questionnaire_edit_form.html'
+class GeneralQuestionnaireEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/general_questionnaire_edit_form.html"
     form_class = GeneralQuestionnaireForm
-    success_url = '/clm/general_questionnaire_list/'
-    group_required = [u"CLM_General_Questionnaire"]
+    success_url = "/clm/general_questionnaire_list/"
+    group_required = ["CLM_General_Questionnaire"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/general-questionnaire-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/general-questionnaire-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/general-questionnaire-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/general-questionnaire-edit/"
+                + str(self.request.session.get("instance_id"))
+                + "/"
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('GeneralQuestionnaire')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_edit"] = is_allowed_edit("GeneralQuestionnaire")
         return super(GeneralQuestionnaireEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = GeneralQuestionnaire.objects.get(id=self.kwargs['pk'])
+        instance = GeneralQuestionnaire.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
-            return GeneralQuestionnaireForm(self.request.POST, instance=instance, request=self.request)
+            return GeneralQuestionnaireForm(
+                self.request.POST, instance=instance, request=self.request
+            )
         else:
             data = GeneralQuestionnaireSerializer(instance).data
-            return GeneralQuestionnaireForm(data, instance=instance, request=self.request)
+            return GeneralQuestionnaireForm(
+                data, instance=instance, request=self.request
+            )
 
     def form_valid(self, form):
-        instance = GeneralQuestionnaire.objects.get(id=self.kwargs['pk'])
+        instance = GeneralQuestionnaire.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(GeneralQuestionnaireEditView, self).form_valid(form)
 
 
-class CBECEReferralView(LoginRequiredMixin,
-                        GroupRequiredMixin,
-                        FormView):
-    template_name = 'clm/cbece_referral.html'
+class CBECEReferralView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_referral.html"
     form_class = CBECEReferralForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(CBECEReferralView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(CBECEReferralView, self).form_valid(form)
 
 
-class CBECEFollowupView(LoginRequiredMixin,
-                        GroupRequiredMixin,
-                        FormView):
-    template_name = 'clm/cbece_followup.html'
+class CBECEFollowupView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/cbece_followup.html"
     form_class = CBECEFollowupForm
-    success_url = '/clm/cbece-list/'
-    group_required = [u"CLM_CBECE"]
+    success_url = "/clm/cbece-list/"
+    group_required = ["CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(CBECEFollowupView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        instance = CBECE.objects.get(
+            id=self.kwargs["pk"], partner=self.request.user.partner_id
+        )
         form.save(request=self.request, instance=instance)
         return super(CBECEFollowupView, self).form_valid(form)
 
@@ -2657,11 +3401,13 @@ class CBECEFollowupView(LoginRequiredMixin,
 ####################### API VIEWS #############################
 
 
-class BLNViewSet(mixins.RetrieveModelMixin,
-                 mixins.ListModelMixin,
-                 mixins.CreateModelMixin,
-                 mixins.UpdateModelMixin,
-                 viewsets.GenericViewSet):
+class BLNViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = BLN
     # current_round = CLMRound.objects.filter(current_year=True)
     # queryset = BLN.objects.filter(round__in=current_round)
@@ -2673,27 +3419,31 @@ class BLNViewSet(mixins.RetrieveModelMixin,
         from datetime import datetime
 
         qs = self.queryset
-        if self.request.GET.get('creation_date', None):
+        if self.request.GET.get("creation_date", None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
-                'created')[:5000]
+                created__gte=datetime.strptime(
+                    self.request.GET.get("creation_date", None), "%Y-%m-%d"
+                )
+            ).order_by("created")[:5000]
 
-        if self.request.GET.get('school', None):
-            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+        if self.request.GET.get("school", None):
+            return self.queryset.filter(school_id=self.request.GET.get("school", None))
 
         return qs
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs["pk"])
         instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
+        return JsonResponse({"status": status.HTTP_200_OK})
 
 
-class ABLNViewSet(mixins.RetrieveModelMixin,
-                  mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.UpdateModelMixin,
-                  viewsets.GenericViewSet):
+class ABLNViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = ABLN
     # current_round = CLMRound.objects.filter(current_year=True)
     queryset = ABLN.objects.all()
@@ -2705,26 +3455,30 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
         from datetime import datetime
 
         qs = self.queryset
-        if self.request.GET.get('creation_date', None):
+        if self.request.GET.get("creation_date", None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
-                'created')[:5000]
-        if self.request.GET.get('school', None):
-            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+                created__gte=datetime.strptime(
+                    self.request.GET.get("creation_date", None), "%Y-%m-%d"
+                )
+            ).order_by("created")[:5000]
+        if self.request.GET.get("school", None):
+            return self.queryset.filter(school_id=self.request.GET.get("school", None))
 
         return qs
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs["pk"])
         instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
+        return JsonResponse({"status": status.HTTP_200_OK})
 
 
-class OutreachViewSet(mixins.RetrieveModelMixin,
-                      mixins.ListModelMixin,
-                      mixins.CreateModelMixin,
-                      mixins.UpdateModelMixin,
-                      viewsets.GenericViewSet):
+class OutreachViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = Outreach
     queryset = Outreach.objects.all()
     serializer_class = OutreachSerializer
@@ -2734,26 +3488,30 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         from datetime import datetime
 
         qs = self.queryset
-        if self.request.GET.get('creation_date', None):
+        if self.request.GET.get("creation_date", None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
-                'created')[:5000]
+                created__gte=datetime.strptime(
+                    self.request.GET.get("creation_date", None), "%Y-%m-%d"
+                )
+            ).order_by("created")[:5000]
         # if self.request.GET.get('school', None):
         #     return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
         return qs
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs["pk"])
         instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
+        return JsonResponse({"status": status.HTTP_200_OK})
 
 
-class GeneralQuestionnaireViewSet(mixins.RetrieveModelMixin,
-                                  mixins.ListModelMixin,
-                                  mixins.CreateModelMixin,
-                                  mixins.UpdateModelMixin,
-                                  viewsets.GenericViewSet):
+class GeneralQuestionnaireViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = GeneralQuestionnaire
     queryset = GeneralQuestionnaire.objects.all()
     serializer_class = GeneralQuestionnaireSerializer
@@ -2763,22 +3521,26 @@ class GeneralQuestionnaireViewSet(mixins.RetrieveModelMixin,
         from datetime import datetime
 
         qs = self.queryset
-        if self.request.GET.get('creation_date', None):
+        if self.request.GET.get("creation_date", None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
-                'created')[:5000]
+                created__gte=datetime.strptime(
+                    self.request.GET.get("creation_date", None), "%Y-%m-%d"
+                )
+            ).order_by("created")[:5000]
         return qs
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs["pk"])
         instance.delete()
 
 
-class RSViewSet(mixins.RetrieveModelMixin,
-                mixins.ListModelMixin,
-                mixins.CreateModelMixin,
-                mixins.UpdateModelMixin,
-                viewsets.GenericViewSet):
+class RSViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = RS
     # current_round = CLMRound.objects.filter(current_year=True)
     queryset = RS.objects.all()
@@ -2788,27 +3550,32 @@ class RSViewSet(mixins.RetrieveModelMixin,
 
     def get_queryset(self):
         from datetime import datetime
+
         qs = self.queryset
-        if self.request.GET.get('creation_date', None):
+        if self.request.GET.get("creation_date", None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
-                'created')[:5000]
-        if self.request.GET.get('school', None):
-            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+                created__gte=datetime.strptime(
+                    self.request.GET.get("creation_date", None), "%Y-%m-%d"
+                )
+            ).order_by("created")[:5000]
+        if self.request.GET.get("school", None):
+            return self.queryset.filter(school_id=self.request.GET.get("school", None))
 
         return qs
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs["pk"])
         instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
+        return JsonResponse({"status": status.HTTP_200_OK})
 
 
-class CBECEViewSet(mixins.RetrieveModelMixin,
-                   mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   mixins.UpdateModelMixin,
-                   viewsets.GenericViewSet):
+class CBECEViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = CBECE
     # current_round = CLMRound.objects.filter(current_year=True)
     queryset = CBECE.objects.all()
@@ -2819,14 +3586,17 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
 
     def get_queryset(self):
         from datetime import datetime
+
         qs = self.queryset
-        if self.request.GET.get('creation_date', None):
+        if self.request.GET.get("creation_date", None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
-                'created')[:5000]
+                created__gte=datetime.strptime(
+                    self.request.GET.get("creation_date", None), "%Y-%m-%d"
+                )
+            ).order_by("created")[:5000]
             # .order_by('-id')
-        if self.request.GET.get('school', None):
-            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+        if self.request.GET.get("school", None):
+            return self.queryset.filter(school_id=self.request.GET.get("school", None))
 
         return qs
 
@@ -2915,16 +3685,18 @@ class CBECEViewSet(mixins.RetrieveModelMixin,
         return rows
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs["pk"])
         instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
+        return JsonResponse({"status": status.HTTP_200_OK})
 
 
-class BridgingViewSet(mixins.RetrieveModelMixin,
-                 mixins.ListModelMixin,
-                 mixins.CreateModelMixin,
-                 mixins.UpdateModelMixin,
-                 viewsets.GenericViewSet):
+class BridgingViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = Bridging
     queryset = Bridging.objects.all()
     serializer_class = BridgingSerializer
@@ -2934,20 +3706,23 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
         from datetime import datetime
 
         qs = self.queryset
-        if self.request.GET.get('creation_date', None):
+        if self.request.GET.get("creation_date", None):
             return self.queryset.filter(
-                created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d')).order_by(
-                'created')
+                created__gte=datetime.strptime(
+                    self.request.GET.get("creation_date", None), "%Y-%m-%d"
+                )
+            ).order_by("created")
 
-        if self.request.GET.get('school', None):
-            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+        if self.request.GET.get("school", None):
+            return self.queryset.filter(school_id=self.request.GET.get("school", None))
 
         return qs
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs["pk"])
         instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
+        return JsonResponse({"status": status.HTTP_200_OK})
+
 
 # def BridgingDeleteView(request, pk):
 #     if request.user.is_authenticated:
@@ -2976,32 +3751,34 @@ def bridging_mark_delete_view(request, pk):
     return JsonResponse(result)
 
 
-class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
-                                  mixins.ListModelMixin,
-                                  mixins.CreateModelMixin,
-                                  mixins.UpdateModelMixin,
-                                  viewsets.GenericViewSet):
+class SelfPerceptionGradesViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     model = SelfPerceptionGrades
     queryset = SelfPerceptionGrades.objects.all()
     serializer_class = SelfPerceptionGradesSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class CLMStudentViewSet(mixins.RetrieveModelMixin,
-                        mixins.ListModelMixin,
-                        viewsets.GenericViewSet):
+class CLMStudentViewSet(
+    mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+):
     model = BLN
     queryset = BLN.objects.all()
     serializer_class = BLNSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        clm_type = self.request.GET.get('clm_type', 'BLN')
-        terms = self.request.GET.get('term', 0)
-        if clm_type == 'RS':
+        clm_type = self.request.GET.get("clm_type", "BLN")
+        terms = self.request.GET.get("term", 0)
+        if clm_type == "RS":
             self.model = RS
             self.serializer_class = RSSerializer
-        elif clm_type == 'CBECE':
+        elif clm_type == "CBECE":
             self.model = CBECE
             self.serializer_class = CBECESerializer
 
@@ -3010,9 +3787,9 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
         if terms:
             for term in terms.split():
                 qs = qs.filter(
-                    Q(student__first_name__contains=term) |
-                    Q(student__father_name__contains=term) |
-                    Q(student__last_name__contains=term)
+                    Q(student__first_name__contains=term)
+                    | Q(student__father_name__contains=term)
+                    | Q(student__last_name__contains=term)
                 ).distinct()
             return qs
 
@@ -3030,10 +3807,12 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
     def get_queryset_fc(self):
         if not self.request.user.is_staff:
             return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
-        return self.qs_fc.order_by('enrollment', 'fc_type')
+        return self.qs_fc.order_by("enrollment", "fc_type")
 
     def get(self, request, *args, **kwargs):
-        return bln_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+        return bln_build_xls_extraction(
+            self.get_queryset_students(), self.get_queryset_fc()
+        )
 
 
 class ABLNExportViewSet(LoginRequiredMixin, ListView):
@@ -3049,10 +3828,12 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
     def get_queryset_fc(self):
         if not self.request.user.is_staff:
             return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
-        return self.qs_fc.order_by('enrollment', 'fc_type')
+        return self.qs_fc.order_by("enrollment", "fc_type")
 
     def get(self, request, *args, **kwargs):
-        return abln_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+        return abln_build_xls_extraction(
+            self.get_queryset_students(), self.get_queryset_fc()
+        )
 
 
 class CBECEExportViewSet(LoginRequiredMixin, ListView):
@@ -3068,10 +3849,12 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
     def get_queryset_fc(self):
         if not self.request.user.is_staff:
             return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
-        return self.qs_fc.order_by('enrollment', 'fc_type')
+        return self.qs_fc.order_by("enrollment", "fc_type")
 
     def get(self, request, *args, **kwargs):
-        return cbece_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+        return cbece_build_xls_extraction(
+            self.get_queryset_students(), self.get_queryset_fc()
+        )
 
 
 class RSExportViewSet(LoginRequiredMixin, ListView):
@@ -3087,101 +3870,112 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
     def get_queryset_fc(self):
         if not self.request.user.is_staff:
             return self.qs_fc.filter(enrollment__partner=self.request.user.partner)
-        return self.qs_fc.order_by('enrollment', 'fc_type')
+        return self.qs_fc.order_by("enrollment", "fc_type")
 
     def get(self, request, *args, **kwargs):
         # return rs_build_xls_extraction(self.get_queryset_students())
-        return rs_build_xls_extraction(self.get_queryset_students(), self.get_queryset_fc())
+        return rs_build_xls_extraction(
+            self.get_queryset_students(), self.get_queryset_fc()
+        )
 
 
 def load_districts(request):
     cities = []
-    if request.GET.get('id_governorate'):
-        id_governorate = request.GET.get('id_governorate')
-        cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
-    return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
+    if request.GET.get("id_governorate"):
+        id_governorate = request.GET.get("id_governorate")
+        cities = Location.objects.filter(parent_id=id_governorate).order_by("name")
+    return render(request, "clm/city_dropdown_list_options.html", {"cities": cities})
 
 
 def load_cadasters(request):
     cities = []
-    if request.GET.get('id_district'):
-        id_district = request.GET.get('id_district')
-        cities = Location.objects.filter(parent_id=id_district).order_by('name')
-    return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
+    if request.GET.get("id_district"):
+        id_district = request.GET.get("id_district")
+        cities = Location.objects.filter(parent_id=id_district).order_by("name")
+    return render(
+        request, "clm/cadaster_dropdown_list_options.html", {"cities": cities}
+    )
 
 
 def load_schools(request):
     schools = []
-    if request.GET.get('id_governorate'):
-        id_governorate = request.GET.get('id_governorate')
-        schools = School.objects.filter(location_id=id_governorate).order_by('name')
-    return render(request, 'clm/school_dropdown_list_options.html', {'schools': schools})
-
+    if request.GET.get("id_governorate"):
+        id_governorate = request.GET.get("id_governorate")
+        schools = School.objects.filter(location_id=id_governorate).order_by("name")
+    return render(
+        request, "clm/school_dropdown_list_options.html", {"schools": schools}
+    )
 
 
 class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
-    template_name = 'clm/execs.html'
+    template_name = "clm/execs.html"
 
     def get_context_data(self, **kwargs):
         instances = ABLN.objects.filter(round_id=8)
         instances.update(round_id=9)
 
         return {
-            'result': instances.count(),
+            "result": instances.count(),
         }
 
-class OutreachAddView(LoginRequiredMixin,
-                      GroupRequiredMixin,
-                      FormView):
-    template_name = 'clm/outreach_create_form.html'
+
+class OutreachAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/outreach_create_form.html"
     form_class = OutreachForm
-    success_url = '/clm/outreach-list/'
-    group_required = [u"CLM_outreach"]
+    success_url = "/clm/outreach-list/"
+    group_required = ["CLM_outreach"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/outreach-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/outreach-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/outreach-edit/"
+                + str(self.request.session.get("instance_id"))
+                + "/"
+            )
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='Outreach',
-                assessment_slug='outreach_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:outreach_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="Outreach",
+                assessment_slug="outreach_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:outreach_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('Outreach')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_create"] = is_allowed_create("Outreach")
         return super(OutreachAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(OutreachAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', ''),
-            'student_outreached': self.request.GET.get('student_outreached', ''),
-            'have_barcode': self.request.GET.get('have_barcode', '')
+            "new_registry": self.request.GET.get("new_registry", ""),
+            "student_outreached": self.request.GET.get("student_outreached", ""),
+            "have_barcode": self.request.GET.get("have_barcode", ""),
         }
-        if self.request.GET.get('enrollment_id'):
-            instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
+        if self.request.GET.get("enrollment_id"):
+            instance = Outreach.objects.get(id=self.request.GET.get("enrollment_id"))
             data = OutreachSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['learning_result'] = ''
+            data["student_nationality"] = data["student_nationality_id"]
+            data["learning_result"] = ""
 
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+        if self.request.GET.get("child_id"):
+            instance = Child.objects.get(id=int(self.request.GET.get("child_id")))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
-            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+            data["new_registry"] = self.request.GET.get("new_registry", "yes")
+            data["student_outreached"] = self.request.GET.get("student_outreached", "")
+            data["have_barcode"] = self.request.GET.get("have_barcode", "")
         initial = data
 
         return initial
@@ -3194,66 +3988,74 @@ class OutreachAddView(LoginRequiredMixin,
         if self.request.method == "POST":
             return OutreachForm(self.request.POST, instance=None, request=self.request)
         else:
-            return OutreachForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return OutreachForm(
+                None, instance=None, request=self.request, initial=self.get_initial()
+            )
 
 
-class OutreachEditView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FormView):
-    template_name = 'clm/outreach_edit_form.html'
+class OutreachEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/outreach_edit_form.html"
     form_class = OutreachForm
-    success_url = '/clm/outreach-list/'
-    group_required = [u"CLM_outreach"]
+    success_url = "/clm/outreach-list/"
+    group_required = ["CLM_outreach"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/outreach-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/outreach-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/outreach-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/outreach-edit/"
+                + str(self.request.session.get("instance_id"))
+                + "/"
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('Outreach')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_edit"] = is_allowed_edit("Outreach")
 
         return super(OutreachEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        instance = Outreach.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
-            return OutreachForm(self.request.POST, instance=instance, request=self.request)
+            return OutreachForm(
+                self.request.POST, instance=instance, request=self.request
+            )
         else:
             data = OutreachSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
+            data["student_nationality"] = data["student_nationality_id"]
             return OutreachForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        instance = Outreach.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(OutreachEditView, self).form_valid(form)
 
 
-class OutreachListView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FilterView,
-                       ExportMixin,
-                       SingleTableView,
-                       RequestConfig):
+class OutreachListView(
+    LoginRequiredMixin,
+    GroupRequiredMixin,
+    FilterView,
+    ExportMixin,
+    SingleTableView,
+    RequestConfig,
+):
     table_class = OutreachTable
     model = Outreach
-    template_name = 'clm/outreach_list.html'
-    table = OutreachTable(Outreach.objects.all(), order_by='id')
-    group_required = [u"CLM_outreach"]
+    template_name = "clm/outreach_list.html"
+    table = OutreachTable(Outreach.objects.all(), order_by="id")
+    group_required = ["CLM_outreach"]
 
     filterset_class = OutreachFilter
 
     def get_queryset(self):
 
-
-        return Outreach.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        return Outreach.objects.filter(partner=self.request.user.partner_id).order_by(
+            "-id"
+        )
 
 
 class OutreachExportViewSet(LoginRequiredMixin, ListView):
@@ -3269,89 +4071,100 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         return outreach_build_xls_extraction(self.get_queryset_students())
 
 
-class BridgingAddView(LoginRequiredMixin,
-                      GroupRequiredMixin,
-                      FormView):
-    template_name = 'clm/bridging_form.html'
+class BridgingAddView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bridging_form.html"
     form_class = BridgingForm
-    success_url = '/clm/bridging-list/'
-    group_required = [u"CLM_Bridging"]
+    success_url = "/clm/bridging-list/"
+    group_required = ["CLM_Bridging"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/bridging-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/bridging-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/bridging-edit/"
+                + str(self.request.session.get("instance_id"))
+                + "/"
+            )
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='Bridging',
-                assessment_slug='bridging_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="Bridging",
+                assessment_slug="bridging_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:bridging_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_create'] = is_allowed_create('Bridging')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_create"] = is_allowed_create("Bridging")
         return super(BridgingAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
         initial = super(BridgingAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', ''),
-            'student_outreached': self.request.GET.get('student_outreached', ''),
-            'have_barcode': self.request.GET.get('have_barcode', '')
+            "new_registry": self.request.GET.get("new_registry", ""),
+            "student_outreached": self.request.GET.get("student_outreached", ""),
+            "have_barcode": self.request.GET.get("have_barcode", ""),
         }
 
-        if self.request.GET.get('search_model') and self.request.GET.get('enrollment_id'):
-            search_model = self.request.GET.get('search_model')
-            if search_model == 'BLN':
-                instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
+        if self.request.GET.get("search_model") and self.request.GET.get(
+            "enrollment_id"
+        ):
+            search_model = self.request.GET.get("search_model")
+            if search_model == "BLN":
+                instance = BLN.objects.get(id=self.request.GET.get("enrollment_id"))
                 data = BLNSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
-            elif search_model == 'ABLN':
-                instance = ABLN.objects.get(id=self.request.GET.get('enrollment_id'))
+                data["student_nationality"] = data["student_nationality_id"]
+                data["learning_result"] = ""
+            elif search_model == "ABLN":
+                instance = ABLN.objects.get(id=self.request.GET.get("enrollment_id"))
                 data = ABLNSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
-            elif search_model == 'CBECE':
-                instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
+                data["student_nationality"] = data["student_nationality_id"]
+                data["learning_result"] = ""
+            elif search_model == "CBECE":
+                instance = CBECE.objects.get(id=self.request.GET.get("enrollment_id"))
                 data = CBECESerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
+                data["student_nationality"] = data["student_nationality_id"]
+                data["learning_result"] = ""
             else:
-                instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
+                instance = Bridging.objects.get(
+                    id=self.request.GET.get("enrollment_id")
+                )
                 data = BridgingSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
+                data["student_nationality"] = data["student_nationality_id"]
+                data["learning_result"] = ""
         else:
-            if self.request.GET.get('enrollment_id'):
-                instance = Bridging.objects.get(id=self.request.GET.get('enrollment_id'))
+            if self.request.GET.get("enrollment_id"):
+                instance = Bridging.objects.get(
+                    id=self.request.GET.get("enrollment_id")
+                )
                 data = BridgingSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
+                data["student_nationality"] = data["student_nationality_id"]
+                data["learning_result"] = ""
 
-            if self.request.GET.get('child_id'):
-                instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+            if self.request.GET.get("child_id"):
+                instance = Child.objects.get(id=int(self.request.GET.get("child_id")))
                 data = ChildSerializer(instance).data
 
-            if self.request.GET.get('outreach_id'):
-                instance = Outreach.objects.get(id=self.request.GET.get('outreach_id'))
+            if self.request.GET.get("outreach_id"):
+                instance = Outreach.objects.get(id=self.request.GET.get("outreach_id"))
                 data = BridgingSerializer(instance).data
-                data['student_nationality'] = data['student_nationality_id']
-                data['learning_result'] = ''
+                data["student_nationality"] = data["student_nationality_id"]
+                data["learning_result"] = ""
 
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', '')
-            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+            data["new_registry"] = self.request.GET.get("new_registry", "yes")
+            data["student_outreached"] = self.request.GET.get("student_outreached", "")
+            data["have_barcode"] = self.request.GET.get("have_barcode", "")
         initial = data
 
         return initial
@@ -3362,129 +4175,173 @@ class BridgingAddView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         if self.request.method == "POST":
-            return BridgingForm(self.request.POST, self.request.FILES, instance=None, request=self.request)
+            return BridgingForm(
+                self.request.POST,
+                self.request.FILES,
+                instance=None,
+                request=self.request,
+            )
         else:
-            return BridgingForm(None, instance=None, request=self.request, initial=self.get_initial())
+            return BridgingForm(
+                None, instance=None, request=self.request, initial=self.get_initial()
+            )
 
 
-class BridgingEditView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FormView):
-    template_name = 'clm/bridging_form.html'
+class BridgingEditView(LoginRequiredMixin, GroupRequiredMixin, FormView):
+    template_name = "clm/bridging_form.html"
     form_class = BridgingForm
-    success_url = '/clm/bridging-list/'
-    group_required = [u"CLM_Bridging"]
+    success_url = "/clm/bridging-list/"
+    group_required = ["CLM_Bridging"]
 
     def get_success_url(self):
-        if self.request.POST.get('save_add_another', None):
-            return '/clm/bridging-add/'
-        if self.request.POST.get('save_and_continue', None):
-            return '/clm/bridging-edit/' + str(self.request.session.get('instance_id')) + '/'
-        if self.request.POST.get('save_and_pretest', None):
+        if self.request.POST.get("save_add_another", None):
+            return "/clm/bridging-add/"
+        if self.request.POST.get("save_and_continue", None):
+            return (
+                "/clm/bridging-edit/"
+                + str(self.request.session.get("instance_id"))
+                + "/"
+            )
+        if self.request.POST.get("save_and_pretest", None):
             return assessment_form(
-                instance_id=self.request.session.get('instance_id'),
-                stage='pre_test',
-                enrollment_model='Bridging',
-                assessment_slug='bridging_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bridging_edit',
-                                                                 kwargs={
-                                                                     'pk': self.request.session.get('instance_id')})))
+                instance_id=self.request.session.get("instance_id"),
+                stage="pre_test",
+                enrollment_model="Bridging",
+                assessment_slug="bridging_pre_test",
+                callback=self.request.build_absolute_uri(
+                    reverse(
+                        "clm:bridging_edit",
+                        kwargs={"pk": self.request.session.get("instance_id")},
+                    )
+                ),
+            )
         return self.success_url
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        kwargs['is_allowed_edit'] = is_allowed_edit('Bridging')
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
+        kwargs["is_allowed_edit"] = is_allowed_edit("Bridging")
         return super(BridgingEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
-            return BridgingForm(self.request.POST, self.request.FILES, instance=instance, request=self.request)
+            return BridgingForm(
+                self.request.POST,
+                self.request.FILES,
+                instance=instance,
+                request=self.request,
+            )
         else:
             data = BridgingSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            if 'pre_test' in data:
-                p_test = data['pre_test']
+            data["student_nationality"] = data["student_nationality_id"]
+            if "pre_test" in data:
+                p_test = data["pre_test"]
                 if p_test:
 
                     if "Bridging_ASSESSMENT/arabic_alphabet_knowledge" in p_test:
-                        data['arabic_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/arabic_alphabet_knowledge"]
+                        data["arabic_alphabet_knowledge"] = p_test[
+                            "Bridging_ASSESSMENT/arabic_alphabet_knowledge"
+                        ]
                     if "Bridging_ASSESSMENT/arabic_familiar_words" in p_test:
-                        data['arabic_familiar_words'] = p_test["Bridging_ASSESSMENT/arabic_familiar_words"]
+                        data["arabic_familiar_words"] = p_test[
+                            "Bridging_ASSESSMENT/arabic_familiar_words"
+                        ]
                     if "Bridging_ASSESSMENT/arabic_reading_comprehension" in p_test:
-                        data['arabic_reading_comprehension'] = p_test["Bridging_ASSESSMENT/arabic_reading_comprehension"]
+                        data["arabic_reading_comprehension"] = p_test[
+                            "Bridging_ASSESSMENT/arabic_reading_comprehension"
+                        ]
 
                     if "Bridging_ASSESSMENT/english_alphabet_knowledge" in p_test:
-                        data['english_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/english_alphabet_knowledge"]
+                        data["english_alphabet_knowledge"] = p_test[
+                            "Bridging_ASSESSMENT/english_alphabet_knowledge"
+                        ]
                     if "Bridging_ASSESSMENT/english_familiar_words" in p_test:
-                        data['english_familiar_words'] = p_test["Bridging_ASSESSMENT/english_familiar_words"]
+                        data["english_familiar_words"] = p_test[
+                            "Bridging_ASSESSMENT/english_familiar_words"
+                        ]
                     if "Bridging_ASSESSMENT/english_reading_comprehension" in p_test:
-                        data['english_reading_comprehension'] = p_test["Bridging_ASSESSMENT/english_reading_comprehension"]
-
+                        data["english_reading_comprehension"] = p_test[
+                            "Bridging_ASSESSMENT/english_reading_comprehension"
+                        ]
 
                     if "Bridging_ASSESSMENT/french_alphabet_knowledge" in p_test:
-                        data['french_alphabet_knowledge'] = p_test["Bridging_ASSESSMENT/french_alphabet_knowledge"]
+                        data["french_alphabet_knowledge"] = p_test[
+                            "Bridging_ASSESSMENT/french_alphabet_knowledge"
+                        ]
                     if "Bridging_ASSESSMENT/french_familiar_words" in p_test:
-                        data['french_familiar_words'] = p_test["Bridging_ASSESSMENT/french_familiar_words"]
+                        data["french_familiar_words"] = p_test[
+                            "Bridging_ASSESSMENT/french_familiar_words"
+                        ]
                     if "Bridging_ASSESSMENT/french_reading_comprehension" in p_test:
-                        data['french_reading_comprehension'] = p_test["Bridging_ASSESSMENT/french_reading_comprehension"]
+                        data["french_reading_comprehension"] = p_test[
+                            "Bridging_ASSESSMENT/french_reading_comprehension"
+                        ]
 
                     if "Bridging_ASSESSMENT/math" in p_test:
-                        data['math'] = p_test["Bridging_ASSESSMENT/math"]
+                        data["math"] = p_test["Bridging_ASSESSMENT/math"]
 
             return BridgingForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
-        instance = Bridging.objects.get(id=self.kwargs['pk'])
+        instance = Bridging.objects.get(id=self.kwargs["pk"])
         form.save(request=self.request, instance=instance)
         return super(BridgingEditView, self).form_valid(form)
 
 
-class BridgingListView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       FilterView,
-                       ExportMixin,
-                       SingleTableView,
-                       RequestConfig):
+class BridgingListView(
+    LoginRequiredMixin,
+    GroupRequiredMixin,
+    FilterView,
+    ExportMixin,
+    SingleTableView,
+    RequestConfig,
+):
     table_class = BridgingTable
     model = Bridging
-    template_name = 'clm/bridging_list.html'
-    table = BridgingTable(Bridging.objects.all(), order_by='student__full_name')
-    group_required = [u"CLM_Bridging"]
+    template_name = "clm/bridging_list.html"
+    table = BridgingTable(Bridging.objects.all(), order_by="student__full_name")
+    group_required = ["CLM_Bridging"]
 
     filterset_class = BridgingFilter
 
     def get_queryset(self):
         qs = Bridging.objects.filter(round__current_year=True, deleted=False)
-        if not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and self.request.user.partner:
+        if (
+            not has_group(self.request.user, "CLM_BRIDGING_ALL")
+            and not self.request.user.is_staff
+            and self.request.user.partner
+        ):
             qs = qs.filter(partner_id=self.request.user.partner_id)
             if self.request.user.school:
                 qs = qs.filter(school_id=self.request.user.school_id)
-        elif not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and not self.request.user.partner:
+        elif (
+            not has_group(self.request.user, "CLM_BRIDGING_ALL")
+            and not self.request.user.is_staff
+            and not self.request.user.partner
+        ):
             qs = qs.none()
         return qs
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url="/users/login")
 def bridging_export_data(request, **kwargs):
     try:
         cursor = connection.cursor()
         user = request.user
-        partner_name = user.partner.name if user.partner else ''
+        partner_name = user.partner.name if user.partner else ""
 
-        round_id = request.GET.get('round', None)
+        round_id = request.GET.get("round", None)
 
-        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        vw_bridging_data = "SELECT * FROM vw_bridging_data WHERE id > 0"
         query_params = []
 
         if round_id:
             vw_bridging_data += " AND round_id = %s"
             query_params.append(round_id)
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = request.user.groups.filter(name="CLM_BRIDGING_ALL").exists()
         is_staff = request.user.is_staff
 
         if not clm_bridging_all and not is_staff and request.user.partner:
@@ -3503,7 +4360,9 @@ def bridging_export_data(request, **kwargs):
         elif not clm_bridging_all and not is_staff and not request.user.partner:
             vw_bridging_data += " AND id = 0 "
 
-        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
+        vw_bridging_data += (
+            " ORDER BY student_first_name, student_fathername, last_name "
+        )
 
         cursor.execute(vw_bridging_data, query_params)
         bridging_data = cursor.fetchall()
@@ -3518,32 +4377,36 @@ def bridging_export_data(request, **kwargs):
         csv_writer = csv.writer(csv_output)
 
         # Add BOM for Arabic text
-        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_output.write(codecs.BOM_UTF8.decode("utf-8"))
         csv_writer.writerow(headers)  # Write headers
 
         for row in bridging_data:
             encoded_row = []
             for cell in row:
                 if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                    encoded_row.append(
+                        cell.decode("utf-8") if isinstance(cell, bytes) else cell
+                    )
+                elif isinstance(
+                    cell, (datetime.date, datetime.datetime)
+                ):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime("%Y-%m-%d"))
                 else:  # Convert other data types to string
                     encoded_row.append(str(cell))
             csv_writer.writerow(encoded_row)
 
         unique_id = str(uuid.uuid4())
         file_name = "bridging_{}.csv".format(unique_id)
-        file_path = os.path.join('export', file_name)
+        file_path = os.path.join("export", file_name)
 
         # Save file
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        default_storage.save(
+            file_path, ContentFile(csv_output.getvalue().encode("utf-8"))
+        )
 
         # Store export history
         ExportHistory.objects.create(
-            export_type='Bridging List',
-            created_by=user,
-            partner_name=partner_name
+            export_type="Bridging List", created_by=user, partner_name=partner_name
         )
 
         return HttpResponse(file_name)
@@ -3554,19 +4417,19 @@ def bridging_export_data(request, **kwargs):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-@login_required(login_url='/users/login')
+@login_required(login_url="/users/login")
 def bridging_school_export(request, **kwargs):
     try:
         cursor = connection.cursor()
         user = request.user
-        partner_name = user.partner.name if user.partner else ''
+        partner_name = user.partner.name if user.partner else ""
 
-        school_id = int(kwargs.get('school_id'))
+        school_id = int(kwargs.get("school_id"))
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = request.user.groups.filter(name="CLM_BRIDGING_ALL").exists()
         is_staff = request.user.is_staff
 
-        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
+        vw_bridging_data = "SELECT * FROM vw_bridging_data WHERE id > 0"
         query_params = []
 
         if not clm_bridging_all and not is_staff and request.user.partner:
@@ -3581,7 +4444,9 @@ def bridging_school_export(request, **kwargs):
             vw_bridging_data += " AND school_id = %s"
             query_params.append(school_id)
 
-        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name"
+        vw_bridging_data += (
+            " ORDER BY student_first_name, student_fathername, last_name"
+        )
 
         cursor.execute(vw_bridging_data, query_params)
         bridging_data = cursor.fetchall()
@@ -3594,16 +4459,20 @@ def bridging_school_export(request, **kwargs):
         csv_output = io.StringIO()
         csv_writer = csv.writer(csv_output)
 
-        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+        csv_output.write(codecs.BOM_UTF8.decode("utf-8"))
         csv_writer.writerow(headers)
 
         for row in bridging_data:
             encoded_row = []
             for cell in row:
                 if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
+                    encoded_row.append(
+                        cell.decode("utf-8") if isinstance(cell, bytes) else cell
+                    )
+                elif isinstance(
+                    cell, (datetime.date, datetime.datetime)
+                ):  # Convert date/datetime objects to string
+                    encoded_row.append(cell.strftime("%Y-%m-%d"))
                 else:  # Convert other data types to string
                     encoded_row.append(str(cell))
                 # Local 2.7
@@ -3617,16 +4486,17 @@ def bridging_school_export(request, **kwargs):
 
         unique_id = str(uuid.uuid4())
         file_name = "bridging_school_{}.csv".format(unique_id)
-        file_path = os.path.join('export', file_name)
+        file_path = os.path.join("export", file_name)
 
-
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        default_storage.save(
+            file_path, ContentFile(csv_output.getvalue().encode("utf-8"))
+        )
 
         # Store export history
         ExportHistory.objects.create(
-            export_type='School List - Bridging',
+            export_type="School List - Bridging",
             created_by=user,
-            partner_name=partner_name
+            partner_name=partner_name,
         )
 
         return HttpResponse(file_name)
@@ -3637,26 +4507,23 @@ def bridging_school_export(request, **kwargs):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-class BridgingPage(LoginRequiredMixin,
-                   TemplateView):
-        template_name = 'clm/bridging.html'
+class BridgingPage(LoginRequiredMixin, TemplateView):
+    template_name = "clm/bridging.html"
 
 
-class BridgingAttendanceReport(LoginRequiredMixin,
-                   TemplateView):
+class BridgingAttendanceReport(LoginRequiredMixin, TemplateView):
 
-    template_name = 'clm/bridging_attendance_report.html'
+    template_name = "clm/bridging_attendance_report.html"
     rounds = CLMRound.objects.filter(current_year=True).all()
 
     def get_context_data(self, **kwargs):
         context = super(BridgingAttendanceReport, self).get_context_data(**kwargs)
-        context['rounds'] = CLMRound.objects.filter(current_year=True).all()
+        context["rounds"] = CLMRound.objects.filter(current_year=True).all()
         return context
 
 
-class DashboardView(LoginRequiredMixin,
-                    TemplateView):
-    template_name = 'clm/dashboard.html'
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = "clm/dashboard.html"
 
     def get_context_data(self, **kwargs):
 

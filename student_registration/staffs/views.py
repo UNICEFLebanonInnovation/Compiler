@@ -1,27 +1,27 @@
-from django.views.generic import CreateView, UpdateView, ListView
-from django.shortcuts import render, get_object_or_404, redirect
-from student_registration.staffs.forms import StaffForm
-from django.utils.translation import gettext as _
-from student_registration.staffs.models import Staffs
 from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.context_processors import csrf
-from django.views.generic import ListView, FormView, TemplateView, UpdateView
 from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.views.generic import CreateView, FormView, ListView, TemplateView, UpdateView
+
+from student_registration.staffs.forms import StaffForm
+from student_registration.staffs.models import Staffs
 from student_registration.users.utils import force_default_language
 
 
 class CreateStaffView(CreateView):
-    template_name = 'staffs/staff_form.html'
+    template_name = "staffs/staff_form.html"
     form_class = StaffForm()
     queryset = Staffs.objects.all()
 
     def get(self, request, *args, **kwargs):
         the_form = StaffForm()
         context = {
-            'title': _('STAFF FORM'),
-            'form': the_form,
+            "title": _("STAFF FORM"),
+            "form": the_form,
         }
-        return render(request, 'staffs/staff_form.html', context)
+        return render(request, "staffs/staff_form.html", context)
 
     def post(self, request, *args, **kwargs):
         form = StaffForm(request.POST, request.FILES)
@@ -30,50 +30,50 @@ class CreateStaffView(CreateView):
                 staff = form.save()
                 staff.owner = request.user
                 staff.save()
-                return HttpResponseRedirect('/staffs/add/')
+                return HttpResponseRedirect("/staffs/add/")
             else:
-                return render(request, 'staffs/staff_form.html', {'form': form})
+                return render(request, "staffs/staff_form.html", {"form": form})
         else:
             form = StaffForm()
 
             args = {}
             args.update(csrf(request))
 
-            args['form'] = form
-            return render(request, 'staffs/staff_form.html', args)
+            args["form"] = form
+            return render(request, "staffs/staff_form.html", args)
 
 
 class EditStaffView(UpdateView, FormView):
     model = Staffs
     form_class = StaffForm()
 
-    template_name = 'staffs/staff_form.html'
-    success_url = '/staffs/stafflist/'
-    context_object_name = 'staff'
+    template_name = "staffs/staff_form.html"
+    success_url = "/staffs/stafflist/"
+    context_object_name = "staff"
 
     def get_context_data(self, **kwargs):
-
         """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+        if "form" not in kwargs:
+            kwargs["form"] = self.get_form()
         return super(EditStaffView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Staffs.objects.get(id=self.kwargs['pk'])
+        instance = Staffs.objects.get(id=self.kwargs["pk"])
         if self.request.method == "POST":
             return StaffForm(self.request.POST, instance=instance)
         else:
             return StaffForm(instance=instance)
 
     def form_valid(self, form):
-        instance = Staffs.objects.get(id=self.kwargs['pk'])
-        if self.request.FILES and self.request.FILES['image']:
-            form.instance.image = self.request.FILES['image']
+        instance = Staffs.objects.get(id=self.kwargs["pk"])
+        if self.request.FILES and self.request.FILES["image"]:
+            form.instance.image = self.request.FILES["image"]
             form.instance.save()
         form.save()
         return super(EditStaffView, self).form_valid(form)
 
-'''class EditStaffView(UpdateView):
+
+"""class EditStaffView(UpdateView):
     model = Staffs
     fields = (
         'first_name',
@@ -86,13 +86,13 @@ class EditStaffView(UpdateView, FormView):
     template_name = 'staffs/staff_update_form.html'
     success_url = '/staffs/stafflist/'
     context_object_name = 'staff'
-'''
+"""
 
 
 class ListStaffView(ListView):
     model = Staffs
-    template_name = 'staffs/stafflist.html'
-    context_object_name = 'staff_list'
+    template_name = "staffs/stafflist.html"
+    context_object_name = "staff_list"
 
     def get_queryset(self):
         return Staffs.objects.all()
