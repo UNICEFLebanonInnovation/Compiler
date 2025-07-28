@@ -53,6 +53,18 @@ Running tests with py.test
 
   $ py.test
 
+Code style
+~~~~~~~~~~
+
+PEP8 compliance is checked using ``flake8``. You can install the pre-commit
+hooks with::
+
+  $ pre-commit install
+
+To run the checks manually::
+
+  $ flake8
+
 Live reloading and Sass CSS compilation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

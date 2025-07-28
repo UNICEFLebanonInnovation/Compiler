@@ -13,4 +13,4 @@ pip install -r /code/requirements/test.txt
 #coverage html -d reports
 
 # Check code style
-#/venv/bin/flake8 .
+flake8 .
