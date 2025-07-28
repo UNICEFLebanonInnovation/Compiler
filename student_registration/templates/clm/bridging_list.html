@@ -141,9 +141,8 @@
 {% get_user_token request.user.id as user_token %}
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
-<!--    <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>-->
     <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}?v=12"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}?v=15"></script>
 
     <script>
         var user_token = '{{ user_token }}';
@@ -187,5 +186,38 @@
                 $('.download-report').removeClass('disabled');
             }
         }
+
+        $(document).ready(function() {
+            $(".delete-student").on("click", function(e) {
+
+                e.preventDefault();
+
+                var buttonId = $(this).attr("id");
+                var registrationId = $(this).data("registration-id");
+                var parentTR = $(this).closest('tr');
+
+                var confirmed = confirm("Are you sure you want to delete this student?");
+                requestHeaders = getHeader();
+                requestHeaders["content-type"] = 'application/json';
+
+                if (confirmed) {
+                    $.ajax({
+                        url: "/clm/bridging-delete/" + registrationId + "/",
+                        type: "GET",
+                        headers: requestHeaders,
+                        success: function(data) {
+                            console.log(parentTR.html());
+                            parentTR.remove();
+                        },
+                        error: function(error) {
+                            alert("Error occurred while deleting the student.");
+                        }
+                    });
+                } else {
+                    console.log("User canceled deleting for student with ID: " + registrationId);
+                }
+            });
+        });
+
     </script>
 {% endblock %}
