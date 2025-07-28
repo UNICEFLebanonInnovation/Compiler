@@ -88,6 +88,12 @@ The system is setup with reasonable defaults, including 404 logging and integrat
 
 You must set the DSN url in production.
 
+Security
+--------
+
+This project uses ``django-csp`` to enforce a Content Security Policy at the
+HTTP response level. Combined with Django's ``SecurityMiddleware`` and custom
+middlewares, this helps mitigate cross-site scripting and related attacks.
 
 Deployment
 ----------

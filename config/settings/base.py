@@ -87,6 +87,8 @@ THIRD_PARTY_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'six',
+# CSP protection
+    'csp',
 #     "social_django",
 #     'tellme',
 #     'reversion',
@@ -122,6 +124,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "csp.middleware.CSPMiddleware",
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     # "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -137,6 +140,12 @@ MIDDLEWARE = [
 ]
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+# Content Security Policy settings
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_IMG_SRC = ("'self'", 'data:')
 
 # # SECURITY CONFIGURATION
 # X_FRAME_OPTIONS = 'DENY'
