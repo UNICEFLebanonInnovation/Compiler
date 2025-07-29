@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
+from drf_spectacular.openapi import AutoSchema
 from braces.views import GroupRequiredMixin
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -81,6 +82,7 @@ class SchoolViewSet(mixins.ListModelMixin,
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    schema = AutoSchema()
 
 
 class ClassRoomViewSet(mixins.ListModelMixin,
@@ -90,6 +92,7 @@ class ClassRoomViewSet(mixins.ListModelMixin,
     queryset = ClassRoom.objects.all()
     serializer_class = ClassRoomSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    schema = AutoSchema()
 
 
 class SectionViewSet(mixins.ListModelMixin,
@@ -99,6 +102,7 @@ class SectionViewSet(mixins.ListModelMixin,
     queryset = Section.objects.all()
     serializer_class = SectionSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    schema = AutoSchema()
 
 
 class ProfileView(LoginRequiredMixin,
