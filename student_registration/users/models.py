@@ -57,13 +57,6 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
-    # youth_partner = models.ForeignKey(
-    #     'youth.Partner',
-    #     blank=True, null=True,
-    #     verbose_name=_('Youth Partner'),
-    #     related_name='+',
-    #     on_delete=models.SET_NULL
-    # )
 
     def __str__(self):
         return self.username
