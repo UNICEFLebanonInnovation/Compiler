@@ -234,7 +234,8 @@ class Absentee(TimeStampedModel):
     def __unicode__(self):
         return '{} - {}'.format(self.student, self.school)
 
-    def absence_type(self):
+    @property
+    def absence_type(self) -> str:
         if 10 > self.absent_days >= 5:
             return '5'
         if self.absent_days >= 10:
