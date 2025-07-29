@@ -1,5 +1,7 @@
 
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 from .models import Attendance, Absentee, CLMAttendanceStudent
 
 
@@ -124,6 +126,11 @@ class CLMAttendanceStudentSerializer(serializers.ModelSerializer):
 
 class AbsenteeSerializer(serializers.ModelSerializer):
     student_id = serializers.IntegerField(source='student.id', read_only=True)
+    absence_type = serializers.SerializerMethodField()
+
+    @extend_schema_field(OpenApiTypes.STR)
+    def get_absence_type(self, obj):
+        return obj.get_absence_type_display()
 
     class Meta:
         model = Absentee

@@ -56,7 +56,7 @@ from .serializers import (
     RS_FCSerializer,
     CBECE_FCSerializer,
     GeneralQuestionnaireSerializer,
-    OutreachSerializer,
+    ClmOutreachSerializer,
     BridgingSerializer,
 )
 
@@ -6888,7 +6888,7 @@ class OutreachForm(CommonForm):
                 self.add_error('labour_weekly_income', 'This field is required')
 
     def save(self, request=None, instance=None, serializer=None):
-        instance = super(OutreachForm, self).save(request=request, instance=instance, serializer=OutreachSerializer)
+        instance = super(OutreachForm, self).save(request=request, instance=instance, serializer=ClmOutreachSerializer)
         instance.save()
 
     class Meta:

@@ -18,7 +18,7 @@ from django_tables2.export.views import ExportMixin
 
 from .models import Outreach, ALPRound
 from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm, PreTestAllForm
-from .serializers import OutreachSerializer, GeneralSerializer, OutreachSmallSerializer, GradingSerializer
+from .serializers import AlpOutreachSerializer, GeneralSerializer, OutreachSmallSerializer, GradingSerializer
 from .tables import BootstrapTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
 from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter, PreTestAllFilter
 from student_registration.outreach.models import Child
@@ -40,7 +40,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
 
     model = Outreach
     queryset = Outreach.objects.all()
-    serializer_class = OutreachSerializer
+    serializer_class = AlpOutreachSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
@@ -141,7 +141,7 @@ class AddView(LoginRequiredMixin,
         }
         if self.request.GET.get('enrollment_id'):
             instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
-            data = OutreachSerializer(instance).data
+            data = AlpOutreachSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
             data['student_mother_nationality'] = data['student_mother_nationality_id']
             data['student_id_type'] = data['student_id_type_id']
@@ -187,7 +187,7 @@ class EditView(LoginRequiredMixin,
         if self.request.method == "POST":
             return RegistrationForm(self.request.POST, instance=instance)
         else:
-            data = OutreachSerializer(instance).data
+            data = AlpOutreachSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
             data['student_mother_nationality'] = data['student_mother_nationality_id']
             data['student_id_type'] = data['student_id_type_id']

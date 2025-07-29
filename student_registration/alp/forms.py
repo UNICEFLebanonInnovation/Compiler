@@ -11,7 +11,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from student_registration.enrollments.models import DuplicateStd
 from .models import Outreach, ALPRound
-from .serializers import OutreachSerializer, OutreachSmallSerializer
+from .serializers import AlpOutreachSerializer, OutreachSmallSerializer
 from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.students.models import (
     Person,
@@ -1177,7 +1177,7 @@ class RegistrationForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         if instance:
-            serializer = OutreachSerializer(instance, data=request.POST)
+            serializer = AlpOutreachSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
@@ -1186,7 +1186,7 @@ class RegistrationForm(forms.ModelForm):
             else:
                 messages.warning(request, serializer.errors)
         else:
-            serializer = OutreachSerializer(data=request.POST)
+            serializer = AlpOutreachSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.school = request.user.school

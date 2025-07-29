@@ -9,7 +9,7 @@ from student_registration.students.models import (
 )
 
 
-class OutreachSerializer(serializers.ModelSerializer):
+class AlpOutreachSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
     # student_id = serializers.IntegerField(source='student.id', read_only=True)

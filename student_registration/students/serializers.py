@@ -1,5 +1,7 @@
 
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 from .models import (
     Student,
     Teacher
@@ -7,22 +9,23 @@ from .models import (
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    from student_registration.alp.serializers import OutreachSerializer
+    from student_registration.alp.serializers import AlpOutreachSerializer
     from student_registration.enrollments.serializers import EnrollmentSerializer
 
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
     birthday = serializers.CharField(read_only=True)
+    age = serializers.SerializerMethodField()
     place_of_birth = serializers.CharField(required=False)
-    registration = OutreachSerializer(source='last_alp_registration', read_only=True)
+    registration = AlpOutreachSerializer(source='last_alp_registration', read_only=True)
     enrollment = EnrollmentSerializer(source='last_enrollment', read_only=True)
     have_children = serializers.CharField(required=False)
     p_code = serializers.CharField(required=False)
 
-    alp_registrations = OutreachSerializer(read_only=True, many=True)
+    alp_registrations = AlpOutreachSerializer(read_only=True, many=True)
     secondshift_registrations = EnrollmentSerializer(read_only=True, many=True)
 
-    current_alp_registration = OutreachSerializer(read_only=True, many=True)
+    current_alp_registration = AlpOutreachSerializer(read_only=True, many=True)
     current_secondshift_registration = EnrollmentSerializer(read_only=True, many=True)
 
     def create(self, validated_data):
@@ -35,6 +38,10 @@ class StudentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'Student instance': ex})
 
         return instance
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def get_age(self, obj):
+        return obj.age
 
     class Meta:
         model = Student

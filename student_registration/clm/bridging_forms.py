@@ -56,7 +56,7 @@ from .serializers import (
     RS_FCSerializer,
     CBECE_FCSerializer,
     GeneralQuestionnaireSerializer,
-    OutreachSerializer,
+    ClmOutreachSerializer,
     BridgingSerializer,
 )
 

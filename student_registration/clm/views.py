@@ -124,7 +124,7 @@ from .serializers import (
     CBECE_FCSerializer,
     RS_FCSerializer,
     GeneralQuestionnaireSerializer,
-    OutreachSerializer,
+    ClmOutreachSerializer,
     BridgingSerializer
 )
 from .utils import is_allowed_create, is_allowed_edit, bln_build_xls_extraction, abln_build_xls_extraction, \
@@ -2727,7 +2727,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
                       viewsets.GenericViewSet):
     model = Outreach
     queryset = Outreach.objects.all()
-    serializer_class = OutreachSerializer
+    serializer_class = ClmOutreachSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
@@ -3171,7 +3171,7 @@ class OutreachAddView(LoginRequiredMixin,
         }
         if self.request.GET.get('enrollment_id'):
             instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
-            data = OutreachSerializer(instance).data
+            data = ClmOutreachSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
             data['learning_result'] = ''
 
@@ -3226,7 +3226,7 @@ class OutreachEditView(LoginRequiredMixin,
         if self.request.method == "POST":
             return OutreachForm(self.request.POST, instance=instance, request=self.request)
         else:
-            data = OutreachSerializer(instance).data
+            data = ClmOutreachSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
             return OutreachForm(data, instance=instance, request=self.request)
 

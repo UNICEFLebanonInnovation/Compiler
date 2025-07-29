@@ -24,7 +24,7 @@ from .filters import EnrollmentFilter, EnrollmentOldDataFilter, EnrollmentByRegi
 from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable, EnrollmentBySchoolTable
 from django.shortcuts import redirect
 from student_registration.alp.models import Outreach
-from student_registration.alp.serializers import OutreachSerializer
+from student_registration.alp.serializers import AlpOutreachSerializer
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import ClassRoom, School
@@ -88,7 +88,7 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             if self.request.GET.get('school_type', None) == 'alp':
                 instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
-                data = OutreachSerializer(instance).data
+                data = AlpOutreachSerializer(instance).data
 
                 data['classroom'] = ''
                 data['participated_in_alp'] = 'yes'

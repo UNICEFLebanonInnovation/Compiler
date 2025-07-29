@@ -771,7 +771,7 @@ class CBECESerializer(CLMSerializer):
         )
 
 
-class OutreachSerializer(CLMSerializer):
+class ClmOutreachSerializer(CLMSerializer):
 
     def create(self, validated_data):
         return create_instance(validated_data=validated_data, model=self.Meta.model)
