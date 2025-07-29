@@ -16,69 +16,119 @@ function showError(selector, message) {
     errorEl.text(message);
 }
 
-function validateMainForm(showModal) {
-    if (showModal === undefined) showModal = true;
+function validateMainForm(step) {
     var valid = true;
-    var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
-    var regexMap = {
-        '#id_first_phone_number': phoneRegex,
-        '#id_first_phone_number_confirm': phoneRegex,
-        '#id_second_phone_number': phoneRegex,
-        '#id_second_phone_number_confirm': phoneRegex,
-        '#id_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
-        '#id_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
-        '#id_parent_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
-        '#id_parent_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
-        '#id_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
-        '#id_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{8})$/,
-        '#id_recorded_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
-        '#id_recorded_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
-        '#id_national_number': /^\d{12}$/,
-        '#id_national_number_confirm': /^\d{12}$/,
-        '#id_syrian_national_number': /^\d{11}$/,
-        '#id_syrian_national_number_confirm': /^\d{11}$/,
-        '#id_parent_national_number': /^\d{12}$/,
-        '#id_parent_national_number_confirm': /^\d{12}$/,
-        '#id_parent_syrian_national_number': /^\d{11}$/,
-        '#id_parent_syrian_national_number_confirm': /^\d{11}$/
-    };
-
-    var requiredFields = [
-        '#id_child_first_name',
-        '#id_child_father_name',
-        '#id_child_last_name',
-        '#id_child_mother_fullname',
-        '#id_child_gender',
-        '#id_child_nationality',
-        '#id_child_disability',
-        '#id_child_marital_status',
-        '#id_child_have_children',
-        '#id_child_have_sibling',
-        '#id_child_mother_pregnant_expecting',
-        '#id_source_of_identification'
-    ];
-
-    var minValueMap = {
-        '#id_child_children_number': 0,
-        '#id_children_number_under18': 0,
-        '#id_labour_hours': 0
-    };
-
-    var maxLengthMap = {
-        '#id_child_children_number': 4,
-        '#id_children_number_under18': 4,
-        '#id_labour_hours': 4
-    };
     clearErrors();
 
-    requiredFields.forEach(function(selector) {
-        var field = $(selector);
-        if (!field.is(':visible')) return;
-        if (!field.val()) {
-            showError(selector, 'This field is required');
+    if (step == 1) {
+        // Step 1 validation
+        var required_step1 = ['#id_child_first_name', '#id_child_father_name', '#id_child_last_name', '#id_child_mother_fullname', '#id_child_gender', '#id_child_nationality', '#id_child_disability', '#id_child_marital_status', '#id_child_have_children', '#id_child_have_sibling', '#id_child_mother_pregnant_expecting', '#id_source_of_identification'];
+        required_step1.forEach(function(field) {
+            if (!$(field).val()) {
+                showError(field, 'This field is required.');
+                valid = false;
+            }
+        });
+
+        if ($('#id_child_nationality').val() == 6 && !$('#id_child_nationality_other').val()) {
+            showError('#id_child_nationality_other', 'This field is required.');
             valid = false;
         }
-    });
+
+        if ($('#id_child_have_children').val() === 'Yes' && !$('#id_child_children_number').val()) {
+            showError('#id_child_children_number', 'This field is required.');
+            valid = false;
+        }
+
+        if ($('#id_child_have_sibling').val() === 'Yes' && !$('#id_child_siblings_have_disability').val()) {
+            showError('#id_child_siblings_have_disability', 'This field is required.');
+            valid = false;
+        }
+
+        if ($('#id_source_of_identification').val() === 'Other Sources' && !$('#id_source_of_identification_specify').val()) {
+            showError('#id_source_of_identification_specify', 'This field is required.');
+            valid = false;
+        }
+
+    } else if (step == 2) {
+        // Step 2 validation
+        if ($('#id_type').val() == 'Core-Package') {
+            var required_step2 = ['#id_father_educational_level', '#id_mother_educational_level', '#id_first_phone_owner', '#id_main_caregiver', '#id_children_number_under18', '#id_caregiver_first_name', '#id_caregiver_middle_name', '#id_caregiver_last_name', '#id_caregiver_mother_name'];
+            required_step2.forEach(function(field) {
+                if (!$(field).val()) {
+                    showError(field, 'This field is required.');
+                    valid = false;
+                }
+            });
+
+            if ($('#id_first_phone_number').val() !== $('#id_first_phone_number_confirm').val()) {
+                showError('#id_first_phone_number_confirm', 'The phone numbers do not match.');
+                valid = false;
+            }
+
+            if ($('#id_second_phone_number').val() !== $('#id_second_phone_number_confirm').val()) {
+                showError('#id_second_phone_number_confirm', 'The phone numbers do not match.');
+                valid = false;
+            }
+
+            if ($('#id_main_caregiver').val() === 'Other' && !$('#id_main_caregiver_other').val()) {
+                showError('#id_main_caregiver_other', 'This field is required.');
+                valid = false;
+            }
+
+            var id_type = $('#id_id_type').val();
+            if (id_type == 1) {
+                if (!$('#id_case_number').val()) {
+                    showError('#id_case_number', 'This field is required.');
+                    valid = false;
+                }
+                if ($('#id_case_number').val() !== $('#id_case_number_confirm').val()) {
+                    showError('#id_case_number_confirm', 'The case numbers do not match.');
+                    valid = false;
+                }
+            } else if (id_type == 2) {
+                if (!$('#id_recorded_number').val()) {
+                    showError('#id_recorded_number', 'This field is required.');
+                    valid = false;
+                }
+                if ($('#id_recorded_number').val() !== $('#id_recorded_number_confirm').val()) {
+                    showError('#id_recorded_number_confirm', 'The recorded numbers do not match.');
+                    valid = false;
+                }
+            }
+        }
+    } else if (step == 3) {
+        // Step 3 validation
+        if ($('#id_type').val() == 'Core-Package') {
+            if (!$('#id_have_labour').val()) {
+                showError('#id_have_labour', 'This field is required.');
+                valid = false;
+            }
+
+            if ($('#id_have_labour').val() !== 'No') {
+                if (!$('#id_labour_type').val()) {
+                    showError('#id_labour_type', 'This field is required.');
+                    valid = false;
+                }
+                if ($('#id_labour_type').val() === 'Other services' && !$('#id_labour_type_specify').val()) {
+                    showError('#id_labour_type_specify', 'This field is required.');
+                    valid = false;
+                }
+                if (!$('#id_labour_hours').val()) {
+                    showError('#id_labour_hours', 'This field is required.');
+                    valid = false;
+                }
+                if (!$('#id_labour_weekly_income').val()) {
+                    showError('#id_labour_weekly_income', 'This field is required.');
+                    valid = false;
+                }
+                if (!$('#id_labour_condition').val()) {
+                    showError('#id_labour_condition', 'This field is required.');
+                    valid = false;
+                }
+            }
+        }
+    }
 
     // Date validation
     var year = parseInt($('#id_child_birthday_year').val()) || 0;

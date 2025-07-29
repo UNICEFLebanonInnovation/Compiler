@@ -946,3 +946,9 @@ def is_valid_filename_csv(filename):
     """Ensure the filename is a valid CSV file with expected format."""
     pattern = r'^[a-zA-Z0-9-_]+\.csv$'
     return re.match(pattern, filename) is not None
+
+
+@login_required
+def get_form_step(request, step):
+    form = MainForm(step=step)
+    return render(request, 'mscc/form_step.html', {'form': form})

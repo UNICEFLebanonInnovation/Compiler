@@ -73,7 +73,7 @@ class MainForm(forms.ModelForm):
     )
     child_nationality = forms.ModelChoiceField(
         label=_("Child\'s Nationality"),
-        queryset=Nationality.objects.all(), widget=forms.Select,
+        queryset=Nationality.objects.select_related().all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     child_nationality_other = forms.CharField(
@@ -96,7 +96,7 @@ class MainForm(forms.ModelForm):
         choices=DAYS
     )
     main_caregiver_nationality = forms.ModelChoiceField(
-        queryset=Nationality.objects.all(), widget=forms.Select,
+        queryset=Nationality.objects.select_related().all(), widget=forms.Select,
         label=_('Caregiver Nationality'),
         required=False, to_field_name='id',
     )
@@ -120,7 +120,7 @@ class MainForm(forms.ModelForm):
     )
     child_disability = forms.ModelChoiceField(
         label=_("Does the child have any disability or special need?"),
-        queryset=Disability.objects.all(), widget=forms.Select,
+        queryset=Disability.objects.select_related().all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     child_marital_status = forms.ChoiceField(
@@ -187,12 +187,12 @@ class MainForm(forms.ModelForm):
     #     required=False
     # )
     father_educational_level = forms.ModelChoiceField(
-        queryset=EducationalLevel.objects.all(), widget=forms.Select,
+        queryset=EducationalLevel.objects.select_related().all(), widget=forms.Select,
         label=_('What is the father\'s educational level?'),
         required=False, to_field_name='id',
     )
     mother_educational_level = forms.ModelChoiceField(
-        queryset=EducationalLevel.objects.all(), widget=forms.Select,
+        queryset=EducationalLevel.objects.select_related().all(), widget=forms.Select,
         label=_('What is the mother\'s educational level?'),
         required=False, to_field_name='id',
     )
@@ -302,7 +302,7 @@ class MainForm(forms.ModelForm):
         required=False
     )
     id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.filter(active =True),
+        queryset=IDType.objects.select_related().filter(active =True),
         widget=forms.Select,
         label=_('ID type of the caregiver'),
         required=False, to_field_name='id'
@@ -456,10 +456,11 @@ class MainForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        step = kwargs.pop('step', None)
         super(MainForm, self).__init__(*args, **kwargs)
 
         display_registry = ''
-        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        instance = kwargs.get('instance', '')
         form_action = reverse('mscc:child_add')
         if instance:
             display_registry = ' d-none'
@@ -468,6 +469,220 @@ class MainForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
+
+        fieldsets = [
+            Fieldset(
+                _('Child Information'),
+                Div(
+                    Div('child_first_name', css_class='col-md-3'),
+                    Div('child_father_name', css_class='col-md-3'),
+                    Div('child_last_name', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_birthday_year', css_class='col-md-3'),
+                    Div('child_birthday_month', css_class='col-md-3'),
+                    Div('child_birthday_day', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_gender', css_class='col-md-3'),
+                    Div('child_mother_fullname', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_nationality', css_class='col-md-3'),
+                    Div('child_nationality_other', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_p_code', css_class='col-md-5'),
+                    Div('child_address', css_class='col-md-6'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_living_arrangement', css_class='col-md-4'),
+                    Div('child_disability', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_marital_status', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_have_children', css_class='col-md-4'),
+                    Div('child_children_number', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_have_sibling', css_class='col-md-4'),
+                    Div('child_siblings_have_disability', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_mother_pregnant_expecting', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('partner_unique_number', css_class='col-md-7'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('source_of_identification', css_class='col-md-7'),
+                    Div('source_of_identification_specify', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('cash_support_programmes', css_class='col-md-9'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('child_fe_unique_id', css_class='col-md-4'),
+                    css_class='row d-none',
+                    css_id='child_fe_unique_id_block'
+                )
+            ),
+            Fieldset(
+                _('Parent/Caregiver Information'),
+                Div(
+                    Div('father_educational_level', css_class='col-md-5'),
+                    Div('mother_educational_level', css_class='col-md-6'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('first_phone_number', css_class='col-md-3'),
+                    Div('first_phone_number_confirm', css_class='col-md-4'),
+                    Div('first_phone_owner', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('second_phone_number', css_class='col-md-3'),
+                    Div('second_phone_number_confirm', css_class='col-md-4'),
+                    Div('second_phone_owner', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('children_number_under18', css_class='col-md-5'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('main_caregiver', css_class='col-md-5'),
+                    Div('main_caregiver_other', css_class='col-md-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('caregiver_first_name', css_class='col-md-3'),
+                    Div('caregiver_middle_name', css_class='col-md-3'),
+                    Div('caregiver_last_name', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('caregiver_mother_name', css_class='col-md-3'),
+                    Div('main_caregiver_nationality', css_class='col-md-3'),
+                    Div('main_caregiver_nationality_other', css_class='col-md-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('id_type', css_class='col-md-6'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('case_number', css_class='col-md-5'),
+                    Div('case_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id1'
+                ),
+                Div(
+                    Div('parent_individual_case_number', css_class='col-md-5'),
+                    Div('parent_individual_case_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id1'
+                ),
+                Div(
+                    Div('individual_case_number', css_class='col-md-5'),
+                    Div('individual_case_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id1'
+                ),
+                Div(
+                    Div('recorded_number', css_class='col-md-5'),
+                    Div('recorded_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id2'
+                ),
+                Div(
+                    Div('parent_national_number', css_class='col-md-5'),
+                    Div('parent_national_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id3'
+                ),
+                Div(
+                    Div('national_number', css_class='col-md-5'),
+                    Div('national_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id3'
+                ),
+                Div(
+                    Div('parent_syrian_national_number', css_class='col-md-5'),
+                    Div('parent_syrian_national_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id4'
+                ),
+                Div(
+                    Div('syrian_national_number', css_class='col-md-5'),
+                    Div('syrian_national_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id4'
+                ),
+                Div(
+                    Div('parent_sop_national_number', css_class='col-md-5'),
+                    Div('parent_sop_national_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id5'
+                ),
+                Div(
+                    Div('sop_national_number', css_class='col-md-5'),
+                    Div('sop_national_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id5'
+                ),
+                Div(
+                    Div('parent_other_number', css_class='col-md-5'),
+                    Div('parent_other_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id6'
+                ),
+                Div(
+                    Div('other_number', css_class='col-md-5'),
+                    Div('other_number_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id6'
+                ),
+                Div(
+                    Div('parent_extract_record', css_class='col-md-5'),
+                    Div('parent_extract_record_confirm', css_class='col-md-6'),
+                    css_class='row child_id child_id7'
+                )
+            ),
+            Fieldset(
+                _('Work Status'),
+                Div(
+                    Div('have_labour', css_class='col-md-5'),
+                    Div('labour_type', css_class='col-md-6'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('labour_type_specify', css_class='col-md-11'),
+                    css_class='row',
+                    css_id='labour_details_1'
+                ),
+                Div(
+                    Div('labour_hours', css_class='col-md-5'),
+                    Div('labour_weekly_income', css_class='col-md-6'),
+                    css_class='row',
+                    css_id='labour_details_2'
+                ),
+                Div(
+                    Div('labour_condition', css_class='col-md-7'),
+                    css_class='row',
+                    css_id='labour_details_3'
+                )
+            )
+        ]
+
+        if step:
+            self.helper.layout = Layout(fieldsets[int(step) - 1])
+        else:
+            self.helper.layout = Layout(*fieldsets)
+            self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean(self):
         cleaned_data = super(MainForm, self).clean()

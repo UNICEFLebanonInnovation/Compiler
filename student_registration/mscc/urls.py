@@ -355,4 +355,5 @@ urlpatterns = [
         view=services_view.LegoServiceFormView.as_view(),
         name='service_lego_edit'
     ),
+    re_path(r'^get-form-step/(?P<step>[\w.@+-]+)/$', views.get_form_step, name='get_form_step'),
 ]

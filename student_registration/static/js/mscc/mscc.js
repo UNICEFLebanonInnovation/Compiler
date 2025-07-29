@@ -2,7 +2,44 @@
 var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, " +
     " #id_caregiver_mother_name, #id_caregiver_last_name, #id_caregiver_middle_name, #id_caregiver_first_name";
 
+function loadStep(step) {
+    $('#search_loader').removeClass('hidden');
+    $.ajax({
+        url: '/MSCC/get-form-step/' + step + '/',
+        dataType: "html",
+        cache: false,
+        async: true,
+        success: function (response) {
+            $('#form-wizard-content').html(response);
+            $('#search_loader').addClass('hidden');
+            reorganizeForm();
+        },
+        error: function (response) {
+            console.log(response);
+            $('#search_loader').addClass('hidden');
+        }
+    });
+}
+
 $(document).ready(function() {
+    var currentStep = 1;
+    loadStep(currentStep);
+
+    $('#next-btn22').click(function() {
+        if (validateMainForm(currentStep)) {
+            if (currentStep < 3) {
+                currentStep++;
+                loadStep(currentStep);
+            }
+        }
+    });
+
+    $('#prev-btn22').click(function() {
+        if (currentStep > 1) {
+            currentStep--;
+            loadStep(currentStep);
+        }
+    });
 
 
     $('.show-progarmme-details').click(function(e){
