@@ -338,7 +338,7 @@ class Person(TimeStampedModel):
         )
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         return u'{} {} {}'.format(
             self.first_name,
             self.father_name,
@@ -375,7 +375,7 @@ class Person(TimeStampedModel):
         )
 
     @property
-    def age(self):
+    def age(self) -> int:
         return Person.get_age(self.birthday_year,self.birthday_month,self.birthday_day)
 
     @staticmethod

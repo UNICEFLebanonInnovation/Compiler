@@ -781,6 +781,7 @@ class OutreachSerializer(CLMSerializer):
 
     class Meta:
         model = Outreach
+        ref_name = 'CLMOutreach'
         fields = CLMSerializer.Meta.fields + (
             'have_labour',
             'labours',
