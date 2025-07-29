@@ -127,28 +127,13 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
     )
 
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        ('Account', {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email',
+                                         'partner', 'phone_number', 'center', 'school',
+                                         'location', 'locations', 'schools', 'regions')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner',
-                           'center',
-                           'school',
-                           # 'location', 'locations', 'schools', 'regions'
-                           )})
-    )
-
-    add_fieldsets = (
-        (None, {'fields': ('username', 'password1', 'password2')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner', 'center',
-                           'school',
-                           # 'location', 'locations', 'schools', 'regions'
-                           )})
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')})
     )
 
     def user_category_display(self, obj):
