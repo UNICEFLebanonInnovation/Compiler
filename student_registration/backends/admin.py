@@ -376,6 +376,7 @@ class UserActivityAdmin(admin.ModelAdmin):
         'path',
         'method',
         'data',
+        'changed_data',
         'timestamp',
     )
     list_filter = (

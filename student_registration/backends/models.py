@@ -120,6 +120,7 @@ class UserActivity(models.Model):
     path = models.CharField(max_length=255)
     method = models.CharField(max_length=10)
     data = models.TextField(blank=True, null=True)
+    changed_data = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

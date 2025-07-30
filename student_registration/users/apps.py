@@ -10,4 +10,4 @@ class UsersConfig(AppConfig):
             Users system checks
             Users signal registration
         """
-        pass
+        import student_registration.user_activity_signals  # noqa: F401

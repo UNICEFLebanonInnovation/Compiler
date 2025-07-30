@@ -32,6 +32,7 @@ def test_logs_get_request_authenticated_user(db):
     assert kwargs["method"] == "GET"
     data = json.loads(kwargs["data"])
     assert data["q"] == ["1"]
+    assert kwargs["changed_data"] is None
 
 
 def test_logs_json_body(db):
@@ -46,4 +47,5 @@ def test_logs_json_body(db):
     create_mock.assert_called_once()
     data = json.loads(create_mock.call_args.kwargs["data"])
     assert data["foo"] == "bar"
+    assert create_mock.call_args.kwargs["changed_data"] is None
 

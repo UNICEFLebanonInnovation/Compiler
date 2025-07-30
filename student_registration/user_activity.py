@@ -1,10 +1,23 @@
 # middleware/user_activity.py
 import json
 import logging
+from threading import local
 
 from django.utils.deprecation import MiddlewareMixin
 
 from student_registration.backends.models import UserActivity
+
+_thread_locals = local()
+
+
+def set_current_user(user):
+    """Store the current authenticated user in thread local storage."""
+    _thread_locals.user = user
+
+
+def get_current_user():
+    """Return the user stored in thread local storage."""
+    return getattr(_thread_locals, "user", None)
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +42,7 @@ class UserActivityMiddleware(MiddlewareMixin):
         return request.GET.copy()
 
     def __call__(self, request):
+        set_current_user(request.user if request.user.is_authenticated else None)
         response = self.get_response(request)
         try:
             if request.user.is_authenticated and not request.path.startswith("/admin"):
@@ -52,8 +66,11 @@ class UserActivityMiddleware(MiddlewareMixin):
                     path=request.get_full_path(),
                     method=request.method,
                     data=serialized_data,
+                    changed_data=None,
                 )
         except Exception as e:  # pragma: no cover - logging should not break request
             logger.exception(e)
+        finally:
+            set_current_user(None)
 
         return response
