@@ -126,6 +126,18 @@ class UserActivity(models.Model):
         return "{} - {} {}".format(self.username, self.method, self.path)
 
 
+class HttpRequestLog(models.Model):
+    path = models.CharField(max_length=255)
+    method = models.CharField(max_length=10)
+    headers = models.TextField()
+    body = models.TextField()
+    status_code = models.IntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.method} {self.path} - {self.status_code} at {self.timestamp}"
+
+
 class AdolescentUpload(TimeStampedModel):
     file = models.FileField(upload_to='uploads/adolescent_imports')
     uploaded_by = models.ForeignKey(

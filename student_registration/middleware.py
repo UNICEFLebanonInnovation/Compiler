@@ -72,3 +72,55 @@ class AutoLogout:
 
     def process_response(self, request, response):
         return response
+
+
+import json
+import logging
+from django.utils.deprecation import MiddlewareMixin
+from student_registration.backends.models import HttpRequestLog
+
+logger = logging.getLogger(__name__)
+
+
+class HttpRequestMonitoringMiddleware(MiddlewareMixin):
+    """Middleware to log all incoming HTTP requests."""
+
+    def __init__(self, get_response=None):
+        self.get_response = get_response
+        super().__init__(get_response)
+
+    def _extract_data(self, request):
+        if request.method in {"POST", "PUT", "PATCH"}:
+            content_type = request.META.get("CONTENT_TYPE", "").lower()
+            if "application/json" in content_type:
+                try:
+                    body = request.body.decode(request.encoding or "utf-8")
+                    return json.loads(body)
+                except Exception:
+                    return {}
+            return request.POST.copy()
+        return request.GET.copy()
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        try:
+            data = self._extract_data(request)
+            if hasattr(data, "lists"):
+                data_dict = dict(data.lists())
+            else:
+                data_dict = data
+
+            # Extract headers
+            headers = {k: v for k, v in request.META.items() if k.startswith('HTTP_')}
+
+            HttpRequestLog.objects.create(
+                path=request.get_full_path(),
+                method=request.method,
+                headers=json.dumps(headers),
+                body=json.dumps(data_dict),
+                status_code=response.status_code,
+            )
+        except Exception as e:
+            logger.exception(e)
+
+        return response

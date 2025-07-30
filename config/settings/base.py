@@ -133,6 +133,7 @@ MIDDLEWARE = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "student_registration.user_activity.UserActivityMiddleware",
+    "student_registration.middleware.HttpRequestMonitoringMiddleware",
     # "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
