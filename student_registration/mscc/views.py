@@ -88,10 +88,6 @@ def chart_data(request):
     if partner:
         qs = qs.filter(partner_id=partner)
 
-    center = request.GET.get('center')
-    if center:
-        qs = qs.filter(center_id=center)
-
     governorate = request.GET.get('governorate')
     if governorate:
         qs = qs.filter(center__governorate_id=governorate)
@@ -103,10 +99,6 @@ def chart_data(request):
     cadaster = request.GET.get('cadaster')
     if cadaster:
         qs = qs.filter(center__cadaster_id=cadaster)
-
-    round_id = request.GET.get('round')
-    if round_id:
-        qs = qs.filter(round_id=round_id)
 
     programme_type = request.GET.get('programme_type')
     if programme_type:
