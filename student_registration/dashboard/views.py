@@ -1036,3 +1036,27 @@ class ChartBuilderView(LoginRequiredMixin, TemplateView):
 
     template_name = 'dashboard/chart_builder.html'
 
+    def get_context_data(self, **kwargs):
+        from student_registration.mscc.models import (
+            PACKAGE_TYPES,
+            Round,
+            EducationService,
+        )
+        from student_registration.schools.models import PartnerOrganization
+        from student_registration.locations.models import Center, Location
+
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "package_types": PACKAGE_TYPES,
+                "partners": PartnerOrganization.objects.all(),
+                "rounds": Round.objects.all(),
+                "centers": Center.objects.all(),
+                "governorates": Location.objects.filter(type_id=1),
+                "cazas": Location.objects.filter(type_id=2),
+                "cadasters": Location.objects.filter(type_id=3),
+                "programme_types": EducationService.EDUCATION_PROGRAM,
+            }
+        )
+        return context
+
