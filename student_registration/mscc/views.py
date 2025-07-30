@@ -137,6 +137,8 @@ class DashboardView(LoginRequiredMixin,
         return {}
 
 
+
+
 class DashboardCustomView(LoginRequiredMixin,
                     TemplateView):
     template_name = 'mscc/dashboard.html'
