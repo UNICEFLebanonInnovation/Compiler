@@ -1,6 +1,16 @@
 (function () {
     'use strict';
 
+    function loadMsccData() {
+        const source = document.getElementById('mscc-data-type').value;
+        fetch(`/mscc/chart-data/?chart=${source}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('chart-data').value = JSON.stringify(data, null, 2);
+                render();
+            });
+    }
+
     function render() {
         const type = document.getElementById('chart-type').value;
         let data;
@@ -104,6 +114,10 @@
             e.preventDefault();
             render();
         });
-        render();
+        const loadBtn = document.getElementById('load-mscc-data');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', loadMsccData);
+        }
+        loadMsccData();
     });
 })();

@@ -8,6 +8,7 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.db.models import Count, F
 from openpyxl import Workbook
 from django.db import connection
 import csv
@@ -71,6 +72,27 @@ from .utils import *
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import generate_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
+
+
+def chart_data(request):
+    """Return aggregated MSCC registration data for charts."""
+    metric = request.GET.get('chart', 'nationality')
+    qs = Registration.objects.filter(deleted=False)
+    if metric == 'gender':
+        data = (
+            qs.values(label=F('child__gender'))
+            .exclude(child__gender__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    else:
+        data = (
+            qs.values(label=F('child__nationality__name'))
+            .exclude(child__nationality__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    return JsonResponse(list(data), safe=False)
 
 
 class ProfileView(LoginRequiredMixin,
