@@ -412,16 +412,12 @@ REST_FRAMEWORK = {
     )
 }
 
-# SWAGGER_SETTINGS = {
-#     'is_authenticated': True,
-#     'is_superuser': True,
-# }
-
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Student Registration API',
-    'DESCRIPTION': 'API for the Student Registration project',
+    'TITLE': 'BMA API',
+    'DESCRIPTION': 'API for the BMA project',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False, # Usually True for Swagger UI/Redoc
+    'SERVE_INCLUDE_SCHEMA': False,  # Usually True for Swagger UI/Redoc
+    'POSTPROCESSING_HOOKS': [],
     # OTHER SETTINGS AS NEEDED
 }
 
