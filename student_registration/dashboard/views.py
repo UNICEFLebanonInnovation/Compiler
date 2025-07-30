@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.shortcuts import render
 from datetime import datetime
 from django.urls import reverse
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -41,6 +41,7 @@ from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
 from student_registration.backends.exporter import export_full_data
 import tablib
+from student_registration.mscc.models import Registration
 
 class ExporterView(LoginRequiredMixin,
                    GroupRequiredMixin,
@@ -1035,4 +1036,33 @@ class ChartBuilderView(LoginRequiredMixin, TemplateView):
     """Interactive page for end users to create D3 charts."""
 
     template_name = 'dashboard/chart_builder.html'
+
+
+class PivotDashboardView(LoginRequiredMixin, TemplateView):
+    """Display a PivotTable.js dashboard for MSCC registrations."""
+
+    template_name = 'dashboard/pivot_dashboard.html'
+
+
+def pivot_data(request):
+    """Return minimal MSCC registration data for the pivot table."""
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+
+    qs = (
+        Registration.objects.filter(deleted=False)
+        .select_related('child__nationality', 'center', 'round')
+    )
+    data = [
+        {
+            'center': reg.center.name if reg.center else '',
+            'gender': reg.child.gender if reg.child else '',
+            'nationality': reg.child.nationality.name if reg.child and reg.child.nationality else '',
+            'age': reg.child.age if reg.child else '',
+            'type': reg.type,
+            'round': reg.round.name if reg.round else '',
+        }
+        for reg in qs
+    ]
+    return JsonResponse(data, safe=False)
 
