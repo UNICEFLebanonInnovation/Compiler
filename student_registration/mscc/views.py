@@ -8,6 +8,8 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.db.models import Count, F
+from .utils import validate_date
 from openpyxl import Workbook
 from django.db import connection
 import csv
@@ -71,6 +73,68 @@ from .utils import *
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import generate_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
+
+
+def chart_data(request):
+    """Return aggregated MSCC registration data for charts."""
+    metric = request.GET.get('chart', 'nationality')
+    qs = Registration.objects.filter(deleted=False)
+
+    package_type = request.GET.get('package_type')
+    if package_type:
+        qs = qs.filter(type=package_type)
+
+    partner = request.GET.get('partner')
+    if partner:
+        qs = qs.filter(partner_id=partner)
+
+    center = request.GET.get('center')
+    if center:
+        qs = qs.filter(center_id=center)
+
+    governorate = request.GET.get('governorate')
+    if governorate:
+        qs = qs.filter(center__governorate_id=governorate)
+
+    caza = request.GET.get('caza')
+    if caza:
+        qs = qs.filter(center__caza_id=caza)
+
+    cadaster = request.GET.get('cadaster')
+    if cadaster:
+        qs = qs.filter(center__cadaster_id=cadaster)
+
+    round_id = request.GET.get('round')
+    if round_id:
+        qs = qs.filter(round_id=round_id)
+
+    programme_type = request.GET.get('programme_type')
+    if programme_type:
+        qs = qs.filter(education_service__education_program=programme_type)
+
+    start = validate_date(request.GET.get('start'))
+    if start:
+        qs = qs.filter(created__date__gte=start)
+
+    end = validate_date(request.GET.get('end'))
+    if end:
+        qs = qs.filter(created__date__lte=end)
+
+    if metric == 'gender':
+        data = (
+            qs.values(label=F('child__gender'))
+            .exclude(child__gender__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    else:
+        data = (
+            qs.values(label=F('child__nationality__name'))
+            .exclude(child__nationality__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    return JsonResponse(list(data), safe=False)
 
 
 class ProfileView(LoginRequiredMixin,
