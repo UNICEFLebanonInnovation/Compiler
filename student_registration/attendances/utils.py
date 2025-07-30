@@ -1,14 +1,4 @@
-import io
-import xlwt
-import csv
 import datetime
-
-from datetime import date
-from django.http import HttpResponse, FileResponse
-from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font, Color
-
-import copy
 
 
 def find_absentees(governorate=None, from_date=None, to_date=None):
@@ -30,7 +20,6 @@ def find_absentees(governorate=None, from_date=None, to_date=None):
 def find_attendances(governorate=None, student_id=None, from_date=None, to_date=None, filter_by_status=None):
     from student_registration.enrollments.models import Enrollment
     from student_registration.alp.models import Outreach, ALPRound
-    from student_registration.clm.models import Bridging
     from .models import Attendance
 
     alp_round = ''

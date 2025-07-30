@@ -24,6 +24,7 @@ from student_registration.schools.models import (
 from collections import OrderedDict
 from django.template.loader import render_to_string
 
+
 class AttendanceDtdAdminForm(forms.ModelForm):
     class Meta:
         model = AttendanceDt

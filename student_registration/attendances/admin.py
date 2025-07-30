@@ -35,6 +35,7 @@ from .models import (
 )
 from .forms import CLMAttendanceAdminForm
 
+
 class SchoolFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
