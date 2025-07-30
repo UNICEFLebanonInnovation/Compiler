@@ -244,9 +244,15 @@
                                     </div>
                                     {% endif %}
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'dashboard:chart-builder' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'dashboard:chart_builder' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Chart Builder
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'dashboard:pivot_dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Pivot Builder
                                         </a>
                                     </div>
                                     <!--<div class="col-sm-6 col-xl-4">-->
