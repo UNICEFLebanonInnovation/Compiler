@@ -355,4 +355,9 @@ urlpatterns = [
         view=services_view.LegoServiceFormView.as_view(),
         name='service_lego_edit'
     ),
+    re_path(
+        r'^chart-data/$',
+        view=views.chart_data,
+        name='chart_data'
+    ),
 ]

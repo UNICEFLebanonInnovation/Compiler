@@ -164,4 +164,9 @@ urlpatterns = [
         view=views.generate_evaluation,
         name='evaluation'
     ),
+    re_path(
+        r'^chart-builder/$',
+        view=views.ChartBuilderView.as_view(),
+        name='chart-builder'
+    ),
 ]
