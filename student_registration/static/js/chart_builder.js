@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    let tooltip;
+
     function loadMsccData() {
         const source = document.getElementById('mscc-data-type').value;
         fetch(`/mscc/chart-data/?chart=${source}`)
@@ -25,6 +27,19 @@
         const width = svg.node().clientWidth;
         const height = svg.node().clientHeight;
         svg.selectAll('*').remove();
+        d3.select('#legend').html('');
+
+        const color = d3
+            .scaleOrdinal(d3.schemeCategory10)
+            .domain(data.map((d) => d.label));
+
+        if (!tooltip) {
+            tooltip = d3
+                .select('body')
+                .append('div')
+                .attr('class', 'tooltip')
+                .style('opacity', 0);
+        }
 
         if (type === 'bar') {
             const x = d3.scaleBand().range([0, width]).padding(0.1);
@@ -48,7 +63,15 @@
                 .attr('y', d => y(d.value))
                 .attr('width', x.bandwidth())
                 .attr('height', d => height - y(d.value))
-                .attr('fill', '#428bca');
+                .attr('fill', d => color(d.label))
+                .on('mousemove', (event, d) => {
+                    tooltip
+                        .style('opacity', 1)
+                        .html(`${d.label}: ${d.value}`)
+                        .style('left', event.pageX + 10 + 'px')
+                        .style('top', event.pageY - 15 + 'px');
+                })
+                .on('mouseout', () => tooltip.style('opacity', 0));
         } else if (type === 'line') {
             const x = d3.scalePoint().range([0, width]);
             const y = d3.scaleLinear().range([height, 0]);
@@ -80,13 +103,19 @@
                 .attr('cx', d => x(d.label))
                 .attr('cy', d => y(d.value))
                 .attr('r', 4)
-                .attr('fill', '#428bca');
+                .attr('fill', d => color(d.label))
+                .on('mousemove', (event, d) => {
+                    tooltip
+                        .style('opacity', 1)
+                        .html(`${d.label}: ${d.value}`)
+                        .style('left', event.pageX + 10 + 'px')
+                        .style('top', event.pageY - 15 + 'px');
+                })
+                .on('mouseout', () => tooltip.style('opacity', 0));
         } else if (type === 'pie') {
             const radius = Math.min(width, height) / 2;
             const g = svg.append('g')
                 .attr('transform', `translate(${width / 2},${height / 2})`);
-
-            const color = d3.scaleOrdinal(d3.schemeCategory10);
 
             const pie = d3.pie().value(d => d.value);
             const path = d3.arc()
@@ -100,13 +129,38 @@
 
             arc.append('path')
                 .attr('d', path)
-                .attr('fill', d => color(d.data.label));
+                .attr('fill', d => color(d.data.label))
+                .on('mousemove', (event, d) => {
+                    tooltip
+                        .style('opacity', 1)
+                        .html(`${d.data.label}: ${d.data.value}`)
+                        .style('left', event.pageX + 10 + 'px')
+                        .style('top', event.pageY - 15 + 'px');
+                })
+                .on('mouseout', () => tooltip.style('opacity', 0));
 
             arc.append('text')
                 .attr('transform', d => `translate(${path.centroid(d)})`)
                 .attr('dy', '0.35em')
                 .text(d => d.data.label);
         }
+
+        const legend = d3.select('#legend');
+        const legendItem = legend
+            .selectAll('.legend-item')
+            .data(data)
+            .enter()
+            .append('div')
+            .attr('class', 'legend-item');
+
+        legendItem
+            .append('span')
+            .attr('class', 'legend-color')
+            .style('background-color', d => color(d.label));
+
+        legendItem
+            .append('span')
+            .text(d => d.label);
     }
 
     document.addEventListener('DOMContentLoaded', function () {

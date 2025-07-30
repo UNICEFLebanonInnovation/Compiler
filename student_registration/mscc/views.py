@@ -80,13 +80,29 @@ def chart_data(request):
     metric = request.GET.get('chart', 'nationality')
     qs = Registration.objects.filter(deleted=False)
 
-    center = request.GET.get('center')
-    if center:
-        qs = qs.filter(center_id=center)
+    package_type = request.GET.get('package_type')
+    if package_type:
+        qs = qs.filter(type=package_type)
 
-    round_id = request.GET.get('round')
-    if round_id:
-        qs = qs.filter(round_id=round_id)
+    partner = request.GET.get('partner')
+    if partner:
+        qs = qs.filter(partner_id=partner)
+
+    governorate = request.GET.get('governorate')
+    if governorate:
+        qs = qs.filter(center__governorate_id=governorate)
+
+    caza = request.GET.get('caza')
+    if caza:
+        qs = qs.filter(center__caza_id=caza)
+
+    cadaster = request.GET.get('cadaster')
+    if cadaster:
+        qs = qs.filter(center__cadaster_id=cadaster)
+
+    programme_type = request.GET.get('programme_type')
+    if programme_type:
+        qs = qs.filter(education_service__education_program=programme_type)
 
     start = validate_date(request.GET.get('start'))
     if start:
