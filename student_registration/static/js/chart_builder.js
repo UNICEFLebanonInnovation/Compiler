@@ -5,10 +5,33 @@
 
     function loadMsccData() {
         const source = document.getElementById('mscc-data-type').value;
-        fetch(`/mscc/chart-data/?chart=${source}`)
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('chart-data').value = JSON.stringify(data, null, 2);
+        const params = new URLSearchParams({ chart: source });
+        [
+            'package_type',
+            'partner',
+            'round',
+            'center',
+            'governorate',
+            'caza',
+            'cadaster',
+            'programme_type',
+            'start',
+            'end'
+        ].forEach((key) => {
+            const el = document.getElementById(`filter-${key}`);
+            if (el && el.value) {
+                params.append(key, el.value);
+            }
+        });
+
+        fetch(`/mscc/chart-data/?${params.toString()}`)
+            .then((r) => r.json())
+            .then((data) => {
+                document.getElementById('chart-data').value = JSON.stringify(
+                    data,
+                    null,
+                    2,
+                );
                 render();
             });
     }
