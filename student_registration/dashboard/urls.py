@@ -169,4 +169,14 @@ urlpatterns = [
         view=views.ChartBuilderView.as_view(),
         name='chart-builder'
     ),
+    re_path(
+        r'^pivot-dashboard/$',
+        view=views.PivotDashboardView.as_view(),
+        name='pivot_dashboard'
+    ),
+    re_path(
+        r'^pivot-data/$',
+        view=views.pivot_data,
+        name='pivot_data'
+    ),
 ]
