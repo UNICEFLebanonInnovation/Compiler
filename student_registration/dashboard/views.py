@@ -1029,3 +1029,10 @@ def generate_evaluation(request):
             )
     context = {}
     return render(request, "dashboard/exporter.html", context)
+
+
+class ChartBuilderView(LoginRequiredMixin, TemplateView):
+    """Interactive page for end users to create D3 charts."""
+
+    template_name = 'dashboard/chart_builder.html'
+
