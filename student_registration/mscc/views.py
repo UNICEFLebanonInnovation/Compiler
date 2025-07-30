@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, F
+from .utils import validate_date
 from openpyxl import Workbook
 from django.db import connection
 import csv
@@ -78,6 +79,23 @@ def chart_data(request):
     """Return aggregated MSCC registration data for charts."""
     metric = request.GET.get('chart', 'nationality')
     qs = Registration.objects.filter(deleted=False)
+
+    center = request.GET.get('center')
+    if center:
+        qs = qs.filter(center_id=center)
+
+    round_id = request.GET.get('round')
+    if round_id:
+        qs = qs.filter(round_id=round_id)
+
+    start = validate_date(request.GET.get('start'))
+    if start:
+        qs = qs.filter(created__date__gte=start)
+
+    end = validate_date(request.GET.get('end'))
+    if end:
+        qs = qs.filter(created__date__lte=end)
+
     if metric == 'gender':
         data = (
             qs.values(label=F('child__gender'))
