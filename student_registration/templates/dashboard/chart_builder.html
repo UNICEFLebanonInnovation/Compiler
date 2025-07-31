@@ -24,6 +24,39 @@
         margin-right: 4px;
         display: inline-block;
     }
+    .chart-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255,255,255,0.8);
+        padding: 5px 10px;
+        border-radius: 4px;
+        display: none;
+    }
+    .chart-wrapper {
+        position: relative;
+    }
+    .chart-wrapper.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #fff;
+        z-index: 1050;
+        padding: 20px;
+        overflow: auto;
+    }
+    .chart-wrapper.fullscreen svg {
+        height: 80vh;
+    }
+    body.no-scroll {
+        overflow: hidden;
+    }
+    #loading-indicator {
+        display: none;
+    }
     .tooltip {
         position: absolute;
         padding: 4px 8px;
@@ -44,8 +77,8 @@
         </div>
         <hr>
         <div class="row">
-            <div class="col-md-4">
-                <form id="chart-form">
+            <div class="col-md-12">
+                <form id="chart-form" class="mb-4">
                     <div class="form-group">
                         <label for="chart-type">{% trans "Chart Type" %}</label>
                         <select id="chart-type" class="form-control">
@@ -56,14 +89,19 @@
                     </div>
                     <div class="form-group">
                         <label for="mscc-data-type">{% trans "MSCC Data Source" %}</label>
-                        <select id="mscc-data-type" class="form-control">
+                        <select id="mscc-data-type" class="form-control mb-2">
                             <option value="nationality">{% trans "By Nationality" %}</option>
                             <option value="gender">{% trans "By Gender" %}</option>
+                            <option value="package_type">{% trans "By Package Type" %}</option>
+                            <option value="partner">{% trans "By Partner" %}</option>
+                            <option value="round">{% trans "By Round" %}</option>
+                            <option value="center">{% trans "By Center" %}</option>
+                            <option value="governorate">{% trans "By Governorate" %}</option>
+                            <option value="caza">{% trans "By Caza" %}</option>
+                            <option value="district">{% trans "By District" %}</option>
+                            <option value="programme_type">{% trans "By Programme Type" %}</option>
                         </select>
-                        <button type="button" id="load-mscc-data" class="btn btn-secondary mt-2">{% trans "Load MSCC Data" %}</button>
-                    </div>
-                    <div class="form-group">
-                        <label>{% trans "Filters" %}</label>
+                        <div id="mscc-filters">
                         <select id="filter-package_type" class="form-control mb-2">
                             <option value="">{% trans 'Package Type' %}</option>
                             {% for key, label in package_types %}
@@ -100,8 +138,8 @@
                             <option value="{{ cz.id }}">{{ cz.name }}</option>
                             {% endfor %}
                         </select>
-                        <select id="filter-cadaster" class="form-control mb-2">
-                            <option value="">{% trans 'Cadaster' %}</option>
+                        <select id="filter-district" class="form-control mb-2">
+                            <option value="">{% trans 'District' %}</option>
                             {% for cd in cadasters %}
                             <option value="{{ cd.id }}">{{ cd.name }}</option>
                             {% endfor %}
@@ -114,6 +152,8 @@
                         </select>
                         <input id="filter-start" type="date" class="form-control mb-2" placeholder="{% trans 'Start Date' %}">
                         <input id="filter-end" type="date" class="form-control mb-2" placeholder="{% trans 'End Date' %}">
+                        </div>
+                        <button type="button" id="load-mscc-data" class="btn btn-secondary mt-2">{% trans "Load MSCC Data" %}</button>
                     </div>
                     <div class="form-group">
                         <label for="chart-data">{% trans "Data (JSON)" %}</label>
@@ -126,11 +166,14 @@
                     <button type="submit" class="btn btn-primary">{% trans "Render" %}</button>
                 </form>
             </div>
-            <div class="col-md-8">
+        </div>
+        <div class="row">
+            <div class="col-md-12">
                 <div class="mb-3">
                     <button id="add-chart" type="button" class="btn btn-primary mr-2">{% trans "Add Chart" %}</button>
                     <button id="save-dashboard" type="button" class="btn btn-secondary">{% trans "Save Dashboard" %}</button>
                 </div>
+                <div id="loading-indicator">{% trans "Loading..." %}</div>
                 <div id="charts-container"></div>
             </div>
         </div>

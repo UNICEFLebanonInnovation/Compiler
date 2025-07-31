@@ -26,7 +26,8 @@ from student_registration.mscc.models import (
     PACKAGE_TYPES,
     Round,
     EducationService,
-    Registration
+    Registration,
+    EducationProgrammeAssessment,
 )
 from student_registration.schools.models import PartnerOrganization
 from student_registration.locations.models import Center, Location
@@ -67,18 +68,34 @@ def pivot_data(request):
 
     qs = (
         Registration.objects.filter(deleted=False)
-        .select_related('child__nationality', 'center', 'round')
+        .select_related(
+            'child__nationality',
+            'center__partner',
+            'center__governorate',
+            'center__caza',
+            'center__cadaster',
+            'center',
+            'round',
+        )
     )
-    data = [
-        {
+
+    data = []
+    for reg in qs:
+        programme_type = EducationProgrammeAssessment.objects.filter(
+            registration=reg
+        ).order_by('-id').values_list('programme_type', flat=True).first() or ''
+        data.append({
             'center': reg.center.name if reg.center else '',
+            'partner': reg.center.partner.name if reg.center and reg.center.partner else '',
+            'governorate': reg.center.governorate.name if reg.center and reg.center.governorate else '',
+            'caza': reg.center.caza.name if reg.center and reg.center.caza else '',
+            'district': reg.center.cadaster.name if reg.center and reg.center.cadaster else '',
             'gender': reg.child.gender if reg.child else '',
             'nationality': reg.child.nationality.name if reg.child and reg.child.nationality else '',
-            'age': reg.child.age if reg.child else '',
-            'type': reg.type,
+            'package_type': reg.type,
             'round': reg.round.name if reg.round else '',
-        }
-        for reg in qs
-    ]
+            'programme_type': programme_type,
+        })
+
     return JsonResponse(data, safe=False)
 
