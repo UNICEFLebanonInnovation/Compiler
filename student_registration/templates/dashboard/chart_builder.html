@@ -75,6 +75,14 @@
                         <select id="mscc-data-type" class="form-control mb-2">
                             <option value="nationality">{% trans "By Nationality" %}</option>
                             <option value="gender">{% trans "By Gender" %}</option>
+                            <option value="package_type">{% trans "By Package Type" %}</option>
+                            <option value="partner">{% trans "By Partner" %}</option>
+                            <option value="round">{% trans "By Round" %}</option>
+                            <option value="center">{% trans "By Center" %}</option>
+                            <option value="governorate">{% trans "By Governorate" %}</option>
+                            <option value="caza">{% trans "By Caza" %}</option>
+                            <option value="district">{% trans "By District" %}</option>
+                            <option value="programme_type">{% trans "By Programme Type" %}</option>
                         </select>
                         <div id="mscc-filters">
                         <select id="filter-package_type" class="form-control mb-2">
@@ -113,8 +121,8 @@
                             <option value="{{ cz.id }}">{{ cz.name }}</option>
                             {% endfor %}
                         </select>
-                        <select id="filter-cadaster" class="form-control mb-2">
-                            <option value="">{% trans 'Cadaster' %}</option>
+                        <select id="filter-district" class="form-control mb-2">
+                            <option value="">{% trans 'District' %}</option>
                             {% for cd in cadasters %}
                             <option value="{{ cd.id }}">{{ cd.name }}</option>
                             {% endfor %}
