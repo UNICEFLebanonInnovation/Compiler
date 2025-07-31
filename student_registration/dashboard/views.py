@@ -67,9 +67,13 @@ def pivot_data(request):
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
 
-    latest_prog_type = EducationProgrammeAssessment.objects.filter(
-        registration=OuterRef('pk')
-    ).order_by('-id').values('programme_type')[:1]
+    latest_prog_type = (
+        EducationProgrammeAssessment.objects.filter(
+            registration=OuterRef("pk")
+        )
+        .order_by("-id")
+        .values_list("programme_type", flat=True)[:1]
+    )
 
     qs = (
         Registration.objects.filter(deleted=False)
@@ -85,32 +89,20 @@ def pivot_data(request):
             nationality=F("child__nationality__name"),
             package_type=F("type"),
         )
-        .values(
-            "center_name",
-            "partner_name",
-            "governorate",
-            "caza",
-            "district",
-            "gender",
-            "nationality",
-            "package_type",
-            "round_name",
-            "programme_type",
-        )
     )
 
     data = [
         {
-            "center": row.get("center_name") or "",
-            "partner": row.get("partner_name") or "",
-            "governorate": row.get("governorate") or "",
-            "caza": row.get("caza") or "",
-            "district": row.get("district") or "",
-            "gender": row.get("gender") or "",
-            "nationality": row.get("nationality") or "",
-            "package_type": row.get("package_type") or "",
-            "round": row.get("round_name") or "",
-            "programme_type": row.get("programme_type") or "",
+            "center": getattr(row, "center_name", "") or "",
+            "partner": getattr(row, "partner_name", "") or "",
+            "governorate": getattr(row, "governorate", "") or "",
+            "caza": getattr(row, "caza", "") or "",
+            "district": getattr(row, "district", "") or "",
+            "gender": getattr(row, "gender", "") or "",
+            "nationality": getattr(row, "nationality", "") or "",
+            "package_type": getattr(row, "package_type", "") or "",
+            "round": getattr(row, "round_name", "") or "",
+            "programme_type": getattr(row, "programme_type", "") or "",
         }
         for row in qs
     ]
