@@ -11,7 +11,7 @@ from django.shortcuts import render
 from datetime import datetime
 from django.urls import reverse
 from django.http import HttpResponseForbidden, JsonResponse
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, F
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -73,32 +73,25 @@ def pivot_data(request):
 
     qs = (
         Registration.objects.filter(deleted=False)
-        .select_related(
-            'child__nationality',
-            'center__partner',
-            'center__governorate',
-            'center__caza',
-            'center__cadaster',
-            'center',
-            'round',
-        )
         .annotate(programme_type=Subquery(latest_prog_type))
+        .values(
+            center=F('center__name'),
+            partner=F('center__partner__name'),
+            governorate=F('center__governorate__name'),
+            caza=F('center__caza__name'),
+            district=F('center__cadaster__name'),
+            gender=F('child__gender'),
+            nationality=F('child__nationality__name'),
+            package_type=F('type'),
+            round=F('round__name'),
+            programme_type=F('programme_type'),
+        )
     )
 
-    data = []
-    for reg in qs:
-        data.append({
-            'center': reg.center.name if reg.center else '',
-            'partner': reg.center.partner.name if reg.center and reg.center.partner else '',
-            'governorate': reg.center.governorate.name if reg.center and reg.center.governorate else '',
-            'caza': reg.center.caza.name if reg.center and reg.center.caza else '',
-            'district': reg.center.cadaster.name if reg.center and reg.center.cadaster else '',
-            'gender': reg.child.gender if reg.child else '',
-            'nationality': reg.child.nationality.name if reg.child and reg.child.nationality else '',
-            'package_type': reg.type,
-            'round': reg.round.name if reg.round else '',
-            'programme_type': reg.programme_type or '',
-        })
+    data = [
+        {k: (v if v is not None else '') for k, v in row.items()}
+        for row in qs
+    ]
 
     return JsonResponse(data, safe=False)
 
