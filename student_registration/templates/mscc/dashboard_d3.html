@@ -263,6 +263,12 @@
         });
 
   }
+
+  $(function(){
+      $.getJSON("{% url 'mscc:dashboard_data' %}", function(data){
+          initDashboardCharts(data);
+      });
+  });
 </script>
 
 
