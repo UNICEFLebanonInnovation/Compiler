@@ -5,6 +5,9 @@ from django.contrib import admin
 from django.contrib.admin.models import LogEntry
 from django.utils.html import escape, format_html, format_html_join, html_safe
 from django.utils.encoding import force_str
+from django.urls import path
+from django.db.models import Count
+from django.template.response import TemplateResponse
 
 from import_export import resources, fields
 from import_export import fields
@@ -384,7 +387,30 @@ class UserActivityAdmin(admin.ModelAdmin):
     search_fields = (
         'username',
         'path'
+
     )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        extra_urls = [
+            path('dashboard/', self.admin_site.admin_view(self.dashboard_view), name='useractivity_dashboard'),
+        ]
+        return extra_urls + urls
+
+    def dashboard_view(self, request):
+        queryset = UserActivity.objects.all()
+
+        method_stats = list(queryset.values('method').annotate(count=Count('id')).order_by('-count'))
+        top_paths = list(queryset.values('path').annotate(count=Count('id')).order_by('-count')[:10])
+
+        context = dict(
+            self.admin_site.each_context(request),
+            title='User Activity Dashboard',
+            method_stats=method_stats,
+            top_paths=top_paths,
+            total=queryset.count(),
+        )
+        return TemplateResponse(request, 'admin/user_activity_dashboard.html', context)
 
 # admin.site.register(LogEntry)
 # admin.site.register(Exporter, ExporterAdmin)
