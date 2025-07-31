@@ -73,23 +73,45 @@ def pivot_data(request):
 
     qs = (
         Registration.objects.filter(deleted=False)
-        .annotate(programme_type=Subquery(latest_prog_type))
+        .annotate(
+            programme_type=Subquery(latest_prog_type),
+            center_name=F("center__name"),
+            partner_name=F("center__partner__name"),
+            round_name=F("round__name"),
+            governorate=F("center__governorate__name"),
+            caza=F("center__caza__name"),
+            district=F("center__cadaster__name"),
+            gender=F("child__gender"),
+            nationality=F("child__nationality__name"),
+            package_type=F("type"),
+        )
         .values(
-            center=F('center__name'),
-            partner=F('center__partner__name'),
-            governorate=F('center__governorate__name'),
-            caza=F('center__caza__name'),
-            district=F('center__cadaster__name'),
-            gender=F('child__gender'),
-            nationality=F('child__nationality__name'),
-            package_type=F('type'),
-            round=F('round__name'),
-            programme_type=F('programme_type'),
+            "center_name",
+            "partner_name",
+            "governorate",
+            "caza",
+            "district",
+            "gender",
+            "nationality",
+            "package_type",
+            "round_name",
+            "programme_type",
         )
     )
 
     data = [
-        {k: (v if v is not None else '') for k, v in row.items()}
+        {
+            "center": row.get("center_name") or "",
+            "partner": row.get("partner_name") or "",
+            "governorate": row.get("governorate") or "",
+            "caza": row.get("caza") or "",
+            "district": row.get("district") or "",
+            "gender": row.get("gender") or "",
+            "nationality": row.get("nationality") or "",
+            "package_type": row.get("package_type") or "",
+            "round": row.get("round_name") or "",
+            "programme_type": row.get("programme_type") or "",
+        }
         for row in qs
     ]
 
