@@ -6,6 +6,22 @@
 {% load util_tags %}
 {% bootstrap_css %}
 
+{% block extra_head %}
+<style>
+  /* Ensure filter box and table occupy full page width */
+  .form-filters form {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .form-filters .form-control {
+    width: 100%;
+  }
+  .table-list .table-responsive {
+    width: 100%;
+  }
+</style>
+{% endblock %}
+
 {% block project_title %}List{% endblock %}
 
 {% block main_content %}
@@ -89,7 +105,7 @@
         </div>
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
             <div class="card-body">
-            <form action="" method="get" class="form form-inline">
+            <form action="" method="get" class="form form-inline w-100">
                 {% bootstrap_form filter.form layout='inline' %}
 
                 <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
