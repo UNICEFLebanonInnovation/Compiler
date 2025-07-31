@@ -7,10 +7,20 @@
     let tooltip;
     let counter = 0;
 
+    function showLoader(){
+        document.getElementById('loading-indicator').style.display = 'block';
+    }
+
+    function hideLoader(){
+        document.getElementById('loading-indicator').style.display = 'none';
+    }
+
     function fetchData(cb){
+        showLoader();
         fetch('/dashboard/pivot-data/')
             .then(r => r.json())
-            .then(data => { rawData = data; if(cb) cb(); });
+            .then(data => { rawData = data; if(cb) cb(); })
+            .finally(hideLoader);
     }
 
     function aggregate(metric){
@@ -33,6 +43,8 @@
 
     function renderChart(cfg){
         const container = d3.select('#chart-'+cfg.id);
+        const loader = container.select('.chart-loading');
+        loader.style('display','block');
         const svg = container.select('svg');
         const legendEl = container.select('.chart-legend');
         const width = +svg.node().clientWidth;
@@ -102,6 +114,7 @@
         const legendItem = legendEl.selectAll('.legend-item').data(data).enter().append('div').attr('class','legend-item');
         legendItem.append('span').attr('class','legend-color').style('background-color',d=>color(d.label));
         legendItem.append('span').text(d=>d.label);
+        loader.style('display','none');
     }
 
     function renderAll(){
@@ -130,9 +143,21 @@
         const container = document.createElement('div');
         container.id = 'chart-'+id;
         container.className = 'chart-wrapper';
-        container.innerHTML = '<svg></svg><div class="chart-legend"></div>';
+        container.innerHTML = '<div class="chart-loading">Loading...</div>'+
+            '<button class="delete-chart btn btn-danger btn-sm" style="position:absolute;top:5px;right:5px;">Delete</button>'+
+            '<svg></svg><div class="chart-legend"></div>';
+        container.querySelector('.delete-chart').addEventListener('click', function(){
+            removeChart(id);
+        });
         document.getElementById('charts-container').appendChild(container);
         renderAll();
+        saveDashboard();
+    }
+
+    function removeChart(id){
+        charts = charts.filter(c=>c.id !== id);
+        const el = document.getElementById('chart-'+id);
+        if(el) el.remove();
         saveDashboard();
     }
 
@@ -153,7 +178,12 @@
                 const div = document.createElement('div');
                 div.id = 'chart-'+c.id;
                 div.className = 'chart-wrapper';
-                div.innerHTML = '<svg></svg><div class="chart-legend"></div>';
+                div.innerHTML = '<div class="chart-loading">Loading...</div>'+
+                    '<button class="delete-chart btn btn-danger btn-sm" style="position:absolute;top:5px;right:5px;">Delete</button>'+
+                    '<svg></svg><div class="chart-legend"></div>';
+                div.querySelector('.delete-chart').addEventListener('click', function(){
+                    removeChart(c.id);
+                });
                 container.appendChild(div);
             });
         }
