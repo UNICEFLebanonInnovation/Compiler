@@ -101,58 +101,6 @@
                             <option value="district">{% trans "By District" %}</option>
                             <option value="programme_type">{% trans "By Programme Type" %}</option>
                         </select>
-                        <div id="mscc-filters">
-                        <select id="filter-package_type" class="form-control mb-2">
-                            <option value="">{% trans 'Package Type' %}</option>
-                            {% for key, label in package_types %}
-                            <option value="{{ key }}">{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                        <select id="filter-partner" class="form-control mb-2">
-                            <option value="">{% trans 'Partner' %}</option>
-                            {% for partner in partners %}
-                            <option value="{{ partner.id }}">{{ partner.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <select id="filter-round" class="form-control mb-2">
-                            <option value="">{% trans 'Round' %}</option>
-                            {% for r in rounds %}
-                            <option value="{{ r.id }}">{{ r.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <select id="filter-center" class="form-control mb-2">
-                            <option value="">{% trans 'Center' %}</option>
-                            {% for c in centers %}
-                            <option value="{{ c.id }}">{{ c.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <select id="filter-governorate" class="form-control mb-2">
-                            <option value="">{% trans 'Governorate' %}</option>
-                            {% for g in governorates %}
-                            <option value="{{ g.id }}">{{ g.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <select id="filter-caza" class="form-control mb-2">
-                            <option value="">{% trans 'Caza' %}</option>
-                            {% for cz in cazas %}
-                            <option value="{{ cz.id }}">{{ cz.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <select id="filter-district" class="form-control mb-2">
-                            <option value="">{% trans 'District' %}</option>
-                            {% for cd in cadasters %}
-                            <option value="{{ cd.id }}">{{ cd.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <select id="filter-programme_type" class="form-control mb-2">
-                            <option value="">{% trans 'Programme Type' %}</option>
-                            {% for key, label in programme_types %}
-                            <option value="{{ key }}">{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                        <input id="filter-start" type="date" class="form-control mb-2" placeholder="{% trans 'Start Date' %}">
-                        <input id="filter-end" type="date" class="form-control mb-2" placeholder="{% trans 'End Date' %}">
-                        </div>
                         <button type="button" id="load-mscc-data" class="btn btn-secondary mt-2">{% trans "Load MSCC Data" %}</button>
                     </div>
                     <div class="form-group">
