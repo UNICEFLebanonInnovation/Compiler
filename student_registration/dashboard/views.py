@@ -11,6 +11,7 @@ from django.shortcuts import render
 from datetime import datetime
 from django.urls import reverse
 from django.http import HttpResponseForbidden, JsonResponse
+from django.db.models import OuterRef, Subquery
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -66,6 +67,10 @@ def pivot_data(request):
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
 
+    latest_prog_type = EducationProgrammeAssessment.objects.filter(
+        registration=OuterRef('pk')
+    ).order_by('-id').values('programme_type')[:1]
+
     qs = (
         Registration.objects.filter(deleted=False)
         .select_related(
@@ -77,13 +82,11 @@ def pivot_data(request):
             'center',
             'round',
         )
+        .annotate(programme_type=Subquery(latest_prog_type))
     )
 
     data = []
     for reg in qs:
-        programme_type = EducationProgrammeAssessment.objects.filter(
-            registration=reg
-        ).order_by('-id').values_list('programme_type', flat=True).first() or ''
         data.append({
             'center': reg.center.name if reg.center else '',
             'partner': reg.center.partner.name if reg.center and reg.center.partner else '',
@@ -94,7 +97,7 @@ def pivot_data(request):
             'nationality': reg.child.nationality.name if reg.child and reg.child.nationality else '',
             'package_type': reg.type,
             'round': reg.round.name if reg.round else '',
-            'programme_type': programme_type,
+            'programme_type': reg.programme_type or '',
         })
 
     return JsonResponse(data, safe=False)
