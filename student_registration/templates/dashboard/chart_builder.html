@@ -37,6 +37,23 @@
     .chart-wrapper {
         position: relative;
     }
+    .chart-wrapper.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #fff;
+        z-index: 1050;
+        padding: 20px;
+        overflow: auto;
+    }
+    .chart-wrapper.fullscreen svg {
+        height: 80vh;
+    }
+    body.no-scroll {
+        overflow: hidden;
+    }
     #loading-indicator {
         display: none;
     }
@@ -60,8 +77,8 @@
         </div>
         <hr>
         <div class="row">
-            <div class="col-md-4">
-                <form id="chart-form">
+            <div class="col-md-12">
+                <form id="chart-form" class="mb-4">
                     <div class="form-group">
                         <label for="chart-type">{% trans "Chart Type" %}</label>
                         <select id="chart-type" class="form-control">
@@ -149,7 +166,9 @@
                     <button type="submit" class="btn btn-primary">{% trans "Render" %}</button>
                 </form>
             </div>
-            <div class="col-md-8">
+        </div>
+        <div class="row">
+            <div class="col-md-12">
                 <div class="mb-3">
                     <button id="add-chart" type="button" class="btn btn-primary mr-2">{% trans "Add Chart" %}</button>
                     <button id="save-dashboard" type="button" class="btn btn-secondary">{% trans "Save Dashboard" %}</button>

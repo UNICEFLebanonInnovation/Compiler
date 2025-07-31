@@ -15,6 +15,15 @@
         document.getElementById('loading-indicator').style.display = 'none';
     }
 
+    function toggleFullscreen(id){
+        const el = document.getElementById('chart-'+id);
+        if(!el) return;
+        el.classList.toggle('fullscreen');
+        document.body.classList.toggle('no-scroll', el.classList.contains('fullscreen'));
+        const cfg = charts.find(c => c.id === id);
+        if(cfg) renderChart(cfg);
+    }
+
     function fetchData(cb){
         showLoader();
         fetch('/dashboard/pivot-data/')
@@ -145,9 +154,13 @@
         container.className = 'chart-wrapper';
         container.innerHTML = '<div class="chart-loading">Loading...</div>'+
             '<button class="delete-chart btn btn-danger btn-sm" style="position:absolute;top:5px;right:5px;">Delete</button>'+
+            '<button class="fullscreen-chart btn btn-secondary btn-sm" style="position:absolute;top:5px;right:80px;">Fullscreen</button>'+
             '<svg></svg><div class="chart-legend"></div>';
         container.querySelector('.delete-chart').addEventListener('click', function(){
             removeChart(id);
+        });
+        container.querySelector('.fullscreen-chart').addEventListener('click', function(){
+            toggleFullscreen(id);
         });
         document.getElementById('charts-container').appendChild(container);
         renderAll();
@@ -180,9 +193,13 @@
                 div.className = 'chart-wrapper';
                 div.innerHTML = '<div class="chart-loading">Loading...</div>'+
                     '<button class="delete-chart btn btn-danger btn-sm" style="position:absolute;top:5px;right:5px;">Delete</button>'+
+                    '<button class="fullscreen-chart btn btn-secondary btn-sm" style="position:absolute;top:5px;right:80px;">Fullscreen</button>'+
                     '<svg></svg><div class="chart-legend"></div>';
                 div.querySelector('.delete-chart').addEventListener('click', function(){
                     removeChart(c.id);
+                });
+                div.querySelector('.fullscreen-chart').addEventListener('click', function(){
+                    toggleFullscreen(c.id);
                 });
                 container.appendChild(div);
             });
@@ -192,6 +209,15 @@
     document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('add-chart').addEventListener('click', addChart);
         document.getElementById('save-dashboard').addEventListener('click', saveDashboard);
+        document.addEventListener('keyup', function(e){
+            if(e.key === 'Escape'){
+                const el = document.querySelector('.chart-wrapper.fullscreen');
+                if(el){
+                    const id = parseInt(el.id.replace('chart-',''));
+                    toggleFullscreen(id);
+                }
+            }
+        });
         fetchData(function(){
             loadDashboard();
             renderAll();
