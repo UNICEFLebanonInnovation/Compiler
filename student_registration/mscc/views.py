@@ -216,6 +216,7 @@ class DashboardDataView(LoginRequiredMixin, View):
         from .models import (
             Registration,
             YouthKitService,
+            PSSService,
             CASH_SUPPORT_PROGRAMMES,
         )
 
@@ -236,7 +237,10 @@ class DashboardDataView(LoginRequiredMixin, View):
             'children_per_nationality': aggregate(qs, 'child__nationality__name'),
             'children_per_source': aggregate(qs, 'source_of_identification'),
             'children_per_disability': aggregate(qs, 'child__disability__name'),
-            'children_per_vulnerability': aggregate(qs, 'child_vulnerability'),
+            'children_per_vulnerability': aggregate(
+                PSSService.objects.filter(registration__deleted=False),
+                'child_vulnerability',
+            ),
         }
 
         cash = []
