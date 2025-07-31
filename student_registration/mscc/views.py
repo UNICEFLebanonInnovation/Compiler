@@ -4,7 +4,15 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 from django.utils.encoding import smart_str
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
+from django.views.generic import (
+    DetailView,
+    ListView,
+    RedirectView,
+    UpdateView,
+    TemplateView,
+    FormView,
+)
+from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -198,6 +206,50 @@ class DashboardYouthView(LoginRequiredMixin,
             'governorates': governorates,
             'partners': partners
         }
+
+
+class DashboardDataView(LoginRequiredMixin, View):
+    """Return aggregated data for dashboard charts."""
+
+    def get(self, request):
+        from django.db.models import Count
+        from .models import (
+            Registration,
+            YouthKitService,
+            CASH_SUPPORT_PROGRAMMES,
+        )
+
+        qs = Registration.objects.filter(deleted=False)
+
+        def aggregate(queryset, field):
+            results = queryset.values(field).annotate(total=Count('id')).order_by(field)
+            data = []
+            for row in results:
+                name = row.get(field) or 'N/A'
+                data.append({'name': name, 'y': row['total']})
+            return data
+
+        data = {
+            'children_per_gender': aggregate(qs, 'child__gender'),
+            'children_per_status': aggregate(qs, 'child__marital_status'),
+            'children_per_programme': aggregate(qs, 'type'),
+            'children_per_nationality': aggregate(qs, 'child__nationality__name'),
+            'children_per_source': aggregate(qs, 'source_of_identification'),
+            'children_per_disability': aggregate(qs, 'child__disability__name'),
+            'children_per_vulnerability': aggregate(qs, 'child_vulnerability'),
+        }
+
+        cash = []
+        for value, _ in CASH_SUPPORT_PROGRAMMES:
+            if value:
+                count = qs.filter(cash_support_programmes__contains=[value]).count()
+                cash.append({'name': value, 'y': count})
+        data['children_cash_support'] = cash
+
+        ys_qs = YouthKitService.objects.filter(registration__deleted=False)
+        data['children_volunteering'] = aggregate(ys_qs, 'participate_volunteering')
+
+        return JsonResponse(data, safe=False)
 
 
 class MainAddView(LoginRequiredMixin,

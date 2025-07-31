@@ -627,16 +627,38 @@
                            color: '#A66999'
                        }];
 
-   var children_per_gender = create_pie_chart('children_per_gender', 'Gender', children_per_gender_data);
-   var children_cash_support = create_pie_chart('children_cash_support', 'Support type', children_cash_support_data);
-   var children_per_status = create_pie_chart('children_per_status', 'Support type', children_per_status_data);
+   var children_per_gender;
+   var children_cash_support;
+   var children_per_status;
+   var children_per_programme;
+   var children_per_nationality;
+   var children_per_source;
+   var children_per_disability;
+   var children_per_vulnerability;
+   var children_volunteering;
 
-   var children_per_programme = create_bar_chart('children_per_programme', children_per_programme_data, [])
-   var children_per_nationality = create_bar_chart('children_per_nationality', children_per_nationality_data, children_per_nationality_data_drilldown)
-   var children_per_source = create_bar_chart('children_per_source', children_per_source_data, [])
-   var children_per_disability = create_pie_chart('children_per_disability', 'Disability', children_per_disability_data)
-   var children_per_vulnerability = create_bar_chart('children_per_vulnerability', children_per_vulnerability_data, [])
-   var children_volunteering = create_bar_chart('children_volunteering', children_volunteering_data, [])
+   function initDashboardCharts(dataset){
+       children_per_gender_data = dataset.children_per_gender || [];
+       children_cash_support_data = dataset.children_cash_support || [];
+       children_per_status_data = dataset.children_per_status || [];
+       children_per_programme_data = dataset.children_per_programme || [];
+       children_per_nationality_data = dataset.children_per_nationality || [];
+       children_per_source_data = dataset.children_per_source || [];
+       children_per_disability_data = dataset.children_per_disability || [];
+       children_per_vulnerability_data = dataset.children_per_vulnerability || [];
+       children_volunteering_data = dataset.children_volunteering || [];
+
+       children_per_gender = create_pie_chart('children_per_gender', 'Gender', children_per_gender_data);
+       children_cash_support = create_pie_chart('children_cash_support', 'Support type', children_cash_support_data);
+       children_per_status = create_pie_chart('children_per_status', 'Support type', children_per_status_data);
+
+       children_per_programme = create_bar_chart('children_per_programme', children_per_programme_data, [])
+       children_per_nationality = create_bar_chart('children_per_nationality', children_per_nationality_data, [])
+       children_per_source = create_bar_chart('children_per_source', children_per_source_data, [])
+       children_per_disability = create_pie_chart('children_per_disability', 'Disability', children_per_disability_data)
+       children_per_vulnerability = create_bar_chart('children_per_vulnerability', children_per_vulnerability_data, [])
+       children_volunteering = create_bar_chart('children_volunteering', children_volunteering_data, [])
+   }
 
    function create_pie_chart(container, series_name, data) {
 
@@ -786,78 +808,71 @@ $(document).on('click',  '.filter-package-type', function(){
 });
 
 function reload_dashboard_data(exclude_container){
+    $.getJSON('/mscc/dashboard-data/', function(resp){
+        if(exclude_container != 'children_per_gender') {
+            children_per_gender.update({
+               series: [{ data: resp.children_per_gender }]
+            });
+        }
 
-    if(exclude_container != 'children_per_gender') {
-        children_per_gender.update({
-           series: [{
-               data: generate_new_data(children_per_gender_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_cash_support') {
+            children_cash_support.update({
+               series: [{ data: resp.children_cash_support }]
+            });
+        }
 
-    if(exclude_container != 'children_cash_support') {
-        children_cash_support.update({
-           series: [{
-               data: generate_new_data(children_cash_support_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_per_status') {
+            children_per_status.update({
+               series: [{ data: resp.children_per_status }]
+            });
+        }
 
-    if(exclude_container != 'children_per_status') {
-        children_per_status.update({
-           series: [{
-               data: generate_new_data(children_per_status_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_per_programme') {
+            children_per_programme.update({
+               series: [{ data: resp.children_per_programme }]
+            });
+        }
 
-    if(exclude_container != 'children_per_programme') {
-        children_per_programme.update({
-           series: [{
-               data: generate_new_data(children_per_programme_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_per_nationality') {
+            children_per_nationality.update({
+               series: [{ data: resp.children_per_nationality }]
+            });
+        }
 
-    if(exclude_container != 'children_per_nationality') {
-        children_per_nationality.update({
-           series: [{
-               data: generate_new_data(children_per_nationality_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_per_source') {
+            children_per_source.update({
+               series: [{ data: resp.children_per_source }]
+            });
+        }
 
-    if(exclude_container != 'children_per_source') {
-        children_per_source.update({
-           series: [{
-               data: generate_new_data(children_per_source_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_per_disability') {
+            children_per_disability.update({
+               series: [{ data: resp.children_per_disability }]
+            });
+        }
 
-    if(exclude_container != 'children_per_disability') {
-        children_per_disability.update({
-           series: [{
-               data: generate_new_data(children_per_disability_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_per_vulnerability') {
+            children_per_vulnerability.update({
+               series: [{ data: resp.children_per_vulnerability }]
+            });
+        }
 
-    if(exclude_container != 'children_per_vulnerability') {
-        children_per_vulnerability.update({
-           series: [{
-               data: generate_new_data(children_per_vulnerability_data)
-           }]
-        });
-    }
+        if(exclude_container != 'children_volunteering') {
+            children_volunteering.update({
+               series: [{ data: resp.children_volunteering }]
+            });
+        }
 
-    if(exclude_container != 'children_volunteering') {
-        children_volunteering.update({
-           series: [{
-               data: generate_new_data(children_volunteering_data)
-           }]
-        });
-    }
+        children_per_gender_data = resp.children_per_gender;
+        children_cash_support_data = resp.children_cash_support;
+        children_per_status_data = resp.children_per_status;
+        children_per_programme_data = resp.children_per_programme;
+        children_per_nationality_data = resp.children_per_nationality;
+        children_per_source_data = resp.children_per_source;
+        children_per_disability_data = resp.children_per_disability;
+        children_per_vulnerability_data = resp.children_per_vulnerability;
+        children_volunteering_data = resp.children_volunteering;
+    });
 }
 
 function generate_new_data(data){
