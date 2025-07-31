@@ -161,11 +161,9 @@ class DashboardView(LoginRequiredMixin,
         return {}
 
 
-
-
 class DashboardCustomView(LoginRequiredMixin,
                     TemplateView):
-    template_name = 'mscc/dashboard.html'
+    template_name = 'mscc/dashboard_d3.html'
 
     def get_context_data(self, **kwargs):
         from student_registration.locations.models import Center, Location
@@ -217,8 +215,8 @@ class DashboardDataView(LoginRequiredMixin, View):
             Registration,
             YouthKitService,
             PSSService,
-            CASH_SUPPORT_PROGRAMMES,
         )
+        cash_support_programmes = Registration.CASH_SUPPORT_PROGRAMMES
 
         qs = Registration.objects.filter(deleted=False)
 
@@ -244,7 +242,7 @@ class DashboardDataView(LoginRequiredMixin, View):
         }
 
         cash = []
-        for value, _ in CASH_SUPPORT_PROGRAMMES:
+        for value, _ in cash_support_programmes:
             if value:
                 count = qs.filter(cash_support_programmes__contains=[value]).count()
                 cash.append({'name': value, 'y': count})

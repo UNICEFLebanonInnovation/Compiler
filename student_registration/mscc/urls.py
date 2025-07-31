@@ -54,6 +54,11 @@ urlpatterns = [
         name='dashboard_data'
     ),
     re_path(
+        r'^dashboard-custom/$',
+        view=views.DashboardCustomView.as_view(),
+        name='dashboard_custom'
+    ),
+    re_path(
         r'^services/education-assessment-add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationAssessmentFormView.as_view(),
         name='service_education_assessment_add'
