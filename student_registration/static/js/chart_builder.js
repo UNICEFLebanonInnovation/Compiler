@@ -7,6 +7,19 @@
     let tooltip;
     let counter = 0;
 
+    function loadMsccData(){
+        const metric = document.getElementById('mscc-data-type').value;
+        const update = () => {
+            const data = aggregate(metric);
+            document.getElementById('chart-data').value = JSON.stringify(data, null, 2);
+        };
+        if(rawData.length === 0){
+            fetchData(update);
+        }else{
+            update();
+        }
+    }
+
     function showLoader(){
         document.getElementById('loading-indicator').style.display = 'block';
     }
@@ -218,6 +231,7 @@
                 }
             }
         });
+        document.getElementById('load-mscc-data').addEventListener('click', loadMsccData);
         fetchData(function(){
             loadDashboard();
             renderAll();
