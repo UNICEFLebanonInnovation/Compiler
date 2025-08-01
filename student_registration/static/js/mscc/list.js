@@ -67,7 +67,7 @@ $(document).ready(function() {
 
     });
 
-$(document).on('click', '.download-report', function(e){
+    $(document).on('click', '.download-report', function(e){
         e.preventDefault();
 
         var nationality = $("#id_child__nationality").val();

@@ -168,7 +168,7 @@ class DashboardCustomView(LoginRequiredMixin,
         from student_registration.locations.models import Center, Location
         from student_registration.clm.models import PartnerOrganization
 
-        instances = Registration.objects.all()
+        instances = Registration.objects.filter(deleted=False)
         centers = Center.objects.all()
         governorates = Location.objects.filter(type_id=1)
         partners = PartnerOrganization.objects.all()
