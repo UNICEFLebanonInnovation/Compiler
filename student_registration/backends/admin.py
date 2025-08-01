@@ -356,6 +356,8 @@ class SchoolTypeFilter(admin.SimpleListFilter):
 
 class ExportHistoryAdmin(admin.ModelAdmin):
 
+    change_list_template = 'admin/export_history_change_list.html'
+
     list_display = (
         'export_type',
         'created_by',
@@ -370,6 +372,28 @@ class ExportHistoryAdmin(admin.ModelAdmin):
     search_fields = (
         'created_by__username',
     )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        extra_urls = [
+            path('dashboard/', self.admin_site.admin_view(self.dashboard_view), name='exporthistory_dashboard'),
+        ]
+        return extra_urls + urls
+
+    def dashboard_view(self, request):
+        queryset = ExportHistory.objects.all()
+
+        export_stats = list(queryset.values('export_type').annotate(count=Count('id')).order_by('-count'))
+        partner_stats = list(queryset.values('partner_name').annotate(count=Count('id')).order_by('-count'))
+
+        context = dict(
+            self.admin_site.each_context(request),
+            title='Export History Dashboard',
+            export_stats=export_stats,
+            partner_stats=partner_stats,
+            total=queryset.count(),
+        )
+        return TemplateResponse(request, 'admin/export_history_dashboard.html', context)
 
 
 class UserActivityAdmin(admin.ModelAdmin):
