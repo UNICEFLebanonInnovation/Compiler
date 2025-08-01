@@ -63,9 +63,14 @@ def get_user_token(user_id):
 
 @register.filter(name='has_group')
 def has_group(user, group_name):
+    if not user:
+        return False
+    # Super users should have access to all groups
+    if getattr(user, "is_superuser", False):
+        return True
     try:
         group = Group.objects.get(name=group_name)
-        return True if user and group in user.groups.all() else False
+        return group in user.groups.all()
     except Group.DoesNotExist:
         return False
 

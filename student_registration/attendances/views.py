@@ -638,7 +638,7 @@ class MainAttendanceCreateView(LoginRequiredMixin, GroupRequiredMixin, CreateVie
             school_id = self.request.user.school.id
         kwargs['user_school_id'] = school_id
 
-        kwargs['clm_bridging_all'] = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        kwargs['clm_bridging_all'] = has_group(self.request.user, 'CLM_BRIDGING_ALL')
 
         round_id = 0
         current_round = CLMRound.objects.filter(current_round_bridging=True).first()
@@ -757,7 +757,7 @@ class MainAttendanceUpdateView(LoginRequiredMixin, UpdateView):
         if current_round:
             round_id = current_round.id
 
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         # messages.success(self.request, 'There is already an attendance record for this date.')
         if self.request.method == "POST":
             instance.save()
@@ -1210,7 +1210,7 @@ def attendance_export_xlsx(request, **kwargs):
 
     query_params = [round_id]
 
-    if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+    if not has_group(request.user, 'CLM_BRIDGING_ALL'):
         if request.user.partner_id:
             vw_data_str += " AND partner_id = %s"
             query_params.append(request.user.partner_id)
@@ -1253,7 +1253,7 @@ def attendance_export(request, **kwargs):
             vw_data_str += " AND EXTRACT(MONTH FROM attendance_date) = %s"
             query_params.append(month)
 
-        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if not has_group(request.user, 'CLM_BRIDGING_ALL'):
             if request.user.partner_id:
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -1327,7 +1327,7 @@ def total_attendance_export(request, **kwargs):
         query_params = [round_id]
         vw_data_str = "SELECT * FROM vw_bridging_attendance_total WHERE round_id = %s"
 
-        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if not has_group(request.user, 'CLM_BRIDGING_ALL'):
             if request.user.partner_id:
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -1392,7 +1392,7 @@ def consecutive_absence_export(request, **kwargs):
         query_params = [round_id]
         vw_data_str = "SELECT * FROM vw_bridging_absence_consecutive WHERE round_id = %s"
 
-        if not request.user.groups.filter(name='CLM_BRIDGING_ALL').exists():
+        if not has_group(request.user, 'CLM_BRIDGING_ALL'):
             if request.user.partner_id:
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -1495,7 +1495,7 @@ def mscc_attendance_export(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not request.user.groups.filter(name='MSCC_UNICEF').exists():
+        if not has_group(request.user, 'MSCC_UNICEF'):
             if request.user.partner_id:
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -1605,7 +1605,7 @@ def mscc_total_attendance_export(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not request.user.groups.filter(name='MSCC_UNICEF').exists():
+        if not has_group(request.user, 'MSCC_UNICEF'):
             if request.user.partner_id:
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -1716,7 +1716,7 @@ def mscc_total_attendance_export1(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not request.user.groups.filter(name='MSCC_UNICEF').exists():
+        if not has_group(request.user, 'MSCC_UNICEF'):
             if request.user.center_id:
                 vw_data_str += " AND center_id = %s"
                 query_params.append(request.user.center_id)

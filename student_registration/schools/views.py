@@ -545,7 +545,7 @@ class SchoolListView(LoginRequiredMixin,
 
     def get_queryset(self):
 
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         queryset = School.objects.filter(is_bma=True).all()
@@ -581,7 +581,7 @@ class SchoolListView(LoginRequiredMixin,
         """
         Return the class to use for the table.
         """
-        if self.request.user.groups.filter(name='EXPORT').exists():
+        if has_group(self.request.user, 'EXPORT'):
             return SchoolExportTable
         else:
             return SchoolTable

@@ -357,7 +357,7 @@ def bridging_export_data(request, **kwargs):
             vw_bridging_data += " AND round_id = %s"
             query_params.append(round_id)
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff
 
         if not clm_bridging_all and not is_staff and request.user.partner:
@@ -436,7 +436,7 @@ def bridging_school_export(request, **kwargs):
 
         school_id = int(kwargs.get('school_id'))
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff
 
         vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'

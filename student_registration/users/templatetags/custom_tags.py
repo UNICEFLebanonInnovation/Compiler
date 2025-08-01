@@ -9,16 +9,30 @@ register = template.Library()
 
 @register.filter(name='has_group')
 def has_group(user, group_name):
-    if user:
-        return user.groups.filter(name=group_name).exists()
-    return False
+    """Return True if the user belongs to the specified group.
+
+    Superusers are considered members of all groups to ensure they can
+    access every module without having explicit group assignments.
+    """
+    if not user:
+        return False
+    if getattr(user, "is_superuser", False):
+        return True
+    return user.groups.filter(name=group_name).exists()
 
 
 @register.filter(name='have_edit_right')
 def have_edit_right(user, name):
-    if user:
-        return user.groups.filter(name=name).exists()
-    return False
+    """Return True if the user may edit a given object.
+
+    Superusers automatically have edit rights for all objects so they
+    are not limited by specific group assignments.
+    """
+    if not user:
+        return False
+    if getattr(user, "is_superuser", False):
+        return True
+    return user.groups.filter(name=name).exists()
 
 
 @register.simple_tag

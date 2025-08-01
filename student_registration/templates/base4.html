@@ -174,7 +174,7 @@
                                             Home
                                         </a>
                                     </div>
-                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -182,7 +182,7 @@
                                         </a>
                                     </div>
                                   {% endif %}
-                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:attendance' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="lnr-laptop-phone icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -199,7 +199,7 @@
 
                                       </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                       <div class="col-sm-6 col-xl-4">
                                           <a href="{% url 'locations:center_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                               <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -207,7 +207,7 @@
                                           </a>
                                       </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -238,7 +238,7 @@
                                         </a>
                                     </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" %}
+                                    {% if request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" or request.user|has_group:"YOUTH" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'youth:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>

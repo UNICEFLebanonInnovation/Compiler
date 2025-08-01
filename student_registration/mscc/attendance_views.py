@@ -13,6 +13,7 @@ from student_registration.locations.models import Center
 from student_registration.schools.models import PartnerOrganization
 
 from .utils import load_child_attendance, create_attendance
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 class AttendanceView(LoginRequiredMixin,
@@ -166,7 +167,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         context['center'] = []
         context['partner'] = []
 
-        if not self.request.user.groups.filter(name='MSCC_UNICEF').exists():
+        if not has_group(self.request.user, 'MSCC_UNICEF'):
             if self.request.user.center_id:
                 center = Center.objects.filter(id=self.request.user.center_id).last()
                 if center:
