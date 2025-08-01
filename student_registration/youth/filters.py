@@ -116,7 +116,109 @@ class FullFilter(FilterSet):
             )
         ],
         field_name='enrolled_programs__master_program',
-        label='Master Program',
+        label='Master Indicator',
+        method='filter_by_master_program',
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
+    )
+
+    sub_program = MultipleChoiceFilter(
+        choices=lambda: [
+            (sp.id, "{} - {}".format(sp.number, sp.name))
+            for sp in sorted(
+                SubProgram.objects.filter(master_program__active=True),
+                key=lambda s: [int(p) for p in s.number.split('.')]
+            )
+        ],
+        field_name='enrolled_programs__sub_program',
+        label='Sub Program',
+        method='filter_by_sub_program',
+        widget=forms.SelectMultiple(attrs={'class': 'long-select'})
+    )
+
+    class Meta:
+        model = Registration
+        fields = []
+
+    def filter_by_master_program(self, queryset, name, value):
+        if value:
+            return queryset.filter(enrolled_programs__master_program__in=value)
+        return queryset
+
+    def filter_by_sub_program(self, queryset, name, value):
+        if value:
+            return queryset.filter(enrolled_programs__sub_program__in=value)
+        return queryset
+
+    def filter_by_donor(self, queryset, name, value):
+        return queryset.filter(enrolled_programs__donor=value)
+
+    def filter_by_program_document(self, queryset, name, value):
+        return queryset.filter(enrolled_programs__program_document=value)
+
+class PartnerFilter(FilterSet):
+
+    adolescent__governorate = ChoiceFilter(
+        choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(),
+        empty_label='Governorate'
+    )
+    adolescent__caza = ChoiceFilter(
+        choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct(),
+        empty_label='Caza'
+    )
+    adolescent__cadaster = ChoiceFilter(
+        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct(),
+        empty_label='Cadaster'
+    )
+
+    adolescent__first_name = CharFilter(lookup_expr='icontains')
+    adolescent__father_name = CharFilter(lookup_expr='icontains')
+    adolescent__last_name = CharFilter(lookup_expr='icontains')
+    adolescent__unicef_id = CharFilter(lookup_expr='icontains')
+    adolescent__gender = ChoiceFilter(choices=Adolescent.GENDER, empty_label='Gender')
+    adolescent__nationality = ChoiceFilter(
+        choices=Nationality.objects.values_list('id', 'name').order_by('name').distinct(),
+        empty_label='Nationality'
+    )
+
+    adolescent__disability = ChoiceFilter(
+        choices=Disability.objects.values_list('id', 'name').order_by('name').distinct(),
+        empty_label='Disability'
+    )
+    adolescent__first_phone_number = CharFilter(lookup_expr='icontains')
+
+    donor = ChoiceFilter(
+        field_name='enrolled_programs__donor',
+        choices=Donor.objects.values_list('id', 'name'),
+        empty_label='Donor',
+        method='filter_by_donor'
+    )
+    program_document = ChoiceFilter(
+        field_name='enrolled_programs__program_document',
+        choices=ProgramDocument.objects.values_list('id', 'project_name'),
+        empty_label='Program Document',
+        method='filter_by_program_document'
+    )
+
+    start_date = DateFilter(
+        field_name='enrolled_programs__completion_date',
+        lookup_expr='gte', label='Start Date'
+    )
+    end_date = DateFilter(
+        field_name='enrolled_programs__completion_date',
+        lookup_expr='lte', label='End Date'
+    )
+    master_program = MultipleChoiceFilter(
+        choices=lambda: [
+            (mp.id, "{} - {}".format(mp.number, mp.name))
+            for mp in sorted(
+                MasterProgram.objects.filter(active=True
+                                             # , created__year=datetime.datetime.now().year
+                                             ),
+                key=lambda m: [int(p) for p in m.number.split('.')]
+            )
+        ],
+        field_name='enrolled_programs__master_program',
+        label='Master Indicator',
         method='filter_by_master_program',
         widget=forms.SelectMultiple(attrs={'class': 'long-select'})
     )
@@ -188,7 +290,7 @@ class PDFilter(FilterSet):
                 key=lambda m: [int(p) for p in m.number.split('.')]
             )
         ],
-        label='Master Program',
+        label='Master Indicator',
         required=False,
         method='filter_by_master_program',
         widget=forms.SelectMultiple(attrs={'class': 'long-select'})
@@ -209,8 +311,6 @@ class PDFilter(FilterSet):
 
 class PDPartnerFilter(FilterSet):
     current_year = datetime.datetime.now().year
-    partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True).values_list('id', 'short_name')
-                                .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
     project_status = ChoiceFilter(choices=ProjectStatus.objects.values_list('id', 'name')
@@ -234,7 +334,7 @@ class PDPartnerFilter(FilterSet):
                 key=lambda m: [int(p) for p in m.number.split('.')]
             )
         ],
-        label='Master Program',
+        label='Master Indicator',
         required=False,
         method='filter_by_master_program',
         widget=forms.SelectMultiple(attrs={'class': 'long-select'})

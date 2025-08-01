@@ -681,6 +681,8 @@ class EnrolledPrograms(TimeStampedModel):
          _('Was Registered in Formal Education but not attending')),
         ('Currently registered in Formal Education school', _('Currently registered in Formal Education school')),
         ('Currently registered in Formal Education school but not attending', _('Currently registered in Formal Education school but not attending')),
+        ('Completed university degree', _('Completed university degree')),
+
         ('No', _('No')),
     )
     DROPOUT_PROGRAM = Choices(

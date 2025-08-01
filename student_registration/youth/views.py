@@ -31,6 +31,7 @@ import traceback
 from .filters import (
     MainFilter,
     FullFilter,
+    PartnerFilter,
     PDFilter,
     PDPartnerFilter
 )
@@ -224,7 +225,11 @@ class MainListView(LoginRequiredMixin,
         return RegistrationTable
 
     def get_filterset_class(self):
-        return FullFilter
+        if has_group(self.request.user, 'YOUTH_UNICEF'):
+            return FullFilter
+        elif has_group(self.request.user, 'YOUTH_PARTNER'):
+            return PartnerFilter
+        return PartnerFilter
 
 
 class MainViewSet(mixins.RetrieveModelMixin,
