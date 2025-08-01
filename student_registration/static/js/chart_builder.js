@@ -155,7 +155,7 @@
 
     function addChart(){
         if(charts.length >= 10){
-            alert('Maximum 10 charts allowed');
+            showModal('Maximum 10 charts allowed');
             return;
         }
         const type = document.getElementById('chart-type').value;

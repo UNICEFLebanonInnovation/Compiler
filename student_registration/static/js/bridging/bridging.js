@@ -949,7 +949,7 @@ function check_duplicate_registration()
     {
         if (isAddPage() && ($('.errorlist').length == 0) )
         {
-            alert("The child already exists with the partner " + partner_name);
+            showModal("The child already exists with the partner " + partner_name);
             $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
             $(':input[type="submit"][name="save"]').prop('disabled', true);
         }
@@ -1504,7 +1504,7 @@ function duplicate_search(search_by) {
         success: function (response) {
 
             if (response.result != "") {
-                alert("The child already exists with the partner  " + response.result);
+                showModal("The child already exists with the partner  " + response.result);
                 $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
                 $(':input[type="submit"][name="save"]').prop('disabled', true);
                 // $('#').addClass('d-none');
@@ -1728,7 +1728,7 @@ function display_alert_restriction(dob, min_value, max_value, min_date)
     if(min_age < min_value) {
         $('#id_age_min_restricted').val(1);
         var msg1 = min_age_restriction_msg;
-        alert(msg1);
+        showModal(msg1);
         $('select#id_student_birthday_year').val("");
         return false;
     }

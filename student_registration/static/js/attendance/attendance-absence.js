@@ -22,7 +22,7 @@ function absence_export() {
     }
     else
     {
-        alert ('Number Of Absences is mandatory')
+        showModal('Number Of Absences is mandatory')
     }
 
 }

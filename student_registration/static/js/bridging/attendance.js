@@ -30,12 +30,12 @@ $(document).on('click', '#save_attendance_children', function(e){
     var registration_level = $("#registration_level").val();
 
     if (!attendance_date || !attendance_day_off || !round_id || !school_id || !registration_level) {
-        alert("Please fill all mandatory fields: Attendance Date, Attendance Day Off, Round, School, and Registration Level.");
+        showModal("Please fill all mandatory fields: Attendance Date, Attendance Day Off, Round, School, and Registration Level.");
         return false;
     }
 
     if (attendance_day_off == 'Yes' && !close_reason) {
-        alert("Close reason is mandatory.");
+        showModal("Close reason is mandatory.");
         return false;
     }
 
@@ -125,7 +125,7 @@ $(document).on('click', '#load_attendance_children', function(e) {
     var registration_level = $("#registration_level").val();
 
     if (!attendance_date || !round_id || !school_id || !registration_level) {
-        alert("Please fill: Attendance Date, Round, School, and Registration Level.");
+        showModal("Please fill: Attendance Date, Round, School, and Registration Level.");
         return false;
     }
 

@@ -77,7 +77,7 @@ $(document).on('click', '.download-report', function(e){
         var mother_fullname = $("#id_child__mother_fullname").val();
         var round = $("#id_round").val();
         if(!round){
-            alert("Cycle is not selected. Please select a cycle before exporting data.");
+            showModal("Cycle is not selected. Please select a cycle before exporting data.");
             return;
         }
 
@@ -131,10 +131,10 @@ $(document).on('click', '.download-report', function(e){
             data: JSON.stringify({format: format}),
             success: function(){
                 $('#exportOptionsModal').modal('hide');
-                alert('Export started. You will be notified when ready.');
+                showModal('Export started. You will be notified when ready.');
             },
             error: function(){
-                alert('Failed to start export. Please try again later.');
+                showModal('Failed to start export. Please try again later.');
             }
         });
     });
