@@ -17,6 +17,9 @@ from openpyxl import Workbook
 
 from django.conf import settings
 from student_registration.taskapp.celery import app
+
+# Use a dedicated Celery queue for MSCC exports so that exports can be
+# processed sequentially without exhausting worker resources.
 from student_registration.backends.models import ExportHistory
 
 logger = logging.getLogger(__name__)
@@ -52,7 +55,9 @@ def send_notification(user, file_url):
         logger.exception("Failed to send push notification")
 
 
-@app.task
+# Route export generation tasks to a dedicated queue so multiple requests
+# are queued and processed one at a time by a low-concurrency worker.
+@app.task(queue="mscc_export")
 def generate_mscc_export(export_id, fields=None, file_format='csv'):
     try:
         export = ExportHistory.objects.get(id=export_id)

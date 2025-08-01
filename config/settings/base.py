@@ -12,6 +12,7 @@ from __future__ import absolute_import, unicode_literals
 
 import environ
 import logging
+from kombu import Queue
 
 logger = logging.getLogger(__name__)
 
@@ -374,6 +375,17 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 INSTALLED_APPS += ['student_registration.taskapp.celery.CeleryConfig']
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TASK_DEFAULT_QUEUE = 'default'
+CELERY_TASK_QUEUES = (
+    Queue('default', routing_key='default'),
+    Queue('mscc_export', routing_key='mscc_export'),
+)
+CELERY_TASK_ROUTES = {
+    'student_registration.mscc.tasks.generate_mscc_export': {
+        'queue': 'mscc_export',
+        'routing_key': 'mscc_export',
+    },
+}
 ########## END CELERY
 
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
