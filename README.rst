@@ -66,13 +66,20 @@ Celery
 ^^^^^^
 
 This app comes with Celery.
+Periodic tasks are managed via ``django-celery-beat`` and stored in the
+database.  You can create schedules from the Django admin interface under
+``Periodic tasks`` and select any available Celery task by name.
 
-To run a celery worker:
+To view execution history, the project records each run in ``Task run logs``
+which is also accessible from the admin site.
+
+To run a celery worker (and the beat scheduler):
 
 .. code-block:: bash
 
     cd student_registration
     celery -A student_registration.taskapp worker -l info
+    celery -A student_registration.taskapp beat -l info
 
 Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
 
