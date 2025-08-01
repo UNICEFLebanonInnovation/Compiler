@@ -6,22 +6,6 @@
 {% load util_tags %}
 {% bootstrap_css %}
 
-{% block extra_head %}
-<style>
-  /* Ensure filter box and table occupy full page width */
-  .form-filters form {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-  .form-filters .form-control {
-    width: 100%;
-  }
-  .table-list .table-responsive {
-    width: 100%;
-  }
-</style>
-{% endblock %}
-
 {% block project_title %}List{% endblock %}
 
 {% block main_content %}
@@ -94,7 +78,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-<div id="accordion" class="accordion-wrapper mb-3 form-filters">
+<div id="accordion" class="accordion-wrapper mb-3 form-filters" style="width: 1620px;">
     <div class="card">
         <div id="headingOne" class="card-header">
             <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
@@ -133,7 +117,7 @@
     </div>
 </div>
 
-<div class="row table-list">
+<div class="row table-list" style="width: 1620px;">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
             <div class="card-body">
