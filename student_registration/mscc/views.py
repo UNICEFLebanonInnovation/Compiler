@@ -64,7 +64,6 @@ from .models import (
     Registration,
     Referral,
     EducationHistory,
-    MSCCExportRequest,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -983,13 +982,13 @@ def export_list_async(request):
             file_format = payload.get('format', 'csv') if payload else 'csv'
     else:
         file_format = request.GET.get('format', 'csv')
-    export_req = MSCCExportRequest.objects.create(
-        user=request.user,
-        fields=fields,
-        file_format=file_format,
+    export_record = ExportHistory.objects.create(
+        export_type='MSCC Export',
+        created_by=request.user,
+        partner_name=request.user.partner.name if request.user.partner else ''
     )
-    generate_mscc_export.delay(export_req.id)
-    return JsonResponse({'request_id': export_req.id})
+    generate_mscc_export.delay(export_record.id, fields, file_format)
+    return JsonResponse({'status': 'started'})
 
 
 class MyAzureStorage(AzureStorage):

@@ -17,16 +17,16 @@ from openpyxl import Workbook
 
 from django.conf import settings
 from student_registration.taskapp.celery import app
-from .models import MSCCExportRequest
+from student_registration.backends.models import ExportHistory
 
 logger = logging.getLogger(__name__)
 
 
-def send_notification(instance):
+def send_notification(user, file_url):
     """Send a push notification via Firebase Cloud Messaging."""
-    token = getattr(instance.user, "firebase_token", None)
+    token = getattr(user, "firebase_token", None)
     server_key = getattr(settings, "FCM_SERVER_KEY", None)
-    if not token or not server_key or not instance.file_url:
+    if not token or not server_key or not file_url:
         return
 
     headers = {
@@ -37,7 +37,7 @@ def send_notification(instance):
         "to": token,
         "data": {
             "type": "mscc_export_ready",
-            "url": instance.file_url,
+            "url": file_url,
         },
     }
 
@@ -53,19 +53,20 @@ def send_notification(instance):
 
 
 @app.task
-def generate_mscc_export(request_id):
+def generate_mscc_export(export_id, fields=None, file_format='csv'):
     try:
-        req = MSCCExportRequest.objects.get(id=request_id)
+        export = ExportHistory.objects.get(id=export_id)
+        user = export.created_by
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM vw_mscc_child")
         mscc_data = cursor.fetchall()
         headers = [col[0] for col in cursor.description]
 
         selected_headers = headers
-        if req.fields:
-            selected_headers = [h for h in headers if h in req.fields]
+        if fields:
+            selected_headers = [h for h in headers if h in fields]
 
-        file_ext = req.file_format or 'csv'
+        file_ext = file_format or 'csv'
 
         if file_ext == 'xlsx':
             wb = Workbook()
@@ -96,12 +97,8 @@ def generate_mscc_export(request_id):
         file_name = f'mscc_export_{unique_id}.zip'
         file_path = os.path.join('export', file_name)
         default_storage.save(file_path, ContentFile(zip_output.getvalue()))
-        req.file_url = default_storage.url(file_path)
-        req.status = 'done'
-        req.save()
-        send_notification(req)
+        file_url = default_storage.url(file_path)
+        if user:
+            send_notification(user, file_url)
     except Exception as e:
         logger.exception('Error generating export: %s', e)
-        if req:
-            req.status = 'failed'
-            req.save()
