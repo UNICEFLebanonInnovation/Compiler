@@ -381,9 +381,9 @@ function resizeCanvas(canvas) {
     canvas.width = canvas.offsetWidth * ratio;
     canvas.height = canvas.offsetHeight * ratio;
     canvas.getContext("2d").scale(ratio, ratio);
-    //alert(canvas.width);
-    //alert(canvas.height);
-    //alert(ratio);
+    //showModal(canvas.width);
+    //showModal(canvas.height);
+    //showModal(ratio);
     //signaturePad.clear(); // otherwise isEmpty() might return incorrect value
 }
 
