@@ -382,6 +382,9 @@ COUCHBASE_PASS = env('COUCHBASE_PASS', default='NO_PASS')
 
 MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
 
+# Firebase Cloud Messaging
+FCM_SERVER_KEY = env('FCM_SERVER_KEY', default=None)
+
 # django-compressor
 # ------------------------------------------------------------------------------
 # INSTALLED_APPS += ['compressor']
