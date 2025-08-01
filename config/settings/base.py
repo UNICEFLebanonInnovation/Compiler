@@ -88,10 +88,6 @@ THIRD_PARTY_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'six',
-#     "social_django",
-#     'tellme',
-#     'reversion',
-#     'django_json_widget',
 ]
 
 
@@ -103,7 +99,7 @@ LOCAL_APPS = [
     'student_registration.alp',  # custom alp app
     'student_registration.clm',  # custom clm app
     'student_registration.attendances',  # custom attendances app
-    'student_registration.enrollments',  # custom enrollments app
+    # 'student_registration.enrollments',  # custom enrollments app
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
@@ -388,14 +384,6 @@ CELERY_TASK_ROUTES = {
 }
 ########## END CELERY
 
-COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
-COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
-COUCHBASE_PASS = env('COUCHBASE_PASS', default='NO_PASS')
-
-MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
-
-# Firebase Cloud Messaging
-FCM_SERVER_KEY = env('FCM_SERVER_KEY', default=None)
 
 # django-compressor
 # ------------------------------------------------------------------------------
@@ -455,3 +443,11 @@ UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azure
 UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsProgrammes')
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
+
+# import firebase_admin
+# from firebase_admin import credentials
+#
+# FIREBASE_CREDENTIALS_FILE = os.path.join(str(ROOT_DIR / "utility"), 'firebase-creds.json')
+#
+# cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
+# firebase_app = firebase_admin.initialize_app(cred)

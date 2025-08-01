@@ -8,16 +8,6 @@ app_name = 'attendances'
 
 urlpatterns = [
     re_path(
-        r'^attendance/$',
-        view=views.AttendanceView.as_view(),
-        name='attendance'
-    ),
-    re_path(
-        r'^attendance-alp/$',
-        view=views.AttendanceALPView.as_view(),
-        name='attendance_alp'
-    ),
-    re_path(
         r'^export/$',
         view=views.ExportView.as_view(),
         name='export'

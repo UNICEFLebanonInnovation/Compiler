@@ -1336,7 +1336,6 @@ class BLNForm(CommonForm):
                 required=True, to_field_name='id',
             )
 
-
     def clean(self):
         cleaned_data = super(BLNForm, self).clean()
 
@@ -1626,7 +1625,6 @@ class BLNForm(CommonForm):
                 self.add_error('social_emotional', 'This value is greater that 24')
             if artistic > 10:
                 self.add_error('artistic', 'This value is greater that 10')
-
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)

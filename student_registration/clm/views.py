@@ -20,7 +20,6 @@ from django.db import connection
 import codecs
 import logging
 import traceback
-from django.utils.encoding import force_str
 import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -38,8 +37,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import Child, OutreachChild
+from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.locations.models import Location
 from .filters import (

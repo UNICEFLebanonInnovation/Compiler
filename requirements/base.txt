@@ -94,3 +94,4 @@ fuzzywuzzy==0.18.0
 python-Levenshtein==0.12.0
 django-storages==1.14.2
 six==1.17.0
+firebase-admin==6.8.0

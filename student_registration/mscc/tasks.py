@@ -6,8 +6,6 @@ import zipfile
 import logging
 import os
 import codecs
-import json
-import requests
 
 from django.utils.encoding import smart_str
 from django.db import connection
@@ -15,7 +13,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from openpyxl import Workbook
 
-from django.conf import settings
+# from firebase_admin import messaging
 from student_registration.taskapp.celery import app
 
 # Use a dedicated Celery queue for MSCC exports so that exports can be
@@ -25,42 +23,35 @@ from student_registration.backends.models import ExportHistory
 logger = logging.getLogger(__name__)
 
 
-def send_notification(user, file_url):
-    """Send a push notification via Firebase Cloud Messaging."""
-    token = getattr(user, "firebase_token", None)
-    server_key = getattr(settings, "FCM_SERVER_KEY", None)
-    if not token or not server_key or not file_url:
-        return
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"key={server_key}",
-    }
-    payload = {
-        "to": token,
-        "data": {
-            "type": "mscc_export_ready",
-            "url": file_url,
-        },
-    }
-
-    try:
-        requests.post(
-            "https://fcm.googleapis.com/fcm/send",
-            headers=headers,
-            data=json.dumps(payload),
-            timeout=5,
-        )
-    except Exception:
-        logger.exception("Failed to send push notification")
+def send_push_to_web(token, title, body, data=None):
+    return True
+    # message = messaging.Message(
+    #     notification=messaging.Notification(
+    #         title=title,
+    #         body=body,
+    #     ),
+    #     webpush=messaging.WebpushConfig(
+    #         headers={
+    #             "Urgency": "high"
+    #         },
+    #         notification=messaging.WebpushNotification(
+    #             title=title,
+    #             body=body,
+    #             icon="/static/images/logo.png"
+    #         ),
+    #     ),
+    #     token=token,
+    # )
+    # response = messaging.send(message)
+    # return response
 
 
 # Route export generation tasks to a dedicated queue so multiple requests
 # are queued and processed one at a time by a low-concurrency worker.
 @app.task(queue="mscc_export")
 def generate_mscc_export(export_id, fields=None, file_format='csv'):
+    export = ExportHistory.objects.get(id=export_id)
     try:
-        export = ExportHistory.objects.get(id=export_id)
         user = export.created_by
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM vw_mscc_child")
@@ -107,7 +98,7 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
         export.status = 'done'
         export.save()
         if user:
-            send_notification(user, file_url)
+            send_push_to_web(user, file_url, "")
     except Exception as e:
         logger.exception('Error generating export: %s', e)
         if export:

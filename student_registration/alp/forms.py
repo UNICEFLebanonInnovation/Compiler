@@ -12,7 +12,6 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from student_registration.enrollments.models import DuplicateStd
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachSmallSerializer
-from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.students.models import (
     Person,
     Student,

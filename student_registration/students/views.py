@@ -5,9 +5,6 @@ import datetime
 from django.contrib.auth.decorators import login_required
 import io
 import csv
-import logging
-logging.basicConfig(level=logging.ERROR)
-logger = logging.getLogger(__name__)
 import os
 import uuid
 from django.core.files.storage import default_storage
@@ -30,7 +27,6 @@ from dal import autocomplete
 from django.http import FileResponse
 from storages.backends.azure_storage import AzureStorage
 
-from student_registration.users.utils import force_default_language
 from .utils import is_allowed_create, is_allowed_edit
 from .models import (
     Student,
@@ -53,11 +49,12 @@ from .tables import (
 from .filters import (
     TeacherFilter
 )
-from student_registration.enrollments.models import (
-    EducationYear
-)
-from student_registration.alp.models import ALPRound
+
 from student_registration.backends.models import ExportHistory
+from student_registration.users.templatetags.custom_tags import has_group
+
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 class StudentViewSet(mixins.RetrieveModelMixin,
@@ -70,16 +67,7 @@ class StudentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        alp_round = ALPRound.objects.get(current_round=True)
-        education_year = EducationYear.objects.get(current_year=True)
-        qs = self.queryset.filter(
-            Q(alp_enrollment__isnull=False,
-              alp_enrollment__deleted=False,
-              alp_enrollment__alp_round=alp_round) |
-            Q(student_enrollment__isnull=False,
-              student_enrollment__deleted=False,
-              student_enrollment__education_year=education_year)
-        )
+        qs = self.queryset.filter()
         if self.request.GET.get('barcode', None):
             qs = qs.filter(hh_barcode=self.request.GET.get('barcode', None))
         if self.request.GET.get('case_number', None):
@@ -136,19 +124,7 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
         user_school = self.request.user.school_id
         school = int(self.request.GET.get('school', 0))
         if terms:
-            if school_type == 'alp':
-                alp_round = ALPRound.objects.get(current_round=True)
-                qs = Student.alp.filter(
-                    alp_enrollment__school_id__in=[school, user_school],
-                    alp_enrollment__alp_round__lt=alp_round.id,
-                    alp_enrollment__registered_in_level__isnull=False,
-                )
-            else:
-                education_year = EducationYear.objects.get(current_year=True)
-                qs = Student.second_shift.filter(
-                    student_enrollment__school_id__in=[school, user_school],
-                    student_enrollment__education_year__lt=education_year.id
-                )
+            qs = Student.second_shift.filter()
             for term in terms.split():
                 qs = qs.filter(
                     Q(first_name__contains=term) |
@@ -194,7 +170,6 @@ class TeacherListView(LoginRequiredMixin,
         is_staff = self.request.user.is_staff
 
         queryset = Teacher.objects.filter(round__current_year=True)
-
 
         if clm_bridging_all or is_staff:
             queryset = Teacher.objects.all()
