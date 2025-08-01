@@ -28,6 +28,9 @@ class CeleryConfig(AppConfig):
         installed_apps = [app_config.name for app_config in apps.get_app_configs()]
         app.autodiscover_tasks(lambda: installed_apps, force=True)
 
+        # register signal handlers for task logging
+        from . import signals  # noqa
+
         # if hasattr(settings, 'RAVEN_CONFIG'):
             # Celery signal registration
 # Since raven is required in production only,
