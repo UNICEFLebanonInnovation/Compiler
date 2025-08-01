@@ -985,7 +985,9 @@ def export_list_async(request):
     export_record = ExportHistory.objects.create(
         export_type='MSCC Export',
         created_by=request.user,
-        partner_name=request.user.partner.name if request.user.partner else ''
+        partner_name=request.user.partner.name if request.user.partner else '',
+        fields=fields,
+        file_format=file_format,
     )
     generate_mscc_export.delay(export_record.id, fields, file_format)
     return JsonResponse({'status': 'started'})
