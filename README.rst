@@ -83,6 +83,14 @@ To run a celery worker (and the beat scheduler):
 
 Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
 
+Long running export tasks are routed to a dedicated ``mscc_export`` queue. Run a
+worker for that queue with limited concurrency to avoid heavy exports running in
+parallel:
+
+.. code-block:: bash
+
+    celery -A student_registration.taskapp worker -Q mscc_export --concurrency=1 -l info
+
 Push Notifications
 ^^^^^^^^^^^^^^^^^^
 
