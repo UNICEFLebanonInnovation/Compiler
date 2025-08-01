@@ -190,7 +190,7 @@ class TeacherListView(LoginRequiredMixin,
 
     def get_queryset(self):
 
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         queryset = Teacher.objects.filter(round__current_year=True)
@@ -337,7 +337,7 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
 
     def get_queryset(self):
 
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         queryset = Teacher.objects.all()
@@ -378,7 +378,7 @@ def teacher_export_data(request):
         cursor = connection.cursor()
         user = request.user
         is_staff = user.is_staff
-        clm_bridging_all = user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(user, 'CLM_BRIDGING_ALL')
         partner_name = user.partner.name if user.partner else ''
 
         vw_teacher_data = 'SELECT * FROM vw_teacher_data WHERE id > 0'

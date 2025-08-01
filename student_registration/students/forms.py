@@ -26,6 +26,8 @@ from student_registration.students.serializers import (
     TeacherSerializer
 )
 
+from student_registration.users.templatetags.custom_tags import has_group
+
 
 from django.utils.safestring import mark_safe
 
@@ -456,7 +458,7 @@ class TeacherForm(forms.ModelForm):
             school_id = self.request.user.school.id
         if self.request.user.partner_id:
             partner_id = self.request.user.partner_id
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
 
         queryset = School.objects.filter(is_closed=False).all()
 

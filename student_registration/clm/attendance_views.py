@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 import json
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from student_registration.users.templatetags.custom_tags import has_group
 from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
@@ -27,7 +28,7 @@ class AttendanceView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         from datetime import datetime
         from collections import OrderedDict
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         attendance_date = datetime.now().strftime('%m/%d/%Y')
