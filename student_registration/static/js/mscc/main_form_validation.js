@@ -201,8 +201,8 @@ function validateMainForm(showModal) {
                 showError('#id_labour_weekly_income', 'This field is required');
                 valid = false;
             }
-            if ($('#labour_condition').val() === '') {
-                showError('#labour_condition', 'This field is required');
+            if ($('input[name="labour_condition"]:checked').length === 0) {
+                showError('input[name="labour_condition"]:first', 'This field is required');
                 valid = false;
             }
         }
@@ -373,7 +373,14 @@ function validateMainForm(showModal) {
         }
 
         if ($('#id_caregiver_mother_name').val() === '') {
+            showError('#id_caregiver_mother_name', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_child_living_arrangement').val() === '') {
             showError('#id_child_living_arrangement', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_cash_support_programmes').val() === '') {
             showError('#id_cash_support_programmes', 'This field is required');
             valid = false;
         }
