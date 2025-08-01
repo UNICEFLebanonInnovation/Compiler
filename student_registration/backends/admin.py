@@ -374,6 +374,8 @@ class ExportHistoryAdmin(admin.ModelAdmin):
 
 class UserActivityAdmin(admin.ModelAdmin):
 
+    change_list_template = 'admin/user_activity_change_list.html'
+
     list_display = (
         'username',
         'path',
