@@ -120,7 +120,7 @@ $(document).on('click', '.download-report', function(e){
         $('#exportOptionsModal').modal('show');
     });
 
-    $('#exportOptionsModal .start-export').on('click', function(){
+    $(document).on('click', '#exportOptionsModal .start-export', function(){
         var format = $('#exportOptionsModal select.export-format').val();
         requestHeaders = getHeader();
         $.ajax({
