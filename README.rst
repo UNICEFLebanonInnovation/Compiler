@@ -76,6 +76,13 @@ To run a celery worker:
 
 Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
 
+Push Notifications
+^^^^^^^^^^^^^^^^^^
+
+Export completion messages are sent via Firebase Cloud Messaging. Set the
+``FCM_SERVER_KEY`` environment variable with your Firebase server key so that
+``student_registration.mscc.tasks`` can deliver notifications.
+
 
 
 
