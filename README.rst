@@ -94,9 +94,37 @@ parallel:
 Push Notifications
 ^^^^^^^^^^^^^^^^^^
 
-Export completion messages are sent via Firebase Cloud Messaging. Set the
-``FCM_SERVER_KEY`` environment variable with your Firebase server key so that
-``student_registration.mscc.tasks`` can deliver notifications.
+Export completion messages are sent via Firebase Cloud Messaging (FCM). Provide your Firebase server key in the ``FCM_SERVER_KEY`` environment variable so that ``student_registration.mscc.tasks`` can deliver notifications. This value is read from ``config/settings/base.py`` and is required for the server to push notifications.
+
+To receive notifications on the client, initialize Firebase with your project's web configuration values and reference them in your frontend code.
+
+Required variables:
+
+- ``FIREBASE_API_KEY``
+- ``FIREBASE_AUTH_DOMAIN``
+- ``FIREBASE_PROJECT_ID``
+- ``FIREBASE_STORAGE_BUCKET``
+- ``FIREBASE_MESSAGING_SENDER_ID``
+- ``FIREBASE_APP_ID``
+- ``FIREBASE_MEASUREMENT_ID``
+
+Example initialization snippet::
+
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+
+    const firebaseConfig = {
+        apiKey: "<YOUR_FIREBASE_API_KEY>",
+        authDomain: "<YOUR_FIREBASE_AUTH_DOMAIN>",
+        projectId: "<YOUR_FIREBASE_PROJECT_ID>",
+        storageBucket: "<YOUR_FIREBASE_STORAGE_BUCKET>",
+        messagingSenderId: "<YOUR_FIREBASE_MESSAGING_SENDER_ID>",
+        appId: "<YOUR_FIREBASE_APP_ID>",
+        measurementId: "<YOUR_FIREBASE_MEASUREMENT_ID>",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    getAnalytics(app);
 
 
 
