@@ -1,5 +1,6 @@
 {% load static i18n %}
 {% load util_tags %}
+{% load custom_tags %}
 <!doctype html>
 <html lang="en">
 
@@ -134,9 +135,10 @@
                                 </div>
                             </div>
                            <ul id="mscc-notification-list" class="nav flex-column">
-                                {% for export in request.user.mscc_export_requests.filter(status='done')|slice:':5' %}
+                                {% recent_export_history as exports %}
+                                {% for export in exports %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ export.file_url }}" target="_blank">MSCC export {{ export.created|date:"Y-m-d H:i" }}</a>
+                                    <a class="nav-link" href="#" target="_blank">MSCC export {{ export.created|date:"Y-m-d H:i" }}</a>
                                 </li>
                                 {% empty %}
                                 <li class="nav-item">
