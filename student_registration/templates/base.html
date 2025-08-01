@@ -133,7 +133,7 @@
                                     </div>
                                 </div>
                             </div>
-                           <ul class="nav flex-column">
+                           <ul id="mscc-notification-list" class="nav flex-column">
                             </ul>
                         </div>
                     </div>
@@ -973,6 +973,17 @@
         if(payload.data && payload.data.type === 'mscc_export_ready'){
             $('#downloadReadyModal .download-link').attr('href', payload.data.url);
             $('#downloadReadyModal').modal('show');
+            var list = $('#mscc-notification-list');
+            if(list.length){
+                list.find('span:contains("No notifications")').closest('li').remove();
+                var timestamp = new Date().toISOString().slice(0,16).replace('T',' ');
+                var li = $('<li/>', { 'class': 'nav-item' });
+                $('<a/>', { 'class': 'nav-link', 'href': payload.data.url, 'target': '_blank', 'text': 'MSCC export ' + timestamp }).appendTo(li);
+                list.prepend(li);
+                if(list.children('li').length > 5){
+                    list.children('li:last-child').remove();
+                }
+            }
         }
     });
   }
