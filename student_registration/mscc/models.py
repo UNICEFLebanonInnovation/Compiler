@@ -2222,28 +2222,3 @@ class LegoService(TimeStampedModel):
         verbose_name = "LEGO"
         verbose_name_plural = "LEGO"
 
-
-class MSCCExportRequest(TimeStampedModel):
-    STATUS = Choices(
-        ('pending', 'Pending'),
-        ('done', 'Done'),
-        ('failed', 'Failed'),
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name='mscc_export_requests',
-        on_delete=models.CASCADE
-    )
-    fields = JSONField(blank=True, null=True)
-    file_format = models.CharField(max_length=10, default='csv')
-    file_url = models.URLField(blank=True, null=True)
-    status = models.CharField(
-        max_length=10,
-        choices=STATUS,
-        default=STATUS.pending
-    )
-
-    class Meta:
-        ordering = ['-created']
-        verbose_name = 'MSCC Export Request'
-        verbose_name_plural = 'MSCC Export Requests'
