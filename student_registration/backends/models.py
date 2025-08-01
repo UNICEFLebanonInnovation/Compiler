@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.conf import settings
 from django.utils.translation import gettext as _
 from django.db import models
+from django.db.models import JSONField
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
 from student_registration.schools.models import School
@@ -88,6 +89,11 @@ class ExportHistory(TimeStampedModel):
         ('School List - Bridging', _('School List - Bridging')),
         ('School List', _('School List')),
     )
+    STATUS = Choices(
+        ('pending', 'Pending'),
+        ('done', 'Done'),
+        ('failed', 'Failed'),
+    )
     export_type = models.CharField(
         max_length=100,
         blank=True,
@@ -107,6 +113,14 @@ class ExportHistory(TimeStampedModel):
         db_index=True,
         blank=True, null=True,
         verbose_name=_('Partner name')
+    )
+    fields = JSONField(blank=True, null=True)
+    file_format = models.CharField(max_length=10, default='csv')
+    file_url = models.URLField(blank=True, null=True)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS,
+        default=STATUS.pending,
     )
 
     class Meta:

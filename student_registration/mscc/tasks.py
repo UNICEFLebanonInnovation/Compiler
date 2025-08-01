@@ -98,7 +98,13 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
         file_path = os.path.join('export', file_name)
         default_storage.save(file_path, ContentFile(zip_output.getvalue()))
         file_url = default_storage.url(file_path)
+        export.file_url = file_url
+        export.status = 'done'
+        export.save()
         if user:
             send_notification(user, file_url)
     except Exception as e:
         logger.exception('Error generating export: %s', e)
+        if export:
+            export.status = 'failed'
+            export.save()
