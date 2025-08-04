@@ -2,15 +2,24 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.urls import reverse, reverse_lazy
-
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
+from django.http import (
+    HttpResponse,
+    JsonResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import translation
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.users.utils import force_default_language
 from django.shortcuts import redirect, render
-from .models import User
+from .models import User, WebPushToken
+import json
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -152,3 +161,18 @@ def user_overview(request):
         'user': request.user,
                }
     return render(request, 'users/profile.html', args)
+
+
+@csrf_exempt
+@require_POST
+@login_required
+def save_fcm_token(request):
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        token = data.get('token')
+    except (ValueError, KeyError):
+        return HttpResponseBadRequest('Invalid payload')
+    if not token:
+        return HttpResponseBadRequest('Missing token')
+    WebPushToken.objects.update_or_create(user=request.user, defaults={'token': token})
+    return JsonResponse({'status': 'ok'})
