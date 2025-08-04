@@ -45,6 +45,14 @@ def send_push_to_web(token, title, body, data=None):
     # response = messaging.send(message)
     # return response
 
+# Save FCM token
+# WebPushToken.objects.update_or_create(user=request.user, defaults={"token": token})
+#
+# Send message to specific user
+# user_token = WebPushToken.objects.get(user=target_user).token
+# send_push_to_web(token=user_token, title="Reminder", body="Your session starts soon.")
+
+
 
 # Route export generation tasks to a dedicated queue so multiple requests
 # are queued and processed one at a time by a low-concurrency worker.
