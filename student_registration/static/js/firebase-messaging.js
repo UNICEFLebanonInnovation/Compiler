@@ -53,6 +53,11 @@ onMessage(messaging, (payload) => {
       if (list.children('li').length > 5) {
         list.children('li:last-child').remove();
       }
+      const count = $('#mscc-unread-count');
+      if (count.length) {
+        const current = parseInt(count.text(), 10) || 0;
+        count.text(current + 1);
+      }
     }
   }
 });
