@@ -46,7 +46,7 @@ from student_registration.locations.views import (
     ProgramStaffViewSet
 )
 
-from student_registration.users.views import LoginRedirectView, home, login_success, LandingPage
+from student_registration.users.views import LoginRedirectView, home, login_success, LandingPage, save_fcm_token
 from student_registration.students.views import serve_file
 
 api = routers.SimpleRouter()
@@ -107,6 +107,7 @@ urlpatterns = [
     re_path(r'^api/docs/$', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     re_path(r'^api/schema/redoc/$', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
+    re_path(r'^api/save-fcm-token/$', save_fcm_token, name='save_fcm_token'),
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")
 

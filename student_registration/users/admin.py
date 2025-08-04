@@ -8,7 +8,7 @@ from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import Group
-from .models import User
+from .models import User, WebPushToken
 from .forms import UserAdminForm
 from student_registration.alp.templatetags.util_tags import has_group
 from django.contrib.admin import SimpleListFilter
@@ -300,5 +300,6 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(WebPushToken)
 
 

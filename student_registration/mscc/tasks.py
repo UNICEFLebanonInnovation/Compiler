@@ -13,44 +13,43 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from openpyxl import Workbook
 
-# from firebase_admin import messaging
+import firebase_admin
+from firebase_admin import messaging
 from student_registration.taskapp.celery import app
 
 # Use a dedicated Celery queue for MSCC exports so that exports can be
 # processed sequentially without exhausting worker resources.
 from student_registration.backends.models import ExportHistory
+from student_registration.users.models import WebPushToken
 
 logger = logging.getLogger(__name__)
 
+if not firebase_admin._apps:
+    firebase_admin.initialize_app()
 
-def send_push_to_web(token, title, body, data=None):
-    return True
-    # message = messaging.Message(
-    #     notification=messaging.Notification(
-    #         title=title,
-    #         body=body,
-    #     ),
-    #     webpush=messaging.WebpushConfig(
-    #         headers={
-    #             "Urgency": "high"
-    #         },
-    #         notification=messaging.WebpushNotification(
-    #             title=title,
-    #             body=body,
-    #             icon="/static/images/logo.png"
-    #         ),
-    #     ),
-    #     token=token,
-    # )
-    # response = messaging.send(message)
-    # return response
 
-# Save FCM token
-# WebPushToken.objects.update_or_create(user=request.user, defaults={"token": token})
-#
-# Send message to specific user
-# user_token = WebPushToken.objects.get(user=target_user).token
-# send_push_to_web(token=user_token, title="Reminder", body="Your session starts soon.")
+def send_push_to_web(user, title, body, data=None):
+    try:
+        token_obj = WebPushToken.objects.get(user=user)
+    except WebPushToken.DoesNotExist:
+        return False
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title=title,
+            body=body,
+        ),
+        webpush=messaging.WebpushConfig(
+            headers={"Urgency": "high"},
+            notification=messaging.WebpushNotification(
+                title=title,
+                body=body,
+                icon="/static/images/logo.png",
+            ),
+        ),
+        token=token_obj.token,
+        data=data or {},
+    )
+    return messaging.send(message)
 
 
 
@@ -106,7 +105,12 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
         export.status = 'done'
         export.save()
         if user:
-            send_push_to_web(user, file_url, "")
+            send_push_to_web(
+                user,
+                "MSCC export ready",
+                "Your export is ready to download.",
+                data={"type": "mscc_export_ready", "url": file_url},
+            )
     except Exception as e:
         logger.exception('Error generating export: %s', e)
         if export:
