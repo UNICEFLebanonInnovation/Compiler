@@ -444,10 +444,10 @@ UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://le
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 
-# import firebase_admin
-# from firebase_admin import credentials
-#
-# FIREBASE_CREDENTIALS_FILE = os.path.join(str(ROOT_DIR / "utility"), 'firebase-creds.json')
-#
-# cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
-# firebase_app = firebase_admin.initialize_app(cred)
+import firebase_admin
+from firebase_admin import credentials
+
+FIREBASE_CREDENTIALS_FILE = os.path.join(str(ROOT_DIR / "utility"), 'firebase-creds.json')
+
+cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
+firebase_app = firebase_admin.initialize_app(cred)
