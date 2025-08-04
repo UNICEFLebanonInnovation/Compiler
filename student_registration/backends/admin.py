@@ -142,6 +142,7 @@ class ExportHistoryAdmin(admin.ModelAdmin):
     search_fields = (
         'created_by__username',
     )
+    list_select_related = ('created_by',)
 
     def get_urls(self):
         urls = super().get_urls()
