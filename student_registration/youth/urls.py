@@ -57,6 +57,11 @@ urlpatterns = [
         name='program_enrolled_programs_edit'
     ),
     url(
+        regex=r'^Program/Enrolled-Programs-Delete/(?P<pk>[\w.@+-]+)/$',
+        view=program_view.EnrolledProgramsDeleteView.as_view(),
+        name='program_enrolled_programs_delete'
+    ),
+    url(
         regex=r'^Program/Program-Document-Add/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_add'

@@ -4,10 +4,12 @@ from __future__ import absolute_import, unicode_literals
 import json
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from braces.views import GroupRequiredMixin
+from django.http import JsonResponse, HttpResponseNotAllowed
 
 from .program_form import *
 from .utils import *
+from student_registration.youth.models import EnrolledPrograms
 
 
 class EnrolledProgramsFormView(LoginRequiredMixin,
@@ -46,6 +48,20 @@ class EnrolledProgramsFormView(LoginRequiredMixin,
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
         form.save(request=self.request, registry=registry, instance=instance)
         return super(EnrolledProgramsFormView, self).form_valid(form)
+
+
+class EnrolledProgramsDeleteView(View):
+
+    def post(self, request, pk):
+        try:
+            program = EnrolledPrograms.objects.get(pk=pk)
+            program.delete()
+            return JsonResponse({'status': 'deleted'})
+        except EnrolledPrograms.DoesNotExist:
+            return JsonResponse({'error': 'Not found'}, status=404)
+
+    def get(self, request, pk):
+        return HttpResponseNotAllowed(['POST'])
 
 
 class ProgramDocumentFormView(LoginRequiredMixin,
