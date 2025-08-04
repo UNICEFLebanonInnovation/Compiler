@@ -40,11 +40,9 @@ from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
 from django.conf import settings
-import os
 from django.http import FileResponse
 import uuid
 from storages.backends.azure_storage import AzureStorage
-from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import re
 from django.contrib.auth.decorators import login_required
@@ -907,9 +905,8 @@ def export_list_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        file_path = os.path.join('export', file_name)
-
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        storage = MyAzureStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
         ExportHistory.objects.create(
             export_type='Makani List',
             created_by=user,
@@ -953,9 +950,8 @@ def export_child_list_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        file_path = os.path.join('export', file_name)
-
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        storage = MyAzureStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
 
         return HttpResponse(file_name)
 
@@ -1004,12 +1000,10 @@ def get_file(request, file_name):
 
     if is_valid_filename(file_name):
         storage = MyAzureStorage()
-
-        file_path = os.path.join('export', file_name)
         returned_file_name = 'output_file.zip'
 
         try:
-            with storage.open(file_path, 'rb') as f:
+            with storage.open(file_name, 'rb') as f:
                 file_stream = io.BytesIO(f.read())
                 file_stream.seek(0)
                 response = FileResponse(file_stream)
@@ -1017,7 +1011,7 @@ def get_file(request, file_name):
         except Exception as e:
             response = HttpResponse("Error reading file: {}".format(e))
 
-        default_storage.delete(file_path)
+        storage.delete(file_name)
     else:
         response = HttpResponse("Invalid file.")
     return response
@@ -1035,11 +1029,10 @@ def get_file_csv(request, file_name):
 
     if is_valid_filename_csv(file_name):
         storage = MyAzureStorage()
-        file_path = os.path.join('export', file_name)
         returned_file_name = "exported_data.csv"
 
         try:
-            with storage.open(file_path, 'rb') as f:
+            with storage.open(file_name, 'rb') as f:
                 file_stream = io.BytesIO(f.read())
                 file_stream.seek(0)
                 response = FileResponse(file_stream, content_type='text/csv')
@@ -1048,7 +1041,7 @@ def get_file_csv(request, file_name):
             response = HttpResponse("Error reading file: {}".format(e))
 
         # Optionally delete after serving
-        default_storage.delete(file_path)
+        storage.delete(file_name)
     else:
         response = HttpResponse("Invalid file.", status=400)
 
