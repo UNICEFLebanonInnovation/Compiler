@@ -124,7 +124,7 @@ $(document).ready(function() {
         var format = $('#exportOptionsModal select.export-format').val();
         requestHeaders = getHeader();
         $.ajax({
-            url: '/MSCC/export-list-async/',
+            url: '/mscc/export-list-async/',
             type: 'POST',
             contentType: 'application/json',
             headers: requestHeaders,

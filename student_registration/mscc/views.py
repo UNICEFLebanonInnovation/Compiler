@@ -983,7 +983,7 @@ def export_list_async(request):
     else:
         file_format = request.GET.get('format', 'csv')
     export_record = ExportHistory.objects.create(
-        export_type='MSCC Export',
+        export_type='Makani Export',
         created_by=request.user,
         partner_name=request.user.partner.name if request.user.partner else '',
         fields=fields,

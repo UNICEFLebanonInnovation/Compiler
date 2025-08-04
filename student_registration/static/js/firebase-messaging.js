@@ -21,7 +21,7 @@ navigator.serviceWorker
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         getToken(messaging, {
-          vapidKey: "YOUR_VAPID_KEY_HERE",
+          vapidKey: "BAwRHhzYusFpd-Z_CTfU3AE1w_LuOgCJ2LpTQMPbIUNZQv343yQwd2fF49XxGj09AwArLcZ7icVMTlgxcaX53nE",
           serviceWorkerRegistration: registration,
         }).then((token) => {
           fetch("/api/save-fcm-token/", {

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 from __future__ import absolute_import, unicode_literals
 
 import environ
+import os
 import logging
 from kombu import Queue
 
@@ -446,8 +447,9 @@ UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 
 import firebase_admin
 from firebase_admin import credentials
+from pathlib import Path
 
-FIREBASE_CREDENTIALS_FILE = os.path.join(str(ROOT_DIR / "utility"), 'firebase-creds.json')
-
+root_dirt = Path(__file__).parents[2]
+FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
 firebase_app = firebase_admin.initialize_app(cred)

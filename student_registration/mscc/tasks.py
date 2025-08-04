@@ -107,7 +107,7 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
         if user:
             send_push_to_web(
                 user,
-                "MSCC export ready",
+                "Makani export ready",
                 "Your export is ready to download.",
                 data={"type": "mscc_export_ready", "url": file_url},
             )
