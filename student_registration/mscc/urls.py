@@ -333,27 +333,6 @@ urlpatterns = [
         view=views.main_registration_cancel_view,
         name='child_registration_cancel'
     ),
-    re_path(
-        r'^export-list-background/$',
-        view=views.export_list_background,
-        name='export_list_background'
-    ),
-    re_path(
-        r'^export-list-async/$',
-        view=views.export_list_async,
-        name='export_list_async'
-    ),
-    re_path(
-        r"^export-download/(?P<file_name>.+)/$",
-        view=views.get_file,
-        name='export_download'
-    ),
-
-    re_path(
-        r"^export-download-csv/(?P<file_name>.+)/$",
-        view=views.get_file_csv,
-        name='export_download_csv'
-    ),
 
     re_path(
         r'^services/lego-add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',

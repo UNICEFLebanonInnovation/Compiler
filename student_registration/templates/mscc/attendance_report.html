@@ -223,7 +223,7 @@ function generateAndOpenURL(event) {
                 $('.download-report').removeClass('disabled');
 
                 // Open the file in a new tab
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/backends/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");
@@ -266,7 +266,7 @@ function generateAndOpenTotalURL(event) {
                 $(".downloading-total-message").hide();
                 $('.download-total-report').removeClass('disabled');
 
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/backends/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");

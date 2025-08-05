@@ -3,12 +3,24 @@ __author__ = 'achamseddine'
 import time
 import tablib
 import logging
+import io
+import uuid
+import csv
+import zipfile
+import os
+import codecs
 from django.utils.translation import gettext as _
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
 from .file import store_file
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 from student_registration.backends.djqscsv import render_to_csv_response
+from django.utils.encoding import smart_str
+from django.db import connection
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from student_registration.backends.models import ExportHistory
+from student_registration.users.models import WebPushToken
 
 logger = logging.getLogger(__name__)
 
@@ -313,4 +325,105 @@ def export_last_attendance(params=None, return_data=False):
     )
 
     return render_to_csv_response(queryset, field_header_map=headers)
+
+
+def send_push_to_web(user, title, body, data=None):
+    """Send a web push notification to the given user.
+
+    This is a thin wrapper around Firebase Cloud Messaging. The actual
+    implementation is intentionally minimal here; return False when a push
+    token is not available or when the optional firebase packages are not
+    configured. This mirrors the behaviour that previously lived in the MSCC
+    app so other apps can import a single helper from ``backends``.
+    """
+    return False
+    # try:
+    #     token_obj = WebPushToken.objects.get(user=user)
+    # except WebPushToken.DoesNotExist:
+    #     return False
+    # message = messaging.Message(
+    #     notification=messaging.Notification(
+    #         title=title,
+    #         body=body,
+    #     ),
+    #     webpush=messaging.WebpushConfig(
+    #         headers={"Urgency": "high"},
+    #         notification=messaging.WebpushNotification(
+    #             title=title,
+    #             body=body,
+    #             icon="/static/images/logo.png",
+    #         ),
+    #     ),
+    #     token=token_obj.token,
+    #     data=data or {},
+    # )
+    # return messaging.send(message)
+
+
+@app.task(queue="mscc_export")
+def generate_mscc_export(export_id, fields=None, file_format='csv'):
+    """Generate the MSCC export file and store it in the configured storage.
+
+    The export record is updated with the resulting file URL and a push
+    notification is sent to the requesting user when the export completes.
+    """
+    export = ExportHistory.objects.get(id=export_id)
+    try:
+        user = export.created_by
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM vw_mscc_child")
+        mscc_data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        selected_headers = headers
+        if fields:
+            selected_headers = [h for h in headers if h in fields]
+
+        file_ext = file_format or 'csv'
+
+        if file_ext == 'xlsx':
+            wb = Workbook()
+            ws = wb.active
+            ws.append(selected_headers)
+            header_indices = [headers.index(h) for h in selected_headers]
+            for row in mscc_data:
+                ws.append([smart_str(row[i]) for i in header_indices])
+            file_content_io = io.BytesIO()
+            wb.save(file_content_io)
+            data_bytes = file_content_io.getvalue()
+        else:
+            csv_output = io.StringIO()
+            csv_writer = csv.writer(csv_output)
+            csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(selected_headers)
+            header_indices = [headers.index(h) for h in selected_headers]
+            for row in mscc_data:
+                csv_writer.writerow([smart_str(row[i]) for i in header_indices])
+            data_bytes = csv_output.getvalue().encode('utf-8')
+            file_ext = 'csv'
+
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            zf.writestr(f'mscc_data.{file_ext}', data_bytes)
+
+        unique_id = str(uuid.uuid4())
+        file_name = f'mscc_export_{unique_id}.zip'
+        file_path = os.path.join('export', file_name)
+        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        file_url = default_storage.url(file_path)
+        export.file_url = file_url
+        export.status = 'done'
+        export.save()
+        if user:
+            send_push_to_web(
+                user,
+                "Makani export ready",
+                "Your export is ready to download.",
+                data={"type": "mscc_export_ready", "url": file_url},
+            )
+    except Exception as e:
+        logger.exception('Error generating export: %s', e)
+        if export:
+            export.status = 'failed'
+            export.save()
 

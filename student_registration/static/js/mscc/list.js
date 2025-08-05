@@ -56,7 +56,7 @@ $(document).ready(function() {
 
                $(".downloading-message").hide();
                $('.download-center-report').removeClass('disabled');
-               window.open("/MSCC/export-download/" + data,
+               window.open("/backends/export-download/" + data,
                            "_blank");
 
             },
@@ -90,7 +90,7 @@ $(document).ready(function() {
 
 
         $.ajax({
-            url: "/MSCC/export-list-background/?nationality=" + nationality
+            url: "/backends/export-list-background/?nationality=" + nationality
                                 + "&first_name=" + first_name
                                 + "&last_name=" + last_name
                                 + "&father_name=" + father_name
@@ -102,7 +102,7 @@ $(document).ready(function() {
 
                $(".downloading-message").hide();
                $('.download-report').removeClass('disabled');
-               window.open("/MSCC/export-download/" + data,
+               window.open("/backends/export-download/" + data,
                            "_blank");
 
             },
@@ -124,7 +124,7 @@ $(document).ready(function() {
         var format = $('#exportOptionsModal select.export-format').val();
         requestHeaders = getHeader();
         $.ajax({
-            url: '/mscc/export-list-async/',
+            url: '/backends/export-list-async/',
             type: 'POST',
             contentType: 'application/json',
             headers: requestHeaders,

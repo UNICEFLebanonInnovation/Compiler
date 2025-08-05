@@ -3,7 +3,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
+from django.http import HttpResponseForbidden, HttpResponse, JsonResponse, FileResponse
+from django.contrib.auth.decorators import login_required
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -16,6 +17,17 @@ from openpyxl import load_workbook
 from django.core.files.base import ContentFile
 import csv
 import io
+import json
+import uuid
+import zipfile
+import codecs
+import logging
+import traceback
+import re
+from storages.backends.azure_storage import AzureStorage
+from django.db import connection
+from django.utils.encoding import smart_str
+from student_registration.users.templatetags.custom_tags import has_group
 
 from student_registration.adolescent.models import Adolescent
 from student_registration.students.models import Nationality, IDType
@@ -25,7 +37,7 @@ from student_registration.youth.models import Registration
 
 
 from .exporter import export_full_data
-from .models import Notification, Exporter, AdolescentUpload
+from .models import Notification, Exporter, AdolescentUpload, ExportHistory
 from .serializers import NotificationSerializer, ExporterSerializer
 from .filters import ExporterFilter
 from .tables import BootstrapTable, ExporterTable
@@ -390,4 +402,188 @@ class AdolescentUploadFailedView(LoginRequiredMixin, View):
         response = HttpResponse(upload.failed_file, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=%s' % upload.failed_file.name.split('/')[-1]
         return response
+
+
+class MyAzureStorage(AzureStorage):
+    """Simple wrapper around Azure storage pointing to the ``export`` container."""
+    location = "export"
+
+
+@login_required(login_url='/users/login')
+def export_list_background(request):
+    """Generate the MSCC export synchronously and return the file name.
+
+    This view mirrors the previous implementation that lived in the MSCC app
+    so other modules can rely on a single location for export logic.
+    """
+    try:
+        cursor = connection.cursor()
+        user = request.user
+        center_id = user.center_id
+
+        partner_id = 0
+        partner_name = ''
+        if user.partner_id:
+            partner_id = user.partner_id
+            partner_name = user.partner.name
+
+        round = request.GET.get('round', '')
+        if not round:
+            return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
+                                status=400)
+
+        query_params = []
+
+        if round == 'no_round':
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0 "
+        else:
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+            query_params = [round]
+
+        if has_group(user, 'MSCC_UNICEF'):
+            vw_mscc_data_str += " AND id > 0 "
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            vw_mscc_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            vw_mscc_data_str += " AND center_id = %s"
+            query_params.append(center_id)
+        else:
+            vw_mscc_data_str += " AND id = 0 "
+
+        cursor.execute(vw_mscc_data_str, query_params)
+        mscc_data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)
+            for row in mscc_data:
+                encoded_row = [smart_str(cell) for cell in row]
+                csv_writer.writerow(encoded_row)
+            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
+
+            registration_ids = [row[0] for row in mscc_data]
+            if registration_ids:
+                followup_service_data_str = "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
+                    ','.join(['%s'] * len(registration_ids)))
+                cursor.execute(followup_service_data_str, registration_ids)
+                followup_service_data = cursor.fetchall()
+                followup_headers = [col[0] for col in cursor.description]
+                csv_followup_output = io.StringIO()
+                csv_writer = csv.writer(csv_followup_output)
+                csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                csv_writer.writerow(followup_headers)
+                for row in followup_service_data:
+                    encoded_row = [smart_str(cell) for cell in row]
+                    csv_writer.writerow(encoded_row)
+                zf.writestr('followup_data.csv', csv_followup_output.getvalue())
+
+        unique_id = str(uuid.uuid4())
+        file_name = "out_file_{}.zip".format(unique_id)
+        storage = MyAzureStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+        ExportHistory.objects.create(
+            export_type='Makani List',
+            created_by=user,
+            partner_name=partner_name
+        )
+
+        return HttpResponse(file_name)
+
+    except Exception as e:
+        logging.error("An error occurred during the export process:")
+        logging.error(traceback.format_exc())
+
+        return HttpResponse("An error occurred: " + str(e), status=500)
+
+
+@login_required(login_url='/users/login')
+def export_list_async(request):
+    fields = None
+    file_format = 'csv'
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body.decode('utf-8'))
+        except (ValueError, AttributeError):
+            payload = request.POST
+        if isinstance(payload, dict):
+            file_format = payload.get('format', 'csv')
+            fields = payload.get('fields') or None
+        else:
+            file_format = payload.get('format', 'csv') if payload else 'csv'
+    else:
+        file_format = request.GET.get('format', 'csv')
+
+    export_record = ExportHistory.objects.create(
+        export_type='Makani List',
+        created_by=request.user,
+        partner_name=request.user.partner.name if request.user.partner else '',
+        fields=fields,
+        file_format=file_format,
+    )
+    generate_mscc_export.delay(export_record.id, fields, file_format)
+    return JsonResponse({'status': 'started'})
+
+
+@login_required(login_url='/users/login')
+def get_file(request, file_name):
+    response = None
+
+    if is_valid_filename(file_name):
+        storage = MyAzureStorage()
+        returned_file_name = 'output_file.zip'
+
+        try:
+            with storage.open(file_name, 'rb') as f:
+                file_stream = io.BytesIO(f.read())
+                file_stream.seek(0)
+                response = FileResponse(file_stream)
+                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
+        except Exception as e:
+            response = HttpResponse("Error reading file: {}".format(e))
+
+        storage.delete(file_name)
+    else:
+        response = HttpResponse("Invalid file.")
+    return response
+
+
+def is_valid_filename(filename):
+    pattern = r'^[a-zA-Z0-9-_]+.zip$'
+
+    return re.match(pattern, filename) is not None
+
+
+@login_required(login_url='/users/login')
+def get_file_csv(request, file_name):
+    response = None
+
+    if is_valid_filename_csv(file_name):
+        storage = MyAzureStorage()
+        returned_file_name = "exported_data.csv"
+
+        try:
+            with storage.open(file_name, 'rb') as f:
+                file_stream = io.BytesIO(f.read())
+                file_stream.seek(0)
+                response = FileResponse(file_stream, content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
+        except Exception as e:
+            response = HttpResponse("Error reading file: {}".format(e))
+
+        storage.delete(file_name)
+    else:
+        response = HttpResponse("Invalid file.", status=400)
+
+    return response
+
+
+def is_valid_filename_csv(filename):
+    """Ensure the filename is a valid CSV file with expected format."""
+    pattern = r'^[a-zA-Z0-9-_]+\.csv$'
+    return re.match(pattern, filename) is not None
 
