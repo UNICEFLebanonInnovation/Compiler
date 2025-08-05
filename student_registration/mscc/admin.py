@@ -5,6 +5,7 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
+from reversion.admin import VersionAdmin
 
 from .models import *
 
@@ -22,7 +23,7 @@ class PackagesResource(resources.ModelResource):
         export_order = ('name', )
 
 
-class PackagesAdmin(ImportExportModelAdmin):
+class PackagesAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = PackagesResource
     list_display = (
         'id',
@@ -55,7 +56,7 @@ class ProvidedServicesResource(resources.ModelResource):
         export_order = ('name', )
 
 
-class ProvidedServicesAdmin(ImportExportModelAdmin):
+class ProvidedServicesAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = ProvidedServicesResource
     list_display = (
         'id',
@@ -79,7 +80,7 @@ class ProvidedServicesAdmin(ImportExportModelAdmin):
     )
 
 
-class RegistrationAdmin(admin.ModelAdmin):
+class RegistrationAdmin(VersionAdmin):
 
     list_display = (
         'child',
@@ -117,7 +118,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     get_unicef_id.short_description = 'Unicef ID'
 
 
-class EducationHistoryAdmin(admin.ModelAdmin):
+class EducationHistoryAdmin(VersionAdmin):
 
     list_display = (
         'registration_id',
@@ -133,7 +134,7 @@ class EducationHistoryAdmin(admin.ModelAdmin):
     )
 
 
-class InclusionServiceAdmin(admin.ModelAdmin):
+class InclusionServiceAdmin(VersionAdmin):
 
     list_display = (
         'registration',
@@ -155,7 +156,7 @@ class InclusionServiceAdmin(admin.ModelAdmin):
     )
 
 
-class DigitalServiceAdmin(admin.ModelAdmin):
+class DigitalServiceAdmin(VersionAdmin):
 
     list_display = (
         'registration',
@@ -185,7 +186,7 @@ class DigitalServiceAdmin(admin.ModelAdmin):
     )
 
 
-class PSSServiceAdmin(admin.ModelAdmin):
+class PSSServiceAdmin(VersionAdmin):
 
     list_display = (
         'registration',
@@ -208,7 +209,7 @@ class PSSServiceAdmin(admin.ModelAdmin):
     )
 
 
-class HealthNutritionServiceAdmin(admin.ModelAdmin):
+class HealthNutritionServiceAdmin(VersionAdmin):
 
     list_display = (
         'registration',
@@ -229,7 +230,7 @@ class HealthNutritionServiceAdmin(admin.ModelAdmin):
     )
 
 
-class HealthNutritionReferralAdmin(admin.ModelAdmin):
+class HealthNutritionReferralAdmin(VersionAdmin):
     list_display = (
         'registration',
         'referred_development_delays',
@@ -256,7 +257,7 @@ class HealthNutritionReferralAdmin(admin.ModelAdmin):
     )
 
 
-class EducationServiceAdmin(admin.ModelAdmin):
+class EducationServiceAdmin(VersionAdmin):
     list_display = (
         'registration',
         'education_status',
@@ -275,7 +276,7 @@ class EducationServiceAdmin(admin.ModelAdmin):
     )
 
 
-class EducationRSServiceAdmin(admin.ModelAdmin):
+class EducationRSServiceAdmin(VersionAdmin):
 
     list_display = (
         'registration',
@@ -295,7 +296,7 @@ class EducationRSServiceAdmin(admin.ModelAdmin):
     )
 
 
-class EducationProgrammeAssessmentAdmin(admin.ModelAdmin):
+class EducationProgrammeAssessmentAdmin(VersionAdmin):
 
     list_display = (
         'registration',
@@ -308,7 +309,7 @@ class EducationProgrammeAssessmentAdmin(admin.ModelAdmin):
     )
 
 
-class YouthKitServiceAdmin(admin.ModelAdmin):
+class YouthKitServiceAdmin(VersionAdmin):
     list_display = (
         'registration',
         'volunteering_experience',
@@ -339,7 +340,7 @@ class YouthKitServiceAdmin(admin.ModelAdmin):
     )
 
 
-class FollowUpServiceAdmin(admin.ModelAdmin):
+class FollowUpServiceAdmin(VersionAdmin):
     list_display = (
         'registration',
         'follow_up_type',
@@ -362,7 +363,7 @@ class FollowUpServiceAdmin(admin.ModelAdmin):
     )
 
 
-class ReferralAdmin(admin.ModelAdmin):
+class ReferralAdmin(VersionAdmin):
     list_display = (
         'registration',
         'referred_formal_education',
@@ -380,7 +381,7 @@ class ReferralAdmin(admin.ModelAdmin):
     )
 
 
-class YouthAssessmentAdmin(admin.ModelAdmin):
+class YouthAssessmentAdmin(VersionAdmin):
     list_display = (
         'registration',
         'undertake_post_diagnostic',
@@ -403,7 +404,7 @@ class YouthAssessmentAdmin(admin.ModelAdmin):
     )
 
 
-class YouthReferralAdmin(admin.ModelAdmin):
+class YouthReferralAdmin(VersionAdmin):
     list_display = (
         'registration',
         'refer_tvet',
@@ -417,7 +418,7 @@ class YouthReferralAdmin(admin.ModelAdmin):
     )
 
 
-class RecreationalAdmin(admin.ModelAdmin):
+class RecreationalAdmin(VersionAdmin):
     list_display = (
         'registration',
     )
@@ -429,7 +430,7 @@ class RecreationalAdmin(admin.ModelAdmin):
     )
 
 
-class RoundAdmin(admin.ModelAdmin):
+class RoundAdmin(VersionAdmin):
     list_display = (
         'name',
         'current_year',

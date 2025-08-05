@@ -5,6 +5,7 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
+from reversion.admin import VersionAdmin
 
 from .forms import BLNAdminForm, ABLNAdminForm, RSAdminForm, CBECEAdminForm, InclusionAdminForm, OutreachAdminForm
 from .models import (
@@ -131,7 +132,7 @@ class BLNResource(resources.ModelResource):
             return obj.get_assessment_value('math', 'post_test')
 
 
-class BLNAdmin(ImportExportModelAdmin):
+class BLNAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = BLNResource
     form = BLNAdminForm
     # fields = '__all__'
@@ -177,7 +178,7 @@ class BLNAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
-class BridgingAdmin(admin.ModelAdmin):
+class BridgingAdmin(VersionAdmin):
 
     list_display = (
         'student',
@@ -443,7 +444,7 @@ class RSResource(resources.ModelResource):
         export_order = fields
 
 
-class RSAdmin(ImportExportModelAdmin):
+class RSAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = RSResource
     form = RSAdminForm
     # fields = '__all__'
@@ -650,7 +651,7 @@ class CBECEResource(resources.ModelResource):
             return obj.get_assessment_value('ArtisticDomain', 'post_test')
 
 
-class CBECEAdmin(ImportExportModelAdmin):
+class CBECEAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = CBECEResource
     form = CBECEAdminForm
     # fields = '__all__'
@@ -807,7 +808,7 @@ class ABLNResource(resources.ModelResource):
             return obj.get_assessment_value('math', 'post_test')
 
 
-class ABLNAdmin(ImportExportModelAdmin):
+class ABLNAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = ABLNResource
     form = ABLNAdminForm
     # fields = '__all__'
@@ -864,7 +865,7 @@ class DisabilityResource(resources.ModelResource):
         export_order = fields
 
 
-class DisabilityAdmin(ImportExportModelAdmin):
+class DisabilityAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = DisabilityResource
 
 
@@ -975,7 +976,7 @@ class InclusionResource(resources.ModelResource):
             return obj.get_assessment_value('math', 'post_test')
 
 
-class InclusionAdmin(ImportExportModelAdmin):
+class InclusionAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = InclusionResource
     form = InclusionAdminForm
     # fields = '__all__'
@@ -1027,7 +1028,7 @@ class CenterResource(resources.ModelResource):
         export_order = fields
 
 
-class CenterAdmin(ImportExportModelAdmin):
+class CenterAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = CenterResource
 
 
@@ -1075,7 +1076,7 @@ class OutreachResource(resources.ModelResource):
         export_order = fields
 
 
-class OutreachAdmin(ImportExportModelAdmin):
+class OutreachAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = OutreachResource
     form = OutreachAdminForm
     # fields = '__all__'

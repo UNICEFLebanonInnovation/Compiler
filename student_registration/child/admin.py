@@ -2,11 +2,12 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 from .models import Child
 
 
-class ChildAdmin(admin.ModelAdmin):
+class ChildAdmin(VersionAdmin):
 
     list_display = (
         'first_name',

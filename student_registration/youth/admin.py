@@ -7,10 +7,11 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from django import forms
+from reversion.admin import VersionAdmin
 from .models import *
 
 
-class RegistrationAdmin(admin.ModelAdmin):
+class RegistrationAdmin(VersionAdmin):
 
     list_display = (
         'adolescent',
@@ -43,7 +44,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     get_unicef_id.short_description = 'Unicef ID'
 
 
-class YouthAssessmentAdmin(admin.ModelAdmin):
+class YouthAssessmentAdmin(VersionAdmin):
     list_display = (
         'registration',
         'undertake_post_diagnostic',
@@ -76,7 +77,7 @@ class ProgramDocumentAdminForm(forms.ModelForm):
         self.fields['governorates'].queryset = Location.objects.filter(parent__isnull=True)
 
 
-class ProgramDocumentAdmin(admin.ModelAdmin):
+class ProgramDocumentAdmin(VersionAdmin):
     form = ProgramDocumentAdminForm
     list_display = (
         'project_code',
@@ -98,12 +99,12 @@ class ProgramDocumentAdmin(admin.ModelAdmin):
     )
 
 
-class ProgramTypeAdmin(admin.ModelAdmin):
+class ProgramTypeAdmin(VersionAdmin):
     list_display = ['name']
     search_fields = ['name']
 
 
-class ProgramTagAdmin(admin.ModelAdmin):
+class ProgramTagAdmin(VersionAdmin):
     list_display = ['name']
     search_fields = ['name']
 
@@ -122,59 +123,59 @@ class CreationYearFilter(admin.SimpleListFilter):
         return queryset
 
 
-class MasterProgramAdmin(admin.ModelAdmin):
+class MasterProgramAdmin(VersionAdmin):
     list_display = ('number', 'name', 'program_type', 'program_tag', 'active', 'creation_year')
     search_fields = ('number', 'name')
     list_filter = (CreationYearFilter, 'program_type', 'program_tag', 'active')
 
 
-class SubProgramAdmin(admin.ModelAdmin):
+class SubProgramAdmin(VersionAdmin):
     list_display = ('number', 'name', 'master_program', 'creation_year')
     search_fields = ('number', 'name', 'master_program', 'active')
     list_filter = (CreationYearFilter,)
 
 
-class FundedByAdmin(admin.ModelAdmin):
+class FundedByAdmin(VersionAdmin):
     list_display = ('name', 'active')
     search_fields = ('name', 'active')
 
 
-class FocalPointAdmin(admin.ModelAdmin):
+class FocalPointAdmin(VersionAdmin):
     list_display = ('name', 'phone', 'email')
     search_fields = ['name']
 
 
-class PlanAdmin(admin.ModelAdmin):
+class PlanAdmin(VersionAdmin):
     list_display = ('name', 'active')
     search_fields = ('name', 'active')
 
 
-class SectorAdmin(admin.ModelAdmin):
+class SectorAdmin(VersionAdmin):
     list_display = ('name', 'default')
     search_fields = ('name', 'default')
 
 
-class ProjectTypeAdmin(admin.ModelAdmin):
+class ProjectTypeAdmin(VersionAdmin):
     list_display = ['name']
     search_fields = ['name']
 
 
-class ProjectStatusAdmin(admin.ModelAdmin):
+class ProjectStatusAdmin(VersionAdmin):
     list_display = ['name']
     search_fields = ['name']
 
 
-class PopulationGroupsAdmin(admin.ModelAdmin):
+class PopulationGroupsAdmin(VersionAdmin):
     list_display = ('name', 'short_name')
     search_fields = ('name', 'short_name')
 
 
-class DonorAdmin(admin.ModelAdmin):
+class DonorAdmin(VersionAdmin):
     list_display = ('name', 'active')
     search_fields = ('name', 'active')
 
 
-class EnrolledProgramAdmin(admin.ModelAdmin):
+class EnrolledProgramAdmin(VersionAdmin):
     list_display = (
         'registration',
         'education_status',
