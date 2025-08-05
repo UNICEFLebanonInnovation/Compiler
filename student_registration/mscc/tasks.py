@@ -9,51 +9,16 @@ import codecs
 from django.utils.encoding import smart_str
 from django.db import connection
 from django.core.files.base import ContentFile
-from storages.backends.azure_storage import AzureStorage
 from openpyxl import Workbook
 
-# import firebase_admin
-# from firebase_admin import messaging
 from student_registration.taskapp.celery import app
 
 # Use a dedicated Celery queue for MSCC exports so that exports can be
 # processed sequentially without exhausting worker resources.
 from student_registration.backends.models import ExportHistory
-from student_registration.users.models import WebPushToken
+from student_registration.backends.utils import ExportStorage, send_push_to_web
 
 logger = logging.getLogger(__name__)
-
-# if not firebase_admin._apps:
-#     firebase_admin.initialize_app()
-
-
-class MyAzureStorage(AzureStorage):
-    location = "export"
-
-
-def send_push_to_web(user, title, body, data=None):
-    return False
-    # try:
-    #     token_obj = WebPushToken.objects.get(user=user)
-    # except WebPushToken.DoesNotExist:
-    #     return False
-    # message = messaging.Message(
-    #     notification=messaging.Notification(
-    #         title=title,
-    #         body=body,
-    #     ),
-    #     webpush=messaging.WebpushConfig(
-    #         headers={"Urgency": "high"},
-    #         notification=messaging.WebpushNotification(
-    #             title=title,
-    #             body=body,
-    #             icon="/static/images/logo.png",
-    #         ),
-    #     ),
-    #     token=token_obj.token,
-    #     data=data or {},
-    # )
-    # return messaging.send(message)
 
 
 
@@ -102,7 +67,7 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
 
         unique_id = str(uuid.uuid4())
         file_name = f'mscc_export_{unique_id}.zip'
-        storage = MyAzureStorage()
+        storage = ExportStorage()
         storage.save(file_name, ContentFile(zip_output.getvalue()))
         file_url = storage.url(file_name)
         export.file_url = file_url

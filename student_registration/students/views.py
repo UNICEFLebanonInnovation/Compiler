@@ -24,8 +24,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from dal import autocomplete
-from django.http import FileResponse
-from storages.backends.azure_storage import AzureStorage
+from student_registration.backends.utils import download_file
 
 from .utils import is_allowed_create, is_allowed_edit
 from .models import (
@@ -425,19 +424,7 @@ def teacher_export_data(request):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-class MyAzureStorage(AzureStorage):
-    location = "export"
-
-
 def serve_file(request, file_path):
     from pathlib import Path
     file_name = Path(file_path).name
-    storage = MyAzureStorage()
-    try:
-        file = storage.open(file_path, "rb")
-    except Exception as ex:
-        logger.exception("Failed to open file %s", file_path)
-        return HttpResponse("File not found", status=404)
-    response = FileResponse(file)
-    response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
-    return response
+    return download_file(file_path, file_name, delete_after=False)
