@@ -40,12 +40,13 @@ from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
 from django.conf import settings
-from django.http import FileResponse
 import uuid
-from storages.backends.azure_storage import AzureStorage
 from django.core.files.base import ContentFile
-import re
-from django.contrib.auth.decorators import login_required
+from student_registration.backends.utils import (
+    ExportStorage,
+    download_file,
+    is_valid_filename,
+)
 
 from .filters import (
     MainFilter,
@@ -905,7 +906,7 @@ def export_list_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        storage = MyAzureStorage()
+        storage = ExportStorage()
         storage.save(file_name, ContentFile(zip_output.getvalue()))
         ExportHistory.objects.create(
             export_type='Makani List',
@@ -950,7 +951,7 @@ def export_child_list_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        storage = MyAzureStorage()
+        storage = ExportStorage()
         storage.save(file_name, ContentFile(zip_output.getvalue()))
 
         return HttpResponse(file_name)
@@ -989,66 +990,15 @@ def export_list_async(request):
     return JsonResponse({'status': 'started'})
 
 
-class MyAzureStorage(AzureStorage):
-    location = "export"
-
-
 @login_required(login_url='/users/login')
 def get_file(request, file_name):
-
-    response = None
-
-    if is_valid_filename(file_name):
-        storage = MyAzureStorage()
-        returned_file_name = 'output_file.zip'
-
-        try:
-            with storage.open(file_name, 'rb') as f:
-                file_stream = io.BytesIO(f.read())
-                file_stream.seek(0)
-                response = FileResponse(file_stream)
-                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
-        except Exception as e:
-            response = HttpResponse("Error reading file: {}".format(e))
-
-        storage.delete(file_name)
-    else:
-        response = HttpResponse("Invalid file.")
-    return response
-
-
-def is_valid_filename(filename):
-    pattern = r'^[a-zA-Z0-9-_]+.zip$'
-
-    return re.match(pattern, filename) is not None
+    if is_valid_filename(file_name, 'zip'):
+        return download_file(file_name, 'output_file.zip')
+    return HttpResponse("Invalid file.")
 
 
 @login_required(login_url='/users/login')
 def get_file_csv(request, file_name):
-    response = None
-
-    if is_valid_filename_csv(file_name):
-        storage = MyAzureStorage()
-        returned_file_name = "exported_data.csv"
-
-        try:
-            with storage.open(file_name, 'rb') as f:
-                file_stream = io.BytesIO(f.read())
-                file_stream.seek(0)
-                response = FileResponse(file_stream, content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
-        except Exception as e:
-            response = HttpResponse("Error reading file: {}".format(e))
-
-        # Optionally delete after serving
-        storage.delete(file_name)
-    else:
-        response = HttpResponse("Invalid file.", status=400)
-
-    return response
-
-
-def is_valid_filename_csv(filename):
-    """Ensure the filename is a valid CSV file with expected format."""
-    pattern = r'^[a-zA-Z0-9-_]+\.csv$'
-    return re.match(pattern, filename) is not None
+    if is_valid_filename(file_name, 'csv'):
+        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
+    return HttpResponse("Invalid file.", status=400)
