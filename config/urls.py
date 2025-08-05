@@ -5,6 +5,12 @@ from django.conf import settings
 from django.urls import include, re_path
 from django.conf.urls.static import static
 from django.contrib import admin
+
+# Customize Django admin site appearance
+admin.site.site_header = "BMA"
+admin.site.site_title = "BMA"
+admin.site.index_title = "BMA"
+admin.site.site_url = "/"
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
 
