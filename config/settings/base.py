@@ -42,7 +42,6 @@ if READ_DOT_ENV_FILE:
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
-    # 'djangosecure', # Django 5.0 provides these security features natively or via other middlewares
     # Default Django apps:
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,12 +57,8 @@ DJANGO_APPS = [
     'dal_select2',
 
     # Admin
-    # 'suit',
     'jazzmin',
     'django.contrib.admin',
-    #'markdown_deux',  # Required for Knowledgebase item formatting
-    # 'bootstrapform',  # Required for nicer formatting of forms with the default templates
-    # 'helpdesk',  # This is us!
     'prettyjson',
     #'storages'
 ]
@@ -76,8 +71,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
     'rest_framework',
-    #'rest_framework_swagger',
-    'drf_spectacular', # Replaced django-rest-swagger
+    'drf_spectacular',
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
 
@@ -136,9 +130,6 @@ MIDDLEWARE = [
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
-# # SECURITY CONFIGURATION
-# X_FRAME_OPTIONS = 'DENY'
-
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
 MIGRATION_MODULES = {
@@ -157,12 +148,8 @@ FIXTURE_DIRS = (
     str(APPS_DIR.path('fixtures')),
 )
 
-
 IMPORT_EXPORT_USE_TRANSACTIONS = False
 IMPORT_EXPORT_SKIP_ADMIN_LOG = False
-
-# If not set default  is TempFolderStorage
-# IMPORT_EXPORT_TMP_STORAGE_CLASS =
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -385,12 +372,6 @@ CELERY_TASK_ROUTES = {
 }
 ########## END CELERY
 
-
-# django-compressor
-# ------------------------------------------------------------------------------
-# INSTALLED_APPS += ['compressor']
-# STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
-
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
 
@@ -439,17 +420,33 @@ JAZZMIN_SETTINGS = {
     },
 }
 
+# STORAGE CONFIGURATION
+# ------------------------------------------------------------------------------
+# Uploaded Media Files
+# ------------------------
+# See: http://django-storages.readthedocs.io/en/latest/index.html
+INSTALLED_APPS += ['storages', ]
+
+AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
+AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
+AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
+
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_blob.AzureBlobStorage' # Updated for newer django-storages
+DEFAULT_FILE_FORMAT = 'xlsx'
+DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
+
 UNIQUE_ID_API_TOKEN_URL = env('UNIQUE_ID_API_TOKEN_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/auth/getAccessToken')
 UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsUniqueIDs')
 UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsProgrammes')
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 
-import firebase_admin
-from firebase_admin import credentials
-from pathlib import Path
-
-root_dirt = Path(__file__).parents[2]
-FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
-firebase_app = firebase_admin.initialize_app(cred)
+# import firebase_admin
+# from firebase_admin import credentials
+# from pathlib import Path
+#
+# root_dirt = Path(__file__).parents[2]
+# FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
+# cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
+# firebase_app = firebase_admin.initialize_app(cred)

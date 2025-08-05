@@ -13,8 +13,8 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from openpyxl import Workbook
 
-import firebase_admin
-from firebase_admin import messaging
+# import firebase_admin
+# from firebase_admin import messaging
 from student_registration.taskapp.celery import app
 
 # Use a dedicated Celery queue for MSCC exports so that exports can be
@@ -24,32 +24,33 @@ from student_registration.users.models import WebPushToken
 
 logger = logging.getLogger(__name__)
 
-if not firebase_admin._apps:
-    firebase_admin.initialize_app()
+# if not firebase_admin._apps:
+#     firebase_admin.initialize_app()
 
 
 def send_push_to_web(user, title, body, data=None):
-    try:
-        token_obj = WebPushToken.objects.get(user=user)
-    except WebPushToken.DoesNotExist:
-        return False
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title=title,
-            body=body,
-        ),
-        webpush=messaging.WebpushConfig(
-            headers={"Urgency": "high"},
-            notification=messaging.WebpushNotification(
-                title=title,
-                body=body,
-                icon="/static/images/logo.png",
-            ),
-        ),
-        token=token_obj.token,
-        data=data or {},
-    )
-    return messaging.send(message)
+    return False
+    # try:
+    #     token_obj = WebPushToken.objects.get(user=user)
+    # except WebPushToken.DoesNotExist:
+    #     return False
+    # message = messaging.Message(
+    #     notification=messaging.Notification(
+    #         title=title,
+    #         body=body,
+    #     ),
+    #     webpush=messaging.WebpushConfig(
+    #         headers={"Urgency": "high"},
+    #         notification=messaging.WebpushNotification(
+    #             title=title,
+    #             body=body,
+    #             icon="/static/images/logo.png",
+    #         ),
+    #     ),
+    #     token=token_obj.token,
+    #     data=data or {},
+    # )
+    # return messaging.send(message)
 
 
 

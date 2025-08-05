@@ -46,18 +46,6 @@ EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
                     'student_registration.hsts_middleware.HSTSMiddleware',
                     'student_registration.xframe_middleware.XFrameMiddleware', ]
 MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE + EXTRA_MIDDLEWARE
-# RAVEN_MIDDLEWARE = ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
-# MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
-
-# opbeat integration
-# See https://opbeat.com/languages/django/
-# INSTALLED_APPS += ['opbeat.contrib.django', ]
-# OPBEAT = {
-#     'ORGANIZATION_ID': env('DJANGO_OPBEAT_ORGANIZATION_ID'),
-#     'APP_ID': env('DJANGO_OPBEAT_APP_ID'),
-#     'SECRET_TOKEN': env('DJANGO_OPBEAT_SECRET_TOKEN')
-# }
-# MIDDLEWARE = ['opbeat.contrib.django.middleware.OpbeatAPMMiddleware', ] + MIDDLEWARE
 
 
 # SECURITY CONFIGURATION
@@ -83,52 +71,11 @@ SECURE_HSTS_PRELOAD = True
 # ------------------------------------------------------------------------------
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['mdb2.uniceflebanon.org', ])
-CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=['https://mdb2.uniceflebanon.org'])
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=[])
+CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[])
 # END SITE CONFIGURATION
 
 INSTALLED_APPS += ['gunicorn', ]
-
-
-# STORAGE CONFIGURATION
-# ------------------------------------------------------------------------------
-# Uploaded Media Files
-# ------------------------
-# See: http://django-storages.readthedocs.io/en/latest/index.html
-INSTALLED_APPS += ['storages', ]
-
-AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
-AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
-AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
-
-DEFAULT_FILE_STORAGE = 'storages.backends.azure_blob.AzureBlobStorage' # Updated for newer django-storages
-DEFAULT_FILE_FORMAT = 'xlsx'
-DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
-# Static Assets
-# ------------------------
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# COMPRESSOR
-# ------------------------------------------------------------------------------
-# COMPRESS_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-# COMPRESS_URL = STATIC_URL
-# COMPRESS_ENABLED = env.bool('COMPRESS_ENABLED', default=True)
-# EMAIL
-# ------------------------------------------------------------------------------
-# DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
-#                          default='Student Registration <noreply@compiler.uniceflebanon.org>')
-# EMAIL_SUBJECT_PREFIX = env('DJANGO_EMAIL_SUBJECT_PREFIX', default='[Student Registration]')
-# SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
-
-# DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='NO_DEFAULT_FROM_EMAIL')
-# EMAIL_FROM = env('EMAIL_FROM', default='NO_FROM_EMAIL')
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = env('EMAIL_HOST', default='smtp.office365.com')
-# EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='NO_EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='NO_EMAIL_HOST_PASSWORD')
-# EMAIL_PORT = env('EMAIL_HOST_PORT', default=587)
-# EMAIL_USE_TLS = env('EMAIL_USE_TLS', default=True)  # set True if using TLS
 
 EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
 
@@ -168,22 +115,6 @@ CACHES = {
     }
 }
 
-# REDIS_LOCATION = '{0}/{1}'.format(env('REDIS_URL', default='redis://127.0.0.1:6379'), 0)
-# Heroku URL does not pass the DB number, so we parse it in
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': REDIS_LOCATION,
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#             'IGNORE_EXCEPTIONS': True,  # mimics memcache behavior.
-#                                         # http://niwinz.github.io/django-redis/latest/#_memcached_exceptions_behavior
-#         }
-#     }
-# }
-
-# INSTALLED_APPS += ['lockout', ]
-
 # Sentry Configuration
 SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='')
 
@@ -193,55 +124,6 @@ sentry_sdk.init(
     traces_sample_rate=1.0,  # Optional, for performance monitoring
     send_default_pii=True,   # Optional, if you want to send user info
 )
-
-# SENTRY_CLIENT = env('DJANGO_SENTRY_CLIENT', default='')
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': True,
-#     'root': {
-#         'level': 'WARNING',
-#         'handlers': ['sentry', ],
-#     },
-#     'formatters': {
-#         'verbose': {
-#             'format': '%(levelname)s %(asctime)s %(module)s '
-#                       '%(process)d %(thread)d %(message)s'
-#         },
-#     },
-#     'handlers': {
-#         'sentry': {
-#             'level': 'ERROR',
-#             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-#         },
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'verbose'
-#         }
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'ERROR',
-#             'handlers': ['console', ],
-#             'propagate': False,
-#         },
-#         'raven': {
-#             'level': 'DEBUG',
-#             'handlers': ['console', ],
-#             'propagate': False,
-#         },
-#         'sentry.errors': {
-#             'level': 'DEBUG',
-#             'handlers': ['console', ],
-#             'propagate': False,
-#         },
-#         'django.security.DisallowedHost': {
-#             'level': 'ERROR',
-#             'handlers': ['console', 'sentry', ],
-#             'propagate': False,
-#         },
-#     },
-# }
 
 LOGGING = {
     'version': 1,
@@ -276,13 +158,6 @@ LOGGING = {
         },
     },
 }
-
-
-# SENTRY_CELERY_LOGLEVEL = env.int('DJANGO_SENTRY_LOG_LEVEL', logging.INFO)
-# RAVEN_CONFIG = {
-#     'CELERY_LOGLEVEL': env.int('DJANGO_SENTRY_LOG_LEVEL', logging.INFO),
-#     'DSN': SENTRY_DSN
-# }
 
 # Custom Admin URL, use {% url 'admin:index' %}
 ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')
