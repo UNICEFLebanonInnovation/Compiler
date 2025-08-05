@@ -15,6 +15,61 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 window.firebaseMessaging = messaging;
 
+function addNotificationToList(url, text) {
+  const list = $('#mscc-notification-list');
+  if (list.length) {
+    list.find('span:contains("No notifications")').closest('li').remove();
+    const li = $('<li/>', { class: 'nav-item' });
+    $('<a/>', { class: 'nav-link', href: url, target: '_blank', text: text }).appendTo(li);
+    list.prepend(li);
+    if (list.children('li').length > 5) {
+      list.children('li:last-child').remove();
+    }
+    const count = $('#mscc-unread-count');
+    if (count.length) {
+      const current = parseInt(count.text(), 10) || 0;
+      count.text(current + 1);
+    }
+  }
+}
+
+function saveNotification(url, text) {
+  let items = [];
+  try {
+    items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+  } catch (e) {
+    items = [];
+  }
+  items.unshift({ url, text });
+  if (items.length > 5) {
+    items = items.slice(0, 5);
+  }
+  localStorage.setItem('msccNotifications', JSON.stringify(items));
+}
+
+$(function () {
+  let items = [];
+  try {
+    items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+  } catch (e) {
+    items = [];
+  }
+  const list = $('#mscc-notification-list');
+  items
+    .slice()
+    .reverse()
+    .forEach((n) => addNotificationToList(n.url, n.text));
+  if (list.length && !list.children('li').length) {
+    list.append(
+      $('<li/>', {
+        class: 'nav-item',
+      }).append(
+        $('<span/>', { class: 'nav-link', text: 'No notifications' })
+      )
+    );
+  }
+});
+
 navigator.serviceWorker
   .register("/static/firebase-messaging-sw.js")
   .then((registration) => {
@@ -38,26 +93,9 @@ onMessage(messaging, (payload) => {
   if (payload.data && payload.data.type === "mscc_export_ready") {
     $('#downloadReadyModal .download-link').attr('href', payload.data.url);
     $('#downloadReadyModal').modal('show');
-    const list = $('#mscc-notification-list');
-    if (list.length) {
-      list.find('span:contains("No notifications")').closest('li').remove();
-      const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
-      const li = $('<li/>', { class: 'nav-item' });
-      $('<a/>', {
-        class: 'nav-link',
-        href: payload.data.url,
-        target: '_blank',
-        text: 'MSCC export ' + timestamp,
-      }).appendTo(li);
-      list.prepend(li);
-      if (list.children('li').length > 5) {
-        list.children('li:last-child').remove();
-      }
-      const count = $('#mscc-unread-count');
-      if (count.length) {
-        const current = parseInt(count.text(), 10) || 0;
-        count.text(current + 1);
-      }
-    }
+    const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const text = 'MSCC export ' + timestamp;
+    saveNotification(payload.data.url, text);
+    addNotificationToList(payload.data.url, text);
   }
 });

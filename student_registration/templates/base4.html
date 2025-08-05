@@ -971,21 +971,56 @@
 </div>
 <script>
   if(window.firebaseMessaging){
+    function addNotificationToList(url, text){
+        var list = $('#mscc-notification-list');
+        if(list.length){
+            list.find('span:contains("No notifications")').closest('li').remove();
+            var li = $('<li/>', { 'class': 'nav-item' });
+            $('<a/>', { 'class': 'nav-link', 'href': url, 'target': '_blank', 'text': text }).appendTo(li);
+            list.prepend(li);
+            if(list.children('li').length > 5){
+                list.children('li:last-child').remove();
+            }
+            var count = $('#mscc-unread-count');
+            if(count.length){
+                var current = parseInt(count.text(),10) || 0;
+                count.text(current + 1);
+            }
+        }
+    }
+
+    function saveNotification(url, text){
+        var items = [];
+        try{
+            items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+        }catch(e){
+            items = [];
+        }
+        items.unshift({url:url, text:text});
+        if(items.length > 5){
+            items = items.slice(0,5);
+        }
+        localStorage.setItem('msccNotifications', JSON.stringify(items));
+    }
+
+    $(function(){
+        var items = [];
+        try{
+            items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+        }catch(e){
+            items = [];
+        }
+        items.slice().reverse().forEach(function(n){ addNotificationToList(n.url, n.text); });
+    });
+
     firebaseMessaging.onMessage(function(payload){
         if(payload.data && payload.data.type === 'mscc_export_ready'){
             $('#downloadReadyModal .download-link').attr('href', payload.data.url);
             $('#downloadReadyModal').modal('show');
-            var list = $('#mscc-notification-list');
-            if(list.length){
-                list.find('span:contains("No notifications")').closest('li').remove();
-                var timestamp = new Date().toISOString().slice(0,16).replace('T',' ');
-                var li = $('<li/>', { 'class': 'nav-item' });
-                $('<a/>', { 'class': 'nav-link', 'href': payload.data.url, 'target': '_blank', 'text': 'MSCC export ' + timestamp }).appendTo(li);
-                list.prepend(li);
-                if(list.children('li').length > 5){
-                    list.children('li:last-child').remove();
-                }
-            }
+            var timestamp = new Date().toISOString().slice(0,16).replace('T',' ');
+            var text = 'MSCC export ' + timestamp;
+            saveNotification(payload.data.url, text);
+            addNotificationToList(payload.data.url, text);
         }
     });
   }
