@@ -82,6 +82,7 @@ THIRD_PARTY_APPS = [
     'django_tables2',
     'django_celery_beat',
     'django_celery_results',
+    'reversion',
     'six',
 ]
 
@@ -121,6 +122,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",

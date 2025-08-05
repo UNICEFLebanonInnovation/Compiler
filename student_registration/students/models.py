@@ -9,6 +9,8 @@ from model_utils.models import TimeStampedModel
 from .utils import *
 from django.core.exceptions import ValidationError
 
+import reversion
+
 
 def validate_file_size(value):
     filesize = value.size
@@ -394,7 +396,7 @@ class Person(TimeStampedModel):
     class Meta:
         abstract = True
 
-    def save(self, **kwargs):
+    def save(self, *args, **kwargs):
 
         """
         Generate unique IDs for every person
@@ -424,9 +426,10 @@ class Person(TimeStampedModel):
         #     self.sex
         # )
 
-        super(Person, self).save(**kwargs)
+        super().save(*args, **kwargs)
 
 
+@reversion.register()
 class Student(Person):
     from student_registration.outreach.models import Child
 
@@ -649,6 +652,7 @@ class AttachmentType(models.Model):
         return self.name
 
 
+@reversion.register()
 class Teacher(Person):
     SUBJECT_PROVIDED = (
         ('arabic', _('Arabic')),

@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib import admin
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
+from reversion.admin import VersionAdmin
 import datetime
 
 from .models import (
@@ -174,7 +175,7 @@ class StudentResource(resources.ModelResource):
         )
 
 
-class StudentAdmin(ImportExportModelAdmin):
+class StudentAdmin(VersionAdmin, ImportExportModelAdmin):
     resource_class = StudentResource
     list_display = (
         'first_name',
@@ -207,12 +208,13 @@ class StudentAdmin(ImportExportModelAdmin):
         'id_number',
     )
 
+
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
 
 
-class TeacherAdmin(ImportExportModelAdmin):
+class TeacherAdmin(VersionAdmin, ImportExportModelAdmin):
     list_display = (
         'first_name',
         'father_name',
