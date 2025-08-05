@@ -413,6 +413,15 @@ JAZZMIN_SETTINGS = {
     "copyright": "UNICEF",
     "show_sidebar": True,
     "navigation_expanded": True,
+    "topmenu_links": [
+        {"app": "users"},
+        {"app": "backends"},
+        {"app": "mscc"},
+        {"app": "youth"},
+        {"app": "dirasa"},
+        {"app": "locations"},
+        {"app": "schools"},
+    ],
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.User": "fas fa-user",
