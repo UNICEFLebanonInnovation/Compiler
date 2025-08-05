@@ -122,6 +122,10 @@ $(document).ready(function() {
 
     $(document).on('click', '#exportOptionsModal .start-export', function(){
         var format = $('#exportOptionsModal select.export-format').val();
+        var button = $(this);
+        var originalHtml = button.html();
+        button.prop('disabled', true);
+        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
         requestHeaders = getHeader();
         $.ajax({
             url: '/mscc/export-list-async/',
@@ -135,6 +139,10 @@ $(document).ready(function() {
             },
             error: function(){
                 showModal('Failed to start export. Please try again later.');
+            },
+            complete: function(){
+                button.prop('disabled', false);
+                button.html(originalHtml);
             }
         });
     });
