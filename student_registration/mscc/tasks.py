@@ -4,13 +4,12 @@ import uuid
 import csv
 import zipfile
 import logging
-import os
 import codecs
 
 from django.utils.encoding import smart_str
 from django.db import connection
 from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
+from storages.backends.azure_storage import AzureStorage
 from openpyxl import Workbook
 
 # import firebase_admin
@@ -26,6 +25,10 @@ logger = logging.getLogger(__name__)
 
 # if not firebase_admin._apps:
 #     firebase_admin.initialize_app()
+
+
+class MyAzureStorage(AzureStorage):
+    location = "export"
 
 
 def send_push_to_web(user, title, body, data=None):
@@ -99,9 +102,9 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
 
         unique_id = str(uuid.uuid4())
         file_name = f'mscc_export_{unique_id}.zip'
-        file_path = os.path.join('export', file_name)
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
-        file_url = default_storage.url(file_path)
+        storage = MyAzureStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+        file_url = storage.url(file_name)
         export.file_url = file_url
         export.status = 'done'
         export.save()
