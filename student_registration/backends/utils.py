@@ -84,12 +84,61 @@ def is_valid_filename(filename, extension):
 
 
 def send_push_to_web(user, title, body, data=None):
-    """Placeholder for sending web push notifications."""
+    """Send a web push notification via Firebase Cloud Messaging.
+
+    Parameters
+    ----------
+    user: ``django.contrib.auth.models.User``
+        Recipient of the notification. All tokens stored for this user will
+        receive the message.
+    title: str
+        Title shown in the web push notification.
+    body: str
+        Body text of the notification.
+    data: dict, optional
+        Extra data to include in the notification payload. Values are
+        converted to strings as required by FCM.
+
+    Returns
+    -------
+    bool
+        ``True`` when at least one message has been successfully sent,
+        otherwise ``False``.
+    """
+
+    # Import locally to avoid loading heavy dependencies when unused.
+    from pathlib import Path
+
+    import firebase_admin
+    from firebase_admin import credentials, messaging
 
     from student_registration.users.models import WebPushToken
 
-    try:
-        WebPushToken.objects.get(user=user)
-    except WebPushToken.DoesNotExist:
+    # Collect all tokens registered for the user.
+    tokens = list(
+        WebPushToken.objects.filter(user=user).values_list("token", flat=True)
+    )
+    if not tokens:
         return False
-    return False
+
+    # Initialise the Firebase app if this hasn't happened yet.  The
+    # credentials file lives in ``utility/firebase-creds.json`` relative to the
+    # project root.
+    if not firebase_admin._apps:  # pragma: no cover - simple initialisation
+        project_root = Path(__file__).resolve().parents[2]
+        cred_path = project_root / "utility" / "firebase-creds.json"
+        cred = credentials.Certificate(str(cred_path))
+        firebase_admin.initialize_app(cred)
+
+    # FCM requires payload data values to be strings.
+    payload_data = {k: str(v) for k, v in (data or {}).items()}
+
+    message = messaging.MulticastMessage(
+        tokens=tokens,
+        notification=messaging.Notification(title=title, body=body),
+        data=payload_data,
+    )
+
+    # Send the notification to all tokens.
+    response = messaging.send_multicast(message)
+    return response.success_count > 0
