@@ -5,8 +5,10 @@ from django.conf import settings
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
-from django.contrib.postgres.fields import ArrayField, JSONField
-from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import ArrayField
+
+from django.utils.translation import gettext as _
+
 
 class LocationType(models.Model):
     name = models.CharField(max_length=64, unique=True)
@@ -27,11 +29,20 @@ class Location(MPTTModel):
 
     name = models.CharField(max_length=254)
     name_en = models.CharField(max_length=254, blank=True, null=True)
-    type = models.ForeignKey(LocationType, verbose_name='Location Type')
+    type = models.ForeignKey(
+        'LocationType',
+        verbose_name='Location Type',
+        on_delete=models.CASCADE
+    )
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     p_code = models.CharField(max_length=32, blank=True, null=True)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    parent = TreeForeignKey(
+        'self', null=True, blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return self.name
@@ -53,11 +64,20 @@ class ActivityInfoLocation(MPTTModel):
 
     name = models.CharField(max_length=254)
     name_en = models.CharField(max_length=254, blank=True, null=True)
-    type = models.ForeignKey(LocationType, verbose_name='Location Type')
+    type = models.ForeignKey(
+        'LocationType',
+        verbose_name='Location Type',
+        on_delete=models.CASCADE
+    )
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     p_code = models.CharField(max_length=32, blank=True, null=True)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    parent = TreeForeignKey(
+        'self', null=True, blank=True,
+        related_name='children',
+        db_index=True,
+        on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return self.name
@@ -71,7 +91,7 @@ class ActivityInfoLocation(MPTTModel):
 
 
 class Center(TimeStampedModel):
-    from student_registration.schools.models import PartnerOrganization
+    # from student_registration.schools.models import PartnerOrganization
     TYPE = Choices(
         ('Municipality', _('Municipality')),
         ('Collective Settlement', _('Collective Settlement')),
@@ -105,28 +125,32 @@ class Center(TimeStampedModel):
         ('False', _("No")),
     )
     partner = models.ForeignKey(
-        PartnerOrganization,
+        'schools.PartnerOrganization',
         blank=True, null=True,
         verbose_name=_('Partner'),
+        on_delete=models.SET_NULL,
         related_name='center_partner'
     )
     name = models.CharField(max_length=100)
     governorate = models.ForeignKey(
-        Location,
+        'Location',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Governorate')
     )
     caza = models.ForeignKey(
-        Location,
+        'Location',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Caza')
     )
     cadaster = models.ForeignKey(
-        Location,
+        'Location',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cadaster')
     )
     longitude = models.FloatField(
@@ -206,7 +230,7 @@ class Center(TimeStampedModel):
         null=True,
         verbose_name=_('P-Code')
     )
-    is_active = models.NullBooleanField(
+    is_active = models.BooleanField(
         default=False,
         blank=True,
         null=True,
@@ -216,11 +240,13 @@ class Center(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
     offer_digital_learning = models.CharField(
@@ -267,13 +293,12 @@ class Center(TimeStampedModel):
     @property
     def total_disability_male(self):
         from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id,child__gender='Male').exclude(child__disability__name_en='No').count()
+        return Registration.objects.filter(center=self.id, child__gender='Male').exclude(child__disability__name_en='No').count()
 
     @property
     def total_disability_female(self):
         from student_registration.mscc.models import Registration
-        return Registration.objects.filter(center=self.id,child__gender='Female').exclude(child__disability__name_en='No').count()
-
+        return Registration.objects.filter(center=self.id, child__gender='Female').exclude(child__disability__name_en='No').count()
 
     @property
     def total_lebanese(self):
@@ -298,12 +323,12 @@ class Center(TimeStampedModel):
         admin_staff = self.total_admin_staff
         program_staff = self.total_program_staff
         return admin_staff + program_staff
+
     def __str__(self):
         return self.name
 
     def __unicode__(self):
         return self.name
-
 
     class Meta:
         ordering = ['name']
@@ -347,9 +372,10 @@ class ProgramStaff(TimeStampedModel):
         ('Psychological first aid', 'Psychological first aid')
     )
     center = models.ForeignKey(
-        Center,
+        'Center',
         blank=True, null=True,
         verbose_name=_('Center'),
+        on_delete=models.SET_NULL,
     )
     facilitator_name = models.CharField(
         max_length=200,
@@ -431,11 +457,13 @@ class ProgramStaff(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
 

@@ -77,7 +77,7 @@ $(document).ready(function() {
         var mother_fullname = $("#id_child__mother_fullname").val();
         var round = $("#id_round").val();
         if(!round){
-            alert("Cycle is not selected. Please select a cycle before exporting data.");
+            showModal("Cycle is not selected. Please select a cycle before exporting data.");
             return;
         }
 
@@ -114,4 +114,36 @@ $(document).ready(function() {
     });
 
 });
+
+    $(document).on('click', '.download-report-async', function(e){
+        e.preventDefault();
+        $('#exportOptionsModal').modal('show');
+    });
+
+    $(document).on('click', '#exportOptionsModal .start-export', function(){
+        var format = $('#exportOptionsModal select.export-format').val();
+        var button = $(this);
+        var originalHtml = button.html();
+        button.prop('disabled', true);
+        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        requestHeaders = getHeader();
+        $.ajax({
+            url: '/mscc/export-list-async/',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: requestHeaders,
+            data: JSON.stringify({format: format}),
+            success: function(){
+                $('#exportOptionsModal').modal('hide');
+                showModal('Export started. You will be notified when ready.');
+            },
+            error: function(){
+                showModal('Failed to start export. Please try again later.');
+            },
+            complete: function(){
+                button.prop('disabled', false);
+                button.html(originalHtml);
+            }
+        });
+    });
 

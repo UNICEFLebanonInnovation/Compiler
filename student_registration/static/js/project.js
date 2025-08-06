@@ -381,9 +381,9 @@ function resizeCanvas(canvas) {
     canvas.width = canvas.offsetWidth * ratio;
     canvas.height = canvas.offsetHeight * ratio;
     canvas.getContext("2d").scale(ratio, ratio);
-    //alert(canvas.width);
-    //alert(canvas.height);
-    //alert(ratio);
+    //showModal(canvas.width);
+    //showModal(canvas.height);
+    //showModal(ratio);
     //signaturePad.clear(); // otherwise isEmpty() might return incorrect value
 }
 
@@ -428,7 +428,7 @@ $(document).ready(function() {
     });
 });
 
-$(document).load(function() {
+$(window).on('load', function() {
     var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_child_mother_fullname";
 
     $(document).on('blur', arabic_fields, function(){

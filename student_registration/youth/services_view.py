@@ -13,7 +13,6 @@ from .services_form import *
 from .models import *
 
 
-
 class YouthAssessmentFormView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        FormView):

@@ -1,5 +1,6 @@
 {% load static i18n %}
 {% load util_tags %}
+{% load custom_tags %}
 <!doctype html>
 <html lang="en">
 
@@ -34,6 +35,7 @@
     <meta name="msapplication-tap-highlight" content="no">
 
     <link href="{% static 'css/main.87c0748b313a1dda75f5.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
 
     {% block extra_head %}{% endblock %}
 
@@ -46,185 +48,13 @@
 
       gtag('config', 'G-J68P860Y4K');
     </script>
-    <style>
-        .app-page-title {
-              padding:  15px;
-        }
-        .form-wizard-content.sw-container.tab-content {
-            min-height: 485px !important;
-        }
-       form .card-body {
-            padding-bottom: 0px;
-            padding-top: 0px;
-            margin-bottom: 0px;
-        }
-        form #step-2 {
-            display: none;
-        }
-        form #step-3 {
-            display: none;
-        }
-        form #step-4 {
-            display: none;
-        }
-        form .form-group label {
-            float: left;
-        }
-        form .multiple-choice .checkbox {
-            width: 400px;
-            height: 33px;
-            float: left;
-        }
-        form .disabled-input .textinput {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        form .radio {
-            float: left;
-            width: 400px;
-        }
-        .form-filters .form-group {
-            padding-right: 10px;
-            padding-bottom: 5px;
-        }
-        .form-filters .btn {
-            margin-right: 10px;
-        }
-        .form-filters .form-control {
-            width: 200px;
-        }
-        .table-list .card-body .table-responsive {
-            padding-bottom: 15px;
-            max-height: 400px;
-            position: relative;
-        }
-        .table-container th {
-            background: white;
-            position: sticky;
-            top: 0; /* Don't forget this, required for the stickiness */
-            box-shadow: 0 1px 2px -1px rgba(63,106,216,0.5);
-            z-index: 999;
-            vertical-align: middle !important;
-        }
-        .table-list .card-body {
-            padding-top: 0px;
-        }
-        .table-list .dropdown-menu.show {
-            position: fixed !important;
-            top: 500px !important;
-            left: 0px !important;
-        }
-        .form-wizard-content #step-1, .form-wizard-content #step-2, .form-wizard-content #step-3, .form-wizard-content #step-4 {
-            height: 400px;
-        }
-        .asteriskField {
-            color: red;
-        }
-        .help-block {
-            color: red;
-        }
-        .error-field {
-            border-color: red;
-        }
-        .hidden {
-            display: none !important;
-        }
-        label.form-control-label {
-            font-weight: 600;
-            color: #6e6e6e;
-        }
-        .badge-form-0 {
-            padding: 2px 7px;
-            min-width: 25px;
-            max-width: 25px;
-            height: 25px;
-            font-size: 13px;
-            color: #3f6ad8;
-            font-weight: bold;
-        }
-        .badge-form {
-            padding: 2px 7px;
-            min-width: 25px;
-            max-width: 25px;
-            height: 25px;
-            font-size: 13px;
-            border: 1px solid #3f6ad8;
-            background-color: white;
-            color: #3f6ad8;
-            font-weight: bold;
-        }
-        .badge-form-2 {
-            padding: 4px 6px;
-            min-width: 32px;
-            max-width: 32px;
-            height: 30px;
-            font-size: 13px;
-            border: 1px solid #3f6ad8;
-            background-color: white;
-            color: #3f6ad8;
-            font-weight: bold;
-        }
-        .badge-form-3 {
-            padding: 4px 6px;
-            min-width: 35px;
-            max-width: 35px;
-            height: 30px;
-            font-size: 11px;
-            border: 1px solid #3f6ad8;
-            background-color: white;
-            color: #3f6ad8;
-            font-weight: bold;
-        }
-        .tabs-lg-alternate.card-header>.nav .nav-link {
-            padding: 1rem 0 !important;
-        }
-        .tabs-lg-alternate.card-header .widget-number {
-            font-size: 2rem;
-            font-weight: 200;
-        }
-        #quick-search-result  {
-            position: absolute;
-            top: 20px;
-        }
-        ul.ui-widget-content.ui-autocomplete {
-            /*top: 32px !important;
-            left: 0px !important;*/
-            width: 315px !important;
-            z-index: 9999 !important;
-            overflow: scroll !important;
-            min-height: 50px;
-            max-height: 300px;
-       }
-      .multiple-choice-options {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 10px; /* Adds space between checkbox and label */
-      }
-
-      .checkbox {
-          margin: 0 10px 0 0; /* Space out checkboxes if needed */
-          width: auto; /* Ensures checkbox doesn’t take up too much space */
-      }
-
-      /* Ensures that checkbox elements are displayed inline */
-      .checkbox input[type="checkbox"] {
-          margin-right: 5px; /* Space between checkbox and label text */
-      }
-
-      .card-body .multiple-choice-label {
-          padding-bottom: 5px; /* Adjust spacing between elements */
-      }
-
-        </style>
 </head>
 
 <body>
 <div class="app-container app-theme-white body-tabs-shadow fixed-header closed-sidebar">
     <div class="app-header header-shadow bg-night-sky header-text-light">
         <div class="app-header__logo">
-          <a href="/"><div class="logo-src"></div></a>
+          <a href="{% url 'home' %}"><div class="logo-src"></div></a>
             <div class="header__pane ml-auto" style="display: none;">
                 <div>
                     <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
@@ -232,8 +62,8 @@
                             <span class="hamburger-inner"></span>
                         </span>
                     </button>
-                </div>
-            </div>
+</div>
+</div>
         </div>
         <div class="app-header__mobile-menu">
             <div>
@@ -300,14 +130,21 @@
                                     <div class="menu-header-image opacity-1"></div>
                                     <div class="menu-header-content text-dark">
                                         <h5 class="menu-header-title">Notifications</h5>
-                                        <h6 class="menu-header-subtitle">You have <b>0</b> unread messages</h6>
+                                        <h6 class="menu-header-subtitle">You have <b id="mscc-unread-count">0</b> unread messages</h6>
                                     </div>
                                 </div>
                             </div>
-                           <ul class="nav flex-column">
-                                <li class="nav-item-divider nav-item"></li>
-                                <li class="nav-item-btn text-center nav-item">
+                           <ul id="mscc-notification-list" class="nav flex-column">
+                                {% recent_export_history as exports %}
+                                {% for export in exports %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" target="_blank">MSCC export {{ export.created|date:"Y-m-d H:i" }}</a>
                                 </li>
+                                {% empty %}
+                                <li class="nav-item">
+                                    <span class="nav-link">No notifications</span>
+                                </li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
@@ -332,12 +169,12 @@
                             <div class="grid-menu grid-menu-xl grid-menu-3col">
                                 <div class="no-gutters row">
                                     <div class="col-sm-6 col-xl-4">
-                                        <a href="/" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                        <a href="{% url 'home' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-home icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Home
                                         </a>
                                     </div>
-                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -345,7 +182,7 @@
                                         </a>
                                     </div>
                                   {% endif %}
-                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:attendance' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="lnr-laptop-phone icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -362,7 +199,7 @@
 
                                       </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                       <div class="col-sm-6 col-xl-4">
                                           <a href="{% url 'locations:center_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                               <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -370,7 +207,7 @@
                                           </a>
                                       </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"MSCC_UNICEF" %}
+                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -401,7 +238,7 @@
                                         </a>
                                     </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" %}
+                                    {% if request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" or request.user|has_group:"YOUTH" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'youth:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -414,6 +251,12 @@
                                         <a href="" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
                                             Youth Dashboard
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'dashboard:chart-builder' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Chart Builder
                                         </a>
                                     </div>
                                     {% endif %}
@@ -969,7 +812,6 @@
                         </div>
                     </div>
                 </div>
-
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -985,6 +827,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script type="text/javascript" src="{% static 'js/project.js' %}?v=1"></script>
+
+
+<!--<script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>-->
+<!--<script type="text/javascript" src="{% static 'js/main.87c0748b313a1dda75f5.js' %}"></script>-->
+<!---->
+<!--<script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>-->
+<!---->
+<!--<script type="text/javascript" src="{% static 'js/project.js' %}?v=1"></script>-->
+<script type="text/javascript">
+  $(function () {
+    // Show loading overlay when any form is submitted
+    $(document).on('submit', 'form', function () {
+      $('.app-drawer-overlay').removeClass('d-none');
+    });
+  });
+</script>
 
 {% block extra_js %}{% endblock %}
 
@@ -1094,3 +954,74 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="downloadReadyModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">File Ready</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Your export is ready. <a class="download-link" href="#" target="_blank">Download</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  if(window.firebaseMessaging){
+    function addNotificationToList(url, text){
+        var list = $('#mscc-notification-list');
+        if(list.length){
+            list.find('span:contains("No notifications")').closest('li').remove();
+            var li = $('<li/>', { 'class': 'nav-item' });
+            $('<a/>', { 'class': 'nav-link', 'href': url, 'target': '_blank', 'text': text }).appendTo(li);
+            list.prepend(li);
+            if(list.children('li').length > 5){
+                list.children('li:last-child').remove();
+            }
+            var count = $('#mscc-unread-count');
+            if(count.length){
+                var current = parseInt(count.text(),10) || 0;
+                count.text(current + 1);
+            }
+        }
+    }
+
+    function saveNotification(url, text){
+        var items = [];
+        try{
+            items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+        }catch(e){
+            items = [];
+        }
+        items.unshift({url:url, text:text});
+        if(items.length > 5){
+            items = items.slice(0,5);
+        }
+        localStorage.setItem('msccNotifications', JSON.stringify(items));
+    }
+
+    $(function(){
+        var items = [];
+        try{
+            items = JSON.parse(localStorage.getItem('msccNotifications')) || [];
+        }catch(e){
+            items = [];
+        }
+        items.slice().reverse().forEach(function(n){ addNotificationToList(n.url, n.text); });
+    });
+
+    firebaseMessaging.onMessage(function(payload){
+        if(payload.data && payload.data.type === 'mscc_export_ready'){
+            $('#downloadReadyModal .download-link').attr('href', payload.data.url);
+            $('#downloadReadyModal').modal('show');
+            var timestamp = new Date().toISOString().slice(0,16).replace('T',' ');
+            var text = 'MSCC export ' + timestamp;
+            saveNotification(payload.data.url, text);
+            addNotificationToList(payload.data.url, text);
+        }
+    });
+  }
+</script>

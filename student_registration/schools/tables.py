@@ -1,36 +1,11 @@
 # coding: utf-8
 import django_tables2 as tables
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .models import School, Club, Meeting, CommunityInitiative, HealthVisit
 
-class BootstrapTable(tables.Table):
 
-    class Meta:
-        model = School
-        template = 'django_tables2/bootstrap.html'
-        attrs = {'class': 'table table-bordered table-striped table-hover'}
-
-
-class CommonTable(tables.Table):
-
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit school'),
-                                        template_name='django_tables2/edit_column.html',
-                                        attrs={'url': ''})
-    # delete_column = tables.TemplateColumn(verbose_name=_('Delete school'),
-    #                                       template_name='django_tables2/delete_column.html',
-    #                                       attrs={'url': ''})
-
-    class Meta:
-        model = School
-        template = 'django_tables2/bootstrap.html'
-        fields = (
-            'edit_column',
-            # 'delete_column',
-        )
-
-
-class SchoolTable(CommonTable):
+class SchoolTable(tables.Table):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit school'), orderable=False,
                                         template_name='django_tables2/school_edit_column.html',
@@ -58,6 +33,7 @@ class SchoolTable(CommonTable):
     class Meta:
         model = School
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'edit_column',
             'club_column',
@@ -78,7 +54,7 @@ class SchoolTable(CommonTable):
         )
 
 
-class SchoolExportTable(CommonTable):
+class SchoolExportTable(tables.Table):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit school'), orderable=False,
                                         template_name='django_tables2/school_edit_column.html',
@@ -110,6 +86,7 @@ class SchoolExportTable(CommonTable):
     class Meta:
         model = School
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'edit_column',
             'club_column',
@@ -131,7 +108,7 @@ class SchoolExportTable(CommonTable):
         )
 
 
-class ClubTable(CommonTable):
+class ClubTable(tables.Table):
 
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/school/club_action_column.html',
@@ -142,6 +119,7 @@ class ClubTable(CommonTable):
     class Meta:
         model = Club
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
             'club_name',
@@ -155,8 +133,7 @@ class ClubTable(CommonTable):
         )
 
 
-class MeetingTable(CommonTable):
-
+class MeetingTable(tables.Table):
 
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/school/meeting_action_column.html',
@@ -167,6 +144,7 @@ class MeetingTable(CommonTable):
     class Meta:
         model = Meeting
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
             'meeting_name',
@@ -179,7 +157,7 @@ class MeetingTable(CommonTable):
         )
 
 
-class CommunityInitiativeTable(CommonTable):
+class CommunityInitiativeTable(tables.Table):
 
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/school/initiative_action_column.html',
@@ -190,6 +168,7 @@ class CommunityInitiativeTable(CommonTable):
     class Meta:
         model = CommunityInitiative
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
             'community_group_name',
@@ -201,7 +180,7 @@ class CommunityInitiativeTable(CommonTable):
         )
 
 
-class HealthVisitTable(CommonTable):
+class HealthVisitTable(tables.Table):
 
     action_column = tables.TemplateColumn(verbose_name=_('Actions'), orderable=False,
                                         template_name='django_tables2/school/visit_action_column.html',
@@ -212,6 +191,7 @@ class HealthVisitTable(CommonTable):
     class Meta:
         model = HealthVisit
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
             'focal_point_name',

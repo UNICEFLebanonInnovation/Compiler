@@ -8,10 +8,8 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
 from django.utils.html import escape, format_html, format_html_join, html_safe
 
-from .forms import OutreachAdminForm
 from .models import (
     Outreach,
-    ALPRound,
 )
 from student_registration.schools.models import (
     School,
@@ -19,7 +17,6 @@ from student_registration.schools.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.users.models import User
-from student_registration.students.models import Student
 from django.db.models import Q
 import datetime
 
@@ -243,35 +240,6 @@ class PostTestTotalFilter(admin.SimpleListFilter):
         return queryset
 
 
-class OwnerFilter(admin.SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
-    title = 'owner'
-
-    # Parameter for the filter that will be used in the URL query.
-    parameter_name = 'owner'
-
-    def lookups(self, request, model_admin):
-        """
-        Returns a list of tuples. The first element in each
-        tuple is the coded value for the option that will
-        appear in the URL query. The second element is the
-        human-readable name for the option that will appear
-        in the right sidebar.
-        """
-        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'TEST_MANAGER', 'CERD']))
-
-    def queryset(self, request, queryset):
-        """
-        Returns the filtered queryset based on the value
-        provided in the query string and retrievable via
-        `self.value()`.
-        """
-        if self.value():
-            return queryset.filter(owner_id=self.value())
-        return queryset
-
-
 class ModifiedByFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
@@ -398,93 +366,6 @@ class RegisteredInSectionFilter(admin.SimpleListFilter):
         return queryset
 
 
-class OldNewFilter(admin.SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
-    title = 'Old or New?'
-
-    # Parameter for the filter that will be used in the URL query.
-    parameter_name = 'old_new'
-
-    def lookups(self, request, model_admin):
-        """
-        Returns a list of tuples. The first element in each
-        tuple is the coded value for the option that will
-        appear in the URL query. The second element is the
-        human-readable name for the option that will appear
-        in the right sidebar.
-        """
-        return (
-            ('old', 'Old'),
-            ('new', 'New')
-        )
-
-    def queryset(self, request, queryset):
-        """
-        Returns the filtered queryset based on the value
-        provided in the query string and retrievable via
-        `self.value()`.
-        """
-        if self.value() and self.value() == 'new':
-            return queryset.extra(where={
-                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) = 1)'
-        }).distinct()
-        if self.value() and self.value() == 'old':
-            return queryset.extra(where={
-                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) > 1)'
-            }).distinct()
-        return queryset
-
-
-class ReferredToFilter(admin.SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
-    title = 'Referred to'
-
-    # Parameter for the filter that will be used in the URL query.
-    parameter_name = 'referred_to'
-
-    def lookups(self, request, model_admin):
-        """
-        Returns a list of tuples. The first element in each
-        tuple is the coded value for the option that will
-        appear in the URL query. The second element is the
-        human-readable name for the option that will appear
-        in the right sidebar.
-        """
-        return (
-            ('alp', 'ALP'),
-            ('alp1', 'Passed ALP level'),
-            ('alp2', 'Repeat ALP level'),
-            ('formal', 'Formal')
-        )
-
-    def queryset(self, request, queryset):
-        """
-        Returns the filtered queryset based on the value
-        provided in the query string and retrievable via
-        `self.value()`.
-        """
-        queryset = queryset.filter(alp_round__current_post_test=True)
-        if self.value() and self.value() == 'alp':
-            return queryset.filter(
-                refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
-            )
-        if self.value() and self.value() == 'alp1':
-            return queryset.filter(
-                refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9]
-            )
-        if self.value() and self.value() == 'alp2':
-            return queryset.filter(
-                refer_to_level_id__in=[18, 19, 20, 21, 22, 23, 24, 25, 26]
-            )
-        if self.value() and self.value() == 'formal':
-            return queryset.filter(
-                refer_to_level_id__in=[1, 10, 11, 12, 13, 14, 15, 16, 17]
-            )
-        return queryset
-
-
 class PassedTestFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
@@ -592,7 +473,6 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
-    form = OutreachAdminForm
     readonly_fields = (
         'student',
         'student_sex',
@@ -694,7 +574,6 @@ class OutreachAdmin(ImportExportModelAdmin):
         RegisteredInSectionFilter,
         FromAgeFilter,
         ToAgeFilter,
-        OwnerFilter,
         ModifiedByFilter,
         'created',
         'modified',
@@ -804,7 +683,6 @@ class CurrentOutreachAdmin(OutreachAdmin):
         'student__nationality',
         FromAgeFilter,
         ToAgeFilter,
-        OwnerFilter,
         ModifiedByFilter,
         'created',
         'modified',
@@ -852,7 +730,6 @@ class PreTestAdmin(OutreachAdmin):
         FromAgeFilter,
         ToAgeFilter,
         PreTestTotalFilter,
-        OwnerFilter,
         ModifiedByFilter,
         'created',
         'modified',
@@ -900,9 +777,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'school',
         'school__location',
         GovernorateFilter,
-        OldNewFilter,
         PassedTestFilter,
-        ReferredToFilter,
         'level',
         'assigned_to_level',
         'registered_in_level',
@@ -911,7 +786,6 @@ class CurrentRoundAdmin(OutreachAdmin):
         'student__sex',
         FromAgeFilter,
         ToAgeFilter,
-        OwnerFilter,
         ModifiedByFilter,
         'created',
         'modified',
@@ -969,7 +843,6 @@ class PostTestAdmin(OutreachAdmin):
         FromAgeFilter,
         ToAgeFilter,
         PostTestTotalFilter,
-        OwnerFilter,
         ModifiedByFilter,
         'created',
         'modified',
@@ -1012,11 +885,3 @@ class ALPRoundAdmin(admin.ModelAdmin):
         'current_pre_test',
         'current_post_test',
     )
-
-
-# admin.site.register(Outreach, OutreachAdmin)
-# admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
-# admin.site.register(PreTest, PreTestAdmin)
-# admin.site.register(CurrentRound, CurrentRoundAdmin)
-# admin.site.register(PostTest, PostTestAdmin)
-# admin.site.register(ALPRound, ALPRoundAdmin)

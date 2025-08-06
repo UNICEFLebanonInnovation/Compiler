@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class YouthConfig(AppConfig):
-    name = 'youth'
+    name = 'student_registration.youth'

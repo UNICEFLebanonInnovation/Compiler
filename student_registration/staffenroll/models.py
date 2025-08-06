@@ -5,7 +5,7 @@ from django.db import models
 import datetime
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from model_utils import Choices
 from student_registration.staffs.models import Staffs
 from student_registration.schools.models import (
@@ -104,11 +104,13 @@ class StaffEnroll(TimeStampedModel):
     staff = models.ForeignKey(
         Staffs,
         blank=False, null=True,
+        on_delete=models.SET_NULL,
         related_name='staff_enrollment',
     )
     job = models.ForeignKey(
         Jobs,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Jobs')
     )
     joineddate = models.CharField(
@@ -121,36 +123,42 @@ class StaffEnroll(TimeStampedModel):
         School,
         blank=False, null=True,
         related_name='school',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
      )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Section')
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Class')
     )
     subject = models.ForeignKey(
         Subjects,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Subjects')
     )
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Education year')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Created by')
     )
     deleted = models.BooleanField(
@@ -193,6 +201,7 @@ class StaffEnroll(TimeStampedModel):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
     )
     is_main = models.BooleanField(
@@ -203,6 +212,7 @@ class StaffEnroll(TimeStampedModel):
         Worklist,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('List of work')
     )
     image = models.ImageField(
@@ -231,7 +241,7 @@ class StaffEnroll(TimeStampedModel):
         return ''
 
     class Meta:
-        ordering = ['-student__first_name']
+        ordering = ['id']
 
     def __unicode__(self):
         if self.student:
@@ -244,29 +254,33 @@ class staffattend(TimeStampedModel):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
     )
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Education year')
     )
     job = models.ForeignKey(
         Jobs,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Job Type')
     )
     staff = models.ForeignKey(
         Staffs,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Staff')
     )
     attenddate = models.DateField(null=False)
     attendhours = models.IntegerField(default=0)
-    isattend = models.NullBooleanField(blank=True, default=False, null=True)
+    isattend = models.BooleanField(blank=True, default=False, null=True)
     attendremarks = models.CharField(blank=True, null=True, max_length=200)
 
 
@@ -275,11 +289,13 @@ class StatisticAttend(TimeStampedModel):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
     )
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='+',
         verbose_name=_('Education year')
     )
@@ -287,6 +303,7 @@ class StatisticAttend(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Created by')
     )
     attenddate = models.DateField(null=False)

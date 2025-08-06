@@ -1,6 +1,6 @@
 # coding: utf-8
 import django_tables2 as tables
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .models import Enrollment
 
@@ -93,7 +93,7 @@ class EnrollmentTable(tables.Table):
         )
 
 
-class Enrollment_By_School_Table(tables.Table):
+class EnrollmentBySchoolTable(tables.Table):
     is_verified_column = tables.TemplateColumn(verbose_name=_('Is Justified'), orderable=False,
                                                template_name='django_tables2/is_verified.html')
 

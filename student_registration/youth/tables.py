@@ -1,16 +1,8 @@
 # coding: utf-8
 import django_tables2 as tables
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .models import Registration, ProgramDocument
-
-
-class BootstrapTable(tables.Table):
-
-    class Meta:
-        model = Registration
-        template = 'django_tables2/bootstrap.html'
-        attrs = {'class': 'table table-bordered table-striped table-hover'}
 
 
 class RegistrationTable(tables.Table):
@@ -25,6 +17,7 @@ class RegistrationTable(tables.Table):
     class Meta:
         model = Registration
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
             # 'status_column',
@@ -55,12 +48,12 @@ class PDTable(tables.Table):
     population_groups = tables.Column(accessor='get_population_groups_name', verbose_name=_('Population Groups'))
     master_programs = tables.Column(accessor='get_master_program_names', verbose_name=_('Master Programs'))
     donor_names = tables.Column(accessor='get_donor_names', verbose_name=_('Donors'))
-
-
     budget = tables.Column(verbose_name=_('Budget'))
+
     class Meta:
         model = ProgramDocument
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
             'partner',
@@ -101,6 +94,7 @@ class PDPartnerTable(tables.Table):
     class Meta:
         model = ProgramDocument
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             'action_column',
             'partner',

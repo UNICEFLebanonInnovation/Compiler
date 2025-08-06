@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class WinterizationsConfig(AppConfig):
-    name = 'winterization'
+    name = 'student_registration.winterization'

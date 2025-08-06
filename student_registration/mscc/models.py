@@ -2,8 +2,10 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.utils.translation import gettext as _
+from django.db.models import JSONField
+from django.contrib.postgres.fields import ArrayField
+
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
@@ -148,12 +150,14 @@ class Registration(TimeStampedModel):
         Center,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Center')
     )
     child = models.ForeignKey(
         Child,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Child')
     )
     child_outreach = models.IntegerField(blank=True, null=True)
@@ -162,12 +166,14 @@ class Registration(TimeStampedModel):
         PartnerOrganization,
         blank=True, null=True,
         verbose_name=_('Partner'),
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     round = models.ForeignKey(
         Round,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Round')
     )
     have_labour = models.CharField(
@@ -259,11 +265,13 @@ class Registration(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
     deleted = models.BooleanField(blank=True, default=False)
@@ -271,6 +279,7 @@ class Registration(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Deleted by'),
     )
     registration_date = models.DateField(
@@ -389,6 +398,7 @@ class ProvidedServices(models.Model):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     type = models.CharField(
         max_length=100,
@@ -474,6 +484,7 @@ class InclusionService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     dropout = models.CharField(
         max_length=100,
@@ -520,6 +531,7 @@ class DigitalService(models.Model):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     using_akelius = models.CharField(
         max_length=100,
@@ -665,6 +677,7 @@ class PSSService(models.Model):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     child_registered = models.CharField(
         max_length=100,
@@ -795,6 +808,7 @@ class HealthNutritionService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL
     )
     # Caregivers of children 0-5 years
     baby_breastfed = models.CharField(
@@ -1023,6 +1037,7 @@ class HealthNutritionReferral(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL
     )
     referred_development_delays = models.CharField(
         max_length=10,
@@ -1194,6 +1209,7 @@ class EducationService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='education_service',
+        on_delete=models.SET_NULL
     )
     education_status = models.CharField(
         max_length=200,
@@ -1239,6 +1255,7 @@ class EducationService(TimeStampedModel):
         Round,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Round')
     )
 
@@ -1275,11 +1292,13 @@ class EducationRSService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     school = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Name of public School')
     )
     foreign_language_grade = models.IntegerField(
@@ -1382,6 +1401,7 @@ class EducationAssessment(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     pre_attended_arabic = models.CharField(
         max_length=100,
@@ -1576,10 +1596,11 @@ class EducationProgrammeAssessment(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
-    pre_test = JSONField(blank=True, null=True)
-    post_test = JSONField(blank=True, null=True)
-    school_test = JSONField(blank=True, null=True)
+    pre_test = JSONField(default=dict)
+    post_test = JSONField(default=dict)
+    school_test = JSONField(default=dict)
     programme_type = models.CharField(
         max_length=100,
         blank=True,
@@ -1632,6 +1653,7 @@ class YouthKitService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     # For Youth
     volunteering_experience = models.CharField(
@@ -1778,6 +1800,7 @@ class YouthService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     service_type = models.CharField(
@@ -1788,12 +1811,13 @@ class YouthService(TimeStampedModel):
         verbose_name=_('Service Type')
     )
 
-    service_values = JSONField(blank=True, null=True)
+    service_values = JSONField(default=dict)
 
     class Meta:
         ordering = ['id']
         verbose_name = "Youth Service"
         verbose_name_plural = "Youth Services"
+
 
 class FollowUpService(TimeStampedModel):
 
@@ -1835,6 +1859,7 @@ class FollowUpService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     follow_up_type = models.CharField(
         max_length=100,
@@ -1948,6 +1973,7 @@ class Referral(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     referred_formal_education = models.CharField(
         max_length=10,
@@ -1960,6 +1986,7 @@ class Referral(TimeStampedModel):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Name of the School referred to')
     )
     receive_needed_material = models.CharField(
@@ -2031,6 +2058,7 @@ class YouthAssessment(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     undertake_post_diagnostic = models.CharField(
         max_length=100,
@@ -2121,6 +2149,7 @@ class YouthReferral(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     refer_tvet = models.CharField(
         max_length=100,
@@ -2148,8 +2177,9 @@ class Recreational(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
-    assessment = JSONField(blank=True, null=True)
+    assessment = JSONField(default=dict)
 
     class Meta:
         ordering = ['id']
@@ -2163,6 +2193,7 @@ class LegoService(TimeStampedModel):
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     participating_lego_sessions = models.CharField(
         max_length=100,
@@ -2190,3 +2221,4 @@ class LegoService(TimeStampedModel):
         ordering = ['id']
         verbose_name = "LEGO"
         verbose_name_plural = "LEGO"
+

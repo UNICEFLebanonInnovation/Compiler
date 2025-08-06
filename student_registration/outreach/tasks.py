@@ -2,10 +2,8 @@
 from student_registration.taskapp.celery import app
 
 import json
-import httplib
 import datetime
 from time import mktime
-from django.core.serializers.json import DjangoJSONEncoder
 from openpyxl import load_workbook
 
 

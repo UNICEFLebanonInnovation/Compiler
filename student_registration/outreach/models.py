@@ -1,27 +1,29 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.postgres.fields import JSONField, ArrayField
-from django.utils.translation import ugettext as _
+from django.db.models import JSONField
+from django.contrib.postgres.fields import ArrayField
+
+from django.utils.translation import gettext as _
 
 from model_utils import Choices
 
 from student_registration.students.models import Person
 
-
-class OutreachYear(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    current_year = models.BooleanField(blank=True, default=False)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = "Outreach Year"
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
+#
+# class OutreachYear(models.Model):
+#     name = models.CharField(max_length=100, unique=True)
+#     current_year = models.BooleanField(blank=True, default=False)
+#
+#     class Meta:
+#         ordering = ['name']
+#         verbose_name = "Outreach Year"
+#
+#     def __str__(self):
+#         return self.name
+#
+#     def __unicode__(self):
+#         return self.name
 
 
 class HouseHold(models.Model):
@@ -60,7 +62,7 @@ class HouseHold(models.Model):
     village = models.CharField(max_length=200, blank=True, null=True)
     interview_date = models.CharField(max_length=200, blank=True, null=True)
 
-    children = JSONField(blank=True, null=True)
+    children = JSONField(default=dict)
 
     class Meta:
         ordering = ['id']
@@ -75,9 +77,10 @@ class HouseHold(models.Model):
 class Child(Person):
 
     household = models.ForeignKey(
-        HouseHold,
+        'HouseHold',
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     form_id = models.CharField(
         max_length=45,
@@ -329,9 +332,10 @@ class OutreachChild(models.Model):
         ('12', _('December')),
     )
     outreach_caregiver = models.ForeignKey(
-        OutreachCaregiver,
+        'OutreachCaregiver',
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     first_name = models.CharField(max_length=200, blank=True, null=True)
     date_of_birth = models.CharField(max_length=200, blank=True, null=True)

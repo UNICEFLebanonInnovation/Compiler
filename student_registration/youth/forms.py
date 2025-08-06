@@ -1,8 +1,8 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
@@ -12,26 +12,20 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
-from dal import autocomplete
 
 from student_registration.students.models import (
     Nationality,
     IDType,
 )
 
-from student_registration.locations.models import Center
 from student_registration.clm.models import Disability, EducationalLevel
 from student_registration.adolescent.models import Adolescent
 from .models import (
     Registration,
-    YES_NO
 )
-
 
 from student_registration.locations.models import Location
-from student_registration.schools.models import (
-    School
-)
+
 from .serializers import MainSerializer
 import datetime
 

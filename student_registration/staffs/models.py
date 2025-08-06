@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 import datetime
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from model_utils import Choices
 from student_registration.students.models import Nationality
 # Create your models here.
@@ -193,6 +193,7 @@ class Staffs(models.Model):
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Nationality')
     )
     address = models.TextField(
@@ -205,12 +206,14 @@ class Staffs(models.Model):
         blank=False, null=True,
         verbose_name=_('Created by'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     created = models.DateTimeField(default=django.utils.timezone.now)
     bank_base1 = models.ForeignKey(
         Bank,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Bank'),
     )
     branch_base1 = models.CharField(
@@ -229,6 +232,7 @@ class Staffs(models.Model):
         Bank,
         related_name='+',
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Bank'),
     )
     branch_base2 = models.CharField(
@@ -254,12 +258,14 @@ class Staffs(models.Model):
         Certificate,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Certificate')
     )
     university = models.ForeignKey(
         University,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('University Name')
     )
     automated_nb = models.CharField(
@@ -276,6 +282,7 @@ class Staffs(models.Model):
         Location,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Governorate'),
         related_name='staff_governorate'
     )
@@ -283,6 +290,7 @@ class Staffs(models.Model):
         Location,
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Caza'),
         related_name='staff_caza'
     )
@@ -390,5 +398,6 @@ class ParticipantYear(models.Model):
         Staffs,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Staff')
     )

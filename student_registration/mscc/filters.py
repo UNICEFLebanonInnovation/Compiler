@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext as _
 from django.db.models import Q
 
 from django_filters import (
@@ -6,9 +5,8 @@ from django_filters import (
     ModelChoiceFilter,
     ChoiceFilter,
     CharFilter,
-    BooleanFilter
+    BooleanFilter,
 )
-
 from django import forms
 
 from student_registration.locations.models import Center, Location
@@ -28,8 +26,19 @@ DELETED_CHOICES = [
     ('no', 'No'),
 ]
 
+class PlaceholderFilterSet(FilterSet):
+    """Base FilterSet that hides labels and uses placeholders."""
 
-class MainFilter(FilterSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.form.fields.items():
+            label = field.label or name.replace('_', ' ').title()
+            field.label = ''
+            if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
+                field.widget.attrs.setdefault('placeholder', label)
+
+
+class MainFilter(PlaceholderFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
@@ -75,7 +84,7 @@ class MainFilter(FilterSet):
         return queryset.filter(education_service__education_program=value)
 
 
-class FullFilter(FilterSet):
+class FullFilter(PlaceholderFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')

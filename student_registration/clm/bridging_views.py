@@ -20,14 +20,12 @@ from django.db import connection
 import codecs
 import logging
 import traceback
-from django.utils.encoding import force_text
 import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
-from django.db.models.expressions import RawSQL
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 
 from rest_framework import status
@@ -38,7 +36,6 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from student_registration.users.utils import force_default_language
 from student_registration.outreach.models import Child, OutreachChild
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.locations.models import Location
@@ -46,7 +43,6 @@ from .filters import (
     BridgingFilter
 )
 from .tables import (
-    BootstrapTable,
     BridgingTable
 )
 from .models import (
@@ -54,14 +50,7 @@ from .models import (
     ABLN,
     RS,
     CBECE,
-    SelfPerceptionGrades,
-    Disability,
     Assessment,
-    ABLN_FC,
-    BLN_FC,
-    CBECE_FC,
-    RS_FC,
-    GeneralQuestionnaire,
     Outreach,
     Bridging,
     Inclusion
@@ -94,10 +83,6 @@ class CLMView(LoginRequiredMixin,
     template_name = 'pages/home.old.html'
 
     group_required = [u"CLM"]
-
-    def get_context_data(self, **kwargs):
-        force_default_language(self.request)
-        return {}
 
 
 def assessment_form(instance_id, stage, enrollment_model, assessment_slug, callback=''):
@@ -165,7 +150,7 @@ class BridgingListView(LoginRequiredMixin,
     table_class = BridgingTable
     model = Bridging
     template_name = 'clm/bridging_list.html'
-    table = BootstrapTable(Bridging.objects.all(), order_by='student__full_name')
+    table = BridgingTable(Bridging.objects.all(), order_by='student__full_name')
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingFilter
@@ -206,7 +191,6 @@ class BridgingAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -304,7 +288,6 @@ class BridgingEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -374,7 +357,7 @@ def bridging_export_data(request, **kwargs):
             vw_bridging_data += " AND round_id = %s"
             query_params.append(round_id)
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff
 
         if not clm_bridging_all and not is_staff and request.user.partner:
@@ -453,7 +436,7 @@ def bridging_school_export(request, **kwargs):
 
         school_id = int(kwargs.get('school_id'))
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff
 
         vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
@@ -498,7 +481,7 @@ def bridging_school_export(request, **kwargs):
                     encoded_row.append(str(cell))
                 # Local 2.7
                 # if isinstance(cell, str) or isinstance(cell, unicode):  # Handle Unicode strings
-                #     encoded_row.append(force_text(cell).encode('utf-8'))
+                #     encoded_row.append(force_str(cell).encode('utf-8'))
                 # elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
                 #     encoded_row.append(cell.strftime('%Y-%m-%d'))
                 # else:  # Convert other data types to string
@@ -550,7 +533,6 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -611,7 +593,6 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
         return super(BridgingPostAssessmentView, self).form_valid(form)
 
 
-
 class BridgingMidAssessmentView(LoginRequiredMixin,
                             GroupRequiredMixin,
                             FormView):
@@ -621,7 +602,6 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -695,7 +675,6 @@ class BridgingFollowupView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -727,7 +706,6 @@ class BridgingServiceView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -751,8 +729,6 @@ class BridgingServiceView(LoginRequiredMixin,
 
 
 ####################### API VIEWS #############################
-
-
 
 
 class BridgingViewSet(mixins.RetrieveModelMixin,
@@ -797,7 +773,7 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 #     return JsonResponse(result)
 
 
-def BridgingMarkDeleteView(request, pk):
+def bridging_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Bridging.objects.get(id=pk)

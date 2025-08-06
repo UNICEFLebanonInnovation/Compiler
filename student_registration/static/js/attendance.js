@@ -51,7 +51,7 @@ $(document).ready(function(){
         var yyyy = today.getFullYear();
         var attendance = $(this).attr('itemref');
         if($('a.attendance_not_done').length){
-            alert($(this).attr('translation_ko'));
+            showModal($(this).attr('translation_ko'));
             return false;
         }
 

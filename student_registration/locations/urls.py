@@ -1,52 +1,54 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
+app_name = 'locations'
+
 urlpatterns = [
-    url(
-        regex=r'^Center-Add/$',
+    re_path(
+        r'^center-add/$',
         view=views.CenterFormView.as_view(),
         name='center_add'
     ),
-    url(
-        regex=r'^Center-Edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^center-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.CenterFormView.as_view(),
         name='center_edit'
     ),
-    url(
-        regex=r'^Center-List/$',
+    re_path(
+        r'^center-list/$',
         view=views.CenterListView.as_view(),
         name='center_list'
     ),
-    url(
-        regex=r'^export/$',
+    re_path(
+        r'^export/$',
         view=views.export_data,
         name='export'
     ),
-    url(
-        regex=r'^export-center-background/$',
+    re_path(
+        r'^export-center-background/$',
         view=views.export_center_background,
         name='export_center_background'
     ),
-    url(
-        regex=r'^Center-Profile/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^center-profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='center_profile'
     ),
-    url(
-        regex=r'^Program-Staff-Add/(?P<center_id>[\w.@+-]+)/$',
+    re_path(
+        r'^program-staff-add/(?P<center_id>[\w.@+-]+)/$',
         view=views.ProgramStaffFormView.as_view(),
         name='program_staff_add'
     ),
-    url(
-        regex=r'^Program-Staff-Edit/(?P<center_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^program-staff-edit/(?P<center_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.ProgramStaffFormView.as_view(),
         name='program_staff_edit'
     ),
-    url(
-        regex=r'^Program-Staff-Delete/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^program-staff-delete/(?P<pk>[\w.@+-]+)/$',
         view=views.program_staff_delete,
         name='program_staff_delete'
     ),

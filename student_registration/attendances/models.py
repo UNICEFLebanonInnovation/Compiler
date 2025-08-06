@@ -1,10 +1,10 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+#from django.db.models import Index
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import JSONField, ArrayField
-import json
+from django.utils.translation import gettext as _ # Will be fixed in a subsequent step
+from django.db.models import JSONField
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -47,26 +47,31 @@ class Attendance(TimeStampedModel):
         Student,
         blank=True, null=True,
         related_name='attendances',
+        on_delete=models.CASCADE,
     )
     school = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='attendances',
+        on_delete=models.CASCADE,
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     classlevel = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     status = models.BooleanField(default=False)
     attendance_date = models.DateField(blank=True, null=True)
@@ -74,11 +79,13 @@ class Attendance(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     validation_status = models.BooleanField(default=False)
     validation_date = models.DateField(blank=True, null=True)
     validation_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='+',
     )
@@ -95,7 +102,7 @@ class Attendance(TimeStampedModel):
         choices=CLOSE_REASON
     )
 
-    students = JSONField(blank=True, null=True)
+    students = JSONField(default=dict)
 
     total_enrolled = models.IntegerField(blank=True, null=True)
     total_attended = models.IntegerField(blank=True, null=True)
@@ -109,11 +116,13 @@ class Attendance(TimeStampedModel):
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     alp_round = models.ForeignKey(
         ALPRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
@@ -162,6 +171,7 @@ class BySchoolByDay(models.Model):
     school = models.ForeignKey(
         School,
         related_name='+',
+        on_delete=models.CASCADE,
     )
     attendance_date = models.DateField()
     highest_attendance_rate = models.BooleanField(default=False)
@@ -181,10 +191,12 @@ class Absentee(TimeStampedModel):
     school = models.ForeignKey(
         School,
         related_name='+',
+        on_delete=models.CASCADE,
     )
     student = models.ForeignKey(
         Student,
         related_name='absents',
+        on_delete=models.CASCADE,
     )
     last_attendance_date = models.DateField(blank=True, null=True)
     last_absent_date = models.DateField(blank=True, null=True)
@@ -197,8 +209,8 @@ class Absentee(TimeStampedModel):
     reattend_date = models.DateField(blank=True, null=True)
     validation_status = models.BooleanField(default=False)
     last_modification_date = models.DateField(blank=True, null=True)
-    dropout_status = models.NullBooleanField(default=False)
-    disabled = models.NullBooleanField(
+    dropout_status = models.BooleanField(default=False)
+    disabled = models.BooleanField(
         blank=True, default=False,
         verbose_name=_('disabled')
     )
@@ -206,11 +218,13 @@ class Absentee(TimeStampedModel):
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     alp_round= models.ForeignKey(
         ALPRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     level = models.CharField(max_length=100, blank=True, null=True)
     level_name = models.CharField(max_length=100, blank=True, null=True)
@@ -220,7 +234,8 @@ class Absentee(TimeStampedModel):
     def __unicode__(self):
         return '{} - {}'.format(self.student, self.school)
 
-    def absence_type(self):
+    @property
+    def absence_type(self) -> str:
         if 10 > self.absent_days >= 5:
             return '5'
         if self.absent_days >= 10:
@@ -236,40 +251,46 @@ class AttendanceDt(models.Model):
         Attendance,
         blank=True, null=True,
         related_name='attendances',
+        on_delete=models.SET_NULL,
     )
     school = models.ForeignKey(
         School,
         blank=False, null=True,
+        on_delete=models.CASCADE,
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
     )
     classlevel = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
     )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
+        on_delete=models.SET_NULL,
     )
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
+        on_delete=models.SET_NULL,
     )
     is_present = models.BooleanField(default=False)
     attendance_date = models.DateField(blank=True, null=True, db_index=True)
     levelname = models.CharField(max_length=100, blank=True, null=True, default=None)
-
-    class Meta:
-        index_together = (
-            ('attendance_date', 'school'),
-        )
+    #
+    # class Meta:
+    # indexes = [
+    #     Index(fields=['attendance_date', 'school']),
+    # ]
 
 
 class AttendanceSyncLog(models.Model):
 
-    school = models.ForeignKey(School)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     school_type = models.CharField(
         max_length=50,
         blank=True,
@@ -285,6 +306,7 @@ class AttendanceSyncLog(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     def __unicode__(self):
@@ -322,6 +344,7 @@ class CLMAttendance(TimeStampedModel):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     registration_level = models.CharField(
         max_length=100,
@@ -378,17 +401,20 @@ class CLMAttendanceStudent(TimeStampedModel):
         CLMAttendance,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     registration = models.ForeignKey(
         Bridging,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Registration')
     )
     student = models.ForeignKey(
         Student,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Student')
     )
     attended = models.CharField(
@@ -470,9 +496,8 @@ class CLMStudentAbsences(TimeStampedModel):
     )
     absence_starting_date = models.DateField(blank=True, null=True)
     absence_ending_date = models.DateField(blank=True, null=True)
-    absence_dates = JSONField(blank=True, null=True)
+    absence_dates = JSONField(default=dict)
     consecutive_absence_days = models.IntegerField(blank=True, null=True)
-
 
     def update_absence_statisics(self, consecutive_absences, ending_date, consecutive_dates):
         self.consecutive_absence_days= consecutive_absences
@@ -612,6 +637,7 @@ class MSCCAttendance(TimeStampedModel):
         Center,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Center')
     )
     education_program = models.CharField(
@@ -674,17 +700,20 @@ class MSCCAttendanceChild(TimeStampedModel):
         MSCCAttendance,
         blank=True, null=True,
         related_name='attendance_child',
+        on_delete=models.SET_NULL,
     )
     registration = models.ForeignKey(
         Registration,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Registration')
     )
     child = models.ForeignKey(
         Child,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Child')
     )
     attended = models.CharField(

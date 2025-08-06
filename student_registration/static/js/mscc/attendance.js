@@ -118,7 +118,7 @@ $(document).ready(function() {
         var class_section = $('#class_section').val();
 
         if (!education_program || !round_id || !class_section) {
-             alert("Please fill: Attendance Date, Round, School, and Registration Level.");
+             showModal("Please fill: Attendance Date, Round, School, and Registration Level.");
              return false;
         }
 

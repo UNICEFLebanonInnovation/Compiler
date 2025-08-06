@@ -1,112 +1,114 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
+app_name = 'alp'
+
 urlpatterns = [
 
-    url(
-        regex=r'^add/$',
+    re_path(
+        r'^add/$',
         view=views.AddView.as_view(),
         name='add'
     ),
-    url(
-        regex=r'^edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^edit/(?P<pk>[\w.@+-]+)/$',
         view=views.EditView.as_view(),
         name='edit'
     ),
-    url(
-        regex=r'^list/$',
+    re_path(
+        r'^list/$',
         view=views.SchoolView.as_view(),
         name='list'
     ),
-    url(
-        regex=r'^pre-test/$',
+    re_path(
+        r'^pre-test/$',
         view=views.PreTestView.as_view(),
         name='pre_test'
     ),
-    url(
-        regex=r'^pre-test-all/$',
-        view=views.PreTest_allView.as_view(),
+    re_path(
+        r'^pre-test-all/$',
+        view=views.PreTestAllView.as_view(),
         name='pre_test_all'
     ),
-    url(
-        regex=r'^pre-test-add/$',
+    re_path(
+        r'^pre-test-add/$',
         view=views.PreTestAddView.as_view(),
         name='pre_test_add'
     ),
-    url(
-        regex=r'^pre-test-add-all/$',
-        view=views.PreTestAdd_allView.as_view(),
+    re_path(
+        r'^pre-test-add-all/$',
+        view=views.PreTestAddAllView.as_view(),
         name='pre_test_add_all'
     ),
-    url(
-        regex=r'^pre-test-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^pre-test-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.PreTestEditView.as_view(),
         name='pre_test_edit'
     ),
-    url(
-        regex=r'^post-test/$',
+    re_path(
+        r'^post-test/$',
         view=views.PostTestView.as_view(),
         name='post_test'
     ),
-    url(
-        regex=r'^pre-test-grading/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^pre-test-grading/(?P<pk>[\w.@+-]+)/$',
         view=views.PreTestGradingView.as_view(),
         name='pre_test_grading'
     ),
-    url(
-        regex=r'^post-test-grading/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^post-test-grading/(?P<pk>[\w.@+-]+)/$',
         view=views.PostTestGradingView.as_view(),
         name='post_test_grading'
     ),
-    url(
-        regex=r'^outreach/$',
+    re_path(
+        r'^outreach/$',
         view=views.OutreachView.as_view(),
         name='outreach'
     ),
-    url(
-        regex=r'^outreach-add/$',
+    re_path(
+        r'^outreach-add/$',
         view=views.OutreachAddView.as_view(),
         name='outreach_add'
     ),
-    url(
-        regex=r'^outreach-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^outreach-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.OutreachEditView.as_view(),
         name='outreach_edit'
     ),
-    # url(
-    #     regex=r'^alp-registrations/$',
+    # re_path(
+    #     r'^alp-registrations/$',
     #     view=views.CurrentRoundView.as_view(),
     #     name='alp_registrations'
     # ),
     #
-    # url(
-    #     regex=r'^outreach/$',
+    # re_path(
+    #     r'^outreach/$',
     #     view=views.DataCollectingView.as_view(),
     #     name='alp_outreach'
     # ),
     #
-    # url(
-    #     regex=r'^post-test/$',
+    # re_path(
+    #     r'^post-test/$',
     #     view=views.PostTestView.as_view(),
     #     name='alp_post_test'
     # ),
     #
-    # url(
-    #     regex=r'^pre-test/$',
+    # re_path(
+    #     r'^pre-test/$',
     #     view=views.PreTestView.as_view(),
     #     name='alp_pre_test'
     # ),
-    url(
-        regex=r'^number-by-school/$',
+    re_path(
+        r'^number-by-school/$',
         view=views.ExportBySchoolView.as_view(),
         name='alp_export_by_school'
     ),
 
-    url(
-        regex=r'^export/$',
+    re_path(
+        r'^export/$',
         view=views.ExportViewSet.as_view(),
         name='export'
     ),

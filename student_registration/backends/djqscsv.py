@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.http import HttpResponse, StreamingHttpResponse
 
-from django.utils import six
 
 """ A simple python package for turning django models into csvs """
 
@@ -82,7 +81,7 @@ def _iter_csv(queryset, file_obj, **kwargs):
 
     csv_kwargs = {'encoding': 'utf-8'}
 
-    for key, val in six.iteritems(kwargs):
+    for key, val in kwargs.items():
         if key not in DJQSCSV_KWARGS:
             csv_kwargs[key] = val
 
@@ -161,7 +160,7 @@ def generate_filename(queryset, append_datestamp=False):
     Takes a queryset and returns a default
     base filename based on the underlying model
     """
-    base_filename = slugify(six.text_type(queryset.model.__name__)) \
+    base_filename = slugify(str(queryset.model.__name__)) \
         + '_export.csv'
 
     if append_datestamp:
@@ -182,7 +181,7 @@ def _validate_and_clean_filename(filename):
         else:
             filename = filename[:-4]
 
-    filename = slugify(six.text_type(filename)) + '.csv'
+    filename = slugify(str(filename)) + '.csv'
     return filename
 
 
@@ -194,17 +193,17 @@ def _sanitize_record(field_serializer_map, record):
         if isinstance(value, datetime.datetime):
             return value.isoformat()
         else:
-            return six.text_type(value)
+            return str(value)
 
     obj = {}
-    for key, val in six.iteritems(record):
+    for key, val in record.items():
         if val is not None:
             serializer = field_serializer_map.get(key, _serialize_value)
             newval = serializer(val)
             # If the user provided serializer did not produce a string,
             # coerce it to a string
-            if not isinstance(newval, six.text_type):
-                newval = six.text_type(newval)
+            if not isinstance(newval, str):
+                newval = str(newval)
             obj[key] = newval
     return obj
 

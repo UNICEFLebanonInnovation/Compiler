@@ -1,5 +1,5 @@
 {% extends "base2.html" %}
-{% load staticfiles i18n %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
 
 {% block head_title %}Registration{% endblock %}
@@ -29,7 +29,7 @@
         <section class="inline-form inner-section light bg-color01">
             <div class="container-fluid nopadding">
                 {{ form.errors }}
-                {% crispy form 'bootstrap4' %}
+                {% crispy form 'bootstrap3' %}
             </div>
         </section>
 {#        {% endif %}#}

@@ -1,9 +1,9 @@
 {% extends "mscc/base.html" %}
 {% load static i18n %}
-{% load static %}
 {% load render_table from django_tables2 %}
-{% load bootstrap3 %}
 {% load util_tags %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
 {% bootstrap_css %}
 
 {% block project_title %}List{% endblock %}
@@ -212,7 +212,7 @@
                           <!--</div>-->
                     </div>
 
-<div class="row">
+<div class="row" style="width: 1620px">
     <div class="col-lg-12">
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
     <div class="card">
@@ -226,7 +226,7 @@
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
             <div class="card-body">
             <form action="" method="get" class="form form-inline">
-                {% bootstrap_form filter.form layout='inline' %}
+               {% crispy filter.form 'bootstrap3' %}
 
                 <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
                   <i style="font-weight:bolder" class="pe-7s-search"></i>
@@ -239,6 +239,9 @@
               {% if user|has_group:"EXPORT" %}
                 <a href="" title="Download" class="btn btn-outline-success download-report">
                     <i class="lnr-download"></i>
+                </a>
+                <a href="" title="Async Download" class="btn btn-outline-info download-report-async">
+                    <i class="lnr-cloud-download"></i>
                 </a>
                 <div class = "downloading-message" style = "display:none">
                   Loading...
@@ -253,13 +256,13 @@
     </div>
 </div>
 
-<div class="row table-list">
+<div class="row table-list" style="width: 1620px">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
             <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap4">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
         {% csrf_token %}
-        {% render_table table 'django_tables2/bootstrap.html' %}
+        {% render_table table 'django_tables2/bootstrap5.html' %}
                 </div>
             </div>
         </div>
@@ -269,7 +272,30 @@
 {% endblock %}
 
 {% block modal %}
-
+<div class="modal fade" id="exportOptionsModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Async Export Options</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="export-format">Format</label>
+          <select id="export-format" class="form-control export-format">
+            <option value="csv">CSV</option>
+            <option value="xlsx">XLSX</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary start-export">Start Export</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}

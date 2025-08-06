@@ -5,7 +5,7 @@ import datetime
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from student_registration.students.models import Nationality, IDType
 from student_registration.clm.models import Disability, EducationalLevel
@@ -83,7 +83,8 @@ class Adolescent(TimeStampedModel):
         Nationality,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('Nationality')
+        verbose_name=_('Nationality'),
+        on_delete=models.SET_NULL
     )
     nationality_other = models.TextField(
         blank=True, null=True,
@@ -117,18 +118,21 @@ class Adolescent(TimeStampedModel):
         Location,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('Governorate')
+        verbose_name=_('Governorate'),
+        on_delete=models.SET_NULL
     )
     district = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('District')
     )
     cadaster = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cadaster')
     )
     address = models.TextField(
@@ -140,6 +144,7 @@ class Adolescent(TimeStampedModel):
         Disability,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Does the youth have any disability or special need?')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
@@ -148,6 +153,7 @@ class Adolescent(TimeStampedModel):
         IDType,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Youth ID type')
     )
     case_number = models.CharField(
@@ -316,12 +322,14 @@ class Adolescent(TimeStampedModel):
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('What is the father\'s educational level?')
     )
     mother_educational_level = models.ForeignKey(
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('What is the father\'s educational level?')
     )
     first_phone_number = models.CharField(
@@ -387,6 +395,7 @@ class Adolescent(TimeStampedModel):
         Nationality,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Caregiver Nationality')
     )
     main_caregiver_nationality_other = models.TextField(

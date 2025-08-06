@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class StaffsConfig(AppConfig):
-    name = 'staffs'
+    name = 'student_registration.staffs'

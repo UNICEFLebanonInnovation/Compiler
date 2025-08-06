@@ -1,7 +1,2 @@
-{% load staticfiles i18n %}
-{% load util_tags %}
-
-<a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-primary">
-    <i class="icon-synch-sign icon-white"></i>
-    {% trans "Follow-up" %}
-</a>
+{# Include shared clm follow-up column template #}
+{% include "django_tables2/clm_followup_column.html" %}

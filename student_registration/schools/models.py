@@ -3,11 +3,9 @@ from django.conf import settings
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.postgres.fields import ArrayField
-# from django.contrib.gis.db import models
 from student_registration.staffs.models import Bank
-from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Coordinator(models.Model):
@@ -123,18 +121,21 @@ class School(TimeStampedModel):
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Governorate')
     )
     district = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('District')
     )
     cadaster = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cadaster')
     )
     longitude = models.FloatField(
@@ -330,6 +331,7 @@ class School(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('coordinator'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     is_2nd_shift = models.BooleanField(
         blank=True,
@@ -363,6 +365,7 @@ class School(TimeStampedModel):
         blank=False, null=True,
         verbose_name=_('School location'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     is_bma = models.BooleanField(
         default=True,
@@ -378,6 +381,7 @@ class School(TimeStampedModel):
         Bank,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Bank'),
     )
     branch_base1 = models.CharField(
@@ -396,6 +400,7 @@ class School(TimeStampedModel):
         Bank,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Bank'),
     )
     branch_base2 = models.CharField(
@@ -414,11 +419,13 @@ class School(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
     benefit_wfp_service = models.CharField(
@@ -586,9 +593,10 @@ class ClubType(models.Model):
 
 class Club(TimeStampedModel):
     school = models.ForeignKey(
-        School,
+        'School',
         verbose_name=_('school'),
         related_name='+',
+        on_delete=models.CASCADE,
     )
     club_name = models.CharField(
         max_length=50,
@@ -600,9 +608,10 @@ class Club(TimeStampedModel):
         verbose_name=_('Number of Clubs')
     )
     club_type = models.ForeignKey(
-        ClubType,
+        'ClubType',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Club Type')
     )
     number_children = models.IntegerField(
@@ -613,20 +622,23 @@ class Club(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
 
 
 class Meeting(TimeStampedModel):
     school = models.ForeignKey(
-        School,
+        'School',
         verbose_name=_('school'),
         related_name='+',
+        on_delete=models.CASCADE,
     )
     meeting_name = models.CharField(
         max_length=50,
@@ -646,6 +658,7 @@ class Meeting(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     modified_by = models.ForeignKey(
@@ -653,14 +666,16 @@ class Meeting(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Modified by'),
+        on_delete=models.SET_NULL,
     )
 
 
 class CommunityInitiative(TimeStampedModel):
     school = models.ForeignKey(
-        School,
+        'School',
         verbose_name=_('school'),
         related_name='+',
+        on_delete=models.CASCADE,
     )
     community_group_name = models.CharField(
         max_length=150,
@@ -675,21 +690,24 @@ class CommunityInitiative(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
 
 
 class HealthVisit(TimeStampedModel):
     school = models.ForeignKey(
-        School,
+        'School',
         verbose_name=_('school'),
         related_name='+',
+        on_delete=models.CASCADE,
     )
     focal_point_name = models.CharField(
         max_length=50,
@@ -719,12 +737,14 @@ class HealthVisit(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
 
@@ -878,25 +898,28 @@ class PartnerOrganization(models.Model):
     is_youth = models.BooleanField(blank=True, default=False)
 
     bln_round = models.ForeignKey(
-        CLMRound,
+        'CLMRound',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('BLN current round')
     )
     rs_round = models.ForeignKey(
-        CLMRound,
+        'CLMRound',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('RS current round')
     )
     cbece_round = models.ForeignKey(
-        CLMRound,
+        'CLMRound',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('CB-ECE current round')
     )
 
-    schools = models.ManyToManyField(School,related_name='partner_schools', blank=True)
+    schools = models.ManyToManyField('School', related_name='partner_schools', blank=True)
     short_name = models.CharField(
         max_length=100,
         blank=True,
@@ -953,18 +976,21 @@ class PartnerOrganization(models.Model):
 
 class ALPReferMatrix(models.Model):
     level = models.ForeignKey(
-        EducationLevel,
+        'EducationLevel',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     success_refer_to = models.ForeignKey(
-        ClassLevel,
+        'ClassLevel',
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='success_refer_to',
     )
     fail_refer_to = models.ForeignKey(
-        ClassLevel,
+        'ClassLevel',
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='fail_refer_to',
     )
     age = models.IntegerField(blank=True, null=True)
@@ -1002,13 +1028,15 @@ class ALPAssignmentMatrix(models.Model):
         ('N', _('New')),
     )
     level = models.ForeignKey(
-        EducationLevel,
+        'EducationLevel',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     refer_to = models.ForeignKey(
-        EducationLevel,
+        'EducationLevel',
         blank=True, null=True,
+        on_delete=models.SET_NULL,
         related_name='refer_to',
     )
 
@@ -1083,21 +1111,24 @@ class Setup(models.Model):
 class class_section(TimeStampedModel):
 
     school = models.ForeignKey(
-        School,
+        'School',
         verbose_name=_('school'),
         related_name='+',
+        on_delete=models.CASCADE,
     )
     classroom = models.ForeignKey(
-        ClassRoom,
+        'ClassRoom',
         blank=True, null=True,
         verbose_name=_('class'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     section = models.ForeignKey(
-        Section,
+        'Section',
         blank=True, null=True,
         verbose_name=_('section'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     closed_date = models.DateField(
         blank=True,
@@ -1115,9 +1146,10 @@ class class_section(TimeStampedModel):
         verbose_name=_('school type')
     )
     education_year = models.ForeignKey(
-        EducationYear,
+        'EducationYear',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Education year')
     )
 
@@ -1128,21 +1160,24 @@ class Evaluation(TimeStampedModel):
         ('no', _("No")),
     )
     school = models.ForeignKey(
-        School,
+        'School',
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
     )
     education_year = models.ForeignKey(
-        EducationYear,
+        'EducationYear',
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Education year')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Created by')
     )
     total_teaching_days = models.IntegerField(
@@ -2777,18 +2812,21 @@ class Schl_Survey(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('School'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         verbose_name=_('Class'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     schl_subject = models.ForeignKey(
         Schl_Subject,
         blank=True, null=True,
         verbose_name=_('Course'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     teachingdays_tillfeb = models.IntegerField(
         blank=True, null=True,
@@ -2807,12 +2845,14 @@ class Schl_Survey_Class(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('School'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         verbose_name=_('Class'),
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     de_implemented = models.BooleanField(
         blank=True,

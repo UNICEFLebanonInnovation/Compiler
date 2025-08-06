@@ -8,7 +8,7 @@ from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import Group
-from .models import User
+from .models import User, WebPushToken
 from .forms import UserAdminForm
 from student_registration.alp.templatetags.util_tags import has_group
 from django.contrib.admin import SimpleListFilter
@@ -33,7 +33,6 @@ class UserCategoryFilter(SimpleListFilter):
         if self.value() == 'Dirasa':
             return queryset.exclude(groups__name__in=['MSCC', 'YOUTH'])
         return queryset
-
 
 
 class UserResource(resources.ModelResource):
@@ -128,28 +127,13 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
     )
 
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        ('Account', {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email',
+                                         'partner', 'phone_number', 'center', 'school',
+                                         'location', 'locations', 'schools', 'regions')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner',
-                           'center',
-                           'school',
-                           # 'location', 'locations', 'schools', 'regions'
-                           )})
-    )
-
-    add_fieldsets = (
-        (None, {'fields': ('username', 'password1', 'password2')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner', 'center',
-                           'school',
-                           # 'location', 'locations', 'schools', 'regions'
-                           )})
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')})
     )
 
     def user_category_display(self, obj):
@@ -316,5 +300,6 @@ class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(WebPushToken)
 
 

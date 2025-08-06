@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.html import escape, format_html, format_html_join, html_safe
 
 from import_export import resources, fields

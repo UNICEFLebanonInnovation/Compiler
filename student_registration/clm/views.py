@@ -20,14 +20,13 @@ from django.db import connection
 import codecs
 import logging
 import traceback
-from django.utils.encoding import force_text
 import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func, When
 from django.db.models.expressions import RawSQL
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 
 from rest_framework import status
@@ -38,8 +37,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from student_registration.users.utils import force_default_language
-from student_registration.outreach.models import Child, OutreachChild
+from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.locations.models import Location
 from .filters import (
@@ -52,7 +50,6 @@ from .filters import (
     BridgingFilter
 )
 from .tables import (
-    BootstrapTable,
     BLNTable,
     ABLNTable,
     RSTable,
@@ -141,7 +138,7 @@ class CLMView(LoginRequiredMixin,
     group_required = [u"CLM"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         return {}
 
 
@@ -184,7 +181,7 @@ class BLNAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -258,7 +255,7 @@ class BLNEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -343,7 +340,7 @@ class BLNMonitoringQuestionerView(LoginRequiredMixin,
     group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -409,13 +406,13 @@ class BLNListView(LoginRequiredMixin,
     table_class = BLNTable
     model = BLN
     template_name = 'clm/bln_list.html'
-    table = BootstrapTable(BLN.objects.all(), order_by='id')
+    table = BLNTable(BLN.objects.all(), order_by='id')
     group_required = [u"CLM_BLN"]
 
     filterset_class = BLNFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
 
         return BLN.objects.filter(partner=self.request.user.partner_id,
                                   round__current_year=True).order_by('-id')
@@ -433,7 +430,7 @@ class BLNReferralView(LoginRequiredMixin,
     group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -462,7 +459,7 @@ class BLNFollowupView(LoginRequiredMixin,
     group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -490,7 +487,7 @@ class BLNDashboardView(LoginRequiredMixin,
     group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
 
         per_gov = []
         clm_round = self.request.user.partner.bln_round
@@ -603,7 +600,7 @@ class ABLNAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -676,7 +673,7 @@ class ABLNEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -755,7 +752,7 @@ class ABLNMonitoringQuestionerView(LoginRequiredMixin,
     group_required = [u"CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -784,13 +781,13 @@ class ABLNListView(LoginRequiredMixin,
     table_class = ABLNTable
     model = ABLN
     template_name = 'clm/abln_list.html'
-    table = BootstrapTable(ABLN.objects.all(), order_by='id')
+    table = ABLNTable(ABLN.objects.all(), order_by='id')
     group_required = [u"CLM_ABLN"]
 
     filterset_class = ABLNFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
 
         return ABLN.objects.filter(partner=self.request.user.partner_id,
                                    round__current_year=True).order_by('-id')
@@ -810,7 +807,7 @@ class ABLNReferralView(LoginRequiredMixin,
     group_required = [u"CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -839,7 +836,7 @@ class ABLNPostAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -919,7 +916,7 @@ class ABLNFCAddView(LoginRequiredMixin,
     group_required = [u"CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -981,7 +978,7 @@ class BLNFCAddView(LoginRequiredMixin,
     group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1041,7 +1038,7 @@ class RSFCAddView(LoginRequiredMixin,
     group_required = [u"CLM_RS"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1103,7 +1100,7 @@ class CBECEFCAddView(LoginRequiredMixin,
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1165,7 +1162,7 @@ class BLNPostAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1251,7 +1248,7 @@ class BridgingPostAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1318,7 +1315,7 @@ class BridgingMidAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1389,7 +1386,7 @@ class BridgingFollowupView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1421,7 +1418,7 @@ class BridgingServiceView(LoginRequiredMixin,
     group_required = [u"CLM_Bridging"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1453,7 +1450,7 @@ class CBECEPostAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1551,7 +1548,7 @@ class CBECEMidAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1649,7 +1646,7 @@ class RSPostAssessmentView(LoginRequiredMixin,
     group_required = [u"CLM_RS"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1748,7 +1745,7 @@ class ABLNFollowupView(LoginRequiredMixin,
     group_required = [u"CLM_ABLN"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -1776,7 +1773,7 @@ class RSDashboardView(LoginRequiredMixin,
     group_required = [u"CLM_RS"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
 
         per_gov = []
         clm_round = self.request.user.partner.rs_round
@@ -1896,7 +1893,7 @@ class CBECEDashboardView(LoginRequiredMixin,
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
 
         per_gov = []
         domain_gov = []
@@ -2075,7 +2072,7 @@ class RSAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2142,7 +2139,7 @@ class RSEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2240,13 +2237,13 @@ class RSListView(LoginRequiredMixin,
     table_class = RSTable
     model = RS
     template_name = 'clm/rs_list.html'
-    table = BootstrapTable(RS.objects.all(), order_by='id')
+    table = RSTable(RS.objects.all(), order_by='id')
     group_required = [u"CLM_RS"]
 
     filterset_class = RSFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
 
         return RS.objects.filter(partner=self.request.user.partner_id,
                                  round__current_year=True).order_by('-id')
@@ -2280,7 +2277,7 @@ class CBECEAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2351,7 +2348,7 @@ class CBECEEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2449,7 +2446,7 @@ class CBECEMonitoringQuestionerView(LoginRequiredMixin,
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2478,13 +2475,13 @@ class CBECEListView(LoginRequiredMixin,
     table_class = CBECETable
     model = CBECE
     template_name = 'clm/cbece_list.html'
-    table = BootstrapTable(CBECE.objects.all(), order_by='id')
+    table = CBECETable(CBECE.objects.all(), order_by='id')
     group_required = [u"CLM_CBECE"]
 
     filterset_class = CBECEFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         return CBECE.objects.filter(partner=self.request.user.partner_id,
                                     round__current_year=True).order_by('-id')
 
@@ -2502,13 +2499,13 @@ class GeneralQuestionnaireListView(LoginRequiredMixin,
     table_class = GeneralQuestionnaireTable
     model = GeneralQuestionnaire
     template_name = 'clm/general_questionnaire_list.html'
-    table = BootstrapTable(GeneralQuestionnaire.objects.all(), order_by='id')
+    table = GeneralQuestionnaireTable(GeneralQuestionnaire.objects.all(), order_by='id')
     group_required = [u"CLM_General_Questionnaire"]
 
     filterset_class = GeneralQuestionnaireFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         return GeneralQuestionnaire.objects.all().order_by('-id')
 
 
@@ -2528,7 +2525,7 @@ class GeneralQuestionnaireAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2576,7 +2573,7 @@ class GeneralQuestionnaireEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2606,7 +2603,7 @@ class CBECEReferralView(LoginRequiredMixin,
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2635,7 +2632,7 @@ class CBECEFollowupView(LoginRequiredMixin,
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -2963,7 +2960,7 @@ class BridgingViewSet(mixins.RetrieveModelMixin,
 #     return JsonResponse(result)
 
 
-def BridgingMarkDeleteView(request, pk):
+def bridging_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Bridging.objects.get(id=pk)
@@ -3156,7 +3153,7 @@ class OutreachAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -3214,7 +3211,7 @@ class OutreachEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -3246,13 +3243,13 @@ class OutreachListView(LoginRequiredMixin,
     table_class = OutreachTable
     model = Outreach
     template_name = 'clm/outreach_list.html'
-    table = BootstrapTable(Outreach.objects.all(), order_by='id')
+    table = OutreachTable(Outreach.objects.all(), order_by='id')
     group_required = [u"CLM_outreach"]
 
     filterset_class = OutreachFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
+
 
         return Outreach.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
@@ -3295,7 +3292,7 @@ class BridgingAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -3393,7 +3390,7 @@ class BridgingEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -3453,7 +3450,7 @@ class BridgingListView(LoginRequiredMixin,
     table_class = BridgingTable
     model = Bridging
     template_name = 'clm/bridging_list.html'
-    table = BootstrapTable(Bridging.objects.all(), order_by='student__full_name')
+    table = BridgingTable(Bridging.objects.all(), order_by='student__full_name')
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingFilter
@@ -3485,7 +3482,7 @@ def bridging_export_data(request, **kwargs):
             vw_bridging_data += " AND round_id = %s"
             query_params.append(round_id)
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff
 
         if not clm_bridging_all and not is_staff and request.user.partner:
@@ -3564,7 +3561,7 @@ def bridging_school_export(request, **kwargs):
 
         school_id = int(kwargs.get('school_id'))
 
-        clm_bridging_all = request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
         is_staff = request.user.is_staff
 
         vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'

@@ -4,10 +4,20 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 from django.utils.encoding import smart_str
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
+from django.views.generic import (
+    DetailView,
+    ListView,
+    RedirectView,
+    UpdateView,
+    TemplateView,
+    FormView,
+)
+from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.db.models import Count, F
+from .utils import validate_date
 from openpyxl import Workbook
 from django.db import connection
 import csv
@@ -20,7 +30,7 @@ import traceback
 
 from rest_framework import status
 from django.db.models import F, Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -30,14 +40,13 @@ from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
 from django.conf import settings
-import os
-from django.http import FileResponse
 import uuid
-from storages.backends.azure_storage import AzureStorage
-from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-import re
-from django.contrib.auth.decorators import login_required
+from student_registration.backends.utils import (
+    ExportStorage,
+    download_file,
+    is_valid_filename,
+)
 
 from .filters import (
     MainFilter,
@@ -53,7 +62,7 @@ from .tables import (
 from .models import (
     Registration,
     Referral,
-    EducationHistory
+    EducationHistory,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -68,7 +77,62 @@ from .serializers import (
 from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
+from .tasks import generate_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
+
+
+def chart_data(request):
+    """Return aggregated MSCC registration data for charts."""
+    metric = request.GET.get('chart', 'nationality')
+    qs = Registration.objects.filter(deleted=False)
+
+    package_type = request.GET.get('package_type')
+    if package_type:
+        qs = qs.filter(type=package_type)
+
+    partner = request.GET.get('partner')
+    if partner:
+        qs = qs.filter(partner_id=partner)
+
+    governorate = request.GET.get('governorate')
+    if governorate:
+        qs = qs.filter(center__governorate_id=governorate)
+
+    caza = request.GET.get('caza')
+    if caza:
+        qs = qs.filter(center__caza_id=caza)
+
+    cadaster = request.GET.get('cadaster')
+    if cadaster:
+        qs = qs.filter(center__cadaster_id=cadaster)
+
+    programme_type = request.GET.get('programme_type')
+    if programme_type:
+        qs = qs.filter(education_service__education_program=programme_type)
+
+    start = validate_date(request.GET.get('start'))
+    if start:
+        qs = qs.filter(created__date__gte=start)
+
+    end = validate_date(request.GET.get('end'))
+    if end:
+        qs = qs.filter(created__date__lte=end)
+
+    if metric == 'gender':
+        data = (
+            qs.values(label=F('child__gender'))
+            .exclude(child__gender__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    else:
+        data = (
+            qs.values(label=F('child__nationality__name'))
+            .exclude(child__nationality__isnull=True)
+            .annotate(value=Count('id'))
+            .order_by('label')
+        )
+    return JsonResponse(list(data), safe=False)
 
 
 class ProfileView(LoginRequiredMixin,
@@ -97,13 +161,13 @@ class DashboardView(LoginRequiredMixin,
 
 class DashboardCustomView(LoginRequiredMixin,
                     TemplateView):
-    template_name = 'mscc/dashboard.html'
+    template_name = 'mscc/dashboard_d3.html'
 
     def get_context_data(self, **kwargs):
         from student_registration.locations.models import Center, Location
         from student_registration.clm.models import PartnerOrganization
 
-        instances = Registration.objects.all()
+        instances = Registration.objects.filter(deleted=False)
         centers = Center.objects.all()
         governorates = Location.objects.filter(type_id=1)
         partners = PartnerOrganization.objects.all()
@@ -138,6 +202,54 @@ class DashboardYouthView(LoginRequiredMixin,
             'governorates': governorates,
             'partners': partners
         }
+
+
+class DashboardDataView(LoginRequiredMixin, View):
+    """Return aggregated data for dashboard charts."""
+
+    def get(self, request):
+        from django.db.models import Count
+        from .models import (
+            Registration,
+            YouthKitService,
+            PSSService,
+        )
+        cash_support_programmes = Registration.CASH_SUPPORT_PROGRAMMES
+
+        qs = Registration.objects.filter(deleted=False)
+
+        def aggregate(queryset, field):
+            results = queryset.values(field).annotate(total=Count('id')).order_by(field)
+            data = []
+            for row in results:
+                name = row.get(field) or 'N/A'
+                data.append({'name': name, 'y': row['total']})
+            return data
+
+        data = {
+            'children_per_gender': aggregate(qs, 'child__gender'),
+            'children_per_status': aggregate(qs, 'child__marital_status'),
+            'children_per_programme': aggregate(qs, 'type'),
+            'children_per_nationality': aggregate(qs, 'child__nationality__name'),
+            'children_per_source': aggregate(qs, 'source_of_identification'),
+            'children_per_disability': aggregate(qs, 'child__disability__name'),
+            'children_per_vulnerability': aggregate(
+                PSSService.objects.filter(registration__deleted=False),
+                'child_vulnerability',
+            ),
+        }
+
+        cash = []
+        for value, _ in cash_support_programmes:
+            if value:
+                count = qs.filter(cash_support_programmes__contains=[value]).count()
+                cash.append({'name': value, 'y': count})
+        data['children_cash_support'] = cash
+
+        ys_qs = YouthKitService.objects.filter(registration__deleted=False)
+        data['children_volunteering'] = aggregate(ys_qs, 'participate_volunteering')
+
+        return JsonResponse(data, safe=False)
 
 
 class MainAddView(LoginRequiredMixin,
@@ -257,7 +369,7 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
         return reverse('mscc:new_round', kwargs={'registry': registry})
 
 
-def MainMarkDeleteView(request, pk):
+def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
@@ -366,7 +478,7 @@ class MainViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-def MainRegistrationCancelView(request, pk):
+def main_registration_cancel_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
@@ -794,9 +906,8 @@ def export_list_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        file_path = os.path.join('export', file_name)
-
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
         ExportHistory.objects.create(
             export_type='Makani List',
             created_by=user,
@@ -840,9 +951,8 @@ def export_child_list_background(request):
 
         unique_id = str(uuid.uuid4())
         file_name = "out_file_{}.zip".format(unique_id)
-        file_path = os.path.join('export', file_name)
-
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
 
         return HttpResponse(file_name)
 
@@ -853,69 +963,42 @@ def export_child_list_background(request):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-class MyAzureStorage(AzureStorage):
-    location = "export"
+@login_required(login_url='/users/login')
+def export_list_async(request):
+    fields = None
+    file_format = 'csv'
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body.decode('utf-8'))
+        except (ValueError, AttributeError):
+            payload = request.POST
+        if isinstance(payload, dict):
+            file_format = payload.get('format', 'csv')
+            fields = payload.get('fields') or None
+        else:
+            file_format = payload.get('format', 'csv') if payload else 'csv'
+    else:
+        file_format = request.GET.get('format', 'csv')
+    export_record = ExportHistory.objects.create(
+        export_type='Makani List',
+        created_by=request.user,
+        partner_name=request.user.partner.name if request.user.partner else '',
+        fields=fields,
+        file_format=file_format,
+    )
+    generate_mscc_export.delay(export_record.id, fields, file_format)
+    return JsonResponse({'status': 'started'})
 
 
 @login_required(login_url='/users/login')
 def get_file(request, file_name):
-
-    response = None
-
-    if is_valid_filename(file_name):
-        storage = MyAzureStorage()
-
-        file_path = os.path.join('export', file_name)
-        returned_file_name = 'output_file.zip'
-
-        try:
-            with storage.open(file_path, 'rb') as f:
-                file_stream = io.BytesIO(f.read())
-                file_stream.seek(0)
-                response = FileResponse(file_stream)
-                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
-        except Exception as e:
-            response = HttpResponse("Error reading file: {}".format(e))
-
-        default_storage.delete(file_path)
-    else:
-        response = HttpResponse("Invalid file.")
-    return response
-
-
-def is_valid_filename(filename):
-    pattern = r'^[a-zA-Z0-9-_]+.zip$'
-
-    return re.match(pattern, filename) is not None
+    if is_valid_filename(file_name, 'zip'):
+        return download_file(file_name, 'output_file.zip')
+    return HttpResponse("Invalid file.")
 
 
 @login_required(login_url='/users/login')
 def get_file_csv(request, file_name):
-    response = None
-
-    if is_valid_filename_csv(file_name):
-        storage = MyAzureStorage()
-        file_path = os.path.join('export', file_name)
-        returned_file_name = "exported_data.csv"
-
-        try:
-            with storage.open(file_path, 'rb') as f:
-                file_stream = io.BytesIO(f.read())
-                file_stream.seek(0)
-                response = FileResponse(file_stream, content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename="' + returned_file_name + '"'
-        except Exception as e:
-            response = HttpResponse("Error reading file: {}".format(e))
-
-        # Optionally delete after serving
-        default_storage.delete(file_path)
-    else:
-        response = HttpResponse("Invalid file.", status=400)
-
-    return response
-
-
-def is_valid_filename_csv(filename):
-    """Ensure the filename is a valid CSV file with expected format."""
-    pattern = r'^[a-zA-Z0-9-_]+\.csv$'
-    return re.match(pattern, filename) is not None
+    if is_valid_filename(file_name, 'csv'):
+        return download_file(file_name, 'exported_data.csv', content_type='text/csv')
+    return HttpResponse("Invalid file.", status=400)

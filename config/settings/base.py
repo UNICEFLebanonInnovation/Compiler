@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 from __future__ import absolute_import, unicode_literals
 
 import environ
+import os
+import logging
+from kombu import Queue
+
+logger = logging.getLogger(__name__)
 
 ROOT_DIR = environ.Path(__file__) - 3  # (student_registration/config/settings/base.py - 3 = student_registration/)
 APPS_DIR = ROOT_DIR.path('student_registration')
@@ -29,16 +34,14 @@ if READ_DOT_ENV_FILE:
     # that is to say variables from the .env files will only be used if not defined
     # as environment variables.
     env_file = str(ROOT_DIR.path('.env'))
-    print('Loading : {}'.format(env_file))
+    logger.info('Loading : %s', env_file)
     env.read_env(env_file)
-    print('The .env file has been loaded. See base.py for more information')
+    logger.info('The .env file has been loaded. See base.py for more information')
 
 
-#USE_TZ = False
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
-    'djangosecure',
     # Default Django apps:
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,31 +57,34 @@ DJANGO_APPS = [
     'dal_select2',
 
     # Admin
-    'suit',
+    'jazzmin',
     'django.contrib.admin',
-    'markdown_deux',  # Required for Knowledgebase item formatting
-    'bootstrapform',  # Required for nicer formatting of forms with the default templates
-    'helpdesk',  # This is us!
     'prettyjson',
     #'storages'
 ]
 THIRD_PARTY_APPS = [
-    'crispy_forms',  # Form layouts
+    "crispy_forms",
+    "crispy_bootstrap3",
+    # "crispy_bootstrap5",
+    # "crispy_bootstrap4",
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
     'rest_framework',
-    'rest_framework_swagger',
+    'drf_spectacular',
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
 
-    'bootstrap3',
+    'django_bootstrap5',
+    # 'bootstrap4',
     'bootstrap3_datetime',
     'import_export',
     'django_tables2',
     'django_celery_beat',
     'django_celery_results',
+    'six',
 ]
+
 
 # Apps specific for this project go here.
 LOCAL_APPS = [
@@ -88,11 +94,11 @@ LOCAL_APPS = [
     'student_registration.alp',  # custom alp app
     'student_registration.clm',  # custom clm app
     'student_registration.attendances',  # custom attendances app
-    'student_registration.enrollments',  # custom enrollments app
+    # 'student_registration.enrollments',  # custom enrollments app
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
-    'student_registration.winterization',  # custom winterization app
+    # 'student_registration.winterization',  # custom winterization app
     'student_registration.backends',  # custom storage app
     'student_registration.staffenroll',
     'student_registration.staffs',
@@ -106,20 +112,23 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    # 'student_registration.lockout_middleware.StudentLockoutMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'student_registration.user_activity.UserActivityMiddleware',
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.common.BrokenLinkEmailsMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "student_registration.user_activity.UserActivityMiddleware",
+    # "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
-# # SECURITY CONFIGURATION
-# X_FRAME_OPTIONS = 'DENY'
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -139,12 +148,8 @@ FIXTURE_DIRS = (
     str(APPS_DIR.path('fixtures')),
 )
 
-
 IMPORT_EXPORT_USE_TRANSACTIONS = False
 IMPORT_EXPORT_SKIP_ADMIN_LOG = False
-
-# If not set default  is TempFolderStorage
-# IMPORT_EXPORT_TMP_STORAGE_CLASS =
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -165,7 +170,10 @@ MANAGERS = ADMINS
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
+    'default': env.db('DATABASE_URL',
+    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/new_staging_13062025'),
 }
+DJANGO_READ_DOT_ENV_FILE = True
 
 # DATABASES = {
 #     'default': {
@@ -178,7 +186,9 @@ DATABASES = {
 #     }
 # }
 
-DATABASES['default']['ATOMIC_REQUESTS'] = True
+# DATABASES['default']['ATOMIC_REQUESTS'] = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # GENERAL CONFIGURATION
@@ -188,20 +198,6 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'Asia/Beirut'
-
-# LANGUAGE_COOKIE_NAME = 'default_language'
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-# LANGUAGE_CODE = 'en-us'
-# LANGUAGE_CODE = 'ar-ar'
-
-# LANGUAGES = (
-#     ('ar-ar', 'arabic'),
-#     ('en-us', 'english'),
-    # ('fr-fr', 'french'),
-# )
-
-# LANGUAGES_BIDI = ["ar-ar"]
-# LANGUAGES_BIDI = ["en-us"]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -243,7 +239,7 @@ TEMPLATES = [
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
-                'django.template.context_processors.tz',
+                # 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 # Your stuff: custom template context processors go here
             ],
@@ -252,7 +248,9 @@ TEMPLATES = [
 ]
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap3", "bootstrap5"]
+# CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap3"
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -298,8 +296,6 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     'django.contrib.auth.hashers.BCryptPasswordHasher',
 ]
-#Turn Timezone off
-#USE_TZ = False
 
 # PASSWORD VALIDATION
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
@@ -337,8 +333,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Some really nice defaults
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_EMAIL_REQUIRED = False
+# ACCOUNT_LOGIN_METHODS = 'username'
+ACCOUNT_LOGIN_METHODS = {'username'}
+# ACCOUNT_AUTHENTICATION_METHOD = 'username'
+# ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
@@ -360,18 +359,18 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 INSTALLED_APPS += ['student_registration.taskapp.celery.CeleryConfig']
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TASK_DEFAULT_QUEUE = 'default'
+CELERY_TASK_QUEUES = (
+    Queue('default', routing_key='default'),
+    Queue('mscc_export', routing_key='mscc_export'),
+)
+CELERY_TASK_ROUTES = {
+    'student_registration.mscc.tasks.generate_mscc_export': {
+        'queue': 'mscc_export',
+        'routing_key': 'mscc_export',
+    },
+}
 ########## END CELERY
-
-COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
-COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
-COUCHBASE_PASS = env('COUCHBASE_PASS', default='NO_PASS')
-
-MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
-
-# django-compressor
-# ------------------------------------------------------------------------------
-# INSTALLED_APPS += ['compressor']
-# STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
@@ -383,6 +382,7 @@ LOCALE_PATHS = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # this setting fixes the bug where user can be logged in as AnonymousUser
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -397,80 +397,53 @@ REST_FRAMEWORK = {
     )
 }
 
-SWAGGER_SETTINGS = {
-    'is_authenticated': True,
-    'is_superuser': True,
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'BMA API',
+    'DESCRIPTION': 'API for the BMA project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,  # Usually True for Swagger UI/Redoc
+    'POSTPROCESSING_HOOKS': [],
+    # OTHER SETTINGS AS NEEDED
 }
 
-# Django Suit configuration
-SUIT_CONFIG = {
-    'ADMIN_NAME': 'MAKANI',
-    'CONFIRM_UNSAVED_CHANGES': False,
-
-    'MENU': (
-        {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
-        # {'app': 'helpdesk', 'label': 'HelpDesk Config', 'icon': 'icon-info-sign'},
-        # {'label': 'HelpDesk Public', 'icon': 'icon-info-sign', 'url': '/helpdesk/dashboard/'},
-        # {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
-        #     {'url': '/dashboard/exporter/', 'label': 'Full data export'},
-        #     {'url': '/dashboard/2ndshift-governorate-grade/', 'label': '2nd Shift by Governorate by Grade'},
-        #     {'url': '/dashboard/2ndshift-governorate-age/', 'label': '2nd Shift by Governorate by Age'},
-        #     {'url': '/dashboard/2ndshift-governorate-nationality/', 'label': '2nd Shift by Governorate by Nationality'},
-        #     {'url': '/dashboard/2ndshift-grade-age/', 'label': '2nd Shift by Grade by Age'},
-        #     {'url': '/dashboard/2ndshift-grade-nationality/', 'label': '2nd Shift by Grade by Nationality'},
-        #     {'url': '/dashboard/2ndshift-nationality-age/', 'label': '2nd Shift by Nationality by Age'},
-        #     {'url': '/dashboard/2ndshift-school-grade/', 'label': '2nd Shift by School by Grade'},
-        #     {'url': '/dashboard/2ndshift-school-nationality/', 'label': '2nd Shift by School by Nationality'},
-            # {'url': '/dashboard/2ndshift-overall/', 'label': '2nd Shift Overall'},
-            # {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},
-            # {'url': '/dashboard/registrations-alp/', 'label': 'ALP Current round'},
-            # {'url': '/dashboard/registrations-alp-outreach/', 'label': 'ALP Outreach'},
-            # {'url': '/dashboard/registrations-alp-pre-test/', 'label': 'ALP Pre-test'},
-            # {'url': '/dashboard/registrations-alp-post-test/', 'label': 'ALP Post-test'},
-        # ]},
-        {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
-        {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
-        {'app': 'clm', 'label': 'CLM', 'icon': 'icon-th-list'},
-        {'app': 'mscc', 'label': 'MAKANI', 'icon': 'icon-th-list'},
-        {'app': 'youth', 'label': 'YOUTH', 'icon': 'icon-th-list'},
-        # {'label': 'ALP', 'icon': 'icon-th-list', 'models': (
-        #     'alp.CurrentRound',
-        #     'alp.CurrentOutreach',
-        #     'alp.PreTest',
-        #     'alp.PostTest',
-        #     'alp.outreach',
-        #     'alp.ALPRound',
-        # )},
-        # {'label': '2nd Shift', 'icon': 'icon-th-list', 'models': (
-        #     'enrollments.enrollment',
-        #     'enrollments.enrollmentgrading',
-        #     'enrollments.dropout',
-        #     'enrollments.disabled',
-        #     'enrollments.LoggingStudentMove',
-        #     'enrollments.LoggingProgramMove',
-        # )},
-        {'label': 'Students', 'icon': 'icon-th-list', 'models': (
-            'students.Student',
-            'students.Nationality',
-            'students.IDType',
-            'students.Language',
-            # 'students.StudentMatching',
-        )},
-        {'label': 'Schools', 'icon': 'icon-th-list', 'models': (
-            'schools.School',
-            # 'schools.EducationLevel',
-            # 'schools.ClassLevel',
-            # 'schools.ALPReferMatrix',
-            # 'schools.ALPAssignmentMatrix',
-            # 'schools.ClassRoom',
-            # 'schools.EducationYear',
-            # 'schools.Section',
-        )},
-        # {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
-        # {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
-        {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
-    )
+JAZZMIN_SETTINGS = {
+    "site_title": "BMA",
+    "site_header": "BMA-2",
+    "welcome_sign": "Welcome, Admin",
+    "copyright": "UNICEF",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "topmenu_links": [
+        {"app": "users"},
+        {"app": "backends"},
+        {"app": "mscc"},
+        {"app": "youth"},
+        {"app": "dirasa"},
+        {"app": "locations"},
+        {"app": "schools"},
+    ],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
 }
+
+# STORAGE CONFIGURATION
+# ------------------------------------------------------------------------------
+# Uploaded Media Files
+# ------------------------
+# See: http://django-storages.readthedocs.io/en/latest/index.html
+INSTALLED_APPS += ['storages', ]
+
+AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
+AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
+AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
+
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_blob.AzureBlobStorage' # Updated for newer django-storages
+DEFAULT_FILE_FORMAT = 'xlsx'
+DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
 
 UNIQUE_ID_API_TOKEN_URL = env('UNIQUE_ID_API_TOKEN_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/auth/getAccessToken')
 UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsUniqueIDs')
@@ -478,11 +451,11 @@ UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://le
 UNIQUE_ID_API_USERNAME = env('UNIQUE_ID_API_USERNAME', default='NO_USERNAME')
 UNIQUE_ID_API_PASSWORD = env('UNIQUE_ID_API_PASSWORD', default='NO_PASSWORD')
 
-HELPDESK_TRANSLATE_TICKET_COMMENTS = True
-HELPDESK_SHOW_DELETE_BUTTON_SUPERUSER_FOLLOW_UP = True
-HELPDESK_STAFF_ONLY_TICKET_OWNERS = True
-HELPDESK_STAFF_ONLY_TICKET_CC = True
-HELPDESK_CREATE_TICKET_HIDE_ASSIGNED_TO = True
-HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
-HELPDESK_VIEW_A_TICKET_PUBLIC = False
-HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
+# import firebase_admin
+# from firebase_admin import credentials
+# from pathlib import Path
+#
+# root_dirt = Path(__file__).parents[2]
+# FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
+# cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
+# firebase_app = firebase_admin.initialize_app(cred)

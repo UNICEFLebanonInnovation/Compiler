@@ -13,6 +13,7 @@ from student_registration.locations.models import Center
 from student_registration.schools.models import PartnerOrganization
 
 from .utils import load_child_attendance, create_attendance
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 class AttendanceView(LoginRequiredMixin,
@@ -62,16 +63,28 @@ class AttendanceView(LoginRequiredMixin,
 
 
 def save_attendance_children(request):
-    body_unicode = request.body.decode('utf-8')
+    """Persist attendance for MSCC children.
 
-    if body_unicode.strip():
-        try:
-            data = json.loads(body_unicode)
-            result = create_attendance(data, request.GET.get('center_id'))
-            return JsonResponse({'result': result})
+    Similar to the CLM view, this now validates the request body and ensures an
+    ``HttpResponse`` is always returned even when errors occur.
+    """
 
-        except Exception as e:
-            pass
+    body_unicode = request.body.decode("utf-8")
+
+    if not body_unicode.strip():
+        return HttpResponseBadRequest("Empty request body")
+
+    try:
+        data = json.loads(body_unicode)
+    except ValueError:
+        return HttpResponseBadRequest("Invalid JSON payload")
+
+    try:
+        result = create_attendance(data, request.GET.get("center_id"))
+    except Exception:  # pragma: no cover - safety net
+        return HttpResponseBadRequest("Failed to save attendance")
+
+    return JsonResponse({"result": result})
 
 
 class LoadAttendanceChildren(LoginRequiredMixin,
@@ -154,7 +167,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         context['center'] = []
         context['partner'] = []
 
-        if not self.request.user.groups.filter(name='MSCC_UNICEF').exists():
+        if not has_group(self.request.user, 'MSCC_UNICEF'):
             if self.request.user.center_id:
                 center = Center.objects.filter(id=self.request.user.center_id).last()
                 if center:

@@ -6,13 +6,13 @@ import json
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from openpyxl import Workbook
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from rest_framework import status
 from django.db.models import F, Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -23,11 +23,11 @@ from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
 from django.db import connection
 import csv
-import io
-import zipfile
 import codecs
 import logging
 import traceback
+
+logger = logging.getLogger(__name__)
 from .filters import (
     MainFilter,
     FullFilter,
@@ -36,22 +36,17 @@ from .filters import (
     PDPartnerFilter
 )
 from .tables import (
-    BootstrapTable,
     RegistrationTable,
     PDTable,
     PDPartnerTable
 
 )
 from .models import (
-    Registration,
     ProgramDocument,
-    MasterProgram,
     SubProgram,
-    Donor,
     EnrolledPrograms,
     ProgramDocumentIndicator
 )
-from student_registration.locations.models import Location
 
 from .forms import (
     MainForm,
@@ -174,7 +169,7 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
         return reverse('youth:new_round', kwargs={'registry': registry})
 
 
-def MainMarkDeleteView(request, pk):
+def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
@@ -188,7 +183,6 @@ def MainMarkDeleteView(request, pk):
     return JsonResponse(result)
 
 
-from django.db.models import F, Max
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
@@ -199,7 +193,7 @@ class MainListView(LoginRequiredMixin,
     table_class = RegistrationTable
     model = Registration
     template_name = 'youth/list.html'
-    table = BootstrapTable(Registration.objects.all(), order_by='id')
+    table = RegistrationTable(Registration.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = MainFilter
@@ -262,7 +256,7 @@ class MainViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-def MainRegistrationCancelView(request, pk):
+def main_registration_cancel_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
@@ -547,6 +541,9 @@ def export_data(request, **kwargs):
         if partner:
             queryset = queryset.filter(registration__partner__id=partner)
 
+
+        logger.debug("governorate: %s", governorate)
+
         if governorate:
             queryset = queryset.filter(registration__governorate__id=governorate)
 
@@ -610,6 +607,10 @@ def export_data(request, **kwargs):
 
         registration_ids = queryset.values_list('registration_id', flat=True).distinct()
 
+
+        logger.debug('-------registration_ids------------')
+        logger.debug(tuple(registration_ids))
+
         # vw_youth_data query
         cursor = connection.cursor()
 
@@ -628,6 +629,10 @@ def export_data(request, **kwargs):
             query_params.append(partner_id)
         else:
             vw_youth_data_str += " AND id = 0"
+
+        # Log the query to the console before execution
+        logger.debug("Executing Query:")
+        logger.debug(cursor.mogrify(vw_youth_data_str, query_params).decode('utf-8'))  # Ensure compatibility with Python 3
 
 
         # Execute the query
@@ -767,7 +772,7 @@ class PDListView(LoginRequiredMixin,
     table_class = PDTable
     model = ProgramDocument
     template_name = 'youth/pd_list.html'
-    table = BootstrapTable(ProgramDocument.objects.all(), order_by='id')
+    table = PDTable(ProgramDocument.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = PDFilter
@@ -892,7 +897,7 @@ def program_document_indicator_list_view(request, program_document_id):
         # return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
-@csrf_exempt
+@method_decorator(csrf_exempt, name='dispatch')
 def save_indicators(request):
     if request.method == 'POST':
         payload = json.loads(request.body.decode('utf-8'))
