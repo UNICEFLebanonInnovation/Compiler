@@ -3,6 +3,13 @@ import json
 import datetime
 
 from time import mktime
+import io
+import re
+import logging
+from django.http import FileResponse, HttpResponse
+from storages.backends.azure_storage import AzureStorage
+
+logger = logging.getLogger(__name__)
 
 
 class MyEncoder(json.JSONEncoder):
@@ -20,43 +27,8 @@ class MyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def post_data(protocol, url, apifunc, token, data):
-
-    params = json.dumps(data, cls=MyEncoder)
-
-    headers = {"Content-type": "application/json", "Authorization": token, "HTTP_REFERER": url, "Cookie": "token="+token}
-
-    # if protocol == 'HTTPS':
-    #     conn = httplib.HTTPSConnection(url)
-    # else:
-    #     conn = httplib.HTTPConnection(url)
-    # conn.request('POST', apifunc, params, headers)
-    # response = conn.getresponse()
-    # result = response.read()
-    #
-    # if not response.status == 201:
-    #     if response.status == 400:
-    #         raise Exception(str(response.status) + response.reason + response.read())
-    #     else:
-    #         raise Exception(str(response.status) + response.reason)
-    #
-    # conn.close()
-    #
-    # return result
-
-
-import io
-import re
-import logging
-from django.http import FileResponse, HttpResponse
-from storages.backends.azure_storage import AzureStorage
-
-logger = logging.getLogger(__name__)
-
-
 class ExportStorage(AzureStorage):
     """Azure storage backend dedicated for exported files."""
-
     location = "export"
 
 
