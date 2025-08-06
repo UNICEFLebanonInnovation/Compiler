@@ -129,9 +129,17 @@ class MasterProgramAdmin(admin.ModelAdmin):
 
 
 class SubProgramAdmin(admin.ModelAdmin):
-    list_display = ('number', 'name', 'master_program', 'creation_year')
-    search_fields = ('number', 'name', 'master_program', 'active')
-    list_filter = (CreationYearFilter,)
+    list_display = ('number', 'name', 'master_program', 'master_active_status', 'creation_year')
+    search_fields = (
+        'number',
+        'name',
+        'master_program__name',
+        'master_program__number',
+    )
+    list_filter = (
+        'master_program__active', 
+        CreationYearFilter,
+    )
 
 
 class FundedByAdmin(admin.ModelAdmin):

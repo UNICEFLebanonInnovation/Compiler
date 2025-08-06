@@ -58,6 +58,13 @@ urlpatterns = [
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_edit'
     ),
+    url(
+        regex=r'^Program/Enrolled-Programs-Delete/(?P<pk>[\w.@+-]+)/$',
+        view=program_view.EnrolledProgramsDeleteView.as_view(),
+        name='program_enrolled_programs_delete'
+    ),
+    url(
+        regex=r'^Program/Program-Document-Add/$',
     re_path(
         r'^program/program-document-add/$',
         view=program_view.ProgramDocumentFormView.as_view(),

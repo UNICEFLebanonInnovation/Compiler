@@ -139,14 +139,14 @@ class MainForm(forms.ModelForm):
         required=False, to_field_name='id',
     )
     first_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=True,
         label=_('Primary phone number')
     )
     second_phone_number = forms.RegexField(
-        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81)|(86))-\d{6}$',
-        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        regex=r'^(((03|70|71|76|78|79|81|86)-\d{6})|(963 \d{2} \d{3} \d{4}))$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX or 963 XX XXX XXXX'}),
         required=False,
         label=_('Secondary phone number')
     )
@@ -342,9 +342,9 @@ class MainForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge-form badge-pill">3</span>'),
-                    Div('first_phone_number', css_class='col-md-3'),
+                    Div('first_phone_number', css_class='col-md-4'),
                     HTML('<span class="badge-form badge-pill">4</span>'),
-                    Div('second_phone_number', css_class='col-md-3'),
+                    Div('second_phone_number', css_class='col-md-4'),
                     css_class='row card-body',
                 ),
                 Div(

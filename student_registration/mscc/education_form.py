@@ -657,7 +657,7 @@ class EducationServiceForm(forms.ModelForm):
             old_class_section = instance.class_section
             new_class_section = validated_data.get('class_section')
 
-            if old_class_section != new_class_section:
+            if str(old_class_section) != str(new_class_section):
                 update_child_attendance(instance.registration.id, instance.education_program, old_class_section,
                                         new_class_section)
 
