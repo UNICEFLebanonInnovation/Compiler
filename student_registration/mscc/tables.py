@@ -68,10 +68,10 @@ class CommonTable(tables.Table):
 
 
 class MainTable(CommonTable):
-    edit_column = tables.TemplateColumn(
-        verbose_name=_('Edit'),
+    action_column = tables.TemplateColumn(
+        verbose_name=_('Actions'),
         orderable=False,
-        template_name='django_tables2/mscc/edit_column.html'
+        template_name='django_tables2/mscc/action_column.html'
     )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
@@ -90,7 +90,7 @@ class MainTable(CommonTable):
     class Meta:
         model = Registration
         fields = (
-            'edit_column',
+            'action_column',
             'type_column',
             'outreached',
             'absence_column',
@@ -121,10 +121,10 @@ class MainTable(CommonTable):
 
 
 class FullTable(CommonTable):
-    edit_column = tables.TemplateColumn(
-        verbose_name=_('Edit'),
+    action_column = tables.TemplateColumn(
+        verbose_name=_('Actions'),
         orderable=False,
-        template_name='django_tables2/mscc/edit_column.html'
+        template_name='django_tables2/mscc/action_column.html'
     )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
@@ -153,7 +153,7 @@ class FullTable(CommonTable):
     class Meta:
         model = Registration
         fields = (
-            'edit_column',
+            'action_column',
             'type_column',
             'outreached',
             'absence_column',
@@ -186,10 +186,10 @@ class FullTable(CommonTable):
 
 
 class PartnerTable(CommonTable):
-    edit_column = tables.TemplateColumn(
-        verbose_name=_('Edit'),
+    action_column = tables.TemplateColumn(
+        verbose_name=_('Actions'),
         orderable=False,
-        template_name='django_tables2/mscc/edit_column.html'
+        template_name='django_tables2/mscc/action_column.html'
     )
     type_column = tables.TemplateColumn(verbose_name=_('Type'), orderable=False,
                                         template_name='django_tables2/mscc/type_column.html')
@@ -205,7 +205,7 @@ class PartnerTable(CommonTable):
     class Meta:
         model = Registration
         fields = (
-            'edit_column',
+            'action_column',
             'type_column',
             'outreached',
             'absence_column',
@@ -236,16 +236,16 @@ class PartnerTable(CommonTable):
 
 
 class YouthMainTable(CommonTable):
-    edit_column = tables.TemplateColumn(
-        verbose_name=_('Edit'),
+    action_column = tables.TemplateColumn(
+        verbose_name=_('Actions'),
         orderable=False,
-        template_name='django_tables2/mscc/edit_column.html'
+        template_name='django_tables2/mscc/action_column.html'
     )
 
     class Meta:
         model = Registration
         fields = (
-            'edit_column',
+            'action_column',
             'child.number',
             'child.unicef_id',
             # 'child_unicef_id',
