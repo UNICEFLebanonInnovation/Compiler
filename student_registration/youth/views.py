@@ -517,7 +517,6 @@ class ChildProfilePreview(LoginRequiredMixin,
 
 @login_required(login_url='/users/login')
 def export_data(request, **kwargs):
-    import datetime
     try:
         user = request.user
         partner_id = user.partner_id
@@ -529,7 +528,7 @@ def export_data(request, **kwargs):
         adolescent_first_name = request.GET.get('adolescent_first_name', '')
         adolescent_father_name = request.GET.get('adolescent_father_name', '')
         adolescent_last_name = request.GET.get('adolescent_last_name', '')
-        adolescent_number = request.GET.get('adolescent_number', '')
+        adolescent_unicef_id = request.GET.get('adolescent_unicef_id', '')
         adolescent_gender = request.GET.get('adolescent_gender', '')
         adolescent_nationality = request.GET.get('adolescent_nationality', '')
         adolescent_disability = request.GET.get('adolescent_disability', '')
@@ -541,86 +540,89 @@ def export_data(request, **kwargs):
         start_date = request.GET.get('start_date', '')
         end_date = request.GET.get('end_date', '')
 
-        # Filter EnrolledPrograms
-        queryset = EnrolledPrograms.objects.filter(registration__deleted=False).all()
+        registration_qs = Registration.objects.filter(deleted=False)
 
         if partner:
-            queryset = queryset.filter(registration__partner__id=partner)
+            registration_qs = registration_qs.filter(partner__id=partner)
 
         if governorate:
-            queryset = queryset.filter(registration__governorate__id=governorate)
+            registration_qs = registration_qs.filter(governorate__id=governorate)
 
         if caza:
-            queryset = queryset.filter(registration__district__id=caza)
+            registration_qs = registration_qs.filter(district__id=caza)
 
         if cadaster:
-            queryset = queryset.filter(registration__cadaster__id=partner)
+            registration_qs = registration_qs.filter(cadaster__id=cadaster)
 
         if adolescent_first_name:
-            queryset = queryset.filter(registration__adolescent__first_name=adolescent_first_name)
+            registration_qs = registration_qs.filter(adolescent__first_name__icontains=adolescent_first_name)
 
         if adolescent_father_name:
-            queryset = queryset.filter(registration__adolescent__father_name=adolescent_father_name)
+            registration_qs = registration_qs.filter(adolescent__father_name__icontains=adolescent_father_name)
 
         if adolescent_last_name:
-            queryset = queryset.filter(registration__adolescent__last_name=adolescent_last_name)
+            registration_qs = registration_qs.filter(adolescent__last_name__icontains=adolescent_last_name)
 
-        if adolescent_number:
-            queryset = queryset.filter(registration__adolescent__number=adolescent_number)
+        if adolescent_unicef_id:
+            registration_qs = registration_qs.filter(adolescent__unicef_id__icontains=adolescent_unicef_id)
 
         if adolescent_gender:
-            queryset = queryset.filter(registration__adolescent__gender=adolescent_gender)
+            registration_qs = registration_qs.filter(adolescent__gender=adolescent_gender)
 
         if adolescent_nationality:
-            queryset = queryset.filter(registration__adolescent__nationality_id=adolescent_nationality)
+            registration_qs = registration_qs.filter(adolescent__nationality_id=adolescent_nationality)
 
         if adolescent_disability:
-            queryset = queryset.filter(registration__adolescent__disability__id=adolescent_disability)
+            registration_qs = registration_qs.filter(adolescent__disability__id=adolescent_disability)
 
         if adolescent_first_phone_number:
-            queryset = queryset.filter(registration__adolescent__first_phone_number=adolescent_first_phone_number)
+            registration_qs = registration_qs.filter(adolescent__first_phone_number__icontains=adolescent_first_phone_number)
 
-        if master_program:
-            master_program_ids = master_program.split(",")
-            queryset = queryset.filter(master_program__id__in=master_program_ids)
+        # EnrolledPrograms-related filters
+        if any([master_program, sub_program, donor, program_document, start_date, end_date]):
+            registration_qs = registration_qs.prefetch_related('enrolled_programs')
 
-        if sub_program:
-            sub_program_ids = sub_program.split(",")
-            queryset = queryset.filter(sub_program__id__in=sub_program_ids)
+            if master_program:
+                master_program_ids = master_program.split(",")
+                registration_qs = registration_qs.filter(enrolled_programs__master_program__id__in=master_program_ids)
 
-        if donor:
-            queryset = queryset.filter(donor__id=donor)
+            if sub_program:
+                sub_program_ids = sub_program.split(",")
+                registration_qs = registration_qs.filter(enrolled_programs__sub_program__id__in=sub_program_ids)
 
-        if program_document:
-            queryset = queryset.filter(program_document__id=program_document)
+            if donor:
+                registration_qs = registration_qs.filter(enrolled_programs__donor__id=donor)
 
-        if start_date:
-            try:
-                start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-                queryset = queryset.filter(completion_date__gte=start_date_obj)
-            except ValueError:
-                pass
+            if program_document:
+                registration_qs = registration_qs.filter(enrolled_programs__program_document__id=program_document)
 
-        if end_date:
-            try:
-                end_date_obj = datetime.datetime.strptime(end_date, "%Y-%m-%d")
-                queryset = queryset.filter(completion_date__lte=end_date_obj)
-            except ValueError:
-                pass
+            if start_date:
+                try:
+                    start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                    registration_qs = registration_qs.filter(enrolled_programs__completion_date__gte=start_date_obj)
+                except ValueError:
+                    pass
 
-        registration_ids = queryset.values_list('registration_id', flat=True).distinct()
+            if end_date:
+                try:
+                    end_date_obj = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+                    registration_qs = registration_qs.filter(enrolled_programs__completion_date__lte=end_date_obj)
+                except ValueError:
+                    pass
 
-        # vw_youth_data query
+        registration_ids = list(registration_qs.values_list('id', flat=True).distinct())
+
         cursor = connection.cursor()
-
         query_params = []
-        vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted='false'"
+
+        vw_youth_data_str = "SELECT * FROM vw_youth_data WHERE deleted = 'false'"
 
         if registration_ids:
-            vw_youth_data_str += " AND id IN %s"
-            query_params.append(tuple(registration_ids))
+            vw_youth_data_str += " AND id = ANY(%s)"
+            query_params.append(registration_ids)
+        else:
+            vw_youth_data_str += " AND 1 = 0"  # No results
 
-        # User group filtering
         if has_group(user, 'YOUTH_UNICEF'):
             vw_youth_data_str += " AND id > 0"
         elif has_group(user, 'YOUTH_PARTNER') and partner_id:
@@ -629,17 +631,15 @@ def export_data(request, **kwargs):
         else:
             vw_youth_data_str += " AND id = 0"
 
-
-        # Execute the query
         cursor.execute(vw_youth_data_str, query_params)
 
         headers = [col[0] for col in cursor.description]
 
         # Prepare CSV response
         response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename=youth_registration_data.csv'
-
+        response['Content-Disposition'] = 'attachment; filename="youth_registration_data.csv"'
         response.write(codecs.BOM_UTF8)
+
         writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
         writer.writerow(headers)
 
@@ -652,8 +652,7 @@ def export_data(request, **kwargs):
         return response
 
     except Exception as e:
-        logging.error("An error occurred during the export process:")
-        logging.error(traceback.format_exc())
+        logging.error("Export failed:", exc_info=True)
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
@@ -680,7 +679,7 @@ def export_pd_data(request, **kwargs):
         queryset = ProgramDocument.objects.all()
 
         if partner.isdigit():
-            queryset = queryset.filter(registration__partner__id=int(partner))
+            queryset = queryset.filter(partner__id=int(partner))
         if funded_by.isdigit():
             queryset = queryset.filter(funded_by__id=int(funded_by))
         if project_status.isdigit():
