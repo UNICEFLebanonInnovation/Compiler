@@ -417,7 +417,13 @@ class AdolescentUploadFailedView(LoginRequiredMixin, View):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
         if not upload.failed_file:
             return HttpResponse(status=404)
-        response = HttpResponse(upload.failed_file, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s' % upload.failed_file.name.split('/')[-1]
+
+        file_content = upload.failed_file.read()
+        bom = b'\xef\xbb\xbf'
+
+        response = HttpResponse(bom + file_content, content_type='text/csv; charset=utf-8')
+        filename = upload.failed_file.name.split('/')[-1]
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
         return response
 
