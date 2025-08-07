@@ -85,3 +85,11 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
         if export:
             export.status = 'failed'
             export.save()
+            if export.created_by:
+                # Notify the user that the export failed and include the reason
+                send_push_to_web(
+                    export.created_by,
+                    "Makani export failed",
+                    str(e),
+                    data={"type": "mscc_export_failed", "reason": str(e)},
+                )

@@ -97,5 +97,11 @@ onMessage(messaging, (payload) => {
     const text = 'MSCC export ' + timestamp;
     saveNotification(payload.data.url, text);
     addNotificationToList(payload.data.url, text);
+  } else if (payload.data && payload.data.type === "mscc_export_failed") {
+    const reason = payload.data.reason || 'Unknown error';
+    const text = 'MSCC export failed: ' + reason;
+    alert(text);
+    saveNotification('#', text);
+    addNotificationToList('#', text);
   }
 });
