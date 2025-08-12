@@ -304,6 +304,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
 
     def import_data(self, data, upload, request):
         from student_registration.students.utils import generate_one_unique_id
+        import datetime
         not_imported = []
         imported = 0
         for index, values in enumerate(data, start=2):
@@ -315,14 +316,25 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 continue
 
             nationality = Nationality.objects.filter(name=values.get('nationality')).first()
-            gov = Location.objects.filter(name=values.get('governorate')).first()
-            dist = Location.objects.filter(name=values.get('district')).first()
-            cad = Location.objects.filter(name=values.get('cadaster')).first()
+            gov = Location.objects.filter( name=values.get('governorate'), type_id=1).first()
+            dist = Location.objects.filter(name=values.get('district'), type_id=2).first()
+            cad = Location.objects.filter(name=values.get('cadaster'), type_id=3).first()
             disability = Disability.objects.filter(name=values.get('disability')).first()
 
             if not all([nationality, gov, dist, cad, disability]):
                 values['row'] = index
                 values['error'] = 'Invalid reference'
+                not_imported.append(values)
+                continue
+
+            try:
+                datetime.date(
+                    int(values.get('birthday_year')),
+                    int(values.get('birthday_month')),
+                    int(values.get('birthday_day'))
+                )
+            except Exception:
+                values['row'] = index
                 not_imported.append(values)
                 continue
 
