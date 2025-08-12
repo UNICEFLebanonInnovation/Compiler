@@ -202,18 +202,22 @@ class MainListView(LoginRequiredMixin,
         user = self.request.user
         partner_id = user.partner_id
 
-        if has_group(user, 'YOUTH_UNICEF'):
-            queryset = Registration.objects.filter(deleted=False
-                                                   ).order_by('-id')
-            queryset = queryset.distinct('id')
-            return queryset
-        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-            queryset = Registration.objects.filter(deleted=False,partner=partner_id
-                                                   ).order_by('-id')
-            queryset = queryset.distinct('id')
-            return queryset
+        queryset = (
+            Registration.objects.filter(deleted=False)
+            .select_related(
+                'adolescent',
+                'adolescent__disability',
+                'adolescent__nationality',
+            )
+            .order_by('-id')
+        )
 
-        return Registration.objects.none()
+        if has_group(user, 'YOUTH_PARTNER') and partner_id:
+            queryset = queryset.filter(partner=partner_id)
+        elif not has_group(user, 'YOUTH_UNICEF'):
+            return Registration.objects.none()
+
+        return queryset.distinct('id')
 
     def get_table_class(self):
         return RegistrationTable
