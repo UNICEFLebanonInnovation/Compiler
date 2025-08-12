@@ -174,5 +174,5 @@ def save_fcm_token(request):
         return HttpResponseBadRequest('Invalid payload')
     if not token:
         return HttpResponseBadRequest('Missing token')
-    WebPushToken.objects.update_or_create(user=request.user, defaults={'token': token})
+    WebPushToken.objects.update_or_create(token=token, defaults={'user': request.user})
     return JsonResponse({'status': 'ok'})
