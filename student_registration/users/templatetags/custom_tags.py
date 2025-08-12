@@ -7,6 +7,22 @@ logger = logging.getLogger(__name__)
 register = template.Library()
 
 
+def _get_user_group_names(user):
+    """Return a cached set of group names for ``user``.
+
+    The first time this helper is called for a given user instance we hit
+    the database to fetch all group names. The result is stored on the user
+    object so subsequent checks during the same request are served from
+    memory, avoiding repetitive ``SELECT`` queries to ``auth_group`` and
+    eliminating the N+1 query pattern.
+    """
+    if not hasattr(user, "_group_names_cache"):
+        user._group_names_cache = set(
+            user.groups.values_list("name", flat=True)
+        )
+    return user._group_names_cache
+
+
 @register.filter(name='has_group')
 def has_group(user, group_name):
     """Return True if the user belongs to the specified group.
@@ -18,7 +34,7 @@ def has_group(user, group_name):
         return False
     if getattr(user, "is_superuser", False):
         return True
-    return user.groups.filter(name=group_name).exists()
+    return group_name in _get_user_group_names(user)
 
 
 @register.filter(name='have_edit_right')
@@ -32,7 +48,7 @@ def have_edit_right(user, name):
         return False
     if getattr(user, "is_superuser", False):
         return True
-    return user.groups.filter(name=name).exists()
+    return name in _get_user_group_names(user)
 
 
 @register.simple_tag
