@@ -1,11 +1,14 @@
 
 import json
 import datetime
-
-from time import mktime
+import os
 import io
 import re
 import logging
+
+from pathlib import Path
+from time import mktime
+
 from django.http import FileResponse, HttpResponse
 from storages.backends.azure_storage import AzureStorage
 
@@ -55,7 +58,7 @@ def is_valid_filename(filename, extension):
     return re.match(pattern, filename) is not None
 
 
-def send_push_to_web(user, title, body, data=None):
+def send_push_to_web_0(user, title, body, data=None):
     """Send a web push notification via Firebase Cloud Messaging.
 
     Parameters
@@ -114,3 +117,40 @@ def send_push_to_web(user, title, body, data=None):
     # Send the notification to all tokens.
     response = messaging.send_multicast(message)
     return response.success_count > 0
+
+
+def send_push_to_web(user, title, body, data=None):
+    import firebase_admin
+    from firebase_admin import credentials, messaging
+
+    from student_registration.users.models import WebPushToken
+
+    root_dirt = Path(__file__).parents[2]
+    FIREBASE_CREDENTIALS_FILE = os.path.join(str(root_dirt / "utility"), 'firebase-creds.json')
+    cred = credentials.Certificate(FIREBASE_CREDENTIALS_FILE)
+    # firebase_app = firebase_admin.initialize_app(cred)
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
+
+    try:
+        token_obj = WebPushToken.objects.get(user=user)
+    except WebPushToken.DoesNotExist:
+        return False
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title=title,
+            body=body,
+        ),
+        webpush=messaging.WebpushConfig(
+            headers={"Urgency": "high"},
+            notification=messaging.WebpushNotification(
+                title=title,
+                body=body,
+                icon="/static/images/logo.png",
+            ),
+        ),
+        token=token_obj.token,
+        data=data or {},
+    )
+    return messaging.send(message)
