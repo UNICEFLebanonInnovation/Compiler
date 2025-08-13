@@ -65,12 +65,13 @@
 
                                 {% endif %}
 
+                                {% if new_round %}
                                 <a href="/MSCC/New-Round/{{ instance.id }}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
 
                                 <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">
                                     {{ instance.type }}
                                 </button>
-
+                                {% endif %}
 {% get_completion_rate instance as result %}
 
 <div class="progress mr-3" style="height: 35px; float: right; width: 150px;" data-toggle="tooltip" title="" data-placement="top" data-original-title="Completion Percentage of the Child Services">

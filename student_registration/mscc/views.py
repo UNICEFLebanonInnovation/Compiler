@@ -53,7 +53,8 @@ from .tables import (
 from .models import (
     Registration,
     Referral,
-    EducationHistory
+    EducationHistory,
+    Round
 )
 from student_registration.backends.models import ExportHistory
 
@@ -80,8 +81,23 @@ class ProfileView(LoginRequiredMixin,
         generate_services(instance.child.age, instance)
         current_tab = self.request.GET.get('current_tab', 'info')
 
+        rounds_registered = EducationService.objects.filter(
+            registration__child_id=instance.child.id,
+            registration__deleted=False
+        ).values_list('round_id', flat=True)
+
+        # Remove any None values
+        rounds_registered = [r for r in rounds_registered if r is not None]
+
+        # Query for available rounds
+        available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+
+        # Check if any exist
+        new_round = available_rounds.exists()
+
         return {
             'instance': instance,
+            'new_round': new_round,
             'current_tab': current_tab
         }
 
