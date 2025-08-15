@@ -400,7 +400,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                         gender_norm
                     )
 
-                    if Adolescent.objects.filter(unicef_id=prospective_unicef_id).exists():
+                    if Registration.objects.filter(adolescent__unicef_id=prospective_unicef_id, deleted=False).exists():
                         invalid_fields.append("duplicate unicef_id ({0})".format(prospective_unicef_id))
 
                 except Exception:

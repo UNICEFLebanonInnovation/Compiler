@@ -502,14 +502,17 @@ class MainForm(forms.ModelForm):
         )
 
         # Check duplicates
-        qs = Adolescent.objects.filter(unicef_id=current_unicef_id)
+        qs = Registration.objects.filter(adolescent__unicef_id=current_unicef_id, deleted=False)
+        print (current_unicef_id)
+        print(qs.count())
 
-        current_adolescent_id = None
-        if getattr(self, 'instance', None) and getattr(self.instance, 'adolescent_id', None):
-            current_adolescent_id = self.instance.adolescent_id
+        current_id = None
+        if getattr(self, 'instance', None) and getattr(self.instance, 'id', None):
+            current_id = self.instance.id
 
-        if current_adolescent_id:
-            qs = qs.exclude(pk=current_adolescent_id)
+        if current_id:
+            qs = qs.exclude(pk=current_id)
+        print(qs.count())
 
         if qs.exists():
             self.add_error('adolescent_first_name', 'Another adolescent already has this UNICEF ID.')
