@@ -467,36 +467,54 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
-        # check if date is valid
-        year = 0
-        month = 0
-        day = 0
-        if cleaned_data.get("adolescent_birthday_year"):
-            year = int(cleaned_data.get("adolescent_birthday_year"))
-        if cleaned_data.get("adolescent_birthday_month"):
-            month = int(cleaned_data.get("adolescent_birthday_month"))
-        if cleaned_data.get("adolescent_birthday_day"):
-            day = int(cleaned_data.get("adolescent_birthday_day"))
+        year = int(cleaned_data.get("adolescent_birthday_year") or 0)
+        month = int(cleaned_data.get("adolescent_birthday_month") or 0)
+        day = int(cleaned_data.get("adolescent_birthday_day") or 0)
 
         try:
             datetime.datetime(year, month, day)
-        except ValueError:
+        except ValueError as e:
             self.add_error('adolescent_birthday_year', 'The date is not valid.')
+            return cleaned_data
 
-        adolescent_nationality = cleaned_data.get("adolescent_nationality")
-        adolescent_nationality_other = cleaned_data.get("adolescent_nationality_other")
-        if adolescent_nationality and adolescent_nationality.id == 6 and not adolescent_nationality_other:
-            self.add_error('adolescent_nationality_other', 'This field is required')
+        first_name = (cleaned_data.get('adolescent_first_name') or '').strip()
+        father_name = (cleaned_data.get('adolescent_father_name') or '').strip()
+        last_name = (cleaned_data.get('adolescent_last_name') or '').strip()
+        mother_fullname = (cleaned_data.get('adolescent_mother_fullname') or '').strip()
+        gender = cleaned_data.get('adolescent_gender')
 
-        main_caregiver = cleaned_data.get("main_caregiver")
-        main_caregiver_other = cleaned_data.get("main_caregiver_other")
-        if main_caregiver == 'Other' and not main_caregiver_other:
-            self.add_error('main_caregiver_other', 'This field is required')
+        nationality = cleaned_data.get('adolescent_nationality')
+        nationality_en = getattr(nationality, 'name_en', None)
 
-        main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
-        main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
-        if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
-            self.add_error('main_caregiver_nationality_other', 'This field is required')
+        dob_str = u'{}-{}-{}'.format(year, month, day)
+
+        # Generate UNICEF ID
+        from student_registration.students.utils import generate_one_unique_id
+        current_unicef_id = generate_one_unique_id(
+            "0",
+            first_name,
+            father_name,
+            last_name,
+            mother_fullname,
+            dob_str,
+            nationality_en,
+            gender
+        )
+
+        # Check duplicates
+        qs = Adolescent.objects.filter(unicef_id=current_unicef_id)
+
+        current_adolescent_id = None
+        if getattr(self, 'instance', None) and getattr(self.instance, 'adolescent_id', None):
+            current_adolescent_id = self.instance.adolescent_id
+
+        if current_adolescent_id:
+            qs = qs.exclude(pk=current_adolescent_id)
+
+        if qs.exists():
+            self.add_error('adolescent_first_name', 'Another adolescent already has this UNICEF ID.')
+
+        return cleaned_data
 
     def save(self, request=None, instance=None):
 
