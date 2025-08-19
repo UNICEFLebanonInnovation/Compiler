@@ -656,6 +656,29 @@ function reorganizeForm()
 
 // main_form_validation.js merged into mscc.js
 // Client-side validation for MSCC MainForm with realtime feedback
+var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
+var regexMap = {
+    '#id_first_phone_number': phoneRegex,
+    '#id_first_phone_number_confirm': phoneRegex,
+    '#id_second_phone_number': phoneRegex,
+    '#id_second_phone_number_confirm': phoneRegex,
+    '#id_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
+    '#id_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
+    '#id_parent_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_parent_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_recorded_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
+    '#id_recorded_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
+    '#id_national_number': /^\d{12}$/,
+    '#id_national_number_confirm': /^\d{12}$/,
+    '#id_syrian_national_number': /^\d{11}$/,
+    '#id_syrian_national_number_confirm': /^\d{11}$/,
+    '#id_parent_national_number': /^\d{12}$/,
+    '#id_parent_national_number_confirm': /^\d{12}$/,
+    '#id_parent_syrian_national_number': /^\d{11}$/,
+    '#id_parent_syrian_national_number_confirm': /^\d{11}$/
+};
 
 function clearErrors() {
     $('.error-field').removeClass('error-field');
@@ -673,32 +696,34 @@ function showError(selector, message) {
     errorEl.text(message);
 }
 
+function validateField(field) {
+    var selector = '#' + field.attr('id');
+    field.removeClass('error-field');
+    field.next('.field-error').remove();
+
+    if (field.prop('required') && field.is(':visible') && !field.val()) {
+        showError(selector, 'This field is required');
+        return;
+    }
+
+    if (regexMap[selector]) {
+        var val = field.val();
+        if (val && !regexMap[selector].test(val)) {
+            var placeholder = field.attr('placeholder');
+            var msg = 'Please enter a valid value';
+            if (selector.indexOf('phone') !== -1) {
+                msg = 'Please enter a valid phone number (XX-XXXXXX)';
+            } else if (placeholder) {
+                msg = 'Please follow the format ' + placeholder.replace('Format:', '').trim();
+            }
+            showError(selector, msg);
+        }
+    }
+}
+
 function validateMainForm(showModal, step) {
     if (showModal === undefined) showModal = true;
     var valid = true;
-    var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
-    var regexMap = {
-        '#id_first_phone_number': phoneRegex,
-        '#id_first_phone_number_confirm': phoneRegex,
-        '#id_second_phone_number': phoneRegex,
-        '#id_second_phone_number_confirm': phoneRegex,
-        '#id_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
-        '#id_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
-        '#id_parent_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
-        '#id_parent_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
-        '#id_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
-        '#id_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
-        '#id_recorded_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
-        '#id_recorded_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
-        '#id_national_number': /^\d{12}$/,
-        '#id_national_number_confirm': /^\d{12}$/,
-        '#id_syrian_national_number': /^\d{11}$/,
-        '#id_syrian_national_number_confirm': /^\d{11}$/,
-        '#id_parent_national_number': /^\d{12}$/,
-        '#id_parent_national_number_confirm': /^\d{12}$/,
-        '#id_parent_syrian_national_number': /^\d{11}$/,
-        '#id_parent_syrian_national_number_confirm': /^\d{11}$/
-    };
 
     var requiredFields = [
         '#id_child_first_name',
@@ -1058,6 +1083,7 @@ $(document).ready(function() {
     });
 
     $('input, select').on('change input blur', function() {
+        validateField($(this));
         var step = $('#step-1').is(':visible') ? 1 : null;
         validateMainForm(false, step);
     });
