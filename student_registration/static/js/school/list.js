@@ -15,7 +15,7 @@ $(document).ready(function() {
             success: function(data) {
                $(".downloading-message").hide();
                $('.download-report').removeClass('disabled');
-               window.open("/MSCC/export-download/" + data,
+               window.open("/mscc/export-download/" + data,
                            "_blank");
 
             },

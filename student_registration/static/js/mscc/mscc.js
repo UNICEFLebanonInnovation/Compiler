@@ -225,7 +225,7 @@ function outreach_child_search() {
         };
 
         $.ajax({
-            url: '/MSCC/Outreach-Child-Search/',
+            url: '/mscc/outreach-child-search/',
             dataType: "json",
             data: data,
             cache: false,
@@ -279,7 +279,7 @@ function get_child_data(outreach_id)
     $('#search_loader').removeClass('hidden');
 
     $.ajax({
-        url: '/MSCC/Outreach-Child/',
+        url: '/mscc/outreach-child/',
         data: { outreach_id: outreach_id},
         cache: false,
         async: true,
@@ -336,7 +336,7 @@ function old_child_search() {
         };
 
         $.ajax({
-            url: '/MSCC/Old-Child-Search/',
+            url: '/mscc/old-child-search/',
             dataType: "json",
             data: data,
             cache: false,
@@ -375,7 +375,7 @@ function child_duplication_check() {
         };
 
         $.ajax({
-            url: '/MSCC/Child-Duplication-Check/',
+            url: '/mscc/child-duplication-check/',
             dataType: "json",
             data: data,
             cache: false,
@@ -384,8 +384,8 @@ function child_duplication_check() {
                 if(response.result.length > 0){
                     var text = ''
                     $(response.result).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/MSCC/Child-Profile-Preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name+'</br>';
-                        text = text + 'Click <a href="/MSCC/New-Round/'+item.id+'/">here</a> to register this child in a new Round.'
+                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/mscc/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name+'</br>';
+                        text = text + 'Click <a href="/mscc/new-round/'+item.id+'/">here</a> to register this child in a new Round.'
                     })
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
@@ -457,7 +457,7 @@ function get_old_child_data(student_id)
     $('#nfe_search_loader').removeClass('hidden');
 
     $.ajax({
-        url: '/MSCC/Get-Old-Child-Data/',
+        url: '/mscc/get-old-child-data/',
         data: { student_id: student_id},
         cache: false,
         async: true,
@@ -510,9 +510,11 @@ function reorganizeForm()
 //    Child Nationality
     var child_nationality = $('select#id_child_nationality').val();
     $('div#div_id_child_nationality_other').addClass('d-none');
+//    $('#child_nationality_other_badge').addClass('d-none');
 
     if(child_nationality == 6){
         $('#div_id_child_nationality_other').removeClass('d-none');
+//        $('#child_nationality_other_badge').removeClass('d-none');
     }
     else{
         $('#id_child_nationality_other').val('');
@@ -531,9 +533,11 @@ function reorganizeForm()
 
     if(child_have_children =='Yes'){
         $('div#div_id_child_children_number').removeClass('d-none');
+//        $('#child_children_number_badge').removeClass('d-none');
     }
     else{
         $('div#div_id_child_children_number').addClass('d-none');
+//        $('#child_children_number_badge').addClass('d-none');
         $('#id_child_children_number').val('');
     }
 
@@ -542,20 +546,22 @@ function reorganizeForm()
 
     if(child_have_sibling =='Yes'){
         $('div#div_id_child_siblings_have_disability').removeClass('d-none');
+//        $('#child_siblings_have_disability_badge').removeClass('d-none');
     }
     else{
         $('div#div_id_child_siblings_have_disability').addClass('d-none');
+//        $('#child_siblings_have_disability_badge').addClass('d-none');
         $('#id_child_siblings_have_disability').val('');
     }
 
 //   Source of Identification
     var source_of_identification = $('select#id_source_of_identification').val();
     $('div#div_id_source_of_identification_specify').addClass('d-none');
-    $('#span_source_of_identification_specify').addClass('d-none');
+//    $('#source_of_identification_specify_badge').addClass('d-none');
 
     if(source_of_identification == 'Other Sources'){
         $('#div_id_source_of_identification_specify').removeClass('d-none');
-        $('#span_source_of_identification_specify').removeClass('d-none');
+//        $('#source_of_identification_specify_badge').removeClass('d-none');
     }
 
 //    Main Caregiver

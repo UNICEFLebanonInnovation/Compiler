@@ -418,7 +418,7 @@ JAZZMIN_SETTINGS = {
         {"app": "backends"},
         {"app": "mscc"},
         {"app": "youth"},
-        {"app": "dirasa"},
+        {"app": "clm"},
         {"app": "locations"},
         {"app": "schools"},
     ],

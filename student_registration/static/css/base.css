@@ -3,6 +3,7 @@
 }
 .form-wizard-content.sw-container.tab-content {
     min-height: 485px !important;
+    overflow: scroll;
 }
 form .card-body {
     padding-bottom: 0px;
@@ -125,6 +126,31 @@ label.form-control-label {
     color: #3f6ad8;
     font-weight: bold;
 }
+
+.badge-form-empty {
+    padding: 2px 7px;
+    min-width: 25px;
+    max-width: 25px;
+    height: 25px;
+    font-size: 13px;
+    border: 0px;
+    background-color: white;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+
+.badge-form-2-empty {
+    padding: 4px 6px;
+    min-width: 32px;
+    max-width: 32px;
+    height: 30px;
+    font-size: 13px;
+    border: 0px;
+    background-color: white;
+    color: #3f6ad8;
+    font-weight: bold;
+}
+
 .tabs-lg-alternate.card-header>.nav .nav-link {
     padding: 1rem 0 !important;
 }
