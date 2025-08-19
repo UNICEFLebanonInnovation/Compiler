@@ -1,18 +1,31 @@
-// Prevent SmartWizard initialization errors when called on empty selections.
-// If the plugin is invoked on a jQuery set with no matched elements it would
-// previously throw an exception inside jQuery's data handling because
-// `this[0]` was undefined.  We wrap the original plugin and simply return the
-// jQuery object when there is nothing to initialize.
+// Ensure SmartWizard doesn't throw when initialized on missing elements.
+//
+// The main bundle wires up event handlers that reference the SmartWizard
+// plugin directly.  If the selector used during initialization matches no
+// elements, the plugin would previously bubble an exception from jQuery's
+// data layer.  We intercept assignment of `$.fn.smartWizard` so the wrapped
+// version is used everywhere, even for references captured during bundle
+// execution.
 (function ($) {
-  if ($.fn && $.fn.smartWizard) {
-    var original = $.fn.smartWizard;
-    $.fn.smartWizard = function () {
+  function wrap(fn) {
+    return function () {
       if (this.length === 0) {
-        // Gracefully handle empty selections.
         return this;
       }
-      return original.apply(this, arguments);
+      return fn.apply(this, arguments);
     };
   }
-})(jQuery);
 
+  if ($.fn.smartWizard) {
+    $.fn.smartWizard = wrap($.fn.smartWizard);
+  } else {
+    Object.defineProperty($.fn, 'smartWizard', {
+      configurable: true,
+      get: function () {
+        return this._smartWizard;
+      },
+      set: function (fn) {
+        this._smartWizard = wrap(fn);
+      }
+    });
+  }
