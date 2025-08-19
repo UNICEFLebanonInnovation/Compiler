@@ -7,9 +7,18 @@
 // version is used everywhere, even for references captured during bundle
 // execution.
 (function ($) {
+  // Guard jQuery's data helper so calls with undefined elements simply no-op.
+  var originalData = $.data;
+  $.data = function (elem) {
+    if (!elem) {
+      return;
+    }
+    return originalData.apply(this, arguments);
+  };
+
   function wrap(fn) {
     return function () {
-      if (this.length === 0) {
+      if (!this || this.length === 0 || !this[0]) {
         return this;
       }
       return fn.apply(this, arguments);
@@ -29,3 +38,4 @@
       }
     });
   }
+})(jQuery);
