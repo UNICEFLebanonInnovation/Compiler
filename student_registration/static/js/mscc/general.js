@@ -29,7 +29,7 @@ $(document).ready(function() {
                 error_fields = true;
             }
         });
-        if(typeof validateMainForm === 'function' && !validateMainForm(false)){
+        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
             error_fields = true;
         }
         if(!error_fields){
@@ -52,7 +52,7 @@ $(document).ready(function() {
                 error_fields = true;
             }
         });
-        if(typeof validateMainForm === 'function' && !validateMainForm(false)){
+        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
             error_fields = true;
         }
         if(error_fields){

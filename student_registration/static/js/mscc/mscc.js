@@ -190,7 +190,7 @@ $(document).ready(function() {
                 error_fields = true;
             }
         });
-        if(typeof validateMainForm === 'function' && !validateMainForm(false)){
+        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
             error_fields = true;
         }
         if(!error_fields){
@@ -673,7 +673,7 @@ function showError(selector, message) {
     errorEl.text(message);
 }
 
-function validateMainForm(showModal) {
+function validateMainForm(showModal, step) {
     if (showModal === undefined) showModal = true;
     var valid = true;
     var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
@@ -776,6 +776,10 @@ function validateMainForm(showModal) {
     if ($('#id_source_of_identification').val() == 'Other Sources' && $('#id_source_of_identification_specify').val() === '') {
         showError('#id_source_of_identification_specify', 'This field is required');
         valid = false;
+    }
+
+    if (step === 1) {
+        return valid;
     }
 
     var package_type = $('#id_type').val();
@@ -1047,12 +1051,14 @@ function validateMainForm(showModal) {
 
 $(document).ready(function() {
     $('form').on('submit', function(e) {
-        if (!validateMainForm(true)) {
+        var step = $('#step-1').is(':visible') ? 1 : null;
+        if (!validateMainForm(true, step)) {
             e.preventDefault();
         }
     });
 
     $('input, select').on('change input blur', function() {
-        validateMainForm(false);
+        var step = $('#step-1').is(':visible') ? 1 : null;
+        validateMainForm(false, step);
     });
 });
