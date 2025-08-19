@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from unittest.mock import patch
 
 from student_registration.user_activity import UserActivityMiddleware
+from student_registration.backends.models import UserActivity
 
 
 User = get_user_model()
@@ -46,4 +47,15 @@ def test_logs_json_body(db):
     create_mock.assert_called_once()
     data = json.loads(create_mock.call_args.kwargs["data"])
     assert data["foo"] == "bar"
+
+
+def test_handles_long_paths(db):
+    long_path = "/sample/" + "a" * 300
+    request = RequestFactory().get(long_path)
+    request.user = make_user()
+    middleware = UserActivityMiddleware(get_response)
+    response = middleware(request)
+    assert response.status_code == 200
+    activity = UserActivity.objects.get()
+    assert activity.path == long_path
 
