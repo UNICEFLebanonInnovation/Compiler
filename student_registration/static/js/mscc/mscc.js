@@ -4,6 +4,25 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
 
 $(document).ready(function() {
 
+    $("#submit-id-save").click(function(e){
+        var form = $(this).closest('form')[0];
+        var valid = form.checkValidity();
+
+        if (typeof validateMainForm === 'function') {
+            valid = validateMainForm(true) && valid;
+        }
+
+        if (valid) {
+            $(this).prop('disabled', true);
+            form.submit();
+        } else {
+            if (typeof form.reportValidity === 'function') {
+                form.reportValidity();
+            }
+            e.preventDefault();
+        }
+    });
+
 
     $('.show-progarmme-details').click(function(e){
         e.preventDefault();
@@ -202,7 +221,28 @@ $(document).ready(function() {
             $(this).removeClass('error-field');
          }else{
             $('#formErrorModal').modal('show');
-         }
+        }
+    });
+
+    // Handle forms where the visible "Next" button uses the id "next-btn22" directly
+    // instead of the generic "next-page" id. Apply the same validation logic when
+    // the button is clicked and only allow progressing if validation succeeds.
+    $(document).on('click', '#next-btn22', function(e){
+        $(this).removeClass('error-field');
+        var error_fields = false;
+        $('input, select').filter('[required]:visible').each(function(){
+            if($(this).val() == null || $(this).val() == ''){
+                $(this).addClass('error-field');
+                error_fields = true;
+            }
+        });
+        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
+            error_fields = true;
+        }
+        if(error_fields){
+            e.preventDefault();
+            $('#formErrorModal').modal('show');
+        }
     });
 
 
