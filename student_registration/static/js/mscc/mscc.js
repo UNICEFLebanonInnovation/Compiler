@@ -160,6 +160,10 @@ $(document).ready(function() {
             old_child_search();
             child_duplication_check();
         }
+        else{
+            $('#search_loader').addClass('hidden');
+            $('#nfe_search_loader').addClass('hidden');
+        }
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
@@ -235,6 +239,7 @@ function outreach_child_search() {
             },
             error: function (response) {
                 console.log(response);
+                $('#search_loader').addClass('hidden');
             }
         });
     }
@@ -346,6 +351,7 @@ function old_child_search() {
             },
             error: function (response) {
                 console.log(response);
+                $('#nfe_search_loader').addClass('hidden');
             }
         });
     }
