@@ -131,7 +131,7 @@ class ExportHistory(TimeStampedModel):
 
 class UserActivity(models.Model):
     username = models.CharField(max_length=255)
-    path = models.CharField(max_length=255)
+    path = models.TextField()
     method = models.CharField(max_length=10)
     data = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
