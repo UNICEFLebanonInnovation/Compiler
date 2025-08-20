@@ -302,7 +302,7 @@ class MainForm(forms.ModelForm):
         required=False
     )
     id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.filter(active =True),
+        queryset=IDType.objects.filter(active=True),
         widget=forms.Select,
         label=_('ID type of the caregiver'),
         required=False, to_field_name='id'
@@ -1160,7 +1160,7 @@ class ReferralForm(forms.ModelForm):
         choices=YES_NO,
     )
     referred_school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
+        queryset=School.objects.filter(is_bma=True), widget=forms.Select,
         label=_('Name of the School referred to'),
         empty_label='-------',
         required=False, to_field_name='id',

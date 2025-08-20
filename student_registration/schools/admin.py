@@ -681,6 +681,9 @@ class SchoolAdmin(ImportExportModelAdmin):
     fields = (
             'number',
             'name',
+            'is_closed',
+            'is_bma',
+            'is_unrwa',
             'director_name',
             'land_phone_number',
             'email',
@@ -712,7 +715,6 @@ class SchoolAdmin(ImportExportModelAdmin):
             'receive_supplies',
             'number_dirasa_children_disability',
             'number_total_children_disability',
-            'is_closed',
     )
     list_display = (
         'id',
@@ -724,12 +726,14 @@ class SchoolAdmin(ImportExportModelAdmin):
         'governorate',
         'district',
         'is_closed',
+        'is_bma',
+        'is_unrwa',
     )
     search_fields = (
         'name',
         'number',
-        'is_closed',
     )
+    list_filter = ('is_closed', 'is_bma','is_unrwa',)
 
     def has_delete_permission(self, request, obj=None):
         return False

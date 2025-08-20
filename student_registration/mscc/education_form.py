@@ -749,7 +749,7 @@ class EducationServiceForm(forms.ModelForm):
 
 class EducationRSServiceForm(forms.ModelForm):
     school = forms.ModelChoiceField(
-        queryset=School.objects.all(),
+        queryset=School.objects.filter(is_bma=True),
         widget=autocomplete.ModelSelect2(url='school_autocomplete'),
         label=_('Name of public School'),
         empty_label='-------',
@@ -782,6 +782,11 @@ class EducationRSServiceForm(forms.ModelForm):
         if pk:
             form_action = reverse('mscc:service_education_rs_edit',
                                   kwargs={'registry': registry, 'pk': pk})
+
+        if self.request and self.request.user.partner.is_unrwa:
+            self.fields['school'].queryset = School.objects.filter(is_bma=True, is_unrwa=True)
+        else:
+            self.fields['school'].queryset = School.objects.filter(is_bma=True)
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True

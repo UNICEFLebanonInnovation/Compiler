@@ -435,6 +435,7 @@ class School(TimeStampedModel):
         choices=WFP_SERVICE_TYPE,
         verbose_name=_('Service Type?')
     )
+    is_unrwa = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['number']
@@ -875,6 +876,7 @@ class PartnerOrganization(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
     is_Kayany = models.BooleanField(blank=True, default=False)
+    is_unrwa = models.BooleanField(blank=True, default=False)
     is_youth = models.BooleanField(blank=True, default=False)
 
     bln_round = models.ForeignKey(
