@@ -17,6 +17,7 @@ from student_registration.taskapp.celery import app
 # processed sequentially without exhausting worker resources.
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage, send_push_to_web
+from student_registration.users.templatetags.custom_tags import has_group
 
 logger = logging.getLogger(__name__)
 
@@ -93,3 +94,100 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
                     str(e),
                     data={"type": "mscc_export_failed", "reason": str(e)},
                 )
+
+
+@app.task(queue="mscc_export")
+def generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
+                                  father_name="", mother_fullname="", round=""):
+    """Generate an MSCC export with optional filtering and notify the user.
+
+    Parameters are used to filter the SQL query in the same way the synchronous
+    view previously did.  Results are written to a ZIP file stored in Azure
+    storage.  A push notification containing the download URL is sent to the
+    requesting user when done.
+    """
+    export = ExportHistory.objects.get(id=export_id)
+    try:
+        user = export.created_by
+        cursor = connection.cursor()
+        center_id = user.center_id
+        partner_id = user.partner_id or 0
+
+        query_params = []
+
+        if not round:
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE id = 0"
+        elif round == "no_round":
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data_no_round WHERE id > 0"
+        else:
+            vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
+            query_params.append(round)
+
+        if has_group(user, 'MSCC_UNICEF'):
+            vw_mscc_data_str += " AND id > 0"
+        elif has_group(user, 'MSCC_PARTNER') and partner_id:
+            vw_mscc_data_str += " AND partner_id = %s"
+            query_params.append(partner_id)
+        elif has_group(user, 'MSCC_CENTER') and center_id:
+            vw_mscc_data_str += " AND center_id = %s"
+            query_params.append(center_id)
+        else:
+            vw_mscc_data_str += " AND id = 0"
+
+        cursor.execute(vw_mscc_data_str, query_params)
+        mscc_data = cursor.fetchall()
+        headers = [col[0] for col in cursor.description]
+
+        zip_output = io.BytesIO()
+        with zipfile.ZipFile(zip_output, 'w') as zf:
+            csv_mscc_output = io.StringIO()
+            csv_writer = csv.writer(csv_mscc_output)
+            csv_mscc_output.write(codecs.BOM_UTF8.decode('utf-8'))
+            csv_writer.writerow(headers)
+            for row in mscc_data:
+                csv_writer.writerow([smart_str(cell) for cell in row])
+            zf.writestr('mscc_data.csv', csv_mscc_output.getvalue())
+
+            registration_ids = [row[0] for row in mscc_data]
+            if registration_ids:
+                followup_service_data_str = (
+                    "SELECT * FROM mscc_followupservice WHERE registration_id IN ({})".format(
+                        ','.join(['%s'] * len(registration_ids)))
+                )
+                cursor.execute(followup_service_data_str, registration_ids)
+                followup_service_data = cursor.fetchall()
+                followup_headers = [col[0] for col in cursor.description]
+                csv_followup_output = io.StringIO()
+                csv_writer = csv.writer(csv_followup_output)
+                csv_followup_output.write(codecs.BOM_UTF8.decode('utf-8'))
+                csv_writer.writerow(followup_headers)
+                for row in followup_service_data:
+                    csv_writer.writerow([smart_str(cell) for cell in row])
+                zf.writestr('followup_data.csv', csv_followup_output.getvalue())
+
+        unique_id = str(uuid.uuid4())
+        file_name = f"out_file_{unique_id}.zip"
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+        file_url = storage.url(file_name)
+        export.file_url = file_url
+        export.status = 'done'
+        export.save()
+        if user:
+            send_push_to_web(
+                user,
+                "Makani export ready",
+                "Your export is ready to download.",
+                data={"type": "mscc_export_ready", "url": file_url},
+            )
+    except Exception as e:  # pragma: no cover - logged for debugging purposes
+        logger.exception('Error generating export: %s', e)
+        export.status = 'failed'
+        export.save()
+        if export.created_by:
+            send_push_to_web(
+                export.created_by,
+                "Makani export failed",
+                str(e),
+                data={"type": "mscc_export_failed", "reason": str(e)},
+            )
