@@ -82,12 +82,8 @@ $(document).ready(function() {
         }
 
         requestHeaders = getHeader();
-
         $(".downloading-message").show();
         $('.download-report').addClass('disabled');
-
-
-
 
         $.ajax({
             url: "/mscc/export-list-background/?nationality=" + nationality
@@ -98,16 +94,13 @@ $(document).ready(function() {
                                + "&round=" + round,
             type: "GET",
             headers: requestHeaders,
-            success: function(data) {
-
+            success: function() {
                $(".downloading-message").hide();
                $('.download-report').removeClass('disabled');
-               window.open("/mscc/export-download/" + data,
-                           "_blank");
-
+               showModal('Export started. You will be notified when ready.');
             },
-            error: function(error) {
-                // Handle error if needed
+            error: function() {
+               showModal('Failed to start export. Please try again later.');
             }
         });
 
@@ -121,18 +114,33 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#exportOptionsModal .start-export', function(){
-        var format = $('#exportOptionsModal select.export-format').val();
+        var nationality = $("#id_child__nationality").val();
+        var first_name = $("#id_child__first_name").val();
+        var last_name = $("#id_child__last_name").val();
+        var father_name = $("#id_child__father_name").val();
+        var mother_fullname = $("#id_child__mother_fullname").val();
+        var round = $("#id_round").val();
         var button = $(this);
         var originalHtml = button.html();
         button.prop('disabled', true);
         button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        if(!round){
+            $('#exportOptionsModal').modal('hide');
+            showModal('Cycle is not selected. Please select a cycle before exporting data.');
+            button.prop('disabled', false);
+            button.html(originalHtml);
+            return;
+        }
         requestHeaders = getHeader();
         $.ajax({
-            url: '/mscc/export-list-async/',
-            type: 'POST',
-            contentType: 'application/json',
+            url: "/mscc/export-list-background/?nationality=" + nationality
+                                + "&first_name=" + first_name
+                                + "&last_name=" + last_name
+                                + "&father_name=" + father_name
+                               + "&mother_fullname=" + mother_fullname
+                               + "&round=" + round,
+            type: 'GET',
             headers: requestHeaders,
-            data: JSON.stringify({format: format}),
             success: function(){
                 $('#exportOptionsModal').modal('hide');
                 showModal('Export started. You will be notified when ready.');
