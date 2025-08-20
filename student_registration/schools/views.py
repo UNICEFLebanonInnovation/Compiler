@@ -1054,7 +1054,7 @@ class SchoolAutocomplete(autocomplete.Select2QuerySetView):
 
         qs = School.objects.filter(is_bma=True)
 
-        if self.q: 
+        if self.q:
             qs = qs.filter(Q(number__icontains=self.q) | Q(name__icontains=self.q))
 
 
