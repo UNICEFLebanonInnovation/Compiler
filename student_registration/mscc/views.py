@@ -16,7 +16,7 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from django.db.models import Count, F
+from django.db.models import Count, F, OuterRef, Subquery, Value
 from .utils import validate_date
 from openpyxl import Workbook
 from django.db import connection
@@ -29,7 +29,7 @@ import logging
 import traceback
 
 from rest_framework import status
-from django.db.models import F, Q
+from django.db.models import Q
 from django.urls import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -78,6 +78,8 @@ from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
 from .tasks import generate_mscc_export
+from django.db.models.functions import Coalesce
+from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.users.templatetags.custom_tags import has_group
 
 
@@ -404,22 +406,34 @@ class MainListView(LoginRequiredMixin,
         center_id = user.center_id
         partner_id = user.partner_id
 
-        if has_group(user, 'MSCC_UNICEF'):
-            return Registration.objects.filter(
-                Q(round__isnull=True) | Q(round__current_year=True)
-            ).order_by('-id')
+        base_qs = Registration.objects.filter(
+            Q(round__isnull=True) | Q(round__current_year=True)
+        ).select_related(
+            'child', 'center', 'partner', 'owner', 'modified_by', 'round'
+        )
 
+        if has_group(user, 'MSCC_UNICEF'):
+            qs = base_qs
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return Registration.objects.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
+            qs = base_qs.filter(
                 deleted=False, partner=partner_id
-            ).order_by('-id')
+            )
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return Registration.objects.filter(
-                Q(round__isnull=True) | Q(round__current_year=True),
+            qs = base_qs.filter(
                 deleted=False, center=center_id
-            ).order_by('-id')
-        return Registration.objects.none()
+            )
+        else:
+            qs = Registration.objects.none()
+
+        attendance_subquery = MSCCAttendanceChild.objects.filter(
+            registration_id=OuterRef('pk'), attended='No'
+        ).values('registration_id').annotate(
+            cnt=Count('id')
+        ).values('cnt')
+
+        return qs.order_by('-id').annotate(
+            total_absent_days=Coalesce(Subquery(attendance_subquery), Value(0))
+        )
 
     def get_table_class(self):
 

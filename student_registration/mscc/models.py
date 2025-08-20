@@ -338,6 +338,9 @@ class Registration(TimeStampedModel):
 
     @property
     def total_absent_days(self):
+        value = self.__dict__.get('total_absent_days')
+        if value is not None:
+            return value
         return Registration.get_total_absent_days(self.id)
 
     @staticmethod
