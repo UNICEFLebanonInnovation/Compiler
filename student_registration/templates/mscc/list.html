@@ -68,12 +68,12 @@
 </div>
 
 <div class="row">
-{% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
+{% if (request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id) or request.user|has_group:"MSCC_YOUTH" %}
                         <div class="col-md-6 col-lg-3">
                             <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
                                 <div class="widget-chat-wrapper-outer">
                                     <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
+                                        <div class="widget-title opacity-5 text-uppercase">New Child Registration</div>
                                         <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
                                             <div class="widget-chart-flex align-items-center">
                                                 <div>
@@ -81,66 +81,8 @@
                                                     <span class="opacity-10 text-primary pr-2">
                                                         <i class="fa fa-plus"></i>
                                                     </span>
-                                                  <a href="{% url 'mscc:child_add' %}?type=Core-Package">
-                                                    Core Package
-                                                  </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-danger border-danger card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-danger pr-2">
-                                                        <i class="fa fa-plus"></i>
-                                                    </span>
-                                                  <a href="{% url 'mscc:child_add' %}?type=Walk-in">
-                                                    Walk-in
-                                                  </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-danger-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-{% endif %}
-{% if request.user|has_group:"MSCC_YOUTH" %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-primary pr-2">
-                                                        <i class="fa fa-plus"></i>
-                                                    </span>
-                                                  <a href="{% url 'mscc:child_add' %}?type=Core-Package">
-                                                    Add new Beneficiary
+                                                  <a href="#" data-toggle="modal" data-target="#child-registration-modal">
+                                                    New Child Registration
                                                   </a>
                                                     <!--<small class="opacity-5 pl-1">%</small>-->
                                                 </div>
@@ -208,9 +150,28 @@
                                           <!--</div>-->
                                       <!--</div>-->
                                   <!--</div>-->
-                              <!--</div>-->
+                          <!--</div>-->
                           <!--</div>-->
                     </div>
+
+<div class="modal fade" id="child-registration-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Registration Type</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex flex-column">
+          <a href="{% url 'mscc:child_add' %}?type=Core-Package" class="btn btn-primary mb-2">Core Package</a>
+          <a href="{% url 'mscc:child_add' %}?type=Walk-in" class="btn btn-danger">Walk-in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="row" style="width: 1620px">
     <div class="col-lg-12">
