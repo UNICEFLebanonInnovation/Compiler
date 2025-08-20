@@ -3,6 +3,10 @@
 $(document).ready(function() {
 
 
+    $(document).on('shown.bs.modal', function(){
+        $('.modal-backdrop').not(':last').remove();
+    });
+
     $( ".delete-student" ).on( "click", function(e) {
         e.preventDefault();
         var registrationId = $(this).data("registration-id");
