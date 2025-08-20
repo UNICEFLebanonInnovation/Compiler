@@ -3,35 +3,41 @@
 $(document).ready(function() {
 
 
+    $(document).on('shown.bs.modal', function(){
+        $('.modal-backdrop').not(':last').remove();
+    });
+
     $( ".delete-student" ).on( "click", function(e) {
-
         e.preventDefault();
-
-        var buttonId = $(this).attr("id");
         var registrationId = $(this).data("registration-id");
         var parentTR = $(this).closest('tr');
+        var modal = $('#deleteConfirmModal');
+        modal.data('registrationId', registrationId);
+        modal.data('parentTR', parentTR);
+        modal.modal('show');
+    } );
 
-        var confirmed = confirm("Are you sure you want to delete this student?");
+    $(document).on('click', '#deleteConfirmModal .confirm-delete', function(){
+        var modal = $('#deleteConfirmModal');
+        var registrationId = modal.data('registrationId');
+        var parentTR = modal.data('parentTR');
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
-
-        if (confirmed) {
-            $.ajax({
-                url: "/mscc/child-mark-delete/" + registrationId + "/",
-                type: "GET",
-                headers: requestHeaders,
-                success: function(data) {
-                    console.log(parentTR.html());
-                    parentTR.remove();
-                },
-                error: function(error) {
-                    // Handle error if needed
-                }
-            });
-        } else {
-            console.log("User canceled marking as deleted for student with ID: " + studentId);
-        }
-    } );
+        $.ajax({
+            url: "/mscc/child-mark-delete/" + registrationId + "/",
+            type: "GET",
+            headers: requestHeaders,
+            success: function(data) {
+                parentTR.remove();
+            },
+            error: function(error) {
+                // Handle error if needed
+            },
+            complete: function(){
+                modal.modal('hide');
+            }
+        });
+    });
 
 
     $(document).on('click', '.download-center-report', function(e){
