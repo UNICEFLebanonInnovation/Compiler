@@ -73,12 +73,11 @@
 
 <div class="row">
 
-                                <div class="col-lg-8 col-md-12">
-                                    <div class="main-card mb-3 card">
-                                        <div class="card-body">
+    <div class="col-lg-9 {% if form.instance.id == None %}col-lg-9 col-md-9{% else %}col-lg-12 col-md-12{% endif %}">
+        <div class="main-card mb-3 card">
+            <div class="card-body">
 
-                                            <div id="smartwizard">
-
+                <div id="smartwizard">
                     <ul class="forms-wizard">
                         <li>
                             <a href="#step-1">
@@ -160,23 +159,25 @@
                                                 </div>
                                                 <div id="step-2">
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">1</span> <div class="col-md-4">{{ form.father_educational_level|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">2</span> <div class="col-md-4">{{ form.mother_educational_level|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">1</span> <div class="col-md-5">{{ form.father_educational_level|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">2</span> <div class="col-md-6">{{ form.mother_educational_level|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">3</span> <div class="col-md-3">{{ form.first_phone_number|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">4</span> <div class="col-md-3">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">5</span> <div class="col-md-3">{{ form.first_phone_owner|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">3</span> <div class="col-md-6">{{ form.first_phone_number|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">4</span> <div class="col-md-6">{{ form.first_phone_number_confirm|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">5</span> <div class="col-md-4">{{ form.first_phone_owner|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">6</span> <div class="col-md-3">{{ form.second_phone_number|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">7</span> <div class="col-md-3">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
-                                                        <span class="badge-form badge-pill">8</span> <div class="col-md-3">{{ form.second_phone_owner|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">6</span> <div class="col-md-6">{{ form.second_phone_number|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">7</span> <div class="col-md-6">{{ form.second_phone_number_confirm|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">8</span> <div class="col-md-4">{{ form.second_phone_owner|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
-                                                        <span class="badge-form badge-pill">9</span> <div class="col-md-3">{{ form.children_number_under18|as_crispy_field }}</div>
-                                                        <span class="badge-form-2 badge-pill">10</span> <div class="col-md-3">{{ form.main_caregiver|as_crispy_field }}</div>
-                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-3">{{ form.main_caregiver_other|as_crispy_field }}</div>
+                                                        <span class="badge-form badge-pill">9</span> <div class="col-md-5">{{ form.children_number_under18|as_crispy_field }}</div>
+                                                    </div>
+                                                    <div class="row card-body">
+                                                        <span class="badge-form-2 badge-pill">10</span> <div class="col-md-5">{{ form.main_caregiver|as_crispy_field }}</div>
+                                                        <span class="badge-form-empty badge-pill"></span> <div class="col-md-4">{{ form.main_caregiver_other|as_crispy_field }}</div>
                                                     </div>
                                                     <div class="row card-body">
                                                         <span class="badge-form-2 badge-pill">12</span> <div class="col-md-3">{{ form.caregiver_first_name|as_crispy_field }}</div>
@@ -268,19 +269,20 @@
                                                 </div>
                                             </form>
                                       </div>
+                </div>
+                <div class="divider"></div>
+                <div class="clearfix">
+                    <!--<button type="reset" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>-->
+                    <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
 
-                                            </div>
-                                            <div class="divider"></div>
-                                            <div class="clearfix">
-                                                <a href="{% url 'mscc:list' %}" type="button" id="reset-btn22-1" class="btn-shadow float-left btn btn-link">Back to list</a>
-                                                <button type="button" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
-
-                                                <button type="button" id="next-btn" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">Next</button>
-                                                <button type="button" id="prev-btn" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <button type="button" id="reset-btn22" class="btn-shadow float-left btn btn-link">Reset</button>
+                    <button type="button" id="next-btn22" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">Next btn</button>
+                    <button type="button" id="next-page" class="btn-shadow btn-wide float-right btn-pill btn-hover-shine btn btn-primary">Next Page</button>
+                    <button type="button" id="prev-btn22" class="btn-shadow float-right btn-wide btn-pill mr-3 btn btn-outline-secondary">Previous</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% if form.instance.id == None %}
   <div class="col-md-3" id="outreach-nfe-result">
