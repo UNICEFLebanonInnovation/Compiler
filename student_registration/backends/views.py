@@ -2,8 +2,10 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
+from django.utils.timezone import localtime
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -25,7 +27,7 @@ from student_registration.youth.models import Registration
 
 
 from .exporter import export_full_data
-from .models import Notification, Exporter, AdolescentUpload
+from .models import Notification, Exporter, AdolescentUpload, ExportHistory
 from .serializers import NotificationSerializer, ExporterSerializer
 from .filters import ExporterFilter
 from .tables import BootstrapTable, ExporterTable
@@ -127,6 +129,19 @@ class ExporterViewSet(LoginRequiredMixin,
             }
             export_full_data(data)
         return JsonResponse({'status': status.HTTP_200_OK})
+
+
+@login_required
+def export_history_list(request):
+    exports = (
+        ExportHistory.objects.filter(created_by=request.user)
+        .order_by('-created')[:5]
+    )
+    data = []
+    for export in exports:
+        timestamp = localtime(export.created).strftime('%Y-%m-%d %H:%M')
+        data.append({'url': export.file_url or '#', 'text': f'MSCC export {timestamp}'})
+    return JsonResponse({'exports': data})
 
 
 class AdolescentUploadView(LoginRequiredMixin, View):

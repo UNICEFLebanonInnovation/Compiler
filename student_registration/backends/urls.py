@@ -14,6 +14,11 @@ urlpatterns = [
         name='files_list'
     ),
     re_path(
+        r'^export-history-list/$',
+        view=views.export_history_list,
+        name='export_history_list'
+    ),
+    re_path(
         r'^generate-child-unique-id/$',
         view=views.generate_child_unique_id,
         name='generate_child_id'
