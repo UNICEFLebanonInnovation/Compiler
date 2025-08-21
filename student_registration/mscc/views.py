@@ -491,6 +491,7 @@ def main_registration_cancel_view(request, pk):
         result = {"isSuccessful": False}
     return JsonResponse(result)
 
+
 def outreach_child_search(request):
 
     birthday_year = request.GET.get('birthday_year')
@@ -841,6 +842,7 @@ def export_list_background(request):
         partner_name=user.partner.name if user.partner else ''
     )
     generate_filtered_mscc_export.delay(
+    # generate_filtered_mscc_export(
         export_record.id,
         nationality,
         first_name,

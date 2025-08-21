@@ -136,6 +136,7 @@ def send_push_to_web(user, title, body, data=None):
     try:
         token_obj = WebPushToken.objects.get(user=user)
     except WebPushToken.DoesNotExist:
+        logger.exception("Error Sending Push notifications")
         return False
     message = messaging.Message(
         notification=messaging.Notification(

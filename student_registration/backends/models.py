@@ -124,7 +124,7 @@ class ExportHistory(TimeStampedModel):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-created']
         verbose_name = "Export History"
         verbose_name_plural = "Export History"
 

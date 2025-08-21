@@ -57,7 +57,14 @@
                                     </div>
                                 </div>
                             </div>
-                        <div class="page-title-actions"></div>
+
+                        <div class="page-title-actions">
+{% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
+
+<a href="#" data-toggle="modal" data-target="#child-registration-modal" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add New Beneficiary</a>
+
+{% endif %}
+                        </div>
                         </div>
 </div>
 
@@ -67,124 +74,18 @@
 {% endif %}
 </div>
 
-<div class="row">
-{% if (request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id) or request.user|has_group:"MSCC_YOUTH" %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Child Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-primary pr-2">
-                                                        <i class="fa fa-plus"></i>
-                                                    </span>
-                                                  <a href="#" data-toggle="modal" data-target="#child-registration-modal">
-                                                    New Child Registration
-                                                  </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-{% endif %}
-{% if request.user|has_group:"MSCC_CENTER" and request.user.center.id or request.user|has_group:"MSCC_PARTNER" %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Attendance</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-                                                    <span class="opacity-10 text-success pr-2">
-                                                        <i class="fa fa-list"></i>
-                                                    </span>
-                                                    <a href="{% url 'mscc:attendance' %}">
-                                                      Daily Attendance
-                                                    </a>
-
-                                                  <!--<small class="opacity-5 pr-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-warning-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-{% endif %}
-
-                          <!--<div class="col-md-6 col-lg-3">-->
-                              <!--<div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">-->
-                                  <!--<div class="widget-chat-wrapper-outer">-->
-                                      <!--<div class="widget-chart-content">-->
-                                          <!--<div class="widget-title opacity-5 text-uppercase">Need RS support</div>-->
-                                          <!--<div class="widget-numbers mt-2 fsize-4 mb-0 w-100">-->
-                                              <!--<div class="widget-chart-flex align-items-center">-->
-                                                  <!--<div>-->
-                                                      <!--<small class="text-success pr-1">+</small>-->
-                                                      <!--34-->
-                                                      <!--<small class="opacity-5 pl-1">%</small>-->
-                                                  <!--</div>-->
-                                                  <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                      <!--<div class="circle-progress circle-progress-success-sm d-inline-block">-->
-                                                          <!--<small></small>-->
-                                                      <!--</div>-->
-                                                  <!--</div>-->
-                                              <!--</div>-->
-                                          <!--</div>-->
-                                      <!--</div>-->
-                                  <!--</div>-->
-                          <!--</div>-->
-                          <!--</div>-->
-                    </div>
-
-<div class="modal fade" id="child-registration-modal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Select Registration Type</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="d-flex flex-column">
-          <a href="{% url 'mscc:child_add' %}?type=Core-Package" class="btn btn-primary mb-2">Core Package</a>
-          <a href="{% url 'mscc:child_add' %}?type=Walk-in" class="btn btn-danger">Walk-in</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row" style="width: 1620px">
+<div class="row" style="width: 1420px">
     <div class="col-lg-12">
 <div id="accordion" class="accordion-wrapper mb-3 form-filters">
     <div class="card">
         <div id="headingOne" class="card-header">
-            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block collapsed">
+            <button type="button" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne" class="text-left m-0 p-0 btn btn-link btn-block">
                 <h5 class="m-0 p-0">
                     <i class="pe-7s-filter text-primary"></i>
                     Filters</h5>
             </button>
         </div>
-        <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
+        <div data-parent="#accordion" id="collapseOne1" class="collapse">
             <div class="card-body">
             <form action="" method="get" class="form form-inline">
                {% crispy filter.form 'bootstrap3' %}
@@ -217,7 +118,7 @@
     </div>
 </div>
 
-<div class="row table-list" style="width: 1620px">
+<div class="row table-list" style="width: 1420px">
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
             <div class="card-body">
@@ -233,6 +134,25 @@
 {% endblock %}
 
 {% block modal %}
+<div class="modal fade" id="child-registration-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Registration Type</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex flex-column">
+          <a href="{% url 'mscc:child_add' %}?type=Core-Package" class="btn btn-primary mb-2">Core Package</a>
+          <a href="{% url 'mscc:child_add' %}?type=Walk-in" class="btn btn-danger">Walk-in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="exportOptionsModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -242,11 +162,11 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="display: none;">
         <div class="form-group">
           <label for="export-format">Format</label>
           <select id="export-format" class="form-control export-format">
-            <option value="csv">CSV</option>
+            <option value="csv" selected>CSV</option>
             <option value="xlsx">XLSX</option>
           </select>
         </div>
@@ -283,7 +203,5 @@
 
     <script type="text/javascript" src="{% static 'js/project.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/list.js' %}?v=19"></script>
-    <script type="text/javascript" src="{% static 'js/mscc/general.js' %}?v=1"></script>
-
 
 {% endblock %}

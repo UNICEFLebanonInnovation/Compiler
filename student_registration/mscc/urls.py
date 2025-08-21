@@ -333,6 +333,7 @@ urlpatterns = [
         view=views.main_registration_cancel_view,
         name='child_registration_cancel'
     ),
+    # old export
     re_path(
         r'^export-list-background/$',
         view=views.export_list_background,

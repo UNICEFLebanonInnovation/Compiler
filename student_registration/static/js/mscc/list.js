@@ -7,12 +7,6 @@ $(document).ready(function() {
         $('.modal-backdrop').not(':last').remove();
     });
 
-    $(document).on('click', '.form-filters .btn-outline-warning', function(e){
-        e.preventDefault();
-        $(this).closest('form')[0].reset();
-        $(this).closest('.form-filters').find('.collapse').collapse('hide');
-    });
-
     $( ".delete-student" ).on( "click", function(e) {
         e.preventDefault();
         var registrationId = $(this).data("registration-id");
