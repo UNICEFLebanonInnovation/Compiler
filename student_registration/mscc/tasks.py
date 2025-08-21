@@ -18,6 +18,7 @@ from student_registration.taskapp.celery import app
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage, send_push_to_web
 from student_registration.users.templatetags.custom_tags import has_group
+from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
         file_name = f'mscc_export_{unique_id}.zip'
         storage = ExportStorage()
         storage.save(file_name, ContentFile(zip_output.getvalue()))
-        file_url = storage.url(file_name)
+        file_url = reverse('mscc:export_download', args=[file_name])
         export.file_url = file_url
         export.status = 'done'
         export.save()
@@ -169,7 +170,7 @@ def generate_filtered_mscc_export(export_id, nationality="", first_name="", last
         file_name = f"out_file_{unique_id}.zip"
         storage = ExportStorage()
         storage.save(file_name, ContentFile(zip_output.getvalue()))
-        file_url = storage.url(file_name)
+        file_url = reverse('mscc:export_download', args=[file_name])
         export.file_url = file_url
         export.status = 'done'
         export.save()
