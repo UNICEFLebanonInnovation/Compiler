@@ -544,6 +544,15 @@ function reorganizeForm()
 {
 //  child_gender
     var child_gender = $('select#id_child_gender').val();
+    var package_type = $('#id_type').val();
+
+    if (package_type == 'Core-Package') {
+        $('#id_first_phone_number').prop('required', true);
+        $('#id_first_phone_number_confirm').prop('required', true);
+    } else {
+        $('#id_first_phone_number').prop('required', false);
+        $('#id_first_phone_number_confirm').prop('required', false);
+    }
 
     if(child_gender =='Female'){
         $("#id_child_have_children").append('<option value="Child pregnant or expecting children">Child pregnant or expecting children</option>');
@@ -739,6 +748,22 @@ function clearErrors() {
 
 function showError(selector, message) {
     var field = $(selector);
+    if (field.attr('type') === 'checkbox') {
+        var name = field.attr('name');
+        var checkboxes = $('input[name="' + name + '"]');
+        if (checkboxes.length > 1) {
+            checkboxes.addClass('error-field');
+            var group = field.closest('.form-group');
+            var label = group.find('label').first();
+            var errorEl = label.next('.field-error');
+            if (!errorEl.length) {
+                errorEl = $('<div class="help-block field-error"></div>');
+                errorEl.insertAfter(label);
+            }
+            errorEl.text(message);
+            return;
+        }
+    }
     field.addClass('error-field');
     var errorEl = field.next('.field-error');
     if (!errorEl.length) {
@@ -873,6 +898,14 @@ function validateMainForm(showModal, step) {
         var first_phone_confirm = $('#id_first_phone_number_confirm').val();
         if ($('#id_first_phone_owner').val() === '') {
             showError('#id_first_phone_owner', 'This field is required');
+            valid = false;
+        }
+        if (first_phone === '') {
+            showError('#id_first_phone_number', 'This field is required');
+            valid = false;
+        }
+        if (first_phone_confirm === '') {
+            showError('#id_first_phone_number_confirm', 'This field is required');
             valid = false;
         }
         if (first_phone !== first_phone_confirm) {

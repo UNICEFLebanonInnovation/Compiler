@@ -529,7 +529,11 @@ class MainForm(forms.ModelForm):
             second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
             if not first_phone_owner:
                 self.add_error('first_phone_owner', 'This field is required')
-            if first_phone_number != first_phone_number_confirm:
+            if not first_phone_number:
+                self.add_error('first_phone_number', 'This field is required')
+            if not first_phone_number_confirm:
+                self.add_error('first_phone_number_confirm', 'This field is required')
+            elif first_phone_number != first_phone_number_confirm:
                 msg = "The phone numbers are not matched"
                 self.add_error('first_phone_number_confirm', msg)
             if second_phone_number != second_phone_number_confirm:
