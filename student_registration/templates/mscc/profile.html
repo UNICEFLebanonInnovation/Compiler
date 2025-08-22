@@ -61,11 +61,6 @@
                                     {{ instance.type }}
                                 </button>
 
-{% get_completion_rate instance as result %}
-
-<div class="progress mr-3" style="height: 35px; float: right; width: 150px;" data-toggle="tooltip" title="" data-placement="top" data-original-title="Completion Percentage of the Child Services">
-    <div class="progress-bar" role="progressbar" aria-valuenow="{{ result }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ result }}%;">{{ result }}%</div>
-</div>
 
 
                             </div>
