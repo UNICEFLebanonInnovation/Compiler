@@ -27,7 +27,7 @@
                                                 <h6 class="menu-header-subtitle">Mother: {{ instance.child.mother_fullname  }}</h6>
                                             </div>
                                             <!--<div class="menu-header-btn-pane">-->
-                                                <!--<button class="button btn btn-pill btn-dark" data-style="slide-right"><a href="/MSCC/Child-Edit/{{ instance.id }}" style="color: white;"><i class="pe-7s-pen"></i></a></button>-->
+                                                <!--<button class="button btn btn-pill btn-dark" data-style="slide-right"><a href="{% url 'mscc:child_edit' instance.id %}" style="color: white;"><i class="pe-7s-pen"></i></a></button>-->
                                             <!--</div>-->
                                         </div>
                                     </div>
@@ -525,9 +525,9 @@
                                                     <h5 class="menu-header-title">Education
                                                       <div style="float:right;">
                                                             {% if result %}
-                                                              <a href="/MSCC/Services/Education-Edit/{{ instance.id }}/{{ result.id }}/{{ instance.type }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos."><i class="pe-7s-pen"></i></a>
+                                                              <a href="{% url 'mscc:service_education_edit' instance.id result.id instance.type %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit Education Infos."><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/MSCC/Services/Education-Add/{{ instance.id }}/{{ instance.type }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos."><i class="pe-7s-plus"></i></a>
+                                                              <a href="{% url 'mscc:service_education_add' instance.id instance.type %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Education Infos."><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                       </div>
                                                     </h5>
