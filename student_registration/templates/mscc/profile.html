@@ -24,9 +24,7 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a>
-                                                        <i aria-hidden="true" class="fa fa-home"></i>
-                                                    </a>
+                                                    <a>Home</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     <a href="{% url 'mscc:list' %}">List</a>
@@ -44,24 +42,16 @@
                         <div class="page-title-actions">
 
                                 {% if instance.student_old %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in one the previous NFE progarmmes">
-                                    <i class="lnr-link btn-icon-wrapper"> </i>
-                                </button>
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in one the previous NFE progarmmes">Found in previous NFE</button>
                                 {% else %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in any of the previous NFE progarmmes">
-                                    <i class="lnr-unlink btn-icon-wrapper"> </i>
-                                </button>
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in any of the previous NFE progarmmes">Not found in previous NFE</button>
 
                                 {% endif %}
 
                                 {% if instance.child_outreach %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in the outreach data">
-                                    <i class="lnr-thumbs-up btn-icon-wrapper"> </i>
-                                </button>
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-success" data-original-title="Child found in the outreach data">Found in outreach data</button>
                                 {% else %}
-                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in the outreach data">
-                                    <i class="lnr-thumbs-down btn-icon-wrapper"> </i>
-                                </button>
+                                <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-warning" data-original-title="Child not found in the outreach data">Not found in outreach data</button>
 
                                 {% endif %}
 
