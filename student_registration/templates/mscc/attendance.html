@@ -39,9 +39,7 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">
-                                                        <i aria-hidden="true" class="fa fa-home"></i>
-                                                    </a>
+                                                    <a href="{% url 'mscc:list' %}">Home</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
@@ -77,11 +75,7 @@
                                     <div class="main-card mb-3 card">
                                          <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
                                             <div class="btn-actions-pane-right actions-icon-btn">
-                                              <a href="{% url 'mscc:attendance_report' %}">
-                                                  <button class="btn-icon btn-icon-only btn btn-link">
-                                                      <i class="pe-7s-cloud-download btn-icon-wrapper"></i>
-                                                  </button>
-                                              </a>
+                                              <a href="{% url 'mscc:attendance_report' %}" class="btn btn-link">Download</a>
                                             </div>
                                         </div>
                                         <div class="card-body">
