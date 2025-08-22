@@ -29,12 +29,10 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">
-                                                        <i aria-hidden="true" class="fa fa-home"></i>
-                                                    </a>
+                                                    <a href="{% url 'mscc:list' %}">Home</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                      <a href="{% url 'mscc:list' %}">List</a>
+                                                      List
                                                 </li>
                                               {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
 
@@ -90,20 +88,18 @@
             <form action="" method="get" class="form form-inline">
                {% crispy filter.form 'bootstrap3' %}
 
-                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
-                  <i style="font-weight:bolder" class="pe-7s-search"></i>
-                </button>
+                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">Search</button>
 
                 <button type="button" href="" title="Cancel"
-                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
+                 class="btn btn-outline-warning">Cancel
                 </button>
 
               {% if user|has_group:"EXPORT" %}
                 <a href="" title="Download" class="btn btn-outline-success download-report">
-                    <i class="lnr-download"></i>
+                    Download
                 </a>
                 <a href="" title="Async Download" class="btn btn-outline-info download-report-async">
-                    <i class="lnr-cloud-download"></i>
+                    Async Download
                 </a>
                 <div class = "downloading-message" style = "display:none">
                   Loading...
