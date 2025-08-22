@@ -32,7 +32,7 @@
                                                     <a href="">Home</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                      <a href="{% url 'mscc:list' %}">List</a>
+                                                      List
                                                 </li>
                                               {% if request.user|has_group:"MSCC_FULL" and request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
 
