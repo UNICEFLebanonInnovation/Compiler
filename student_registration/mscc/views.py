@@ -30,7 +30,7 @@ import traceback
 
 from rest_framework import status
 from django.db.models import F, Q
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -257,7 +257,7 @@ class MainAddView(LoginRequiredMixin,
                   FormView):
     template_name = 'mscc/main_form.html'
     form_class = MainForm
-    success_url = '/MSCC/List/'
+    success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
@@ -294,7 +294,7 @@ class MainEditView(LoginRequiredMixin,
                    FormView):
     template_name = 'mscc/main_form.html'
     form_class = MainForm
-    success_url = '/MSCC/List/'
+    success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
@@ -484,7 +484,7 @@ def main_registration_cancel_view(request, pk):
             registration = Registration.objects.get(id=pk)
             registration.deleted = True
             registration.save()
-            return redirect('/MSCC/List/')
+            return redirect('mscc:list')
         except Registration.DoesNotExist:
             result = {"isSuccessful": False}
     else:
@@ -556,11 +556,11 @@ class ReferralFormView(LoginRequiredMixin,
                        FormView):
     template_name = 'mscc/referral_form.html'
     form_class = ReferralForm
-    success_url = ''
+    success_url = reverse_lazy('mscc:list')
     group_required = [u"MSCC", u"MSCC_CENTER"]
 
     def get_success_url(self):
-        return '/MSCC/Child-Profile/{}/?current_tab=services'.format(str(self.kwargs['registry']))
+        return reverse('mscc:child_profile', kwargs={'pk': self.kwargs['registry']}) + '?current_tab=services'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
