@@ -29,7 +29,7 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">Home</a>
+                                                    <a href="">Home</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                       List
@@ -87,24 +87,6 @@
             <div class="card-body">
             <form action="" method="get" class="form form-inline">
                {% crispy filter.form 'bootstrap3' %}
-
-                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">Search</button>
-
-                <button type="button" href="" title="Cancel"
-                 class="btn btn-outline-warning">Cancel
-                </button>
-
-              {% if user|has_group:"EXPORT" %}
-                <a href="" title="Download" class="btn btn-outline-success download-report">
-                    Download
-                </a>
-                <a href="" title="Async Download" class="btn btn-outline-info download-report-async">
-                    Async Download
-                </a>
-                <div class = "downloading-message" style = "display:none">
-                  Loading...
-                </div>
-              {% endif %}
 
             </form>
             </div>
