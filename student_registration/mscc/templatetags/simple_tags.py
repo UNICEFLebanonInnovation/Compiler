@@ -51,35 +51,13 @@ def get_child_rounds(registry):
     else:
         return None
 
-@register.simple_tag(takes_context=True)
-def get_service(context, registry, service_name=None):
-    """Retrieve a provided service.
 
-    Historically ``get_service`` was used both as a template tag (which
-    automatically passes the template ``context``) and as a regular python
-    helper within forms and views.  The latter usage only supplied the
-    ``registry`` and ``service_name`` arguments which caused Django to raise
-    ``TypeError`` once the ``takes_context`` flag was introduced (as the first
-    positional argument became the context).
-
-    To remain backwards compatible we accept ``service_name`` as optional and
-    detect the two‑argument invocation.  When ``service_name`` is omitted we
-    treat ``registry`` as the ``service_name`` and the original ``context`` as
-    the ``registry`` instance.
-    """
-
-    # Support calls without an explicit context (e.g. from python code)
-    if service_name is None:
-        service_name = registry
-        registry = context
-        context = {}
-
-    services_dict = context.get('provided_services') if hasattr(context, 'get') else None
-    if services_dict and not isinstance(registry, int):
-        return services_dict.get(service_name)
-    if isinstance(registry, int):
+@register.simple_tag
+def get_service(registry, service_name):
+    if type(registry) == 'int':
         return ProvidedServices.objects.filter(name=service_name, registration_id=registry).last()
     return ProvidedServices.objects.filter(name=service_name, registration=registry).last()
+
 
 @register.simple_tag
 def get_youth_services(registry,service_name):

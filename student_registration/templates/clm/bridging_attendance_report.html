@@ -168,8 +168,8 @@ function generateAndOpenURL(event) {
                 $('.download-report').removeClass('disabled');
 
                 // Open the file in a new tab
-               // window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
-                window.open(window.location.origin + "/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+               // window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open(window.location.origin + "/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
 
             },
             error: function (error) {
@@ -208,7 +208,7 @@ function generateAndOpenTotalURL(event) {
                 $(".downloading-total-message").hide();
                 $('.download-total-report').removeClass('disabled');
 
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");
@@ -246,7 +246,7 @@ function generateAndOpenConsecutiveURL(event) {
                 $(".downloading-consecutive-message").hide();
                 $('.download-consecutive-report').removeClass('disabled');
 
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");

@@ -165,7 +165,7 @@
                     $('.download-report').removeClass('disabled');
 
                     // Open the file in a new tab
-                    window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                    window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
                 },
                 error: function (error) {
                     alert("Error downloading file. Please try again.");
