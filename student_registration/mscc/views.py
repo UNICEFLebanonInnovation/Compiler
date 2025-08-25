@@ -63,6 +63,7 @@ from .models import (
     Registration,
     Referral,
     EducationHistory,
+    ProvidedServices,
 )
 from student_registration.backends.models import ExportHistory
 
@@ -144,9 +145,13 @@ class ProfileView(LoginRequiredMixin,
         generate_services(instance.child.age, instance)
         current_tab = self.request.GET.get('current_tab', 'info')
 
+        services = ProvidedServices.objects.filter(registration=instance)
+        services_dict = {service.name: service for service in services}
+
         return {
             'instance': instance,
-            'current_tab': current_tab
+            'current_tab': current_tab,
+            'provided_services': services_dict,
         }
 
 

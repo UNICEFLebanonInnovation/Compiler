@@ -51,9 +51,12 @@ def get_child_rounds(registry):
     else:
         return None
 
-@register.simple_tag
-def get_service(registry, service_name):
-    if type(registry) == 'int':
+@register.simple_tag(takes_context=True)
+def get_service(context, registry, service_name):
+    services_dict = context.get('provided_services')
+    if services_dict and not isinstance(registry, int):
+        return services_dict.get(service_name)
+    if isinstance(registry, int):
         return ProvidedServices.objects.filter(name=service_name, registration_id=registry).last()
     return ProvidedServices.objects.filter(name=service_name, registration=registry).last()
 
@@ -271,17 +274,16 @@ def child_attendance_history(child_id):
 
 @register.simple_tag
 def eligible_to_followup(registry):
-
     try:
         disability = True if registry.child.disability else False
         if disability:
             return True
 
-        referral = service_data('Referral', register)
+        referral = service_data('Referral', registry)
         if referral and referral.referred_service == 'CP':
             return True
 
-        if get_service(registry, 'PSS'):
+        if ProvidedServices.objects.filter(name='PSS', registration=registry).exists():
             return True
 
         return False
