@@ -303,57 +303,39 @@ $(document).on('click',  '.filter-package-type', function(){
 function reload_dashboard_data(exclude_container){
     $.getJSON('/mscc/dashboard-data/', function(resp){
         if(exclude_container != 'children_per_gender') {
-            children_per_gender.update({
-               series: [{ data: resp.children_per_gender }]
-            });
+            children_per_gender.series[0].setData(resp.children_per_gender);
         }
 
         if(exclude_container != 'children_cash_support') {
-            children_cash_support.update({
-               series: [{ data: resp.children_cash_support }]
-            });
+            children_cash_support.series[0].setData(resp.children_cash_support);
         }
 
         if(exclude_container != 'children_per_status') {
-            children_per_status.update({
-               series: [{ data: resp.children_per_status }]
-            });
+            children_per_status.series[0].setData(resp.children_per_status);
         }
 
         if(exclude_container != 'children_per_programme') {
-            children_per_programme.update({
-               series: [{ data: resp.children_per_programme }]
-            });
+            children_per_programme.series[0].setData(resp.children_per_programme);
         }
 
         if(exclude_container != 'children_per_nationality') {
-            children_per_nationality.update({
-               series: [{ data: resp.children_per_nationality }]
-            });
+            children_per_nationality.series[0].setData(resp.children_per_nationality);
         }
 
         if(exclude_container != 'children_per_source') {
-            children_per_source.update({
-               series: [{ data: resp.children_per_source }]
-            });
+            children_per_source.series[0].setData(resp.children_per_source);
         }
 
         if(exclude_container != 'children_per_disability') {
-            children_per_disability.update({
-               series: [{ data: resp.children_per_disability }]
-            });
+            children_per_disability.series[0].setData(resp.children_per_disability);
         }
 
         if(exclude_container != 'children_per_vulnerability') {
-            children_per_vulnerability.update({
-               series: [{ data: resp.children_per_vulnerability }]
-            });
+            children_per_vulnerability.series[0].setData(resp.children_per_vulnerability);
         }
 
         if(exclude_container != 'children_volunteering') {
-            children_volunteering.update({
-               series: [{ data: resp.children_volunteering }]
-            });
+            children_volunteering.series[0].setData(resp.children_volunteering);
         }
 
         children_per_gender_data = resp.children_per_gender;
