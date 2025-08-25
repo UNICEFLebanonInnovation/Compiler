@@ -170,7 +170,7 @@
         // Function to update the href of the button based on the selected radio button
         const updateHref = () => {
             const selectedType = document.querySelector("input[name='registrationType']:checked").value;
-            confirmButton.href = "{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}";
+            confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
         };
 
         // Update the href when the page loads (in case a default is selected)
