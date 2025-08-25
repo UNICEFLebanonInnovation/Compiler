@@ -845,50 +845,6 @@
 <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
 <script type="module" src="{% static 'js/firebase-messaging.js' %}"></script>
 
-<script>
-  if(window.firebaseMessaging){
-    var exportHistoryListUrl = "{% url 'backends:export_history_list' %}";
-
-    function addNotificationToList(url, text){
-        var list = $('#mscc-notification-list');
-        if(list.length){
-            var li = $('<li/>', { 'class': 'nav-item' });
-            $('<a/>', { 'class': 'nav-link', 'href': url, 'target': '_blank', 'text': text }).appendTo(li);
-            list.append(li);
-        }
-    }
-
-    function refreshExportHistory(){
-        $.getJSON(exportHistoryListUrl, function(data){
-            var list = $('#mscc-notification-list');
-            list.empty();
-            if(data.exports && data.exports.length){
-                data.exports.forEach(function(item){
-                    addNotificationToList(item.url, item.text);
-                });
-                $('#mscc-unread-count').text(data.exports.length);
-            }else{
-                list.append('<li class="nav-item"><span class="nav-link">No notifications</span></li>');
-                $('#mscc-unread-count').text('0');
-            }
-        });
-    }
-
-    $(refreshExportHistory);
-
-    firebaseMessaging.onMessage(function(payload){
-        if(payload.data && payload.data.type === 'mscc_export_ready'){
-            $('#downloadReadyModal .download-link').attr('href', payload.data.url);
-            $('#downloadReadyModal').modal('show');
-            refreshExportHistory();
-        }else if(payload.data && payload.data.type === 'mscc_export_failed'){
-            var reason = payload.data.reason || 'Unknown error';
-            alert('MSCC export failed: ' + reason);
-            refreshExportHistory();
-        }
-    });
-  }
-</script>
 
 
 <!--New -->

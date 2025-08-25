@@ -91,8 +91,10 @@ navigator.serviceWorker
 
 onMessage(messaging, (payload) => {
   if (payload.data && payload.data.type === "mscc_export_ready") {
-    $('#downloadReadyModal .download-link').attr('href', payload.data.url);
-    $('#downloadReadyModal').modal('show');
+    if (!document.hidden) {
+      $('#downloadReadyModal .download-link').attr('href', payload.data.url);
+      $('#downloadReadyModal').modal('show');
+    }
     const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
     const text = 'Makani export ' + timestamp;
     saveNotification(payload.data.url, text);
@@ -100,7 +102,9 @@ onMessage(messaging, (payload) => {
   } else if (payload.data && payload.data.type === "mscc_export_failed") {
     const reason = payload.data.reason || 'Unknown error';
     const text = 'Makani export failed: ' + reason;
-    alert(text);
+    if (!document.hidden) {
+      alert(text);
+    }
     saveNotification('#', text);
     addNotificationToList('#', text);
   }
