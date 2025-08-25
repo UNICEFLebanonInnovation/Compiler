@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+from collections import Counter
 
 from django.utils.encoding import smart_str
 from django.views.generic import (
@@ -244,11 +245,15 @@ class DashboardDataView(LoginRequiredMixin, View):
             ),
         }
 
+        programme_counts = Counter()
+        for programmes in qs.values_list('cash_support_programmes', flat=True):
+            if programmes:
+                programme_counts.update(programmes)
+
         cash = []
         for value, _ in cash_support_programmes:
             if value:
-                count = qs.filter(cash_support_programmes__contains=[value]).count()
-                cash.append({'name': value, 'y': count})
+                cash.append({'name': value, 'y': programme_counts.get(value, 0)})
         data['children_cash_support'] = cash
 
         ys_qs = YouthKitService.objects.filter(registration__deleted=False)
