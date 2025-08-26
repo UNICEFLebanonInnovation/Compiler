@@ -1151,10 +1151,10 @@ function validateMainForm(showModal, step) {
             showError('#id_child_living_arrangement', 'This field is required');
             valid = false;
         }
-        if ($('#id_cash_support_programmes').val() === '') {
-            showError('#id_cash_support_programmes', 'This field is required');
-            valid = false;
-        }
+//        if ($('#id_cash_support_programmes').val() === '') {
+//            showError('#id_cash_support_programmes', 'This field is required');
+//            valid = false;
+//        }
     }
     return valid;
 }
