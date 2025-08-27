@@ -130,6 +130,11 @@ def service_info(services, service_name):
 @register.simple_tag
 def have_service_category(category, obj):
     try:
+        # Allow passing a preloaded services dictionary to avoid
+        # hitting the database repeatedly when rendering templates.
+        if isinstance(obj, dict):
+            services = obj.values()
+            return len([s for s in services if s.category == category])
         services = get_services(obj)
         return services.filter(category=category).count()
     except Exception as ex:

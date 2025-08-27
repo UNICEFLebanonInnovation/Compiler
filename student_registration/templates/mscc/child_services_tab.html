@@ -6,7 +6,7 @@
 <div class="row staff-profile">
 
   <!--RS-->
-{% get_service instance 'RS' as result %}
+{% have_service provided_services 'RS' as result %}
   {% service_data 'EducationService' instance as es_result %}
   {% if result and es_result.education_program  in 'RS Grade 1, RS Grade 2, RS Grade 3, RS Grade 4, RS Grade 5, RS Grade 6, RS Grade 7, RS Grade 8, RS Grade 9, YFS Level 1 - RS Grade 9, YFS Level 2 - RS Grade 9' %}
 
@@ -84,7 +84,7 @@
 
   <!-- Education -->
 {% service_data 'EducationService' instance as result1 %}
-{% have_service_category 'Education' instance as result2 %}
+{% have_service_category 'Education' provided_services as result2 %}
 {% have_education_programme result1.education_program as result3 %}
 
   {% if result1 and result2 and result1.education_program and result3 %}
@@ -1662,7 +1662,7 @@
 
   <!-- Youth -->
 {% service_data 'EducationService' instance as result1 %}
-{% have_service_category 'Youth' instance as result2 %}
+{% have_service_category 'Youth' provided_services as result2 %}
 {% have_youth_programme result1.education_program as result3 %}
 
   {% if result1 and result2 and result1.education_program and result3 %}
@@ -2113,7 +2113,7 @@
 {% endif %}
 
   <!--Digital component-->
-{% get_service instance 'Digital component' as result %}
+{% have_service provided_services 'Digital component' as result %}
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'DigitalService' instance as result %}
@@ -2266,7 +2266,7 @@
   {% endif %}
 
   <!--Health and Nutrition-->
-{% get_service instance 'Health & Nutrition' as result %}
+{% have_service provided_services 'Health & Nutrition' as result %}
   {% if result %}
 
 <div class="col-md-12 col-lg-6 col-xl-4">
@@ -2646,7 +2646,7 @@
   {% get_education_service  instance  as service %}
   {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|YFS Level 1 - RS Grade 9|YFS Level 2 - RS Grade 9' %}
 <!--  {{service}}-->
-    {% get_service instance 'Adolescents kit' as result %}
+    {% have_service provided_services 'Adolescents kit' as result %}
       {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'YouthKitService' instance as result %}
@@ -2875,7 +2875,7 @@
   {% endif %}
    {% endif %}
 
-  {% get_service instance 'Maharati' as result %}
+  {% have_service provided_services 'Maharati' as result %}
   {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
   {% if service in 'BLN Level 1|BLN Level 2|BLN Level 3|BLN Catch-up|ABLN Level 1|ABLN Level 2|ABLN Catch-up|YBLN Level 1|YBLN Level 2|YFS Level 1|YFS Level 2|YFS Level 1 - RS Grade 9|YFS Level 2 - RS Grade 9|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
@@ -2984,7 +2984,7 @@
 
 
 
-  {% get_service instance 'GIL' as result %}
+  {% have_service provided_services 'GIL' as result %}
    {% if result or  instance.type == 'Walk-in' %}
 {% get_education_service  instance  as service %}
   {% if service in 'YBLN Level 1|YBLN Level 2|YBLN Catch-up|YFS Level 1|YFS Level 2|YFS Level 1 - RS Grade 9|YFS Level 2 - RS Grade 9|RS Grade 1|RS Grade 2|RS Grade 3|RS Grade 4|RS Grade 5|RS Grade 6|RS Grade 7|RS Grade 8|RS Grade 9' or instance.type == 'Walk-in'  %}
@@ -3106,7 +3106,7 @@
   {% endif %}
 
   <!--LEGO-->
-{% get_service instance 'LEGO' as result %}
+{% have_service provided_services 'LEGO' as result %}
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 
@@ -3180,7 +3180,7 @@
   {% endif %}
 
   <!--PSS-->
-{% get_service instance 'PSS' as result %}
+{% have_service provided_services 'PSS' as result %}
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
 {% service_data 'PSSService' instance as result %}
@@ -3350,7 +3350,7 @@
   {% endif %}
 
   <!--Follow-up / Caregivers Package	 -->
-{% get_service instance 'Caregivers Package' as result %}
+{% have_service provided_services 'Caregivers Package' as result %}
   {% get_service_all instance 'FollowUpService' as results %}
   {% eligible_to_followup instance as result1 %}
   {% if result and result1 %}
@@ -3531,7 +3531,7 @@
 {% endif %}
 
   <!--Inclusion-->
-{% get_service instance 'Inclusion' as result %}
+{% have_service provided_services 'Inclusion' as result %}
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'InclusionService' instance as result %}
@@ -3633,7 +3633,7 @@
                                                         <div class="p-3">
                                                             <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
 
-                                                                 {% get_service instance 'CB-ECE' as result1 %}
+                                                                 {% have_service provided_services 'CB-ECE' as result1 %}
                                                                  {% if result1 %}
                                                                 <div class="vertical-timeline-item vertical-timeline-element">
                                                                     <div><span class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-info"><i class="pe-7s-info text-info"></i></div></span>
@@ -3684,7 +3684,7 @@
                             </div>
 
 {% service_data 'EducationService' instance as result1 %}
-{% have_service_category 'Youth' instance as result2 %}
+{% have_service_category 'Youth' provided_services as result2 %}
 
   {% if result1 and result2 %}
 {% service_data 'YouthAssessment' instance as result %}
@@ -3862,7 +3862,7 @@
 {% endif %}
 
   <!--Recreational-->
-{% get_service instance 'Recreational' as result %}
+{% have_service provided_services 'Recreational' as result %}
   {% if result %}
 <div class="col-md-12 col-lg-6 col-xl-4">
   {% service_data 'Recreational' instance as result %}
