@@ -289,6 +289,11 @@ urlpatterns = [
         name='attendance_report'
     ),
     re_path(
+        'attendance-heatmap/$',
+        attendance_views.AttendanceHeatmap.as_view(),
+        name='attendance_heatmap'
+    ),
+    re_path(
         r'^services/follow-up-view-all/(?P<registry>[\w.@+-]+)/$',
         view=services_view.FollowUpViewAll.as_view(),
         name='service_follow_up_view_all'
