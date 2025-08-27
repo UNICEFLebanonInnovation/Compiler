@@ -146,13 +146,14 @@ class ProfileView(LoginRequiredMixin,
         generate_services(instance.child.age, instance)
         current_tab = self.request.GET.get('current_tab', 'info')
 
-        services = ProvidedServices.objects.filter(registration=instance)
-        services_dict = {service.name: service for service in services}
+        provided_services = ProvidedServices.objects.filter(
+            registration=instance
+        ).in_bulk(field_name='name')
 
         return {
             'instance': instance,
             'current_tab': current_tab,
-            'provided_services': services_dict,
+            'provided_services': provided_services,
         }
 
 

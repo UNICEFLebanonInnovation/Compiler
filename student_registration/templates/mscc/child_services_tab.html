@@ -2,6 +2,9 @@
 {% load static i18n %}
 {% load util_tags %}
 {% load simple_tags %}
+{# `provided_services` is a dictionary keyed by service name and is
+   supplied by `ProfileView.get_context_data` to avoid repeated
+   database queries when rendering this tab. #}
 
 <div class="row staff-profile">
 
