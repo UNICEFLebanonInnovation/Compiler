@@ -188,20 +188,27 @@ class ClassRoomAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
-class PartnerOrganizationResource(resources.ModelResource):
-    class Meta:
-        model = PartnerOrganization
-        fields = (
-            'id',
-            'name',
-        )
-        export_order = ('name')
-
-
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
-    resource_class = PartnerOrganizationResource
     filter_horizontal = ('schools', )
-    search_fields = ('name', )
+    search_fields = ('name', 'short_name')
+    list_filter = ('is_Kayany', 'is_unrwa', 'is_youth', 'active')
+    list_display = (
+        'name',
+        'short_name',
+        'is_Kayany',
+        'is_unrwa',
+        'is_youth',
+        'active',
+    )
+    fields = (
+        'name',
+        'short_name',
+        'is_Kayany',
+        'is_unrwa',
+        'is_youth',
+        'active',
+        'schools'
+    )
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "schools":

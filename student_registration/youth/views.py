@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
-
+from collections import defaultdict
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -857,18 +857,35 @@ def load_sub_program(request):
 
 
 def program_document_indicators_view(request, program_document_id):
-    master_indicators = list(MasterProgram.objects.filter(active=True).values('id', 'name'))
-    sub_indicator_map = {
-        mp.id: list(
-            SubProgram.objects.filter(master_program=mp).order_by('name').values('id', 'name')
-        )
-        for mp in MasterProgram.objects.filter(active=True)
-    }
+
+    masters = list(MasterProgram.objects.filter(active=True)
+                   .order_by('number', 'name')
+                   .values('id', 'name', 'number')
+                   )
+
+    master_indicators = [
+        {
+            "id": m["id"],
+            "name": "{} - {}".format(m.get("number", ""), m["name"]).strip(" -")
+        }
+        for m in masters
+    ]
+
+    subs = SubProgram.objects.filter(
+        master_program_id__in=[m["id"] for m in masters]
+    ).order_by('number', 'name').values('id', 'name', 'number', 'master_program_id')
+
+    sub_indicator_map = defaultdict(list)
+    for sp in subs:
+        sub_indicator_map[sp["master_program_id"]].append({
+            "id": sp["id"],
+            "name": "{} - {}".format(sp.get("number", ""), sp["name"]).strip(" -")
+        })
 
     return render(request, 'youth/program_document_indicator.html', {
         'program_document_id': program_document_id,
         'master_indicators': master_indicators,
-        'sub_indicators': json.dumps(sub_indicator_map),
+        'sub_indicators': json.dumps(sub_indicator_map, ensure_ascii=False),
     })
 
 def program_document_indicator_list_view(request, program_document_id):
