@@ -256,11 +256,6 @@ urlpatterns = [
         name='outreach_child'
     ),
     url(
-        'search-clm-duplicate-registration/$',
-        bridging_views.search_clm_duplicate_registration,
-        name='search_clm_duplicate_registration'
-    ),
-    url(
         'search-clm-duplicate-unicef-id/$',
         bridging_views.search_clm_duplicate_unicef_id,
         name='search_clm_duplicate_unicef_id'
