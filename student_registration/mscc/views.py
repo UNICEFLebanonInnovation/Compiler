@@ -265,9 +265,11 @@ class DashboardDataView(LoginRequiredMixin, View):
             .annotate(total=Count('child', distinct=True))
             .order_by('round__name')
         )
+        round_names = [row.get('round__name') or 'N/A' for row in per_round]
+        per_round_dict = {name: row['total'] for name, row in zip(round_names, per_round)}
         data['children_per_round'] = [
-            {'name': row.get('round__name') or 'N/A', 'y': row['total']}
-            for row in per_round
+            {'name': name, 'y': per_round_dict[name]}
+            for name in round_names
         ]
 
         # Children registered in more than one round
@@ -283,10 +285,13 @@ class DashboardDataView(LoginRequiredMixin, View):
             .annotate(total=Count('child', distinct=True))
             .order_by('round__name')
         )
-        data['children_moved_rounds'] = [
-            {'name': row.get('round__name') or 'N/A', 'y': row['total']}
-            for row in moved_per_round
-        ]
+        moved_dict = {row.get('round__name') or 'N/A': row['total'] for row in moved_per_round}
+
+        data['children_moved_rounds'] = {
+            'categories': round_names,
+            'moved': [moved_dict.get(name, 0) for name in round_names],
+            'new': [per_round_dict[name] - moved_dict.get(name, 0) for name in round_names],
+        }
 
         return JsonResponse(data, safe=False)
 
