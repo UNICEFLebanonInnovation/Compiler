@@ -10,8 +10,8 @@
   <div id="attendance-heatmap"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script src="{% static 'js/mscc/attendance-heatmap.js' %}"></script>
 <script>
   window.attendanceData = {{ attendance_json|safe }};
 </script>
+<script src="{% static 'js/mscc/attendance-heatmap.js' %}"></script>
 {% endblock %}
