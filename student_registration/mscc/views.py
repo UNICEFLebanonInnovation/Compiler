@@ -259,6 +259,35 @@ class DashboardDataView(LoginRequiredMixin, View):
         ys_qs = YouthKitService.objects.filter(registration__deleted=False)
         data['children_volunteering'] = aggregate(ys_qs, 'participate_volunteering')
 
+        # Number of unique children per round
+        per_round = (
+            qs.values('round__name')
+            .annotate(total=Count('child', distinct=True))
+            .order_by('round__name')
+        )
+        data['children_per_round'] = [
+            {'name': row.get('round__name') or 'N/A', 'y': row['total']}
+            for row in per_round
+        ]
+
+        # Children registered in more than one round
+        multi_round_children = list(
+            qs.values('child')
+            .annotate(round_count=Count('round', distinct=True))
+            .filter(round_count__gt=1)
+            .values_list('child', flat=True)
+        )
+        moved_per_round = (
+            qs.filter(child__in=multi_round_children)
+            .values('round__name')
+            .annotate(total=Count('child', distinct=True))
+            .order_by('round__name')
+        )
+        data['children_moved_rounds'] = [
+            {'name': row.get('round__name') or 'N/A', 'y': row['total']}
+            for row in moved_per_round
+        ]
+
         return JsonResponse(data, safe=False)
 
 
