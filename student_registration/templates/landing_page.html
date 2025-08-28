@@ -45,8 +45,12 @@
                                                         <i class="fa fa-arrow-right"></i>
                                                         {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                                             <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
+                                                            <span class="pl-1"></span>
+                                                            <a href="{% url 'mscc:attendance_heatmap' %}">Attendance Heatmap</a>
                                                         {% else %}
                                                             <span class="text-muted">Dashboard</span>
+                                                            <span class="pl-1"></span>
+                                                            <span class="text-muted">Attendance Heatmap</span>
                                                         {% endif %}
                                                         <span class="pl-1"></span>
                                                     </div>

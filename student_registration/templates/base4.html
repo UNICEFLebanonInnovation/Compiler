@@ -214,6 +214,12 @@
                                             Makani Dashboard
                                         </a>
                                     </div>
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'mscc:attendance_heatmap' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-graph icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Attendance Heatmap
+                                        </a>
+                                    </div>
                                     {% endif %}
                                   {% if request.user|has_group:"CLM_Bridging" %}
                                     <div class="col-sm-6 col-xl-4">

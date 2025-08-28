@@ -6,6 +6,8 @@ from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.db.models import Count, Q
+from django.utils import timezone
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.mscc.models import EducationService, Round
@@ -177,4 +179,25 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
             context['center'] = Center.objects.all()
             context['partner'] = PartnerOrganization.objects.all()
 
+        return context
+
+
+class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
+    template_name = 'mscc/attendance_heatmap.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        year = int(self.request.GET.get('year', timezone.now().year))
+        queryset = (
+            MSCCAttendanceChild.objects
+            .filter(attendance_day__attendance_date__year=year)
+            .values('attendance_day__attendance_date')
+            .annotate(
+                total=Count('id'),
+                absent=Count('id', filter=Q(attended='No'))
+            )
+            .order_by('attendance_day__attendance_date')
+        )
+        context['attendance_json'] = json.dumps(list(queryset), default=str)
+        context['year'] = year
         return context
