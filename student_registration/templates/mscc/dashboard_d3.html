@@ -257,6 +257,7 @@
                           <tr>
                               <th>Child</th>
                               <th>Rounds</th>
+                              <th>Programme</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -264,10 +265,11 @@
                           <tr>
                               <td>{{ item.name }}</td>
                               <td>{{ item.rounds|join:", " }}</td>
+                              <td>{{ item.programmes|join:", " }}</td>
                           </tr>
                           {% empty %}
                           <tr>
-                              <td colspan="2">No data available</td>
+                              <td colspan="3">No data available</td>
                           </tr>
                           {% endfor %}
                       </tbody>
