@@ -66,6 +66,34 @@ def pivot_data(request):
     """Return minimal MSCC registration data for the pivot table."""
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
+    filters = {}
+    partner = request.GET.get("partner")
+    if partner:
+        filters["center__partner__name"] = partner
+    center = request.GET.get("center")
+    if center:
+        filters["center__name"] = center
+    round_name = request.GET.get("round")
+    if round_name:
+        filters["round__name"] = round_name
+    governorate = request.GET.get("governorate")
+    if governorate:
+        filters["center__governorate__name"] = governorate
+    caza = request.GET.get("caza")
+    if caza:
+        filters["center__caza__name"] = caza
+    district = request.GET.get("district")
+    if district:
+        filters["center__cadaster__name"] = district
+    gender = request.GET.get("gender")
+    if gender:
+        filters["child__gender"] = gender
+    nationality = request.GET.get("nationality")
+    if nationality:
+        filters["child__nationality__name"] = nationality
+    package_type = request.GET.get("package_type")
+    if package_type:
+        filters["type"] = package_type
 
     latest_prog_type = (
         EducationProgrammeAssessment.objects.filter(
@@ -76,7 +104,7 @@ def pivot_data(request):
     )
 
     qs = (
-        Registration.objects.filter(deleted=False)
+        Registration.objects.filter(deleted=False, **filters)
         .annotate(
             programme_type=Subquery(latest_prog_type),
             center_name=F("center__name"),
@@ -90,6 +118,10 @@ def pivot_data(request):
             package_type=F("type"),
         )
     )
+
+    programme_type = request.GET.get("programme_type")
+    if programme_type:
+        qs = qs.filter(programme_type=programme_type)
 
     data = [
         {

@@ -13,11 +13,7 @@
             const data = aggregate(metric);
             document.getElementById('chart-data').value = JSON.stringify(data, null, 2);
         };
-        if(rawData.length === 0){
-            fetchData(update);
-        }else{
-            update();
-        }
+        fetchData(update);
     }
 
     function showLoader(){
@@ -39,7 +35,9 @@
 
     function fetchData(cb){
         showLoader();
-        fetch('/dashboard/pivot-data/')
+        const params = new URLSearchParams(filters).toString();
+        const url = '/dashboard/pivot-data/' + (params ? '?' + params : '');
+        fetch(url)
             .then(r => r.json())
             .then(data => { rawData = data; if(cb) cb(); })
             .finally(hideLoader);
@@ -149,7 +147,7 @@
         }else{
             filters[metric] = value;
         }
-        renderAll();
+        fetchData(renderAll);
         saveDashboard();
     }
 
@@ -232,9 +230,7 @@
             }
         });
         document.getElementById('load-mscc-data').addEventListener('click', loadMsccData);
-        fetchData(function(){
-            loadDashboard();
-            renderAll();
-        });
+        loadDashboard();
+        fetchData(renderAll);
     });
 })();
