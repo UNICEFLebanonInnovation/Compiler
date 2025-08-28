@@ -172,11 +172,13 @@ class DashboardCustomView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         from student_registration.locations.models import Center, Location
         from student_registration.clm.models import PartnerOrganization
+        from .models import Round
 
         instances = Registration.objects.filter(deleted=False)
         centers = Center.objects.all()
         governorates = Location.objects.filter(type_id=1)
         partners = PartnerOrganization.objects.all()
+        rounds = Round.objects.all()
 
         return {
             'total': instances.count(),
@@ -184,7 +186,8 @@ class DashboardCustomView(LoginRequiredMixin,
             'total_walkin': instances.filter(type='Walk-in').count(),
             'centers': centers,
             'governorates': governorates,
-            'partners': partners
+            'partners': partners,
+            'rounds': rounds,
         }
 
 
@@ -224,6 +227,22 @@ class DashboardDataView(LoginRequiredMixin, View):
 
         qs = Registration.objects.filter(deleted=False)
 
+        centers = request.GET.getlist('centers[]')
+        if centers:
+            qs = qs.filter(center_id__in=centers)
+
+        rounds = request.GET.getlist('rounds[]')
+        if rounds:
+            qs = qs.filter(round_id__in=rounds)
+
+        governorates = request.GET.getlist('governorates[]')
+        if governorates:
+            qs = qs.filter(center__governorate_id__in=governorates)
+
+        partners = request.GET.getlist('partners[]')
+        if partners:
+            qs = qs.filter(partner_id__in=partners)
+
         def aggregate(queryset, field):
             results = queryset.values(field).annotate(total=Count('id')).order_by(field)
             data = []
@@ -232,6 +251,9 @@ class DashboardDataView(LoginRequiredMixin, View):
                 data.append({'name': name, 'y': row['total']})
             return data
 
+        pss_qs = PSSService.objects.filter(registration__in=qs)
+        ys_qs = YouthKitService.objects.filter(registration__in=qs)
+
         data = {
             'children_per_gender': aggregate(qs, 'child__gender'),
             'children_per_status': aggregate(qs, 'child__marital_status'),
@@ -239,10 +261,7 @@ class DashboardDataView(LoginRequiredMixin, View):
             'children_per_nationality': aggregate(qs, 'child__nationality__name'),
             'children_per_source': aggregate(qs, 'source_of_identification'),
             'children_per_disability': aggregate(qs, 'child__disability__name'),
-            'children_per_vulnerability': aggregate(
-                PSSService.objects.filter(registration__deleted=False),
-                'child_vulnerability',
-            ),
+            'children_per_vulnerability': aggregate(pss_qs, 'child_vulnerability'),
         }
 
         programme_counts = Counter()
@@ -256,7 +275,6 @@ class DashboardDataView(LoginRequiredMixin, View):
                 cash.append({'name': value, 'y': programme_counts.get(value, 0)})
         data['children_cash_support'] = cash
 
-        ys_qs = YouthKitService.objects.filter(registration__deleted=False)
         data['children_volunteering'] = aggregate(ys_qs, 'participate_volunteering')
 
         # Number of unique children per round

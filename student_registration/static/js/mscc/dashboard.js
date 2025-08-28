@@ -375,6 +375,15 @@
    }
 
 
+function getFilters(){
+    return {
+        'centers[]': $('#center_filter').val(),
+        'rounds[]': $('#round_filter').val(),
+        'governorates[]': $('#governorate_filter').val(),
+        'partners[]': $('#partner_filter').val()
+    };
+}
+
 $(document).on('click',  '.filter-package-type', function(){
 
     $('.filter-package-type').removeClass('bg-light');
@@ -383,8 +392,12 @@ $(document).on('click',  '.filter-package-type', function(){
     reload_dashboard_data();
 });
 
+$(document).on('change', '#center_filter, #round_filter, #governorate_filter, #partner_filter', function(){
+    reload_dashboard_data();
+});
+
 function reload_dashboard_data(exclude_container){
-    $.getJSON('/mscc/dashboard-data/', function(resp){
+    $.getJSON('/mscc/dashboard-data/', getFilters(), function(resp){
         if(exclude_container != 'children_per_gender') {
             children_per_gender.series[0].setData(resp.children_per_gender);
         }
