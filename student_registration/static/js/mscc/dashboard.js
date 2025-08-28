@@ -120,7 +120,9 @@
     var children_per_vulnerability_data = [];
     var children_volunteering_data = [];
     var children_per_round_data = [];
-    var children_moved_rounds_data = [];
+    var children_moved_rounds_categories = [];
+    var children_moved_rounds_moved = [];
+    var children_moved_rounds_new = [];
 
     var children_per_gender;
     var children_cash_support;
@@ -145,7 +147,9 @@
         children_per_vulnerability_data = dataset.children_per_vulnerability || [];
         children_volunteering_data = dataset.children_volunteering || [];
         children_per_round_data = dataset.children_per_round || [];
-        children_moved_rounds_data = dataset.children_moved_rounds || [];
+        children_moved_rounds_categories = dataset.children_moved_rounds.categories || [];
+        children_moved_rounds_moved = dataset.children_moved_rounds.moved || [];
+        children_moved_rounds_new = dataset.children_moved_rounds.new || [];
 
        children_per_gender = create_pie_chart('children_per_gender', 'Gender', children_per_gender_data);
        children_cash_support = create_pie_chart('children_cash_support', 'Support type', children_cash_support_data);
@@ -158,7 +162,10 @@
         children_per_vulnerability = create_bar_chart('children_per_vulnerability', children_per_vulnerability_data, [])
         children_volunteering = create_bar_chart('children_volunteering', children_volunteering_data, [])
         children_per_round = create_bar_chart('children_per_round', children_per_round_data, [])
-        children_moved_rounds = create_bar_chart('children_moved_rounds', children_moved_rounds_data, [])
+        children_moved_rounds = create_comparison_bar_chart('children_moved_rounds', children_moved_rounds_categories, [
+            { name: 'Moved', data: children_moved_rounds_moved },
+            { name: 'New', data: children_moved_rounds_new }
+        ]);
    }
 
    function create_pie_chart(container, series_name, data) {
@@ -299,6 +306,74 @@
        });
    }
 
+   function create_comparison_bar_chart(container, categories, series) {
+
+       return Highcharts.chart(container, {
+           chart: {
+               type: 'column',
+               margin:80,
+               marginBottom:100,
+           },
+           title: {
+               text: '',
+           },
+           subtitle: {
+               text: '',
+               align: 'left',
+               verticalAlign: 'bottom',
+           },
+           accessibility: {
+               announceNewData: {
+                   enabled: true
+               }
+           },
+           xAxis: {
+               categories: categories
+           },
+           yAxis: {
+               title: {
+                   text:' '
+               },
+
+           },
+           legend: {
+               enabled: true
+           },
+           plotOptions: {
+               series: {
+                   borderWidth: 1,
+                   pointWidth:40,
+                   dataLabels: {
+                       enabled: false,
+                       formatter: function() {
+                         return formatNumber(this.point.y);
+                       }
+                   },
+                    point: {
+                        events: {
+                            click: function () {
+                                reload_dashboard_data(container);
+                            }
+                        }
+                    }
+               }
+           },
+
+           tooltip: {
+               shared: true,
+               formatter: function() {
+                   var s = '<b>' + this.x + '</b>';
+                   this.points.forEach(function(point){
+                       s += '<br/>' + point.series.name + ': ' + formatNumber(point.y);
+                   });
+                   return s;
+               }
+           },
+
+           series: series
+       });
+   }
+
 
 $(document).on('click',  '.filter-package-type', function(){
 
@@ -351,7 +426,9 @@ function reload_dashboard_data(exclude_container){
         }
 
         if(exclude_container != 'children_moved_rounds') {
-            children_moved_rounds.series[0].setData(resp.children_moved_rounds);
+            children_moved_rounds.xAxis[0].setCategories(resp.children_moved_rounds.categories);
+            children_moved_rounds.series[0].setData(resp.children_moved_rounds.moved);
+            children_moved_rounds.series[1].setData(resp.children_moved_rounds.new);
         }
 
         children_per_gender_data = resp.children_per_gender;
@@ -364,7 +441,9 @@ function reload_dashboard_data(exclude_container){
         children_per_vulnerability_data = resp.children_per_vulnerability;
         children_volunteering_data = resp.children_volunteering;
         children_per_round_data = resp.children_per_round;
-        children_moved_rounds_data = resp.children_moved_rounds;
+        children_moved_rounds_categories = resp.children_moved_rounds.categories;
+        children_moved_rounds_moved = resp.children_moved_rounds.moved;
+        children_moved_rounds_new = resp.children_moved_rounds.new;
     });
 }
 
