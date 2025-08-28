@@ -86,6 +86,8 @@ from .serializers import (
 )
 from .utils import is_allowed_create, is_allowed_edit,  get_outreach_child
 from student_registration.users.templatetags.custom_tags import has_group
+from student_registration.students.utils import generate_one_unique_id
+from student_registration.students.models import Nationality
 
 
 class CLMView(LoginRequiredMixin,
@@ -1004,7 +1006,53 @@ def search_clm_duplicate_registration(request):
                                           parent_other_number)
 
         if str_partner_name != '':
-            return JsonResponse({'result': str_partner_name})
+    return JsonResponse({'result': str_partner_name})
+
+    return JsonResponse({'result': ''})
+
+
+def search_clm_duplicate_unicef_id(request):
+    body_unicode = request.body.decode('utf-8')
+    if body_unicode:
+        body = json.loads(body_unicode)
+
+        round_id = body.get('round_id')
+        first_name = body.get('student_first_name')
+        father_name = body.get('student_father_name')
+        last_name = body.get('student_last_name')
+        mother_fullname = body.get('student_mother_fullname')
+        sex = body.get('student_sex')
+        day = body.get('student_birthday_day')
+        month = body.get('student_birthday_month')
+        year = body.get('student_birthday_year')
+        nationality_id = body.get('student_nationality')
+
+        try:
+            nationality = Nationality.objects.get(id=nationality_id).name_en
+        except Nationality.DoesNotExist:
+            nationality = ''
+
+        birthdate = '{0}-{1}-{2}'.format(year, month, day)
+        unicef_id = generate_one_unique_id(
+            '0',
+            first_name,
+            father_name,
+            last_name,
+            mother_fullname,
+            birthdate,
+            nationality,
+            sex
+        )
+
+        if unicef_id:
+            qs = Bridging.objects.filter(
+                round_id=round_id,
+                student__unicef_id=unicef_id,
+                deleted=False
+            ).values('partner__name').first()
+
+            if qs and 'partner__name' in qs:
+                return JsonResponse({'result': qs['partner__name']})
 
     return JsonResponse({'result': ''})
 
