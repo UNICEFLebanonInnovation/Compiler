@@ -4,14 +4,14 @@
     const total = d.total || 0;
     const absent = d.absent || 0;
     const rate = total ? absent / total : 0;
-    return { date, rate };
+    return { date, rate, absent, total };
   });
 
   if (!data.length) {
     return;
   }
 
-  const cellSize = 17;
+  const cellSize = 25;
   const width = cellSize * 12;
   const height = cellSize * 31;
 
@@ -36,13 +36,23 @@
       .attr('fill', color(d.rate))
       .append('title')
       .text(tooltip);
+
+    svg.append('text')
+      .attr('x', x + cellSize / 2)
+      .attr('y', y + cellSize / 2)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('font-size', '10px')
+      .attr('fill', d.rate > 0.5 ? '#fff' : '#000')
+      .text(d.absent);
   });
 
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  svg.selectAll('text')
+  svg.selectAll('text.month')
     .data(monthNames)
     .enter()
     .append('text')
+    .attr('class', 'month')
     .attr('x', (d, i) => i * cellSize + 2)
     .attr('y', 10)
     .attr('font-size', '10px')
