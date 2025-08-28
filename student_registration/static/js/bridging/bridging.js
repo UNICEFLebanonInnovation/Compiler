@@ -1404,6 +1404,8 @@ function check_unicef_duplicate() {
     var nationality = $('#id_student_nationality').val();
 
     if (round && first_name && father_name && last_name && mother_fullname && sex && day && month && year && nationality) {
+        var path = window.location.pathname;
+        var match = path.match(/bridging-edit\/([^\/]+)\//);
         var data = {
             round_id: round,
             student_first_name: first_name,
@@ -1416,6 +1418,9 @@ function check_unicef_duplicate() {
             student_birthday_year: year,
             student_nationality: nationality
         };
+        if (match) {
+            data.registration_id = match[1];
+        }
 
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';

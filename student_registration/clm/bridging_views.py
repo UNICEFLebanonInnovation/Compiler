@@ -975,6 +975,7 @@ def search_clm_duplicate_unicef_id(request):
         month = body.get('student_birthday_month')
         year = body.get('student_birthday_year')
         nationality_id = body.get('student_nationality')
+        registration_id = body.get('registration_id')
 
         try:
             nationality = Nationality.objects.get(id=nationality_id).name_en
@@ -998,7 +999,10 @@ def search_clm_duplicate_unicef_id(request):
                 round_id=round_id,
                 student__unicef_id=unicef_id,
                 deleted=False
-            ).values('partner__name').first()
+            )
+            if registration_id:
+                qs = qs.exclude(pk=registration_id)
+            qs = qs.values('partner__name').first()
 
             if qs and 'partner__name' in qs:
                 return JsonResponse({'result': qs['partner__name']})
