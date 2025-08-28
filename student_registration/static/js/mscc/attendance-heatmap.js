@@ -2,11 +2,12 @@
   function prepareData(raw) {
     return (raw || []).map(d => {
       const date = new Date(d.attendance_day__attendance_date);
-      const total = d.total || 0;
-      const absent = d.absent || 0;
+      const total = Number(d.total) || 0;
+      const absent = Number(d.absent) || 0;
       const present = total - absent;
       const rate = total ? present / total : 0;
-      return { date, present, total, rate };
+      const percentage = rate * 100;
+      return { date, present, total, rate, percentage };
     });
   }
 
@@ -36,7 +37,7 @@
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     const color = d3.scaleSequential()
-      .domain([0, 1])
+      .domain([0, 100])
       .interpolator(d3.interpolateGreens);
 
     const tooltip = d3.select('body').append('div')
@@ -57,9 +58,9 @@
       .attr('y', d => d.date.getMonth() * cellSize)
       .attr('width', cellSize - 1)
       .attr('height', cellSize - 1)
-      .attr('fill', d => color(d.rate))
+      .attr('fill', d => color(d.percentage))
       .on('mouseover', function(event, d) {
-        const text = `${d3.timeFormat('%Y-%m-%d')(d.date)}: ${d.present}/${d.total} present`;
+        const text = `${d3.timeFormat('%Y-%m-%d')(d.date)}: ${d.present}/${d.total} present (${d.percentage.toFixed(1)}%)`;
         tooltip.transition().style('opacity', 1);
         tooltip.html(text)
           .style('left', (event.pageX + 5) + 'px')
