@@ -377,10 +377,10 @@
 
 function getFilters(){
     return {
-        'centers[]': $('#center_filter').val(),
-        'rounds[]': $('#round_filter').val(),
-        'governorates[]': $('#governorate_filter').val(),
-        'partners[]': $('#partner_filter').val()
+        centers: $('#center_filter').val(),
+        rounds: $('#round_filter').val(),
+        governorates: $('#governorate_filter').val(),
+        partners: $('#partner_filter').val()
     };
 }
 

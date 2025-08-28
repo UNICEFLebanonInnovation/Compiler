@@ -227,19 +227,16 @@ class DashboardDataView(LoginRequiredMixin, View):
 
         qs = Registration.objects.filter(deleted=False)
 
-        centers = request.GET.getlist('centers[]')
+        centers = request.GET.getlist('centers')
         if centers:
             qs = qs.filter(center_id__in=centers)
-
-        rounds = request.GET.getlist('rounds[]')
+        rounds = request.GET.getlist('rounds')
         if rounds:
             qs = qs.filter(round_id__in=rounds)
-
-        governorates = request.GET.getlist('governorates[]')
+        governorates = request.GET.getlist('governorates')
         if governorates:
             qs = qs.filter(center__governorate_id__in=governorates)
-
-        partners = request.GET.getlist('partners[]')
+        partners = request.GET.getlist('partners')
         if partners:
             qs = qs.filter(partner_id__in=partners)
 
