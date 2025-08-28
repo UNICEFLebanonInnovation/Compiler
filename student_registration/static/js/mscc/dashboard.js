@@ -117,18 +117,22 @@
    var children_per_nationality_data_drilldown = [];
    var children_per_source_data = [];
    var children_per_disability_data = [];
-   var children_per_vulnerability_data = [];
-   var children_volunteering_data = [];
+    var children_per_vulnerability_data = [];
+    var children_volunteering_data = [];
+    var children_per_round_data = [];
+    var children_moved_rounds_data = [];
 
-   var children_per_gender;
-   var children_cash_support;
-   var children_per_status;
-   var children_per_programme;
-   var children_per_nationality;
-   var children_per_source;
-   var children_per_disability;
-   var children_per_vulnerability;
-   var children_volunteering;
+    var children_per_gender;
+    var children_cash_support;
+    var children_per_status;
+    var children_per_programme;
+    var children_per_nationality;
+    var children_per_source;
+    var children_per_disability;
+    var children_per_vulnerability;
+    var children_volunteering;
+    var children_per_round;
+    var children_moved_rounds;
 
    function initDashboardCharts(dataset){
        children_per_gender_data = dataset.children_per_gender || [];
@@ -137,9 +141,11 @@
        children_per_programme_data = dataset.children_per_programme || [];
        children_per_nationality_data = dataset.children_per_nationality || [];
        children_per_source_data = dataset.children_per_source || [];
-       children_per_disability_data = dataset.children_per_disability || [];
-       children_per_vulnerability_data = dataset.children_per_vulnerability || [];
-       children_volunteering_data = dataset.children_volunteering || [];
+        children_per_disability_data = dataset.children_per_disability || [];
+        children_per_vulnerability_data = dataset.children_per_vulnerability || [];
+        children_volunteering_data = dataset.children_volunteering || [];
+        children_per_round_data = dataset.children_per_round || [];
+        children_moved_rounds_data = dataset.children_moved_rounds || [];
 
        children_per_gender = create_pie_chart('children_per_gender', 'Gender', children_per_gender_data);
        children_cash_support = create_pie_chart('children_cash_support', 'Support type', children_cash_support_data);
@@ -148,9 +154,11 @@
        children_per_programme = create_bar_chart('children_per_programme', children_per_programme_data, [])
        children_per_nationality = create_bar_chart('children_per_nationality', children_per_nationality_data, [])
        children_per_source = create_bar_chart('children_per_source', children_per_source_data, [])
-       children_per_disability = create_pie_chart('children_per_disability', 'Disability', children_per_disability_data)
-       children_per_vulnerability = create_bar_chart('children_per_vulnerability', children_per_vulnerability_data, [])
-       children_volunteering = create_bar_chart('children_volunteering', children_volunteering_data, [])
+        children_per_disability = create_pie_chart('children_per_disability', 'Disability', children_per_disability_data)
+        children_per_vulnerability = create_bar_chart('children_per_vulnerability', children_per_vulnerability_data, [])
+        children_volunteering = create_bar_chart('children_volunteering', children_volunteering_data, [])
+        children_per_round = create_bar_chart('children_per_round', children_per_round_data, [])
+        children_moved_rounds = create_bar_chart('children_moved_rounds', children_moved_rounds_data, [])
    }
 
    function create_pie_chart(container, series_name, data) {
@@ -338,6 +346,14 @@ function reload_dashboard_data(exclude_container){
             children_volunteering.series[0].setData(resp.children_volunteering);
         }
 
+        if(exclude_container != 'children_per_round') {
+            children_per_round.series[0].setData(resp.children_per_round);
+        }
+
+        if(exclude_container != 'children_moved_rounds') {
+            children_moved_rounds.series[0].setData(resp.children_moved_rounds);
+        }
+
         children_per_gender_data = resp.children_per_gender;
         children_cash_support_data = resp.children_cash_support;
         children_per_status_data = resp.children_per_status;
@@ -347,6 +363,8 @@ function reload_dashboard_data(exclude_container){
         children_per_disability_data = resp.children_per_disability;
         children_per_vulnerability_data = resp.children_per_vulnerability;
         children_volunteering_data = resp.children_volunteering;
+        children_per_round_data = resp.children_per_round;
+        children_moved_rounds_data = resp.children_moved_rounds;
     });
 }
 
