@@ -18,6 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, F
+from django.contrib.postgres.aggregates import ArrayAgg
 from .utils import validate_date
 from openpyxl import Workbook
 from django.db import connection
@@ -180,6 +181,28 @@ class DashboardCustomView(LoginRequiredMixin,
         partners = PartnerOrganization.objects.all()
         rounds = Round.objects.all()
 
+        # Children registered in more than one round
+        moved_qs = (
+            instances.values(
+                'child__first_name',
+                'child__father_name',
+                'child__last_name',
+            )
+            .annotate(
+                rounds=ArrayAgg('round__name', distinct=True),
+                num_rounds=Count('round', distinct=True),
+            )
+            .filter(num_rounds__gt=1)
+        )
+
+        moved_children = [
+            {
+                'name': f"{row['child__first_name']} {row['child__father_name']} {row['child__last_name']}",
+                'rounds': [r for r in row['rounds'] if r],
+            }
+            for row in moved_qs
+        ]
+
         return {
             'total': instances.count(),
             'total_corepackage': instances.filter(type='Core-Package').count(),
@@ -188,6 +211,7 @@ class DashboardCustomView(LoginRequiredMixin,
             'governorates': governorates,
             'partners': partners,
             'rounds': rounds,
+            'moved_children': moved_children,
         }
 
 
