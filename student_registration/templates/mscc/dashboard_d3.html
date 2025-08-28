@@ -250,8 +250,29 @@
 <div class="row">
       <div class="col-md-12">
           <div class="main-card mb-3 card">
-              <div class="card-header">Attendance trends</div>
-              <div class="card-body" id="attendance"></div>
+              <div class="card-header">Children moved between rounds</div>
+              <div class="card-body p-0">
+                  <table class="mb-0 table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Child</th>
+                              <th>Rounds</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for item in moved_children %}
+                          <tr>
+                              <td>{{ item.name }}</td>
+                              <td>{{ item.rounds|join:", " }}</td>
+                          </tr>
+                          {% empty %}
+                          <tr>
+                              <td colspan="2">No data available</td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
           </div>
       </div>
 </div>
