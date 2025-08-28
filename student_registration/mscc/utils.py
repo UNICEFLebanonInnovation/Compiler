@@ -374,75 +374,128 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
     if attendance_date is not None:
         attendance_date = datetime.strptime(attendance_date, '%m/%d/%Y')
 
-        attendance = MSCCAttendance.objects.filter(center_id=center_id,
-                                                   attendance_date=attendance_date,
-                                                   education_program=education_program,
-                                                   class_section=class_section,
-                                                   round_id=round_id
-                                                   ).last()
+        attendance = MSCCAttendance.objects.filter(
+            center_id=center_id,
+            attendance_date=attendance_date,
+            education_program=education_program,
+            class_section=class_section,
+            round_id=round_id,
+        ).last()
 
-    result = []
+    existing_children = []
+    new_children = []
 
     try:
         if attendance:
             attendances = MSCCAttendanceChild.objects.filter(attendance_day=attendance)
 
+            existing_ids = []
             for attendance in attendances:
-                attendance_record = {}
-                attendance_record['registration_id'] = attendance.registration.id
-                attendance_record['child_id'] = attendance.child.id
-                attendance_record['child_fullname'] = attendance.child.full_name
-                attendance_record['child_mother_fullname'] = attendance.child.mother_fullname
-                attendance_record['child_birthday'] = attendance.child.birthday
-                attendance_record['child_nationality'] = attendance.child.nationality.name
-                attendance_record['attended'] = attendance.attended
-                attendance_record['absence_reason'] = attendance.absence_reason
-                attendance_record['absence_reason_other'] = attendance.absence_reason_other
+                existing_ids.append(attendance.registration.id)
+                attendance_record = {
+                    'registration_id': attendance.registration.id,
+                    'child_id': attendance.child.id,
+                    'child_fullname': attendance.child.full_name,
+                    'child_mother_fullname': attendance.child.mother_fullname,
+                    'child_birthday': attendance.child.birthday,
+                    'child_nationality': attendance.child.nationality.name,
+                    'attended': attendance.attended,
+                    'absence_reason': attendance.absence_reason,
+                    'absence_reason_other': attendance.absence_reason_other,
+                }
 
-                result.append(attendance_record)
-        else:
-            registrations = Registration.objects.filter(
-                center_id=center_id,
-                type='Core-Package',
-                deleted=False,
-                round_id=round_id
-            ).annotate(
-                has_education_service=Exists(
-                    EducationService.objects.filter(
-                        registration_id=OuterRef('pk'),
-                        education_program=education_program,
-                        class_section=class_section
+                existing_children.append(attendance_record)
+
+            registrations = (
+                Registration.objects.filter(
+                    center_id=center_id,
+                    type='Core-Package',
+                    deleted=False,
+                    round_id=round_id,
+                )
+                .annotate(
+                    has_education_service=Exists(
+                        EducationService.objects.filter(
+                            registration_id=OuterRef('pk'),
+                            education_program=education_program,
+                            class_section=class_section,
+                        )
                     )
                 )
-            ).filter(has_education_service=True)\
+                .filter(has_education_service=True)
                 .exclude(
-                id__in=Subquery(
-                    Referral.objects.filter(
-                        registration_id=OuterRef('pk'),
-                        recommended_learning_path='Drop out',
-                        dropout_date__lte = attendance_date
-                    ).values('registration_id')
+                    id__in=Subquery(
+                        Referral.objects.filter(
+                            registration_id=OuterRef('pk'),
+                            recommended_learning_path='Drop out',
+                            dropout_date__lte=attendance_date,
+                        ).values('registration_id')
+                    )
+                )
+                .exclude(id__in=existing_ids)
+            )
+
+            for registration_child in registrations:
+                registration_record = {
+                    'registration_id': registration_child.id,
+                    'child_id': registration_child.child.id,
+                    'child_fullname': registration_child.child.full_name,
+                    'child_mother_fullname': registration_child.child.mother_fullname,
+                    'child_birthday': registration_child.child.birthday,
+                    'child_nationality': registration_child.child.nationality.name,
+                    'attended': 'Yes',
+                    'absence_reason': '',
+                    'absence_reason_other': '',
+                }
+                new_children.append(registration_record)
+        else:
+            registrations = (
+                Registration.objects.filter(
+                    center_id=center_id,
+                    type='Core-Package',
+                    deleted=False,
+                    round_id=round_id,
+                )
+                .annotate(
+                    has_education_service=Exists(
+                        EducationService.objects.filter(
+                            registration_id=OuterRef('pk'),
+                            education_program=education_program,
+                            class_section=class_section,
+                        )
+                    )
+                )
+                .filter(has_education_service=True)
+                .exclude(
+                    id__in=Subquery(
+                        Referral.objects.filter(
+                            registration_id=OuterRef('pk'),
+                            recommended_learning_path='Drop out',
+                            dropout_date__lte=attendance_date,
+                        ).values('registration_id')
+                    )
                 )
             )
-            # print(registrations.query)
-            for registration_child in registrations:
-                registration_record = {}
-                registration_record['registration_id'] = registration_child.id
-                registration_record['child_id'] = registration_child.child.id
-                registration_record['child_fullname'] = registration_child.child.full_name
-                registration_record['child_mother_fullname'] = registration_child.child.mother_fullname
-                registration_record['child_birthday'] = registration_child.child.birthday
-                registration_record['child_nationality'] = registration_child.child.nationality.name
-                registration_record['attended'] = 'Yes'
-                registration_record['absence_reason'] = ''
-                registration_record['absence_reason_other'] = ''
-                result.append(registration_record)
 
-        return result
+            for registration_child in registrations:
+                registration_record = {
+                    'registration_id': registration_child.id,
+                    'child_id': registration_child.child.id,
+                    'child_fullname': registration_child.child.full_name,
+                    'child_mother_fullname': registration_child.child.mother_fullname,
+                    'child_birthday': registration_child.child.birthday,
+                    'child_nationality': registration_child.child.nationality.name,
+                    'attended': 'Yes',
+                    'absence_reason': '',
+                    'absence_reason_other': '',
+                }
+                existing_children.append(registration_record)
+
+        return {'instances': existing_children, 'new_instances': new_children}
 
     except Exception as ex:
         logger.exception(ex)
-        return []
+        return {'instances': [], 'new_instances': []}
 
 
 def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):

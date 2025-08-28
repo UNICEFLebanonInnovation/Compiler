@@ -105,22 +105,26 @@ class LoadAttendanceChildren(LoginRequiredMixin,
         round_id = self.request.GET.get("round_id")
 
         if attendance_date_str is None:
-            return {'instances': []}
+            return {'instances': [], 'new_instances': []}
 
         try:
             # Parse the attendance_date_str into a datetime object
             attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
 
             if attendance_date <= current_date and center_id:
-                instances = load_child_attendance(center_id, round_id, attendance_date_str, education_program, class_section)
+                data = load_child_attendance(
+                    center_id,
+                    round_id,
+                    attendance_date_str,
+                    education_program,
+                    class_section,
+                )
             else:
-                instances = []
+                data = {'instances': [], 'new_instances': []}
         except ValueError:
-            instances = []
+            data = {'instances': [], 'new_instances': []}
 
-        return {
-            'instances': instances
-        }
+        return data
 
 
 class LoadAttendanceChild(LoginRequiredMixin,
