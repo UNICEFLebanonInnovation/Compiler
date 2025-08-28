@@ -198,6 +198,10 @@
             charts = obj.charts || [];
             filters = obj.filters || {};
             counter = charts.reduce((m,c)=>Math.max(m,c.id),0);
+            const roundSelect = document.getElementById('filter-round');
+            if(roundSelect){
+                roundSelect.value = filters.round || '';
+            }
             const container = document.getElementById('charts-container');
             container.innerHTML = '';
             charts.forEach(c=>{
@@ -222,6 +226,19 @@
     document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('add-chart').addEventListener('click', addChart);
         document.getElementById('save-dashboard').addEventListener('click', saveDashboard);
+        const roundSelect = document.getElementById('filter-round');
+        if(roundSelect){
+            roundSelect.addEventListener('change', function(){
+                const val = this.value;
+                if(val){
+                    filters.round = val;
+                }else{
+                    delete filters.round;
+                }
+                renderAll();
+                saveDashboard();
+            });
+        }
         document.addEventListener('keyup', function(e){
             if(e.key === 'Escape'){
                 const el = document.querySelector('.chart-wrapper.fullscreen');

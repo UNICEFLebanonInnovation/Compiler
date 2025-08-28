@@ -104,6 +104,15 @@
                         <button type="button" id="load-mscc-data" class="btn btn-secondary mt-2">{% trans "Load MSCC Data" %}</button>
                     </div>
                     <div class="form-group">
+                        <label for="filter-round">{% trans "Filter by Round" %}</label>
+                        <select id="filter-round" class="form-control">
+                            <option value="">{% trans "All Rounds" %}</option>
+                            {% for round in rounds %}
+                            <option value="{{ round.name }}">{{ round.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="chart-data">{% trans "Data (JSON)" %}</label>
                         <textarea id="chart-data" class="form-control" rows="5">[
 {"label": "A", "value": 30},
