@@ -141,12 +141,6 @@
                                                             <span>Dashboard</span>
                                                         </a>
                                                     </li>
-                                                    <li class="nav-item">
-                                                        <a href="{% url 'mscc:attendance_heatmap' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-chart-bars"></i>
-                                                            <span>Attendance Heatmap</span>
-                                                        </a>
-                                                    </li>
                                                 </ul>
                                             </div>
                                             {% endif %}
@@ -310,7 +304,13 @@
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'dashboard:pivot_dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Pivot Builder
+                                            Pivot Builder / Makani
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-xl-4">
+                                        <a href="{% url 'mscc:attendance_heatmap' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
+                                            <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
+                                            Attendance Heat-map
                                         </a>
                                     </div>
                                   {% endif %}
