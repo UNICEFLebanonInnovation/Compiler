@@ -188,9 +188,13 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         year = int(self.request.GET.get('year', timezone.now().year))
+
+        base_qs = MSCCAttendanceChild.objects.filter(
+            attendance_day__attendance_date__year=year
+        )
+
         queryset = (
-            MSCCAttendanceChild.objects
-            .filter(attendance_day__attendance_date__year=year)
+            base_qs
             .values('attendance_day__attendance_date')
             .annotate(
                 total=Count('id'),
@@ -198,6 +202,35 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
             )
             .order_by('attendance_day__attendance_date')
         )
+
+        programme_qs = (
+            base_qs
+            .values(
+                'attendance_day__attendance_date',
+                'registration__education_service__education_program',
+            )
+            .annotate(
+                total=Count('id'),
+                absent=Count('id', filter=Q(attended='No'))
+            )
+            .order_by('attendance_day__attendance_date')
+        )
+
+        programme_data = {}
+        for row in programme_qs:
+            programme = row['registration__education_service__education_program'] or 'Unknown'
+            programme_data.setdefault(programme, []).append({
+                'attendance_day__attendance_date': row['attendance_day__attendance_date'],
+                'total': row['total'],
+                'absent': row['absent'],
+            })
+
+        years = MSCCAttendanceChild.objects.dates(
+            'attendance_day__attendance_date', 'year'
+        )
+
         context['attendance_json'] = json.dumps(list(queryset), default=str)
+        context['program_attendance_json'] = json.dumps(programme_data, default=str)
         context['year'] = year
+        context['years'] = [d.year for d in years]
         return context
