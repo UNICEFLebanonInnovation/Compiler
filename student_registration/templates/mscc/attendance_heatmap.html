@@ -4,6 +4,12 @@
 {% block module_name %}Makani - Attendance{% endblock %}
 {% block project_title %}Attendance Heatmap{% endblock %}
 
+{% block extra_head %}
+<style>
+  .heatmap-container { width: 50%; margin: 0 auto; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
   <h2>Attendance Heatmap - {{ year }}</h2>
@@ -13,7 +19,7 @@
       <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
     {% endfor %}
   </select>
-  <div id="attendance-heatmap" class="mb-5"></div>
+  <div id="attendance-heatmap" class="mb-5 heatmap-container"></div>
   <div id="programme-heatmaps"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>

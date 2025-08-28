@@ -16,12 +16,13 @@
       return;
     }
 
-    const cellSize = 25;
-    const margin = { top: 20, left: 40 };
-    const width = cellSize * 31 + margin.left;
-    const height = cellSize * 12 + margin.top;
+    const margin = { top: 20, left: 40, bottom: 30 };
+    const container = d3.select(selector);
+    const width = container.node().getBoundingClientRect().width;
+    const cellSize = (width - margin.left) / 31;
+    const height = cellSize * 12 + margin.top + margin.bottom;
 
-    const svg = d3.select(selector).append('svg')
+    const svg = container.append('svg')
       .attr('width', width)
       .attr('height', height);
 
@@ -86,6 +87,31 @@
       .attr('font-size', '10px')
       .attr('text-anchor', 'middle')
       .text(d => d);
+
+    const legendWidth = cellSize * 31;
+    const legendHeight = 10;
+    const legend = svg.append('g')
+      .attr('class', 'heatmap-legend')
+      .attr('transform', `translate(${margin.left}, ${height - margin.bottom + 10})`);
+
+    const legendScale = d3.scaleLinear()
+      .domain([0, 1])
+      .range([0, legendWidth]);
+
+    const legendData = d3.range(0, 1.01, 0.01);
+    legend.selectAll('rect')
+      .data(legendData)
+      .enter()
+      .append('rect')
+      .attr('x', d => legendScale(d))
+      .attr('y', 0)
+      .attr('width', legendWidth / legendData.length)
+      .attr('height', legendHeight)
+      .attr('fill', d => color(d));
+
+    legend.append('g')
+      .attr('transform', `translate(0, ${legendHeight})`)
+      .call(d3.axisBottom(legendScale).ticks(5).tickFormat(d3.format('.0%')));
   }
 
   renderHeatmap('#attendance-heatmap', window.attendanceData);
@@ -95,7 +121,7 @@
     const slug = programme.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const container = d3.select('#programme-heatmaps')
       .append('div')
-      .attr('class', 'mb-4');
+      .attr('class', 'mb-4 heatmap-container');
     container.append('h3').text(programme);
     const divId = `heatmap-${slug}`;
     container.append('div').attr('id', divId);
