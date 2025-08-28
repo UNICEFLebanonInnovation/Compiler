@@ -39,7 +39,8 @@
       .style('padding', '4px 8px')
       .style('background', '#fff')
       .style('border', '1px solid #ccc')
-      .style('pointer-events', 'none');
+      .style('pointer-events', 'none')
+      .style('z-index', 10);
 
     g.selectAll('rect')
       .data(data)
