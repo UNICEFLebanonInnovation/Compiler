@@ -190,6 +190,7 @@ class DashboardCustomView(LoginRequiredMixin,
             )
             .annotate(
                 rounds=ArrayAgg('round__name', distinct=True),
+                programmes=ArrayAgg('education_service__education_program', distinct=True),
                 num_rounds=Count('round', distinct=True),
             )
             .filter(num_rounds__gt=1)
@@ -199,6 +200,7 @@ class DashboardCustomView(LoginRequiredMixin,
             {
                 'name': f"{row['child__first_name']} {row['child__father_name']} {row['child__last_name']}",
                 'rounds': [r for r in row['rounds'] if r],
+                'programmes': [p for p in row['programmes'] if p],
             }
             for row in moved_qs
         ]
