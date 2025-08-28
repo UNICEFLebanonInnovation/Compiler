@@ -69,8 +69,17 @@
         loader.style('display','block');
         const svg = container.select('svg');
         const legendEl = container.select('.chart-legend');
-        const width = +svg.node().clientWidth;
-        const height = +svg.node().clientHeight;
+        // Ensure the SVG has explicit dimensions; relying solely on CSS can
+        // result in clientWidth/clientHeight returning 0 which prevents D3
+        // from rendering any shapes. Fallback to a default size when the
+        // computed dimensions are zero.
+        let width = +svg.node().clientWidth;
+        let height = +svg.node().clientHeight;
+        if (!width || !height) {
+            width = parseInt(svg.style('width')) || 400;
+            height = parseInt(svg.style('height')) || 400;
+            svg.attr('width', width).attr('height', height);
+        }
         svg.selectAll('*').remove();
         legendEl.html('');
 
