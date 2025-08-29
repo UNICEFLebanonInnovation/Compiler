@@ -81,6 +81,33 @@ class EnrolledProgramsForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
 
+    same_location = forms.BooleanField(
+        label=_('Same location as main registration'),
+        required=False,
+        initial=True,
+    )
+    governorate = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=True),
+        widget=forms.Select,
+        label=_('Governorate'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    district = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False),
+        widget=forms.Select,
+        label=_('District'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    cadaster = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False),
+        widget=forms.Select,
+        label=_('Cadaster'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -91,6 +118,38 @@ class EnrolledProgramsForm(forms.ModelForm):
         super(EnrolledProgramsForm, self).__init__(*args, **kwargs)
 
         self.fields['registration_id'].initial = registry
+
+        # prepare initial location values
+        enrolled_instance = None
+        if instance:
+            try:
+                enrolled_instance = EnrolledPrograms.objects.get(id=instance)
+            except EnrolledPrograms.DoesNotExist:
+                enrolled_instance = None
+        registration_obj = None
+        if registry:
+            registration_obj = Registration.objects.filter(id=registry).select_related('adolescent').first()
+
+        same_location_val = None
+        if self.data:
+            same_location_val = self.data.get('same_location')
+        elif enrolled_instance:
+            same_location_val = enrolled_instance.same_location
+
+        same_location = True if same_location_val in [True, 'True', 'on', '1', 1] or same_location_val is None else False
+        self.fields['same_location'].initial = same_location
+
+        if same_location and registration_obj and registration_obj.adolescent:
+            self.fields['governorate'].initial = registration_obj.adolescent.governorate_id
+            self.fields['district'].initial = registration_obj.adolescent.district_id
+            self.fields['cadaster'].initial = registration_obj.adolescent.cadaster_id
+            self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
+            self.fields['district'].widget.attrs['disabled'] = 'disabled'
+            self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
+        elif enrolled_instance and not self.data:
+            self.fields['governorate'].initial = enrolled_instance.governorate_id
+            self.fields['district'].initial = enrolled_instance.district_id
+            self.fields['cadaster'].initial = enrolled_instance.cadaster_id
 
         form_action = reverse('youth:program_enrolled_programs_add', kwargs={'registry': registry})
         if instance:
@@ -133,6 +192,17 @@ class EnrolledProgramsForm(forms.ModelForm):
                     Div('sub_program', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    Div('same_location', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">10</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge-form badge-pill">11</span>'),
+                    Div('cadaster', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
                 css_id='step-1'
             ),
             FormActions(
@@ -167,6 +237,25 @@ class EnrolledProgramsForm(forms.ModelForm):
         instance.donor_id = validated_data.get('donor')
         instance.program_document_id = validated_data.get('program_document')
 
+        same_location = validated_data.get('same_location')
+        instance.same_location = True if same_location in ['on', 'True', 'true', True, '1'] else False
+
+        gov_id = validated_data.get('governorate')
+        dist_id = validated_data.get('district')
+        cad_id = validated_data.get('cadaster')
+
+        if instance.same_location and (not gov_id or not dist_id or not cad_id):
+            if registry:
+                reg_obj = Registration.objects.filter(id=registry).select_related('adolescent').first()
+                if reg_obj and reg_obj.adolescent:
+                    gov_id = reg_obj.adolescent.governorate_id
+                    dist_id = reg_obj.adolescent.district_id
+                    cad_id = reg_obj.adolescent.cadaster_id
+
+        instance.governorate_id = gov_id
+        instance.district_id = dist_id
+        instance.cadaster_id = cad_id
+
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
             registration_date = datetime.strptime(registration_date_str, '%Y-%m-%d')
@@ -193,6 +282,15 @@ class EnrolledProgramsForm(forms.ModelForm):
         if registration_date >= completion_date:
             self.add_error('registration_date', 'Registration Date must be less than Completion Date')
 
+        same_location = cleaned_data.get('same_location')
+        if not same_location:
+            if not cleaned_data.get('governorate'):
+                self.add_error('governorate', _('This field is required.'))
+            if not cleaned_data.get('district'):
+                self.add_error('district', _('This field is required.'))
+            if not cleaned_data.get('cadaster'):
+                self.add_error('cadaster', _('This field is required.'))
+
 
     class Meta:
         model = EnrolledPrograms
@@ -206,6 +304,10 @@ class EnrolledProgramsForm(forms.ModelForm):
             'program_document',
             'master_program',
             'sub_program',
+            'same_location',
+            'governorate',
+            'district',
+            'cadaster',
         )
 
 
