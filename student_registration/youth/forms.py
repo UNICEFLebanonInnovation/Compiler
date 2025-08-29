@@ -465,13 +465,6 @@ class MainForm(forms.ModelForm):
         )
 
     def clean(self):
-        """Validate form fields.
-
-        The unique UNICEF ID duplication check that previously lived here has been
-        moved to a client side JavaScript check.  The server side form now only
-        validates the adolescent's date of birth to ensure that the provided
-        values compose a valid date.
-        """
         cleaned_data = super(MainForm, self).clean()
 
         year = int(cleaned_data.get("adolescent_birthday_year") or 0)

@@ -440,12 +440,6 @@ def old_child_data(request):
 
 
 def child_duplication_check(request):
-    """Check for existing adolescents with the same generated UNICEF ID.
-
-    The client sends the adolescent's personal information which is used to
-    generate a UNICEF ID.  If another registration already exists with the same
-    ID, that registration (minus the current one when editing) is returned.
-    """
     body_unicode = request.body.decode('utf-8')
     if body_unicode:
         body = json.loads(body_unicode)
