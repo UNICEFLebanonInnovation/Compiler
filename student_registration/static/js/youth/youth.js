@@ -147,7 +147,7 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_adolescent_first_name, select#id_adolescent_father_name, select#id_adolescent_last_name, select#id_adolescent_birthday_year, select#id_adolescent_birthday_month, select#id_adolescent_birthday_day', function(){
+    $(document).on('change', '#id_adolescent_first_name, #id_adolescent_father_name, #id_adolescent_last_name, #id_adolescent_mother_fullname, #id_adolescent_gender, #id_adolescent_birthday_year, #id_adolescent_birthday_month, #id_adolescent_birthday_day, #id_adolescent_nationality', function(){
         $('#search_loader').removeClass('hidden');
         $('#nfe_search_loader').removeClass('hidden');
 
@@ -158,8 +158,8 @@ $(document).ready(function() {
         {
             outreach_adolescent_search();
             old_adolescent_search();
-            adolescent_duplication_check();
         }
+        adolescent_duplication_check();
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
@@ -369,19 +369,22 @@ function old_child_search() {
     }
 }
 
-function child_duplication_check() {
+function adolescent_duplication_check() {
 
     $('#child-duplication-error').hide();
+    $('#submit-id-save').prop('disabled', false);
 
-    if (isAddPage()) {
+    var birthday_year = $('#id_adolescent_birthday_year').val();
+    var birthday_month = $('#id_adolescent_birthday_month').val();
+    var birthday_day = $('#id_adolescent_birthday_day').val();
+    var first_name = $('#id_adolescent_first_name').val();
+    var father_name = $('#id_adolescent_father_name').val();
+    var last_name = $('#id_adolescent_last_name').val();
+    var mother_fullname = $('#id_adolescent_mother_fullname').val();
+    var sex = $('#id_adolescent_gender').val();
+    var nationality = $('#id_adolescent_nationality').val();
 
-        var birthday_year = $('#id_adolescent_birthday_year').val();
-        var birthday_month = $('#id_adolescent_birthday_month').val();
-        var birthday_day = $('#id_adolescent_birthday_day').val();
-        var first_name = $('#id_adolescent_first_name').val();
-        var father_name = $('#id_adolescent_father_name').val();
-        var last_name = $('#id_adolescent_last_name').val();
-
+    if (birthday_year && birthday_month && birthday_day && first_name && father_name && last_name && mother_fullname && sex && nationality) {
         var data = {
             birthday_year: birthday_year,
             birthday_month: birthday_month,
@@ -389,25 +392,34 @@ function child_duplication_check() {
             first_name: first_name,
             father_name: father_name,
             last_name: last_name,
+            mother_fullname: mother_fullname,
+            sex: sex,
+            nationality: nationality
         };
 
+        var path = window.location.pathname;
+        var match = path.match(/Child-Edit\/([^\/]+)\//);
+        if (match) {
+            data.registration_id = match[1];
+        }
+
+        var requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
         $.ajax({
-            url: '/MSCC/Child-Duplication-Check/',
-            dataType: "json",
-            data: data,
+            type: "POST",
+            url: '/youth/Child-Duplication-Check/',
+            data: JSON.stringify(data),
             cache: false,
             async: true,
+            headers: requestHeaders,
+            dataType: 'json',
             success: function (response) {
                 if(response.result.length > 0){
-                    var text = ''
-                    $(response.result).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/MSCC/Child-Profile-Preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name+'</br>';
-                        text = text + 'Click <a href="/MSCC/New-Round/'+item.id+'/">here</a> to register this child in a new Round.'
-                    })
-                    $('#child-duplication-error-text').html(text);
+                    $('#child-duplication-error-text').html('Another adolescent already has this UNICEF ID.');
                     $('#child-duplication-error').show();
+                    $('#submit-id-save').prop('disabled', true);
                 }
-                console.log(response);
             },
             error: function (response) {
                 console.log(response);
@@ -415,7 +427,6 @@ function child_duplication_check() {
         });
     }
 }
-
 
 function append_old_result(data)
 {

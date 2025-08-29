@@ -465,6 +465,13 @@ class MainForm(forms.ModelForm):
         )
 
     def clean(self):
+        """Validate form fields.
+
+        The unique UNICEF ID duplication check that previously lived here has been
+        moved to a client side JavaScript check.  The server side form now only
+        validates the adolescent's date of birth to ensure that the provided
+        values compose a valid date.
+        """
         cleaned_data = super(MainForm, self).clean()
 
         year = int(cleaned_data.get("adolescent_birthday_year") or 0)
@@ -473,49 +480,8 @@ class MainForm(forms.ModelForm):
 
         try:
             datetime.datetime(year, month, day)
-        except ValueError as e:
+        except ValueError:
             self.add_error('adolescent_birthday_year', 'The date is not valid.')
-            return cleaned_data
-
-        first_name = (cleaned_data.get('adolescent_first_name') or '').strip()
-        father_name = (cleaned_data.get('adolescent_father_name') or '').strip()
-        last_name = (cleaned_data.get('adolescent_last_name') or '').strip()
-        mother_fullname = (cleaned_data.get('adolescent_mother_fullname') or '').strip()
-        gender = cleaned_data.get('adolescent_gender')
-
-        nationality = cleaned_data.get('adolescent_nationality')
-        nationality_en = getattr(nationality, 'name_en', None)
-
-        dob_str = u'{}-{}-{}'.format(year, month, day)
-
-        # Generate UNICEF ID
-        from student_registration.students.utils import generate_one_unique_id
-        current_unicef_id = generate_one_unique_id(
-            "0",
-            first_name,
-            father_name,
-            last_name,
-            mother_fullname,
-            dob_str,
-            nationality_en,
-            gender
-        )
-
-        # Check duplicates
-        qs = Registration.objects.filter(adolescent__unicef_id=current_unicef_id, deleted=False)
-        print (current_unicef_id)
-        print(qs.count())
-
-        current_id = None
-        if getattr(self, 'instance', None) and getattr(self.instance, 'id', None):
-            current_id = self.instance.id
-
-        if current_id:
-            qs = qs.exclude(pk=current_id)
-        print(qs.count())
-
-        if qs.exists():
-            self.add_error('adolescent_first_name', 'Another adolescent already has this UNICEF ID.')
 
         return cleaned_data
 
