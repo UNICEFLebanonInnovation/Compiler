@@ -278,6 +278,18 @@ class MainForm(forms.ModelForm):
 
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
+
+        gov_id = self.data.get('adolescent_governorate') or self.fields['adolescent_governorate'].initial
+        if gov_id:
+            self.fields['adolescent_district'].queryset = Location.objects.filter(parent_id=gov_id).order_by('name')
+        else:
+            self.fields['adolescent_district'].queryset = Location.objects.none()
+
+        dist_id = self.data.get('adolescent_district') or self.fields['adolescent_district'].initial
+        if dist_id:
+            self.fields['adolescent_cadaster'].queryset = Location.objects.filter(parent_id=dist_id).order_by('name')
+        else:
+            self.fields['adolescent_cadaster'].queryset = Location.objects.none()
         form_action = reverse('youth:child_add')
         if instance:
             display_registry = ' d-none'

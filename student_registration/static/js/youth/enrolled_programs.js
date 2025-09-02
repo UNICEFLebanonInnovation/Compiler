@@ -109,6 +109,33 @@ function load_sub_program(url)
     })
 }
 
+function load_districts(url)
+{
+    var value = $("#id_governorate").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_adolescent_governorate': value
+        },
+        success: function (data) {
+            $("#id_district").html(data);
+        }
+    })
+}
+
+function load_cadasters(url)
+{
+    var value = $("#id_district").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_adolescent_district': value
+        },
+        success: function (data) {
+            $("#id_cadaster").html(data);
+        }
+    })
+}
 
 function urlParam(name){
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);

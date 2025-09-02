@@ -82,7 +82,7 @@ class EnrolledProgramsForm(forms.ModelForm):
     )
 
     same_location = forms.BooleanField(
-        label=_('Same location as main registration'),
+        label=_('Same location'),
         required=False,
         initial=True,
     )
@@ -151,6 +151,18 @@ class EnrolledProgramsForm(forms.ModelForm):
             self.fields['district'].initial = enrolled_instance.district_id
             self.fields['cadaster'].initial = enrolled_instance.cadaster_id
 
+        gov_id = self.data.get('governorate') or self.fields['governorate'].initial
+        if gov_id:
+            self.fields['district'].queryset = Location.objects.filter(parent_id=gov_id).order_by('name')
+        else:
+            self.fields['district'].queryset = Location.objects.none()
+
+        dist_id = self.data.get('district') or self.fields['district'].initial
+        if dist_id:
+            self.fields['cadaster'].queryset = Location.objects.filter(parent_id=dist_id).order_by('name')
+        else:
+            self.fields['cadaster'].queryset = Location.objects.none()
+
         form_action = reverse('youth:program_enrolled_programs_add', kwargs={'registry': registry})
         if instance:
             form_action = reverse('youth:program_enrolled_programs_edit',
@@ -195,16 +207,17 @@ class EnrolledProgramsForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">8</span>'),
                     Div('same_location', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
                     HTML('<span class="badge-form badge-pill">9</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">10</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
                     Div('district', css_class='col-md-3'),
-                    HTML('<span class="badge-form badge-pill">11</span>'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
-                css_id='step-1'
-            ),
             FormActions(
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -213,9 +226,10 @@ class EnrolledProgramsForm(forms.ModelForm):
                 HTML(
                     '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/Child-Registration-Cancel/{}/">Cancel</a>'.format(
                         registry)
-                ),
-
+                )
             ),
+            css_id='step-1'
+        )
         )
 
     def save(self, request=None, instance=None, registry=None):
