@@ -147,20 +147,35 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', '#id_child_first_name, #id_child_father_name, #id_child_last_name, #id_child_mother_fullname, #id_child_gender, #id_child_birthday_year, #id_child_birthday_month, #id_child_birthday_day, #id_child_nationality', function(){
-        $('#search_loader').removeClass('hidden');
-        $('#nfe_search_loader').removeClass('hidden');
-
+    $(document).on('change',
+      '#id_child_first_name, #id_child_father_name, #id_child_last_name, ' +
+      '#id_child_mother_fullname, #id_child_gender, #id_child_birthday_year, ' +
+      '#id_child_birthday_month, #id_child_birthday_day, #id_child_nationality',
+      function () {
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
-        if ( first_name!= '' && father_name!= '' && last_name!= '')
-        {
-            outreach_child_search();
-            old_child_search();
+        var mother_fullname = $('#id_child_mother_fullname').val();
+        var sex = $('#id_child_gender').val();
+        var year = $('#id_child_birthday_year').val();
+        var month = $('#id_child_birthday_month').val();
+        var day = $('#id_child_birthday_day').val();
+        var nationality = $('#id_child_nationality').val();
+
+        if (first_name && father_name && last_name && year && month && day) {
+
+          $('#search_loader').removeClass('hidden');
+          $('#nfe_search_loader').removeClass('hidden');
+
+          outreach_child_search();
+          old_child_search();
+          if ( mother_fullname && sex && nationality) {
             child_duplication_check();
         }
-    });
+        }
+      }
+    );
+
 
     $(document).on('change', 'select#id_main_caregiver', function(){
         var main_caregiver = $('select#id_main_caregiver').val();
