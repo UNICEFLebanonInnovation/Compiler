@@ -151,14 +151,13 @@ $(document).ready(function() {
         $('#search_loader').removeClass('hidden');
         $('#nfe_search_loader').removeClass('hidden');
 
-        var first_name = $('#id_adolescent_first_name').val();
-        var father_name = $('#id_adolescent_father_name').val();
-        var last_name = $('#id_adolescent_last_name').val();
-        if ( first_name!= '' && father_name!= '' && last_name!= '')
-        {
-            outreach_adolescent_search();
-            old_adolescent_search();
-        }
+//        var first_name = $('#id_adolescent_first_name').val();
+//        var father_name = $('#id_adolescent_father_name').val();
+//        var last_name = $('#id_adolescent_last_name').val();
+//        if ( first_name!= '' && father_name!= '' && last_name!= '')
+//        {
+//            outreach_adolescent_search();
+//        }
         adolescent_duplication_check();
     });
 
@@ -201,41 +200,41 @@ $(document).ready(function() {
 
 });
 
-function outreach_adolescent_search() {
-
-    if (isAddPage()) {
-
-        var birthday_year = $('#id_adolescent_birthday_year').val();
-        var birthday_month = $('#id_adolescent_birthday_month').val();
-        var birthday_day = $('#id_adolescent_birthday_day').val();
-        var first_name = $('#id_adolescent_first_name').val();
-        var father_name = $('#id_adolescent_father_name').val();
-        var last_name = $('#id_adolescent_last_name').val();
-
-        var data = {
-            birthday_year: birthday_year,
-            birthday_month: birthday_month,
-            birthday_day: birthday_day,
-            first_name: first_name,
-            father_name: father_name,
-            last_name: last_name,
-        };
-
-        $.ajax({
-            url: '/MSCC/Outreach-Child-Search/',
-            dataType: "json",
-            data: data,
-            cache: false,
-            async: true,
-            success: function (response) {
-                append_new_result(response);
-            },
-            error: function (response) {
-                console.log(response);
-            }
-        });
-    }
-}
+//function outreach_adolescent_search() {
+//
+//    if (isAddPage()) {
+//
+//        var birthday_year = $('#id_adolescent_birthday_year').val();
+//        var birthday_month = $('#id_adolescent_birthday_month').val();
+//        var birthday_day = $('#id_adolescent_birthday_day').val();
+//        var first_name = $('#id_adolescent_first_name').val();
+//        var father_name = $('#id_adolescent_father_name').val();
+//        var last_name = $('#id_adolescent_last_name').val();
+//
+//        var data = {
+//            birthday_year: birthday_year,
+//            birthday_month: birthday_month,
+//            birthday_day: birthday_day,
+//            first_name: first_name,
+//            father_name: father_name,
+//            last_name: last_name,
+//        };
+//
+//        $.ajax({
+//            url: '/MSCC/Outreach-Child-Search/',
+//            dataType: "json",
+//            data: data,
+//            cache: false,
+//            async: true,
+//            success: function (response) {
+//                append_new_result(response);
+//            },
+//            error: function (response) {
+//                console.log(response);
+//            }
+//        });
+//    }
+//}
 
 function append_new_result(data)
 {
@@ -415,8 +414,10 @@ function adolescent_duplication_check() {
             headers: requestHeaders,
             dataType: 'json',
             success: function (response) {
-                if(response.result.length > 0){
-                    $('#child-duplication-error-text').html('Another adolescent already has this UNICEF ID.');
+                if (response.has_duplicate) {
+                    const partnerName = response.partner_name || 'another partner';
+                    $('#child-duplication-error-text')
+                      .html(`Another adolescent already has this UNICEF ID with partner <b>${partnerName}</b>.`);
                     $('#child-duplication-error').show();
                     $('#submit-id-save').prop('disabled', true);
                 }
