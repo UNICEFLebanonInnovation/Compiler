@@ -132,12 +132,10 @@ class EnrolledProgramsForm(forms.ModelForm):
         gov_initial = self.initial.get('governorate')
         dist_initial = self.initial.get('district')
         cad_initial = self.initial.get('cadaster')
-        print("gov_initial: ", gov_initial)
         if registration_obj and registration_obj.adolescent:
             reg_gov = registration_obj.adolescent.governorate_id
             reg_dist = registration_obj.adolescent.district_id
             reg_cad = registration_obj.adolescent.cadaster_id
-            print("reg_gov: ", reg_gov)
             if same_location:
                 gov_initial = reg_gov
                 dist_initial = reg_dist
@@ -145,8 +143,6 @@ class EnrolledProgramsForm(forms.ModelForm):
                 self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
                 self.fields['district'].widget.attrs['disabled'] = 'disabled'
                 self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
-
-                print("gov_initial same:  ", gov_initial)
             else:
                 if not gov_initial:
                     gov_initial = reg_gov
@@ -154,11 +150,6 @@ class EnrolledProgramsForm(forms.ModelForm):
                     dist_initial = reg_dist
                 if not cad_initial:
                     cad_initial = reg_cad
-                print("gov_initial not same: ", gov_initial)
-
-        print("gov_initial final: ", gov_initial)
-        print("dist_initial final: ", dist_initial)
-        print("cad_initial final: ", cad_initial)
 
         self.fields['governorate'].initial = gov_initial
         self.fields['district'].initial = dist_initial
