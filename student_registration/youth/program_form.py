@@ -119,7 +119,6 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         self.fields['registration_id'].initial = registry
 
-        # prepare initial location values
         enrolled_instance = None
         if instance:
             try:
@@ -139,17 +138,29 @@ class EnrolledProgramsForm(forms.ModelForm):
         same_location = True if same_location_val in [True, 'True', 'on', '1', 1] or same_location_val is None else False
         self.fields['same_location'].initial = same_location
 
-        if same_location and registration_obj and registration_obj.adolescent:
+        if instance:
+            if enrolled_instance.governorate_id:
+                self.fields['governorate'].initial = enrolled_instance.governorate_id
+                self.fields['district'].initial = enrolled_instance.district_id
+                self.fields['cadaster'].initial = enrolled_instance.cadaster_id
+
+            elif registration_obj and registration_obj.adolescent:
+
+                if not self.fields['governorate'].initial:
+                    self.fields['same_location'].initial = True
+                    self.fields['governorate'].initial = registration_obj.adolescent.governorate_id
+                    self.fields['district'].initial = registration_obj.adolescent.district_id
+                    self.fields['cadaster'].initial = registration_obj.adolescent.cadaster_id
+                    self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
+                    self.fields['district'].widget.attrs['disabled'] = 'disabled'
+                    self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
+        elif same_location and registration_obj and registration_obj.adolescent:
             self.fields['governorate'].initial = registration_obj.adolescent.governorate_id
             self.fields['district'].initial = registration_obj.adolescent.district_id
             self.fields['cadaster'].initial = registration_obj.adolescent.cadaster_id
             self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
             self.fields['district'].widget.attrs['disabled'] = 'disabled'
             self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
-        elif enrolled_instance and not self.data:
-            self.fields['governorate'].initial = enrolled_instance.governorate_id
-            self.fields['district'].initial = enrolled_instance.district_id
-            self.fields['cadaster'].initial = enrolled_instance.cadaster_id
 
         gov_id = self.data.get('governorate') or self.fields['governorate'].initial
         if gov_id:

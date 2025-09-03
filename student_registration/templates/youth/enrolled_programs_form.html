@@ -97,8 +97,7 @@
       var url_master_program = "{% url 'youth:load_master_program' %}";
       var url_sub_program = "{% url 'youth:load_sub_program' %}";
 
-      $("#id_governorate").change(function () {
-          alert('hiiii')
+      $("#id_governorate").change(function () { 
           load_districts(url_districts);
           load_cadasters(url_cadasters);
       });
