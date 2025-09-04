@@ -119,48 +119,41 @@ class EnrolledProgramsForm(forms.ModelForm):
 
         self.fields['registration_id'].initial = registry
 
-        enrolled_instance = None
-        if instance:
-            try:
-                enrolled_instance = EnrolledPrograms.objects.get(id=instance)
-            except EnrolledPrograms.DoesNotExist:
-                enrolled_instance = None
         registration_obj = None
         if registry:
             registration_obj = Registration.objects.filter(id=registry).select_related('adolescent').first()
 
-        same_location_val = None
         if self.data:
-            same_location_val = self.data.get('same_location')
-        elif enrolled_instance:
-            same_location_val = enrolled_instance.same_location
-
-        same_location = True if same_location_val in [True, 'True', 'on', '1', 1] or same_location_val is None else False
+            same_location = self.data.get('same_location') in ['on', 'True', 'true', True, '1']
+        else:
+            same_location = self.initial.get('same_location', True)
         self.fields['same_location'].initial = same_location
 
-        if instance:
-            if enrolled_instance.governorate_id:
-                self.fields['governorate'].initial = enrolled_instance.governorate_id
-                self.fields['district'].initial = enrolled_instance.district_id
-                self.fields['cadaster'].initial = enrolled_instance.cadaster_id
+        gov_initial = self.initial.get('governorate')
+        dist_initial = self.initial.get('district')
+        cad_initial = self.initial.get('cadaster')
+        if registration_obj and registration_obj.adolescent:
+            reg_gov = registration_obj.adolescent.governorate_id
+            reg_dist = registration_obj.adolescent.district_id
+            reg_cad = registration_obj.adolescent.cadaster_id
+            if same_location:
+                gov_initial = reg_gov
+                dist_initial = reg_dist
+                cad_initial = reg_cad
+                self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
+                self.fields['district'].widget.attrs['disabled'] = 'disabled'
+                self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
+            else:
+                if not gov_initial:
+                    gov_initial = reg_gov
+                if not dist_initial:
+                    dist_initial = reg_dist
+                if not cad_initial:
+                    cad_initial = reg_cad
 
-            elif registration_obj and registration_obj.adolescent:
-
-                if not self.fields['governorate'].initial:
-                    self.fields['same_location'].initial = True
-                    self.fields['governorate'].initial = registration_obj.adolescent.governorate_id
-                    self.fields['district'].initial = registration_obj.adolescent.district_id
-                    self.fields['cadaster'].initial = registration_obj.adolescent.cadaster_id
-                    self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
-                    self.fields['district'].widget.attrs['disabled'] = 'disabled'
-                    self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
-        elif same_location and registration_obj and registration_obj.adolescent:
-            self.fields['governorate'].initial = registration_obj.adolescent.governorate_id
-            self.fields['district'].initial = registration_obj.adolescent.district_id
-            self.fields['cadaster'].initial = registration_obj.adolescent.cadaster_id
-            self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
-            self.fields['district'].widget.attrs['disabled'] = 'disabled'
-            self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
+        self.fields['governorate'].initial = gov_initial
+        self.fields['district'].initial = dist_initial
+        self.fields['cadaster'].initial = cad_initial
 
         gov_id = self.data.get('governorate') or self.fields['governorate'].initial
         if gov_id:

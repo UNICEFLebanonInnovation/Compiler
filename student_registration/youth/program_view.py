@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 
 from .program_form import *
 from .utils import *
-from student_registration.youth.models import EnrolledPrograms
+from student_registration.youth.models import EnrolledPrograms, Registration
 
 
 class EnrolledProgramsFormView(LoginRequiredMixin,
@@ -33,15 +33,13 @@ class EnrolledProgramsFormView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         registry = self.kwargs['registry']
         instance = self.kwargs['pk'] if 'pk' in self.kwargs else None
-        data = {}
         if self.request.method == "POST":
             return EnrolledProgramsForm(self.request.POST, instance=instance, registry=registry,
                                         request=self.request)
-        else:
-            if instance:
-                data = to_array(EnrolledProgramsForm.Meta.fields, EnrolledPrograms.objects.get(id=instance))
-                return EnrolledProgramsForm(data, registry=registry,  instance=instance, request=self.request)
-            return EnrolledProgramsForm(registry=registry,  instance=instance, request=self.request)
+        if instance:
+            data = to_array(EnrolledProgramsForm.Meta.fields, EnrolledPrograms.objects.get(id=instance))
+            return EnrolledProgramsForm(initial=data, registry=registry, instance=instance, request=self.request)
+        return EnrolledProgramsForm(registry=registry, instance=instance, request=self.request)
 
     def form_valid(self, form):
         registry = self.kwargs['registry']
