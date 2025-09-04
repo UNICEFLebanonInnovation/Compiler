@@ -297,7 +297,7 @@ class EnrolledProgramsForm(forms.ModelForm):
         cleaned_data = super(EnrolledProgramsForm, self).clean()
         registration_date = cleaned_data.get("registration_date")
         completion_date = cleaned_data.get("completion_date")
-        if registration_date >= completion_date:
+        if registration_date and completion_date and registration_date > completion_date:
             self.add_error('registration_date', 'Registration Date must be less than Completion Date')
 
         same_location = cleaned_data.get('same_location')
