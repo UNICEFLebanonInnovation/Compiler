@@ -3,6 +3,28 @@
 $(document).ready(function() {
     reorganizeForm();
 
+    var initialGov = $('#id_governorate').val();
+    var initialDistrict = $('#id_district').val();
+    var initialCadaster = $('#id_cadaster').val();
+
+    function toggleLocation() {
+        var same = $('#id_same_location').is(':checked');
+        if (same) {
+            $('#id_governorate').val(initialGov).prop('disabled', true);
+            $('#id_district').val(initialDistrict).prop('disabled', true);
+            $('#id_cadaster').val(initialCadaster).prop('disabled', true);
+        } else {
+            $('#id_governorate').prop('disabled', false);
+            $('#id_district').prop('disabled', false);
+            $('#id_cadaster').prop('disabled', false);
+        }
+    }
+
+    if($('#id_same_location').length === 1) {
+        toggleLocation();
+        $('#id_same_location').on('change', toggleLocation);
+    }
+
     if($(document).find('#id_dropout_date').length == 1) {
         $('#id_dropout_date').datepicker({dateFormat: "yy-mm-dd"});
     }
@@ -15,6 +37,10 @@ $(document).ready(function() {
 
     $(document).on('change', 'select#id_education_status', function(){
         reorganizeForm();
+    });
+
+    $('form').on('submit', function(){
+        $('#id_governorate,#id_district,#id_cadaster').prop('disabled', false);
     });
 });
 
@@ -83,6 +109,33 @@ function load_sub_program(url)
     })
 }
 
+function load_districts(url)
+{
+    var value = $("#id_governorate").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_adolescent_governorate': value
+        },
+        success: function (data) {
+            $("#id_district").html(data);
+        }
+    })
+}
+
+function load_cadasters(url)
+{
+    var value = $("#id_district").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_adolescent_district': value
+        },
+        success: function (data) {
+            $("#id_cadaster").html(data);
+        }
+    })
+}
 
 function urlParam(name){
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);

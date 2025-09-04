@@ -188,20 +188,27 @@ class ClassRoomAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
-class PartnerOrganizationResource(resources.ModelResource):
-    class Meta:
-        model = PartnerOrganization
-        fields = (
-            'id',
-            'name',
-        )
-        export_order = ('name')
-
-
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
-    resource_class = PartnerOrganizationResource
     filter_horizontal = ('schools', )
-    search_fields = ('name', )
+    search_fields = ('name', 'short_name')
+    list_filter = ('is_Kayany', 'is_unrwa', 'is_youth', 'active')
+    list_display = (
+        'name',
+        'short_name',
+        'is_Kayany',
+        'is_unrwa',
+        'is_youth',
+        'active',
+    )
+    fields = (
+        'name',
+        'short_name',
+        'is_Kayany',
+        'is_unrwa',
+        'is_youth',
+        'active',
+        'schools'
+    )
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "schools":
@@ -681,6 +688,9 @@ class SchoolAdmin(ImportExportModelAdmin):
     fields = (
             'number',
             'name',
+            'is_closed',
+            'is_bma',
+            'is_unrwa',
             'director_name',
             'land_phone_number',
             'email',
@@ -712,7 +722,6 @@ class SchoolAdmin(ImportExportModelAdmin):
             'receive_supplies',
             'number_dirasa_children_disability',
             'number_total_children_disability',
-            'is_closed',
     )
     list_display = (
         'id',
@@ -724,12 +733,14 @@ class SchoolAdmin(ImportExportModelAdmin):
         'governorate',
         'district',
         'is_closed',
+        'is_bma',
+        'is_unrwa',
     )
     search_fields = (
         'name',
         'number',
-        'is_closed',
     )
+    list_filter = ('is_closed', 'is_bma','is_unrwa',)
 
     def has_delete_permission(self, request, obj=None):
         return False

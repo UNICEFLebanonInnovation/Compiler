@@ -166,24 +166,34 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_child_first_name, select#id_child_father_name, select#id_child_last_name, select#id_child_birthday_year, select#id_child_birthday_month, select#id_child_birthday_day', function(){
-        $('#search_loader').removeClass('hidden');
-        $('#nfe_search_loader').removeClass('hidden');
-
+    $(document).on('change',
+      '#id_child_first_name, #id_child_father_name, #id_child_last_name, ' +
+      '#id_child_mother_fullname, #id_child_gender, #id_child_birthday_year, ' +
+      '#id_child_birthday_month, #id_child_birthday_day, #id_child_nationality',
+      function () {
         var first_name = $('#id_child_first_name').val();
         var father_name = $('#id_child_father_name').val();
         var last_name = $('#id_child_last_name').val();
-        if ( first_name!= '' && father_name!= '' && last_name!= '')
-        {
-            outreach_child_search();
-            old_child_search();
+        var mother_fullname = $('#id_child_mother_fullname').val();
+        var sex = $('#id_child_gender').val();
+        var year = $('#id_child_birthday_year').val();
+        var month = $('#id_child_birthday_month').val();
+        var day = $('#id_child_birthday_day').val();
+        var nationality = $('#id_child_nationality').val();
+
+        if (first_name && father_name && last_name && year && month && day) {
+
+          $('#search_loader').removeClass('hidden');
+          $('#nfe_search_loader').removeClass('hidden');
+
+          outreach_child_search();
+          old_child_search();
+          if ( mother_fullname && sex && nationality) {
             child_duplication_check();
         }
-        else{
-            $('#search_loader').addClass('hidden');
-            $('#nfe_search_loader').addClass('hidden');
         }
-    });
+      }
+    );
 
     $(document).on('change', 'select#id_main_caregiver', function(){
         var main_caregiver = $('select#id_main_caregiver').val();
@@ -396,21 +406,22 @@ function old_child_search() {
         });
     }
 }
-
 function child_duplication_check() {
 
     $('#child-duplication-error').hide();
     $('#submit-id-save').prop('disabled', false);
 
-//    if (isAddPage()) {
+    var birthday_year = $('#id_child_birthday_year').val();
+    var birthday_month = $('#id_child_birthday_month').val();
+    var birthday_day = $('#id_child_birthday_day').val();
+    var first_name = $('#id_child_first_name').val();
+    var father_name = $('#id_child_father_name').val();
+    var last_name = $('#id_child_last_name').val();
+    var mother_fullname = $('#id_child_mother_fullname').val();
+    var sex = $('#id_child_gender').val();
+    var nationality = $('#id_child_nationality').val();
 
-        var birthday_year = $('#id_child_birthday_year').val();
-        var birthday_month = $('#id_child_birthday_month').val();
-        var birthday_day = $('#id_child_birthday_day').val();
-        var first_name = $('#id_child_first_name').val();
-        var father_name = $('#id_child_father_name').val();
-        var last_name = $('#id_child_last_name').val();
-
+    if (birthday_year && birthday_month && birthday_day && first_name && father_name && last_name && mother_fullname && sex && nationality) {
         var data = {
             birthday_year: birthday_year,
             birthday_month: birthday_month,
@@ -418,14 +429,28 @@ function child_duplication_check() {
             first_name: first_name,
             father_name: father_name,
             last_name: last_name,
+            mother_fullname: mother_fullname,
+            sex: sex,
+            nationality: nationality
         };
 
+        var path = window.location.pathname;
+        var match = path.match(/Child-Edit\/([^\/]+)\//);
+        if (match) {
+            data.registration_id = match[1];
+        }
+
+        var requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
         $.ajax({
+            type: "POST",
             url: '/mscc/child-duplication-check/',
-            dataType: "json",
-            data: data,
+            data: JSON.stringify(data),
             cache: false,
             async: true,
+            headers: requestHeaders,
+            dataType: 'json',
             success: function (response) {
                 if(response.result.length > 0){
                     var text = ''
@@ -436,18 +461,14 @@ function child_duplication_check() {
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
                     $('#submit-id-save').prop('disabled', true);
-
                 }
-                console.log(response);
             },
             error: function (response) {
                 console.log(response);
             }
         });
-//    }
+    }
 }
-
-
 function append_old_result(data)
 {
     var child_html = '';

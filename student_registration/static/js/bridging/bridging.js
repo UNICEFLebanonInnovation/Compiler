@@ -26,15 +26,6 @@ $(window).load(function () {
 $(document).ready(function() {
     new_registry = $('#id_new_registry').val();
 
-//    if(new_registry == 'no')
-//    {
-//        check_duplicate_registration();
-//    }
-//    else
-//    {
-//            duplicate_search_student_name();
-//    }
-
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -99,49 +90,13 @@ $(document).ready(function() {
          reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_round', function () {
-            duplicate_search_student_name();
+
+
+    $(document).on('change', 'input#id_student_first_name, input#id_student_father_name, input#id_student_last_name, input#id_student_mother_fullname, #id_round, #id_student_sex, #id_student_birthday_day, #id_student_birthday_month, #id_student_birthday_year, #id_student_nationality', function () {
+        check_unicef_duplicate();
     });
 
-    $(document).on('change', 'input#id_student_first_name', function () {
-        duplicate_search_student_name();
-    });
 
-    $(document).on('change', 'input#id_student_father_name', function () {
-       duplicate_search_student_name();
-    });
-
-    $(document).on('change', 'input#id_student_last_name', function () {
-        duplicate_search_student_name();
-
-    });
-
-    $(document).on('change', 'input#id_student_mother_fullname', function () {
-        duplicate_search_student_name();
-
-    });
-
-    $(document).on('change', 'input#id_case_number, ' +
-        'input#id_recorded_number, ' +
-        'input#id_parent_syrian_national_number, ' +
-        'input#id_parent_sop_national_number, ' +
-        'input#id_parent_national_number, ' +
-        'input#id_parent_other_number', function () {
-        duplicate_search('id');
-
-    });
-
-    $(document).on('change', 'input#id_phone_number', function() {
-        var student_first_name= $('#id_student_first_name').val();
-        var student_father_name= $('#id_student_father_name').val();
-        var student_last_name= $('#id_student_last_name').val();
-        var phone_number= $('#id_phone_number').val();
-
-        if (student_first_name!='' && student_father_name!='' && student_last_name!=''  && phone_number!='')
-        {
-            duplicate_search('phone');
-        }
-    });
     $(document).on('change', 'select#id_new_registry', function(){
         reorganizeForm();
     });
@@ -1435,98 +1390,64 @@ function reorganize_pre_assessment()
 
 }
 
-function duplicate_search_student_name()
-{
-    var student_first_name= $('#id_student_first_name').val();
-    var student_father_name= $('#id_student_father_name').val();
-    var student_last_name= $('#id_student_last_name').val();
-    var student_mother_fullname= $('#student_mother_fullname').val();
 
-    if (student_first_name!='' && student_father_name!='' && student_last_name!=''  && student_mother_fullname!='')
-    {
-        duplicate_search('student name');
-    }
-
-}
-
-
-function duplicate_search(search_by) {
-
-    if (search_by=='student name' || isAddPage() ) {
-    var search_by = search_by;
+function check_unicef_duplicate() {
     var round = $('select#id_round').val();
-//        var new_registry = $('select#id_new_registry').val();
-    var student_id = $('#id_student_id').val();
-    var student_first_name = $('#id_student_first_name').val();
-    var student_father_name = $('#id_student_father_name').val();
-    var student_last_name = $('#id_student_last_name').val();
-    var student_mother_fullname = $('#id_student_mother_fullname').val();
-    var phone_number = $('#id_phone_number').val();
-    var id_type = $('#id_id_type').val();
-    var case_number = $('#id_case_number').val();
-    var recorded_number = $('#id_recorded_number').val();
-    var parent_syrian_national_number = $('#id_parent_syrian_national_number').val();
-    var parent_sop_national_number = $('#id_parent_sop_national_number').val();
-    var parent_national_number = $('#id_parent_national_number').val();
-    var parent_other_number = $('#id_parent_other_number').val();
+    var first_name = $('#id_student_first_name').val();
+    var father_name = $('#id_student_father_name').val();
+    var last_name = $('#id_student_last_name').val();
+    var mother_fullname = $('#id_student_mother_fullname').val();
+    var sex = $('#id_student_sex').val();
+    var day = $('#id_student_birthday_day').val();
+    var month = $('#id_student_birthday_month').val();
+    var year = $('#id_student_birthday_year').val();
+    var nationality = $('#id_student_nationality').val();
 
-    var data = {
-        search_by: search_by,
-        round_id: round,
-        // new_registry: new_registry,
-        clm_type: 'Bridging',
-        student_id: student_id,
-        student_first_name: student_first_name,
-        student_father_name: student_father_name,
-        student_last_name: student_last_name,
-        student_mother_fullname: student_mother_fullname,
-        phone_number: phone_number,
-        id_type: id_type,
-        case_number: case_number,
-        recorded_number: recorded_number,
-        parent_syrian_national_number: parent_syrian_national_number,
-        parent_sop_national_number: parent_sop_national_number,
-        parent_national_number: parent_national_number,
-        parent_other_number: parent_other_number,
-    };
-
-    requestHeaders = getHeader();
-    requestHeaders["content-type"] = 'application/json';
-
-    $.ajax({
-        type: "POST",
-        url: '/clm/search-clm-duplicate-registration/',
-        data: JSON.stringify(data),
-        cache: false,
-        async: false,
-        headers: requestHeaders,
-        dataType: 'json',
-        success: function (response) {
-
-            if (response.result != "") {
-                showModal("The child already exists with the partner  " + response.result);
-                $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
-                $(':input[type="submit"][name="save"]').prop('disabled', true);
-                // $('#').addClass('d-none');
-
-            }
-            else {
-                $(':input[type="submit"][name="save_add_another"]').prop('disabled', false);
-                $(':input[type="submit"][name="save"]').prop('disabled', false);
-            }
-
-            console.log(response);
-        },
-        error: function (response) {
-            console.log(response);
+    if (round && first_name && father_name && last_name && mother_fullname && sex && day && month && year && nationality) {
+        var path = window.location.pathname;
+        var match = path.match(/bridging-edit\/([^\/]+)\//);
+        var data = {
+            round_id: round,
+            student_first_name: first_name,
+            student_father_name: father_name,
+            student_last_name: last_name,
+            student_mother_fullname: mother_fullname,
+            student_sex: sex,
+            student_birthday_day: day,
+            student_birthday_month: month,
+            student_birthday_year: year,
+            student_nationality: nationality
+        };
+        if (match) {
+            data.registration_id = match[1];
         }
 
+        requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
 
-    });
-
-
+        $.ajax({
+            type: "POST",
+            url: '/clm/search-clm-duplicate-unicef-id/',
+            data: JSON.stringify(data),
+            cache: false,
+            headers: requestHeaders,
+            dataType: 'json',
+            success: function (response) {
+                if (response.result != "") {
+                    alert("The child already exists with the partner  " + response.result);
+                    $(':input[type="submit"][name="save_add_another"]').prop('disabled', true);
+                    $(':input[type="submit"][name="save"]').prop('disabled', true);
+                }
+                else {
+                    $(':input[type="submit"][name="save_add_another"]').prop('disabled', false);
+                    $(':input[type="submit"][name="save"]').prop('disabled', false);
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
     }
-
 }
 
 function moved_student(item, moved_date)

@@ -147,19 +147,18 @@ $(document).ready(function() {
         reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_adolescent_first_name, select#id_adolescent_father_name, select#id_adolescent_last_name, select#id_adolescent_birthday_year, select#id_adolescent_birthday_month, select#id_adolescent_birthday_day', function(){
+    $(document).on('change', '#id_adolescent_first_name, #id_adolescent_father_name, #id_adolescent_last_name, #id_adolescent_mother_fullname, #id_adolescent_gender, #id_adolescent_birthday_year, #id_adolescent_birthday_month, #id_adolescent_birthday_day, #id_adolescent_nationality', function(){
         $('#search_loader').removeClass('hidden');
         $('#nfe_search_loader').removeClass('hidden');
 
-        var first_name = $('#id_adolescent_first_name').val();
-        var father_name = $('#id_adolescent_father_name').val();
-        var last_name = $('#id_adolescent_last_name').val();
-        if ( first_name!= '' && father_name!= '' && last_name!= '')
-        {
-            outreach_adolescent_search();
-            old_adolescent_search();
-            adolescent_duplication_check();
-        }
+//        var first_name = $('#id_adolescent_first_name').val();
+//        var father_name = $('#id_adolescent_father_name').val();
+//        var last_name = $('#id_adolescent_last_name').val();
+//        if ( first_name!= '' && father_name!= '' && last_name!= '')
+//        {
+//            outreach_adolescent_search();
+//        }
+        adolescent_duplication_check();
     });
 
     $(document).on('change', 'select#id_main_caregiver', function(){
@@ -204,6 +203,74 @@ $(document).ready(function() {
 
 });
 
+
+function append_new_result(data)
+{
+
+    var child_html = '';
+    $('#outreach_search_result').empty();
+    $('#search_loader').addClass('hidden');
+
+    $(data.result).each(function(i, item) {
+        var full_name = "";
+        full_name = full_name.concat(item.first_name, " ", item.outreach_caregiver__father_name, " ", item.outreach_caregiver__last_name);
+
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success">'+ item.score +'%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_child_data('+ item.id +');">'+full_name+'</a></h4>';
+        var html_line3 = '<p>'+ item.date_of_birth + ' - '+ item.outreach_caregiver__mother_full_name +'</p>';
+        var html_line4 = '<p>'+ item.gender + ' - '+ item.nationality +'</p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
+        $('#outreach_search_result').append(child_html);
+    });
+
+    if(data.result.length == 0) {
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-cross text-danger"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-danger">No result found</h4>';
+        var html_line3 = '<p></p>';
+        var html_line4 = '<p></p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
+        $('#outreach_search_result').append(child_html);
+
+    }
+}
+
+function get_child_data(outreach_id)
+{
+    $('#search_loader').removeClass('hidden');
+
+    $.ajax({
+        url: '/MSCC/Outreach-Child/',
+        data: { outreach_id: outreach_id},
+        cache: false,
+        async: true,
+        dataType: 'json',
+        success: function (response) {
+            fill_outreach_child_data(response);
+        },
+        error: function (response) {
+            console.log(response);
+        }
+    });
+}
+
+function fill_outreach_child_data(data)
+{
+    $('#search_loader').addClass('hidden');
+    $(data).each(function(i, item) {
+        console.log(item);
+        {
+            Object.keys(item).forEach(key => {
+                $('#id_'+ key).val(item[key]);
+            });
+        }
+    });
+    $('#search_loader').addClass('hidden');
+}
+
 function load_districts(url)
 {
     var value = $("#id_adolescent_governorate").val();
@@ -231,6 +298,196 @@ function load_cadasters(url)
         }
     })
 }
+
+function old_child_search() {
+
+    if (isAddPage()) {
+
+        var birthday_year = $('#id_adolescent_birthday_year').val();
+        var birthday_month = $('#id_adolescent_birthday_month').val();
+        var birthday_day = $('#id_adolescent_birthday_day').val();
+        var first_name = $('#id_adolescent_first_name').val();
+        var father_name = $('#id_adolescent_father_name').val();
+        var last_name = $('#id_adolescent_last_name').val();
+
+        var data = {
+            birthday_year: birthday_year,
+            birthday_month: birthday_month,
+            birthday_day: birthday_day,
+            first_name: first_name,
+            father_name: father_name,
+            last_name: last_name,
+        };
+
+        $.ajax({
+            url: '/MSCC/Old-Child-Search/',
+            dataType: "json",
+            data: data,
+            cache: false,
+            async: true,
+            success: function (response) {
+                append_old_result(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+}
+
+function adolescent_duplication_check() {
+
+    $('#child-duplication-error').hide();
+    $('#submit-id-save').prop('disabled', false);
+
+    var birthday_year = $('#id_adolescent_birthday_year').val();
+    var birthday_month = $('#id_adolescent_birthday_month').val();
+    var birthday_day = $('#id_adolescent_birthday_day').val();
+    var first_name = $('#id_adolescent_first_name').val();
+    var father_name = $('#id_adolescent_father_name').val();
+    var last_name = $('#id_adolescent_last_name').val();
+    var mother_fullname = $('#id_adolescent_mother_fullname').val();
+    var sex = $('#id_adolescent_gender').val();
+    var nationality = $('#id_adolescent_nationality').val();
+
+    if (birthday_year && birthday_month && birthday_day && first_name && father_name && last_name && mother_fullname && sex && nationality) {
+        var data = {
+            birthday_year: birthday_year,
+            birthday_month: birthday_month,
+            birthday_day: birthday_day,
+            first_name: first_name,
+            father_name: father_name,
+            last_name: last_name,
+            mother_fullname: mother_fullname,
+            sex: sex,
+            nationality: nationality
+        };
+
+        var path = window.location.pathname;
+        var match = path.match(/Child-Edit\/([^\/]+)\//);
+        if (match) {
+            data.registration_id = match[1];
+        }
+
+        var requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
+        $.ajax({
+            type: "POST",
+            url: '/youth/Child-Duplication-Check/',
+            data: JSON.stringify(data),
+            cache: false,
+            async: true,
+            headers: requestHeaders,
+            dataType: 'json',
+            success: function (response) {
+                if (response.has_duplicate) {
+                    const partnerName = response.partner_name || 'another partner';
+                    $('#child-duplication-error-text')
+                      .html(`Another adolescent already has this UNICEF ID with partner <b>${partnerName}</b>.`);
+                    $('#child-duplication-error').show();
+                    $('#submit-id-save').prop('disabled', true);
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+}
+
+function append_old_result(data)
+{
+    var child_html = '';
+    $('#nfe_search_result').empty();
+    $('#nfe_search_loader').addClass('hidden');
+
+    if(data.result.error) {
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-warning"><i class="lnr-cross text-warning"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-warning">'+ data.result.error +'</h4>';
+        var html_line3 = '<p></p>';
+        var html_line4 = '<p></p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
+        $('#nfe_search_result').append(child_html);
+
+        return true;
+    }
+
+    if(data.result.length == 0) {
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-danger"><i class="lnr-warning text-danger"></i></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-danger">No result found</h4>';
+        var html_line3 = '<p></p>';
+        var html_line4 = '<p></p></div></div></div>';
+
+        child_html = html_line1 + html_line2 + html_line3 + html_line4;
+
+        $('#nfe_search_result').append(child_html);
+
+        return true;
+    }
+
+    $(data.result).each(function(i, item) {
+        var full_name = "";
+        full_name = full_name.concat(item.first_name, " ", item.father_name, " ", item.last_name);
+
+        var html_line1 = '<div class="vertical-timeline-item vertical-timeline-element"><div><div class="vertical-timeline-element-icon bounce-in"><div class="timeline-icon border-success"><span class="text-success">'+ item.score +'%</span></div></div><div class="vertical-timeline-element-content bounce-in">';
+        var html_line2 = '<h4 class="timeline-title text-success"><a href="javascript:get_old_child_data('+ item.id +');">'+full_name+'</a></h4>';
+        var html_line3 = '<p>'+ item.birthday_day + '/'+ item.birthday_month + '/'+ item.birthday_year + ' - '+ item.mother_fullname +'</p>';
+        var html_line4 = '<p>'+ item.sex + ' - '+ item.nationality__name +'</p>';
+        var html_line5 = '<p>'+ item.programmes +'</p></div></div></div>';
+        child_html = html_line1 + html_line2 + html_line3 + html_line4 + html_line5;
+
+        $('#nfe_search_result').append(child_html);
+
+        return true;
+    });
+
+}
+
+function get_old_child_data(student_id)
+{
+    $('#nfe_search_loader').removeClass('hidden');
+
+    $.ajax({
+        url: '/MSCC/Get-Old-Child-Data/',
+        data: { student_id: student_id},
+        cache: false,
+        async: true,
+        dataType: 'json',
+        success: function (response) {
+            fill_old_child_data(response);
+        },
+        error: function (response) {
+            console.log(response);
+        }
+    });
+}
+
+function fill_old_child_data(data)
+{
+    $('#nfe_search_loader').addClass('hidden');
+    $(data).each(function(i, item) {
+        console.log(item);
+        {
+            Object.keys(item).forEach(key => {
+                $('#id_'+ key).val(item[key]);
+            });
+        }
+    });
+    $('#nfe_search_loader').addClass('hidden');
+}
+
+
+function isAddPage()
+{
+    if( $(document).find('#outreach-nfe-result').length == 1) {
+        return true;
+    }
+    return false;
+}
+
 
 function reorganizeForm()
 {

@@ -44,6 +44,10 @@ from django.shortcuts import redirect, render
 from django.conf import settings
 import uuid
 from django.core.files.base import ContentFile
+import re
+from django.contrib.auth.decorators import login_required
+from student_registration.students.utils import generate_one_unique_id
+from student_registration.students.models import Nationality
 from student_registration.backends.utils import (
     ExportStorage,
     download_file,
@@ -65,6 +69,7 @@ from .models import (
     Registration,
     Referral,
     EducationHistory,
+    Round
     ProvidedServices,
 )
 from student_registration.backends.models import ExportHistory
@@ -147,11 +152,26 @@ class ProfileView(LoginRequiredMixin,
         generate_services(instance.child.age, instance)
         current_tab = self.request.GET.get('current_tab', 'info')
 
+        rounds_registered = EducationService.objects.filter(
+            registration__child_id=instance.child.id,
+            registration__deleted=False
+        ).values_list('round_id', flat=True)
+
+        # Remove any None values
+        rounds_registered = [r for r in rounds_registered if r is not None]
+
+        # Query for available rounds
+        available_rounds = Round.objects.filter(current_year=True).exclude(id__in=rounds_registered)
+
+        # Check if any exist
+        new_round = available_rounds.exists()
+        
         services = ProvidedServices.objects.filter(registration=instance)
         services_dict = {service.name: service for service in services}
 
         return {
             'instance': instance,
+            'new_round': new_round,
             'current_tab': current_tab,
             'provided_services': services_dict,
         }
@@ -777,40 +797,49 @@ def old_child_data(request):
 
 
 def child_duplication_check(request):
+    body_unicode = request.body.decode('utf-8')
+    if body_unicode:
+        body = json.loads(body_unicode)
 
-    birthday_year = request.GET.get('birthday_year')
-    birthday_month = request.GET.get('birthday_month')
-    birthday_day = request.GET.get('birthday_day')
-    first_name = request.GET.get('first_name')
-    father_name = request.GET.get('father_name')
-    last_name = request.GET.get('last_name')
+        birthday_year = body.get('birthday_year')
+        birthday_month = body.get('birthday_month')
+        birthday_day = body.get('birthday_day')
+        first_name = body.get('first_name')
+        father_name = body.get('father_name')
+        last_name = body.get('last_name')
+        mother_fullname = body.get('mother_fullname')
+        sex = body.get('sex')
+        nationality_id = body.get('nationality')
+        registration_id = body.get('registration_id')
 
-    form_str = '{} {} {}'.format(first_name, father_name, last_name)
-    filtered_results = Registration.objects.filter(
-        child__birthday_year=birthday_year,
-        child__birthday_month=birthday_month,
-        child__birthday_day=birthday_day,
-        deleted=False
-    )
+        try:
+            nationality = Nationality.objects.get(id=nationality_id).name_en
+        except Nationality.DoesNotExist:
+            nationality = ''
 
-    filtered_results = filtered_results.values(
-        'id',
-        'child__first_name',
-        'child__father_name',
-        'child__last_name',
-        'center__name'
-    ).distinct()
+        birthdate = '{0}-{1}-{2}'.format(birthday_year, birthday_month, birthday_day)
+        unicef_id = generate_one_unique_id(
+            '0',
+            first_name,
+            father_name,
+            last_name,
+            mother_fullname,
+            birthdate,
+            nationality,
+            sex
+        )
 
-    result_match = []
-    for result in filtered_results:
-        result_str = '{} {} {}'.format(result['child__first_name'], result['child__father_name'],
-                                       result['child__last_name'])
-        fuzzy_match = fuzz.ratio(form_str, result_str)
-        if fuzzy_match > 95:
-            result['score'] = fuzzy_match
-            result_match.append(result)
+        if unicef_id:
+            qs = Registration.objects.filter(
+                child__unicef_id=unicef_id,
+                deleted=False
+            )
+            if registration_id:
+                qs = qs.exclude(pk=registration_id)
+            qs = qs.values('id', 'center__name')
+            return JsonResponse({'result': list(qs)})
 
-    return JsonResponse({'result': result_match})
+    return JsonResponse({'result': []})
 
 
 def quick_search(request):

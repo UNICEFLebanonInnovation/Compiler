@@ -12,7 +12,7 @@ $(document).ready(function() {
         var adolescent_first_name = $("#id_adolescent__first_name").val();
         var adolescent_father_name = $("#id_adolescent__father_name").val();
         var adolescent_last_name = $("#id_adolescent__last_name").val();
-        var adolescent_number = $("#id_adolescent__number").val();
+        var adolescent_unicef_id = $("#id_adolescent__unicef_id").val();
         var adolescent_gender = $("#id_adolescent__gender").val();
         var adolescent_nationality = $("#id_adolescent__nationality").val();
         var adolescent_disability = $("#id_adolescent__disability").val();
@@ -32,7 +32,7 @@ $(document).ready(function() {
                                 + "&adolescent_first_name=" + adolescent_first_name
                                 + "&adolescent_father_name=" + adolescent_father_name
                                 + "&adolescent_last_name=" + adolescent_last_name
-                                + "&adolescent_number=" + adolescent_number
+                                + "&adolescent_unicef_id=" + adolescent_unicef_id
                                 + "&adolescent_gender=" + adolescent_gender
                                 + "&adolescent_nationality=" + adolescent_nationality
                                 + "&adolescent_disability=" + adolescent_disability

@@ -302,7 +302,7 @@ class MainForm(forms.ModelForm):
         required=False
     )
     id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.filter(active =True),
+        queryset=IDType.objects.filter(active=True),
         widget=forms.Select,
         label=_('ID type of the caregiver'),
         required=False, to_field_name='id'
@@ -877,10 +877,10 @@ class ReferralForm(forms.ModelForm):
         choices=YES_NO,
     )
     referred_school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
-        label=_('Name of the School referred to'),
-        empty_label='-------',
-        required=False, to_field_name='id',
+        queryset=School.objects.filter(is_bma=True),
+        widget=autocomplete.ModelSelect2(url='school_autocomplete'),
+        label=_('Name of public School'),
+        required=False,
     )
     receive_needed_material = forms.ChoiceField(
         label=_("Did the child receive all needed materials and resources (Stationery, Books, Learning bundle)?"),

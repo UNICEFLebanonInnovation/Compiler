@@ -272,6 +272,18 @@ class MainForm(forms.ModelForm):
 
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
+
+        gov_id = self.data.get('adolescent_governorate') or self.fields['adolescent_governorate'].initial
+        if gov_id:
+            self.fields['adolescent_district'].queryset = Location.objects.filter(parent_id=gov_id).order_by('name')
+        else:
+            self.fields['adolescent_district'].queryset = Location.objects.none()
+
+        dist_id = self.data.get('adolescent_district') or self.fields['adolescent_district'].initial
+        if dist_id:
+            self.fields['adolescent_cadaster'].queryset = Location.objects.filter(parent_id=dist_id).order_by('name')
+        else:
+            self.fields['adolescent_cadaster'].queryset = Location.objects.none()
         form_action = reverse('youth:child_add')
         if instance:
             display_registry = ' d-none'
@@ -461,36 +473,16 @@ class MainForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(MainForm, self).clean()
 
-        # check if date is valid
-        year = 0
-        month = 0
-        day = 0
-        if cleaned_data.get("adolescent_birthday_year"):
-            year = int(cleaned_data.get("adolescent_birthday_year"))
-        if cleaned_data.get("adolescent_birthday_month"):
-            month = int(cleaned_data.get("adolescent_birthday_month"))
-        if cleaned_data.get("adolescent_birthday_day"):
-            day = int(cleaned_data.get("adolescent_birthday_day"))
+        year = int(cleaned_data.get("adolescent_birthday_year") or 0)
+        month = int(cleaned_data.get("adolescent_birthday_month") or 0)
+        day = int(cleaned_data.get("adolescent_birthday_day") or 0)
 
         try:
             datetime.datetime(year, month, day)
         except ValueError:
             self.add_error('adolescent_birthday_year', 'The date is not valid.')
 
-        adolescent_nationality = cleaned_data.get("adolescent_nationality")
-        adolescent_nationality_other = cleaned_data.get("adolescent_nationality_other")
-        if adolescent_nationality and adolescent_nationality.id == 6 and not adolescent_nationality_other:
-            self.add_error('adolescent_nationality_other', 'This field is required')
-
-        main_caregiver = cleaned_data.get("main_caregiver")
-        main_caregiver_other = cleaned_data.get("main_caregiver_other")
-        if main_caregiver == 'Other' and not main_caregiver_other:
-            self.add_error('main_caregiver_other', 'This field is required')
-
-        main_caregiver_nationality = cleaned_data.get("main_caregiver_nationality")
-        main_caregiver_nationality_other = cleaned_data.get("main_caregiver_nationality_other")
-        if main_caregiver_nationality and main_caregiver_nationality.id == 6 and not main_caregiver_nationality_other:
-            self.add_error('main_caregiver_nationality_other', 'This field is required')
+        return cleaned_data
 
     def save(self, request=None, instance=None):
 

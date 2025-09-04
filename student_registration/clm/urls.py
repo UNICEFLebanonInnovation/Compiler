@@ -256,11 +256,14 @@ urlpatterns = [
         name='outreach_child'
     ),
     re_path(
+        'search-clm-duplicate-unicef-id/$',
+        bridging_views.search_clm_duplicate_unicef_id,
+        name='search_clm_duplicate_unicef_id'
+    re_path(
         'search-clm-duplicate-registration/$',
         bridging_views.search_clm_duplicate_registration,
         name='search_clm_duplicate_registration'
     ),
-
     re_path(
         r'^exec-abln-update/$',
         view=views.ExecABLNUpdateView.as_view(),

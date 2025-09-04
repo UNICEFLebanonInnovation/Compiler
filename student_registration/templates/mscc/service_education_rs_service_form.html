@@ -10,8 +10,14 @@
 {% block project_title %}RS{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+  <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+
+  {{ form.media }}
+
+  <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+
 {% endblock %}
+
 
 {% block content %}
 

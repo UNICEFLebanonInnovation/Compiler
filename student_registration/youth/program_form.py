@@ -81,6 +81,33 @@ class EnrolledProgramsForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
 
+    same_location = forms.BooleanField(
+        label=_('Same location'),
+        required=False,
+        initial=True,
+    )
+    governorate = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=True),
+        widget=forms.Select,
+        label=_('Governorate'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    district = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False),
+        widget=forms.Select,
+        label=_('District'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+    cadaster = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False),
+        widget=forms.Select,
+        label=_('Cadaster'),
+        empty_label='-------',
+        required=False, to_field_name='id',
+    )
+
     registration_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -91,6 +118,54 @@ class EnrolledProgramsForm(forms.ModelForm):
         super(EnrolledProgramsForm, self).__init__(*args, **kwargs)
 
         self.fields['registration_id'].initial = registry
+
+        registration_obj = None
+        if registry:
+            registration_obj = Registration.objects.filter(id=registry).select_related('adolescent').first()
+
+        if self.data:
+            same_location = self.data.get('same_location') in ['on', 'True', 'true', True, '1']
+        else:
+            same_location = self.initial.get('same_location', True)
+        self.fields['same_location'].initial = same_location
+
+        gov_initial = self.initial.get('governorate')
+        dist_initial = self.initial.get('district')
+        cad_initial = self.initial.get('cadaster')
+        if registration_obj and registration_obj.adolescent:
+            reg_gov = registration_obj.adolescent.governorate_id
+            reg_dist = registration_obj.adolescent.district_id
+            reg_cad = registration_obj.adolescent.cadaster_id
+            if same_location:
+                gov_initial = reg_gov
+                dist_initial = reg_dist
+                cad_initial = reg_cad
+                self.fields['governorate'].widget.attrs['disabled'] = 'disabled'
+                self.fields['district'].widget.attrs['disabled'] = 'disabled'
+                self.fields['cadaster'].widget.attrs['disabled'] = 'disabled'
+            else:
+                if not gov_initial:
+                    gov_initial = reg_gov
+                if not dist_initial:
+                    dist_initial = reg_dist
+                if not cad_initial:
+                    cad_initial = reg_cad
+
+        self.fields['governorate'].initial = gov_initial
+        self.fields['district'].initial = dist_initial
+        self.fields['cadaster'].initial = cad_initial
+
+        gov_id = self.data.get('governorate') or self.fields['governorate'].initial
+        if gov_id:
+            self.fields['district'].queryset = Location.objects.filter(parent_id=gov_id).order_by('name')
+        else:
+            self.fields['district'].queryset = Location.objects.none()
+
+        dist_id = self.data.get('district') or self.fields['district'].initial
+        if dist_id:
+            self.fields['cadaster'].queryset = Location.objects.filter(parent_id=dist_id).order_by('name')
+        else:
+            self.fields['cadaster'].queryset = Location.objects.none()
 
         form_action = reverse('youth:program_enrolled_programs_add', kwargs={'registry': registry})
         if instance:
@@ -133,8 +208,20 @@ class EnrolledProgramsForm(forms.ModelForm):
                     Div('sub_program', css_class='col-md-9'),
                     css_class='row card-body'
                 ),
-                css_id='step-1'
-            ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">8</span>'),
+                    Div('same_location', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
+                Div(
+                    HTML('<span class="badge-form badge-pill">9</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">10</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge-form-2 badge-pill">11</span>'),
+                    Div('cadaster', css_class='col-md-3'),
+                    css_class='row card-body'
+                ),
             FormActions(
                 Submit('save', 'Save',
                        css_class='btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success'),
@@ -143,9 +230,10 @@ class EnrolledProgramsForm(forms.ModelForm):
                 HTML(
                     '<a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/youth/Child-Registration-Cancel/{}/">Cancel</a>'.format(
                         registry)
-                ),
-
+                )
             ),
+            css_id='step-1'
+        )
         )
 
     def save(self, request=None, instance=None, registry=None):
@@ -166,6 +254,25 @@ class EnrolledProgramsForm(forms.ModelForm):
         instance.sub_program_id = validated_data.get('sub_program')
         instance.donor_id = validated_data.get('donor')
         instance.program_document_id = validated_data.get('program_document')
+
+        same_location = validated_data.get('same_location')
+        instance.same_location = True if same_location in ['on', 'True', 'true', True, '1'] else False
+
+        gov_id = validated_data.get('governorate')
+        dist_id = validated_data.get('district')
+        cad_id = validated_data.get('cadaster')
+
+        if instance.same_location and (not gov_id or not dist_id or not cad_id):
+            if registry:
+                reg_obj = Registration.objects.filter(id=registry).select_related('adolescent').first()
+                if reg_obj and reg_obj.adolescent:
+                    gov_id = reg_obj.adolescent.governorate_id
+                    dist_id = reg_obj.adolescent.district_id
+                    cad_id = reg_obj.adolescent.cadaster_id
+
+        instance.governorate_id = gov_id
+        instance.district_id = dist_id
+        instance.cadaster_id = cad_id
 
         registration_date_str = validated_data.get('registration_date')
         if registration_date_str:
@@ -190,9 +297,19 @@ class EnrolledProgramsForm(forms.ModelForm):
         cleaned_data = super(EnrolledProgramsForm, self).clean()
         registration_date = cleaned_data.get("registration_date")
         completion_date = cleaned_data.get("completion_date")
-        if registration_date >= completion_date:
+        if registration_date and completion_date and registration_date > completion_date:
             self.add_error('registration_date', 'Registration Date must be less than Completion Date')
 
+        same_location = cleaned_data.get('same_location')
+        if not same_location:
+            if not cleaned_data.get('governorate'):
+                self.add_error('governorate', _('This field is required.'))
+            if not cleaned_data.get('district'):
+                self.add_error('district', _('This field is required.'))
+            if not cleaned_data.get('cadaster'):
+                self.add_error('cadaster', _('This field is required.'))
+
+        return cleaned_data
 
     class Meta:
         model = EnrolledPrograms
@@ -206,6 +323,10 @@ class EnrolledProgramsForm(forms.ModelForm):
             'program_document',
             'master_program',
             'sub_program',
+            'same_location',
+            'governorate',
+            'district',
+            'cadaster',
         )
 
 
@@ -641,6 +762,8 @@ class ProgramDocumentForm(forms.ModelForm):
         end_date = cleaned_data.get("end_date")
         if start_date and end_date and start_date >= end_date:
             self.add_error('start_date', 'Start Date must be less than End Date')
+
+        return cleaned_data
 
     class Meta:
         model = ProgramDocument

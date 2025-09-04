@@ -52,9 +52,7 @@ class MainFilter(FilterSet):
 
 class FullFilter(FilterSet):
     partner = ChoiceFilter(
-        choices=PartnerOrganization.objects.values_list('id', 'name').order_by('name').distinct(),
-        empty_label='Partner'
-    )
+        choices=PartnerOrganization.objects.filter(active=True, is_youth=True).values_list('id', 'short_name').order_by('short_name').distinct(), empty_label='Partner')
     adolescent__governorate = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(),
         empty_label='Governorate'
@@ -260,7 +258,7 @@ class PartnerFilter(FilterSet):
 
 class PDFilter(FilterSet):
     current_year = datetime.datetime.now().year
-    partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True).values_list('id', 'short_name')
+    partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True, is_youth=True).values_list('id', 'short_name')
                                 .order_by('short_name').distinct(), empty_label='Partner')
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')

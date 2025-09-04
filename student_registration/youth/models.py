@@ -764,6 +764,28 @@ class EnrolledPrograms(TimeStampedModel):
         null=True,
         verbose_name=_('Date of completion')
     )
+    same_location = models.BooleanField(default=True)
+    governorate = models.ForeignKey(
+        Location,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name=_('Governorate')
+    )
+    district = models.ForeignKey(
+        Location,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name=_('District')
+    )
+    cadaster = models.ForeignKey(
+        Location,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name=_('Cadaster')
+    )
 
     class Meta:
         ordering = ['id']

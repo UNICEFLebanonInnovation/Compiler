@@ -318,10 +318,14 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             return {"error": "Unexpected error while processing Excel file"}
 
     def import_data(self, data, upload, request):
+        import datetime
         from student_registration.students.utils import generate_one_unique_id
+
         not_imported = []
         imported = 0
+
         for index, values in enumerate(data, start=2):
+            # ---- Missing mandatory fields
             missing = [f for f in self.mandatory_fields if not values.get(f)]
             if missing:
                 values['row'] = index
@@ -329,22 +333,102 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                 not_imported.append(values)
                 continue
 
+            invalid_fields = []
+
+            # ---- Normalize gender (and validate)
+            raw_gender = (values.get('gender') or '').strip()
+            gender_norm = raw_gender.title() if raw_gender else ''
+            if gender_norm not in ('Male', 'Female'):
+                invalid_fields.append("gender ({0})".format(raw_gender or 'None'))
+
             nationality = Nationality.objects.filter(name=values.get('nationality')).first()
-            gov = Location.objects.filter(name=values.get('governorate')).first()
-            dist = Location.objects.filter(name=values.get('district')).first()
-            cad = Location.objects.filter(name=values.get('cadaster')).first()
+            gov = Location.objects.filter(name=values.get('governorate'), type_id=1).first()
+            dist = Location.objects.filter(name=values.get('district'), type_id=2).first()
+            cad = Location.objects.filter(name=values.get('cadaster'), type_id=3).first()
             disability = Disability.objects.filter(name=values.get('disability')).first()
 
-            if not all([nationality, gov, dist, cad, disability]):
+            if not nationality:
+                invalid_fields.append("nationality ({0})".format(values.get('nationality')))
+            if not gov:
+                invalid_fields.append("governorate ({0})".format(values.get('governorate')))
+            if not dist:
+                invalid_fields.append("district ({0})".format(values.get('district')))
+            if not cad:
+                invalid_fields.append("cadaster ({0})".format(values.get('cadaster')))
+            if not disability:
+                invalid_fields.append("disability ({0})".format(values.get('disability')))
+
+            dob = None
+            try:
+                y = int(values.get('birthday_year'))
+                m = int(values.get('birthday_month'))
+                d = int(values.get('birthday_day'))
+                dob = datetime.date(y, m, d)
+                if dob >= datetime.date.today():
+                    invalid_fields.append("DOB ({0}) cannot be today or in the future".format(dob))
+            except Exception:
+                invalid_fields.append("DOB (invalid date parts)")
+
+            # ---- Optional lookups: not mandatory, but if provided must exist
+            father_ed = None
+            father_ed_val = (values.get('father_educational_level') or '').strip()
+            if father_ed_val:
+                father_ed = EducationalLevel.objects.filter(name=father_ed_val).first()
+                if not father_ed:
+                    invalid_fields.append("father_educational_level ({0})".format(father_ed_val))
+
+            mother_ed = None
+            mother_ed_val = (values.get('mother_educational_level') or '').strip()
+            if mother_ed_val:
+                mother_ed = EducationalLevel.objects.filter(name=mother_ed_val).first()
+                if not mother_ed:
+                    invalid_fields.append("mother_educational_level ({0})".format(mother_ed_val))
+
+            caregiver_nat = None
+            caregiver_nat_val = (values.get('main_caregiver_nationality') or '').strip()
+            if caregiver_nat_val:
+                caregiver_nat = Nationality.objects.filter(name=caregiver_nat_val).first()
+                if not caregiver_nat:
+                    invalid_fields.append("main_caregiver_nationality ({0})".format(caregiver_nat_val))
+
+            id_type = None
+            id_type_val = (values.get('id_type') or '').strip()
+            if id_type_val:
+                id_type = IDType.objects.filter(name=id_type_val).first()
+                if not id_type:
+                    invalid_fields.append("id_type ({0})".format(id_type_val))
+
+            # ---- UNICEF ID duplicate pre-check
+            if not invalid_fields and dob is not None and nationality is not None:
+                try:
+                    nationality_en = getattr(nationality, 'name_en', None)
+                    dob_str = u'{}-{}-{}'.format(y, m, d)
+
+                    prospective_unicef_id = generate_one_unique_id(
+                        123,
+                        (values.get('first_name') or ''),
+                        (values.get('father_name') or ''),
+                        (values.get('last_name') or ''),
+                        (values.get('mother_fullname') or ''),
+                        dob_str,
+                        nationality_en,
+                        gender_norm
+                    )
+
+                    if Registration.objects.filter(adolescent__unicef_id=prospective_unicef_id, deleted=False).exists():
+                        invalid_fields.append("duplicate unicef_id ({0})".format(prospective_unicef_id))
+
+                except Exception:
+                    invalid_fields.append("unicef_id generation failed")
+
+            # ---- If any invalids, log and skip row
+            if invalid_fields:
                 values['row'] = index
-                values['error'] = 'Invalid reference'
+                values['error'] = "Invalid: " + "; ".join(invalid_fields)
                 not_imported.append(values)
                 continue
 
-            father_ed = EducationalLevel.objects.filter(name=values.get('father_educational_level')).first() if values.get('father_educational_level') else None
-            mother_ed = EducationalLevel.objects.filter(name=values.get('mother_educational_level')).first() if values.get('mother_educational_level') else None
-            caregiver_nat = Nationality.objects.filter(name=values.get('main_caregiver_nationality')).first() if values.get('main_caregiver_nationality') else None
-            id_type = IDType.objects.filter(name=values.get('id_type')).first() if values.get('id_type') else None
+            values['gender'] = gender_norm
 
             try:
                 adolescent = Adolescent.objects.create(
@@ -400,6 +484,7 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                         adolescent.nationality_name_en,
                         adolescent.gender
                     )
+
                     adolescent.save()
 
                     Registration.objects.create(
@@ -408,20 +493,23 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
                         partner_id=getattr(request.user, 'partner_id', None),
                         center_id=getattr(request.user, 'center_id', None),
                     )
+
                 imported += 1
+
             except Exception as ex:
                 values['row'] = index
                 values['error'] = str(ex)
                 not_imported.append(values)
 
+        # ---- Write failed rows CSV
         if not_imported:
             csv_buffer = io.StringIO()
             writer = csv.DictWriter(csv_buffer, fieldnames=not_imported[0].keys())
             writer.writeheader()
             writer.writerows(not_imported)
             upload.failed_file.save(
-                'failed_{}.csv'.format(upload.pk),
-                ContentFile(csv_buffer.getvalue().encode('utf-8'))  # convert str to bytes
+                'failed_{0}.csv'.format(upload.pk),
+                ContentFile(csv_buffer.getvalue().encode('utf-8'))
             )
 
         return imported, not_imported
@@ -432,7 +520,13 @@ class AdolescentUploadFailedView(LoginRequiredMixin, View):
         upload = get_object_or_404(AdolescentUpload, pk=pk, uploaded_by=request.user)
         if not upload.failed_file:
             return HttpResponse(status=404)
-        response = HttpResponse(upload.failed_file, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s' % upload.failed_file.name.split('/')[-1]
+
+        file_content = upload.failed_file.read()
+        bom = b'\xef\xbb\xbf'
+
+        response = HttpResponse(bom + file_content, content_type='text/csv; charset=utf-8')
+        filename = upload.failed_file.name.split('/')[-1]
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
         return response
 
