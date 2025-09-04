@@ -1,8 +1,8 @@
 {% extends "location/base.html" %}
 {% load static i18n %}
-{% load static %}
+{% load static i18n %}
 {% load render_table from django_tables2 %}
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% bootstrap_css %}
 {% block project_title %}Center List{% endblock %}
@@ -25,12 +25,12 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/">
+                                                    <a href="{% url 'home' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                      <a href="/">Center List</a>
+                                                      <a href="{% url 'locations:center_list' %}">Center List</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
@@ -106,7 +106,7 @@
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
             <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap4">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
                 </div>

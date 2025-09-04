@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class MsccConfig(AppConfig):
-    name = 'mscc'
+    name = 'student_registration.mscc'

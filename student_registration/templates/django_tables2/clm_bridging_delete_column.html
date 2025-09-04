@@ -1,4 +1,4 @@
-{% load staticfiles i18n %}
+{% load static i18n %}
 {% load util_tags %}
 {% if record.owner.id == request.user.id %}
     {% if record.total_absent_days >= 40 %}

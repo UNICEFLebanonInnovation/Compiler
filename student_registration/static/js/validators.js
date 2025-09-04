@@ -64,7 +64,7 @@ function checkCharacterIsNumber(fieldValue)
 }
 function check_unhcr_number(id_number)
 {
-    var patt = /^(([0-9]{3})|(245)|(380)|(568)|(705)|(781)|(909)|(947)|(LEB))-((1[0-7][C]\d{5})|(\d{8}))$/i;
+    var patt = /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/i;
     return patt.test(id_number);
 }
 function check_national_id(id_number)

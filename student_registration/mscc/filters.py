@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext as _
 from django.db.models import Q
 
 from django_filters import (
@@ -6,9 +5,10 @@ from django_filters import (
     ModelChoiceFilter,
     ChoiceFilter,
     CharFilter,
-    BooleanFilter
+    BooleanFilter,
 )
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, ButtonHolder, Submit, HTML
 from django import forms
 
 from student_registration.locations.models import Center, Location
@@ -28,8 +28,32 @@ DELETED_CHOICES = [
     ('no', 'No'),
 ]
 
+class PlaceholderFilterSet(FilterSet):
+    """Base FilterSet that hides labels and uses placeholders."""
 
-class MainFilter(FilterSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.helper = FormHelper(self.form)
+        self.form.helper.form_method = "get"     # django-filter expects GET
+        self.form.helper.form_class = "form-inline"
+        self.form.helper.form_tag = True
+        # self.form.helper.add_input(Submit("submit", "Filter"))
+        # self.form.helper.add_input(Rest("Rest", "Cancel"))
+        all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
+        self.form.helper.layout = Layout(
+            *all_fields,
+            ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
+                         HTML('<a href="" title="Async Download" class="btn btn-outline-info download-report-async">Export</a>')
+            )
+        )
+        for name, field in self.form.fields.items():
+            label = field.label or name.replace('_', ' ').title()
+            field.label = ''
+            if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
+                field.widget.attrs.setdefault('placeholder', label)
+
+
+class MainFilter(PlaceholderFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
@@ -75,7 +99,7 @@ class MainFilter(FilterSet):
         return queryset.filter(education_service__education_program=value)
 
 
-class FullFilter(FilterSet):
+class FullFilter(PlaceholderFilterSet):
     NO_ROUND_OPTION = ('no_round', 'No Round')
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')

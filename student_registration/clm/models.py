@@ -4,9 +4,9 @@ import datetime
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import ArrayField, JSONField
-from django.core.urlresolvers import reverse
+from django.utils.translation import gettext as _
+from django.db.models import JSONField
+from django.contrib.postgres.fields import ArrayField
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -127,7 +127,8 @@ class Center(models.Model):
         PartnerOrganization,
         blank=True, null=True,
         verbose_name=_('Partner'),
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
@@ -300,6 +301,7 @@ class CLM(TimeStampedModel):
         CLMRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Round')
     )
 
@@ -307,18 +309,21 @@ class CLM(TimeStampedModel):
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Governorate')
     )
     district = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('District')
     )
     cadaster = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cadaster')
     )
     location = models.CharField(
@@ -331,6 +336,7 @@ class CLM(TimeStampedModel):
         Center,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Site / Center')
     )
 
@@ -345,12 +351,14 @@ class CLM(TimeStampedModel):
         Student,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Student')
     )
     disability = models.ForeignKey(
         Disability,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Disability')
     )
     have_labour = ArrayField(
@@ -412,6 +420,7 @@ class CLM(TimeStampedModel):
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('What is the educational level of the mother?')
     )
 
@@ -419,25 +428,26 @@ class CLM(TimeStampedModel):
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('What is the educational level of the father?')
     )
 
     status = models.CharField(max_length=50, choices=STATUS, default=STATUS.enrolled)
-    pre_test = JSONField(blank=True, null=True)
+    pre_test = JSONField(default=dict)
     pre_test_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Pre-assessment')
     )
-    post_test = JSONField(blank=True, null=True)
+    post_test = JSONField(default=dict)
     post_test_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Post-assessment')
     )
-    scores = JSONField(blank=True, null=True, default=dict)
+    scores = JSONField(default=dict)
 
     participation = models.CharField(
         max_length=100,
@@ -742,11 +752,13 @@ class CLM(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
     deleted = models.BooleanField(blank=True, default=False)
@@ -788,7 +800,8 @@ class CLM(TimeStampedModel):
         PartnerOrganization,
         blank=True, null=True,
         verbose_name=_('Partner'),
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     internal_number = models.CharField(
         max_length=50,
@@ -1596,6 +1609,7 @@ class BLN(CLM):
         Cycle,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cycle')
     )
     referral = ArrayField(
@@ -1650,6 +1664,7 @@ class BLN(CLM):
         Nationality,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Main Caregiver Nationality')
     )
     main_caregiver_nationality_other = models.CharField(
@@ -1889,12 +1904,14 @@ class Bridging(CLM):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('School Name')
     )
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cycle')
     )
     residence_type = models.CharField(
@@ -1975,6 +1992,7 @@ class Bridging(CLM):
         Nationality,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Main Caregiver Nationality')
     )
     main_caregiver_nationality_other = models.CharField(
@@ -2136,8 +2154,8 @@ class Bridging(CLM):
         null=True,
         verbose_name=_('Registration Date')
     )
-    mid_test1 = JSONField(blank=True, null=True)
-    mid_test2 = JSONField(blank=True, null=True)
+    mid_test1 = JSONField(default=dict)
+    mid_test2 = JSONField(default=dict)
 
     enrolled_formal_education = models.CharField(
         max_length=10,
@@ -2335,6 +2353,7 @@ class Outreach(CLM):
         Cycle,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cycle')
     )
     referral = ArrayField(
@@ -2389,6 +2408,7 @@ class Outreach(CLM):
         Nationality,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Main Caregiver Nationality')
     )
     main_caregiver_nationality_other = models.CharField(
@@ -2604,6 +2624,7 @@ class ABLN(CLM):
         Cycle,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cycle')
     )
     referral = ArrayField(
@@ -2658,6 +2679,7 @@ class ABLN(CLM):
         Nationality,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Main Caregiver Nationality')
     )
     main_caregiver_nationality_other = models.CharField(
@@ -2823,11 +2845,11 @@ class RS(CLM):
         ('1', _('< 11.5 CM (severe malnutrition)')),
         ('2', _('< 12.5 CM (moderate malnutrition)')),
     )
-    SITES = Choices(
-        ('', _('Program site')),
-        ('in_school', _('Inside the school')),
-        ('out_school', _('Outside the school')),
-    )
+    # SITES = Choices(
+    #     ('', _('Program site')),
+    #     ('in_school', _('Inside the school')),
+    #     ('out_school', _('Outside the school')),
+    # )
 
     # LEARNING_RESULT = Choices(
     #     ('', _('Learning result')),
@@ -2917,6 +2939,7 @@ class RS(CLM):
         Cycle,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cycle')
     )
     site = models.CharField(
@@ -2930,6 +2953,7 @@ class RS(CLM):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Attending in school')
     )
     registered_in_school = models.TextField(
@@ -2948,6 +2972,7 @@ class RS(CLM):
         ClassRoom,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Class')
     )
     referral = ArrayField(
@@ -3017,14 +3042,14 @@ class RS(CLM):
         verbose_name=_('Science')
     )
 
-    pre_reading = JSONField(blank=True, null=True)
+    pre_reading = JSONField(default=dict)
     pre_reading_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Arabic reading - Pre')
     )
-    post_reading = JSONField(blank=True, null=True)
+    post_reading = JSONField(default=dict)
     post_reading_score = models.CharField(
         max_length=45,
         blank=True,
@@ -3032,14 +3057,14 @@ class RS(CLM):
         verbose_name=_('Arabic reading - Post')
     )
 
-    pre_self_assessment = JSONField(blank=True, null=True)
+    pre_self_assessment = JSONField(default=dict)
     pre_self_assessment_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Self-assessment - Pre')
     )
-    post_self_assessment = JSONField(blank=True, null=True)
+    post_self_assessment = JSONField(default=dict)
     post_self_assessment_score = models.CharField(
         max_length=45,
         blank=True,
@@ -3047,14 +3072,14 @@ class RS(CLM):
         verbose_name=_('Self-assessment - Post')
     )
 
-    pre_motivation = JSONField(blank=True, null=True)
+    pre_motivation = JSONField(default=dict)
     pre_motivation_score = models.CharField(
         max_length=45,
         blank=True,
         null=True,
         verbose_name=_('Motivation - Pre')
     )
-    post_motivation = JSONField(blank=True, null=True)
+    post_motivation = JSONField(default=dict)
     post_motivation_score = models.CharField(
         max_length=45,
         blank=True,
@@ -3076,6 +3101,7 @@ class RS(CLM):
         Section,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Section')
     )
     final_grade = models.DecimalField(
@@ -3112,6 +3138,7 @@ class RS(CLM):
         Nationality,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Main Caregiver Nationality')
     )
 
@@ -3444,6 +3471,7 @@ class CBECE(CLM):
         Cycle,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cycle')
     )
     site = models.CharField(
@@ -3457,6 +3485,7 @@ class CBECE(CLM):
         School,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Attending in school')
     )
     referral = ArrayField(
@@ -3552,6 +3581,7 @@ class CBECE(CLM):
         Nationality,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Main Caregiver Nationality')
     )
 
@@ -3630,7 +3660,7 @@ class CBECE(CLM):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         verbose_name=_('test_done')
     )
-    mid_test = JSONField(blank=True, null=True)
+    mid_test = JSONField(default=dict)
 
     main_caregiver_nationality_other = models.CharField(
         max_length=500,
@@ -3778,6 +3808,7 @@ class SelfPerceptionGrades(models.Model):
         RS,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Enrollment')
     )
     assessment_type = models.CharField(
@@ -3794,7 +3825,7 @@ class SelfPerceptionGrades(models.Model):
     answers = JSONField(
         blank=True,
         null=True,
-        default={},
+        default=dict,
         verbose_name=_('Assessment answers')
     )
 
@@ -3923,24 +3954,28 @@ class Inclusion(TimeStampedModel):
         CLMRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Round')
     )
     governorate = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Governorate')
     )
     district = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('District')
     )
     cadaster = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cadaster')
     )
     location = models.CharField(
@@ -3953,12 +3988,14 @@ class Inclusion(TimeStampedModel):
         Student,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Student')
     )
     disability = models.ForeignKey(
         Disability,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Disability')
     )
     have_labour = models.CharField(
@@ -4000,11 +4037,13 @@ class Inclusion(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Modified by'),
     )
     deleted = models.BooleanField(blank=True, default=False)
@@ -4015,6 +4054,7 @@ class Inclusion(TimeStampedModel):
     )
     partner = models.ForeignKey(
         PartnerOrganization,
+        on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Partner'),
         related_name='+'
@@ -4291,6 +4331,7 @@ class Inclusion(TimeStampedModel):
         Nationality,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Main Caregiver Nationality')
     )
 
@@ -4577,6 +4618,7 @@ class ABLN_FC(TimeStampedModel):
         ABLN,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Enrollment')
     )
     fc_type = models.CharField(
@@ -4908,6 +4950,7 @@ class BLN_FC(TimeStampedModel):
         BLN,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Enrollment')
     )
     fc_type = models.CharField(
@@ -5248,6 +5291,7 @@ class RS_FC(TimeStampedModel):
         RS,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Enrollment')
     )
     fc_type = models.CharField(
@@ -5577,6 +5621,7 @@ class CBECE_FC(TimeStampedModel):
         CBECE,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Enrollment')
     )
     fc_type = models.CharField(

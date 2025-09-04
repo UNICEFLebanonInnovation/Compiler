@@ -4,6 +4,25 @@ var arabic_fields = "#id_child_first_name, #id_child_father_name, #id_child_last
 
 $(document).ready(function() {
 
+    $("#submit-id-save").click(function(e){
+        var form = $(this).closest('form')[0];
+        var valid = form.checkValidity();
+
+        if (typeof validateMainForm === 'function') {
+            valid = validateMainForm(true) && valid;
+        }
+
+        if (valid) {
+            $(this).prop('disabled', true);
+            form.submit();
+        } else {
+            if (typeof form.reportValidity === 'function') {
+                form.reportValidity();
+            }
+            e.preventDefault();
+        }
+    });
+
 
     $('.show-progarmme-details').click(function(e){
         e.preventDefault();
@@ -176,7 +195,6 @@ $(document).ready(function() {
       }
     );
 
-
     $(document).on('change', 'select#id_main_caregiver', function(){
         var main_caregiver = $('select#id_main_caregiver').val();
         if(main_caregiver == 'Father'){
@@ -196,21 +214,45 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#next-page', function(e){
+        e.preventDefault();
         $(this).removeClass('error-field');
         var error_fields = false;
         $('input, select').filter('[required]:visible').each(function(){
-            e.preventDefault();
             if($(this).val() == null || $(this).val() == ''){
                 $(this).addClass('error-field');
                 error_fields = true;
             }
         });
+        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
+            error_fields = true;
+        }
         if(!error_fields){
             $('#next-btn22').trigger('click');
             $(this).removeClass('error-field');
          }else{
             $('#formErrorModal').modal('show');
-         }
+        }
+    });
+
+    // Handle forms where the visible "Next" button uses the id "next-btn22" directly
+    // instead of the generic "next-page" id. Apply the same validation logic when
+    // the button is clicked and only allow progressing if validation succeeds.
+    $(document).on('click', '#next-btn22', function(e){
+        $(this).removeClass('error-field');
+        var error_fields = false;
+        $('input, select').filter('[required]:visible').each(function(){
+            if($(this).val() == null || $(this).val() == ''){
+                $(this).addClass('error-field');
+                error_fields = true;
+            }
+        });
+        if(typeof validateMainForm === 'function' && !validateMainForm(false, 1)){
+            error_fields = true;
+        }
+        if(error_fields){
+            e.preventDefault();
+            $('#formErrorModal').modal('show');
+        }
     });
 
 
@@ -237,7 +279,7 @@ function outreach_child_search() {
         };
 
         $.ajax({
-            url: '/MSCC/Outreach-Child-Search/',
+            url: '/mscc/outreach-child-search/',
             dataType: "json",
             data: data,
             cache: false,
@@ -247,6 +289,7 @@ function outreach_child_search() {
             },
             error: function (response) {
                 console.log(response);
+                $('#search_loader').addClass('hidden');
             }
         });
     }
@@ -291,7 +334,7 @@ function get_child_data(outreach_id)
     $('#search_loader').removeClass('hidden');
 
     $.ajax({
-        url: '/MSCC/Outreach-Child/',
+        url: '/mscc/outreach-child/',
         data: { outreach_id: outreach_id},
         cache: false,
         async: true,
@@ -348,7 +391,7 @@ function old_child_search() {
         };
 
         $.ajax({
-            url: '/MSCC/Old-Child-Search/',
+            url: '/mscc/old-child-search/',
             dataType: "json",
             data: data,
             cache: false,
@@ -358,6 +401,7 @@ function old_child_search() {
             },
             error: function (response) {
                 console.log(response);
+                $('#nfe_search_loader').addClass('hidden');
             }
         });
     }
@@ -401,7 +445,7 @@ function child_duplication_check() {
 
         $.ajax({
             type: "POST",
-            url: '/MSCC/Child-Duplication-Check/',
+            url: '/mscc/child-duplication-check/',
             data: JSON.stringify(data),
             cache: false,
             async: true,
@@ -411,8 +455,8 @@ function child_duplication_check() {
                 if(response.result.length > 0){
                     var text = ''
                     $(response.result).each(function(i, item){
-                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/MSCC/Child-Profile-Preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center:' + item.center__name+'</br>';
-                        text = text + 'Click <a href="/MSCC/New-Round/'+item.id+'/">here</a> to register this child in a new Round.'
+                        text = 'This <a class="show-child-details" data-toggle="modal" data-target=".bd-example-modal-lg-2" href="/mscc/child-profile-preview/?registry_id='+item.id+'">Child</a> is already registered under the MSCC progarmme in the Center: ' + item.center__name+'</br>';
+                        text = text + 'Click <a href="/mscc/new-round/'+item.id+'/">here</a> to register this child in a new Round.'
                     })
                     $('#child-duplication-error-text').html(text);
                     $('#child-duplication-error').show();
@@ -480,7 +524,7 @@ function get_old_child_data(student_id)
     $('#nfe_search_loader').removeClass('hidden');
 
     $.ajax({
-        url: '/MSCC/Get-Old-Child-Data/',
+        url: '/mscc/get-old-child-data/',
         data: { student_id: student_id},
         cache: false,
         async: true,
@@ -521,6 +565,15 @@ function reorganizeForm()
 {
 //  child_gender
     var child_gender = $('select#id_child_gender').val();
+    var package_type = $('#id_type').val();
+
+    if (package_type == 'Core-Package') {
+        $('#id_first_phone_number').prop('required', true);
+        $('#id_first_phone_number_confirm').prop('required', true);
+    } else {
+        $('#id_first_phone_number').prop('required', false);
+        $('#id_first_phone_number_confirm').prop('required', false);
+    }
 
     if(child_gender =='Female'){
         $("#id_child_have_children").append('<option value="Child pregnant or expecting children">Child pregnant or expecting children</option>');
@@ -533,9 +586,11 @@ function reorganizeForm()
 //    Child Nationality
     var child_nationality = $('select#id_child_nationality').val();
     $('div#div_id_child_nationality_other').addClass('d-none');
+//    $('#child_nationality_other_badge').addClass('d-none');
 
     if(child_nationality == 6){
         $('#div_id_child_nationality_other').removeClass('d-none');
+//        $('#child_nationality_other_badge').removeClass('d-none');
     }
     else{
         $('#id_child_nationality_other').val('');
@@ -554,9 +609,11 @@ function reorganizeForm()
 
     if(child_have_children =='Yes'){
         $('div#div_id_child_children_number').removeClass('d-none');
+//        $('#child_children_number_badge').removeClass('d-none');
     }
     else{
         $('div#div_id_child_children_number').addClass('d-none');
+//        $('#child_children_number_badge').addClass('d-none');
         $('#id_child_children_number').val('');
     }
 
@@ -565,20 +622,22 @@ function reorganizeForm()
 
     if(child_have_sibling =='Yes'){
         $('div#div_id_child_siblings_have_disability').removeClass('d-none');
+//        $('#child_siblings_have_disability_badge').removeClass('d-none');
     }
     else{
         $('div#div_id_child_siblings_have_disability').addClass('d-none');
+//        $('#child_siblings_have_disability_badge').addClass('d-none');
         $('#id_child_siblings_have_disability').val('');
     }
 
 //   Source of Identification
     var source_of_identification = $('select#id_source_of_identification').val();
     $('div#div_id_source_of_identification_specify').addClass('d-none');
-    $('#span_source_of_identification_specify').addClass('d-none');
+//    $('#source_of_identification_specify_badge').addClass('d-none');
 
     if(source_of_identification == 'Other Sources'){
         $('#div_id_source_of_identification_specify').removeClass('d-none');
-        $('#span_source_of_identification_specify').removeClass('d-none');
+//        $('#source_of_identification_specify_badge').removeClass('d-none');
     }
 
 //    Main Caregiver
@@ -675,3 +734,463 @@ function reorganizeForm()
         $('#id_labour_type_specify').val('');
     }
 }
+
+
+// main_form_validation.js merged into mscc.js
+// Client-side validation for MSCC MainForm with realtime feedback
+var phoneRegex = /^((03|70|71|76|78|79|81|86)-\d{6})$/;
+var regexMap = {
+    '#id_first_phone_number': phoneRegex,
+    '#id_first_phone_number_confirm': phoneRegex,
+    '#id_second_phone_number': phoneRegex,
+    '#id_second_phone_number_confirm': phoneRegex,
+    '#id_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
+    '#id_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6}))$/,
+    '#id_parent_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_parent_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_individual_case_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_individual_case_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{8})$/,
+    '#id_recorded_number': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
+    '#id_recorded_number_confirm': /^((245|380|568|705|781|909|947|954|781|LEB|leb|LB1|LB2|lb2|LBE|lbe|b6a|B6A)-[0-9]{2}[C-](?:\d{5}|\d{6})|LB-\d{3}-\d{6}|\d{7}|86A-\d{2}-\d{5})$/,
+    '#id_national_number': /^\d{12}$/,
+    '#id_national_number_confirm': /^\d{12}$/,
+    '#id_syrian_national_number': /^\d{11}$/,
+    '#id_syrian_national_number_confirm': /^\d{11}$/,
+    '#id_parent_national_number': /^\d{12}$/,
+    '#id_parent_national_number_confirm': /^\d{12}$/,
+    '#id_parent_syrian_national_number': /^\d{11}$/,
+    '#id_parent_syrian_national_number_confirm': /^\d{11}$/
+};
+
+function clearErrors() {
+    $('.error-field').removeClass('error-field');
+    $('.field-error').remove();
+}
+
+function showError(selector, message) {
+    var field = $(selector);
+    if (field.attr('type') === 'checkbox') {
+        var name = field.attr('name');
+        var checkboxes = $('input[name="' + name + '"]');
+        if (checkboxes.length > 1) {
+            checkboxes.addClass('error-field');
+            var group = field.closest('.form-group');
+            var label = group.find('label').first();
+            var errorEl = label.next('.field-error');
+            if (!errorEl.length) {
+                errorEl = $('<div class="help-block field-error"></div>');
+                errorEl.insertAfter(label);
+            }
+            errorEl.text(message);
+            return;
+        }
+    }
+    field.addClass('error-field');
+    var errorEl = field.next('.field-error');
+    if (!errorEl.length) {
+        errorEl = $('<div class="help-block field-error"></div>');
+        errorEl.insertAfter(field);
+    }
+    errorEl.text(message);
+}
+
+function validateField(field) {
+    var selector = '#' + field.attr('id');
+    field.removeClass('error-field');
+    field.next('.field-error').remove();
+
+    if (field.prop('required') && field.is(':visible') && !field.val()) {
+        showError(selector, 'This field is required');
+        return;
+    }
+
+    if (regexMap[selector]) {
+        var val = field.val();
+        if (val && !regexMap[selector].test(val)) {
+            var placeholder = field.attr('placeholder');
+            var msg = 'Please enter a valid value';
+            if (selector.indexOf('phone') !== -1) {
+                msg = 'Please enter a valid phone number (XX-XXXXXX)';
+            } else if (placeholder) {
+                msg = 'Please follow the format ' + placeholder.replace('Format:', '').trim();
+            }
+            showError(selector, msg);
+        }
+    }
+}
+
+function validateMainForm(showModal, step) {
+    if (showModal === undefined) showModal = true;
+    var valid = true;
+
+    var requiredFields = [
+        '#id_child_first_name',
+        '#id_child_father_name',
+        '#id_child_last_name',
+        '#id_child_mother_fullname',
+        '#id_child_gender',
+        '#id_child_nationality',
+        '#id_child_disability',
+        '#id_child_marital_status',
+        '#id_child_have_children',
+        '#id_child_have_sibling',
+        '#id_child_mother_pregnant_expecting',
+        '#id_source_of_identification'
+    ];
+
+    var minValueMap = {
+        '#id_child_children_number': 0,
+        '#id_children_number_under18': 0,
+        '#id_labour_hours': 0
+    };
+
+    var maxLengthMap = {
+        '#id_child_children_number': 4,
+        '#id_children_number_under18': 4,
+        '#id_labour_hours': 4
+    };
+    clearErrors();
+
+    requiredFields.forEach(function(selector) {
+        var field = $(selector);
+        if (!field.is(':visible')) return;
+        if (!field.val()) {
+            showError(selector, 'This field is required');
+            valid = false;
+        }
+    });
+
+    // Date validation
+    var year = parseInt($('#id_child_birthday_year').val()) || 0;
+    var month = parseInt($('#id_child_birthday_month').val()) || 0;
+    var day = parseInt($('#id_child_birthday_day').val()) || 0;
+    if (year && month && day) {
+        var dt = new Date(year, month - 1, day);
+        if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
+            showError('#id_child_birthday_year', 'The date is not valid.');
+            valid = false;
+        }
+    } else {
+        if (!year) showError('#id_child_birthday_year', 'This field is required');
+        if (!month) showError('#id_child_birthday_month', 'This field is required');
+        if (!day) showError('#id_child_birthday_day', 'This field is required');
+        valid = false;
+    }
+
+    // Child nationality other
+    if ($('#id_child_nationality').val() == '6' && $('#id_child_nationality_other').val() === '') {
+        showError('#id_child_nationality_other', 'This field is required');
+        valid = false;
+    }
+
+    // Child have children
+    if ($('#id_child_have_children').val() == 'Yes' && $('#id_child_children_number').val() === '') {
+        showError('#id_child_children_number', 'This field is required');
+        valid = false;
+    }
+
+    // Child have sibling
+    if ($('#id_child_have_sibling').val() == 'Yes' && $('#id_child_siblings_have_disability').val() === '') {
+        showError('#id_child_siblings_have_disability', 'This field is required');
+        valid = false;
+    }
+
+    // Source of identification
+    if ($('#id_source_of_identification').val() == 'Other Sources' && $('#id_source_of_identification_specify').val() === '') {
+        showError('#id_source_of_identification_specify', 'This field is required');
+        valid = false;
+    }
+
+    if (step === 1) {
+        return valid;
+    }
+
+    var package_type = $('#id_type').val();
+    if (package_type == 'Core-Package') {
+        if ($('#id_father_educational_level').val() === '') {
+            showError('#id_father_educational_level', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_mother_educational_level').val() === '') {
+            showError('#id_mother_educational_level', 'This field is required');
+            valid = false;
+        }
+        var first_phone = $('#id_first_phone_number').val();
+        var first_phone_confirm = $('#id_first_phone_number_confirm').val();
+        if ($('#id_first_phone_owner').val() === '') {
+            showError('#id_first_phone_owner', 'This field is required');
+            valid = false;
+        }
+        if (first_phone === '') {
+            showError('#id_first_phone_number', 'This field is required');
+            valid = false;
+        }
+        if (first_phone_confirm === '') {
+            showError('#id_first_phone_number_confirm', 'This field is required');
+            valid = false;
+        }
+        if (first_phone !== first_phone_confirm) {
+            showError('#id_first_phone_number_confirm', 'The phone numbers are not matched');
+            valid = false;
+        }
+        var second_phone = $('#id_second_phone_number').val();
+        var second_phone_confirm = $('#id_second_phone_number_confirm').val();
+        if (second_phone !== second_phone_confirm) {
+            showError('#id_second_phone_number_confirm', 'The phone numbers are not matched');
+            valid = false;
+        }
+        var main_caregiver = $('#id_main_caregiver').val();
+        if (main_caregiver === '') {
+            showError('#id_main_caregiver', 'This field is required');
+            valid = false;
+        }
+        if (main_caregiver == 'Other' && $('#id_main_caregiver_other').val() === '') {
+            showError('#id_main_caregiver_other', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_main_caregiver_nationality').val() == '6' && $('#id_main_caregiver_nationality_other').val() === '') {
+            showError('#id_main_caregiver_nationality_other', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_children_number_under18').val() === '') {
+            showError('#id_children_number_under18', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_caregiver_first_name').val() === '') {
+            showError('#id_caregiver_first_name', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_caregiver_middle_name').val() === '') {
+            showError('#id_caregiver_middle_name', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_caregiver_last_name').val() === '') {
+            showError('#id_caregiver_last_name', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_caregiver_mother_name').val() === '') {
+            showError('#id_caregiver_mother_name', 'This field is required');
+            valid = false;
+        }
+        var have_labour = $('#id_have_labour').val();
+        if (have_labour === '') {
+            showError('#id_have_labour', 'This field is required');
+            valid = false;
+        }
+        if (have_labour != 'No') {
+            if ($('#id_labour_type').val() === '') {
+                showError('#id_labour_type', 'This field is required');
+                valid = false;
+            } else if ($('#id_labour_type').val() == 'Other services' && $('#id_labour_type_specify').val() === '') {
+                showError('#id_labour_type_specify', 'This field is required');
+                valid = false;
+            }
+            if ($('#id_labour_hours').val() === '') {
+                showError('#id_labour_hours', 'This field is required');
+                valid = false;
+            }
+            if ($('#id_labour_weekly_income').val() === '') {
+                showError('#id_labour_weekly_income', 'This field is required');
+                valid = false;
+            }
+            if ($('input[name="labour_condition"]:checked').length === 0) {
+                showError('input[name="labour_condition"]:first', 'This field is required');
+                valid = false;
+            }
+        }
+        var id_type = $('#id_id_type').val();
+        var case_number = $('#id_case_number').val();
+        var case_confirm = $('#id_case_number_confirm').val();
+        var parent_case = $('#id_parent_individual_case_number').val();
+        var parent_case_confirm = $('#id_parent_individual_case_number_confirm').val();
+        var individual_case = $('#id_individual_case_number').val();
+        var individual_case_confirm = $('#id_individual_case_number_confirm').val();
+        var recorded = $('#id_recorded_number').val();
+        var recorded_confirm = $('#id_recorded_number_confirm').val();
+        var parent_syrian = $('#id_parent_syrian_national_number').val();
+        var parent_syrian_confirm = $('#id_parent_syrian_national_number_confirm').val();
+        var syrian = $('#id_syrian_national_number').val();
+        var syrian_confirm = $('#id_syrian_national_number_confirm').val();
+        var parent_sop = $('#id_parent_sop_national_number').val();
+        var parent_sop_confirm = $('#id_parent_sop_national_number_confirm').val();
+        var sop = $('#id_sop_national_number').val();
+        var sop_confirm = $('#id_sop_national_number_confirm').val();
+        var parent_nat = $('#id_parent_national_number').val();
+        var parent_nat_confirm = $('#id_parent_national_number_confirm').val();
+        var nat = $('#id_national_number').val();
+        var nat_confirm = $('#id_national_number_confirm').val();
+        var parent_other = $('#id_parent_other_number').val();
+        var parent_other_confirm = $('#id_parent_other_number_confirm').val();
+        var other = $('#id_other_number').val();
+        var other_confirm = $('#id_other_number_confirm').val();
+        var parent_extract = $('#id_parent_extract_record').val();
+        var parent_extract_confirm = $('#id_parent_extract_record_confirm').val();
+
+        Object.keys(regexMap).forEach(function(selector) {
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
+            if (val && !regexMap[selector].test(val)) {
+                var placeholder = $(selector).attr('placeholder');
+                var msg = 'Please enter a valid value';
+                if (selector.indexOf('phone') !== -1) {
+                    msg = 'Please enter a valid phone number (XX-XXXXXX)';
+                } else if (placeholder) {
+                    msg = 'Please follow the format ' + placeholder.replace('Format:', '').trim();
+                }
+                showError(selector, msg);
+                valid = false;
+            }
+        });
+
+        Object.keys(minValueMap).forEach(function(selector) {
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
+            var min = minValueMap[selector];
+            if (val && parseInt(val, 10) < min) {
+                showError(selector, 'Value must be at least ' + min);
+                valid = false;
+            }
+        });
+
+        Object.keys(maxLengthMap).forEach(function(selector) {
+            var field = $(selector);
+            if (!field.is(':visible')) return;
+            var val = field.val();
+            var maxLen = maxLengthMap[selector];
+            if (val && val.length > maxLen) {
+                showError(selector, 'Ensure this value has at most ' + maxLen + ' characters.');
+                valid = false;
+            }
+        });
+
+        if (id_type == '1') {
+            if (case_number === '') {
+                showError('#id_case_number', 'This field is required');
+                valid = false;
+            }
+            if (case_number !== case_confirm) {
+                showError('#id_case_number_confirm', 'The case numbers are not matched');
+                valid = false;
+            }
+            if (parent_case !== parent_case_confirm) {
+                showError('#id_parent_individual_case_number_confirm', 'The individual case numbers are not matched');
+                valid = false;
+            }
+            if (individual_case !== individual_case_confirm) {
+                showError('#id_individual_case_number_confirm', 'The individual case numbers are not matched');
+                valid = false;
+            }
+        }
+        if (id_type == '2') {
+            if (recorded === '') {
+                showError('#id_recorded_number', 'This field is required');
+                valid = false;
+            }
+            if (recorded !== recorded_confirm) {
+                showError('#id_recorded_number_confirm', 'The recorded numbers are not matched');
+                valid = false;
+            }
+        }
+        if (id_type == '3') {
+            if (parent_syrian === '') {
+                showError('#id_parent_syrian_national_number', 'This field is required');
+                valid = false;
+            }
+            if (parent_syrian_confirm === '') {
+                showError('#id_parent_syrian_national_number_confirm', 'This field is required');
+                valid = false;
+            }
+            if (parent_syrian !== parent_syrian_confirm) {
+                showError('#id_parent_syrian_national_number_confirm', 'The national numbers are not matched');
+                valid = false;
+            }
+            if (syrian !== syrian_confirm) {
+                showError('#id_syrian_national_number_confirm', 'The national numbers are not matched');
+                valid = false;
+            }
+        }
+        if (id_type == '4') {
+            if (parent_sop === '') {
+                showError('#id_parent_sop_national_number', 'This field is required');
+                valid = false;
+            }
+            if (parent_sop_confirm === '') {
+                showError('#id_parent_sop_national_number_confirm', 'This field is required');
+                valid = false;
+            }
+            if (parent_sop !== parent_sop_confirm) {
+                showError('#id_parent_sop_national_number_confirm', 'The national numbers are not matched');
+                valid = false;
+            }
+            if (sop !== sop_confirm) {
+                showError('#id_sop_national_number_confirm', 'The national numbers are not matched');
+                valid = false;
+            }
+        }
+        if (id_type == '5') {
+            if (parent_nat !== parent_nat_confirm) {
+                showError('#id_parent_national_number_confirm', 'The national numbers are not matched');
+                valid = false;
+            }
+            if (nat !== nat_confirm) {
+                showError('#id_national_number_confirm', 'The national numbers are not matched');
+                valid = false;
+            }
+        }
+        if (id_type == '6') {
+            if (parent_other === '') {
+                showError('#id_parent_other_number', 'This field is required');
+                valid = false;
+            }
+            if (parent_other_confirm === '') {
+                showError('#id_parent_other_number_confirm', 'This field is required');
+                valid = false;
+            }
+            if (parent_other !== parent_other_confirm) {
+                showError('#id_parent_other_number_confirm', 'The ID numbers are not matched');
+                valid = false;
+            }
+            if (other !== other_confirm) {
+                showError('#id_other_number_confirm', 'The ID numbers are not matched');
+                valid = false;
+            }
+        }
+        if (id_type == '9') {
+            if (parent_extract !== parent_extract_confirm) {
+                showError('#id_parent_extract_record_confirm', 'The Parent Extract Record are not matched');
+                valid = false;
+            }
+        }
+
+        if ($('#id_caregiver_mother_name').val() === '') {
+            showError('#id_caregiver_mother_name', 'This field is required');
+            valid = false;
+        }
+        if ($('#id_child_living_arrangement').val() === '') {
+            showError('#id_child_living_arrangement', 'This field is required');
+            valid = false;
+        }
+//        if ($('#id_cash_support_programmes').val() === '') {
+//            showError('#id_cash_support_programmes', 'This field is required');
+//            valid = false;
+//        }
+    }
+    return valid;
+}
+
+$(document).ready(function() {
+    $('form').on('submit', function(e) {
+        var step = $('#step-1').is(':visible') ? 1 : null;
+        if (!validateMainForm(true, step)) {
+            e.preventDefault();
+        }
+    });
+
+    $('input, select').on('change input blur', function() {
+        validateField($(this));
+        var step = $('#step-1').is(':visible') ? 1 : null;
+        validateMainForm(false, step);
+    });
+});

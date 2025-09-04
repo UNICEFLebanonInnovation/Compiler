@@ -7,12 +7,12 @@ import json
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, Http404
 from openpyxl import Workbook
 
 from rest_framework import status
 from django.db.models import F, Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -74,7 +74,7 @@ from django.contrib.auth.decorators import login_required
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return Location.objects.none()
 
         qs = Location.objects.all()
@@ -191,7 +191,10 @@ class ProgramStaffFormView(LoginRequiredMixin,
         return super(ProgramStaffFormView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        center_id = int(self.kwargs.get('center_id'))
+        try:
+            center_id = int(self.kwargs.get('center_id'))
+        except (TypeError, ValueError):
+            raise Http404("Center id must be an integer")
         pk = self.kwargs.get('pk', None)
         if self.request.method == "POST":
             return ProgramStaffForm(self.request.POST, pk=pk, center_id=center_id, request=self.request)

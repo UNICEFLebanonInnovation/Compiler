@@ -37,5 +37,5 @@ def get_user_token(user_id):
 
 def force_default_language(request, language='ar-ar'):
     from django.utils import translation
-    translation.activate(language)
-    request.session[translation.LANGUAGE_SESSION_KEY] = language
+    # translation.activate(language)
+    # request.session[translation.LANGUAGE_SESSION_KEY] = language

@@ -1,7 +1,7 @@
 {% extends "mscc/base.html" %}
-{% load staticfiles i18n %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% bootstrap_css %}
 
@@ -25,9 +25,7 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'mscc:list' %}">
-                                                        <i aria-hidden="true" class="fa fa-home"></i>
-                                                    </a>
+                                                    <a href="{% url 'mscc:list' %}">Home</a>
                                                 </li>
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.governorate }}
@@ -223,7 +221,7 @@ function generateAndOpenURL(event) {
                 $('.download-report').removeClass('disabled');
 
                 // Open the file in a new tab
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");
@@ -266,7 +264,7 @@ function generateAndOpenTotalURL(event) {
                 $(".downloading-total-message").hide();
                 $('.download-total-report').removeClass('disabled');
 
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");

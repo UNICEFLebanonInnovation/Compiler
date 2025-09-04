@@ -1,8 +1,8 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
@@ -27,6 +27,7 @@ from student_registration.schools.models import (
     PartnerOrganization,
 )
 from student_registration.locations.models import Location
+from student_registration.users.templatetags.custom_tags import has_group
 from .models import (
     CLM,
     BLN,
@@ -1335,7 +1336,6 @@ class BLNForm(CommonForm):
                 required=True, to_field_name='id',
             )
 
-
     def clean(self):
         cleaned_data = super(BLNForm, self).clean()
 
@@ -1625,7 +1625,6 @@ class BLNForm(CommonForm):
                 self.add_error('social_emotional', 'This value is greater that 24')
             if artistic > 10:
                 self.add_error('artistic', 'This value is greater that 10')
-
 
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
@@ -7846,7 +7845,7 @@ class BridgingForm(CommonForm):
             school_id = self.request.user.school.id
         if self.request.user.partner_id:
             partner_id = self.request.user.partner_id
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
 
         queryset = School.objects.filter(is_closed=False).all()
 

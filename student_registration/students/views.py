@@ -5,8 +5,6 @@ import datetime
 from django.contrib.auth.decorators import login_required
 import io
 import csv
-import logging
-logging.basicConfig(level=logging.ERROR)
 import os
 import uuid
 from django.core.files.storage import default_storage
@@ -26,10 +24,8 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from dal import autocomplete
-from django.http import FileResponse
-from storages.backends.azure_storage import AzureStorage
+from student_registration.backends.utils import download_file
 
-from student_registration.users.utils import force_default_language
 from .utils import is_allowed_create, is_allowed_edit
 from .models import (
     Student,
@@ -52,11 +48,12 @@ from .tables import (
 from .filters import (
     TeacherFilter
 )
-from student_registration.enrollments.models import (
-    EducationYear
-)
-from student_registration.alp.models import ALPRound
+
 from student_registration.backends.models import ExportHistory
+from student_registration.users.templatetags.custom_tags import has_group
+
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 class StudentViewSet(mixins.RetrieveModelMixin,
@@ -69,16 +66,7 @@ class StudentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        alp_round = ALPRound.objects.get(current_round=True)
-        education_year = EducationYear.objects.get(current_year=True)
-        qs = self.queryset.filter(
-            Q(alp_enrollment__isnull=False,
-              alp_enrollment__deleted=False,
-              alp_enrollment__alp_round=alp_round) |
-            Q(student_enrollment__isnull=False,
-              student_enrollment__deleted=False,
-              student_enrollment__education_year=education_year)
-        )
+        qs = self.queryset.filter()
         if self.request.GET.get('barcode', None):
             qs = qs.filter(hh_barcode=self.request.GET.get('barcode', None))
         if self.request.GET.get('case_number', None):
@@ -135,19 +123,7 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
         user_school = self.request.user.school_id
         school = int(self.request.GET.get('school', 0))
         if terms:
-            if school_type == 'alp':
-                alp_round = ALPRound.objects.get(current_round=True)
-                qs = Student.alp.filter(
-                    alp_enrollment__school_id__in=[school, user_school],
-                    alp_enrollment__alp_round__lt=alp_round.id,
-                    alp_enrollment__registered_in_level__isnull=False,
-                )
-            else:
-                education_year = EducationYear.objects.get(current_year=True)
-                qs = Student.second_shift.filter(
-                    student_enrollment__school_id__in=[school, user_school],
-                    student_enrollment__education_year__lt=education_year.id
-                )
+            qs = Student.second_shift.filter()
             for term in terms.split():
                 qs = qs.filter(
                     Q(first_name__contains=term) |
@@ -160,7 +136,7 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
 
 class StudentAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return Student.objects.none()
 
         qs = Student.objects.all()
@@ -188,12 +164,11 @@ class TeacherListView(LoginRequiredMixin,
     filterset_class = TeacherFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         queryset = Teacher.objects.filter(round__current_year=True)
-
 
         if clm_bridging_all or is_staff:
             queryset = Teacher.objects.all()
@@ -238,7 +213,7 @@ class TeacherAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -287,7 +262,7 @@ class TeacherEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -335,8 +310,8 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
 
 
     def get_queryset(self):
-        force_default_language(self.request)
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         queryset = Teacher.objects.all()
@@ -377,7 +352,7 @@ def teacher_export_data(request):
         cursor = connection.cursor()
         user = request.user
         is_staff = user.is_staff
-        clm_bridging_all = user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(user, 'CLM_BRIDGING_ALL')
         partner_name = user.partner.name if user.partner else ''
 
         vw_teacher_data = 'SELECT * FROM vw_teacher_data WHERE id > 0'
@@ -449,15 +424,7 @@ def teacher_export_data(request):
         return HttpResponse("An error occurred: " + str(e), status=500)
 
 
-class MyAzureStorage(AzureStorage):
-    location = "export"
-
-
 def serve_file(request, file_path):
     from pathlib import Path
     file_name = Path(file_path).name
-    storage = MyAzureStorage()
-    file = storage.open(file_path, "rb")
-    response = FileResponse(file)
-    response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
-    return response
+    return download_file(file_path, file_name, delete_after=False)

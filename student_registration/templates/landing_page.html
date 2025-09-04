@@ -1,11 +1,8 @@
-{% extends "base4.html" %}
+{% extends "base.html" %}
 {% load static i18n %}
-{% load static %}
-{% load bootstrap3 %}
-
 {% load util_tags %}
 
-{% bootstrap_css %}
+{% block module_name %}{% endblock %}
 
 {% block main_content %}
 
@@ -37,7 +34,7 @@
                                                         <i class="lnr-laptop-phone text-info"></i>
                                                     </div>
                                                     <div class="widget-numbers">
-                                                        {% if request.user|has_group:"MSCC" %}
+                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                                             <a href="{% url 'mscc:list' %}">MSCC</a>
                                                         {% else %}
                                                             <span class="text-muted">MSCC</span>
@@ -46,7 +43,7 @@
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-info">
                                                         <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"MSCC" %}
+                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                                             <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
                                                         {% else %}
                                                             <span class="text-muted">Dashboard</span>
@@ -103,7 +100,7 @@
                                                         <div class="icon-wrapper-bg bg-success"></div>
                                                         <i class="lnr-graduation-hat"></i></div>
                                                     <div class="widget-numbers">
-                                                          {% if request.user|has_group:"YOUTH" %}
+                                                          {% if request.user|has_group:"YOUTH" or request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" %}
                                                               <a href="{% url 'youth:list' %}">Youth</a>
                                                           {% else %}
                                                               <span class="text-muted">Youth</span>

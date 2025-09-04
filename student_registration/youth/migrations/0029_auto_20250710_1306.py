@@ -12,6 +12,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql='DROP VIEW vw_youth_data CASCADE; DROP VIEW vw_youth_enrolledprograms_aggregated CASCADE; DROP VIEW vw_youth_pd_indicators_aggregated CASCADE; DROP VIEW vw_youth_enrolledprograms CASCADE;',
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name='masterprogram',
             name='name',

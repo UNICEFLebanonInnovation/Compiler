@@ -1,8 +1,8 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django import forms
-from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
+from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.contrib import messages
 
 from dal import autocomplete
@@ -12,7 +12,6 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from student_registration.enrollments.models import DuplicateStd
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachSmallSerializer
-from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.students.models import (
     Person,
     Student,
@@ -577,7 +576,7 @@ class PreTestForm(forms.ModelForm):
         )
 
 
-class PreTest_allForm(forms.ModelForm):
+class PreTestAllForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
         label=_('School'),
@@ -669,7 +668,7 @@ class PreTest_allForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(PreTest_allForm, self).__init__(*args, **kwargs)
+        super(PreTestAllForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
 

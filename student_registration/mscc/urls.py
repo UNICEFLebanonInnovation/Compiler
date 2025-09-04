@@ -1,351 +1,379 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views, education_view, services_view, attendance_views
 
+app_name = 'mscc'
+
 urlpatterns = [
 
-    url(
-        regex=r'^Child-Add/$',
+    re_path(
+        r'^child-add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
     ),
-    url(
-        regex=r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^child-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
         name='child_edit'
     ),
-    url(
-        regex=r'^New-Round/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^new-round/(?P<pk>[\w.@+-]+)/$',
         view=views.NewRoundView.as_view(),
         name='new_round'
     ),
-    url(
-        regex=r'^New-Round-Redirect/$',
+    re_path(
+        r'^new-round-redirect/$',
         view=views.NewRoundRedirectView.as_view(),
         name='new_round_redirect'
     ),
-    url(
-        regex=r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
-        view=views.MainMarkDeleteView,
+    re_path(
+        r'^child-mark-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.main_mark_delete_view,
         name='child_mark_deleted'
     ),
-    url(
-        regex=r'^List/$',
+    re_path(
+        r'^list/$',
         view=views.MainListView.as_view(),
         name='list'
     ),
-    url(
-        regex=r'^Dashboard/$',
+    re_path(
+        r'^dashboard/$',
         view=views.DashboardView.as_view(),
         name='dashboard'
     ),
-    url(
-        regex=r'^Dashboard-Youth/$',
+    re_path(
+        r'^dashboard-youth/$',
         view=views.DashboardYouthView.as_view(),
         name='dashboard_youth'
     ),
-    url(
-        regex=r'^Services/Education-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^dashboard-data/$',
+        view=views.DashboardDataView.as_view(),
+        name='dashboard_data'
+    ),
+    re_path(
+        r'^dashboard-custom/$',
+        view=views.DashboardCustomView.as_view(),
+        name='dashboard_custom'
+    ),
+    re_path(
+        r'^services/education-assessment-add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationAssessmentFormView.as_view(),
         name='service_education_assessment_add'
     ),
-    url(
-        regex=r'^Services/Education-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/education-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationAssessmentFormView.as_view(),
         name='service_education_assessment_edit'
     ),
-    url(
-        regex=r'^Services/Diagnostic-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/diagnostic-assessment-add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.DiagnosticAssessmentFormView.as_view(),
         name='service_diagnostic_assessment_add'
     ),
-    url(
-        regex=r'^Services/Diagnostic-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/diagnostic-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.DiagnosticAssessmentFormView.as_view(),
         name='service_diagnostic_assessment_edit'
     ),
-    url(
-        regex=r'^Services/Education-Add/(?P<registry>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
+    re_path(
+        r'^services/education-add/(?P<registry>[\w.@+-]+)/(?P<package_type>[^/]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_add'
     ),
-    url(
-        regex=r'^Services/Education-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
+    re_path(
+        r'^services/education-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/(?P<package_type>[\w\s.@+-]+)/$',
         view=education_view.EducationServiceFormView.as_view(),
         name='service_education_edit'
     ),
-    url(
-        regex=r'^Services/RS-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/rs-add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationRSServiceFormView.as_view(),
         name='service_education_rs_add'
     ),
-    url(
-        regex=r'^Services/RS-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/rs-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationRSServiceFormView.as_view(),
         name='service_education_rs_edit'
     ),
-    url(
-        regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^child-profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='child_profile'
     ),
-    url(
-        regex=r'^Services/Inclusion-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/inclusion-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.InclusionFormView.as_view(),
         name='service_inclusion_add'
     ),
-    url(
-        regex=r'^Services/Inclusion-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/inclusion-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.InclusionFormView.as_view(),
         name='service_inclusion_edit'
     ),
-    url(
-        regex=r'^Services/Digital-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/digital-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.DigitalFormView.as_view(),
         name='service_digital_add'
     ),
-    url(
-        regex=r'^Services/Digital-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/digital-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.DigitalFormView.as_view(),
         name='service_digital_edit'
     ),
-    url(
-        regex=r'^Services/Health-Nutrition-Add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',
+    re_path(
+        r'^services/health-nutrition-add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',
         view=services_view.HealthNutritionFormView.as_view(),
         name='service_health_nutrition_add'
     ),
-    url(
-        regex=r'^Services/Health-Nutrition-Edit/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/health-nutrition-edit/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.HealthNutritionFormView.as_view(),
         name='service_health_nutrition_edit'
     ),
-    url(
-        regex=r'^Services/Health-Nutrition-Referral-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/health-nutrition-referral-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.HealthNutritionReferralFormView.as_view(),
         name='service_health_nutrition_referral_add'
     ),
-    url(
-        regex=r'^Services/Health-Nutrition-Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/health-nutrition-referral-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.HealthNutritionReferralFormView.as_view(),
         name='service_health_nutrition_referral_edit'
     ),
-    url(
-        regex=r'^Services/PSS-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/pss-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.PSSFormView.as_view(),
         name='service_pss_add'
     ),
-    url(
-        regex=r'^Services/PSS-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/pss-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.PSSFormView.as_view(),
         name='service_pss_edit'
     ),
-    url(
-        regex=r'^Services/Youth-Kit-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-kit-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthKitServiceFormView.as_view(),
         name='service_youth_kit_add'
     ),
-    url(
-        regex=r'^Services/Youth-Kit-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-kit-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthKitServiceFormView.as_view(),
         name='service_youth_kit_edit'
     ),
-    url(
-        regex=r'^Services/Youth-Maharati-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-maharati-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthServiceMaharatiFormView.as_view(),
         name='service_youth_maharati_add'
     ),
-    url(
-        regex=r'^Services/Youth-Maharati-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-maharati-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthServiceMaharatiFormView.as_view(),
         name='service_youth_maharati_edit'
     ),
-    url(
-        regex=r'^Services/Youth-Gil-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-gil-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthServiceGilFormView.as_view(),
         name='service_youth_gil_add'
     ),
-    url(
-        regex=r'^Services/Youth-Gil-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-gil-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthServiceGilFormView.as_view(),
         name='service_youth_gil_edit'
     ),
-    url(
-        regex=r'^Services/Follow-Up-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/follow-up-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.FollowUpFormView.as_view(),
         name='service_follow_up_add'
     ),
-    url(
-        regex=r'^Services/Follow-Up-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/follow-up-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.FollowUpFormView.as_view(),
         name='service_follow_up_edit'
     ),
-    url(
-        regex=r'^Services/Youth-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-assessment-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_add'
     ),
-    url(
-        regex=r'^Services/Youth-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_edit'
     ),
-    url(
-        regex=r'^Services/Youth-Referral-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-referral-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthReferralFormView.as_view(),
         name='service_youth_referral_add'
     ),
-    url(
-        regex=r'^Services/Youth-Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-referral-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthReferralFormView.as_view(),
         name='service_youth_referral_edit'
     ),
-    url(
-        'Outreach-Child-Search/$',
+    re_path(
+        'outreach-child-search/$',
         views.outreach_child_search,
         name='outreach_child_search'
     ),
-    url(
-        'Outreach-Child/$',
+    re_path(
+        'outreach-child/$',
         views.outreach_child,
         name='outreach_child'
     ),
-    url(
-        regex=r'^Referral-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^referral-add/(?P<registry>[\w.@+-]+)/$',
         view=views.ReferralFormView.as_view(),
         name='referral_add'
     ),
-    url(
-        regex=r'^Referral-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^referral-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.ReferralFormView.as_view(),
         name='referral_edit'
     ),
-    url(
-        'Old-Child-Search/$',
+    re_path(
+        'old-child-search/$',
         views.old_child_search,
         name='old_child_search'
     ),
-    url(
-        'Get-Old-Child-Data/$',
+    re_path(
+        'get-old-child-data/$',
         views.old_child_data,
         name='old_child_data'
     ),
-    url(
-        'Child-Duplication-Check/$',
+    re_path(
+        'child-duplication-check/$',
         views.child_duplication_check,
         name='child_duplication_check'
     ),
-    url(
-        'Quick-Search/$',
+    re_path(
+        'quick-search/$',
         views.quick_search,
         name='quick_search'
     ),
-    url(
-        'Find-Programme-Details/$',
+    re_path(
+        'find-programme-details/$',
         view=views.ProgrammeDetails.as_view(),
         name='find_programme_details'
     ),
-    url(
-        'Child-Profile-Preview/$',
+    re_path(
+        'child-profile-preview/$',
         view=views.ChildProfilePreview.as_view(),
         name='child_profile_preview'
     ),
-    url(
-        regex=r'^Attendance/$',
+    re_path(
+        r'^attendance/$',
         view=attendance_views.AttendanceView.as_view(),
         name='attendance'
     ),
-    url(
-        'Load-Attendance-Children/$',
+    re_path(
+        'load-attendance-children/$',
         view=attendance_views.LoadAttendanceChildren.as_view(),
         name='load_attendance_children'
     ),
-    url(
-        'Save-Attendance-Children/$',
+    re_path(
+        'save-attendance-children/$',
         view=attendance_views.save_attendance_children,
         name='save_attendance_children'
     ),
-    url(
-        'Attendance-Child/(?P<child>[\w.@+-]+)/$',
+    re_path(
+        'attendance-child/(?P<child>[\w.@+-]+)/$',
         view=attendance_views.LoadAttendanceChild.as_view(),
         name='attendance_child'
     ),
-    url(
+    re_path(
         'attendance-report/$',
         attendance_views.AttendanceReport.as_view(),
         name='attendance_report'
     ),
-    url(
-        regex=r'^Services/Follow-Up-View-ALl/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        'attendance-heatmap/$',
+        attendance_views.AttendanceHeatmap.as_view(),
+        name='attendance_heatmap'
+    ),
+    re_path(
+        r'^services/follow-up-view-all/(?P<registry>[\w.@+-]+)/$',
         view=services_view.FollowUpViewAll.as_view(),
         name='service_follow_up_view_all'
     ),
-    url(
-        regex=r'^Services/Education-Grading-Add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
+    re_path(
+        r'^services/education-grading-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
         view=education_view.EducationGradingFormView.as_view(),
         name='service_education_grading_add'
     ),
-    url(
-        regex=r'^Services/Education-Grading-Edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/education-grading-edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationGradingFormView.as_view(),
         name='service_education_grading_edit'
     ),
-    url(
-        regex=r'^Services/Youth-Scoring-Add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
+    re_path(
+        r'^services/youth-scoring-add/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/$',
         view=education_view.YouthScoringFormView.as_view(),
         name='service_youth_scoring_add'
     ),
-    url(
-        regex=r'^Services/Youth-Scoring-Edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/youth-scoring-edit/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pre_post>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.YouthScoringFormView.as_view(),
         name='service_youth_scoring_edit'
     ),
-    url(
-        regex=r'^Services/Education-School-Grading/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/education-school-grading/(?P<registry>[\w.@+-]+)/(?P<programme_type>[\w\s.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=education_view.EducationSchoolGradingFormView.as_view(),
         name='service_school_grading'
     ),
-    url(
-        regex=r'^Services/Recreational-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^services/recreational-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.RecreationalFormView.as_view(),
         name='service_recreational_add'
     ),
-    url(
-        regex=r'^Services/Recreational-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/recreational-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.RecreationalFormView.as_view(),
         name='service_recreational_edit'
     ),
-    url(
-        regex=r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
-        view=views.MainRegistrationCancelView,
+    re_path(
+        r'^child-registration-cancel/(?P<pk>[\w.@+-]+)/$',
+        view=views.main_registration_cancel_view,
         name='child_registration_cancel'
     ),
-    url(
-        regex=r'^export-list-background/$',
+    # old export
+    re_path(
+        r'^export-list-background/$',
         view=views.export_list_background,
         name='export_list_background'
     ),
-    url(
-        regex=r"^export-download/(?P<file_name>.+)/$",
+    re_path(
+        r'^export-list-async/$',
+        view=views.export_list_async,
+        name='export_list_async'
+    ),
+    re_path(
+        r"^export-download/(?P<file_name>.+)/$",
         view=views.get_file,
         name='export_download'
     ),
 
-    url(
-        regex=r"^export-download-csv/(?P<file_name>.+)/$",
+    re_path(
+        r"^export-download-csv/(?P<file_name>.+)/$",
         view=views.get_file_csv,
         name='export_download_csv'
     ),
 
-    url(
-        regex=r'^Services/Lego-Add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',
+    re_path(
+        r'^services/lego-add/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/$',
         view=services_view.LegoServiceFormView.as_view(),
         name='service_lego_add'
     ),
-    url(
-        regex=r'^Services/Lego-Edit/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^services/lego-edit/(?P<registry>[\w.@+-]+)/(?P<age>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.LegoServiceFormView.as_view(),
         name='service_lego_edit'
+    ),
+    re_path(
+        r'^chart-data/$',
+        view=views.chart_data,
+        name='chart_data'
     ),
 ]

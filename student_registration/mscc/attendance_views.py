@@ -6,6 +6,8 @@ from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.db.models import Count, Q
+from django.utils import timezone
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 from student_registration.mscc.models import EducationService, Round
@@ -13,6 +15,7 @@ from student_registration.locations.models import Center
 from student_registration.schools.models import PartnerOrganization
 
 from .utils import load_child_attendance, create_attendance
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 class AttendanceView(LoginRequiredMixin,
@@ -62,16 +65,28 @@ class AttendanceView(LoginRequiredMixin,
 
 
 def save_attendance_children(request):
-    body_unicode = request.body.decode('utf-8')
+    """Persist attendance for MSCC children.
 
-    if body_unicode.strip():
-        try:
-            data = json.loads(body_unicode)
-            result = create_attendance(data, request.GET.get('center_id'))
-            return JsonResponse({'result': result})
+    Similar to the CLM view, this now validates the request body and ensures an
+    ``HttpResponse`` is always returned even when errors occur.
+    """
 
-        except Exception as e:
-            pass
+    body_unicode = request.body.decode("utf-8")
+
+    if not body_unicode.strip():
+        return HttpResponseBadRequest("Empty request body")
+
+    try:
+        data = json.loads(body_unicode)
+    except ValueError:
+        return HttpResponseBadRequest("Invalid JSON payload")
+
+    try:
+        result = create_attendance(data, request.GET.get("center_id"))
+    except Exception:  # pragma: no cover - safety net
+        return HttpResponseBadRequest("Failed to save attendance")
+
+    return JsonResponse({"result": result})
 
 
 class LoadAttendanceChildren(LoginRequiredMixin,
@@ -90,22 +105,26 @@ class LoadAttendanceChildren(LoginRequiredMixin,
         round_id = self.request.GET.get("round_id")
 
         if attendance_date_str is None:
-            return {'instances': []}
+            return {'instances': [], 'new_instances': []}
 
         try:
             # Parse the attendance_date_str into a datetime object
             attendance_date = datetime.strptime(attendance_date_str, '%m/%d/%Y').date()
 
             if attendance_date <= current_date and center_id:
-                instances = load_child_attendance(center_id, round_id, attendance_date_str, education_program, class_section)
+                data = load_child_attendance(
+                    center_id,
+                    round_id,
+                    attendance_date_str,
+                    education_program,
+                    class_section,
+                )
             else:
-                instances = []
+                data = {'instances': [], 'new_instances': []}
         except ValueError:
-            instances = []
+            data = {'instances': [], 'new_instances': []}
 
-        return {
-            'instances': instances
-        }
+        return data
 
 
 class LoadAttendanceChild(LoginRequiredMixin,
@@ -154,7 +173,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         context['center'] = []
         context['partner'] = []
 
-        if not self.request.user.groups.filter(name='MSCC_UNICEF').exists():
+        if not has_group(self.request.user, 'MSCC_UNICEF'):
             if self.request.user.center_id:
                 center = Center.objects.filter(id=self.request.user.center_id).last()
                 if center:
@@ -164,4 +183,58 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
             context['center'] = Center.objects.all()
             context['partner'] = PartnerOrganization.objects.all()
 
+        return context
+
+
+class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
+    template_name = 'mscc/attendance_heatmap.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        year = int(self.request.GET.get('year', timezone.now().year))
+
+        base_qs = MSCCAttendanceChild.objects.filter(
+            attendance_day__attendance_date__year=year
+        )
+
+        queryset = (
+            base_qs
+            .values('attendance_day__attendance_date')
+            .annotate(
+                total=Count('id'),
+                absent=Count('id', filter=Q(attended='No'))
+            )
+            .order_by('attendance_day__attendance_date')
+        )
+
+        programme_qs = (
+            base_qs
+            .values(
+                'attendance_day__attendance_date',
+                'registration__education_service__education_program',
+            )
+            .annotate(
+                total=Count('id'),
+                absent=Count('id', filter=Q(attended='No'))
+            )
+            .order_by('attendance_day__attendance_date')
+        )
+
+        programme_data = {}
+        for row in programme_qs:
+            programme = row['registration__education_service__education_program'] or 'Unknown'
+            programme_data.setdefault(programme, []).append({
+                'attendance_day__attendance_date': row['attendance_day__attendance_date'],
+                'total': row['total'],
+                'absent': row['absent'],
+            })
+
+        years = MSCCAttendanceChild.objects.dates(
+            'attendance_day__attendance_date', 'year'
+        )
+
+        context['attendance_json'] = json.dumps(list(queryset), default=str)
+        context['program_attendance_json'] = json.dumps(programme_data, default=str)
+        context['year'] = year
+        context['years'] = [d.year for d in years]
         return context

@@ -1,11 +1,13 @@
 from django import template
 from django.apps import apps
+import logging
 
 from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration, EducationService, Round, Packages
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 
 
 register = template.Library()
+logger = logging.getLogger(__name__)
 
 
 @register.simple_tag
@@ -49,11 +51,13 @@ def get_child_rounds(registry):
     else:
         return None
 
+
 @register.simple_tag
 def get_service(registry, service_name):
     if type(registry) == 'int':
         return ProvidedServices.objects.filter(name=service_name, registration_id=registry).last()
     return ProvidedServices.objects.filter(name=service_name, registration=registry).last()
+
 
 @register.simple_tag
 def get_youth_services(registry,service_name):
@@ -231,7 +235,7 @@ def get_educations_data(obj):
             })
         return educations
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 
@@ -241,7 +245,7 @@ def child_attendance(child_id):
         return MSCCAttendanceChild.objects.filter(child_id=child_id)
 
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 
@@ -263,23 +267,22 @@ def child_attendance_history(child_id):
 
         return details
     except Exception as ex:
-        print(ex)
+        logger.exception(ex)
         return []
 
 
 @register.simple_tag
 def eligible_to_followup(registry):
-
     try:
         disability = True if registry.child.disability else False
         if disability:
             return True
 
-        referral = service_data('Referral', register)
+        referral = service_data('Referral', registry)
         if referral and referral.referred_service == 'CP':
             return True
 
-        if get_service(registry, 'PSS'):
+        if ProvidedServices.objects.filter(name='PSS', registration=registry).exists():
             return True
 
         return False

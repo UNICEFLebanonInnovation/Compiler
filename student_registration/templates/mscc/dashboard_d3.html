@@ -1,7 +1,7 @@
 {% extends "mscc/base.html" %}
 {% load static i18n %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% load simple_tags %}
 {% bootstrap_css %}
@@ -103,7 +103,7 @@
           <div class="main-card mb-3 card">
               <div class="card-body">
                   <h5 class="card-title">Select one or more center</h5>
-                  <select multiple="multiple" class="multiselect-dropdown form-control">
+                  <select multiple="multiple" id="center_filter" class="multiselect-dropdown form-control">
                     {% for item in centers %}
                       <option value="{{ item.id }}">{{ item }}</option>
                     {% endfor %}
@@ -115,7 +115,7 @@
           <div class="main-card mb-3 card">
               <div class="card-body">
                   <h5 class="card-title">Select one or more governorate</h5>
-                  <select multiple="multiple" class="multiselect-dropdown form-control">
+                  <select multiple="multiple" id="governorate_filter" class="multiselect-dropdown form-control">
                     {% for item in governorates %}
                       <option value="{{ item.id }}">{{ item }}</option>
                     {% endfor %}
@@ -128,7 +128,7 @@
           <div class="main-card mb-3 card">
               <div class="card-body">
                   <h5 class="card-title">Select one or more partner</h5>
-                  <select multiple="multiple" class="multiselect-dropdown form-control">
+                  <select multiple="multiple" id="partner_filter" class="multiselect-dropdown form-control">
                     {% for item in partners %}
                       <option value="{{ item.id }}">{{ item }}</option>
                     {% endfor %}
@@ -137,6 +137,21 @@
           </div>
       </div>
 
+</div>
+
+<div class="row">
+      <div class="col-md-4">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <h5 class="card-title">Select one or more round</h5>
+                  <select multiple="multiple" id="round_filter" class="multiselect-dropdown form-control">
+                    {% for item in rounds %}
+                      <option value="{{ item.id }}">{{ item }}</option>
+                    {% endfor %}
+                  </select>
+              </div>
+          </div>
+      </div>
 </div>
 
 <div class="row">
@@ -215,10 +230,51 @@
 </div>
 
 <div class="row">
+
+    <div class="col-md-6">
+        <div class="main-card mb-3 card">
+            <div class="card-header">Children per Round</div>
+            <div class="card-body" id="children_per_round"></div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="main-card mb-3 card">
+            <div class="card-header">Children Moved Between Rounds</div>
+            <div class="card-body" id="children_moved_rounds"></div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
       <div class="col-md-12">
           <div class="main-card mb-3 card">
-              <div class="card-header">Attendance trends</div>
-              <div class="card-body" id="attendance"></div>
+              <div class="card-header">Children moved between rounds</div>
+              <div class="card-body p-0" style="height: 600px; overflow-y: auto;">
+                  <table class="mb-0 table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Child</th>
+                              <th>Rounds</th>
+                              <th>Programme</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for item in moved_children %}
+                          <tr>
+                              <td>{{ item.name }}</td>
+                              <td>{{ item.rounds|join:", " }}</td>
+                              <td>{{ item.programmes|join:", " }}</td>
+                          </tr>
+                          {% empty %}
+                          <tr>
+                              <td colspan="3">No data available</td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
           </div>
       </div>
 </div>
@@ -263,6 +319,12 @@
         });
 
   }
+
+  $(function(){
+      $.getJSON("{% url 'mscc:dashboard_data' %}", getFilters(), function(data){
+          initDashboardCharts(data);
+      });
+  });
 </script>
 
 

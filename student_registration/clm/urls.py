@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views, attendance_views, inclusion_views, bridging_views
 
@@ -8,413 +8,416 @@ app_name = 'clm'
 
 urlpatterns = [
 
-    url(
-        regex=r'^index/$',
+    re_path(
+        r'^index/$',
         view=views.CLMView.as_view(),
         name='index'
     ),
 
-    url(
-        regex=r'^bln-dashboard/$',
+    re_path(
+        r'^bln-dashboard/$',
         view=views.BLNDashboardView.as_view(),
         name='bln_dashboard'
     ),
 
-    url(
-        regex=r'^rs-dashboard/$',
+    re_path(
+        r'^rs-dashboard/$',
         view=views.RSDashboardView.as_view(),
         name='rs_dashboard'
     ),
 
-    url(
-        regex=r'^cbece-dashboard/$',
+    re_path(
+        r'^cbece-dashboard/$',
         view=views.CBECEDashboardView.as_view(),
         name='cbece_dashboard'
     ),
 
-    url(
-        regex=r'^bln-add/$',
+    re_path(
+        r'^bln-add/$',
         view=views.BLNAddView.as_view(),
         name='bln_add'
     ),
-    url(
-        regex=r'^bln-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bln-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNEditView.as_view(),
         name='bln_edit'
     ),
-    url(
-        regex=r'^bln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNMonitoringQuestionerView.as_view(),
         name='bln_monitoring_questioner'
     ),
-    url(
-        regex=r'^bln-export/$',
+    re_path(
+        r'^bln-export/$',
         view=views.BLNExportViewSet.as_view(),
         name='bln_export'
     ),
 
-    url(
-        regex=r'^assessment-submission/$',
+    re_path(
+        r'^assessment-submission/$',
         view=views.AssessmentSubmission.as_view(),
         name='assessment_submission'
     ),
-    url(
-        regex=r'^bln-list/$',
+    re_path(
+        r'^bln-list/$',
         view=views.BLNListView.as_view(),
         name='bln_list'
     ),
-    url(
-        regex=r'^bln-referral/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bln-referral/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNReferralView.as_view(),
         name='bln_referral'
     ),
-    url(
-        regex=r'^bln-followup/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bln-followup/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNFollowupView.as_view(),
         name='bln_followup'
     ),
-    url(
-        regex=r'^rs-add/$',
+    re_path(
+        r'^rs-add/$',
         view=views.RSAddView.as_view(),
         name='rs_add'
     ),
-    url(
-        regex=r'^rs-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^rs-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.RSEditView.as_view(),
         name='rs_edit'
     ),
-    url(
-        regex=r'^rs-export/$',
+    re_path(
+        r'^rs-export/$',
         view=views.RSExportViewSet.as_view(),
         name='rs_export'
     ),
-    url(
-        regex=r'^rs-list/$',
+    re_path(
+        r'^rs-list/$',
         view=views.RSListView.as_view(),
         name='rs_list'
     ),
 
-    url(
-        regex=r'^cbece-add/$',
+    re_path(
+        r'^cbece-add/$',
         view=views.CBECEAddView.as_view(),
         name='cbece_add'
     ),
-    url(
-        regex=r'^cbece-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^cbece-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEEditView.as_view(),
         name='cbece_edit'
     ),
-    url(
-        regex=r'^cbece-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^cbece-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEMonitoringQuestionerView.as_view(),
         name='cbece_monitoring_questioner'
     ),
-    url(
-        regex=r'^cbece-export/$',
+    re_path(
+        r'^cbece-export/$',
         view=views.CBECEExportViewSet.as_view(),
         name='cbece_export'
     ),
-    url(
-        regex=r'^cbece-list/$',
+    re_path(
+        r'^cbece-list/$',
         view=views.CBECEListView.as_view(),
         name='cbece_list'
     ),
-    url(
-        regex=r'^general-questionnaire-list/$',
+    re_path(
+        r'^general-questionnaire-list/$',
         view=views.GeneralQuestionnaireListView.as_view(),
         name='general_questionnaire_list'
     ),
 
-    url(
-        regex=r'^general-questionnaire-add/$',
+    re_path(
+        r'^general-questionnaire-add/$',
         view=views.GeneralQuestionnaireAddView.as_view(),
         name='general_questionnaire_add'
     ),
-    url(
-        regex=r'^general-questionnaire-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^general-questionnaire-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.GeneralQuestionnaireEditView.as_view(),
         name='general_questionnaire_edit'
     ),
-    url(
-        regex=r'^abln-add/$',
+    re_path(
+        r'^abln-add/$',
         view=views.ABLNAddView.as_view(),
         name='abln_add'
     ),
-    url(
-        regex=r'^abln-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^abln-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.ABLNEditView.as_view(),
         name='abln_edit'
     ),
-    url(
-        regex=r'^abln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^abln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
         view=views.ABLNMonitoringQuestionerView.as_view(),
         name='abln_monitoring_questioner'
     ),
-    url(
-        regex=r'^abln-export/$',
+    re_path(
+        r'^abln-export/$',
         view=views.ABLNExportViewSet.as_view(),
         name='abln_export'
     ),
-    url(
-        regex=r'^abln-list/$',
+    re_path(
+        r'^abln-list/$',
         view=views.ABLNListView.as_view(),
         name='abln_list'
     ),
-    url(
-        regex=r'^abln-referral/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^abln-referral/(?P<pk>[\w.@+-]+)/$',
         view=views.ABLNReferralView.as_view(),
         name='abln_referral'
     ),
-    url(
-        regex=r'^abln-followup/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^abln-followup/(?P<pk>[\w.@+-]+)/$',
         view=views.ABLNFollowupView.as_view(),
         name='abln_followup'
     ),
-    url(
-        regex=r'^abln-post-assessment/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^abln-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.ABLNPostAssessmentView.as_view(),
         name='abln_post_assessment'
     ),
-    url(
-        regex=r'^abln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+    re_path(
+        r'^abln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
         view=views.ABLNFCAddView.as_view(),
         name='abln_fc_add'
     ),
-    url(
-        regex=r'^bln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+    re_path(
+        r'^bln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
         view=views.BLNFCAddView.as_view(),
         name='bln_fc_add'
     ),
-    url(
-        regex=r'^rs-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+    re_path(
+        r'^rs-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
         view=views.RSFCAddView.as_view(),
         name='rs_fc_add'
     ),
-    url(
-        regex=r'^cbece-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
+    re_path(
+        r'^cbece-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
         view=views.CBECEFCAddView.as_view(),
         name='cbece_fc_add'
     ),
-    url(
-        regex=r'^bln-post-assessment/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bln-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.BLNPostAssessmentView.as_view(),
         name='bln_post_assessment'
     ),
-    url(
-        regex=r'^cbece-post-assessment/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^cbece-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEPostAssessmentView.as_view(),
         name='cbece_post_assessment'
     ),
-    url(
-        regex=r'^cbece-mid-assessment/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^cbece-mid-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEMidAssessmentView.as_view(),
         name='cbece_mid_assessment'
     ),
-    url(
-        regex=r'^cbece-referral/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^cbece-referral/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEReferralView.as_view(),
         name='cbece_referral'
     ),
-    url(
-        regex=r'^cbece-followup/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^cbece-followup/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEFollowupView.as_view(),
         name='cbece_followup'
     ),
-    url(
-        regex=r'^rs-post-assessment/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^rs-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=views.RSPostAssessmentView.as_view(),
         name='rs_post_assessment'
     ),
-    url(
+    re_path(
         'load-districts/$',
         views.load_districts,
         name='load_districts'
     ),
-    url(
+    re_path(
         'load-cadasters/$',
         views.load_cadasters,
         name='load_cadasters'
     ),
-    url(
+    re_path(
         'load-schools/$',
         views.load_schools,
         name='load_schools'
     ),
-    url(
+    re_path(
         'search-clm-child/$',
         bridging_views.search_clm_child,
         name='search_clm_child'
     ),
-    url(
+    re_path(
         'search-kobo-outreach-child/$',
         bridging_views.search_kobo_outreach_child,
         name='search_kobo_outreach_child'
     ),
-    url(
+    re_path(
         'outreach-child/$',
         bridging_views.outreach_child,
         name='outreach_child'
     ),
-    url(
+    re_path(
         'search-clm-duplicate-unicef-id/$',
         bridging_views.search_clm_duplicate_unicef_id,
         name='search_clm_duplicate_unicef_id'
+    re_path(
+        'search-clm-duplicate-registration/$',
+        bridging_views.search_clm_duplicate_registration,
+        name='search_clm_duplicate_registration'
     ),
-
-    url(
-        regex=r'^exec-abln-update/$',
+    re_path(
+        r'^exec-abln-update/$',
         view=views.ExecABLNUpdateView.as_view(),
         name='exec_abln_update'
     ),
-    url(
-        regex=r'^inclusion-add/$',
+    re_path(
+        r'^inclusion-add/$',
         view=inclusion_views.InclusionAddView.as_view(),
         name='inclusion_add'
     ),
-    url(
-        regex=r'^inclusion-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^inclusion-edit/(?P<pk>[\w.@+-]+)/$',
         view=inclusion_views.InclusionEditView.as_view(),
         name='inclusion_edit'
     ),
-    url(
-        regex=r'^inclusion-export/$',
+    re_path(
+        r'^inclusion-export/$',
         view=inclusion_views.inclusion_export,
         name='inclusion_export'
     ),
-    url(
-        regex=r'^inclusion-list/$',
+    re_path(
+        r'^inclusion-list/$',
         view=inclusion_views.InclusionListView.as_view(),
         name='inclusion_list'
     ),
-    url(
-        regex=r'^inclusion-followup/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^inclusion-followup/(?P<pk>[\w.@+-]+)/$',
         view=inclusion_views.InclusionFollowupView.as_view(),
         name='inclusion_followup'
     ),
-    # url(
-    #     regex=r'^inclusion-referral/(?P<pk>[\w.@+-]+)/$',
+    # re_path(
+    #     r'^inclusion-referral/(?P<pk>[\w.@+-]+)/$',
     #     view=inclusion_views.InclusionReferralView.as_view(),
     #     name='inclusion_referral'
     # ),
-    url(
-        regex=r'^inclusion-assessment/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^inclusion-assessment/(?P<pk>[\w.@+-]+)/$',
         view=inclusion_views.InclusionAssessmentView.as_view(),
         name='inclusion_assessment'
     ),
-    url(
-        regex=r'^inclusion-delete/(?P<pk>[\w.@+-]+)/$',
-        view=inclusion_views.InclusionDeleteView,
+    re_path(
+        r'^inclusion-delete/(?P<pk>[\w.@+-]+)/$',
+        view=inclusion_views.inclusion_delete_view,
         name='inclusion_delete'
     ),
-    url(
-        regex=r'^outreach-add/$',
+    re_path(
+        r'^outreach-add/$',
         view=views.OutreachAddView.as_view(),
         name='outreach_add'
     ),
-    url(
-        regex=r'^outreach-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^outreach-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.OutreachEditView.as_view(),
         name='outreach_edit'
     ),
-    url(
-        regex=r'^outreach-export/$',
+    re_path(
+        r'^outreach-export/$',
         view=views.OutreachExportViewSet.as_view(),
         name='outreach_export'
     ),
-    url(
-        regex=r'^outreach-list/$',
+    re_path(
+        r'^outreach-list/$',
         view=views.OutreachListView.as_view(),
         name='outreach_list'
     ),
 
-    url(
-        regex=r'^bridging-add/$',
+    re_path(
+        r'^bridging-add/$',
         view=bridging_views.BridgingAddView.as_view(),
         name='bridging_add'
     ),
-    url(
-        regex=r'^bridging-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bridging-edit/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingEditView.as_view(),
         name='bridging_edit'
     ),
-    url(
-        regex=r'^bridging-post-assessment/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bridging-post-assessment/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingPostAssessmentView.as_view(),
         name='bridging_post_assessment'
     ),
-    url(
-        regex=r'^bridging-mid-assessment/(?P<pk>[\w.@+-]+)/(?P<number>[\w.@+-]+)/$',
+    re_path(
+        r'^bridging-mid-assessment/(?P<pk>[\w.@+-]+)/(?P<number>[\w.@+-]+)/$',
         view=bridging_views.BridgingMidAssessmentView.as_view(),
         name='bridging_mid_assessment'
     ),
-    url(
-        regex=r'^bridging-followup/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bridging-followup/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingFollowupView.as_view(),
         name='bridging_followup'
     ),
-    url(
-        regex=r'^bridging-service/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^bridging-service/(?P<pk>[\w.@+-]+)/$',
         view=bridging_views.BridgingServiceView.as_view(),
         name='bridging_service'
     ),
-    url(
-        regex=r'^bridging-export/(?P<round>[\w.@+-]+)/$',
+    re_path(
+        r'^bridging-export/(?P<round>[\w.@+-]+)/$',
         view=bridging_views.bridging_export_data,
         name='bridging_export'
     ),
-    url(
-        regex=r'^bridging-export-all/$',
+    re_path(
+        r'^bridging-export-all/$',
         view=bridging_views.bridging_export_all,
         name='bridging_export_all'
     ),
-    url(
-        regex=r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^bridging-school-export-data/(?P<school_id>[\w.@+-]+)/$',
         view=bridging_views.bridging_school_export,
         name='bridging_school_export_data'
     ),
 
-    url(
-        regex=r'^bridging-list/$',
+    re_path(
+        r'^bridging-list/$',
         view=bridging_views.BridgingListView.as_view(),
         name='bridging_list'
     ),
-    url(
-        regex=r'^bridging-page/$',
+    re_path(
+        r'^bridging-page/$',
         view=bridging_views.BridgingPage.as_view(),
         name='bridging_page'
     ),
-    url(
+    re_path(
         'bridging-attendance-report/$',
         bridging_views.BridgingAttendanceReport.as_view(),
         name='bridging_attendance_report'
     ),
-    url(
-        regex=r'^bridging-delete/(?P<pk>[\w.@+-]+)/$',
-        view=bridging_views.BridgingMarkDeleteView,
+    re_path(
+        r'^bridging-delete/(?P<pk>[\w.@+-]+)/$',
+        view=bridging_views.bridging_mark_delete_view,
         name='bridging_delete'
     ),
-    url(
-        regex=r'^Attendance/$',
+    re_path(
+        r'^attendance/$',
         view=attendance_views.AttendanceView.as_view(),
         name='attendance'
     ),
-    url(
-        'Load-Attendance-Children/$',
+    re_path(
+        r'^load-attendance-children/$',
         view=attendance_views.LoadAttendanceChildren.as_view(),
         name='load_attendance_children'
     ),
-    url(
-        'Save-Attendance-Children/$',
+    re_path(
+        r'^save-attendance-children/$',
         view=attendance_views.save_attendance_children,
         name='save_attendance_children'
     ),
-    url(
-        'Attendance-Child/(?P<child>[\w.@+-]+)/$',
+    re_path(
+        r'^attendance-child/(?P<child>[\w.@+-]+)/$',
         view=attendance_views.LoadAttendanceChild.as_view(),
         name='attendance_child'
     ),
-    url(
-        regex=r'^Dashboard/$',
+    re_path(
+        r'^Dashboard/$',
         view=views.DashboardView.as_view(),
         name='dashboard'
     ),

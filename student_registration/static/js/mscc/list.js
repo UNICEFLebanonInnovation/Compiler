@@ -3,35 +3,41 @@
 $(document).ready(function() {
 
 
+    $(document).on('shown.bs.modal', function(){
+        $('.modal-backdrop').not(':last').remove();
+    });
+
     $( ".delete-student" ).on( "click", function(e) {
-
         e.preventDefault();
-
-        var buttonId = $(this).attr("id");
         var registrationId = $(this).data("registration-id");
         var parentTR = $(this).closest('tr');
+        var modal = $('#deleteConfirmModal');
+        modal.data('registrationId', registrationId);
+        modal.data('parentTR', parentTR);
+        modal.modal('show');
+    } );
 
-        var confirmed = confirm("Are you sure you want to delete this student?");
+    $(document).on('click', '#deleteConfirmModal .confirm-delete', function(){
+        var modal = $('#deleteConfirmModal');
+        var registrationId = modal.data('registrationId');
+        var parentTR = modal.data('parentTR');
         requestHeaders = getHeader();
         requestHeaders["content-type"] = 'application/json';
-
-        if (confirmed) {
-            $.ajax({
-                url: "/MSCC/Child-Mark-Delete/" + registrationId + "/",
-                type: "GET",
-                headers: requestHeaders,
-                success: function(data) {
-                    console.log(parentTR.html());
-                    parentTR.remove();
-                },
-                error: function(error) {
-                    // Handle error if needed
-                }
-            });
-        } else {
-            console.log("User canceled marking as deleted for student with ID: " + studentId);
-        }
-    } );
+        $.ajax({
+            url: "/mscc/child-mark-delete/" + registrationId + "/",
+            type: "GET",
+            headers: requestHeaders,
+            success: function(data) {
+                parentTR.remove();
+            },
+            error: function(error) {
+                // Handle error if needed
+            },
+            complete: function(){
+                modal.modal('hide');
+            }
+        });
+    });
 
 
     $(document).on('click', '.download-center-report', function(e){
@@ -56,7 +62,7 @@ $(document).ready(function() {
 
                $(".downloading-message").hide();
                $('.download-center-report').removeClass('disabled');
-               window.open("/MSCC/export-download/" + data,
+               window.open("/mscc/export-download/" + data,
                            "_blank");
 
             },
@@ -77,20 +83,16 @@ $(document).ready(function() {
         var mother_fullname = $("#id_child__mother_fullname").val();
         var round = $("#id_round").val();
         if(!round){
-            alert("Cycle is not selected. Please select a cycle before exporting data.");
+            showModal("Cycle is not selected. Please select a cycle before exporting data.");
             return;
         }
 
         requestHeaders = getHeader();
-
         $(".downloading-message").show();
         $('.download-report').addClass('disabled');
 
-
-
-
         $.ajax({
-            url: "/MSCC/export-list-background/?nationality=" + nationality
+            url: "/mscc/export-list-background/?nationality=" + nationality
                                 + "&first_name=" + first_name
                                 + "&last_name=" + last_name
                                 + "&father_name=" + father_name
@@ -98,20 +100,64 @@ $(document).ready(function() {
                                + "&round=" + round,
             type: "GET",
             headers: requestHeaders,
-            success: function(data) {
-
+            success: function() {
                $(".downloading-message").hide();
                $('.download-report').removeClass('disabled');
-               window.open("/MSCC/export-download/" + data,
-                           "_blank");
-
+               showModal('Export started. You will be notified when ready.');
             },
-            error: function(error) {
-                // Handle error if needed
+            error: function() {
+               showModal('Failed to start export. Please try again later.');
             }
         });
 
     });
 
 });
+
+    $(document).on('click', '.download-report-async', function(e){
+        e.preventDefault();
+        $('#exportOptionsModal').modal('show');
+    });
+
+    $(document).on('click', '#exportOptionsModal .start-export', function(){
+        var nationality = $("#id_child__nationality").val();
+        var first_name = $("#id_child__first_name").val();
+        var last_name = $("#id_child__last_name").val();
+        var father_name = $("#id_child__father_name").val();
+        var mother_fullname = $("#id_child__mother_fullname").val();
+        var round = $("#id_round").val();
+        var button = $(this);
+        var originalHtml = button.html();
+        button.prop('disabled', true);
+        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        if(!round){
+            $('#exportOptionsModal').modal('hide');
+            showModal('Cycle is not selected. Please select a cycle before exporting data.');
+            button.prop('disabled', false);
+            button.html(originalHtml);
+            return;
+        }
+        requestHeaders = getHeader();
+        $.ajax({
+            url: "/mscc/export-list-background/?nationality=" + nationality
+                                + "&first_name=" + first_name
+                                + "&last_name=" + last_name
+                                + "&father_name=" + father_name
+                               + "&mother_fullname=" + mother_fullname
+                               + "&round=" + round,
+            type: 'GET',
+            headers: requestHeaders,
+            success: function(){
+                $('#exportOptionsModal').modal('hide');
+                showModal('Export started. You will be notified when ready.');
+            },
+            error: function(){
+                showModal('Failed to start export. Please try again later.');
+            },
+            complete: function(){
+                button.prop('disabled', false);
+                button.html(originalHtml);
+            }
+        });
+    });
 

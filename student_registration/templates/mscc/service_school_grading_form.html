@@ -1,8 +1,8 @@
 {% extends "mscc/base.html" %}
-{% load staticfiles i18n %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% load simple_tags %}
 {% bootstrap_css %}
@@ -31,12 +31,10 @@
                       <nav class="" aria-label="breadcrumb">
                           <ol class="breadcrumb">
                               <li class="breadcrumb-item">
-                                  <a href="{% url 'mscc:list' %}">
-                                      <i aria-hidden="true" class="fa fa-home"></i>
-                                  </a>
+                                  <a href="{% url 'mscc:list' %}">Home</a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="/MSCC/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname  registry %}</a>
+                                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname  registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
                                      School Grading
@@ -53,7 +51,7 @@
 
 <div class="main-card mb-3 card">
                                 <div class="card-body">
-                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                    <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
                                             <li>
                                                 <a href="#step-1">
@@ -63,7 +61,7 @@
                                         </ul>
                                         <div class="form-wizard-content">
 
-                                           {% crispy form 'bootstrap4' %}
+                                           {% crispy form 'bootstrap3' %}
                                         </div>
                                     </div>
                                     <div class="divider"></div>

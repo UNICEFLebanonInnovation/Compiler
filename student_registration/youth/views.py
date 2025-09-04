@@ -6,13 +6,13 @@ from collections import defaultdict
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-from openpyxl import Workbook
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from rest_framework import status
 from django.db.models import F, Q
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
@@ -23,13 +23,13 @@ from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
 from django.db import connection
 import csv
-import io
-import zipfile
 import codecs
 import logging
 import traceback
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
+
+logger = logging.getLogger(__name__)
 from .filters import (
     MainFilter,
     FullFilter,
@@ -38,22 +38,17 @@ from .filters import (
     PDPartnerFilter
 )
 from .tables import (
-    BootstrapTable,
     RegistrationTable,
     PDTable,
     PDPartnerTable
 
 )
 from .models import (
-    Registration,
     ProgramDocument,
-    MasterProgram,
     SubProgram,
-    Donor,
     EnrolledPrograms,
     ProgramDocumentIndicator
 )
-from student_registration.locations.models import Location
 
 from .forms import (
     MainForm,
@@ -176,7 +171,7 @@ class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
         return reverse('youth:new_round', kwargs={'registry': registry})
 
 
-def MainMarkDeleteView(request, pk):
+def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
@@ -190,7 +185,6 @@ def MainMarkDeleteView(request, pk):
     return JsonResponse(result)
 
 
-from django.db.models import F, Max
 class MainListView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FilterView,
@@ -201,7 +195,7 @@ class MainListView(LoginRequiredMixin,
     table_class = RegistrationTable
     model = Registration
     template_name = 'youth/list.html'
-    table = BootstrapTable(Registration.objects.all(), order_by='id')
+    table = RegistrationTable(Registration.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = MainFilter
@@ -210,18 +204,22 @@ class MainListView(LoginRequiredMixin,
         user = self.request.user
         partner_id = user.partner_id
 
-        if has_group(user, 'YOUTH_UNICEF'):
-            queryset = Registration.objects.filter(deleted=False
-                                                   ).order_by('-id')
-            queryset = queryset.distinct('id')
-            return queryset
-        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-            queryset = Registration.objects.filter(deleted=False,partner=partner_id
-                                                   ).order_by('-id')
-            queryset = queryset.distinct('id')
-            return queryset
+        queryset = (
+            Registration.objects.filter(deleted=False)
+            .select_related(
+                'adolescent',
+                'adolescent__disability',
+                'adolescent__nationality',
+            )
+            .order_by('-id')
+        )
 
-        return Registration.objects.none()
+        if has_group(user, 'YOUTH_PARTNER') and partner_id:
+            queryset = queryset.filter(partner=partner_id)
+        elif not has_group(user, 'YOUTH_UNICEF'):
+            return Registration.objects.none()
+
+        return queryset.distinct('id')
 
     def get_table_class(self):
         return RegistrationTable
@@ -264,7 +262,7 @@ class MainViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-def MainRegistrationCancelView(request, pk):
+def main_registration_cancel_view(request, pk):
     if request.user.is_authenticated:
         try:
             registration = Registration.objects.get(id=pk)
@@ -563,6 +561,9 @@ def export_data(request, **kwargs):
         if partner:
             registration_qs = registration_qs.filter(partner__id=partner)
 
+
+        logger.debug("governorate: %s", governorate)
+
         if governorate:
             registration_qs = registration_qs.filter(governorate__id=governorate)
 
@@ -629,6 +630,8 @@ def export_data(request, **kwargs):
                     pass
 
         registration_ids = list(registration_qs.values_list('id', flat=True).distinct())
+        # vw_youth_data query
+        cursor = connection.cursor()
 
         cursor = connection.cursor()
         query_params = []
@@ -648,6 +651,10 @@ def export_data(request, **kwargs):
             query_params.append(partner_id)
         else:
             vw_youth_data_str += " AND id = 0"
+
+        # Log the query to the console before execution
+        logger.debug("Executing Query:")
+        logger.debug(cursor.mogrify(vw_youth_data_str, query_params).decode('utf-8'))  # Ensure compatibility with Python 3
 
         cursor.execute(vw_youth_data_str, query_params)
 
@@ -784,7 +791,7 @@ class PDListView(LoginRequiredMixin,
     table_class = PDTable
     model = ProgramDocument
     template_name = 'youth/pd_list.html'
-    table = BootstrapTable(ProgramDocument.objects.all(), order_by='id')
+    table = PDTable(ProgramDocument.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = PDFilter
@@ -926,7 +933,7 @@ def program_document_indicator_list_view(request, program_document_id):
         # return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
-@csrf_exempt
+@method_decorator(csrf_exempt, name='dispatch')
 def save_indicators(request):
     if request.method == 'POST':
         payload = json.loads(request.body.decode('utf-8'))

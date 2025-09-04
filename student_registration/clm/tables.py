@@ -1,16 +1,8 @@
 # coding: utf-8
 import django_tables2 as tables
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from .models import CLM, BLN, ABLN, RS, CBECE, GeneralQuestionnaire, Outreach, Bridging
-
-
-class BootstrapTable(tables.Table):
-
-    class Meta:
-        model = CLM
-        template = 'django_tables2/bootstrap.html'
-        attrs = {'class': 'table table-bordered table-striped table-hover'}
 
 
 class CommonTable(tables.Table):
@@ -28,6 +20,7 @@ class CommonTable(tables.Table):
     class Meta:
         model = CLM
         template = 'django_tables2/bootstrap.html'
+        attrs = {'class': 'table table-bordered table-striped table-hover'}
         fields = (
             # 'edit_column',
             # 'delete_column',

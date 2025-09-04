@@ -1,12 +1,12 @@
 from django.views.generic import CreateView, UpdateView, ListView
-from django.shortcuts import render_to_response, render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from student_registration.staffs.forms import StaffForm
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from student_registration.staffs.models import Staffs
 from django.http import Http404, HttpResponseRedirect
 from django.template.context_processors import csrf
 from django.views.generic import ListView, FormView, TemplateView, UpdateView
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from student_registration.users.utils import force_default_language
 
 
@@ -40,7 +40,7 @@ class CreateStaffView(CreateView):
             args.update(csrf(request))
 
             args['form'] = form
-            return render_to_response('staffs/staff_form.html', args)
+            return render(request, 'staffs/staff_form.html', args)
 
 
 class EditStaffView(UpdateView, FormView):
@@ -52,7 +52,7 @@ class EditStaffView(UpdateView, FormView):
     context_object_name = 'staff'
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()

@@ -1,7 +1,7 @@
 {% extends "base5.html" %}
-{% load staticfiles i18n %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% bootstrap_css %}
 {% block project_title %}Attendance Export{% endblock %}
@@ -23,7 +23,7 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/clm/bridging-page/">
+                                                    <a href="{% url 'clm:bridging_page' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>
@@ -168,8 +168,8 @@ function generateAndOpenURL(event) {
                 $('.download-report').removeClass('disabled');
 
                 // Open the file in a new tab
-               // window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
-                window.open(window.location.origin + "/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+               // window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open(window.location.origin + "/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
 
             },
             error: function (error) {
@@ -208,7 +208,7 @@ function generateAndOpenTotalURL(event) {
                 $(".downloading-total-message").hide();
                 $('.download-total-report').removeClass('disabled');
 
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");
@@ -246,7 +246,7 @@ function generateAndOpenConsecutiveURL(event) {
                 $(".downloading-consecutive-message").hide();
                 $('.download-consecutive-report').removeClass('disabled');
 
-                window.open("/MSCC/export-download-csv/" + encodeURIComponent(data), "_blank");
+                window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
             },
             error: function (error) {
                 alert("Error downloading file. Please try again.");

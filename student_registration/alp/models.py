@@ -2,10 +2,10 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from model_utils.models import TimeStampedModel
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from student_registration.students.models import (
     Person,
     Student,
@@ -83,16 +83,19 @@ class Outreach(TimeStampedModel):
         Student,
         blank=False, null=True,
         related_name='alp_enrollment',
+        on_delete=models.SET_NULL,
     )
     partner = models.ForeignKey(
         PartnerOrganization,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Created by')
     )
     modified_by = models.ForeignKey(
@@ -100,11 +103,13 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='modifications',
         verbose_name=_('Modified by'),
+        on_delete=models.SET_NULL,
     )
     school = models.ForeignKey(
         School,
         blank=True, null=True,
         related_name='alp_school',
+        on_delete=models.SET_NULL,
         verbose_name=_('School')
     )
     location = models.ForeignKey(
@@ -112,11 +117,13 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Location'),
+        on_delete=models.SET_NULL,
     )
     last_class_level = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     average_distance = models.CharField(
         max_length=10,
@@ -150,17 +157,20 @@ class Outreach(TimeStampedModel):
         ALPRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Section'),
     )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL,
     )
     alp_year = models.CharField(
         max_length=20,
@@ -195,6 +205,7 @@ class Outreach(TimeStampedModel):
         ClassRoom,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last Education level'),
     )
     last_education_year = models.CharField(
@@ -222,6 +233,7 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last informal education level'),
     )
     last_informal_edu_year = models.CharField(
@@ -242,12 +254,14 @@ class Outreach(TimeStampedModel):
         ALPRound,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last informal education round'),
     )
     last_informal_edu_final_result = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Last informal education status'),
     )
     exam_result_arabic = models.FloatField(
@@ -315,24 +329,28 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Entrance Test (Pre-Test)'),
     )
     registered_in_level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Current Level'),
     )
     assigned_to_level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Pre-test result'),
     )
     exam_school = models.ForeignKey(
         School,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
     )
     deleted = models.BooleanField(blank=True, default=False)
 
@@ -395,6 +413,7 @@ class Outreach(TimeStampedModel):
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Post-test result'),
     )
     dropout_status = models.BooleanField(blank=True, default=False)

@@ -115,6 +115,7 @@ class OutreachSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Outreach
+        ref_name = 'ALPOutreach'
         fields = (
             'id',
             'original_id',

@@ -66,15 +66,65 @@ Celery
 ^^^^^^
 
 This app comes with Celery.
+Periodic tasks are managed via ``django-celery-beat`` and stored in the
+database.  You can create schedules from the Django admin interface under
+``Periodic tasks`` and select any available Celery task by name.
 
-To run a celery worker:
+To view execution history, the project records each run in ``Task run logs``
+which is also accessible from the admin site.
+
+To run a celery worker (and the beat scheduler):
 
 .. code-block:: bash
 
     cd student_registration
     celery -A student_registration.taskapp worker -l info
+    celery -A student_registration.taskapp beat -l info
 
 Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
+
+Long running export tasks are routed to a dedicated ``mscc_export`` queue. Run a
+worker for that queue with limited concurrency to avoid heavy exports running in
+parallel:
+
+.. code-block:: bash
+
+    celery -A student_registration.taskapp worker -Q mscc_export --concurrency=1 -l info
+
+Push Notifications
+^^^^^^^^^^^^^^^^^^
+
+Export completion messages are sent via Firebase Cloud Messaging (FCM). Provide your Firebase server key in the ``FCM_SERVER_KEY`` environment variable so that ``student_registration.mscc.tasks`` can deliver notifications. This value is read from ``config/settings/base.py`` and is required for the server to push notifications.
+
+To receive notifications on the client, initialize Firebase with your project's web configuration values and reference them in your frontend code.
+
+Required variables:
+
+- ``FIREBASE_API_KEY``
+- ``FIREBASE_AUTH_DOMAIN``
+- ``FIREBASE_PROJECT_ID``
+- ``FIREBASE_STORAGE_BUCKET``
+- ``FIREBASE_MESSAGING_SENDER_ID``
+- ``FIREBASE_APP_ID``
+- ``FIREBASE_MEASUREMENT_ID``
+
+Example initialization snippet::
+
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+
+    const firebaseConfig = {
+        apiKey: "<YOUR_FIREBASE_API_KEY>",
+        authDomain: "<YOUR_FIREBASE_AUTH_DOMAIN>",
+        projectId: "<YOUR_FIREBASE_PROJECT_ID>",
+        storageBucket: "<YOUR_FIREBASE_STORAGE_BUCKET>",
+        messagingSenderId: "<YOUR_FIREBASE_MESSAGING_SENDER_ID>",
+        appId: "<YOUR_FIREBASE_APP_ID>",
+        measurementId: "<YOUR_FIREBASE_MEASUREMENT_ID>",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    getAnalytics(app);
 
 
 

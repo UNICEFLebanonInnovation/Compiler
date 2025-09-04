@@ -1,8 +1,8 @@
 {% extends "youth/base.html" %}
-{% load staticfiles i18n %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% load youth_tags %}
 {% bootstrap_css %}
@@ -34,7 +34,7 @@
                                   </a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="/youth/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname  registry %}</a>
+                                    <a href="{% url 'youth:child_profile' registry %}?current_tab=services">{% get_child_fullname  registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
                                      Youth Assessment
@@ -52,7 +52,7 @@
 
 <div class="main-card mb-3 card">
                                 <div class="card-body">
-                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                    <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
                                             <li>
                                                 <a href="#step-1">
@@ -62,7 +62,7 @@
                                         </ul>
                                         <div class="form-wizard-content">
 
-                                           {% crispy form 'bootstrap4' %}
+                                           {% crispy form 'bootstrap3' %}
                                         </div>
                                     </div>
                                     <div class="divider"></div>

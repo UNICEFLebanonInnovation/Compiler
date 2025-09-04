@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from django.views.generic import FormView
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from student_registration.staffenroll.filters import StaffEnrollFilter
@@ -28,7 +28,7 @@ class ListingView(LoginRequiredMixin,
     group_required = [u"SCHOOL"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         education_year = EducationYear.objects.get(current_year=True)
         return StaffEnroll.objects.exclude(deleted=False).filter(
             education_year=education_year,
@@ -51,7 +51,7 @@ class AddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()

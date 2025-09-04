@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from django_filters import FilterSet, ModelChoiceFilter
 
@@ -19,7 +19,7 @@ class OutreachFilter(FilterSet):
         }
 
 
-class PreTest_allFilter(FilterSet):
+class PreTestAllFilter(FilterSet):
     level = ModelChoiceFilter(queryset=EducationLevel.objects.all(), empty_label=_('Entrance test'))
     school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
 

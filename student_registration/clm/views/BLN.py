@@ -20,7 +20,7 @@ class DashboardView(LoginRequiredMixin,
     group_required = [u"CLM"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         return {
 
         }

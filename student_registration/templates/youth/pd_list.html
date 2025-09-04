@@ -1,8 +1,8 @@
 {% extends "youth/base.html" %}
 {% load static i18n %}
-{% load static %}
+{% load static i18n %}
 {% load render_table from django_tables2 %}
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% bootstrap_css %}
 
@@ -46,12 +46,12 @@
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="{% url 'youth:list' %}">
-                                                        <i aria-hidden="true" class="fa fa-home"></i>
+                                                    <a href="/">
+                                                        Home
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                      <a href="{% url 'youth:list' %}">List</a>
+                                                      <a href="{% url 'youth:pd_list' %}">List</a>
                                                 </li>
 
 
@@ -60,7 +60,9 @@
                                     </div>
                                 </div>
                             </div>
-                        <div class="page-title-actions"></div>
+                        <div class="page-title-actions">
+<a href="{% url 'youth:program_program_document_add' %}" class="mr-3 btn-icon btn btn-info"><i class="fa fa-plus btn-icon-wrapper"> </i>Add Programme Document</a>
+                        </div>
                         </div>
 </div>
 
@@ -68,87 +70,6 @@
 {% if request.user|has_group:"youth_CENTER" and not request.user.center %}
   <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
 {% endif %}
-</div>
-
-<div class="row">
-                        <div class="col-md-6 col-lg-4">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-primary card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">Registration</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-primary pr-2">
-                                                        <i class="fa fa-list"></i>
-                                                    </span>
-                                                  <a href="{% url 'youth:list' %}">
-                                                    Youth List
-                                                  </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-primary border-danger card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Registrations</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-danger pr-2">
-                                                        <i class="fa fa-plus"></i>
-                                                    </span>
-                                                  <a href="{% url 'backends:adolescent_upload' %}?type=Core-Package">
-                                                    Bulk Import
-                                                  </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="widget-chart widget-chart2 text-left mb-3 card-btm-border card-shadow-success border-success card">
-                                <div class="widget-chat-wrapper-outer">
-                                    <div class="widget-chart-content">
-                                        <div class="widget-title opacity-5 text-uppercase">New Program Document</div>
-                                        <div class="widget-numbers mt-2 fsize-3 mb-0 w-100">
-                                            <div class="widget-chart-flex align-items-center">
-                                                <div>
-
-                                                    <span class="opacity-10 text-success pr-2">
-                                                        <i class="fa fa-plus"></i>
-                                                    </span>
-                                                  <a href="{% url 'youth:program_program_document_add' %}">
-                                                    Add Program Document
-                                                  </a>
-                                                    <!--<small class="opacity-5 pl-1">%</small>-->
-                                                </div>
-                                                <!--<div class="widget-title ml-auto font-size-lg font-weight-normal text-muted">-->
-                                                    <!--<div class="circle-progress circle-progress-gradient-alt-sm d-inline-block">-->
-                                                        <!--<small></small>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 </div>
 
 <div class="row">
@@ -191,7 +112,7 @@
     <div class="col-lg-12">
         <div class="card-hover-shadow-2x mb-3 card">
             <div class="card-body">
-                <div class="table-responsive dataTables_wrapper dt-bootstrap4">
+                <div class="table-responsive dataTables_wrapper dt-bootstrap5">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap.html' %}
                 </div>

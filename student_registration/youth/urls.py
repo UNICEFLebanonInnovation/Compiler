@@ -1,169 +1,171 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views, program_view, services_view
 
+app_name = 'youth'
+
 urlpatterns = [
 
-    url(
-        regex=r'^Child-Add/$',
+    re_path(
+        r'^child-add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
     ),
-    url(
-        regex=r'^Child-Edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^child-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.MainEditView.as_view(),
         name='child_edit'
     ),
-    url(
-        regex=r'^Child-Mark-Delete/(?P<pk>[\w.@+-]+)/$',
-        view=views.MainMarkDeleteView,
+    re_path(
+        r'^child-mark-delete/(?P<pk>[\w.@+-]+)/$',
+        view=views.main_mark_delete_view,
         name='child_mark_deleted'
     ),
-    url(
-        regex=r'^export/$',
+    re_path(
+        r'^export/$',
         view=views.export_data,
         name='export'
     ),
-    url(
-        regex=r'^export-pd/$',
+    re_path(
+        r'^export-pd/$',
         view=views.export_pd_data,
         name='export_pd'
     ),
-    url(
-        regex=r'^List/$',
+    re_path(
+        r'^list/$',
         view=views.MainListView.as_view(),
         name='list'
     ),
-    url(
-        regex=r'^PD-List/$',
+    re_path(
+        r'^pd-list/$',
         view=views.PDListView.as_view(),
         name='pd_list'
     ),
-    url(
-        regex=r'^PD-Add/$',
+    re_path(
+        r'^pd-add/$',
         view=views.PDListView.as_view(),
         name='pd_add'
     ),
-    url(
-        regex=r'^Program/Enrolled-Programs-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^program/enrolled-programs-add/(?P<registry>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_add'
     ),
-    url(
-        regex=r'^Program/Enrolled-Programs-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^program/enrolled-programs-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsFormView.as_view(),
         name='program_enrolled_programs_edit'
     ),
-    url(
-        regex=r'^Program/Enrolled-Programs-Delete/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^Program/Enrolled-Programs-Delete/(?P<pk>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsDeleteView.as_view(),
         name='program_enrolled_programs_delete'
     ),
-    url(
-        regex=r'^Program/Program-Document-Add/$',
+    re_path(
+        r'^program/program-document-add/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_add'
     ),
-    url(
-        regex=r'^Program/Program-Document-Edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^program/program-document-edit/(?P<pk>[\w.@+-]+)/$',
         view=program_view.ProgramDocumentFormView.as_view(),
         name='program_program_document_edit'
     ),
-    url(
-        regex=r'^Child-Profile/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^child-profile/(?P<pk>[\w.@+-]+)/$',
         view=views.ProfileView.as_view(),
         name='child_profile'
     ),
-    url(
-        regex=r'^Services/Youth-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+    re_path(
+        r'^Services/Youth-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_add'
     ),
-    url(
-        regex=r'^Services/Youth-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^Services/Youth-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_edit'
     ),
-    url(
-        'Outreach-Child-Search/$',
+    re_path(
+        r'^outreach-child-search/$',
         views.outreach_child_search,
         name='outreach_child_search'
     ),
-    url(
-        'Outreach-Child/$',
+    re_path(
+        r'^outreach-child/$',
         views.outreach_child,
         name='outreach_child'
     ),
-    url(
-        'Old-Child-Search/$',
+    re_path(
+        r'^old-child-search/$',
         views.old_child_search,
         name='old_child_search'
     ),
-    url(
-        'Get-Old-Child-Data/$',
+    re_path(
+        r'^get-old-child-data/$',
         views.old_child_data,
         name='old_child_data'
     ),
-    url(
-        'Child-Duplication-Check/$',
+    re_path(
+        r'^child-duplication-check/$',
         views.child_duplication_check,
         name='child_duplication_check'
     ),
-    url(
-        'Quick-Search/$',
+    re_path(
+        r'^quick-search/$',
         views.quick_search,
         name='quick_search'
     ),
-    url(
-        'Child-Profile-Preview/$',
+    re_path(
+        r'^child-profile-preview/$',
         view=views.ChildProfilePreview.as_view(),
         name='child_profile_preview'
     ),
-    url(
-        regex=r'^Child-Registration-Cancel/(?P<pk>[\w.@+-]+)/$',
-        view=views.MainRegistrationCancelView,
+    re_path(
+        r'^child-registration-cancel/(?P<pk>[\w.@+-]+)/$',
+        view=views.main_registration_cancel_view,
         name='child_registration_cancel'
     ),
-    url(
+    re_path(
         'load-districts/$',
         views.load_districts,
         name='load_districts'
     ),
-    url(
+    re_path(
         'load-cadasters/$',
         views.load_cadasters,
         name='load_cadasters'
     ),
 
-    url(
+    re_path(
         'load-program-document/$',
         views.load_program_document,
         name='load_program_document'
     ),
-    url(
+    re_path(
         'load-master-program/$',
         views.load_master_program,
         name='load_master_program'
     ),
-    url(
+    re_path(
         'load-subr-program/$',
         views.load_sub_program,
         name='load_sub_program'
     ),
-    url(
-        regex=r'^Program/Program-Document-Indicators/(?P<program_document_id>[\w.@+-]+)/$',
+    re_path(
+        r'^Program/Program-Document-Indicators/(?P<program_document_id>[\w.@+-]+)/$',
         view=views.program_document_indicators_view,
         name='program_document_indicators'
     ),
-    url(
-        regex=r'^Program/Program-Document-Indicator-List/(?P<program_document_id>[\w.@+-]+)/$',
+    re_path(
+        r'^Program/Program-Document-Indicator-List/(?P<program_document_id>[\w.@+-]+)/$',
         view=views.program_document_indicator_list_view,
         name='program_document_indicator_list'
     ),
-    url(
-        regex=r'^Program/Program-Document-Indicators-Save/$',
+    re_path(
+        r'^Program/Program-Document-Indicators-Save/$',
         view=views.save_indicators,
         name='program_document_indicators_save'
     ),

@@ -1,198 +1,200 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
+app_name = 'schools'
+
 urlpatterns = [
 
-    url(
-        regex=r'^profile/$',
+    re_path(
+        r'^profile/$',
         view=views.ProfileView.as_view(),
         name='profile'
     ),
-    url(
-        regex=r'^partner/$',
+    re_path(
+        r'^partner/$',
         view=views.PartnerView.as_view(),
         name='partner'
     ),
-    url(
-        regex=r'^documents/$',
+    re_path(
+        r'^documents/$',
         view=views.PublicDocumentView.as_view(),
         name='documents'
     ),
-    url(
-        regex=r'^autocomplete/$',
+    re_path(
+        r'^autocomplete/$',
         view=views.AutocompleteView.as_view(),
         name='autocomplete'
     ),
-    url(
-        regex=r'^evaluation/$',
+    re_path(
+        r'^evaluation/$',
         view=views.EvaluationView.as_view(),
         name='evaluation'
     ),
-    url(
-        regex=r'^evaluation/update_classroom/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class.as_view(),
         name='update_classroom'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c1/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c1/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_c1.as_view(),
         name='update_classroom_c1'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c3/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c3/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_C3.as_view(),
         name='update_classroom_c3'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c4/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c4/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_c4.as_view(),
         name='update_classroom_c4'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c5/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c5/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_c5.as_view(),
         name='update_classroom_c5'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c6/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c6/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_c6.as_view(),
         name='update_classroom_c6'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c7/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c7/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_c7.as_view(),
         name='update_classroom_c7'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c8/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c8/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_c8.as_view(),
         name='update_classroom_c8'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_c9/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_c9/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_c9.as_view(),
         name='update_classroom_c9'
     ),
-    url(
-        regex=r'^evaluation/update_classroom_cprep/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^evaluation/update_classroom_cprep/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Class_cprep.as_view(),
         name='update_classroom_cprep'
     ),
-    url(
-        regex=r'^school-list/$',
+    re_path(
+        r'^school-list/$',
         view=views.SchoolListView.as_view(),
         name='school_list'
     ),
-    url(
-        regex=r'^school-add/$',
+    re_path(
+        r'^school-add/$',
         view=views.SchoolAddView.as_view(),
         name='school_add'
     ),
-    url(
-        regex=r'^school-edit/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^school-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.SchoolEditView.as_view(),
         name='school_edit'
     ),
-    url(
-        regex=r'^club-list/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^club-list/(?P<school_id>[\w.@+-]+)/$',
         view=views.ClubListView.as_view(),
         name='club_list'
     ),
-    url(
-        regex=r'^club-add/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^club-add/(?P<school_id>[\w.@+-]+)/$',
         view=views.ClubFormView.as_view(),
         name='club_add'
     ),
-    url(
-        regex=r'^club-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^club-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.ClubFormView.as_view(),
         name='club_edit'
     ),
-    url(
-        regex=r'^club-delete/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^club-delete/(?P<pk>[\w.@+-]+)/$',
         view=views.club_delete,
         name='club_delete'
     ),
-    url(
-        regex=r'^meeting-list/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^meeting-list/(?P<school_id>[\w.@+-]+)/$',
         view=views.MeetingListView.as_view(),
         name='meeting_list'
     ),
-    url(
-        regex=r'^meeting-add/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^meeting-add/(?P<school_id>[\w.@+-]+)/$',
         view=views.MeetingFormView.as_view(),
         name='meeting_add'
     ),
-    url(
-        regex=r'^meeting-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^meeting-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.MeetingFormView.as_view(),
         name='meeting_edit'
     ),
-    url(
-        regex=r'^meeting-delete/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^meeting-delete/(?P<pk>[\w.@+-]+)/$',
         view=views.meeting_delete,
         name='meeting_delete'
     ),
-    url(
-        regex=r'^community-initiative-list/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^community-initiative-list/(?P<school_id>[\w.@+-]+)/$',
         view=views.CommunityInitiativeListView.as_view(),
         name='community_initiative_list'
     ),
-    url(
-        regex=r'^community-initiative-add/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^community-initiative-add/(?P<school_id>[\w.@+-]+)/$',
         view=views.CommunityInitiativeFormView.as_view(),
         name='community_initiative_add'
     ),
-    url(
-        regex=r'^community-initiative-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^community-initiative-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.CommunityInitiativeFormView.as_view(),
         name='community_initiative_edit'
     ),
-    url(
-        regex=r'^community-initiative-delete/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^community-initiative-delete/(?P<pk>[\w.@+-]+)/$',
         view=views.community_initiative_delete,
         name='community_initiative_delete'
     ),
-    url(
-        regex=r'^health-visit-list/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^health-visit-list/(?P<school_id>[\w.@+-]+)/$',
         view=views.HealthVisitListView.as_view(),
         name='health_visit_list'
     ),
-    url(
-        regex=r'^health-visit-add/(?P<school_id>[\w.@+-]+)/$',
+    re_path(
+        r'^health-visit-add/(?P<school_id>[\w.@+-]+)/$',
         view=views.HealthVisitFormView.as_view(),
         name='health_visit_add'
     ),
-    url(
-        regex=r'^health-visit-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^health-visit-edit/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.HealthVisitFormView.as_view(),
         name='health_visit_edit'
     ),
-    url(
-        regex=r'^health-visit-delete/(?P<pk>[\w.@+-]+)/$',
+    re_path(
+        r'^health-visit-delete/(?P<pk>[\w.@+-]+)/$',
         view=views.health_visit_delete,
         name='health_visit_delete'
     ),
-    url(
+    re_path(
         'load-districts/$',
         views.load_districts,
         name='load_districts'
     ),
-    url(
+    re_path(
         'load-cadasters/$',
         views.load_cadasters,
         name='load_cadasters'
     ),
-    url(
+    re_path(
         'load-schools/$',
         views.load_schools,
         name='load_schools'
     ),
-    url(
-        regex=r'^school-export-background/$',
+    re_path(
+        r'^school-export-background/$',
         view=views.export_school_background,
         name='school_export_background'
     ),

@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
+from drf_spectacular.openapi import AutoSchema
 from braces.views import GroupRequiredMixin
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -54,7 +55,6 @@ from .serializers import (
     SectionSerializer
 )
 from .tables import (
-    BootstrapTable,
     SchoolTable,
     SchoolExportTable,
     ClubTable,
@@ -75,7 +75,6 @@ from .forms import ProfileForm,SchoolForm, ClubForm, MeetingForm, CommunityIniti
 from .utils import *
 
 
-
 class SchoolViewSet(mixins.ListModelMixin,
                     viewsets.GenericViewSet):
 
@@ -83,6 +82,7 @@ class SchoolViewSet(mixins.ListModelMixin,
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    schema = AutoSchema()
 
 
 class ClassRoomViewSet(mixins.ListModelMixin,
@@ -92,6 +92,7 @@ class ClassRoomViewSet(mixins.ListModelMixin,
     queryset = ClassRoom.objects.all()
     serializer_class = ClassRoomSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    schema = AutoSchema()
 
 
 class SectionViewSet(mixins.ListModelMixin,
@@ -101,6 +102,7 @@ class SectionViewSet(mixins.ListModelMixin,
     queryset = Section.objects.all()
     serializer_class = SectionSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    schema = AutoSchema()
 
 
 class ProfileView(LoginRequiredMixin,
@@ -113,7 +115,7 @@ class ProfileView(LoginRequiredMixin,
     group_required = [u"SCHOOL", u"ALP_SCHOOL"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -159,7 +161,7 @@ class PartnerView(LoginRequiredMixin,
     group_required = [u"CLM"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -188,7 +190,7 @@ class PublicDocumentView(LoginRequiredMixin,
     group_required = [u"SCHOOL", u"ALP_SCHOOL"]
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         return {
             'documents': self.queryset
         }
@@ -196,7 +198,7 @@ class PublicDocumentView(LoginRequiredMixin,
 
 class AutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return School.objects.none()
 
         qs = School.objects.all()
@@ -246,7 +248,7 @@ class Update_Class(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -273,7 +275,7 @@ class Update_Class_c1(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -300,7 +302,7 @@ class Update_Class_C3(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -327,7 +329,7 @@ class Update_Class_c4(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -354,7 +356,7 @@ class Update_Class_c5(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -381,7 +383,7 @@ class Update_Class_c6(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -408,7 +410,7 @@ class Update_Class_c7(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -435,7 +437,7 @@ class Update_Class_c8(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -462,7 +464,7 @@ class Update_Class_c9(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -489,7 +491,7 @@ class Update_Class_cprep(UpdateView):
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -537,13 +539,13 @@ class SchoolListView(LoginRequiredMixin,
     table_class = SchoolTable
     model = School
     template_name = 'schools/school_list.html'
-    table = BootstrapTable(School.objects.all(), order_by='id')
+    table = SchoolTable(School.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
     filterset_class = SchoolFilter
 
     def get_queryset(self):
-        force_default_language(self.request)
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
         queryset = School.objects.filter(is_bma=True).all()
@@ -579,7 +581,7 @@ class SchoolListView(LoginRequiredMixin,
         """
         Return the class to use for the table.
         """
-        if self.request.user.groups.filter(name='EXPORT').exists():
+        if has_group(self.request.user, 'EXPORT'):
             return SchoolExportTable
         else:
             return SchoolTable
@@ -603,7 +605,7 @@ class SchoolAddView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -652,7 +654,7 @@ class SchoolEditView(LoginRequiredMixin,
         return self.success_url
 
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
+
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -683,11 +685,11 @@ class ClubListView(LoginRequiredMixin,
     table_class = ClubTable
     model = Club
     template_name = 'schools/club_list.html'
-    table = BootstrapTable(Club.objects.all(), order_by='id')
+    table = ClubTable(Club.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return Club.objects.filter(school_id=school_id).order_by('-id')
 
@@ -758,11 +760,11 @@ class MeetingListView(LoginRequiredMixin,
     table_class = MeetingTable
     model = Meeting
     template_name = 'schools/meeting_list.html'
-    table = BootstrapTable(Meeting.objects.all(), order_by='id')
+    table = MeetingTable(Meeting.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return Meeting.objects.filter(school_id=school_id).order_by('-id')
 
@@ -833,11 +835,11 @@ class CommunityInitiativeListView(LoginRequiredMixin,
     table_class = CommunityInitiativeTable
     model = CommunityInitiative
     template_name = 'schools/community_initiative_list.html'
-    table = BootstrapTable(CommunityInitiative.objects.all(), order_by='id')
+    table = CommunityInitiativeTable(CommunityInitiative.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return CommunityInitiative.objects.filter(school_id=school_id).order_by('-id')
 
@@ -885,7 +887,6 @@ class CommunityInitiativeFormView(LoginRequiredMixin,
         return super(CommunityInitiativeFormView, self).form_valid(form)
 
 
-
 def community_initiative_delete(request, pk):
     if request.user.is_authenticated:
         try:
@@ -909,11 +910,11 @@ class HealthVisitListView(LoginRequiredMixin,
     table_class = HealthVisitTable
     model = HealthVisit
     template_name = 'schools/health_visit_list.html'
-    table = BootstrapTable(HealthVisit.objects.all(), order_by='id')
+    table = HealthVisitTable(HealthVisit.objects.all(), order_by='id')
     group_required = [u"CLM_Bridging"]
 
     def get_queryset(self):
-        force_default_language(self.request)
+
         school_id = int(self.kwargs['school_id'])
         return HealthVisit.objects.filter(school_id=school_id).order_by('-id')
 

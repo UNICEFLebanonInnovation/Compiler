@@ -180,15 +180,18 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#next-page', function(e){
+        e.preventDefault();
         $(this).removeClass('error-field');
         var error_fields = false;
         $('input, select').filter('[required]:visible').each(function(){
-            e.preventDefault();
             if($(this).val() == null || $(this).val() == ''){
                 $(this).addClass('error-field');
                 error_fields = true;
             }
         });
+        if(typeof validateMainForm === 'function' && !validateMainForm(false)){
+            error_fields = true;
+        }
         if(!error_fields){
             $('#next-btn22').trigger('click');
             $(this).removeClass('error-field');
@@ -200,41 +203,6 @@ $(document).ready(function() {
 
 });
 
-//function outreach_adolescent_search() {
-//
-//    if (isAddPage()) {
-//
-//        var birthday_year = $('#id_adolescent_birthday_year').val();
-//        var birthday_month = $('#id_adolescent_birthday_month').val();
-//        var birthday_day = $('#id_adolescent_birthday_day').val();
-//        var first_name = $('#id_adolescent_first_name').val();
-//        var father_name = $('#id_adolescent_father_name').val();
-//        var last_name = $('#id_adolescent_last_name').val();
-//
-//        var data = {
-//            birthday_year: birthday_year,
-//            birthday_month: birthday_month,
-//            birthday_day: birthday_day,
-//            first_name: first_name,
-//            father_name: father_name,
-//            last_name: last_name,
-//        };
-//
-//        $.ajax({
-//            url: '/MSCC/Outreach-Child-Search/',
-//            dataType: "json",
-//            data: data,
-//            cache: false,
-//            async: true,
-//            success: function (response) {
-//                append_new_result(response);
-//            },
-//            error: function (response) {
-//                console.log(response);
-//            }
-//        });
-//    }
-//}
 
 function append_new_result(data)
 {
@@ -303,7 +271,6 @@ function fill_outreach_child_data(data)
     $('#search_loader').addClass('hidden');
 }
 
-
 function load_districts(url)
 {
     var value = $("#id_adolescent_governorate").val();
@@ -317,6 +284,7 @@ function load_districts(url)
         }
     })
 }
+
 function load_cadasters(url)
 {
     var value = $("#id_adolescent_district").val();
@@ -331,7 +299,6 @@ function load_cadasters(url)
     })
 }
 
-//old student
 function old_child_search() {
 
     if (isAddPage()) {
@@ -520,6 +487,7 @@ function isAddPage()
     }
     return false;
 }
+
 
 function reorganizeForm()
 {

@@ -1,11 +1,9 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from django_filters import FilterSet, ModelChoiceFilter,ChoiceFilter
 
 
-from student_registration.locations.models import Location
-from student_registration.schools.models import CLMRound, School, Section, ClassRoom
-# from .models import CLMAttendanceStudent, CLMAttendance
+from student_registration.schools.models import School
 from student_registration.clm.models import Bridging
 
 

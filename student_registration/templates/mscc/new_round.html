@@ -1,8 +1,8 @@
 {% extends "mscc/base.html" %}
-{% load staticfiles i18n %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% load simple_tags %}
 {% bootstrap_css %}
@@ -31,12 +31,10 @@
                       <nav class="" aria-label="breadcrumb">
                           <ol class="breadcrumb">
                               <li class="breadcrumb-item">
-                                  <a href="{% url 'mscc:list' %}">
-                                      <i aria-hidden="true" class="fa fa-home"></i>
-                                  </a>
+                                  <a href="{% url 'mscc:list' %}">Home</a>
                               </li>
                               <li class="breadcrumb-item">
-                                    <a href="/MSCC/Child-Profile/{{ registry }}/?current_tab=services">{% get_child_fullname registry %}</a>
+                                    <a href="{% url 'mscc:child_profile' registry %}?current_tab=services">{% get_child_fullname registry %}</a>
                               </li>
                                <li class="breadcrumb-item">
                                      New Round
@@ -55,7 +53,7 @@
 
 <div class="main-card mb-3 card">
                                 <div class="card-body">
-                                    <div id="smartwizard3" class="forms-wizard-vertical">
+                                    <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
                                             <li>
                                                 <a href="#step-1">
@@ -128,8 +126,8 @@
                                               <!--<div class="row card-body">-->
                                                   <div class="form-group" style="padding-top: 100px;">
                                                     <div class="">
-                                                      <a type="button" href="/MSCC/New-Round-Redirect/?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=Core-Package" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
-                                                      <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="/MSCC/List/">Cancel</a>
+                                                      <a type="button" href="{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=Core-Package" name="new_round_confirmation" class="btn btn-primary btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-success" id="submit-id-save">Confirm</a>
+                                                      <a type="reset" name="cancel" class="btn btn-inverse btn-shadow btn-wide float-right btn-pill mr-3 btn-hover-shine btn btn-warning" id="cancel-id-cancel" href="{% url 'mscc:list' %}">Cancel</a>
                                                     </div>
                                                   </div>
                                               <!--</div>-->
@@ -172,7 +170,7 @@
         // Function to update the href of the button based on the selected radio button
         const updateHref = () => {
             const selectedType = document.querySelector("input[name='registrationType']:checked").value;
-            confirmButton.href = `/MSCC/New-Round-Redirect/?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
+            confirmButton.href = `{% url 'mscc:new_round_redirect' %}?registry={{ registry }}&new_round_confirmation=confirmed&registrationType=${selectedType}`;
         };
 
         // Update the href when the page loads (in case a default is selected)

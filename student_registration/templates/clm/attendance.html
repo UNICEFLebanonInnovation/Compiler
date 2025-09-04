@@ -1,7 +1,7 @@
 {% extends "clm/base.html" %}
-{% load staticfiles i18n %}
-{% load static %}
-{% load bootstrap3 %}
+{% load static i18n %}
+{% load static i18n %}
+{% load django_bootstrap5 %}
 {% load util_tags %}
 {% bootstrap_css %}
 
@@ -77,7 +77,7 @@ select {
                                         <nav class="" aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item">
-                                                    <a href="/clm/bridging-page/">
+                                                    <a href="{% url 'clm:bridging_page' %}">
                                                         <i aria-hidden="true" class="fa fa-home"></i>
                                                     </a>
                                                 </li>

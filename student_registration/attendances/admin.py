@@ -4,11 +4,11 @@ from django.db import models
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 # from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from student_registration.attendances.forms import AttendanceDtdAdminForm
 from import_export.admin import ExportMixin
 from import_export import resources
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from prettyjson import PrettyJSONWidget
 
 from student_registration.alp.templatetags.util_tags import has_group
@@ -34,6 +34,7 @@ from .models import (
     CLMStudentAbsences
 )
 from .forms import CLMAttendanceAdminForm
+
 
 class SchoolFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the

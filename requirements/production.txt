@@ -2,27 +2,25 @@
 #	production that aren't in development.
 -r base.txt
 
-
-
 # WSGI Handler
 # ------------------------------------------------
-gevent==1.2.2
-gunicorn==19.7.1
+gevent==25.5.1
+gunicorn==23.0.0
 
 # Static and Media Storage
 # ------------------------------------------------
 boto==2.48.0
-django-storages==1.6.5
 
 
 # Email backends for Mailgun, Postmark, SendGrid and more
 # -------------------------------------------------------
-django-anymail==1.2.1
+#django-anymail==1.2.1
 
 # Raven is the Sentry client
 # --------------------------
-raven==6.1.0
+#raven==6.1.0
+sentry-sdk
 
 # Opbeat agent for performance monitoring
 # -----------------------------------------
-opbeat==3.5.2
+#opbeat==3.5.2

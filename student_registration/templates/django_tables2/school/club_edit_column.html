@@ -1,9 +1,8 @@
-{% load staticfiles i18n %}
 {% if column.attrs.url %}
 <a href="{{ column.attrs.url }}{{ record.school_id }}/{{ record.id }}" class="btn btn-info">
     <i class="icon-edit-sign icon-white"></i>
-    {% trans "Edit" %}
+    Edit
 </a>
 {% else %}
-    {% trans "Not allowed" %}
+    Not allowed
 {% endif %}

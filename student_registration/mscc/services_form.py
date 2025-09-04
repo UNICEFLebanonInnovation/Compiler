@@ -1,9 +1,10 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from crispy_forms.helper import FormHelper
 
@@ -13,7 +14,7 @@ from crispy_forms.bootstrap import (
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
 
-from .utils import update_service
+from .utils import update_service, validate_date, TrimmedDateField
 from .models import (
     PSSService,
     InclusionService,
@@ -448,7 +449,11 @@ class DigitalServiceForm(forms.ModelForm):
         using_akelius = validated_data.get('using_akelius')
         instance.using_akelius = using_akelius
         if using_akelius == 'Yes':
-            instance.akelius_sessions_number = validated_data.get('akelius_sessions_number')
+            akelius_sessions_number = validated_data.get('akelius_sessions_number')
+            if akelius_sessions_number:
+                instance.akelius_sessions_number = int(akelius_sessions_number)
+            else:
+                instance.akelius_sessions_number = 0
             instance.akelius_access = validated_data.get('akelius_access')
             instance.akelius_child_equipped = validated_data.get('akelius_child_equipped')
             instance.akelius_change_literacy = validated_data.get('akelius_change_literacy')
@@ -465,7 +470,11 @@ class DigitalServiceForm(forms.ModelForm):
         using_lp = validated_data.get('using_lp')
         instance.using_lp = using_lp
         if using_lp == 'Yes':
-            instance.lp_sessions_number = validated_data.get('lp_sessions_number')
+            lp_sessions_number = validated_data.get('lp_sessions_number')
+            if lp_sessions_number:
+                instance.lp_sessions_number = int(lp_sessions_number)
+            else:
+                instance.lp_sessions_number = 0
             instance.lp_access = validated_data.get('lp_access')
             instance.lp_child_equipped = validated_data.get('lp_child_equipped')
             instance.lp_change_literacy = validated_data.get('lp_change_literacy')
@@ -707,7 +716,7 @@ class HealthNutritionServiceForm(forms.ModelForm):
         label=_('Title of the session')
     )
     # Caregivers of children 0-5 years
-    health_nutrition_session_date = forms.DateField(
+    health_nutrition_session_date = TrimmedDateField(
         label=_("Date of the session"),
         required=False
     )
@@ -1063,7 +1072,14 @@ class HealthNutritionServiceForm(forms.ModelForm):
         instance.attended_health_nutrition_session = attended_health_nutrition_session
         if attended_health_nutrition_session == 'Yes':
             instance.health_nutrition_session_title = validated_data.get('health_nutrition_session_title')
-            instance.health_nutrition_session_date = validated_data.get('health_nutrition_session_date')
+            session_date_str = validated_data.get('health_nutrition_session_date')
+            if session_date_str:
+                try:
+                    instance.health_nutrition_session_date = validate_date(session_date_str)
+                except ValidationError as e:
+                    raise ValidationError('Session date error: {}'.format(e))
+            else:
+                instance.health_nutrition_session_date = None
         else:
             instance.health_nutrition_session_title = ''
             instance.health_nutrition_session_date = None

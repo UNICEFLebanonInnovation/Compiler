@@ -1,8 +1,8 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import messages
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import (
@@ -10,7 +10,6 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes
 )
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML, Reset
-from dal import autocomplete
 from student_registration.students.models import (
     Student,
     Teacher,
@@ -26,6 +25,8 @@ from student_registration.schools.models import (
 from student_registration.students.serializers import (
     TeacherSerializer
 )
+
+from student_registration.users.templatetags.custom_tags import has_group
 
 
 from django.utils.safestring import mark_safe
@@ -457,7 +458,7 @@ class TeacherForm(forms.ModelForm):
             school_id = self.request.user.school.id
         if self.request.user.partner_id:
             partner_id = self.request.user.partner_id
-        clm_bridging_all = self.request.user.groups.filter(name='CLM_BRIDGING_ALL').exists()
+        clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
 
         queryset = School.objects.filter(is_closed=False).all()
 

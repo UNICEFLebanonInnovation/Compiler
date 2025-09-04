@@ -1,4 +1,4 @@
-{% load staticfiles i18n %}
+{% load static i18n %}
 {% load util_tags %}
 
 <div class="mb-2 mr-2 btn-group dropdown" style="position: relative;">
@@ -26,7 +26,7 @@
           <button class="mb-2 mr-2 btn-icon btn-icon-only btn-pill btn btn-outline-info"><i class="ion-android-delete btn-icon-wrapper"> </i></button>
           {% trans "Delete" %}</a>
       {% endif %}
-      
+
 <div tabindex="-1" class="dropdown-divider"></div>
 
         <a type="button" href="{{ column.attrs.url_post_assessment }}{{ record.id }}?v=2" tabindex="0" class="dropdown-item">
