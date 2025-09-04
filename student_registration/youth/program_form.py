@@ -309,6 +309,7 @@ class EnrolledProgramsForm(forms.ModelForm):
             if not cleaned_data.get('cadaster'):
                 self.add_error('cadaster', _('This field is required.'))
 
+        return cleaned_data
 
     class Meta:
         model = EnrolledPrograms
@@ -761,6 +762,8 @@ class ProgramDocumentForm(forms.ModelForm):
         end_date = cleaned_data.get("end_date")
         if start_date and end_date and start_date >= end_date:
             self.add_error('start_date', 'Start Date must be less than End Date')
+
+        return cleaned_data
 
     class Meta:
         model = ProgramDocument
