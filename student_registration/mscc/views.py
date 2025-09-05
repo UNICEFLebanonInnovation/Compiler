@@ -4,7 +4,6 @@ from __future__ import absolute_import, unicode_literals
 import json
 from collections import Counter
 
-from django.utils.encoding import smart_str
 from django.views.generic import (
     DetailView,
     ListView,
@@ -15,19 +14,15 @@ from django.views.generic import (
 )
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, F
 from django.contrib.postgres.aggregates import ArrayAgg
-from .utils import validate_date
-from openpyxl import Workbook
 from django.db import connection
 import csv
 import io
 import zipfile
 import codecs
 from django.utils.encoding import smart_str
-import logging
 import traceback
 
 from rest_framework import status
@@ -41,10 +36,8 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 from fuzzywuzzy import fuzz
 from django.shortcuts import redirect, render
-from django.conf import settings
 import uuid
 from django.core.files.base import ContentFile
-import re
 from django.contrib.auth.decorators import login_required
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
@@ -66,10 +59,7 @@ from .tables import (
     PartnerTable,
 )
 from .models import (
-    Registration,
-    Referral,
-    EducationHistory,
-    Round
+    Round,
     ProvidedServices,
 )
 from student_registration.backends.models import ExportHistory
@@ -165,7 +155,7 @@ class ProfileView(LoginRequiredMixin,
 
         # Check if any exist
         new_round = available_rounds.exists()
-        
+
         services = ProvidedServices.objects.filter(registration=instance)
         services_dict = {service.name: service for service in services}
 

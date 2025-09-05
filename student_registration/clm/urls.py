@@ -31,7 +31,6 @@ urlpatterns = [
         view=views.CBECEDashboardView.as_view(),
         name='cbece_dashboard'
     ),
-
     re_path(
         r'^bln-add/$',
         view=views.BLNAddView.as_view(),
@@ -93,7 +92,6 @@ urlpatterns = [
         view=views.RSListView.as_view(),
         name='rs_list'
     ),
-
     re_path(
         r'^cbece-add/$',
         view=views.CBECEAddView.as_view(),
@@ -259,10 +257,6 @@ urlpatterns = [
         'search-clm-duplicate-unicef-id/$',
         bridging_views.search_clm_duplicate_unicef_id,
         name='search_clm_duplicate_unicef_id'
-    re_path(
-        'search-clm-duplicate-registration/$',
-        bridging_views.search_clm_duplicate_registration,
-        name='search_clm_duplicate_registration'
     ),
     re_path(
         r'^exec-abln-update/$',

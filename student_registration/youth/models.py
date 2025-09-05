@@ -474,7 +474,12 @@ class ProgramDocument(TimeStampedModel):
         choices=SUPPORT,
         verbose_name=_('Support of Public Institution')
     )
-    governorates = models.ManyToManyField(Location, blank=True, related_name='+', verbose_name=_('Governorate of Coverage'))
+    governorates = models.ManyToManyField(
+        Location,
+        blank=True,
+        related_name='+',
+        verbose_name=_('Governorate of Coverage')
+    )
 
     budget = models.FloatField(
         blank=True,
@@ -488,7 +493,11 @@ class ProgramDocument(TimeStampedModel):
         choices=YES_NO,
         verbose_name=_('Does this Project have any Cash Assistance Component')
     )
-    population_groups = models.ManyToManyField(PopulationGroups, blank=True, verbose_name=_('Population Groups Targeted'))
+    population_groups = models.ManyToManyField(
+        PopulationGroups,
+        blank=True,
+        verbose_name=_('Population Groups Targeted')
+    )
 
     number_targeted_syrians = models.IntegerField(
         blank=True,
@@ -770,6 +779,7 @@ class EnrolledPrograms(TimeStampedModel):
         blank=True,
         null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Governorate')
     )
     district = models.ForeignKey(
@@ -777,6 +787,7 @@ class EnrolledPrograms(TimeStampedModel):
         blank=True,
         null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('District')
     )
     cadaster = models.ForeignKey(
@@ -784,6 +795,7 @@ class EnrolledPrograms(TimeStampedModel):
         blank=True,
         null=True,
         related_name='+',
+        on_delete=models.SET_NULL,
         verbose_name=_('Cadaster')
     )
 

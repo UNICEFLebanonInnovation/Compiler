@@ -3,22 +3,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, unicode_literals
-from django.contrib.auth.models import User
-from student_registration.backends.djqscsv import render_to_csv_response
-from django.utils.translation import gettext as _
-from django.contrib import messages
-from django.shortcuts import render
-from datetime import datetime
-from django.urls import reverse
 from django.http import HttpResponseForbidden, JsonResponse
 from django.db.models import OuterRef, Subquery, F
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
-from django.shortcuts import render
-from django.contrib.auth.models import Group
-from django.utils.translation import gettext as _
-from import_export.formats import base_formats
 import logging
 
 logger = logging.getLogger(__name__)
