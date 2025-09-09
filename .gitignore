@@ -86,3 +86,6 @@ celerybeat-schedule
 *.py
 student_registration/templates/mscc/child_services_tab.html
 student_registration/templates/mscc/child_services_tab.html
+# Ignore virtual environments
+.venv*/
+venv*/
