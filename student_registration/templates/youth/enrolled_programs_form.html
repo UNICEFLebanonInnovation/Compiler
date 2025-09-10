@@ -95,7 +95,7 @@
       var url_cadasters = "{% url 'youth:load_cadasters' %}";
       var url_program_document = "{% url 'youth:load_program_document' %}";
       var url_master_program = "{% url 'youth:load_master_program' %}";
-      var url_sub_program = "{% url 'youth:load_sub_program' %}";
+      var url_sub_programs = "{% url 'youth:load_sub_programs' %}";
 
       $("#id_governorate").change(function () {
           load_districts(url_districts);
@@ -113,7 +113,7 @@
           load_master_program(url_master_program);
       });
       $("#id_master_program").change(function () {
-          load_sub_program(url_sub_program);
+          load_sub_programs(url_sub_programs);
       });
     </script>
 

@@ -150,9 +150,9 @@ urlpatterns = [
         name='load_master_program'
     ),
     re_path(
-        r'^load-sub-program/$',
+        r'^load-sub-programs/$',
         views.load_sub_program,
-        name='load_sub_program'
+        name='load_sub_programs'
     ),
     re_path(
         r'^program/program-document-indicators/(?P<program_document_id>[\w.@+-]+)/$',
