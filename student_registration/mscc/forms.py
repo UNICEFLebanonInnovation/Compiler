@@ -178,7 +178,7 @@ class MainForm(forms.ModelForm):
         label=_('Cash support programmes that the child is already benefiting from'),
         choices=Registration.CASH_SUPPORT_PROGRAMMES,
         widget=forms.CheckboxSelectMultiple,
-        required=False
+        required=True
     )
     # mscc_packages = forms.MultipleChoiceField(
     #     label=_('Packages received/to be provided to child under Makani'),
@@ -715,9 +715,9 @@ class MainForm(forms.ModelForm):
             if not child_living_arrangement:
                 self.add_error('child_living_arrangement', 'This field is required')
 
-            cash_support_programmes = cleaned_data.get("cash_support_programmes")
-            if not cash_support_programmes:
-                self.add_error('cash_support_programmes', 'This field is required')
+            # cash_support_programmes = cleaned_data.get("cash_support_programmes")
+            # if not cash_support_programmes:
+            #     self.add_error('cash_support_programmes', 'This field is required')
 
 
     def save(self, request=None, instance=None):

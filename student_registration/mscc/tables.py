@@ -37,10 +37,10 @@ class CommonTable(tables.Table):
         orderable=False,
     )
 
-    child_unicef_id = tables.Column(
-        verbose_name=_('UNICEF ID'),
-        orderable=False,
-    )
+    # child_unicef_id = tables.Column(
+    #     verbose_name=_('UNICEF ID'),
+    #     orderable=False,
+    # )
 
     class Meta:
         model = Registration
