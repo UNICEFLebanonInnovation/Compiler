@@ -783,11 +783,6 @@ class EducationRSServiceForm(forms.ModelForm):
             form_action = reverse('mscc:service_education_rs_edit',
                                   kwargs={'registry': registry, 'pk': pk})
 
-        if self.request and self.request.user.partner.is_unrwa:
-            self.fields['school'].queryset = School.objects.filter(is_bma=True, is_unrwa=True)
-        else:
-            self.fields['school'].queryset = School.objects.filter(is_bma=True)
-
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
