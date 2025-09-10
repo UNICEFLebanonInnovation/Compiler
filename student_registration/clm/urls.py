@@ -224,37 +224,37 @@ urlpatterns = [
         name='rs_post_assessment'
     ),
     re_path(
-        'load-districts/$',
+        r'^load-districts/$',
         views.load_districts,
         name='load_districts'
     ),
     re_path(
-        'load-cadasters/$',
+        r'^load-cadasters/$',
         views.load_cadasters,
         name='load_cadasters'
     ),
     re_path(
-        'load-schools/$',
+        r'^load-schools/$',
         views.load_schools,
         name='load_schools'
     ),
     re_path(
-        'search-clm-child/$',
+        r'^search-clm-child/$',
         bridging_views.search_clm_child,
         name='search_clm_child'
     ),
     re_path(
-        'search-kobo-outreach-child/$',
+        r'^search-kobo-outreach-child/$',
         bridging_views.search_kobo_outreach_child,
         name='search_kobo_outreach_child'
     ),
     re_path(
-        'outreach-child/$',
+        r'^outreach-child/$',
         bridging_views.outreach_child,
         name='outreach_child'
     ),
     re_path(
-        'search-clm-duplicate-unicef-id/$',
+        r'^search-clm-duplicate-unicef-id/$',
         bridging_views.search_clm_duplicate_unicef_id,
         name='search_clm_duplicate_unicef_id'
     ),
@@ -381,7 +381,7 @@ urlpatterns = [
         name='bridging_page'
     ),
     re_path(
-        'bridging-attendance-report/$',
+        r'^bridging-attendance-report/$',
         bridging_views.BridgingAttendanceReport.as_view(),
         name='bridging_attendance_report'
     ),
