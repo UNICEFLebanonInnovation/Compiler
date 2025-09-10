@@ -3397,9 +3397,9 @@
                                                 <div class="scroll-area-sm" style="height: 222px;">
                                                        <div style="float:right;margin-top: 5px;margin-right: 12px;font-size: 25px;">
                                                           {% if result %}
-                                                              <a href="/youth/Services/Youth-Assessment-Edit/{{ instance.id }}/{{ result.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Assessment Data"><i class="pe-7s-pen"></i></a>
+                                                              <a href="{% url 'youth:service_youth_assessment_edit' instance.id result.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Edit The Youth Assessment Data"><i class="pe-7s-pen"></i></a>
                                                             {% else %}
-                                                              <a href="/youth/Services/Youth-Assessment-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add The Youth Assessment Data"><i class="pe-7s-plus"></i></a>
+                                                              <a href="{% url 'youth:service_youth_assessment_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add The Youth Assessment Data"><i class="pe-7s-plus"></i></a>
                                                             {% endif %}
                                                     </div>
 

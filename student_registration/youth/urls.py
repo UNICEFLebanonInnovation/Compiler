@@ -59,7 +59,7 @@ urlpatterns = [
         name='program_enrolled_programs_edit'
     ),
     re_path(
-        r'^Program/Enrolled-Programs-Delete/(?P<pk>[\w.@+-]+)/$',
+        r'^program/enrolled-programs-delete/(?P<pk>[\w.@+-]+)/$',
         view=program_view.EnrolledProgramsDeleteView.as_view(),
         name='program_enrolled_programs_delete'
     ),
@@ -79,12 +79,12 @@ urlpatterns = [
         name='child_profile'
     ),
     re_path(
-        r'^Services/Youth-Assessment-Add/(?P<registry>[\w.@+-]+)/$',
+        r'^services/youth-assessment-add/(?P<registry>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_add'
     ),
     re_path(
-        r'^Services/Youth-Assessment-Edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
+        r'^services/youth-assessment-edit/(?P<registry>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=services_view.YouthAssessmentFormView.as_view(),
         name='service_youth_assessment_edit'
     ),
@@ -129,43 +129,43 @@ urlpatterns = [
         name='child_registration_cancel'
     ),
     re_path(
-        'load-districts/$',
+        r'^load-districts/$',
         views.load_districts,
         name='load_districts'
     ),
     re_path(
-        'load-cadasters/$',
+        r'^load-cadasters/$',
         views.load_cadasters,
         name='load_cadasters'
     ),
 
     re_path(
-        'load-program-document/$',
+        r'^load-program-document/$',
         views.load_program_document,
         name='load_program_document'
     ),
     re_path(
-        'load-master-program/$',
+        r'^load-master-program/$',
         views.load_master_program,
         name='load_master_program'
     ),
     re_path(
-        'load-subr-program/$',
+        r'^load-sub-program/$',
         views.load_sub_program,
         name='load_sub_program'
     ),
     re_path(
-        r'^Program/Program-Document-Indicators/(?P<program_document_id>[\w.@+-]+)/$',
+        r'^program/program-document-indicators/(?P<program_document_id>[\w.@+-]+)/$',
         view=views.program_document_indicators_view,
         name='program_document_indicators'
     ),
     re_path(
-        r'^Program/Program-Document-Indicator-List/(?P<program_document_id>[\w.@+-]+)/$',
+        r'^program/program-document-indicator-list/(?P<program_document_id>[\w.@+-]+)/$',
         view=views.program_document_indicator_list_view,
         name='program_document_indicator_list'
     ),
     re_path(
-        r'^Program/Program-Document-Indicators-Save/$',
+        r'^program/program-document-indicators-save/$',
         view=views.save_indicators,
         name='program_document_indicators_save'
     ),

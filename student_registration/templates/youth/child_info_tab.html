@@ -316,7 +316,7 @@
                                                 <div class="menu-header-content text-dark">
                                                     <h5 class="menu-header-title">Enrolled Programs
                                                       <div style="float:right;">
-                                                        <a href="/youth/Program/Enrolled-Programs-Add/{{ instance.id }}/" data-toggle="tooltip" data-placement="top" data-original-title="Add Program Infos."><i class="pe-7s-plus"></i></a>
+                                                        <a href="{% url 'youth:program_enrolled_programs_add' instance.id %}" data-toggle="tooltip" data-placement="top" data-original-title="Add Program Infos."><i class="pe-7s-plus"></i></a>
                                                       </div>
                                                     </h5>
                                                     <!--<h6 class="menu-header-subtitle">-->
@@ -356,7 +356,7 @@
 
     <!-- Action icons -->
     <div class="ml-3">
-      <a href="/youth/Program/Enrolled-Programs-Edit/{{ instance.id }}/{{ prog.id }}/"
+      <a href="{% url 'youth:program_enrolled_programs_edit' instance.id prog.id %}"
          class="text-primary mr-2" data-toggle="tooltip" title="Edit">
          <i class="pe-7s-pen"></i>
       </a>
@@ -391,7 +391,7 @@
   function deleteProgram(pk) {
     if (!confirm("Are you sure you want to delete this program?")) return;
 
-    fetch(`/youth/Program/Enrolled-Programs-Delete/${pk}/`, {
+    fetch("{% url 'youth:program_enrolled_programs_delete' 0 %}".replace('0', pk), {
       method: 'POST',
       headers: {
         'X-CSRFToken': '{{ csrf_token }}',
