@@ -391,7 +391,8 @@
   function deleteProgram(pk) {
     if (!confirm("Are you sure you want to delete this program?")) return;
 
-    fetch("{% url 'youth:program_enrolled_programs_delete' 0 %}".replace('0', pk), {
+    const deleteUrl = "{% url 'youth:program_enrolled_programs_delete' '0' %}".replace('0', pk);
+    fetch(deleteUrl, {
       method: 'POST',
       headers: {
         'X-CSRFToken': '{{ csrf_token }}',
