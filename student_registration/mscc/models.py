@@ -663,6 +663,7 @@ class PSSService(models.Model):
         ('The child needs to stay at home to support the family with chores',
          _('The child needs to stay at home to support the family with chores')),
         ('Disability', _('Disability')),
+        ('N/A', _('N/A')),
     )
     PROTECTION_CONCERN = Choices(
         ('', '----------'),
