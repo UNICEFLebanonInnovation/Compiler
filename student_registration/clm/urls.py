@@ -411,7 +411,7 @@ urlpatterns = [
         name='attendance_child'
     ),
     re_path(
-        r'^Dashboard/$',
+        r'^dashboard/$',
         view=views.DashboardView.as_view(),
         name='dashboard'
     ),

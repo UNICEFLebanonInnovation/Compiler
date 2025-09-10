@@ -95,7 +95,7 @@ function load_master_program(url)
     })
 }
 
-function load_sub_program(url)
+function load_sub_programs(url)
 {
     var value = $("#id_master_program").val();
     $.ajax({
