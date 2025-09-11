@@ -1052,11 +1052,7 @@ class SchoolAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return School.objects.none()
-
-        qs = School.objects.filter(is_bma=True)
-
+        qs = School.objects.filter(is_bma=True, is_closed=False).order_by('name')
         if self.q:
             qs = qs.filter(Q(number__icontains=self.q) | Q(name__icontains=self.q))
-
-
         return qs
