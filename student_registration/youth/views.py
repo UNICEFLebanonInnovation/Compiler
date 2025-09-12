@@ -683,10 +683,9 @@ def export_data(request, **kwargs):
 
 @login_required(login_url='/users/login')
 def export_pd_data(request, **kwargs):
-    import datetime
     try:
         user = request.user
-        partner_id = user.partner_id
+        partner_id = getattr(user, "partner_id", None)
 
         partner = request.GET.get('partner', '').strip()
         funded_by = request.GET.get('funded_by', '').strip()
@@ -699,7 +698,6 @@ def export_pd_data(request, **kwargs):
         end_date = request.GET.get('end_date', '').strip()
         donor = request.GET.get('donor', '').strip()
         master_program = request.GET.get('master_program', '').strip()
-
 
         queryset = ProgramDocument.objects.all()
 
@@ -736,29 +734,31 @@ def export_pd_data(request, **kwargs):
             if master_program_ids:
                 queryset = queryset.filter(master_program__id__in=master_program_ids)
 
-        pd_ids = queryset.values_list('id', flat=True).distinct()
+        pd_ids = list(queryset.values_list('id', flat=True).distinct())
 
-        cursor = connection.cursor()
-
-        query_params = []
-        vw_youth_data_str = "SELECT * FROM vw_youth_pd WHERE id >0 "
+        sql = "SELECT * FROM vw_youth_pd WHERE id > 0"
+        params = []
 
         if pd_ids:
-            vw_youth_data_str += " AND id IN %s"
-            query_params.append(tuple(pd_ids))
+            placeholders = ",".join(["%s"] * len(pd_ids))
+            sql += f" AND id IN ({placeholders})"
+            params.extend(pd_ids)
+        else:
+            sql += " AND 1 = 0"
 
         # User group filtering
         if has_group(user, 'YOUTH_UNICEF'):
-            vw_youth_data_str += " AND id > 0"
+            pass
         elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-            vw_youth_data_str += " AND partner_id = %s"
-            query_params.append(partner_id)
+            sql += " AND partner_id = %s"
+            params.append(partner_id)
         else:
-            vw_youth_data_str += " AND id = 0"
+            sql += " AND id = 0"
 
-        cursor.execute(vw_youth_data_str, query_params)
-
-        headers = [col[0] for col in cursor.description]
+        with connection.cursor() as cursor:
+            cursor.execute(sql, params)
+            headers = [col[0] for col in cursor.description]  # now valid
+            rows = cursor.fetchall()
 
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename=youth_pd_data.csv'
@@ -767,7 +767,7 @@ def export_pd_data(request, **kwargs):
         writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
         writer.writerow(headers)
 
-        for row in cursor.fetchall():
+        for row in rows:  
             writer.writerow([
                 cell.strftime('%Y-%m-%d') if isinstance(cell, (datetime.date, datetime.datetime)) else cell
                 for cell in row
