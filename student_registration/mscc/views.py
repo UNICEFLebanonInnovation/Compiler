@@ -26,7 +26,7 @@ from django.utils.encoding import smart_str
 import traceback
 
 from rest_framework import status
-from django.db.models import F, Q
+from django.db.models import F, Q, OuterRef, Exists
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -499,18 +499,37 @@ class MainListView(LoginRequiredMixin,
         center_id = user.center_id
         partner_id = user.partner_id
 
+        qs = Registration.objects.select_related(
+            'child',
+            'child__nationality',
+            'partner',
+            'center',
+            'center__governorate',
+            'center__caza',
+            'center__cadaster',
+            'owner',
+            'modified_by',
+            'round',
+        ).prefetch_related('education_service')
+
+        previous_registration = Registration.objects.filter(
+            child_id=OuterRef('child_id'),
+            created__lt=OuterRef('created'),
+        )
+        qs = qs.annotate(has_previous=Exists(previous_registration))
+
         if has_group(user, 'MSCC_UNICEF'):
-            return Registration.objects.filter(
+            return qs.filter(
                 Q(round__isnull=True) | Q(round__current_year=True)
             ).order_by('-id')
 
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
-            return Registration.objects.filter(
+            return qs.filter(
                 Q(round__isnull=True) | Q(round__current_year=True),
                 deleted=False, partner=partner_id
             ).order_by('-id')
         elif has_group(user, 'MSCC_CENTER') and center_id:
-            return Registration.objects.filter(
+            return qs.filter(
                 Q(round__isnull=True) | Q(round__current_year=True),
                 deleted=False, center=center_id
             ).order_by('-id')
