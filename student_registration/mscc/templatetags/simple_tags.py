@@ -24,7 +24,9 @@ def get_service_info(services, registry, service_name):
 @register.simple_tag
 def get_child_fullname(registry):
     reg = Registration.objects.filter(id=registry).last()
-    return reg.child_fullname
+    if reg:
+        return reg.child_fullname
+    return None
 
 
 @register.simple_tag

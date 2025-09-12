@@ -750,10 +750,8 @@ class EducationServiceForm(forms.ModelForm):
 class EducationRSServiceForm(forms.ModelForm):
     school = forms.ModelChoiceField(
         queryset=School.objects.filter(is_bma=True).order_by('name'),
-        widget=autocomplete.ModelSelect2(
-            url='mscc:school_autocomplete',
-            attrs={'data-placeholder': '-------'}
-        ),
+        widget=forms.Select,
+        empty_label='-------',
         label=_('Name of public School'),
         required=True,
         to_field_name='id',
