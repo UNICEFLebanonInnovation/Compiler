@@ -341,6 +341,8 @@ class Registration(TimeStampedModel):
 
     @property
     def total_absent_days(self):
+        if hasattr(self, '_total_absent_days'):
+            return self._total_absent_days or 0
         return Registration.get_total_absent_days(self.id)
 
     @staticmethod

@@ -195,7 +195,6 @@ class MainListView(LoginRequiredMixin,
     table_class = RegistrationTable
     model = Registration
     template_name = 'youth/list.html'
-    table = RegistrationTable(Registration.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = MainFilter
@@ -210,6 +209,14 @@ class MainListView(LoginRequiredMixin,
                 'adolescent',
                 'adolescent__disability',
                 'adolescent__nationality',
+                'adolescent__governorate',
+                'adolescent__district',
+                'adolescent__cadaster',
+                'center',
+                'partner',
+                'round',
+                'owner',
+                'modified_by',
             )
             .order_by('-id')
         )
@@ -791,7 +798,6 @@ class PDListView(LoginRequiredMixin,
     table_class = PDTable
     model = ProgramDocument
     template_name = 'youth/pd_list.html'
-    table = PDTable(ProgramDocument.objects.all(), order_by='id')
     group_required = [u"YOUTH"]
 
     filterset_class = PDFilter
@@ -800,16 +806,31 @@ class PDListView(LoginRequiredMixin,
         user = self.request.user
         partner_id = user.partner_id
 
-        if has_group(user, 'YOUTH_UNICEF'):
-            queryset = ProgramDocument.objects.all().order_by('-id')
-            queryset = queryset.distinct('id')
-            return queryset
-        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
-            queryset = ProgramDocument.objects.filter(partner=partner_id).order_by('-id')
-            queryset = queryset.distinct('id')
-            return queryset
+        queryset = (
+            ProgramDocument.objects.select_related(
+                'partner',
+                'funded_by',
+                'project_status',
+                'focal_point',
+                'plan',
+                'sectors',
+                'project_type',
+            )
+            .prefetch_related(
+                'governorates',
+                'population_groups',
+                'donors',
+                'indicators__master_indicator',
+            )
+            .order_by('-id')
+        )
 
-        return ProgramDocument.objects.none()
+        if has_group(user, 'YOUTH_PARTNER') and partner_id:
+            queryset = queryset.filter(partner=partner_id)
+        elif not has_group(user, 'YOUTH_UNICEF'):
+            return ProgramDocument.objects.none()
+
+        return queryset.distinct('id')
 
     def get_table_class(self):
         if has_group(self.request.user, 'YOUTH_UNICEF'):

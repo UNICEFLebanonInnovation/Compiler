@@ -406,16 +406,26 @@ class BLNListView(LoginRequiredMixin,
     table_class = BLNTable
     model = BLN
     template_name = 'clm/bln_list.html'
-    table = BLNTable(BLN.objects.all(), order_by='id')
     group_required = [u"CLM_BLN"]
 
     filterset_class = BLNFilter
 
     def get_queryset(self):
-
-
-        return BLN.objects.filter(partner=self.request.user.partner_id,
-                                  round__current_year=True).order_by('-id')
+        return (
+            BLN.objects.filter(
+                partner=self.request.user.partner_id, round__current_year=True
+            )
+            .select_related(
+                "student",
+                "student__nationality",
+                "round",
+                "governorate",
+                "district",
+                "owner",
+                "modified_by",
+            )
+            .order_by("-id")
+        )
         # return BLN.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_bln__year=Person.CURRENT_YEAR).order_by('-id')
         # return BLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
@@ -781,16 +791,26 @@ class ABLNListView(LoginRequiredMixin,
     table_class = ABLNTable
     model = ABLN
     template_name = 'clm/abln_list.html'
-    table = ABLNTable(ABLN.objects.all(), order_by='id')
     group_required = [u"CLM_ABLN"]
 
     filterset_class = ABLNFilter
 
     def get_queryset(self):
-
-
-        return ABLN.objects.filter(partner=self.request.user.partner_id,
-                                   round__current_year=True).order_by('-id')
+        return (
+            ABLN.objects.filter(
+                partner=self.request.user.partner_id, round__current_year=True
+            )
+            .select_related(
+                "student",
+                "student__nationality",
+                "round",
+                "governorate",
+                "district",
+                "owner",
+                "modified_by",
+            )
+            .order_by("-id")
+        )
 
         # return ABLN.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_abln__year=Person.CURRENT_YEAR).order_by('-id')
@@ -2237,16 +2257,28 @@ class RSListView(LoginRequiredMixin,
     table_class = RSTable
     model = RS
     template_name = 'clm/rs_list.html'
-    table = RSTable(RS.objects.all(), order_by='id')
     group_required = [u"CLM_RS"]
 
     filterset_class = RSFilter
 
     def get_queryset(self):
-
-
-        return RS.objects.filter(partner=self.request.user.partner_id,
-                                 round__current_year=True).order_by('-id')
+        return (
+            RS.objects.filter(
+                partner=self.request.user.partner_id, round__current_year=True
+            )
+            .select_related(
+                "student",
+                "student__nationality",
+                "round",
+                "cycle",
+                "school",
+                "governorate",
+                "district",
+                "owner",
+                "modified_by",
+            )
+            .order_by("-id")
+        )
         # return RS.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_rs__year=Person.CURRENT_YEAR).order_by('-id')
         # return RS.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
@@ -2475,15 +2507,28 @@ class CBECEListView(LoginRequiredMixin,
     table_class = CBECETable
     model = CBECE
     template_name = 'clm/cbece_list.html'
-    table = CBECETable(CBECE.objects.all(), order_by='id')
     group_required = [u"CLM_CBECE"]
 
     filterset_class = CBECEFilter
 
     def get_queryset(self):
-
-        return CBECE.objects.filter(partner=self.request.user.partner_id,
-                                    round__current_year=True).order_by('-id')
+        return (
+            CBECE.objects.filter(
+                partner=self.request.user.partner_id, round__current_year=True
+            )
+            .select_related(
+                "student",
+                "student__nationality",
+                "round",
+                "cycle",
+                "school",
+                "governorate",
+                "district",
+                "owner",
+                "modified_by",
+            )
+            .order_by("-id")
+        )
 
         # return CBECE.objects.filter(partner=self.request.user.partner_id,
         #                             round__end_date_cbece__year=Person.CURRENT_YEAR).order_by('-id')
@@ -2499,14 +2544,16 @@ class GeneralQuestionnaireListView(LoginRequiredMixin,
     table_class = GeneralQuestionnaireTable
     model = GeneralQuestionnaire
     template_name = 'clm/general_questionnaire_list.html'
-    table = GeneralQuestionnaireTable(GeneralQuestionnaire.objects.all(), order_by='id')
     group_required = [u"CLM_General_Questionnaire"]
 
     filterset_class = GeneralQuestionnaireFilter
 
     def get_queryset(self):
-
-        return GeneralQuestionnaire.objects.all().order_by('-id')
+        return (
+            GeneralQuestionnaire.objects.all()
+            .select_related("owner", "modified_by")
+            .order_by("-id")
+        )
 
 
 class GeneralQuestionnaireAddView(LoginRequiredMixin,
@@ -3243,15 +3290,21 @@ class OutreachListView(LoginRequiredMixin,
     table_class = OutreachTable
     model = Outreach
     template_name = 'clm/outreach_list.html'
-    table = OutreachTable(Outreach.objects.all(), order_by='id')
     group_required = [u"CLM_outreach"]
 
     filterset_class = OutreachFilter
 
     def get_queryset(self):
-
-
-        return Outreach.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        return (
+            Outreach.objects.filter(partner=self.request.user.partner_id)
+            .select_related(
+                "student",
+                "student__nationality",
+                "owner",
+                "modified_by",
+            )
+            .order_by("-id")
+        )
 
 
 class OutreachExportViewSet(LoginRequiredMixin, ListView):
@@ -3450,20 +3503,36 @@ class BridgingListView(LoginRequiredMixin,
     table_class = BridgingTable
     model = Bridging
     template_name = 'clm/bridging_list.html'
-    table = BridgingTable(Bridging.objects.all(), order_by='student__full_name')
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingFilter
 
     def get_queryset(self):
         qs = Bridging.objects.filter(round__current_year=True, deleted=False)
-        if not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and self.request.user.partner:
+        if (
+            not has_group(self.request.user, 'CLM_BRIDGING_ALL')
+            and not self.request.user.is_staff
+            and self.request.user.partner
+        ):
             qs = qs.filter(partner_id=self.request.user.partner_id)
             if self.request.user.school:
                 qs = qs.filter(school_id=self.request.user.school_id)
-        elif not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and not self.request.user.partner:
+        elif (
+            not has_group(self.request.user, 'CLM_BRIDGING_ALL')
+            and not self.request.user.is_staff
+            and not self.request.user.partner
+        ):
             qs = qs.none()
-        return qs
+        return qs.select_related(
+            "student",
+            "student__nationality",
+            "round",
+            "governorate",
+            "district",
+            "school",
+            "owner",
+            "modified_by",
+        ).order_by('student__last_name', 'student__first_name')
 
 
 @login_required(login_url='/users/login')

@@ -131,17 +131,31 @@ class InclusionListView(LoginRequiredMixin,
     table_class = InclusionTable
     model = Inclusion
     template_name = 'clm/inclusion_list.html'
-    table = InclusionTable(Inclusion.objects.all(), order_by='id')
     group_required = [u"CLM_Inclusion"]
     filterset_class = InclusionFilter
 
     def get_queryset(self):
-        partner_id = self.request.user.partner_id
-        if not self.request.user.is_staff and partner_id:
-            return Inclusion.objects.filter(round__current_year_inclusion=True,partner=partner_id).order_by('-id')
-        elif self.request.user.is_staff:
-            return Inclusion.objects.filter(round__current_year_inclusion=True).order_by('-id')
-        return Inclusion.objects.none()
+        qs = Inclusion.objects.filter(round__current_year_inclusion=True)
+
+        if not self.request.user.is_staff:
+            partner_id = self.request.user.partner_id
+            if partner_id:
+                qs = qs.filter(partner=partner_id)
+            else:
+                return Inclusion.objects.none()
+
+        return (
+            qs.select_related(
+                "student",
+                "student__nationality",
+                "round",
+                "governorate",
+                "district",
+                "owner",
+                "modified_by",
+            )
+            .order_by("-id")
+        )
 
 
 class InclusionAssessmentView(LoginRequiredMixin,

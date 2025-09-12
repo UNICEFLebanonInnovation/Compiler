@@ -61,7 +61,14 @@ class StudentViewSet(mixins.RetrieveModelMixin,
                      viewsets.GenericViewSet):
 
     model = Student
-    queryset = Student.objects.all()
+    queryset = Student.objects.select_related(
+        'id_type',
+        'nationality',
+        'mother_nationality',
+        'specialneeds',
+        'specialneedsdt',
+        'financialsupport',
+    ).all()
     serializer_class = StudentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -111,7 +118,14 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
                            viewsets.GenericViewSet):
 
     model = Student
-    queryset = Student.objects.all()
+    queryset = Student.objects.select_related(
+        'id_type',
+        'nationality',
+        'mother_nationality',
+        'specialneeds',
+        'specialneedsdt',
+        'financialsupport',
+    ).all()
     serializer_class = StudentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -123,7 +137,14 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
         user_school = self.request.user.school_id
         school = int(self.request.GET.get('school', 0))
         if terms:
-            qs = Student.second_shift.filter()
+            qs = Student.second_shift.select_related(
+                'id_type',
+                'nationality',
+                'mother_nationality',
+                'specialneeds',
+                'specialneedsdt',
+                'financialsupport',
+            ).filter()
             for term in terms.split():
                 qs = qs.filter(
                     Q(first_name__contains=term) |
@@ -139,7 +160,14 @@ class StudentAutocomplete(autocomplete.Select2QuerySetView):
         if not self.request.user.is_authenticated:
             return Student.objects.none()
 
-        qs = Student.objects.all()
+        qs = Student.objects.select_related(
+            'id_type',
+            'nationality',
+            'mother_nationality',
+            'specialneeds',
+            'specialneedsdt',
+            'financialsupport',
+        )
 
         if self.q:
             qs = Student.objects.filter(
@@ -159,42 +187,32 @@ class TeacherListView(LoginRequiredMixin,
     table_class = TeacherTable
     model = Teacher
     template_name = 'students/teacher_list.html'
-    table = BootstrapTable(Teacher.objects.all(), order_by='id')
+    table = BootstrapTable(Teacher.objects.none(), order_by='id')
     group_required = [u"CLM_TEACHER"]
     filterset_class = TeacherFilter
 
     def get_queryset(self):
 
+        base_queryset = Teacher.objects.select_related('round', 'school')
         clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')
         is_staff = self.request.user.is_staff
 
-        queryset = Teacher.objects.filter(round__current_year=True)
-
         if clm_bridging_all or is_staff:
-            queryset = Teacher.objects.all()
-            # queryset = Teacher.objects.filter(round__current_year=True)
+            return base_queryset
 
+        school_id = self.request.user.school.id if self.request.user.school else 0
+        partner_id = self.request.user.partner_id or 0
+
+        if school_id and school_id > 0:
+            return base_queryset.filter(school_id=school_id)
+        elif partner_id > 0:
+            return base_queryset.filter(
+                school_id__in=PartnerOrganization.objects
+                .filter(id=partner_id)
+                .values_list('schools', flat=True)
+            )
         else:
-            school_id = 0
-            partner_id = 0
-
-            if self.request.user.school:
-                school_id = self.request.user.school.id
-            if self.request.user.partner_id:
-                partner_id = self.request.user.partner_id
-
-            if school_id and school_id > 0:
-                queryset = Teacher.objects.filter(school_id=school_id)
-
-            elif partner_id > 0:
-                queryset = Teacher.objects.filter(school_id__in=PartnerOrganization
-                                                 .objects
-                                                 .filter(id=partner_id)
-                                                 .values_list('schools', flat=True))
-            else:
-                queryset = queryset.none()
-
-        return queryset
+            return base_queryset.none()
 
 
 class TeacherAddView(LoginRequiredMixin,

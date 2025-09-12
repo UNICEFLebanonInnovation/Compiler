@@ -26,7 +26,7 @@ from django.utils.encoding import smart_str
 import traceback
 
 from rest_framework import status
-from django.db.models import F, Q, OuterRef, Exists
+from django.db.models import F, Q, OuterRef, Exists, Subquery, IntegerField
 from django.urls import reverse, reverse_lazy
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -41,6 +41,7 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
 from student_registration.students.utils import generate_one_unique_id
 from student_registration.students.models import Nationality
+from student_registration.attendances.models import MSCCAttendanceChild
 from student_registration.backends.utils import (
     ExportStorage,
     download_file,
@@ -516,7 +517,21 @@ class MainListView(LoginRequiredMixin,
             child_id=OuterRef('child_id'),
             created__lt=OuterRef('created'),
         )
-        qs = qs.annotate(has_previous=Exists(previous_registration))
+
+        absent_days = (
+            MSCCAttendanceChild.objects.filter(
+                registration_id=OuterRef('pk'),
+                attended='No'
+            )
+            .values('registration')
+            .annotate(count=Count('id'))
+            .values('count')
+        )
+
+        qs = qs.annotate(
+            has_previous=Exists(previous_registration),
+            _total_absent_days=Subquery(absent_days, output_field=IntegerField()),
+        )
 
         if has_group(user, 'MSCC_UNICEF'):
             return qs.filter(
