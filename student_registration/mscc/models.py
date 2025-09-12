@@ -331,6 +331,8 @@ class Registration(TimeStampedModel):
 
     @property
     def has_previous_registration(self):
+        if hasattr(self, 'has_previous'):
+            return "Yes" if self.has_previous else "No"
         previous_registration_exists = Registration.objects.filter(
             child_id=self.child.id,
             created__lt=self.created
