@@ -1,8 +1,8 @@
 {% extends "youth/base.html" %}
 {% load static i18n %}
-{% load static i18n %}
 {% load render_table from django_tables2 %}
 {% load django_bootstrap5 %}
+{% load crispy_forms_tags %}
 {% load util_tags %}
 {% bootstrap_css %}
 
@@ -86,20 +86,7 @@
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
             <div class="card-body">
             <form action="" method="get" class="form form-inline">
-                {% bootstrap_form filter.form layout='inline' %}
-
-                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
-                  <i style="font-weight:bolder" class="pe-7s-search"></i>
-                </button>
-
-               <button type="button" title="Cancel" class="btn btn-outline-warning" onclick="window.location.href='{% url 'youth:pd_list' %}'">
-                    <i class="fa fa-fw" aria-hidden="true"></i>
-                </button>
-
-                <a href="#" title="Download" class="btn btn-outline-success download-report">
-                    <i class="lnr-download"></i>
-                </a>
-
+               {% crispy filter.form 'bootstrap3' %}
             </form>
             </div>
         </div>
