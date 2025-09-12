@@ -767,7 +767,7 @@ def export_pd_data(request, **kwargs):
         writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
         writer.writerow(headers)
 
-        for row in rows:  
+        for row in rows:
             writer.writerow([
                 cell.strftime('%Y-%m-%d') if isinstance(cell, (datetime.date, datetime.datetime)) else cell
                 for cell in row
