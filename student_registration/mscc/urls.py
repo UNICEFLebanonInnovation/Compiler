@@ -59,6 +59,11 @@ urlpatterns = [
         name='dashboard_custom'
     ),
     re_path(
+        r'^school-autocomplete/$',
+        view=education_view.SchoolAutocomplete.as_view(),
+        name='school_autocomplete'
+    ),
+    re_path(
         r'^services/education-assessment-add/(?P<registry>[\w.@+-]+)/$',
         view=education_view.EducationAssessmentFormView.as_view(),
         name='service_education_assessment_add'

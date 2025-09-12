@@ -6,8 +6,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.urls import reverse
 
+from dal import autocomplete
+from student_registration.schools.models import School
+
 from .education_form import *
 from .utils import *
+
+
+class SchoolAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = School.objects.filter(is_bma=True).order_by('name')
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
 
 
 class EducationAssessmentFormView(LoginRequiredMixin,
