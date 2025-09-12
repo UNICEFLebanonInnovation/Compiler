@@ -40,7 +40,7 @@
 
       {% if request.user|has_group:"MSCC_FULL" %}
                         <div class="page-title-actions">
-                                <a href="{% url 'mscc:new_round' instance.id %}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
+                                <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
 
                                 <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">
                                     {{ instance.type }}
@@ -114,10 +114,61 @@
 
 {% block modal %}
 
+<div class="modal fade" id="newRoundModal" tabindex="-1" role="dialog" aria-labelledby="newRoundModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newRoundModalLabel">Register the Child in a new Round</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>To add this child to a new round, select the registration type (Core Package/Walk-In), and then click the "Confirm" button to create a new registration and start adding the education information.</p>
+        {% get_regitration_type instance.id as regitration_type %}
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="corePackage" name="registrationType" value="Core-Package" {% if regitration_type == "Core-Package" %}checked{% endif %}>
+          <label class="form-check-label" for="corePackage">Core Package</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="walkIn" name="registrationType" value="Walk-in" {% if regitration_type == "Walk-in" %}checked{% endif %}>
+          <label class="form-check-label" for="walkIn">Walk-In</label>
+        </div>
+        {% get_child_rounds instance.id as child_rounds %}
+        {% if child_rounds %}
+          <h5>Regitration History</h5>
+          {% for child_round in child_rounds %}
+            <p>{{ child_round }}</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <a id="new-round-confirm" href="{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=Core-Package" class="btn btn-success">Confirm</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 
     <script type="text/javascript" src="{% static 'js/mscc/mscc.js' %}?v=34"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const confirmButton = document.getElementById("new-round-confirm");
+            const radioButtons = document.querySelectorAll("input[name='registrationType']");
+            const updateHref = () => {
+                const selectedType = document.querySelector("input[name='registrationType']:checked").value;
+                confirmButton.href = "{% url 'mscc:new_round_redirect' %}?registry={{ instance.id }}&new_round_confirmation=confirmed&registrationType=" + selectedType;
+            };
+            updateHref();
+            radioButtons.forEach((radio) => {
+                radio.addEventListener("change", updateHref);
+            });
+        });
+    </script>
 
 {% endblock %}

@@ -64,7 +64,7 @@
 
                                 {% endif %}
 
-                                <a href="/youth/New-Round/{{ instance.id }}" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
+                                <a href="#" data-toggle="modal" data-target="#newRoundModal" class="mr-3 btn-icon btn btn-success"><i class="fa fa-plus btn-icon-wrapper"> </i>Register in a new Round</a>
 
                                 <button type="button" data-toggle="tooltip" title="" data-placement="top" class="btn-shadow mr-3 btn btn-primary" data-original-title="Package Type">
                                     {{ instance.type }}
@@ -139,6 +139,33 @@
 {% endblock %}
 
 {% block modal %}
+
+<div class="modal fade" id="newRoundModal" tabindex="-1" role="dialog" aria-labelledby="newRoundModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newRoundModalLabel">Register the Youth in a new Round</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>To add this youth to a new round, click on the "Confirm" button to create a new registration and start adding the Education information.</p>
+        {% get_child_rounds instance.id as child_rounds %}
+        {% if child_rounds %}
+          <h5>Regitration History</h5>
+          {% for child_round in child_rounds %}
+            <p>{{ child_round }}</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <a href="/youth/New-Round-Redirect/?registry={{ instance.id }}&new_round_confirmation=confirmed" class="btn btn-success">Confirm</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
