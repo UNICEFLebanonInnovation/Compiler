@@ -43,7 +43,7 @@ class PlaceholderFilterSet(FilterSet):
         self.form.helper.layout = Layout(
             *all_fields,
             ButtonHolder(Submit("submit", "Filter", css_class="btn btn-primary"),
-                         HTML('<a href="" title="Async Download" class="btn btn-outline-info download-report-async">Export</a>')
+                         HTML('<a href="" title="Async Download" class="btn btn-success download-report-async">Export</a>')
             )
         )
         for name, field in self.form.fields.items():

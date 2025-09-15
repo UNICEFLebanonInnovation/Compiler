@@ -3682,11 +3682,11 @@ class ClubForm(forms.ModelForm):
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('number_clubs', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('club_type', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('number_children', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -3767,11 +3767,11 @@ class MeetingForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('meeting_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('meeting_date', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('number_participants', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -3825,7 +3825,6 @@ class CommunityInitiativeForm(forms.ModelForm):
     )
     school_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
-
     def __init__(self, *args, **kwargs):
 
         self.request = kwargs.pop('request', None)
@@ -3845,9 +3844,9 @@ class CommunityInitiativeForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('community_group_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('number_initiatives', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
@@ -3931,21 +3930,21 @@ class HealthVisitForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">1</span>'),
+                    HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('focal_point_name', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">2</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('number_visits', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">3</span>'),
+                    HTML('<span class="badge-form badge-pill">3</span>'),
                     Div('date_first_visit', css_class='col-md-3'),
-                    HTML('<span class="badge-form-2 badge-pill">4</span>'),
+                    HTML('<span class="badge-form badge-pill">4</span>'),
                     Div('date_last_visit', css_class='col-md-3'),
                     css_class='row card-body',
                 ),
                 Div(
-                    HTML('<span class="badge-form-2 badge-pill">5</span>'),
+                    HTML('<span class="badge-form badge-pill">5</span>'),
                     Div('summary', css_class='col-md-3'),
                     css_class='row card-body',
                 ),

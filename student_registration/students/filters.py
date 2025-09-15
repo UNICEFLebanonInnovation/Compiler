@@ -34,8 +34,8 @@ class PlaceholderFilterSet(FilterSet):
             ButtonHolder(
                 Submit("submit", "Filter", css_class="btn btn-primary"),
                 HTML(
-                    '<a href="javascript:void(0);"  title="Download" class="btn btn-outline-success download-report" onclick="teacherExport(event)">'
-                    '<i class="lnr-download"></i>'
+                    '<a href="javascript:void(0);"  title="Download" class="btn btn-success download-report" onclick="teacherExport(event)">'
+                    'Export'
                     '</a>'
                 ),
                 css_class="d-flex gap-2"  # optional: layout/spacing
