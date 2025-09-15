@@ -60,7 +60,7 @@ $(document).ready(function() {
 
         if (confirmed) {
             $.ajax({
-                url: "/youth/Child-Mark-Delete/" + registrationId + "/",
+                url: "/youth/child-mark-delete/" + registrationId + "/",
                 type: "GET",
                 headers: requestHeaders,
                 success: function(data) {

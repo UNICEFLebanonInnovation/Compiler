@@ -2,6 +2,7 @@
 {% load static i18n %}
 {% load static i18n %}
 {% load render_table from django_tables2 %}
+{% load crispy_forms_tags %}
 {% load django_bootstrap5 %}
 {% load util_tags %}
 {% bootstrap_css %}
@@ -44,8 +45,6 @@
                                                 <li class="breadcrumb-item">
                                                     {{ request.user.center.name }} - {{ request.user.center.type }}
                                                 </li>
-
-
                                             </ol>
                                         </nav>
                                     </div>
@@ -76,24 +75,7 @@
         <div data-parent="#accordion" id="collapseOne1" aria-labelledby="headingOne" class="collapse" style="">
             <div class="card-body">
             <form action="" method="get" class="form form-inline">
-                {% bootstrap_form filter.form layout='inline' %}
-
-                <button class="btn btn-outline-primary mr-left-5 filter-report" title="Search">
-                  <i style="font-weight:bolder" class="pe-7s-search"></i>
-                </button>
-
-                <button href="" title="Cancel"
-                 class="btn btn-outline-warning"><i class="fa fa-fw" aria-hidden="true"></i>
-                </button>
-
-                <a href="" title="Download" class="btn btn-outline-success download-center-report">
-                    <i class="lnr-download"></i>
-                </a>
-
-                <div class = "downloading-message" style = "display:none">
-                  Loading...
-                </div>
-
+                {% crispy filter.form 'bootstrap3' %}
             </form>
             </div>
         </div>

@@ -74,9 +74,7 @@
 <div class="col-md-4">
                                     <div class="main-card mb-3 card">
                                          <div class="card-header"><i class="header-icon lnr-laptop-phone icon-gradient bg-plum-plate"> </i>Daily Attendance
-                                            <div class="btn-actions-pane-right actions-icon-btn">
-                                              <a href="{% url 'mscc:attendance_report' %}" class="btn btn-link">Download</a>
-                                            </div>
+
                                         </div>
                                         <div class="card-body">
 
@@ -175,6 +173,7 @@
                                           </div>
 
                                         <div class="d-block text-right card-footer">
+                                            <a href="{% url 'mscc:attendance_report' %}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary"><i class="pe-7s-cloud-download btn-icon-wrapper"></i>Download</a>
                                             <a href="{% url 'mscc:load_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-primary" id="load_attendance_children"><i class="pe-7s-refresh-2 btn-icon-wrapper"></i>Load</a>
 {% if request.user|has_group:"MSCC_CENTER" and request.user.center.id %}
                                             <a href="{% url 'mscc:save_attendance_children' %}?center_id={{ request.user.center_id }}" class="btn-wide mb-2 mr-2 btn-icon btn btn-success disabled" id="save_attendance_children"><i class="pe-7s-diskette btn-icon-wrapper"></i>Save</a>

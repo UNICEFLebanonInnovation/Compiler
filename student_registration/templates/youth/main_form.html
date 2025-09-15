@@ -37,24 +37,13 @@
                                                     </a>
                                                 </li>
                                                 <li class="breadcrumb-item">
-                                                    {% if form.instance.id == None %}
                                                       <a href="{% url 'youth:list' %}">List</a>
-                                                    {% else %}
-                                                      <a href="{% url 'youth:child_profile' form.instance.id %}">Youth Profile</a>
-                                                    {% endif %}
                                                 </li>
-<!--                                                <li class="breadcrumb-item">-->
-<!--                                                    {{ request.user.center.governorate }}-->
-<!--                                                </li>-->
-<!--                                                <li class="breadcrumb-item">-->
-<!--                                                    {{ request.user.center.caza }}-->
-<!--                                                </li>-->
-<!--                                                <li class="breadcrumb-item">-->
-<!--                                                    {{ request.user.center.cadaster }} - {{ request.user.center.p_code }}-->
-<!--                                                </li>-->
-<!--                                                <li class="breadcrumb-item">-->
-<!--                                                    {{ request.user.center.name }} - {{ request.user.center.type }}-->
-<!--                                                </li>-->
+                                              {% if form.instance %}
+                                                <li class="breadcrumb-item">
+                                                      <a href="{% url 'youth:child_profile' form.instance.id %}">{{ form.instance }}</a>
+                                                </li>
+                                              {% endif %}
                                             </ol>
                                         </nav>
                                     </div>
@@ -73,15 +62,10 @@
 
 <div class="row">
 
-<div class="main-card mb-3 card {% if form.instance.id == None %}col-md-9{% else %}col-md-12{% endif %}">
+<div class="main-card mb-3 card col-md-12">
                                 <div class="card-body">
                                     <div id="smartwizard3" class="forms-wizard">
                                         <ul class="forms-wizard">
-                                            <!--<li>-->
-                                                <!--<a href="#step-1">-->
-                                                    <!--<em>1</em><span>General Information</span>-->
-                                                <!--</a>-->
-                                            <!--</li>-->
                                             <li>
                                                 <a href="#step-1">
                                                     <em>1</em><span>Youth Information</span>
@@ -113,84 +97,6 @@
                                     </div>
                                 </div>
                             </div>
-{% if form.instance.id == None %}
-  <div class="col-md-3" id="outreach-nfe-result">
-    <div class="main-card mb-3 card">
-      <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Outreach filter result</div>
-                                                  <div id="search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
-                                                    <div class="loader">
-                                                        <div class="ball-spin-fade-loader">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        <div class="card-body" style="height: 225px; overflow: auto;">
-                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="outreach_search_result">
-                                                <!--<div class="vertical-timeline-item vertical-timeline-element">-->
-                                                    <!--<div>-->
-                                                        <!--<div class="vertical-timeline-element-icon bounce-in">-->
-                                                            <!--<div class="timeline-icon border-success bg-success">-->
-                                                                <!--<i class="fa fa-child text-white"></i>-->
-                                                            <!--</div>-->
-                                                        <!--</div>-->
-                                                        <!--<div class="vertical-timeline-element-content bounce-in">-->
-                                                            <!--<h4 class="timeline-title text-success">FontAwesome Icons</h4>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                        <!--</div>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-
-                                            </div>
-                                        </div>
-                                    </div>
-    <div class="main-card mb-3 card">
-      <div class="card-header"><i class="header-icon pe-7s-filter icon-gradient bg-plum-plate"> </i>Previous data</div>
-                                                  <div id="nfe_search_loader" class="loader-wrapper d-flex justify-content-center align-items-center hidden" style="position: absolute; top: 100px; left: 25%;">
-                                                    <div class="loader">
-                                                        <div class="ball-spin-fade-loader">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        <div class="card-body" style="height: 225px; overflow: auto;">
-                                            <div class="vertical-time-icons vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="nfe_search_result">
-                                                <!--<div class="vertical-timeline-item vertical-timeline-element">-->
-                                                    <!--<div>-->
-                                                        <!--<div class="vertical-timeline-element-icon bounce-in">-->
-                                                            <!--<div class="timeline-icon border-success bg-success">-->
-                                                                <!--<i class="fa fa-child text-white"></i>-->
-                                                            <!--</div>-->
-                                                        <!--</div>-->
-                                                        <!--<div class="vertical-timeline-element-content bounce-in">-->
-                                                            <!--<h4 class="timeline-title text-success">FontAwesome Icons</h4>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                            <!--<p>Lorem ipsum dolor sit amit,consectetur elit enim at minim veniam quis nostrud</p>-->
-                                                        <!--</div>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-
-                                            </div>
-                                        </div>
-                                    </div>
-</div>
-{% endif %}
 </div>
 
 {% endblock %}

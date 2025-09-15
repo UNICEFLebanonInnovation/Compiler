@@ -31,11 +31,17 @@
                       <nav aria-label="breadcrumb">
                           <ol class="breadcrumb">
                               <li class="breadcrumb-item">
-                                  <a href="{% url 'youth:list' %}">
-                                      <i class="fa fa-home"></i>
+                                  <a href="/">
+                                      Home
                                   </a>
                               </li>
-                              <li class="breadcrumb-item">Upload</li>
+
+                              <li class="breadcrumb-item">
+                                  <a href="{% url 'youth:list' %}">
+                                      List
+                                  </a>
+                              </li>
+                              <li class="breadcrumb-item">Bulk import</li>
                           </ol>
                       </nav>
                   </div>
@@ -68,7 +74,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-3 btn-shadow btn-wide btn-pill">
-                    {% trans "Upload" %}
+                    {% trans "Start import" %}
                 </button>
             </form>
         </div>

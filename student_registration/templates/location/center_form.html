@@ -34,6 +34,11 @@
                                                         Home
                                                     </a>
                                                 </li>
+                                                {% if request.user|has_group:"MSCC_PARTNER" %}
+                                                <li class="breadcrumb-item">
+                                                    <a href="{% url 'locations:center_list' %}">List</a>
+                                                </li>
+                                                {% endif %}
                                <li class="breadcrumb-item">
                                      Center
                               </li>

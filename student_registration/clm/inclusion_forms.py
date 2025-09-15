@@ -1073,12 +1073,12 @@ class InclusionFollowupForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge-form badge-pill">1</span>'),
                     Div('child_dropout', css_class='col-md-6'),
-                    HTML('<span class="badge-form badge-pill" id="span_child_dropout_specify">2</span>'),
+                    HTML('<span class="" id="span_child_dropout_specify"></span>'),
                     Div('child_dropout_specify', css_class='col-md-3'),
                     css_class='row card-body'
                 ),
                 Div(
-                    HTML('<span class="badge-form badge-pill">3</span>'),
+                    HTML('<span class="badge-form badge-pill">2</span>'),
                     Div('caregiver_trained_parental_engagement', css_class='col-md-6'),
                     css_class='row card-body'
                 ),
