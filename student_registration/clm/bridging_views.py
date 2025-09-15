@@ -152,19 +152,37 @@ class BridgingListView(LoginRequiredMixin,
     table_class = BridgingTable
     model = Bridging
     template_name = 'clm/bridging_list.html'
-    table = BridgingTable(Bridging.objects.all(), order_by='student__full_name')
     group_required = [u"CLM_Bridging"]
 
     filterset_class = BridgingFilter
 
     def get_queryset(self):
-        qs = Bridging.objects.filter(round__current_year=True, deleted=False)
-        if not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and self.request.user.partner:
-            qs = qs.filter(partner_id=self.request.user.partner_id)
-            if self.request.user.school:
-                qs = qs.filter(school_id=self.request.user.school_id)
-        elif not has_group(self.request.user, 'CLM_BRIDGING_ALL') and not self.request.user.is_staff and not self.request.user.partner:
-            qs = qs.none()
+        qs = (
+            Bridging.objects.filter(round__current_year=True, deleted=False)
+            .select_related(
+                "student",
+                "student__nationality",
+                "round",
+                "school",
+                "governorate",
+                "district",
+                "owner",
+                "modified_by",
+            )
+            .order_by("student__full_name")
+        )
+
+        if (
+            not has_group(self.request.user, "CLM_BRIDGING_ALL")
+            and not self.request.user.is_staff
+        ):
+            if self.request.user.partner:
+                qs = qs.filter(partner_id=self.request.user.partner_id)
+                if self.request.user.school:
+                    qs = qs.filter(school_id=self.request.user.school_id)
+            else:
+                qs = qs.none()
+
         return qs
 
 
