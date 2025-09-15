@@ -708,6 +708,15 @@ class EducationServiceForm(forms.ModelForm):
             except ValidationError as e:
                 self.add_error("registration_date", str(e))
 
+        education_status = cleaned_data.get("education_status")
+        dropout_date = cleaned_data.get("dropout_date")
+
+        if education_status and education_status == 'Currently registered in Formal Education school but not attending'\
+            and not dropout_date:
+            self.add_error('dropout_date', 'This field is required')
+
+        return cleaned_data
+
         # instance = self.instance
 
         # if not instance.pk:
