@@ -1177,6 +1177,37 @@ function validateMainForm(showModal, step) {
 //            valid = false;
 //        }
     }
+
+    if (showModal && !valid) {
+        var missingByStep = {};
+        $('.error-field').each(function() {
+            var field = $(this);
+            var stepDiv = field.closest('div[id^="step-"]');
+            var stepId = stepDiv.length ? stepDiv.attr('id') : 'step-1';
+            var stepNum = stepId.split('-')[1];
+            if (!missingByStep[stepNum]) {
+                missingByStep[stepNum] = [];
+            }
+            var label = $('label[for="' + field.attr('id') + '"]').clone().children().remove().end().text().trim();
+            if (!label) {
+                label = field.attr('name') || field.attr('id');
+            }
+            if (missingByStep[stepNum].indexOf(label) === -1) {
+                missingByStep[stepNum].push(label);
+            }
+        });
+        var content = '';
+        Object.keys(missingByStep).sort().forEach(function(stepKey) {
+            content += '<strong>Step ' + stepKey + ':</strong><ul>';
+            missingByStep[stepKey].forEach(function(label) {
+                content += '<li>' + label + '</li>';
+            });
+            content += '</ul>';
+        });
+        $('#formErrorModal #swal2-content').html(content);
+        $('#formErrorModal').modal('show');
+    }
+
     return valid;
 }
 
@@ -1192,5 +1223,9 @@ $(document).ready(function() {
         validateField($(this));
         var step = $('#step-1').is(':visible') ? 1 : null;
         validateMainForm(false, step);
+    });
+
+    $('#formErrorModal').on('hidden.bs.modal', function(){
+        $('#formErrorModal #swal2-content').text('Please check the form mandatory fields.');
     });
 });
