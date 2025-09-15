@@ -37,32 +37,35 @@ $(document).ready(function() {
     var deleteRegistrationId = null;
     var deleteParentTR = null;
 
-    $(".delete-inclusion-student").on("click", function(e) {
-        e.preventDefault();
-        deleteRegistrationId = $(this).data("registration-id");
-        deleteParentTR = $(this).closest('tr');
-        $('#deleteStudentModal').modal('show');
-    });
+    $( ".delete-inclusion-student" ).on( "click", function(e) {
 
-    $('#confirmDeleteStudent').on('click', function() {
-        if (deleteRegistrationId) {
-            requestHeaders = getHeader();
-            requestHeaders["content-type"] = 'application/json';
+        e.preventDefault();
+
+        var buttonId = $(this).attr("id");
+        var registrationId = $(this).data("registration-id");
+        var parentTR = $(this).closest('tr');
+
+        var confirmed = confirm("Are you sure you want to delete this student?");
+        requestHeaders = getHeader();
+        requestHeaders["content-type"] = 'application/json';
+
+        if (confirmed) {
             $.ajax({
-                url: "/clm/inclusion-delete/" + deleteRegistrationId + "/",
+                url: "/clm/inclusion-delete/" + registrationId + "/",
                 type: "GET",
                 headers: requestHeaders,
                 success: function(data) {
-                    deleteParentTR.remove();
-                    $('#deleteStudentModal').modal('hide');
+                    console.log(parentTR.html());
+                    parentTR.remove();
                 },
                 error: function(error) {
-                    $('#deleteStudentModal').modal('hide');
+                    // Handle error if needed
                 }
             });
+        } else {
+            console.log("User canceled deleting for student with ID: " + registrationId);
         }
-    });
-
+    } );
 
     if($(document).find('#id_registration_date').length == 1) {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
