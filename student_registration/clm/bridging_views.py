@@ -169,7 +169,11 @@ class BridgingListView(LoginRequiredMixin,
                 "owner",
                 "modified_by",
             )
-            .order_by("student__full_name")
+            .order_by(
+                "student__first_name",
+                "student__father_name",
+                "student__last_name",
+            )
         )
 
         if (
