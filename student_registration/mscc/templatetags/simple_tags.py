@@ -1,24 +1,91 @@
 from django import template
 from django.apps import apps
+from django.db.models import QuerySet
 import logging
 
-from student_registration.mscc.models import ProvidedServices, EducationHistory, Registration, EducationService, Round, Packages
+from student_registration.mscc.models import (
+    ProvidedServices,
+    EducationHistory,
+    Registration,
+    EducationService,
+    Round,
+    Packages,
+)
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
 
 
 register = template.Library()
 logger = logging.getLogger(__name__)
 
+_SERVICES_CACHE_ATTR = "_provided_services_cache"
+
+
+def _get_services_for_registry(registry):
+    if not registry:
+        return []
+
+    if isinstance(registry, Registration):
+        cached_services = getattr(registry, _SERVICES_CACHE_ATTR, None)
+        if cached_services is not None:
+            return cached_services
+
+        services = list(
+            ProvidedServices.objects.filter(registration=registry).order_by("id")
+        )
+        setattr(registry, _SERVICES_CACHE_ATTR, services)
+        return services
+
+    return list(
+        ProvidedServices.objects.filter(registration_id=registry).order_by("id")
+    )
+
+
+def _coerce_services(services, registry=None):
+    if isinstance(services, dict):
+        return list(services.values())
+
+    if isinstance(services, list):
+        return services
+
+    if isinstance(services, QuerySet):
+        if registry is not None:
+            return _get_services_for_registry(registry)
+        return list(services.order_by("id"))
+
+    if services is None and registry is not None:
+        return _get_services_for_registry(registry)
+
+    try:
+        return list(services)
+    except TypeError:
+        if registry is not None:
+            return _get_services_for_registry(registry)
+        return []
+
+
+def _get_service_by_name(services, service_name):
+    for service in reversed(services):
+        if service.name == service_name:
+            return service
+    return None
+
 
 @register.simple_tag
 def have_service(services, service_name):
-    if service_name in services:
-        return services[service_name]
+    if isinstance(services, dict):
+        return services.get(service_name)
+
+    for service in _coerce_services(services):
+        if service.name == service_name:
+            return service
+
+    return None
 
 
 @register.simple_tag
 def get_service_info(services, registry, service_name):
-    return services.filter(name=service_name, registration=registry).last()
+    service_list = _coerce_services(services, registry)
+    return _get_service_by_name(service_list, service_name)
 
 
 @register.simple_tag
@@ -56,9 +123,8 @@ def get_child_rounds(registry):
 
 @register.simple_tag
 def get_service(registry, service_name):
-    if type(registry) == 'int':
-        return ProvidedServices.objects.filter(name=service_name, registration_id=registry).last()
-    return ProvidedServices.objects.filter(name=service_name, registration=registry).last()
+    services = _get_services_for_registry(registry)
+    return _get_service_by_name(services, service_name)
 
 
 @register.simple_tag
@@ -100,14 +166,14 @@ def get_education_service_history(child_id):
 
 @register.simple_tag
 def get_services(registry):
-    return ProvidedServices.objects.filter(registration=registry)
+    return _get_services_for_registry(registry)
 
 
 @register.simple_tag
 def get_completion_rate(registry):
-    services = get_services(registry)
-    nbr_services = services.count()
-    nbr_completed = services.filter(completed=True).count()
+    services = _get_services_for_registry(registry)
+    nbr_services = len(services)
+    nbr_completed = len([service for service in services if service.completed])
     try:
         return int(round(float(nbr_completed)/float(nbr_services), 2) * 100.0)
     except Exception as ex:
@@ -116,24 +182,34 @@ def get_completion_rate(registry):
 
 @register.simple_tag
 def service_completed(services, service_name):
-    return services.filter(name=service_name, completed=True).exists()
+    for service in _coerce_services(services):
+        if service.name == service_name and service.completed:
+            return True
+    return False
 
 
 @register.simple_tag
 def service_required(services, service_name):
-    return services.filter(name=service_name, required=True).exists()
+    for service in _coerce_services(services):
+        if service.name == service_name and service.required:
+            return True
+    return False
 
 
 @register.simple_tag
 def service_info(services, service_name):
-    return services.filter(name=service_name)
+    return [
+        service
+        for service in _coerce_services(services)
+        if service.name == service_name
+    ]
 
 
 @register.simple_tag
 def have_service_category(category, obj):
     try:
-        services = get_services(obj)
-        return services.filter(category=category).count()
+        services = _get_services_for_registry(obj)
+        return len([service for service in services if service.category == category])
     except Exception as ex:
         return False
 
