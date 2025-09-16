@@ -188,7 +188,8 @@ DJANGO_READ_DOT_ENV_FILE = True
 
 # DATABASES['default']['ATOMIC_REQUESTS'] = True
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # GENERAL CONFIGURATION
