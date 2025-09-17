@@ -91,6 +91,12 @@ class RegistrationAdmin(admin.ModelAdmin):
         'created',
         'modified',
     )
+    list_select_related = (
+        'child',
+        'partner',
+        'center',
+        'round',
+    )
     list_filter = (
         'child__mother_fullname',
         'child__gender',
