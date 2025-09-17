@@ -118,6 +118,10 @@ class RegistrationAdmin(admin.ModelAdmin):
         'child__last_name',
         'child__unicef_id',
     )
+
+    def get_queryset(self, request):
+        queryset = super(RegistrationAdmin, self).get_queryset(request)
+        return queryset.select_related('child', 'partner', 'center', 'round')
     def get_unicef_id(self, obj):
         return obj.child.unicef_id
     get_unicef_id.short_description = 'Unicef ID'
