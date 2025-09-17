@@ -42,16 +42,40 @@ def generate_services(child_age, registry, user=None):
         from .models import ProvidedServices, Packages
         from student_registration.users.templatetags.custom_tags import has_group
 
-        packages = Packages.objects.filter(type=registry.type, age=child_age)
+        packages_qs = Packages.objects.filter(type=registry.type, age=child_age)
         if user and has_group(user, 'MSCC_YOUTH'):
-            packages = packages.filter(category="Youth")
+            packages_qs = packages_qs.filter(category="Youth")
 
-        for package in packages.all():
-            instance, created = ProvidedServices.objects.get_or_create(name=package.name,
-                                                                       registration=registry,
-                                                                       type=package.type,
-                                                                       category=package.category)
-            instance.save()
+        packages = list(packages_qs)
+        if not packages:
+            return True
+
+        existing_services = set(
+            ProvidedServices.objects.filter(
+                registration=registry,
+                name__in=[package.name for package in packages],
+            ).values_list("name", "type", "category")
+        )
+
+        services_to_create = []
+        for package in packages:
+            key = (package.name, package.type, package.category)
+            if key in existing_services:
+                continue
+
+            services_to_create.append(
+                ProvidedServices(
+                    name=package.name,
+                    registration=registry,
+                    type=package.type,
+                    category=package.category,
+                )
+            )
+            existing_services.add(key)
+
+        if services_to_create:
+            ProvidedServices.objects.bulk_create(services_to_create)
+        return True
     except Exception as ex:
         return False
 
