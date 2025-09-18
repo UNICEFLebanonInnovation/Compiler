@@ -70,6 +70,7 @@ THIRD_PARTY_APPS = [
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
+    'allauth.socialaccount.providers.microsoft',
     'rest_framework',
     'drf_spectacular',
     'rest_framework.authtoken',
@@ -344,6 +345,41 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
 ACCOUNT_ADAPTER = 'student_registration.users.adapters.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'student_registration.users.adapters.SocialAccountAdapter'
+
+# Azure Active Directory / Entra ID integration
+AZURE_AD_TENANT_ID = env('AZURE_AD_TENANT_ID', default='')
+AZURE_AD_CLIENT_ID = env('AZURE_AD_CLIENT_ID', default='')
+AZURE_AD_CLIENT_SECRET = env('AZURE_AD_CLIENT_SECRET', default='')
+AZURE_ALLAUTH_PROVIDER_ID = env('AZURE_ALLAUTH_PROVIDER_ID', default='microsoft')
+AZURE_AD_SCOPES = tuple(env.list('AZURE_AD_SCOPES', default=['openid', 'profile', 'email', 'offline_access']))
+AZURE_REQUIRE_MFA = env.bool('AZURE_REQUIRE_MFA', default=True)
+AZURE_ACCEPTED_MFA_CLAIMS = tuple(env.list('AZURE_ACCEPTED_MFA_CLAIMS', default=['mfa']))
+AZURE_CONDITIONAL_ACCESS_CLAIMS = tuple(env.list('AZURE_CONDITIONAL_ACCESS_CLAIMS', default=[]))
+AZURE_PIM_REQUIRED_ROLE_IDS = tuple(env.list('AZURE_PIM_REQUIRED_ROLE_IDS', default=[]))
+AZURE_RISK_THRESHOLD = env('AZURE_RISK_THRESHOLD', default='medium').lower()
+AZURE_TOKEN_MAX_AGE = env.int('AZURE_TOKEN_MAX_AGE', default=3600)
+AZURE_TOKEN_LEEWAY = env.int('AZURE_TOKEN_LEEWAY', default=120)
+AZURE_GRAPH_TIMEOUT = env.float('AZURE_GRAPH_TIMEOUT', default=5.0)
+AZURE_IDENTITY_PROTECTION_ENABLED = env.bool('AZURE_IDENTITY_PROTECTION_ENABLED', default=True)
+
+_AZURE_PROVIDER_SETTINGS = {
+    'APP': {
+        'client_id': AZURE_AD_CLIENT_ID,
+        'secret': AZURE_AD_CLIENT_SECRET,
+    },
+    'SCOPE': list(AZURE_AD_SCOPES),
+    'AUTH_PARAMS': {
+        'response_type': 'code',
+    },
+    'OAUTH_PKCE_ENABLED': True,
+}
+
+_AZURE_TENANT_VALUE = AZURE_AD_TENANT_ID or 'common'
+_AZURE_PROVIDER_SETTINGS['TENANT'] = _AZURE_TENANT_VALUE
+
+SOCIALACCOUNT_PROVIDERS = {
+    AZURE_ALLAUTH_PROVIDER_ID: _AZURE_PROVIDER_SETTINGS,
+}
 
 # Custom user app defaults
 # Select the correct user model
