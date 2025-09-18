@@ -1,0 +1,37 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.11
+        environment:
+          DATABASE_URL: sqlite:////tmp/test.sqlite3
+    steps:
+      - checkout
+      - run:
+          name: Create virtual environment
+          command: |
+            python -m venv venv
+      - run:
+          name: Install dependencies
+          command: |
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements/base.txt
+            pip install -r requirements/test.txt
+      - run:
+          name: Run linters
+          command: |
+            . venv/bin/activate
+            flake8
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            pytest
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
