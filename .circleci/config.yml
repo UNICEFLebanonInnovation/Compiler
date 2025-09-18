@@ -1,0 +1,92 @@
+version: 2.1
+
+jobs:
+  build:
+    machine:
+      image: ubuntu-2004:202201-02
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-docker-image
+      - run:
+          name: Load cached docker image
+          command: |
+            if [ -f ~/docker/image.tar ]; then
+              docker load -i ~/docker/image.tar
+            else
+              echo "No cached image found"
+            fi
+      - run:
+          name: Docker info
+          command: docker info
+      - run:
+          name: Build application image
+          command: docker build --rm=false -f ./compose/django/Dockerfile -t jamescw/compiler:v2 .
+      - run:
+          name: Save docker image
+          command: |
+            mkdir -p ~/docker
+            docker save jamescw/compiler:v2 > ~/docker/image.tar
+      - save_cache:
+          key: v1-docker-image
+          paths:
+            - ~/docker
+      - run:
+          name: Run test suite
+          command: |
+            set -eo pipefail
+            ARTIFACTS=/tmp/artifacts
+            mkdir -p "${ARTIFACTS}"
+            HOSTIP=$(ip -4 addr show scope global dev eth0 | grep inet | awk '{print $2}' | cut -d / -f 1)
+            docker run --rm \
+              -e "DATABASE_URL=postgres://ubuntu@docker:5432/circle_test" \
+              -v "${ARTIFACTS}:/reports" \
+              -v "${ARTIFACTS}:/home/LogFiles" \
+              --add-host=docker:${HOSTIP} \
+              jamescw/compiler:v2 \
+              /code/runtests.sh
+      - store_artifacts:
+          path: /tmp/artifacts
+          destination: reports
+      - persist_to_workspace:
+          root: ~
+          paths:
+            - docker/image.tar
+
+  deploy:
+    machine:
+      image: ubuntu-2004:202201-02
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~
+      - run:
+          name: Load built docker image
+          command: |
+            if [ -f ~/docker/image.tar ]; then
+              docker load -i ~/docker/image.tar
+            else
+              echo "Cached docker image not found"
+            fi
+      - run:
+          name: Push image to Docker Hub
+          command: |
+            if [ -z "${DOCKER_USER}" ] || [ -z "${DOCKER_PASS}" ]; then
+              echo "Docker Hub credentials are not set; skipping push."
+              exit 0
+            fi
+            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+            docker push jamescw/compiler:v2
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: Complier-2-0
