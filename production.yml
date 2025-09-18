@@ -1,78 +1,106 @@
-version: '2'
+version: "3.9"
+
+x-domain-name: &domain_name compiler.uniceflebanon.org
+x-certbot-email: &certbot_email jcranwellward@unicef.org
 
 volumes:
-  postgres_data: {}
-  postgres_backup: {}
+  postgres_data:
+  postgres_backup:
 
 services:
   postgres:
     build: ./compose/postgres
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - postgres_backup:/backups
-    env_file: .env
 
   django:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    depends_on:
-      - postgres
-      - redis
     command: /gunicorn.sh
-    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env
+    restart: unless-stopped
 
   nginx:
     build: ./compose/nginx
     depends_on:
-      - django
-
-      - certbot
+      django:
+        condition: service_started
+      certbot:
+        condition: service_completed_successfully
     environment:
-      - MY_DOMAIN_NAME=compiler.uniceflebanon.org
-
+      MY_DOMAIN_NAME: *domain_name
     ports:
       - "0.0.0.0:80:80"
-
       - "0.0.0.0:443:443"
+    restart: unless-stopped
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/lib/letsencrypt:/var/lib/letsencrypt
 
   certbot:
-    image: quay.io/letsencrypt/letsencrypt
-    command: bash -c "sleep 6 && certbot certonly -n --standalone -d compiler.uniceflebanon.org --test --agree-tos --email jcranwellward@unicef.org --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges http-01"
+    image: certbot/certbot:latest
+    command: >-
+      bash -c "sleep 6 &&
+      certbot certonly -n --standalone -d ${DOMAIN_NAME:-*domain_name}
+      --staging --agree-tos --email ${CERTBOT_EMAIL:-*certbot_email}
+      --rsa-key-size 4096 --keep-until-expiring --preferred-challenges http-01"
     entrypoint: ""
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
+    environment:
+      DOMAIN_NAME: *domain_name
+      CERTBOT_EMAIL: *certbot_email
+      TERM: xterm
     ports:
       - "80"
       - "443"
-    environment:
-      - TERM=xterm
-
+    restart: on-failure
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
 
   redis:
-    image: redis:3.0
+    image: redis:7-alpine
+    restart: unless-stopped
 
   celeryworker:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    env_file: .env
-    depends_on:
-     - postgres
-     - redis
     command: celery -A student_registration.taskapp worker -l INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env
+    restart: unless-stopped
 
   celerybeat:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    env_file: .env
-    depends_on:
-      - postgres
-      - redis
     command: celery -A student_registration.taskapp beat -l INFO
-
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env
+    restart: unless-stopped
