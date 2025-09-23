@@ -42,62 +42,16 @@ def generate_services(child_age, registry, user=None):
         from .models import ProvidedServices, Packages
         from student_registration.users.templatetags.custom_tags import has_group
 
-        packages_qs = Packages.objects.filter(type=registry.type, age=child_age)
+        packages = Packages.objects.filter(type=registry.type, age=child_age)
         if user and has_group(user, 'MSCC_YOUTH'):
-            packages_qs = packages_qs.filter(category="Youth")
+            packages = packages.filter(category="Youth")
 
-        packages = list(packages_qs)
-        if not packages:
-            return True
-
-        package_keys = {
-            (package.name, package.type, package.category) for package in packages
-        }
-
-        existing_services_qs = list(
-            ProvidedServices.objects.filter(
-                registration=registry,
-                type=registry.type,
-            ).only("id", "name", "type", "category", "service_id", "completed")
-        )
-
-        existing_services = set()
-        removable_ids = []
-        removal_keys = set()
-        for service in existing_services_qs:
-            key = (service.name, service.type, service.category)
-            existing_services.add(key)
-            if (
-                key not in package_keys
-                and not service.completed
-                and service.service_id is None
-            ):
-                removable_ids.append(service.id)
-                removal_keys.add(key)
-
-        if removable_ids:
-            ProvidedServices.objects.filter(id__in=removable_ids).delete()
-            existing_services.difference_update(removal_keys)
-
-        services_to_create = []
-        for package in packages:
-            key = (package.name, package.type, package.category)
-            if key in existing_services:
-                continue
-
-            services_to_create.append(
-                ProvidedServices(
-                    name=package.name,
-                    registration=registry,
-                    type=package.type,
-                    category=package.category,
-                )
-            )
-            existing_services.add(key)
-
-        if services_to_create:
-            ProvidedServices.objects.bulk_create(services_to_create)
-        return True
+        for package in packages.all():
+            instance, created = ProvidedServices.objects.get_or_create(name=package.name,
+                                                                       registration=registry,
+                                                                       type=package.type,
+                                                                       category=package.category)
+            instance.save()
     except Exception as ex:
         return False
 
