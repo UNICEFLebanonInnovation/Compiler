@@ -21,7 +21,7 @@ class EnrolledProgramsFormView(LoginRequiredMixin,
     group_required = [u"YOUTH"]
 
     def get_success_url(self):
-        return '/youth/Child-Profile/{}/'.format(str(self.kwargs['registry']))
+        return '/youth/child-profile/{}/'.format(str(self.kwargs['registry']))
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -71,7 +71,7 @@ class ProgramDocumentFormView(LoginRequiredMixin,
     group_required = [u"YOUTH"]
 
     def get_success_url(self):
-        return '/youth/PD-List/'
+        return '/youth/pd-list/'
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""

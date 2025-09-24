@@ -7,7 +7,7 @@ $(document).ready(function() {
 
         var partner = $("#id_partner").val();
         var governorate = $("#id_adolescent__governorate").val();
-        var caza = $("#id_adolescent__caza").val();
+        var district = $("#id_adolescent__district").val();
         var cadaster = $("#id_adolescent__cadaster").val();
         var adolescent_first_name = $("#id_adolescent__first_name").val();
         var adolescent_father_name = $("#id_adolescent__father_name").val();
@@ -27,7 +27,7 @@ $(document).ready(function() {
 
         window.open("/youth/export/?partner=" + partner
                                 + "&governorate=" + governorate
-                                + "&caza=" + caza
+                                + "&district=" + district
                                 + "&cadaster=" + cadaster
                                 + "&adolescent_first_name=" + adolescent_first_name
                                 + "&adolescent_father_name=" + adolescent_father_name

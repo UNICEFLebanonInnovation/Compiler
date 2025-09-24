@@ -89,9 +89,9 @@ class FullFilter(PlaceholderFilterSet):
         choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(),
         empty_label='Governorate'
     )
-    adolescent__caza = ChoiceFilter(
+    adolescent__district = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct(),
-        empty_label='Caza'
+        empty_label='district'
     )
     adolescent__cadaster = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct(),
@@ -192,9 +192,9 @@ class PartnerFilter(PlaceholderFilterSet):
         choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct(),
         empty_label='Governorate'
     )
-    adolescent__caza = ChoiceFilter(
+    adolescent__district = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct(),
-        empty_label='Caza'
+        empty_label='District'
     )
     adolescent__cadaster = ChoiceFilter(
         choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct(),

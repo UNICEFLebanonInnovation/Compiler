@@ -674,7 +674,7 @@ class Registration(TimeStampedModel):
         return result
 
     def get_absolute_url(self):
-        return '/YOUTH/Child-Profile/%d/' % self.pk
+        return '/youth/child-profile/%d/' % self.pk
 
     def __str__(self):
         if self.adolescent:

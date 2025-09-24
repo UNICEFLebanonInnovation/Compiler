@@ -544,7 +544,7 @@ def export_data(request, **kwargs):
 
         partner = request.GET.get('partner', '')
         governorate = request.GET.get('governorate', '')
-        caza = request.GET.get('caza', '')
+        district = request.GET.get('district', '')
         cadaster = request.GET.get('cadaster', '')
         adolescent_first_name = request.GET.get('adolescent_first_name', '')
         adolescent_father_name = request.GET.get('adolescent_father_name', '')
@@ -570,13 +570,13 @@ def export_data(request, **kwargs):
         logger.debug("governorate: %s", governorate)
 
         if governorate:
-            registration_qs = registration_qs.filter(governorate__id=governorate)
+            registration_qs = registration_qs.filter(adolescent__governorate__id=governorate)
 
-        if caza:
-            registration_qs = registration_qs.filter(district__id=caza)
+        if district:
+            registration_qs = registration_qs.filter(adolescent__district__id=district)
 
         if cadaster:
-            registration_qs = registration_qs.filter(cadaster__id=cadaster)
+            registration_qs = registration_qs.filter(adolescent__cadaster__id=cadaster)
 
         if adolescent_first_name:
             registration_qs = registration_qs.filter(adolescent__first_name__icontains=adolescent_first_name)
@@ -659,8 +659,10 @@ def export_data(request, **kwargs):
 
         # Log the query to the console before execution
         logger.debug("Executing Query:")
-        logger.debug(cursor.mogrify(vw_youth_data_str, query_params).decode('utf-8'))  # Ensure compatibility with Python 3
-
+        mogrified_query = cursor.mogrify(vw_youth_data_str, query_params)
+        if isinstance(mogrified_query, bytes):
+            mogrified_query = mogrified_query.decode('utf-8')
+        logger.debug(mogrified_query)
         cursor.execute(vw_youth_data_str, query_params)
 
         headers = [col[0] for col in cursor.description]
