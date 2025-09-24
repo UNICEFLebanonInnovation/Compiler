@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 from collections import defaultdict
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
+from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -153,24 +153,6 @@ class MainEditView(LoginRequiredMixin,
         return super(MainEditView, self).form_valid(form)
 
 
-
-class NewRoundRedirectView(LoginRequiredMixin, RedirectView):
-    permanent = False
-
-    def get_redirect_url(self):
-
-        registry = self.request.GET.get('registry')
-        if self.request.GET.get('new_round_confirmation', None) == 'confirmed':
-            import copy
-            registration = Registration.objects.get(id=registry)
-            new_registration = copy.copy(registration)
-            new_registration.pk = None
-            new_registration.save()
-            return reverse('youth:service_enrolled_programs_add', kwargs={'registry': new_registration.id})
-
-        return reverse('youth:new_round', kwargs={'registry': registry})
-
-
 def main_mark_delete_view(request, pk):
     if request.user.is_authenticated:
         try:
@@ -219,7 +201,9 @@ class MainListView(LoginRequiredMixin,
             .order_by('-id')
         )
 
-        if has_group(user, 'YOUTH_PARTNER') and partner_id:
+        if not has_group(user, 'YOUTH_UNICEF'):
+            pass
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
             queryset = queryset.filter(partner=partner_id)
         elif not has_group(user, 'YOUTH_UNICEF'):
             return Registration.objects.none()
@@ -825,7 +809,9 @@ class PDListView(LoginRequiredMixin,
             .order_by('-id')
         )
 
-        if has_group(user, 'YOUTH_PARTNER') and partner_id:
+        if has_group(user, 'YOUTH_UNICEF'):
+            pass
+        elif has_group(user, 'YOUTH_PARTNER') and partner_id:
             queryset = queryset.filter(partner=partner_id)
         elif not has_group(user, 'YOUTH_UNICEF'):
             return ProgramDocument.objects.none()
