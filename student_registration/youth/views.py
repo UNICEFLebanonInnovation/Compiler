@@ -6,7 +6,6 @@ from collections import defaultdict
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 
@@ -940,7 +939,7 @@ def program_document_indicator_list_view(request, program_document_id):
         # return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@csrf_exempt
 def save_indicators(request):
     if request.method == 'POST':
         payload = json.loads(request.body.decode('utf-8'))
@@ -961,8 +960,11 @@ def save_indicators(request):
 
             indicator.program_document_id = item.get('program_document_id')
             indicator.master_indicator_id = item.get('master_indicator') or None
-            indicator.sub_indicator_id = item.get('sub_indicator') or None
-            indicator.baseline = item.get('baseline') or None
+            indicator.sub_indicator_id = item.get('sub_indicator') or None 
+            baseline_value = item.get('baseline')
+            indicator.baseline = (
+                baseline_value if baseline_value not in (None, '') else None
+            )
             indicator.target = item.get('target') or None
             indicator.save()
 

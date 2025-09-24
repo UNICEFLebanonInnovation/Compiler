@@ -102,7 +102,9 @@
       const id = indicator.id || 'new_' + Math.random().toString(36).substring(2, 9);
       const selectedMaster = indicator.master_indicator_id || '';
       const selectedSub = indicator.sub_indicator_id || '';
-      const baseline = indicator.baseline || '';
+      const baseline = (indicator.baseline !== undefined && indicator.baseline !== null)
+        ? indicator.baseline
+        : '';
       const target = indicator.target || '';
 
       let masterOptions = '<option value="">Select Master Indicator</option>';
