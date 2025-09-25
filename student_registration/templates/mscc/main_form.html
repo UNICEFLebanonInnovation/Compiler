@@ -14,6 +14,21 @@
 
 {% block content %}
 
+<div id="page-loader" class="loader-wrapper d-flex justify-content-center align-items-center" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.85); z-index: 1050;">
+    <div class="loader">
+        <div class="ball-spin-fade-loader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
 <div class="app-page-title">
                         <div class="page-title-wrapper">
                             <div class="page-title-heading">
@@ -367,5 +382,21 @@
 
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}?v=1"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/mscc/mscc.js' %}?v=37"></script>
+    <script type="text/javascript">
+        (function () {
+            function hidePageLoader() {
+                var loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.classList.add('d-none');
+                }
+            }
+
+            if (document.readyState === 'complete') {
+                hidePageLoader();
+            } else {
+                window.addEventListener('load', hidePageLoader);
+            }
+        })();
+    </script>
 
 {% endblock %}
