@@ -3,6 +3,35 @@
 $(document).ready(function() {
 
 
+    const updateMsccListTableWidth = () => {
+        const $tableContainer = $('.table-list');
+
+        if (!$tableContainer.length) {
+            return;
+        }
+
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+        let widthValue = '100%';
+
+        if (viewportWidth >= 1400) {
+            widthValue = 'calc(100vw - 9rem)';
+        } else if (viewportWidth >= 1200) {
+            widthValue = 'calc(100vw - 7rem)';
+        } else if (viewportWidth >= 992) {
+            widthValue = 'calc(100vw - 5rem)';
+        } else if (viewportWidth >= 768) {
+            widthValue = 'calc(100vw - 3rem)';
+        } else if (viewportWidth >= 576) {
+            widthValue = 'calc(100vw - 2rem)';
+        }
+
+        $tableContainer.css('--mscc-table-width', widthValue);
+    };
+
+    updateMsccListTableWidth();
+    $(window).on('resize orientationchange', updateMsccListTableWidth);
+
     $(document).on('shown.bs.modal', function(){
         $('.modal-backdrop').not(':last').remove();
     });
