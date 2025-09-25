@@ -960,7 +960,7 @@ def save_indicators(request):
 
             indicator.program_document_id = item.get('program_document_id')
             indicator.master_indicator_id = item.get('master_indicator') or None
-            indicator.sub_indicator_id = item.get('sub_indicator') or None 
+            indicator.sub_indicator_id = item.get('sub_indicator') or None
             baseline_value = item.get('baseline')
             indicator.baseline = (
                 baseline_value if baseline_value not in (None, '') else None

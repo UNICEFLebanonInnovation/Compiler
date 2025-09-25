@@ -71,11 +71,6 @@
                         </div>
 </div>
 
-<div class="row">
-{% if request.user|has_group:"youth_CENTER" and not request.user.center %}
-  <div class="alert alert-danger fade show" role="alert"> You don't have a center assigned to your profile please contact the administrator</div>
-{% endif %}
-</div>
 
 <div class="row">
     <div class="col-lg-12">
