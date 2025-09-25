@@ -51,6 +51,14 @@ class PlaceholderFilterSet(FilterSet):
             ButtonHolder(
                 Submit("submit", "Filter", css_class="btn btn-primary"),
                 HTML(
+                    """
+                     <button type="button" title="Reset" class="btn btn-warning text-white"
+                            onclick="window.location.href='{% url 'youth:list' %}'">
+                        Reset
+                    </button>
+                    """
+                ),
+                HTML(
                     '<a href="#" title="Download" class="btn btn-success download-report">'
                     'Export'
                     '</a>'
@@ -289,7 +297,46 @@ class PartnerFilter(PlaceholderFilterSet):
         return queryset.filter(enrolled_programs__program_document=value)
 
 
-class PDFilter(PlaceholderFilterSet):
+class PDPlaceholderFilterSet(FilterSet):
+    """Base FilterSet that hides labels and uses placeholders."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.helper = FormHelper(self.form)
+        self.form.helper.form_method = "get"     # django-filter expects GET
+        self.form.helper.form_class = "form-inline"
+        self.form.helper.form_tag = True
+        # self.form.helper.add_input(Submit("submit", "Filter"))
+        # self.form.helper.add_input(Rest("Rest", "Cancel"))
+        all_fields = list(self.form.fields)  # -> ['type', 'partner', 'round', ...]
+        self.form.helper.layout = Layout(
+            *all_fields,
+            ButtonHolder(
+                Submit("submit", "Filter", css_class="btn btn-primary"),
+                HTML(
+                    """
+                     <button type="button" title="Reset" class="btn btn-warning text-white"
+                            onclick="window.location.href='{% url 'youth:pd_list' %}'">
+                        Reset
+                    </button>
+                    """
+                ),
+                HTML(
+                    '<a href="#" title="Download" class="btn btn-success download-report">'
+                    'Export'
+                    '</a>'
+                ),
+                css_class="d-flex gap-2"  # optional: layout/spacing
+            ),
+        )
+        for name, field in self.form.fields.items():
+            label = field.label or name.replace('_', ' ').title()
+            field.label = ''
+            if isinstance(field.widget, (forms.TextInput, forms.NumberInput)):
+                field.widget.attrs.setdefault('placeholder', label)
+
+
+class PDFilter(PDPlaceholderFilterSet):
     current_year = datetime.datetime.now().year
     partner = ChoiceFilter(choices=PartnerOrganization.objects.filter(active=True, is_youth=True).values_list('id', 'short_name')
                                 .order_by('short_name').distinct(), empty_label='Partner')
@@ -340,7 +387,7 @@ class PDFilter(PlaceholderFilterSet):
         return queryset
 
 
-class PDPartnerFilter(PlaceholderFilterSet):
+class PDPartnerFilter(PDPlaceholderFilterSet):
     current_year = datetime.datetime.now().year
     funded_by = ChoiceFilter(choices=FundedBy.objects.filter(active=True).values_list('id', 'name')
                                  .order_by('name').distinct(), empty_label='Funded By')
