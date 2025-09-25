@@ -46,10 +46,53 @@ form .radio {
 .form-filters .form-control {
     width: 200px;
 }
+.table-list {
+    --mscc-table-width: 100%;
+}
+
 .table-list .card-body .table-responsive {
     padding-bottom: 15px;
     max-height: 400px;
     position: relative;
+    width: var(--mscc-table-width);
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+    transition: width 0.2s ease-in-out;
+}
+
+.table-list .card-body .table-responsive table {
+    width: 100% !important;
+}
+
+@media (min-width: 576px) {
+    .table-list {
+        --mscc-table-width: calc(100vw - 2rem);
+    }
+}
+
+@media (min-width: 768px) {
+    .table-list {
+        --mscc-table-width: calc(100vw - 3rem);
+    }
+}
+
+@media (min-width: 992px) {
+    .table-list {
+        --mscc-table-width: calc(100vw - 5rem);
+    }
+}
+
+@media (min-width: 1200px) {
+    .table-list {
+        --mscc-table-width: calc(100vw - 7rem);
+    }
+}
+
+@media (min-width: 1400px) {
+    .table-list {
+        --mscc-table-width: calc(100vw - 9rem);
+    }
 }
 .table-container th {
     background: white;
