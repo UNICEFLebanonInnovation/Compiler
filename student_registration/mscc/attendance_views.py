@@ -10,6 +10,7 @@ from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, Q
 from django.utils import timezone
+from django.utils.encoding import force_str
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view, action
 
@@ -302,16 +303,17 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
         for row in programme_rows:
             programme = row['registration__education_service__education_program'] or 'Unknown'
             label = programme_choices.get(programme, programme)
+            programme_label = force_str(label)
             month = row['attendance_day__attendance_date__month']
             total = row['total'] or 0
             absent = row['absent'] or 0
             present = total - absent
             percentage = round((present * 100.0) / total, 2) if total else 0.0
 
-            if label not in programme_monthly:
-                programme_monthly[label] = []
+            if programme_label not in programme_monthly:
+                programme_monthly[programme_label] = []
 
-            programme_monthly[label].append({
+            programme_monthly[programme_label].append({
                 'month': month,
                 'month_name': calendar.month_name[month],
                 'attendance_percentage': percentage,
