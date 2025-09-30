@@ -14,6 +14,7 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     list_display = (
         'adolescent',
+        'year',
         'get_unicef_id',
         'partner',
         'center',
@@ -22,6 +23,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         'modified',
     )
     list_filter = (
+        'year',
         'adolescent__mother_fullname',
         'adolescent__gender',
         'adolescent__nationality',
@@ -73,12 +75,17 @@ class ProgramDocumentAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProgramDocumentAdminForm, self).__init__(*args, **kwargs)
+        self.fields['year'].queryset = Year.objects.all()
         self.fields['governorates'].queryset = Location.objects.filter(parent__isnull=True)
+        current_year = Year.objects.filter(current_year=True).first()
+        if current_year and not self.instance.pk:
+            self.fields['year'].initial = current_year
 
 
 class ProgramDocumentAdmin(admin.ModelAdmin):
     form = ProgramDocumentAdminForm
     list_display = (
+        'year',
         'project_code',
         'project_name',
         'project_description',
@@ -87,6 +94,7 @@ class ProgramDocumentAdmin(admin.ModelAdmin):
         'project_status',
     )
     list_filter = (
+        'year',
         'partner',
         'funded_by',
         'project_status',
@@ -96,6 +104,22 @@ class ProgramDocumentAdmin(admin.ModelAdmin):
         'project_name',
         'project_description',
     )
+
+
+class YearAdminForm(forms.ModelForm):
+    class Meta:
+        model = Year
+        fields = '__all__'
+
+
+class YearAdmin(admin.ModelAdmin):
+    form = YearAdminForm
+    list_display = ('name', 'current_year')
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if obj.current_year:
+            Year.objects.exclude(pk=obj.pk).update(current_year=False)
 
 
 class ProgramTypeAdmin(admin.ModelAdmin):
@@ -216,5 +240,6 @@ admin.site.register(Donor,DonorAdmin)
 admin.site.register(YouthAssessment)
 admin.site.register(ProgramDocument, ProgramDocumentAdmin)
 admin.site.register(Registration, RegistrationAdmin)
+admin.site.register(Year, YearAdmin)
 # admin.site.register(EnrolledPrograms, EnrolledProgramAdmin)
 # admin.site.register(YouthAssessment, YouthAssessmentAdmin)
