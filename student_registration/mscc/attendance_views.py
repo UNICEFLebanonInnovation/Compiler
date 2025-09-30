@@ -327,11 +327,28 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
             'attendance_day__attendance_date', 'year'
         )
 
-        data = {
-            'year': year,
-            'available_years': [d.year for d in years],
-            'monthly': sorted(monthly, key=lambda item: item['month']),
-            'programme_monthly': programme_monthly,
-        }
+        available_years = [d.year for d in years]
+        available_years_str = ','.join(str(item) for item in available_years)
 
-        return JsonResponse(data)
+        flat_rows = []
+
+        for entry in sorted(monthly, key=lambda item: item['month']):
+            flat_rows.append({
+                'record_type': 'monthly',
+                'year': year,
+                'available_years': available_years_str,
+                'programme': '',
+                **entry,
+            })
+
+        for programme, values in programme_monthly.items():
+            for entry in values:
+                flat_rows.append({
+                    'record_type': 'programme_monthly',
+                    'year': year,
+                    'available_years': available_years_str,
+                    'programme': programme,
+                    **entry,
+                })
+
+        return JsonResponse(flat_rows, safe=False)
