@@ -47,10 +47,16 @@ AGREE_DISAGREE = Choices(
 
 
 class Round(models.Model):
+    YEAR_CHOICES = [(year, year) for year in range(2020, 2051)]
 
     name = models.CharField(max_length=45, unique=True)
     current_year = models.BooleanField(blank=True, default=False)
-
+    year = models.PositiveSmallIntegerField(
+        choices=YEAR_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name=_('Year'),
+    )
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 

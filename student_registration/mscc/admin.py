@@ -443,13 +443,18 @@ class RoundAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'current_year',
+        'year',
         'start_date',
         'end_date',
     )
 
     search_fields = (
         'name',
+    )
+
+    list_filter = (
         'current_year',
+        'year',
     )
 
 
