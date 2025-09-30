@@ -82,8 +82,11 @@ def test_attendance_heatmap_api_monthly_percentages():
     assert response.status_code == 200
     payload = json.loads(response.content)
 
-    january = next(entry for entry in payload['monthly'] if entry['month'] == 1)
-    february = next(entry for entry in payload['monthly'] if entry['month'] == 2)
+    assert payload['year'] == 2024
+    assert payload['available_years'] == [2023, 2024]
+
+    january = next(entry for entry in payload['rows'] if entry['record_type'] == 'monthly' and entry['month'] == 1)
+    february = next(entry for entry in payload['rows'] if entry['record_type'] == 'monthly' and entry['month'] == 2)
 
     assert january['attendance_percentage'] == pytest.approx(66.67, rel=1e-3)
     assert january['present'] == 2
@@ -97,16 +100,14 @@ def test_attendance_heatmap_api_monthly_percentages():
     assert february['total'] == 1
     assert february['month_name'] == 'February'
 
-    programme_monthly = payload['programme_monthly']
-    assert set(programme_monthly.keys()) == {'BLN Level 1', 'YFS Level 1'}
+    programme_rows = [entry for entry in payload['rows'] if entry['record_type'] == 'programme_monthly']
+    programmes = {entry['programme'] for entry in programme_rows}
+    assert programmes == {'BLN Level 1', 'YFS Level 1'}
 
-    bln_entries = programme_monthly['BLN Level 1']
+    bln_entries = [entry for entry in programme_rows if entry['programme'] == 'BLN Level 1']
     assert [entry['attendance_percentage'] for entry in bln_entries] == [100.0, 0.0]
     assert [entry['month'] for entry in bln_entries] == [1, 2]
 
-    yfs_entries = programme_monthly['YFS Level 1']
+    yfs_entries = [entry for entry in programme_rows if entry['programme'] == 'YFS Level 1']
     assert [entry['attendance_percentage'] for entry in yfs_entries] == [50.0]
     assert [entry['month'] for entry in yfs_entries] == [1]
-
-    assert payload['year'] == 2024
-    assert payload['available_years'] == [2023, 2024]
