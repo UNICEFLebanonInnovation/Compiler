@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+import calendar
 import json
+from collections import OrderedDict
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin
@@ -16,6 +18,24 @@ from student_registration.schools.models import PartnerOrganization
 
 from .utils import load_child_attendance, create_attendance
 from student_registration.users.templatetags.custom_tags import has_group
+
+
+def _aggregate_attendance(queryset, *group_fields):
+    """Aggregate attendance counts for the provided ``group_fields``.
+
+    This mirrors the logic used by the heatmap view to ensure the API is
+    using the exact same calculations as the user-facing dashboard.
+    """
+
+    return (
+        queryset
+        .values(*group_fields)
+        .annotate(
+            total=Count('id'),
+            absent=Count('id', filter=Q(attended='No'))
+        )
+        .order_by(*group_fields)
+    )
 
 
 class AttendanceView(LoginRequiredMixin,
@@ -197,27 +217,15 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
             attendance_day__attendance_date__year=year
         )
 
-        queryset = (
-            base_qs
-            .values('attendance_day__attendance_date')
-            .annotate(
-                total=Count('id'),
-                absent=Count('id', filter=Q(attended='No'))
-            )
-            .order_by('attendance_day__attendance_date')
+        queryset = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date',
         )
 
-        programme_qs = (
-            base_qs
-            .values(
-                'attendance_day__attendance_date',
-                'registration__education_service__education_program',
-            )
-            .annotate(
-                total=Count('id'),
-                absent=Count('id', filter=Q(attended='No'))
-            )
-            .order_by('attendance_day__attendance_date')
+        programme_qs = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date',
+            'registration__education_service__education_program',
         )
 
         programme_data = {}
@@ -238,3 +246,81 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
         context['year'] = year
         context['years'] = [d.year for d in years]
         return context
+
+
+class AttendanceHeatmapAPI(LoginRequiredMixin, View):
+    """Provide attendance percentages per month and per programme."""
+
+    def get(self, request, *args, **kwargs):
+        year = int(self.request.GET.get('year', timezone.now().year))
+
+        base_qs = MSCCAttendanceChild.objects.filter(
+            attendance_day__attendance_date__year=year
+        )
+
+        monthly_rows = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date__month',
+        )
+
+        monthly = []
+        for row in monthly_rows:
+            month = row['attendance_day__attendance_date__month']
+            total = row['total'] or 0
+            absent = row['absent'] or 0
+            present = total - absent
+            percentage = round((present * 100.0) / total, 2) if total else 0.0
+            monthly.append({
+                'month': month,
+                'month_name': calendar.month_name[month],
+                'attendance_percentage': percentage,
+                'present': present,
+                'absent': absent,
+                'total': total,
+            })
+
+        programme_rows = _aggregate_attendance(
+            base_qs,
+            'attendance_day__attendance_date__month',
+            'registration__education_service__education_program',
+        )
+
+        programme_choices = dict(EducationService.EDUCATION_PROGRAM)
+        programme_monthly = OrderedDict()
+
+        for row in programme_rows:
+            programme = row['registration__education_service__education_program'] or 'Unknown'
+            label = programme_choices.get(programme, programme)
+            month = row['attendance_day__attendance_date__month']
+            total = row['total'] or 0
+            absent = row['absent'] or 0
+            present = total - absent
+            percentage = round((present * 100.0) / total, 2) if total else 0.0
+
+            if label not in programme_monthly:
+                programme_monthly[label] = []
+
+            programme_monthly[label].append({
+                'month': month,
+                'month_name': calendar.month_name[month],
+                'attendance_percentage': percentage,
+                'present': present,
+                'absent': absent,
+                'total': total,
+            })
+
+        for values in programme_monthly.values():
+            values.sort(key=lambda item: item['month'])
+
+        years = MSCCAttendanceChild.objects.dates(
+            'attendance_day__attendance_date', 'year'
+        )
+
+        data = {
+            'year': year,
+            'available_years': [d.year for d in years],
+            'monthly': sorted(monthly, key=lambda item: item['month']),
+            'programme_monthly': programme_monthly,
+        }
+
+        return JsonResponse(data)
