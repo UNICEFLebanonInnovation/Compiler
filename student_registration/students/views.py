@@ -326,7 +326,6 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
     serializer_class = TeacherSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-
     def get_queryset(self):
 
         clm_bridging_all = has_group(self.request.user, 'CLM_BRIDGING_ALL')

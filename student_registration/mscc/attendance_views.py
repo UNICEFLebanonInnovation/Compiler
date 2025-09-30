@@ -10,8 +10,11 @@ from braces.views import GroupRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.db.models import Count, Q
 from django.utils import timezone
+from rest_framework import viewsets, mixins, permissions
+from rest_framework.decorators import api_view, action
 
 from student_registration.attendances.models import MSCCAttendance, MSCCAttendanceChild
+from student_registration.attendances.serializers import MSCCAttendanceChildSerializer
 from student_registration.mscc.models import EducationService, Round
 from student_registration.locations.models import Center
 from student_registration.schools.models import PartnerOrganization
@@ -248,10 +251,18 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
         return context
 
 
-class AttendanceHeatmapAPI(LoginRequiredMixin, View):
+class AttendanceHeatmapViewSet(mixins.ListModelMixin,
+                               viewsets.GenericViewSet):
+
+    model = MSCCAttendanceChild
+    queryset = MSCCAttendanceChild.objects.all()
+    serializer_class = MSCCAttendanceChildSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
     """Provide attendance percentages per month and per programme."""
 
-    def get(self, request, *args, **kwargs):
+    @action(detail=False, methods=['get'], url_path='percentage')
+    def percentage(self, request, *args, **kwargs):
         year = int(self.request.GET.get('year', timezone.now().year))
 
         base_qs = MSCCAttendanceChild.objects.filter(

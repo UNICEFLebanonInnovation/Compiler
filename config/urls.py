@@ -54,6 +54,7 @@ from student_registration.locations.views import (
 
 from student_registration.users.views import LoginRedirectView, home, login_success, LandingPage, save_fcm_token
 from student_registration.students.views import serve_file
+from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 
 api = routers.SimpleRouter()
 
@@ -73,6 +74,7 @@ api.register(r'clm-inclusion', InclusionViewSet, basename='clm-inclusion')
 api.register(r'clm-students', CLMStudentViewSet, basename='clm-students')
 api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, basename='self-perception-grads')
 api.register(r'program-staff', ProgramStaffViewSet, basename='program-staff')
+api.register(r'attendance-heatmap-data', AttendanceHeatmapViewSet, basename='attendance-heatmap-data')
 
 api.register(r'clm-outreach', OutreachViewSet, basename='clm-outreach')
 api.register(r'locations', LocationViewSet, basename='locations')

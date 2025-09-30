@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Attendance, Absentee, CLMAttendanceStudent
+from .models import Attendance, Absentee, CLMAttendanceStudent, MSCCAttendanceChild
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -119,6 +119,15 @@ class CLMAttendanceStudentSerializer(serializers.ModelSerializer):
             'attended',
             'absence_reason',
             'absence_reason_other',
+        )
+
+
+class MSCCAttendanceChildSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MSCCAttendanceChild
+        fields = (
+            '__all__'
         )
 
 
