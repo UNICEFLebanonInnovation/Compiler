@@ -93,21 +93,23 @@ def test_attendance_heatmap_api_monthly_percentages():
     assert january['absent'] == 1
     assert january['total'] == 3
     assert january['month_name'] == 'January'
+    assert january['programme_type'] == 'All Programmes'
 
     assert february['attendance_percentage'] == 0.0
     assert february['present'] == 0
     assert february['absent'] == 1
     assert february['total'] == 1
     assert february['month_name'] == 'February'
+    assert february['programme_type'] == 'All Programmes'
 
     programme_rows = [entry for entry in payload['rows'] if entry['record_type'] == 'programme_monthly']
-    programmes = {entry['programme'] for entry in programme_rows}
+    programmes = {entry['programme_type'] for entry in programme_rows}
     assert programmes == {'BLN Level 1', 'YFS Level 1'}
 
-    bln_entries = [entry for entry in programme_rows if entry['programme'] == 'BLN Level 1']
+    bln_entries = [entry for entry in programme_rows if entry['programme_type'] == 'BLN Level 1']
     assert [entry['attendance_percentage'] for entry in bln_entries] == [100.0, 0.0]
     assert [entry['month'] for entry in bln_entries] == [1, 2]
 
-    yfs_entries = [entry for entry in programme_rows if entry['programme'] == 'YFS Level 1']
+    yfs_entries = [entry for entry in programme_rows if entry['programme_type'] == 'YFS Level 1']
     assert [entry['attendance_percentage'] for entry in yfs_entries] == [50.0]
     assert [entry['month'] for entry in yfs_entries] == [1]

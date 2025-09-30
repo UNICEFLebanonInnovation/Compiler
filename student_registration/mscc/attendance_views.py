@@ -331,11 +331,13 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
 
         flat_rows = []
 
+        overall_label = 'All Programmes'
+
         for entry in sorted(monthly, key=lambda item: item['month']):
             flat_rows.append({
                 'record_type': 'monthly',
                 'year': year,
-                'programme': '',
+                'programme_type': overall_label,
                 **entry,
             })
 
@@ -344,7 +346,7 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
                 flat_rows.append({
                     'record_type': 'programme_monthly',
                     'year': year,
-                    'programme': programme,
+                    'programme_type': programme,
                     **entry,
                 })
 
