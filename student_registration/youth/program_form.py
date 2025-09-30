@@ -29,7 +29,7 @@ from .models import (
     Sector,
     ProjectType,
     PopulationGroups,
-    ProjectStatus
+    ProjectStatus,
 )
 from student_registration.locations.models import Location
 from student_registration.users.templatetags.custom_tags import has_group
@@ -538,7 +538,7 @@ class ProgramDocumentForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">19</span>'),
-                        Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
+                        Div('population_groups', css_class='col-md-10  multiple-choice checkbox'),
                         css_class='row card-body'
                     ),
                     # Div(
@@ -645,7 +645,7 @@ class ProgramDocumentForm(forms.ModelForm):
                     ),
                     Div(
                         HTML('<span class="badge-form-2 badge-pill">18</span>'),
-                        Div('population_groups', css_class='col-md-5  multiple-choice checkbox'),
+                        Div('population_groups', css_class='col-md-10  multiple-choice checkbox'),
                         css_class='row card-body'
                     ),
                     # Div(

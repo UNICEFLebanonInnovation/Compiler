@@ -30,6 +30,29 @@ AGREE_DISAGREE = Choices(
 )
 
 
+
+class Year(models.Model):
+
+    name = models.CharField(max_length=10, unique=True)
+    current_year = models.BooleanField(blank=True, default=False)
+
+    class Meta:
+        ordering = ['-name']
+        verbose_name = _('Year')
+        verbose_name_plural = _('Years')
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.current_year:
+            Year.objects.exclude(pk=self.pk).update(current_year=False)
+
+
 class Round(models.Model):
 
     name = models.CharField(max_length=45, unique=True)
@@ -385,6 +408,14 @@ class ProgramDocument(TimeStampedModel):
         ('No Support', _("No Support")),
         ('Support', _("Support"))
     )
+    year = models.ForeignKey(
+        Year,
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Year')
+    )
     partner = models.ForeignKey(
         PartnerOrganization,
         blank=True, null=True,
@@ -531,6 +562,11 @@ class ProgramDocument(TimeStampedModel):
     def __unicode__(self):
         return self.project_name
 
+    def save(self, *args, **kwargs):
+        if not self.year:
+            self.year = Year.objects.filter(current_year=True).first()
+        super().save(*args, **kwargs)
+
     def get_governorate_names(self):
         return ", ".join(pop.name for pop in self.governorates.all())
     # get_governorate_names.short_description = _('Governorates')
@@ -602,6 +638,14 @@ class Registration(TimeStampedModel):
         ('', '----------'),
         ('Yes', _("Yes")),
         ('No', _("No"))
+    )
+    year = models.ForeignKey(
+        Year,
+        blank=True,
+        null=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name=_('Year')
     )
     center = models.ForeignKey(
         Center,
@@ -685,6 +729,11 @@ class Registration(TimeStampedModel):
         if self.adolescent:
             return self.adolescent.__unicode__()
         return str(self.id)
+
+    def save(self, *args, **kwargs):
+        if not self.year:
+            self.year = Year.objects.filter(current_year=True).first()
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-id']
