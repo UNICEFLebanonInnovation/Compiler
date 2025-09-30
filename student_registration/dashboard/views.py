@@ -70,6 +70,7 @@ def pivot_data(request):
             center_name=F("center__name"),
             partner_name=F("center__partner__name"),
             round_name=F("round__name"),
+            round_year=F("round__year"),
             governorate=F("center__governorate__name"),
             caza=F("center__caza__name"),
             district=F("center__cadaster__name"),
@@ -90,6 +91,7 @@ def pivot_data(request):
             "nationality": getattr(row, "nationality", "") or "",
             "package_type": getattr(row, "package_type", "") or "",
             "round": getattr(row, "round_name", "") or "",
+            "round_year": getattr(row, "round_year", "") or "",
             "programme_type": getattr(row, "programme_type", "") or "",
         }
         for row in qs
