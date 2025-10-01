@@ -10,7 +10,7 @@ import os
 import django
 
 import pytest
-from django.test import RequestFactory
+from rest_framework.test import APIRequestFactory
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
@@ -20,11 +20,11 @@ os.environ.setdefault('DATABASE_URL', 'sqlite:///test.sqlite3')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
 django.setup()
 
-from student_registration.mscc.attendance_views import AttendanceHeatmapAPI
+from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 
 
 def test_attendance_heatmap_api_monthly_percentages():
-    request = RequestFactory().get('/attendance-heatmap-data/', {'year': '2024'})
+    request = APIRequestFactory().get('/attendance-heatmap-data/percentage/', {'year': '2024'})
     request.user = SimpleNamespace(is_authenticated=True)
 
     base_qs = MagicMock(name='base_qs')
@@ -74,7 +74,8 @@ def test_attendance_heatmap_api_monthly_percentages():
             'student_registration.mscc.attendance_views._aggregate_attendance',
             side_effect=aggregate_side_effect,
         ) as mock_aggregate:
-            response = AttendanceHeatmapAPI.as_view()(request)
+            view = AttendanceHeatmapViewSet.as_view({'get': 'percentage'})
+            response = view(request)
 
     mock_filter.assert_called_once()
     mock_dates.assert_called_once_with('attendance_day__attendance_date', 'year')
@@ -82,8 +83,11 @@ def test_attendance_heatmap_api_monthly_percentages():
     assert response.status_code == 200
     payload = json.loads(response.content)
 
-    january = next(entry for entry in payload['monthly'] if entry['month'] == 1)
-    february = next(entry for entry in payload['monthly'] if entry['month'] == 2)
+    monthly = [entry for entry in payload if entry['record_type'] == 'monthly']
+    programme_entries = [entry for entry in payload if entry['record_type'] == 'programme_monthly']
+
+    january = next(entry for entry in monthly if entry['month'] == 1)
+    february = next(entry for entry in monthly if entry['month'] == 2)
 
     assert january['attendance_percentage'] == pytest.approx(66.67, rel=1e-3)
     assert january['present'] == 2
@@ -97,16 +101,19 @@ def test_attendance_heatmap_api_monthly_percentages():
     assert february['total'] == 1
     assert february['month_name'] == 'February'
 
-    programme_monthly = payload['programme_monthly']
-    assert set(programme_monthly.keys()) == {'BLN Level 1', 'YFS Level 1'}
+    grouped_programmes = {}
+    for entry in programme_entries:
+        grouped_programmes.setdefault(entry['programme'], []).append(entry)
 
-    bln_entries = programme_monthly['BLN Level 1']
+    assert set(grouped_programmes.keys()) == {'BLN', 'YFS'}
+
+    bln_entries = sorted(grouped_programmes['BLN'], key=lambda item: item['month'])
     assert [entry['attendance_percentage'] for entry in bln_entries] == [100.0, 0.0]
     assert [entry['month'] for entry in bln_entries] == [1, 2]
 
-    yfs_entries = programme_monthly['YFS Level 1']
+    yfs_entries = grouped_programmes['YFS']
     assert [entry['attendance_percentage'] for entry in yfs_entries] == [50.0]
     assert [entry['month'] for entry in yfs_entries] == [1]
 
-    assert payload['year'] == 2024
-    assert payload['available_years'] == [2023, 2024]
+    assert all(entry['year'] == 2024 for entry in monthly)
+    assert all(entry['available_years'] == '2023,2024' for entry in monthly)

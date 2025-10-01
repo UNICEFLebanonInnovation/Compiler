@@ -24,6 +24,72 @@ from .utils import load_child_attendance, create_attendance
 from student_registration.users.templatetags.custom_tags import has_group
 
 
+SERVICE_PROGRAM_MAPPING = [
+    ('BLN', [
+        'BLN Level 1',
+        'BLN Level 2',
+        'BLN Level 3',
+    ]),
+    ('BLN Catch-up', [
+        'BLN Catch-up',
+    ]),
+    ('CB-ECE', [
+        'CBECE Level 1',
+        'CBECE Level 2',
+        'CBECE Level 3',
+    ]),
+    ('CB-ECE Catch-up', [
+        'CBECE Catch-up',
+    ]),
+    ('ABLN', [
+        'ABLN Level 1',
+        'ABLN Level 2',
+    ]),
+    ('ABLN Catch-up', [
+        'ABLN Catch-up',
+    ]),
+    ('RS', [
+        'RS Grade 1',
+        'RS Grade 2',
+        'RS Grade 3',
+        'RS Grade 4',
+        'RS Grade 5',
+        'RS Grade 6',
+        'RS Grade 7',
+        'RS Grade 8',
+        'RS Grade 9',
+    ]),
+    ('YBLN', [
+        'YBLN Level 1',
+        'YBLN Level 2',
+    ]),
+    ('YBLN Catch-up', [
+        'YBLN Catch-up',
+    ]),
+    ('YFS', [
+        'YFS Level 1',
+        'YFS Level 2',
+    ]),
+    ('ECD', [
+        'ECD',
+    ]),
+    ('RS-YFS', [
+        'YFS Level 1 - RS Grade 9',
+        'YFS Level 2 - RS Grade 9',
+    ]),
+]
+
+PROGRAMME_CATEGORY_LOOKUP = {
+    programme: category
+    for category, programmes in SERVICE_PROGRAM_MAPPING
+    for programme in programmes
+}
+
+CATEGORY_ORDER_LOOKUP = {
+    category: index for index, (category, _programmes) in enumerate(SERVICE_PROGRAM_MAPPING)
+}
+
+
 def _aggregate_attendance(queryset, *group_fields):
     """Aggregate attendance counts for the provided ``group_fields``.
 
@@ -232,13 +298,39 @@ class AttendanceHeatmap(LoginRequiredMixin, TemplateView):
             'registration__education_service__education_program',
         )
 
-        programme_data = {}
+        programme_choices = dict(EducationService.EDUCATION_PROGRAM)
+        programme_totals = {}
+
         for row in programme_qs:
             programme = row['registration__education_service__education_program'] or 'Unknown'
-            programme_data.setdefault(programme, []).append({
-                'attendance_day__attendance_date': row['attendance_day__attendance_date'],
-                'total': row['total'],
-                'absent': row['absent'],
+            label = programme_choices.get(programme, programme)
+            category = PROGRAMME_CATEGORY_LOOKUP.get(programme)
+
+            if category is None:
+                category = force_str(label) if label else 'Unknown'
+
+            key = (category, row['attendance_day__attendance_date'])
+            totals = programme_totals.setdefault(key, {'total': 0, 'absent': 0})
+            totals['total'] += row['total'] or 0
+            totals['absent'] += row['absent'] or 0
+
+        programme_data = OrderedDict()
+
+        def _programme_sort_key(item):
+            (category, attendance_date), _data = item
+            return (
+                CATEGORY_ORDER_LOOKUP.get(category, len(CATEGORY_ORDER_LOOKUP)),
+                attendance_date,
+            )
+
+        for (category, attendance_date), data in sorted(programme_totals.items(), key=_programme_sort_key):
+            if category not in programme_data:
+                programme_data[category] = []
+
+            programme_data[category].append({
+                'attendance_day__attendance_date': attendance_date,
+                'total': data['total'],
+                'absent': data['absent'],
             })
 
         years = MSCCAttendanceChild.objects.dates(
@@ -298,22 +390,41 @@ class AttendanceHeatmapViewSet(mixins.ListModelMixin,
         )
 
         programme_choices = dict(EducationService.EDUCATION_PROGRAM)
-        programme_monthly = OrderedDict()
+        programme_monthly_totals = {}
 
         for row in programme_rows:
             programme = row['registration__education_service__education_program'] or 'Unknown'
             label = programme_choices.get(programme, programme)
-            programme_label = force_str(label)
+            category = PROGRAMME_CATEGORY_LOOKUP.get(programme)
+
+            if category is None:
+                category = force_str(label) if label else 'Unknown'
+
             month = row['attendance_day__attendance_date__month']
-            total = row['total'] or 0
-            absent = row['absent'] or 0
+            key = (category, month)
+            total_entry = programme_monthly_totals.setdefault(key, {'total': 0, 'absent': 0})
+            total_entry['total'] += row['total'] or 0
+            total_entry['absent'] += row['absent'] or 0
+
+        programme_monthly = OrderedDict()
+
+        def _category_sort_key(item):
+            (category, month), _data = item
+            return (
+                CATEGORY_ORDER_LOOKUP.get(category, len(CATEGORY_ORDER_LOOKUP)),
+                month,
+            )
+
+        for (category, month), data in sorted(programme_monthly_totals.items(), key=_category_sort_key):
+            total = data['total'] or 0
+            absent = data['absent'] or 0
             present = total - absent
             percentage = round((present * 100.0) / total, 2) if total else 0.0
 
-            if programme_label not in programme_monthly:
-                programme_monthly[programme_label] = []
+            if category not in programme_monthly:
+                programme_monthly[category] = []
 
-            programme_monthly[programme_label].append({
+            programme_monthly[category].append({
                 'month': month,
                 'month_name': calendar.month_name[month],
                 'attendance_percentage': percentage,
