@@ -22,6 +22,7 @@ from .models import (
     Registration,
     EducationAssessment,
     EducationService,
+    ServiceProgramOption,
     EducationRSService,
     EducationProgrammeAssessment,
     YES_NO,
@@ -484,63 +485,25 @@ class EducationServiceForm(forms.ModelForm):
 
         self.fields['registration_id'].initial = registry
 
-        service_bln = get_service(registry, 'BLN')
-        service_abln = get_service(registry, 'ABLN')
-        service_cbece = get_service(registry, 'CB-ECE')
-        service_rs = get_service(registry, 'RS')
-        service_ybln = get_service(registry, 'YBLN')
-        service_yfs = get_service(registry, 'YFS')
-        service_ecd = get_service(registry, 'ECD')
-        service_rs_yfs = get_service(registry, 'RS-YFS')
+        programme_labels = dict(EducationService.EDUCATION_PROGRAM)
+        service_programs = list(ServiceProgramOption.objects.all())
 
-        service_bln_catch_up = get_service(registry, 'BLN Catch-up')
-        service_abln_catch_up = get_service(registry, 'ABLN Catch-up')
-        service_ybln_catch_up = get_service(registry, 'YBLN Catch-up')
-        service_cbece_catch_up = get_service(registry, 'CB-ECE Catch-up')
+        if service_programs:
+            service_names = {option.service_name for option in service_programs}
+            available_services = {
+                service_name: get_service(registry, service_name)
+                for service_name in service_names
+            }
 
-        choices = list()
-        if service_bln:
-            choices.append(('BLN Level 1', _('BLN Level 1')))
-            choices.append(('BLN Level 2', _('BLN Level 2')))
-            choices.append(('BLN Level 3', _('BLN Level 3')))
-        if service_bln_catch_up:
-            choices.append(('BLN Catch-up', _('BLN Catch-up')))
-        if service_cbece:
-            choices.append(('CBECE Level 1', _('CBECE Level 1')))
-            choices.append(('CBECE Level 2', _('CBECE Level 2')))
-            choices.append(('CBECE Level 3', _('CBECE Level 3')))
-        if service_cbece_catch_up:
-            choices.append(('CBECE Catch-up', _('CBECE Catch-up')))
-        if service_abln:
-            choices.append(('ABLN Level 1', _('ABLN Level 1')))
-            choices.append(('ABLN Level 2', _('ABLN Level 2')))
-        if service_abln_catch_up:
-            choices.append(('ABLN Catch-up', _('ABLN Catch-up')))
-        if service_rs:
-            choices.append(('RS Grade 1', _('RS Grade 1')))
-            choices.append(('RS Grade 2', _('RS Grade 2')))
-            choices.append(('RS Grade 3', _('RS Grade 3')))
-            choices.append(('RS Grade 4', _('RS Grade 4')))
-            choices.append(('RS Grade 5', _('RS Grade 5')))
-            choices.append(('RS Grade 6', _('RS Grade 6')))
-            choices.append(('RS Grade 7', _('RS Grade 7')))
-            choices.append(('RS Grade 8', _('RS Grade 8')))
-            choices.append(('RS Grade 9', _('RS Grade 9')))
-        if service_ybln:
-            choices.append(('YBLN Level 1', _('YBLN Level 1')))
-            choices.append(('YBLN Level 2', _('YBLN Level 2')))
-        if service_ybln_catch_up:
-            choices.append(('YBLN Catch-up', _('YBLN Catch-up')))
-        if service_yfs:
-            choices.append(('YFS Level 1', _('YFS Level 1')))
-            choices.append(('YFS Level 2', _('YFS Level 2')))
-        if service_ecd:
-            choices.append(('ECD', _('ECD')))
-        if service_rs_yfs:
-            choices.append(('YFS Level 1 - RS Grade 9', _('YFS Level 1 - RS Grade 9')))
-            choices.append(('YFS Level 2 - RS Grade 9', _('YFS Level 2 - RS Grade 9')))
+            choices = []
+            for option in service_programs:
+                if not available_services.get(option.service_name):
+                    continue
 
-        self.fields['education_program'].choices = choices
+                label = programme_labels.get(option.program_code, _(option.program_code))
+                choices.append((option.program_code, label))
+
+            self.fields['education_program'].choices = choices
 
         choices_education_status = list()
         if package_type == 'Walk-in':
