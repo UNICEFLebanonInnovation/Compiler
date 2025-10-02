@@ -102,7 +102,6 @@ class OutreachChildResource(resources.ModelResource):
             'birthday_year',
             'birthday_month',
             'birthday_day',
-            'outreach_caregiver',
         )
         fields = (
             'id',

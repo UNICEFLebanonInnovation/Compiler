@@ -780,7 +780,7 @@ class ProgramDocumentForm(forms.ModelForm):
             cleaned_data['project_code'] = project_code
             existing_code = ProgramDocument.objects.filter(
                 project_code__iexact=project_code
-            ) 
+            )
             instance_pk = self.instance_pk or getattr(self.instance, 'pk', None)
             if instance_pk:
                 existing_code = existing_code.exclude(pk=instance_pk)
