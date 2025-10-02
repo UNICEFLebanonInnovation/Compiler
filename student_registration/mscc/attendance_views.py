@@ -112,7 +112,8 @@ class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      TemplateView):
 
-    group_required = [u"MSCC",u"MSCC_UNICEF", u"MSCC_CENTER", "MSCC_PARTNER"]
+    # TODO(MoE): Update programme-admin group name once ministry roles are defined.
+    group_required = [u"MSCC",u"MSCC_PROGRAM_ADMIN", u"MSCC_CENTER", "MSCC_PARTNER"]
     template_name = 'mscc/attendance.html'
 
     def get_context_data(self, **kwargs):
@@ -263,7 +264,8 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         context['center'] = []
         context['partner'] = []
 
-        if not has_group(self.request.user, 'MSCC_UNICEF'):
+        # TODO(MoE): Replace programme-admin group check with ministry access control.
+        if not has_group(self.request.user, 'MSCC_PROGRAM_ADMIN'):
             if self.request.user.center_id:
                 center = Center.objects.filter(id=self.request.user.center_id).last()
                 if center:

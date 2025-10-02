@@ -1,6 +1,8 @@
 
 
 def get_default_provider():
+    # TODO(MoE): Swap out the Azure storage provider if the ministry adopts a
+    #            different on-prem file storage service.
     from .providers.azure import Azure
 
     return Azure()

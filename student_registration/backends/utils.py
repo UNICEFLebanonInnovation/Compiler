@@ -12,6 +12,9 @@ from time import mktime
 from django.http import FileResponse, HttpResponse
 from storages.backends.azure_storage import AzureStorage
 
+# TODO(MoE): Point this storage helper at the ministry's replacement backend if
+#            Azure Blob Storage is not available on-prem.
+
 logger = logging.getLogger(__name__)
 
 

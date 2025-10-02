@@ -95,8 +95,9 @@ def login_success(request):
     modules = []
 
     # MSCC access
+    # TODO(MoE): Update programme-admin group name once ministry roles are defined.
     if user.is_superuser or user.groups.filter(name__in=[
-        'MSCC_UNICEF', 'MSCC_PARTNER', 'MSCC_CENTER', 'MSCC'
+        'MSCC_PROGRAM_ADMIN', 'MSCC_PARTNER', 'MSCC_CENTER', 'MSCC'
     ]).exists():
         modules.append('mscc')
 

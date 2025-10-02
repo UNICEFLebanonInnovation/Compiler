@@ -29,6 +29,8 @@ services:
 
       - certbot
     environment:
+      # TODO(MoE): Replace UNICEF production domain with the ministry's
+      #            on-premise hostname before issuing TLS certificates.
       - MY_DOMAIN_NAME=compiler.uniceflebanon.org
 
     ports:
@@ -41,6 +43,8 @@ services:
 
   certbot:
     image: quay.io/letsencrypt/letsencrypt
+    # TODO(MoE): Update domain and contact email so certificate renewals target
+    #            the ministry operations team instead of UNICEF.
     command: bash -c "sleep 6 && certbot certonly -n --standalone -d compiler.uniceflebanon.org --test --agree-tos --email jcranwellward@unicef.org --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges http-01"
     entrypoint: ""
     volumes:

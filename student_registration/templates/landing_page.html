@@ -34,7 +34,8 @@
                                                         <i class="lnr-laptop-phone text-info"></i>
                                                     </div>
                                                     <div class="widget-numbers">
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                                        {# TODO(MoE): Update programme-admin group name once ministry roles are defined. #}
+                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_PROGRAM_ADMIN" %}
                                                             <a href="{% url 'mscc:list' %}">Makani</a>
                                                         {% else %}
                                                             <span class="text-muted">Makani</span>
@@ -43,7 +44,8 @@
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-info">
                                                         <i class="fa fa-arrow-right"></i>
-                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
+                                                        {# TODO(MoE): Update programme-admin group name once ministry roles are defined. #}
+                                                        {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_PROGRAM_ADMIN" %}
                                                             <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
                                                         {% else %}
                                                             <span class="text-muted">Dashboard</span>
@@ -73,43 +75,6 @@
                                                             <span class="text-muted">Dashboard</span>
                                                         {% endif %}
                                                         <span class="pl-1"> </span></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-danger"></div>
-                                                        <i class="lnr-apartment text-danger"></i>
-                                                    </div>
-                                                  <div class="widget-numbers">
-                                                        {% if request.user|has_group:"CLM_Inclusion" %}
-                                                            <a href="{% url 'clm:inclusion_list' %}">Disability Specialized</a>
-                                                        {% else %}
-                                                            <span class="text-muted">Disability Specialized</span>
-                                                        {% endif %}
-                                                  </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-primary"><span class="pr-1"></span>
-                                                        <!--<i class="fa fa-angle-up"></i>-->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="widget-chart widget-chart-hover br-br">
-                                                    <div class="icon-wrapper rounded-circle">
-                                                        <div class="icon-wrapper-bg bg-success"></div>
-                                                        <i class="lnr-graduation-hat"></i></div>
-                                                    <div class="widget-numbers">
-                                                          {% if request.user|has_group:"YOUTH" or request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" %}
-                                                              <a href="{% url 'youth:list' %}">Youth</a>
-                                                          {% else %}
-                                                              <span class="text-muted">Youth</span>
-                                                          {% endif %}
-                                                    </div>
-                                                    <div class="widget-subheading"></div>
-                                                    <div class="widget-description text-warning"><span class="pr-1"></span>
-                                                        <!--<i class="fa fa-arrow-left"></i>-->
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

@@ -27,29 +27,12 @@ from student_registration.students.views import (
     StudentViewSet,
     StudentSearchViewSet,
     StudentAutocomplete,
-    TeacherViewSet
 )
 from student_registration.schools.views import (
-    SchoolViewSet,
-    ClassRoomViewSet,
-    SectionViewSet,
-    SchoolAutocomplete
+    SchoolAutocomplete,
 )
-from student_registration.clm.views import (
-    OutreachViewSet,
-    BridgingViewSet,
-    CLMStudentViewSet,
-    SelfPerceptionGradesViewSet,
-)
-
-from student_registration.clm.inclusion_views import (
-    InclusionViewSet
-)
-
 from student_registration.locations.views import (
-    LocationViewSet,
     LocationAutocomplete,
-    ProgramStaffViewSet
 )
 
 from student_registration.users.views import LoginRedirectView, home, login_success, LandingPage, save_fcm_token
@@ -65,19 +48,7 @@ api.register(r'dirasa/attendances', AttendanceListViewSet, basename='dirasa-atte
 
 api.register(r'students', StudentViewSet, basename='students')
 api.register(r'students-search', StudentSearchViewSet, basename='students-search')
-api.register(r'schools', SchoolViewSet, basename='schools')
-api.register(r'classrooms', ClassRoomViewSet, basename='classrooms')
-api.register(r'sections', SectionViewSet, basename='sections')
-api.register(r'clm-bridging', BridgingViewSet, basename='clm-bridging')
-api.register(r'teacher', TeacherViewSet, basename='teacher')
-api.register(r'clm-inclusion', InclusionViewSet, basename='clm-inclusion')
-api.register(r'clm-students', CLMStudentViewSet, basename='clm-students')
-api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, basename='self-perception-grads')
-api.register(r'program-staff', ProgramStaffViewSet, basename='program-staff')
 api.register(r'attendance-heatmap-data', AttendanceHeatmapViewSet, basename='attendance-heatmap-data')
-
-api.register(r'clm-outreach', OutreachViewSet, basename='clm-outreach')
-api.register(r'locations', LocationViewSet, basename='locations')
 
 urlpatterns = [
     re_path(r'^$', home, name="home"),
@@ -97,16 +68,9 @@ urlpatterns = [
     re_path(r'^users/', include('student_registration.users.urls', namespace='users')),
     re_path(r'^accounts/', include('allauth.urls')),
 
-    re_path(r'^students/', include('student_registration.students.urls', namespace='students')),
     re_path(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
     re_path(r'^mscc/', include('student_registration.mscc.urls', namespace='mscc')),
-    re_path(r'^youth/', include('student_registration.youth.urls', namespace='youth')),
-    re_path(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
-    re_path(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
-    re_path(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     re_path(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
-    re_path(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
-    re_path(r'^backends/', include('student_registration.backends.urls', namespace='backends')),
 
     re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 

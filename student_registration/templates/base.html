@@ -106,7 +106,8 @@
                                 <div class="dropdown-mega-menu">
                                     <div class="grid-menu grid-menu-3col">
                                         <div class="no-gutters row">
-                                            {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+                                            {# TODO(MoE): Update programme-admin group name once ministry roles are defined. #}
+                                            {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_PROGRAM_ADMIN" or request.user|has_group:"MSCC" %}
                                             <div class="col-sm-6 col-xl-4">
                                                 <ul class="nav flex-column">
                                                     <li class="nav-item-header nav-item">Makani</li>
@@ -160,18 +161,6 @@
                                                             <span>Student Attendance</span>
                                                         </a>
                                                     </li>
-                                                    <li>
-                                                        <a href="{% url 'schools:school_list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-picture"></i>
-                                                            <span>Schools</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{% url 'students:teacher_list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-picture"></i>
-                                                            <span>Teachers</span>
-                                                        </a>
-                                                    </li>
                                                     <li class="nav-item">
                                                         <a href="{% url 'clm:dashboard' %}" class="nav-link">
                                                             <i class="nav-link-icon lnr-file-empty"></i>
@@ -183,45 +172,7 @@
                                             </div>
                                             {% endif %}
 
-                                          {% if request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" or request.user|has_group:"YOUTH" %}
-                                            <div class="col-sm-6 col-xl-4">
-                                                <ul class="nav flex-column">
-                                                    <li class="nav-item-header nav-item">Youth</li>
-                                                    <li class="nav-item">
-                                                        <a href="{% url 'youth:list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-inbox"></i>
-                                                            <span>Student Registration</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="{% url 'youth:pd_list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-book"></i>
-                                                            <span>Programme Document</span>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a class="nav-link">
-                                                            <i class="nav-link-icon lnr-file-empty"></i>
-                                                            <span>Dashboard</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                          {% endif %}
-
-                                            {% if request.user|has_group:"CLM_Inclusion" %}
-                                            <div class="col-sm-6 col-xl-4">
-                                                <ul class="nav flex-column">
-                                                    <li class="nav-item-header nav-item">Disability Specialized</li>
-                                                    <li class="nav-item">
-                                                        <a href="{% url 'clm:inclusion_list' %}" class="nav-link">
-                                                            <i class="nav-link-icon lnr-inbox"></i>
-                                                            <span>Student Registration</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            {% endif %}
+                                          
 
                                         </div>
                                     </div>

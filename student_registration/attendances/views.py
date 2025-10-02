@@ -1118,7 +1118,8 @@ def mscc_attendance_export(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not has_group(request.user, 'MSCC_UNICEF'):
+        # TODO(MoE): Replace programme-admin group check with ministry access control.
+        if not has_group(request.user, 'MSCC_PROGRAM_ADMIN'):
             if request.user.partner_id:
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -1228,7 +1229,8 @@ def mscc_total_attendance_export(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not has_group(request.user, 'MSCC_UNICEF'):
+        # TODO(MoE): Replace programme-admin group check with ministry access control.
+        if not has_group(request.user, 'MSCC_PROGRAM_ADMIN'):
             if request.user.partner_id:
                 vw_data_str += " AND partner_id = %s"
                 query_params.append(request.user.partner_id)
@@ -1340,7 +1342,8 @@ def mscc_total_attendance_export1(request, **kwargs):
             vw_data_str += " AND center_id = %s"
             query_params.append(center_id)
 
-        if not has_group(request.user, 'MSCC_UNICEF'):
+        # TODO(MoE): Replace programme-admin group check with ministry access control.
+        if not has_group(request.user, 'MSCC_PROGRAM_ADMIN'):
             if request.user.center_id:
                 vw_data_str += " AND center_id = %s"
                 query_params.append(request.user.center_id)

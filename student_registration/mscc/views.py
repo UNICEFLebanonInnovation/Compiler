@@ -533,7 +533,8 @@ class MainListView(LoginRequiredMixin,
             _total_absent_days=Subquery(absent_days, output_field=IntegerField()),
         )
 
-        if has_group(user, 'MSCC_UNICEF'):
+        # TODO(MoE): Replace programme-admin group check with ministry access control.
+        if has_group(user, 'MSCC_PROGRAM_ADMIN'):
             return qs.filter(
                 Q(round__isnull=True) | Q(round__current_year=True)
             ).order_by('-id')
@@ -555,7 +556,8 @@ class MainListView(LoginRequiredMixin,
         """
         Return the class to use for the table.
         """
-        if has_group(self.request.user, 'MSCC_UNICEF'):
+        # TODO(MoE): Replace programme-admin group check with ministry access control.
+        if has_group(self.request.user, 'MSCC_PROGRAM_ADMIN'):
             return FullTable
         elif has_group(self.request.user, 'MSCC_PARTNER'):
             return PartnerTable
@@ -567,7 +569,8 @@ class MainListView(LoginRequiredMixin,
         return self.table_class
 
     def get_filterset_class(self):
-        if has_group(self.request.user, 'MSCC_UNICEF'):
+        # TODO(MoE): Replace programme-admin group check with ministry access control.
+        if has_group(self.request.user, 'MSCC_PROGRAM_ADMIN'):
             return FullFilter
         elif has_group(self.request.user, 'MSCC_PARTNER'):
             return self.filterset_class
@@ -880,7 +883,8 @@ def quick_search(request):
             center_id = user.center_id
             partner_id = user.partner_id
 
-            if has_group(user, 'MSCC_UNICEF'):
+            # TODO(MoE): Replace programme-admin group check with ministry access control.
+            if has_group(user, 'MSCC_PROGRAM_ADMIN'):
                 qs= Registration.objects.filter(
                     Q(round__isnull=True) | Q(round__current_year=True),
                     deleted=False

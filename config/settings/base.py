@@ -168,6 +168,9 @@ MANAGERS = ADMINS
 # DATABASE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
+# TODO(MoE): Point DATABASE_URL to the ministry's on-premises PostgreSQL host
+#            before deployment; the default currently targets the UNICEF Azure
+#            managed instance used by BMA production.
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
     'default': env.db('DATABASE_URL',
@@ -437,6 +440,9 @@ JAZZMIN_SETTINGS = {
 # See: http://django-storages.readthedocs.io/en/latest/index.html
 INSTALLED_APPS += ['storages', ]
 
+# TODO(MoE): Replace Azure storage credentials with the ministry's chosen
+#            storage backend (or disable Azure Blob usage entirely) when
+#            deploying to the on-premise environment.
 AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
 AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
 AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
@@ -446,6 +452,8 @@ DEFAULT_FILE_FORMAT = 'xlsx'
 DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
 
+# TODO(MoE): Update UNICEF-hosted API endpoints once the ministry exposes its
+#            own identity services; current defaults rely on Azure Websites.
 UNIQUE_ID_API_TOKEN_URL = env('UNIQUE_ID_API_TOKEN_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/auth/getAccessToken')
 UNIQUE_ID_API_URL = env('UNIQUE_ID_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsUniqueIDs')
 UNIQUE_PROGRAMMES_API_URL = env('UNIQUE_PROGRAMMES_API_URL', default='https://leb-cash-ims.azurewebsites.net/cashmis/api/Request/getIndividualsProgrammes')

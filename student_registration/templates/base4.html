@@ -174,7 +174,8 @@
                                             Home
                                         </a>
                                     </div>
-                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+                                  {# TODO(MoE): Update programme-admin group name once ministry roles are defined. #}
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_PROGRAM_ADMIN" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -182,7 +183,8 @@
                                         </a>
                                     </div>
                                   {% endif %}
-                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+                                  {# TODO(MoE): Update programme-admin group name once ministry roles are defined. #}
+                                  {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_PROGRAM_ADMIN" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:attendance' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="lnr-laptop-phone icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -199,7 +201,8 @@
 
                                       </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+                                    {# TODO(MoE): Update programme-admin group name once ministry roles are defined. #}
+                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_PROGRAM_ADMIN" or request.user|has_group:"MSCC" %}
                                       <div class="col-sm-6 col-xl-4">
                                           <a href="{% url 'locations:center_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                               <i class="lnr-apartment icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -207,7 +210,7 @@
                                           </a>
                                       </div>
                                     {% endif %}
-                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
+                                    {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_PROGRAM_ADMIN" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:dashboard' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
                                             <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
@@ -236,36 +239,6 @@
                                         </a>
                                     </div>
                                   {% endif %}
-                                  {% if request.user|has_group:"CLM_Inclusion" %}
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'clm:inclusion_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-plugin icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Disability specialized
-                                        </a>
-                                    </div>
-                                    {% endif %}
-                                    {% if request.user|has_group:"YOUTH_PARTNER" or request.user|has_group:"YOUTH_UNICEF" or request.user|has_group:"YOUTH" %}
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'youth:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-study icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Youth
-                                        </a>
-                                    </div>
-                                    {% endif %}
-                                    {% if request.user|has_group:"YOUTH_UNICEF" %}
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-display1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Youth Dashboard
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-6 col-xl-4">
-                                        <a href="{% url 'dashboard:chart-builder' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
-                                            <i class="pe-7s-graph1 icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"></i>
-                                            Chart Builder
-                                        </a>
-                                    </div>
-                                    {% endif %}
                                     <!--<div class="col-sm-6 col-xl-4">-->
                                         <!--<a class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">-->
                                             <!--<i class="pe-7s-browser icon-gradient bg-night-fade btn-icon-wrapper btn-icon-lg mb-3"> </i>-->

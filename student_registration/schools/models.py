@@ -367,6 +367,7 @@ class School(TimeStampedModel):
         related_name='+',
         on_delete=models.SET_NULL,
     )
+    # TODO(MoE): Replace UNICEF BMA-specific flag with Ministry terminology or remove if not applicable.
     is_bma = models.BooleanField(
         default=True,
         blank=True,
