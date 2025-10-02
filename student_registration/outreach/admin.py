@@ -3,14 +3,14 @@ from __future__ import absolute_import, unicode_literals
 import uuid
 
 from django.contrib import admin, messages
-from import_export import resources
+from import_export import exceptions, resources
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import path, reverse
 from django.utils.html import format_html
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from tablib import Dataset
 from import_export.widgets import ForeignKeyWidget
+from tablib import Dataset
 
 from .models import HouseHold, OutreachCaregiver, OutreachChild
 
@@ -46,6 +46,7 @@ class HouseHoldAdmin(ImportExportModelAdmin):
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
+
 
 class OutreachCaregiverResource(resources.ModelResource):
     class Meta:
@@ -108,12 +109,7 @@ class OutreachChildResource(resources.ModelResource):
 
     class Meta:
         model = OutreachChild
-        import_id_fields = (
-            'first_name',
-            'birthday_year',
-            'birthday_month',
-            'birthday_day',
-        )
+        import_id_fields = ()
         fields = (
             'id',
             'outreach_caregiver',
@@ -146,16 +142,16 @@ class OutreachChildResource(resources.ModelResource):
                 defaults={k: v for k, v in caregiver_data.items() if v is not None},
             )
 
-            if not created:
-                updated = False
-                for key, value in caregiver_data.items():
-                    if value is not None and getattr(caregiver, key) != value:
-                        setattr(caregiver, key, value)
-                        updated = True
-                if updated:
-                    caregiver.save()
-
             row['outreach_caregiver'] = caregiver.pk
+
+    def get_or_init_instance(self, instance_loader, row):
+        try:
+            return super().get_or_init_instance(instance_loader, row)
+        except OutreachChild.MultipleObjectsReturned:
+            # Allow duplicate imports by creating a fresh instance when multiple
+            # matches exist instead of skipping the row altogether.
+            instance = self.init_instance(row)
+            return instance, True
 
     def _store_not_imported_row(self, row, error_messages):
         if self._not_imported_headers is None:
@@ -191,6 +187,11 @@ class OutreachChildResource(resources.ModelResource):
                 message = getattr(error, 'error', error)
                 messages_list.append(str(message))
 
+            if hasattr(row, 'get'):
+                extra_message = row.get('_import_error')
+                if extra_message and extra_message not in messages_list:
+                    messages_list.append(extra_message)
+
             validation_error = getattr(row_result, 'validation_error', None)
             if validation_error:
                 messages_list.append(str(validation_error))
@@ -203,8 +204,20 @@ class OutreachChildResource(resources.ModelResource):
         return row_result
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
-        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
-
+        try:
+            super().after_import(
+                dataset,
+                result,
+                using_transactions=using_transactions,
+                dry_run=dry_run,
+                **kwargs,
+            )
+        except TypeError as exc:
+            message = str(exc)
+            if 'unexpected keyword argument' in message or 'positional arguments' in message:
+                super().after_import(dataset, result, **kwargs)
+            else:
+                raise
         if self._not_imported_rows and not dry_run:
             not_imported = Dataset()
             not_imported.headers = self._not_imported_headers
