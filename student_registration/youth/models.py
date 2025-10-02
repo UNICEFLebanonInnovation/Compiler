@@ -439,12 +439,10 @@ class ProgramDocument(TimeStampedModel):
     )
     project_code = models.CharField(
         max_length=100,
-        unique=True,
         verbose_name=_('Project Code')
     )
     project_name = models.CharField(
         max_length=250,
-        unique=True,
         verbose_name=_('Project Name')
     )
     project_description = models.CharField(
@@ -583,39 +581,6 @@ class ProgramDocument(TimeStampedModel):
         return ", ".join(donor.name for donor in self.donors.all())
         # return "\n".join(donor.name for donor in self.donors.all())
 
-    def clean(self):
-        super(ProgramDocument, self).clean()
-
-        if not self.project_name:
-            raise ValidationError({'project_name': _('Project Name cannot be empty')})
-        if not self.project_code:
-            raise ValidationError({'project_code': _('Project Code cannot be empty')})
-
-        if self.project_code:
-            duplicate_code = ProgramDocument.objects.filter(
-                project_code__iexact=self.project_code
-            )
-            if self.pk:
-                duplicate_code = duplicate_code.exclude(pk=self.pk)
-            if duplicate_code.exists():
-                raise ValidationError({
-                    'project_code': _(
-                        'A Program Document with this project code already exists.'
-                    )
-                })
-
-        if self.project_name:
-            duplicate_name = ProgramDocument.objects.filter(
-                project_name__iexact=self.project_name
-            )
-            if self.pk:
-                duplicate_name = duplicate_name.exclude(pk=self.pk)
-            if duplicate_name.exists():
-                raise ValidationError({
-                    'project_name': _(
-                        'A Program Document with this project name already exists.'
-                    )
-                })
 
 
 class ProgramDocumentIndicator(TimeStampedModel):

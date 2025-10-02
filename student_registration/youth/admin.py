@@ -80,11 +80,12 @@ class ProgramDocumentAdminForm(forms.ModelForm):
         current_year = Year.objects.filter(current_year=True).first()
         if current_year and not self.instance.pk:
             self.fields['year'].initial = current_year
-
     def clean(self):
         cleaned_data = super(ProgramDocumentAdminForm, self).clean()
 
         project_code = cleaned_data.get('project_code')
+        if project_code is not None:
+            self.instance.project_code = project_code
         if project_code:
             qs = ProgramDocument.objects.filter(project_code__iexact=project_code)
             if self.instance.pk:
@@ -96,6 +97,8 @@ class ProgramDocumentAdminForm(forms.ModelForm):
                 )
 
         project_name = cleaned_data.get('project_name')
+        if project_name is not None:
+            self.instance.project_name = project_name
         if project_name:
             qs = ProgramDocument.objects.filter(project_name__iexact=project_name)
             if self.instance.pk:
@@ -108,14 +111,13 @@ class ProgramDocumentAdminForm(forms.ModelForm):
 
         return cleaned_data
 
-
 class ProgramDocumentAdmin(admin.ModelAdmin):
     form = ProgramDocumentAdminForm
     list_display = (
-        'year',
         'project_code',
         'project_name',
         'project_description',
+        'year',
         'partner',
         'funded_by',
         'project_status',
@@ -188,7 +190,7 @@ class SubProgramAdmin(admin.ModelAdmin):
         'master_program__number',
     )
     list_filter = (
-        'master_program__active', 
+        'master_program__active',
         CreationYearFilter,
     )
 

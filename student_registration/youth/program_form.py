@@ -456,6 +456,17 @@ class ProgramDocumentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         instance = kwargs.pop('instance', None)
+        self.instance_pk = None
+        if isinstance(instance, ProgramDocument):
+            self.instance_pk = instance.pk
+            kwargs['instance'] = instance
+        elif instance is not None:
+            self.instance_pk = instance
+            try:
+                kwargs['instance'] = ProgramDocument.objects.get(pk=instance)
+            except ProgramDocument.DoesNotExist:
+                kwargs['instance'] = None
+
 
         super(ProgramDocumentForm, self).__init__(*args, **kwargs)
 
@@ -765,11 +776,14 @@ class ProgramDocumentForm(forms.ModelForm):
 
         project_code = cleaned_data.get('project_code')
         if project_code:
+            project_code = project_code.strip()
+            cleaned_data['project_code'] = project_code
             existing_code = ProgramDocument.objects.filter(
                 project_code__iexact=project_code
-            )
-            if self.instance.pk:
-                existing_code = existing_code.exclude(pk=self.instance.pk)
+            ) 
+            instance_pk = self.instance_pk or getattr(self.instance, 'pk', None)
+            if instance_pk:
+                existing_code = existing_code.exclude(pk=instance_pk)
             if existing_code.exists():
                 self.add_error(
                     'project_code',
@@ -778,11 +792,14 @@ class ProgramDocumentForm(forms.ModelForm):
 
         project_name = cleaned_data.get('project_name')
         if project_name:
+            project_name = project_name.strip()
+            cleaned_data['project_name'] = project_name
             existing_name = ProgramDocument.objects.filter(
                 project_name__iexact=project_name
             )
-            if self.instance.pk:
-                existing_name = existing_name.exclude(pk=self.instance.pk)
+            instance_pk = self.instance_pk or getattr(self.instance, 'pk', None)
+            if instance_pk:
+                existing_name = existing_name.exclude(pk=instance_pk)
             if existing_name.exists():
                 self.add_error(
                     'project_name',
