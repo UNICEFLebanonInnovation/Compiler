@@ -2,328 +2,26 @@ from __future__ import absolute_import, unicode_literals
 
 from django.urls import re_path
 
-from . import views, attendance_views, inclusion_views, bridging_views
+from . import attendance_views, bridging_views, views
 
 app_name = 'clm'
 
 urlpatterns = [
-
     re_path(
         r'^index/$',
-        view=views.CLMView.as_view(),
+        view=bridging_views.BridgingPage.as_view(),
         name='index'
     ),
-
     re_path(
-        r'^bln-dashboard/$',
-        view=views.BLNDashboardView.as_view(),
-        name='bln_dashboard'
-    ),
-
-    re_path(
-        r'^rs-dashboard/$',
-        view=views.RSDashboardView.as_view(),
-        name='rs_dashboard'
-    ),
-
-    re_path(
-        r'^cbece-dashboard/$',
-        view=views.CBECEDashboardView.as_view(),
-        name='cbece_dashboard'
+        r'^bridging-page/$',
+        view=bridging_views.BridgingPage.as_view(),
+        name='bridging_page'
     ),
     re_path(
-        r'^bln-add/$',
-        view=views.BLNAddView.as_view(),
-        name='bln_add'
+        r'^bridging-list/$',
+        view=bridging_views.BridgingListView.as_view(),
+        name='bridging_list'
     ),
-    re_path(
-        r'^bln-edit/(?P<pk>[\w.@+-]+)/$',
-        view=views.BLNEditView.as_view(),
-        name='bln_edit'
-    ),
-    re_path(
-        r'^bln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
-        view=views.BLNMonitoringQuestionerView.as_view(),
-        name='bln_monitoring_questioner'
-    ),
-    re_path(
-        r'^bln-export/$',
-        view=views.BLNExportViewSet.as_view(),
-        name='bln_export'
-    ),
-
-    re_path(
-        r'^assessment-submission/$',
-        view=views.AssessmentSubmission.as_view(),
-        name='assessment_submission'
-    ),
-    re_path(
-        r'^bln-list/$',
-        view=views.BLNListView.as_view(),
-        name='bln_list'
-    ),
-    re_path(
-        r'^bln-referral/(?P<pk>[\w.@+-]+)/$',
-        view=views.BLNReferralView.as_view(),
-        name='bln_referral'
-    ),
-    re_path(
-        r'^bln-followup/(?P<pk>[\w.@+-]+)/$',
-        view=views.BLNFollowupView.as_view(),
-        name='bln_followup'
-    ),
-    re_path(
-        r'^rs-add/$',
-        view=views.RSAddView.as_view(),
-        name='rs_add'
-    ),
-    re_path(
-        r'^rs-edit/(?P<pk>[\w.@+-]+)/$',
-        view=views.RSEditView.as_view(),
-        name='rs_edit'
-    ),
-    re_path(
-        r'^rs-export/$',
-        view=views.RSExportViewSet.as_view(),
-        name='rs_export'
-    ),
-    re_path(
-        r'^rs-list/$',
-        view=views.RSListView.as_view(),
-        name='rs_list'
-    ),
-    re_path(
-        r'^cbece-add/$',
-        view=views.CBECEAddView.as_view(),
-        name='cbece_add'
-    ),
-    re_path(
-        r'^cbece-edit/(?P<pk>[\w.@+-]+)/$',
-        view=views.CBECEEditView.as_view(),
-        name='cbece_edit'
-    ),
-    re_path(
-        r'^cbece-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
-        view=views.CBECEMonitoringQuestionerView.as_view(),
-        name='cbece_monitoring_questioner'
-    ),
-    re_path(
-        r'^cbece-export/$',
-        view=views.CBECEExportViewSet.as_view(),
-        name='cbece_export'
-    ),
-    re_path(
-        r'^cbece-list/$',
-        view=views.CBECEListView.as_view(),
-        name='cbece_list'
-    ),
-    re_path(
-        r'^general-questionnaire-list/$',
-        view=views.GeneralQuestionnaireListView.as_view(),
-        name='general_questionnaire_list'
-    ),
-
-    re_path(
-        r'^general-questionnaire-add/$',
-        view=views.GeneralQuestionnaireAddView.as_view(),
-        name='general_questionnaire_add'
-    ),
-    re_path(
-        r'^general-questionnaire-edit/(?P<pk>[\w.@+-]+)/$',
-        view=views.GeneralQuestionnaireEditView.as_view(),
-        name='general_questionnaire_edit'
-    ),
-    re_path(
-        r'^abln-add/$',
-        view=views.ABLNAddView.as_view(),
-        name='abln_add'
-    ),
-    re_path(
-        r'^abln-edit/(?P<pk>[\w.@+-]+)/$',
-        view=views.ABLNEditView.as_view(),
-        name='abln_edit'
-    ),
-    re_path(
-        r'^abln-monitoring-questioner/(?P<pk>[\w.@+-]+)/$',
-        view=views.ABLNMonitoringQuestionerView.as_view(),
-        name='abln_monitoring_questioner'
-    ),
-    re_path(
-        r'^abln-export/$',
-        view=views.ABLNExportViewSet.as_view(),
-        name='abln_export'
-    ),
-    re_path(
-        r'^abln-list/$',
-        view=views.ABLNListView.as_view(),
-        name='abln_list'
-    ),
-    re_path(
-        r'^abln-referral/(?P<pk>[\w.@+-]+)/$',
-        view=views.ABLNReferralView.as_view(),
-        name='abln_referral'
-    ),
-    re_path(
-        r'^abln-followup/(?P<pk>[\w.@+-]+)/$',
-        view=views.ABLNFollowupView.as_view(),
-        name='abln_followup'
-    ),
-    re_path(
-        r'^abln-post-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.ABLNPostAssessmentView.as_view(),
-        name='abln_post_assessment'
-    ),
-    re_path(
-        r'^abln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
-        view=views.ABLNFCAddView.as_view(),
-        name='abln_fc_add'
-    ),
-    re_path(
-        r'^bln-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
-        view=views.BLNFCAddView.as_view(),
-        name='bln_fc_add'
-    ),
-    re_path(
-        r'^rs-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
-        view=views.RSFCAddView.as_view(),
-        name='rs_fc_add'
-    ),
-    re_path(
-        r'^cbece-fc-add/(?P<enrollment_id>[\w.@+-]+)/(?P<fc_type>[\w.@+-]+)/$',
-        view=views.CBECEFCAddView.as_view(),
-        name='cbece_fc_add'
-    ),
-    re_path(
-        r'^bln-post-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.BLNPostAssessmentView.as_view(),
-        name='bln_post_assessment'
-    ),
-    re_path(
-        r'^cbece-post-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.CBECEPostAssessmentView.as_view(),
-        name='cbece_post_assessment'
-    ),
-    re_path(
-        r'^cbece-mid-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.CBECEMidAssessmentView.as_view(),
-        name='cbece_mid_assessment'
-    ),
-    re_path(
-        r'^cbece-referral/(?P<pk>[\w.@+-]+)/$',
-        view=views.CBECEReferralView.as_view(),
-        name='cbece_referral'
-    ),
-    re_path(
-        r'^cbece-followup/(?P<pk>[\w.@+-]+)/$',
-        view=views.CBECEFollowupView.as_view(),
-        name='cbece_followup'
-    ),
-    re_path(
-        r'^rs-post-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=views.RSPostAssessmentView.as_view(),
-        name='rs_post_assessment'
-    ),
-    re_path(
-        r'^load-districts/$',
-        views.load_districts,
-        name='load_districts'
-    ),
-    re_path(
-        r'^load-cadasters/$',
-        views.load_cadasters,
-        name='load_cadasters'
-    ),
-    re_path(
-        r'^load-schools/$',
-        views.load_schools,
-        name='load_schools'
-    ),
-    re_path(
-        r'^search-clm-child/$',
-        bridging_views.search_clm_child,
-        name='search_clm_child'
-    ),
-    re_path(
-        r'^search-kobo-outreach-child/$',
-        bridging_views.search_kobo_outreach_child,
-        name='search_kobo_outreach_child'
-    ),
-    re_path(
-        r'^outreach-child/$',
-        bridging_views.outreach_child,
-        name='outreach_child'
-    ),
-    re_path(
-        r'^search-clm-duplicate-unicef-id/$',
-        bridging_views.search_clm_duplicate_unicef_id,
-        name='search_clm_duplicate_unicef_id'
-    ),
-    re_path(
-        r'^exec-abln-update/$',
-        view=views.ExecABLNUpdateView.as_view(),
-        name='exec_abln_update'
-    ),
-    re_path(
-        r'^inclusion-add/$',
-        view=inclusion_views.InclusionAddView.as_view(),
-        name='inclusion_add'
-    ),
-    re_path(
-        r'^inclusion-edit/(?P<pk>[\w.@+-]+)/$',
-        view=inclusion_views.InclusionEditView.as_view(),
-        name='inclusion_edit'
-    ),
-    re_path(
-        r'^inclusion-export/$',
-        view=inclusion_views.inclusion_export,
-        name='inclusion_export'
-    ),
-    re_path(
-        r'^inclusion-list/$',
-        view=inclusion_views.InclusionListView.as_view(),
-        name='inclusion_list'
-    ),
-    re_path(
-        r'^inclusion-followup/(?P<pk>[\w.@+-]+)/$',
-        view=inclusion_views.InclusionFollowupView.as_view(),
-        name='inclusion_followup'
-    ),
-    # re_path(
-    #     r'^inclusion-referral/(?P<pk>[\w.@+-]+)/$',
-    #     view=inclusion_views.InclusionReferralView.as_view(),
-    #     name='inclusion_referral'
-    # ),
-    re_path(
-        r'^inclusion-assessment/(?P<pk>[\w.@+-]+)/$',
-        view=inclusion_views.InclusionAssessmentView.as_view(),
-        name='inclusion_assessment'
-    ),
-    re_path(
-        r'^inclusion-delete/(?P<pk>[\w.@+-]+)/$',
-        view=inclusion_views.inclusion_delete_view,
-        name='inclusion_delete'
-    ),
-    re_path(
-        r'^outreach-add/$',
-        view=views.OutreachAddView.as_view(),
-        name='outreach_add'
-    ),
-    re_path(
-        r'^outreach-edit/(?P<pk>[\w.@+-]+)/$',
-        view=views.OutreachEditView.as_view(),
-        name='outreach_edit'
-    ),
-    re_path(
-        r'^outreach-export/$',
-        view=views.OutreachExportViewSet.as_view(),
-        name='outreach_export'
-    ),
-    re_path(
-        r'^outreach-list/$',
-        view=views.OutreachListView.as_view(),
-        name='outreach_list'
-    ),
-
     re_path(
         r'^bridging-add/$',
         view=bridging_views.BridgingAddView.as_view(),
@@ -369,20 +67,9 @@ urlpatterns = [
         view=bridging_views.bridging_school_export,
         name='bridging_school_export_data'
     ),
-
-    re_path(
-        r'^bridging-list/$',
-        view=bridging_views.BridgingListView.as_view(),
-        name='bridging_list'
-    ),
-    re_path(
-        r'^bridging-page/$',
-        view=bridging_views.BridgingPage.as_view(),
-        name='bridging_page'
-    ),
     re_path(
         r'^bridging-attendance-report/$',
-        bridging_views.BridgingAttendanceReport.as_view(),
+        view=bridging_views.BridgingAttendanceReport.as_view(),
         name='bridging_attendance_report'
     ),
     re_path(
@@ -409,6 +96,41 @@ urlpatterns = [
         r'^attendance-child/(?P<child>[\w.@+-]+)/$',
         view=attendance_views.LoadAttendanceChild.as_view(),
         name='attendance_child'
+    ),
+    re_path(
+        r'^search-clm-child/$',
+        bridging_views.search_clm_child,
+        name='search_clm_child'
+    ),
+    re_path(
+        r'^search-kobo-outreach-child/$',
+        bridging_views.search_kobo_outreach_child,
+        name='search_kobo_outreach_child'
+    ),
+    re_path(
+        r'^outreach-child/$',
+        bridging_views.outreach_child,
+        name='outreach_child'
+    ),
+    re_path(
+        r'^search-clm-duplicate-unicef-id/$',
+        bridging_views.search_clm_duplicate_unicef_id,
+        name='search_clm_duplicate_unicef_id'
+    ),
+    re_path(
+        r'^load-districts/$',
+        views.load_districts,
+        name='load_districts'
+    ),
+    re_path(
+        r'^load-cadasters/$',
+        views.load_cadasters,
+        name='load_cadasters'
+    ),
+    re_path(
+        r'^load-schools/$',
+        views.load_schools,
+        name='load_schools'
     ),
     re_path(
         r'^dashboard/$',
