@@ -81,6 +81,33 @@ class ProgramDocumentAdminForm(forms.ModelForm):
         if current_year and not self.instance.pk:
             self.fields['year'].initial = current_year
 
+    def clean(self):
+        cleaned_data = super(ProgramDocumentAdminForm, self).clean()
+
+        project_code = cleaned_data.get('project_code')
+        if project_code:
+            qs = ProgramDocument.objects.filter(project_code__iexact=project_code)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                self.add_error(
+                    'project_code',
+                    _('A Program Document with this project code already exists.')
+                )
+
+        project_name = cleaned_data.get('project_name')
+        if project_name:
+            qs = ProgramDocument.objects.filter(project_name__iexact=project_name)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                self.add_error(
+                    'project_name',
+                    _('A Program Document with this project name already exists.')
+                )
+
+        return cleaned_data
+
 
 class ProgramDocumentAdmin(admin.ModelAdmin):
     form = ProgramDocumentAdminForm

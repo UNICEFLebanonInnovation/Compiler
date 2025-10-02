@@ -763,6 +763,32 @@ class ProgramDocumentForm(forms.ModelForm):
         if start_date and end_date and start_date >= end_date:
             self.add_error('start_date', 'Start Date must be less than End Date')
 
+        project_code = cleaned_data.get('project_code')
+        if project_code:
+            existing_code = ProgramDocument.objects.filter(
+                project_code__iexact=project_code
+            )
+            if self.instance.pk:
+                existing_code = existing_code.exclude(pk=self.instance.pk)
+            if existing_code.exists():
+                self.add_error(
+                    'project_code',
+                    _('A Program Document with this project code already exists.')
+                )
+
+        project_name = cleaned_data.get('project_name')
+        if project_name:
+            existing_name = ProgramDocument.objects.filter(
+                project_name__iexact=project_name
+            )
+            if self.instance.pk:
+                existing_name = existing_name.exclude(pk=self.instance.pk)
+            if existing_name.exists():
+                self.add_error(
+                    'project_name',
+                    _('A Program Document with this project name already exists.')
+                )
+
         return cleaned_data
 
     class Meta:
