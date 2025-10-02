@@ -1,9 +1,15 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.contrib import admin
+import uuid
+
+from django.contrib import admin, messages
 from import_export import resources
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import path, reverse
+from django.utils.html import format_html
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
+from tablib import Dataset
 from import_export.widgets import ForeignKeyWidget
 
 from .models import HouseHold, OutreachCaregiver, OutreachChild
@@ -95,6 +101,11 @@ class OutreachChildResource(resources.ModelResource):
         'main_caregiver',
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._not_imported_headers = None
+        self._not_imported_rows = []
+
     class Meta:
         model = OutreachChild
         import_id_fields = (
@@ -146,6 +157,66 @@ class OutreachChildResource(resources.ModelResource):
 
             row['outreach_caregiver'] = caregiver.pk
 
+    def _store_not_imported_row(self, row, error_messages):
+        if self._not_imported_headers is None:
+            try:
+                keys = list(row.keys())
+            except AttributeError:
+                keys = list(row)
+            self._not_imported_headers = keys + ['error']
+
+        serialized_row = []
+        for key in self._not_imported_headers[:-1]:
+            if hasattr(row, 'get'):
+                value = row.get(key)
+            else:
+                try:
+                    value = row[key]
+                except Exception:
+                    value = None
+            serialized_row.append(value)
+        serialized_row.append('; '.join(error_messages))
+        self._not_imported_rows.append(serialized_row)
+
+    def import_row(self, row, instance_loader, **kwargs):
+        row_result = super().import_row(row, instance_loader, **kwargs)
+
+        import_type = getattr(row_result, 'import_type', None)
+        error_constant = getattr(row_result, 'IMPORT_TYPE_ERROR', 'error')
+        skip_constant = getattr(row_result, 'IMPORT_TYPE_SKIP', 'skip')
+
+        if import_type in {error_constant, skip_constant}:
+            messages_list = []
+            for error in getattr(row_result, 'errors', []) or []:
+                message = getattr(error, 'error', error)
+                messages_list.append(str(message))
+
+            validation_error = getattr(row_result, 'validation_error', None)
+            if validation_error:
+                messages_list.append(str(validation_error))
+
+            if not messages_list:
+                messages_list.append('Row was skipped during import')
+
+            self._store_not_imported_row(row, messages_list)
+
+        return row_result
+
+    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
+
+        if self._not_imported_rows and not dry_run:
+            not_imported = Dataset()
+            not_imported.headers = self._not_imported_headers
+            for row in self._not_imported_rows:
+                not_imported.append(row)
+            result.not_imported_dataset = not_imported
+        else:
+            result.not_imported_dataset = None
+
+        self._not_imported_rows = []
+        self._not_imported_headers = None
+
 
 class OutreachChildAdmin(ImportExportModelAdmin):
     resource_class = OutreachChildResource
@@ -162,6 +233,60 @@ class OutreachChildAdmin(ImportExportModelAdmin):
         'outreach_caregiver__father_name',
         'outreach_caregiver__last_name',
     )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'download-not-imported/<str:storage_id>/',
+                self.admin_site.admin_view(self.download_not_imported_records),
+                name='outreach_outreachchild_download_not_imported',
+            ),
+        ]
+        return custom_urls + urls
+
+    def process_result(self, result, request):
+        response = super().process_result(result, request)
+
+        dataset = getattr(result, 'not_imported_dataset', None)
+        if dataset and len(dataset):
+            storage_id = str(uuid.uuid4())
+            session_key = self._build_session_key(storage_id)
+            request.session[session_key] = dataset.export('csv')
+
+            download_url = reverse(
+                'admin:outreach_outreachchild_download_not_imported',
+                args=[storage_id],
+            )
+            message = format_html(
+                'Some rows were not imported. <a href="{}">Download the skipped rows</a>.',
+                download_url,
+            )
+            self.message_user(request, message, level=messages.WARNING)
+
+        return response
+
+    def _build_session_key(self, storage_id):
+        return f'outreach_child_not_imported_{storage_id}'
+
+    def download_not_imported_records(self, request, storage_id):
+        session_key = self._build_session_key(storage_id)
+        data = request.session.pop(session_key, None)
+
+        if data is None:
+            self.message_user(
+                request,
+                'The file with skipped rows is no longer available. Please run the import again.',
+                level=messages.ERROR,
+            )
+            changelist_url = reverse(
+                f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist'
+            )
+            return HttpResponseRedirect(changelist_url)
+
+        response = HttpResponse(data, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="outreachchild_not_imported.csv"'
+        return response
 
 
 admin.site.register(OutreachCaregiver, OutreachCaregiverAdmin)
