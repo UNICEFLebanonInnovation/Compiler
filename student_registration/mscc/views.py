@@ -533,6 +533,7 @@ class MainListView(LoginRequiredMixin,
             _total_absent_days=Subquery(absent_days, output_field=IntegerField()),
         )
 
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if has_group(user, 'MSCC_UNICEF'):
             return qs.filter(
                 Q(round__isnull=True) | Q(round__current_year=True)
@@ -555,6 +556,7 @@ class MainListView(LoginRequiredMixin,
         """
         Return the class to use for the table.
         """
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if has_group(self.request.user, 'MSCC_UNICEF'):
             return FullTable
         elif has_group(self.request.user, 'MSCC_PARTNER'):
@@ -567,6 +569,7 @@ class MainListView(LoginRequiredMixin,
         return self.table_class
 
     def get_filterset_class(self):
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if has_group(self.request.user, 'MSCC_UNICEF'):
             return FullFilter
         elif has_group(self.request.user, 'MSCC_PARTNER'):
@@ -880,6 +883,7 @@ def quick_search(request):
             center_id = user.center_id
             partner_id = user.partner_id
 
+            # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
             if has_group(user, 'MSCC_UNICEF'):
                 qs= Registration.objects.filter(
                     Q(round__isnull=True) | Q(round__current_year=True),

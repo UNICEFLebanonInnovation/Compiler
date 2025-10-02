@@ -174,6 +174,7 @@
                                             Home
                                         </a>
                                     </div>
+                                  {# TODO(MoE): Update UNICEF-specific group names once ministry roles are defined. #}
                                   {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
@@ -182,6 +183,7 @@
                                         </a>
                                     </div>
                                   {% endif %}
+                                  {# TODO(MoE): Update UNICEF-specific group names once ministry roles are defined. #}
                                   {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                     <div class="col-sm-6 col-xl-4">
                                         <a href="{% url 'mscc:attendance' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">
@@ -199,6 +201,7 @@
 
                                       </div>
                                     {% endif %}
+                                    {# TODO(MoE): Update UNICEF-specific group names once ministry roles are defined. #}
                                     {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                       <div class="col-sm-6 col-xl-4">
                                           <a href="{% url 'locations:center_list' %}" class="btn-icon-vertical btn-square btn-transition btn btn-outline-link">

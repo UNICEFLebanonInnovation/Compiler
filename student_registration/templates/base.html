@@ -106,6 +106,7 @@
                                 <div class="dropdown-mega-menu">
                                     <div class="grid-menu grid-menu-3col">
                                         <div class="no-gutters row">
+                                            {# TODO(MoE): Update UNICEF-specific group names once ministry roles are defined. #}
                                             {% if request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" or request.user|has_group:"MSCC" %}
                                             <div class="col-sm-6 col-xl-4">
                                                 <ul class="nav flex-column">

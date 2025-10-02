@@ -95,6 +95,7 @@ def login_success(request):
     modules = []
 
     # MSCC access
+    # TODO(MoE): Update UNICEF-specific group names once ministry roles are defined.
     if user.is_superuser or user.groups.filter(name__in=[
         'MSCC_UNICEF', 'MSCC_PARTNER', 'MSCC_CENTER', 'MSCC'
     ]).exists():

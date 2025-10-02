@@ -34,6 +34,7 @@
                                                         <i class="lnr-laptop-phone text-info"></i>
                                                     </div>
                                                     <div class="widget-numbers">
+                                                        {# TODO(MoE): Update UNICEF-specific group names once ministry roles are defined. #}
                                                         {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                                             <a href="{% url 'mscc:list' %}">Makani</a>
                                                         {% else %}
@@ -43,6 +44,7 @@
                                                     <div class="widget-subheading"></div>
                                                     <div class="widget-description text-info">
                                                         <i class="fa fa-arrow-right"></i>
+                                                        {# TODO(MoE): Update UNICEF-specific group names once ministry roles are defined. #}
                                                         {% if request.user|has_group:"MSCC" or request.user|has_group:"MSCC_PARTNER" or request.user|has_group:"MSCC_UNICEF" %}
                                                             <a href="{% url 'mscc:dashboard' %}">Dashboard</a>
                                                         {% else %}

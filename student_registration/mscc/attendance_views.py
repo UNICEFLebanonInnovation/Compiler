@@ -112,6 +112,7 @@ class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      TemplateView):
 
+    # TODO(MoE): Update UNICEF-specific group names once ministry roles are defined.
     group_required = [u"MSCC",u"MSCC_UNICEF", u"MSCC_CENTER", "MSCC_PARTNER"]
     template_name = 'mscc/attendance.html'
 
@@ -263,6 +264,7 @@ class AttendanceReport(LoginRequiredMixin, TemplateView):
         context['center'] = []
         context['partner'] = []
 
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if not has_group(self.request.user, 'MSCC_UNICEF'):
             if self.request.user.center_id:
                 center = Center.objects.filter(id=self.request.user.center_id).last()

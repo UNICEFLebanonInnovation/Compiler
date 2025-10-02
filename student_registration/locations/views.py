@@ -158,6 +158,7 @@ class CenterListView(LoginRequiredMixin,
         user = self.request.user
         center_id = user.center_id
         partner_id = user.partner_id
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if has_group(user, 'MSCC_UNICEF'):
             return Center.objects.order_by('-id')
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
@@ -259,6 +260,7 @@ def export_data(request):
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
 
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if has_group(user, 'MSCC_UNICEF'):
             vw_center_data_str += ""  # UNICEF has no extra filter
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
@@ -344,6 +346,7 @@ def export_center_background(request):
 
         vw_center_data_str = "SELECT * FROM vw_center_data WHERE center_id > 0"
 
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if has_group(user, 'MSCC_UNICEF'):
             vw_center_data_str += ""  # UNICEF has no extra filter
         elif has_group(user, 'MSCC_PARTNER') and partner_id:

@@ -126,6 +126,7 @@ def generate_filtered_mscc_export(export_id, nationality="", first_name="", last
             vw_mscc_data_str = "SELECT * FROM vw_mscc_data WHERE round_id = %s"
             query_params.append(round)
 
+        # TODO(MoE): Replace UNICEF-specific group check with ministry access control.
         if has_group(user, 'MSCC_UNICEF'):
             vw_mscc_data_str += " AND id > 0"
         elif has_group(user, 'MSCC_PARTNER') and partner_id:
