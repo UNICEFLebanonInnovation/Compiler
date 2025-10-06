@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db.utils import OperationalError, ProgrammingError, NotSupportedError
 
 from django_filters import (
     FilterSet,
@@ -28,6 +29,35 @@ DELETED_CHOICES = [
     ('no', 'No'),
 ]
 
+# Utility helpers -----------------------------------------------------------
+
+
+ROUND_EMPTY_CHOICE = ('no_round', 'No Round')
+
+
+def _safe_values_list(queryset, include_no_round=False):
+    """Evaluate a queryset safely during import time.
+
+    Some environments (like the CI used for automated tests) do not provide
+    the PostgreSQL version expected by the production system.  The queryset
+    evaluations performed when this module is imported would normally trigger
+    a database connection which then raises ``NotSupportedError``.  That in
+    turn prevents Django from loading the filters module altogether.  By
+    catching the relevant exceptions we allow the application to fall back to
+    empty choices while still working with alternative database backends.
+    """
+
+    try:
+        values = list(queryset)
+    except (OperationalError, ProgrammingError, NotSupportedError):
+        values = []
+
+    if include_no_round:
+        return [ROUND_EMPTY_CHOICE] + values
+
+    return values
+
+
 class PlaceholderFilterSet(FilterSet):
     """Base FilterSet that hides labels and uses placeholders."""
 
@@ -54,7 +84,7 @@ class PlaceholderFilterSet(FilterSet):
 
 
 class MainFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Round')
+    NO_ROUND_OPTION = ROUND_EMPTY_CHOICE
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
     child__first_name = CharFilter(lookup_expr='icontains' )
@@ -64,10 +94,14 @@ class MainFilter(PlaceholderFilterSet):
     child__number = CharFilter(lookup_expr='icontains')
     child__unicef_id = CharFilter(lookup_expr='icontains')
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
-    child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
-                                .order_by('name').distinct(), empty_label='Nationality')
+    child__nationality = ChoiceFilter(choices=_safe_values_list(
+        Nationality.objects.values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Nationality')
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
+        choices=_safe_values_list(
+            Round.objects.values_list('id', 'name').order_by('name').distinct(),
+            include_no_round=True,
+        ),
         empty_label='Round',
         method='filter_round'
     )
@@ -76,15 +110,20 @@ class MainFilter(PlaceholderFilterSet):
                                   empty_label='Programme Type', method='filter_education_program')
     child__first_phone_number = CharFilter(lookup_expr='icontains')
     child__second_phone_number = CharFilter(lookup_expr='icontains')
-    center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
-                          .order_by('name').distinct(), empty_label='Center')
-    center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')
-                                       .order_by('name').distinct(), empty_label='Governorate')
-    center__caza = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name')
-                                .order_by('name').distinct(), empty_label='Caza')
+    center = ChoiceFilter(choices=_safe_values_list(
+        Center.objects.values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Center')
+    center__governorate = ChoiceFilter(choices=_safe_values_list(
+        Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Governorate')
+    center__caza = ChoiceFilter(choices=_safe_values_list(
+        Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Caza')
     center__cadaster = ChoiceFilter(
-        choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name')
-        .order_by('name').distinct(), empty_label='Cadaster')
+        choices=_safe_values_list(
+            Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct()
+        ),
+        empty_label='Cadaster')
 
     class Meta:
         model = Registration
@@ -100,26 +139,34 @@ class MainFilter(PlaceholderFilterSet):
 
 
 class FullFilter(PlaceholderFilterSet):
-    NO_ROUND_OPTION = ('no_round', 'No Round')
+    NO_ROUND_OPTION = ROUND_EMPTY_CHOICE
 
     type = ChoiceFilter(choices=PACKAGE_TYPES, empty_label='Package type')
-    partner = ChoiceFilter(choices=PartnerOrganization.objects.values_list('id', 'name')
-                          .order_by('name').distinct(), empty_label='Partner')
+    partner = ChoiceFilter(choices=_safe_values_list(
+        PartnerOrganization.objects.values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Partner')
 
     round = ChoiceFilter(
-        choices=[NO_ROUND_OPTION] + list(Round.objects.values_list('id', 'name').order_by('name').distinct()),
+        choices=_safe_values_list(
+            Round.objects.values_list('id', 'name').order_by('name').distinct(),
+            include_no_round=True,
+        ),
         empty_label='Round',
         method='filter_round'
     )
 
-    center = ChoiceFilter(choices=Center.objects.values_list('id', 'name')
-                          .order_by('name').distinct(), empty_label='Center')
-    center__governorate = ChoiceFilter(choices=Location.objects.filter(parent__isnull=True).values_list('id', 'name')
-                                       .order_by('name').distinct(), empty_label='Governorate')
-    center__caza = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name')
-                                .order_by('name').distinct(), empty_label='Caza')
-    center__cadaster = ChoiceFilter(choices=Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name')
-                                    .order_by('name').distinct(), empty_label='Cadaster')
+    center = ChoiceFilter(choices=_safe_values_list(
+        Center.objects.values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Center')
+    center__governorate = ChoiceFilter(choices=_safe_values_list(
+        Location.objects.filter(parent__isnull=True).values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Governorate')
+    center__caza = ChoiceFilter(choices=_safe_values_list(
+        Location.objects.filter(parent__isnull=False, type=2).values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Caza')
+    center__cadaster = ChoiceFilter(choices=_safe_values_list(
+        Location.objects.filter(parent__isnull=False, type=3).values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Cadaster')
 
     child__first_name = CharFilter(lookup_expr='icontains')
     child__father_name = CharFilter(lookup_expr='icontains')
@@ -128,8 +175,9 @@ class FullFilter(PlaceholderFilterSet):
     child__number = CharFilter(lookup_expr='icontains')
     child__unicef_id = CharFilter(lookup_expr='icontains')
     child__gender = ChoiceFilter(choices=Child.GENDER, empty_label='Gender')
-    child__nationality = ChoiceFilter(choices=Nationality.objects.values_list('id', 'name')
-                                      .order_by('name').distinct(), empty_label='Nationality')
+    child__nationality = ChoiceFilter(choices=_safe_values_list(
+        Nationality.objects.values_list('id', 'name').order_by('name').distinct()
+    ), empty_label='Nationality')
     programme_type = ChoiceFilter(choices=EducationService.EDUCATION_PROGRAM,
                                   field_name='education_service__education_program',
                                   empty_label='Programme Type', method='filter_education_program')
