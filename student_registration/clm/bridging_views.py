@@ -444,7 +444,6 @@ def bridging_export_data(request, **kwargs):
         storage = ExportStorage()
         storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
         file_url = reverse('mscc:export_download', args=[file_name])
-        print(file_url)
 
         # Store export history
         ExportHistory.objects.create(
@@ -529,12 +528,18 @@ def bridging_school_export(request, **kwargs):
         file_path = os.path.join('export', file_name)
 
 
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         # Store export history
         ExportHistory.objects.create(
             export_type='School List - Bridging',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 

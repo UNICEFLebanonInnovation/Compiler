@@ -67,8 +67,12 @@ import os
 import uuid
 # from storages.backends.azure_storage import AzureStorage
 from django.core.files.storage import default_storage
+from storages.backends.azure_storage import AzureStorage
+
 from django.core.files.base import ContentFile
 # import re
+from django.urls import reverse
+
 from django.contrib.auth.decorators import login_required
 
 
@@ -325,6 +329,10 @@ def export_data(request):
 
         return HttpResponse("An error occurred: " + str(e), status=500)
 
+class ExportStorage(AzureStorage):
+    """Azure storage backend dedicated for exported files."""
+    location = "export"
+
 @login_required(login_url='/users/login')
 def export_center_background(request):
     try:
@@ -403,10 +411,17 @@ def export_center_background(request):
         file_name = "out_file_{}.zip".format(unique_id)
         file_path = os.path.join('export', file_name)
 
-        default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        # default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+
+        file_url = reverse('mscc:export_download', args=[file_name])
+
         ExportHistory.objects.create(
             export_type='Center List',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
         return HttpResponse(file_name)

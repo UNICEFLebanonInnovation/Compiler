@@ -23,9 +23,12 @@ import os
 import uuid
 import codecs
 from django.core.files.storage import default_storage
+from storages.backends.azure_storage import AzureStorage
+
 from django.core.files.base import ContentFile
 
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from student_registration.users.templatetags.custom_tags import has_group
 from django.contrib.auth.decorators import login_required
@@ -989,6 +992,9 @@ def add_csv_to_zip(zipfile_obj, filename, queryset):
 
     zipfile_obj.writestr(filename, csv_output.getvalue())
 
+class ExportStorage(AzureStorage):
+    """Azure storage backend dedicated for exported files."""
+    location = "export"
 
 @login_required(login_url='/users/login')
 def export_school_background(request):
@@ -1029,15 +1035,20 @@ def export_school_background(request):
 
         file_path = os.path.join('export', file_name)
 
-        try:
-            default_storage.save(file_path, ContentFile(zip_output.getvalue()))
-        except Exception as e:
-            logging.error("Error saving file: %s", str(e))
-            return HttpResponse("An error occurred while saving the file.", status=500)
+        # try:
+        #     default_storage.save(file_path, ContentFile(zip_output.getvalue()))
+        # except Exception as e:
+        #     logging.error("Error saving file: %s", str(e))
+        #     return HttpResponse("An error occurred while saving the file.", status=500)
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(zip_output.getvalue()))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         ExportHistory.objects.create(
             export_type='School List',
             created_by=request.user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 

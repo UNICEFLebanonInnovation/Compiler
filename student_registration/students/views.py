@@ -8,6 +8,8 @@ import csv
 import os
 import uuid
 from django.core.files.storage import default_storage
+from storages.backends.azure_storage import AzureStorage
+
 from django.core.files.base import ContentFile
 from django.db import connection
 import codecs
@@ -17,6 +19,7 @@ from django.views.generic import ListView, FormView, DeleteView, TemplateView, U
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.db.models import Q, Sum, Avg, F, Func, When
+from django.urls import reverse
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -362,6 +365,10 @@ class TeacherViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
+class ExportStorage(AzureStorage):
+    """Azure storage backend dedicated for exported files."""
+    location = "export"
+
 
 @login_required(login_url='/users/login')
 def teacher_export_data(request):
@@ -424,12 +431,17 @@ def teacher_export_data(request):
         file_path = os.path.join('export', file_name)
 
         # Save file
-        default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
+        storage = ExportStorage()
+        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
+        file_url = reverse('mscc:export_download', args=[file_name])
 
         # Store export history
         ExportHistory.objects.create(
             export_type='Teacher List',
             created_by=user,
+            file_url=file_url,
+            status='done',
             partner_name=partner_name
         )
 
