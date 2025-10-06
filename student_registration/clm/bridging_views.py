@@ -8,18 +8,9 @@ from django.views.generic import ListView, FormView, TemplateView, UpdateView, V
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
-import io
-import csv
 import logging
 logging.basicConfig(level=logging.ERROR)
-import os
-import uuid
-from django.core.files.storage import default_storage
-from storages.backends.azure_storage import AzureStorage
-from django.core.files.base import ContentFile
 from django.db import connection
-import codecs
-import logging
 import traceback
 import datetime
 from django.utils.decorators import method_decorator
@@ -61,6 +52,10 @@ from student_registration.schools.models import (
     CLMRound,
 )
 from student_registration.backends.models import ExportHistory
+from student_registration.clm.tasks import (
+    generate_bridging_export,
+    generate_bridging_extract_export,
+)
 from .bridging_forms import (
     BridgingAssessmentForm,
     BridgingMidAssessmentForm,
@@ -366,189 +361,37 @@ class BridgingEditView(LoginRequiredMixin,
         return super(BridgingEditView, self).form_valid(form)
 
 
-class ExportStorage(AzureStorage):
-    """Azure storage backend dedicated for exported files."""
-    location = "export"
-
 @login_required(login_url='/users/login')
 def bridging_export_data(request, **kwargs):
-    try:
-        cursor = connection.cursor()
-        user = request.user
-        partner_name = user.partner.name if user.partner else ''
+    round_id = kwargs.get('round') or request.GET.get('round')
+    if not round_id:
+        return JsonResponse({'error': 'Round is not selected. Please select a round before exporting data.'},
+                            status=400)
 
-        round_id = request.GET.get('round', None)
-
-        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
-        query_params = []
-
-        if round_id:
-            vw_bridging_data += " AND round_id = %s"
-            query_params.append(round_id)
-
-        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
-        is_staff = request.user.is_staff
-
-        if not clm_bridging_all and not is_staff and request.user.partner:
-            school_id = 0
-            partner_id = request.user.partner_id
-
-            vw_bridging_data += " AND partner_id = %s"
-            query_params.append(partner_id)
-
-            if request.user.school:
-                school_id = request.user.school.id
-            if school_id > 0:
-                vw_bridging_data += " AND school_id = %s"
-                query_params.append(school_id)
-
-        elif not clm_bridging_all and not is_staff and not request.user.partner:
-            vw_bridging_data += " AND id = 0 "
-
-        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name "
-
-        cursor.execute(vw_bridging_data, query_params)
-        bridging_data = cursor.fetchall()
-
-        logging.debug("Executing query: %s", vw_bridging_data)
-        logging.debug("Query params: %s", str(query_params))
-
-        headers = [col[0] for col in cursor.description]
-
-        # Create CSV
-        csv_output = io.StringIO()
-        csv_writer = csv.writer(csv_output)
-
-        # Add BOM for Arabic text
-        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
-        csv_writer.writerow(headers)  # Write headers
-
-        for row in bridging_data:
-            encoded_row = []
-            for cell in row:
-                if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
-                else:  # Convert other data types to string
-                    encoded_row.append(str(cell))
-            csv_writer.writerow(encoded_row)
-
-        unique_id = str(uuid.uuid4())
-        file_name = "bridging_{}.csv".format(unique_id)
-        file_path = os.path.join('export', file_name)
-
-        # Save file
-        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
-
-        storage = ExportStorage()
-        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
-        file_url = reverse('mscc:export_download', args=[file_name])
-
-        # Store export history
-        ExportHistory.objects.create(
-            export_type='Bridging List',
-            created_by=user,
-            file_url=file_url,
-            status='done',
-            partner_name=partner_name
-        )
-
-        return HttpResponse(file_name)
-
-    except Exception as e:
-        logging.error("An error occurred during the export process:")
-        logging.error(traceback.format_exc())
-        return HttpResponse("An error occurred: " + str(e), status=500)
+    export_record = ExportHistory.objects.create(
+        export_type='Bridging List',
+        created_by=request.user,
+        partner_name=request.user.partner.name if request.user.partner else '',
+    )
+    generate_bridging_export.delay(export_record.id, round_id=round_id)
+    return JsonResponse({'status': 'started'})
 
 
 @login_required(login_url='/users/login')
 def bridging_school_export(request, **kwargs):
+    school_id = kwargs.get('school_id')
     try:
-        cursor = connection.cursor()
-        user = request.user
-        partner_name = user.partner.name if user.partner else ''
+        school_id = int(school_id)
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'Invalid school identifier provided.'}, status=400)
 
-        school_id = int(kwargs.get('school_id'))
-
-        clm_bridging_all = has_group(request.user, 'CLM_BRIDGING_ALL')
-        is_staff = request.user.is_staff
-
-        vw_bridging_data = 'SELECT * FROM vw_bridging_data WHERE id > 0'
-        query_params = []
-
-        if not clm_bridging_all and not is_staff and request.user.partner:
-            partner_id = request.user.partner_id
-            vw_bridging_data += " AND partner_id = %s"
-            query_params.append(partner_id)
-
-        elif not clm_bridging_all and not is_staff and not request.user.partner:
-            vw_bridging_data += " AND id = 0"
-
-        if school_id > 0:
-            vw_bridging_data += " AND school_id = %s"
-            query_params.append(school_id)
-
-        vw_bridging_data += " ORDER BY student_first_name, student_fathername, last_name"
-
-        cursor.execute(vw_bridging_data, query_params)
-        bridging_data = cursor.fetchall()
-
-        logging.debug("Executing query: %s", vw_bridging_data)
-        logging.debug("Query params: %s", str(query_params))
-
-        headers = [col[0] for col in cursor.description]
-
-        csv_output = io.StringIO()
-        csv_writer = csv.writer(csv_output)
-
-        csv_output.write(codecs.BOM_UTF8.decode('utf-8'))
-        csv_writer.writerow(headers)
-
-        for row in bridging_data:
-            encoded_row = []
-            for cell in row:
-                if isinstance(cell, (str, bytes)):  # Handle string and bytes
-                    encoded_row.append(cell.decode('utf-8') if isinstance(cell, bytes) else cell)
-                elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
-                else:  # Convert other data types to string
-                    encoded_row.append(str(cell))
-                # Local 2.7
-                # if isinstance(cell, str) or isinstance(cell, unicode):  # Handle Unicode strings
-                #     encoded_row.append(force_str(cell).encode('utf-8'))
-                # elif isinstance(cell, (datetime.date, datetime.datetime)):  # Convert date/datetime objects to string
-                #     encoded_row.append(cell.strftime('%Y-%m-%d'))
-                # else:  # Convert other data types to string
-                #     encoded_row.append(str(cell).encode('utf-8'))
-            csv_writer.writerow(encoded_row)
-
-        unique_id = str(uuid.uuid4())
-        file_name = "bridging_school_{}.csv".format(unique_id)
-        file_path = os.path.join('export', file_name)
-
-
-        # default_storage.save(file_path, ContentFile(csv_output.getvalue().encode('utf-8')))
-
-        storage = ExportStorage()
-        storage.save(file_name, ContentFile(csv_output.getvalue().encode('utf-8')))
-        file_url = reverse('mscc:export_download', args=[file_name])
-
-        # Store export history
-        ExportHistory.objects.create(
-            export_type='School List - Bridging',
-            created_by=user,
-            file_url=file_url,
-            status='done',
-            partner_name=partner_name
-        )
-
-        return HttpResponse(file_name)
-
-    except Exception as e:
-        logging.error("An error occurred during the export process:")
-        logging.error(traceback.format_exc())
-        return HttpResponse("An error occurred: " + str(e), status=500)
+    export_record = ExportHistory.objects.create(
+        export_type='School List - Bridging',
+        created_by=request.user,
+        partner_name=request.user.partner.name if request.user.partner else '',
+    )
+    generate_bridging_export.delay(export_record.id, school_id=school_id)
+    return JsonResponse({'status': 'started'})
 
 
 
@@ -1025,47 +868,14 @@ def search_clm_duplicate_unicef_id(request):
     return JsonResponse({'result': ''})
 
 
-import sys
-if sys.version_info[0] >= 3:
-    unicode = str
-
 @login_required(login_url='/users/login')
 def bridging_export_all(request, **kwargs):
-    try:
-        cursor = connection.cursor()
-        query = 'SELECT * FROM vw_bridging_extract WHERE id > 0'
-        cursor.execute(query)
-        data = cursor.fetchall()
-        headers = [col[0] for col in cursor.description]
-
-        # Create CSV in memory
-        csv_output = io.StringIO()
-        csv_output.write(u'\ufeff')  # UTF-8 BOM for Arabic Excel support
-        writer = csv.writer(csv_output)
-
-        writer.writerow(headers)
-        for row in data:
-            encoded_row = []
-            for cell in row:
-                if isinstance(cell, (datetime.date, datetime.datetime)):
-                    encoded_row.append(cell.strftime('%Y-%m-%d'))
-                elif isinstance(cell, bytes):
-                    # Decode byte strings safely
-                    encoded_row.append(cell.decode('utf-8', errors='replace'))
-                elif cell is None:
-                    encoded_row.append('')
-                else:
-                    encoded_row.append(unicode(cell))  # Ensure proper Unicode text
-            writer.writerow(encoded_row)
-
-        # Prepare downloadable response
-        file_name = "bridging_{}.csv".format(uuid.uuid4().hex)
-        response = HttpResponse(csv_output.getvalue().encode('utf-8'), content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
-        return response
-
-    except Exception as e:
-        logging.error("Export failed: %s", traceback.format_exc())
-        return HttpResponse("An error occurred: " + str(e), status=500)
+    export_record = ExportHistory.objects.create(
+        export_type='Bridging List',
+        created_by=request.user,
+        partner_name=request.user.partner.name if request.user.partner else '',
+    )
+    generate_bridging_extract_export.delay(export_record.id)
+    return JsonResponse({'status': 'started'})
 
 

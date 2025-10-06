@@ -121,22 +121,20 @@
                     url: url,
                     type: "GET",
                     headers: requestHeaders,
-                    success: function (data) {
+                    success: function () {
                         $(".downloading-message").hide();
                         $('.download-report').removeClass('disabled');
-
-                        // Open the file in a new tab
-                        window.open("/mscc/export-download-csv/" + encodeURIComponent(data), "_blank");
+                        showModal('Export started. You will be notified when ready.');
                     },
-                    error: function (error) {
-                        alert("Error downloading file. Please try again.");
+                    error: function () {
+                        showModal('Failed to start export. Please try again later.');
                         $(".downloading-message").hide();
                         $('.download-report').removeClass('disabled');
                     }
                 });
 
             } else {
-                alert("Round is not selected. Please select a round before exporting data.");
+                showModal('Round is not selected. Please select a round before exporting data.');
 
                 $(".downloading-message").hide();
                 $('.download-report').removeClass('disabled');
