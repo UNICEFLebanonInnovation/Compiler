@@ -116,7 +116,7 @@ class ExporterViewSet(LoginRequiredMixin,
     serializer_class = ExporterSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def handle_no_permission(self, request):
+    def handle_no_permission(self):
         return HttpResponseForbidden()
 
     def list(self, request, *args, **kwargs):
