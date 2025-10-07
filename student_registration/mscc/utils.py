@@ -202,7 +202,8 @@ def get_outreach_child(outreach_id):
     elif disability == 'Other':
         initial['child_disability'] = 2
     initial['disability_other'] = instance.disability_other
-    initial['child_marital_status'] = instance.family_status.capitalize()
+    family_status = instance.family_status or ''
+    initial['child_marital_status'] = family_status.capitalize() if family_status else ''
 
     main_caregiver_nationality = instance.outreach_caregiver.caregiver_nationality
     if main_caregiver_nationality == 'syrian':
@@ -219,8 +220,9 @@ def get_outreach_child(outreach_id):
         initial['main_caregiver_nationality'] = 6
     initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
 
-    initial['have_labour'] = instance.working_status.capitalize()
-    if instance.working_status == 'yes':
+    working_status = instance.working_status or ''
+    initial['have_labour'] = working_status.capitalize() if working_status else ''
+    if working_status == 'yes':
         initial['have_labour'] = 'Yes - Full Day'
         labour_type = instance.work_type
         if labour_type == 'manufacturing_producing':

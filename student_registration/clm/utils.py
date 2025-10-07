@@ -3228,7 +3228,8 @@ def get_outreach_child(outreach_id):
         initial['disability'] = 10
     initial['disability_other'] = instance.disability_other
 
-    family_status = instance.family_status.capitalize()
+    family_status_raw = instance.family_status or ''
+    family_status = family_status_raw.capitalize() if family_status_raw else ''
 
 
     if family_status == 'Widow' or family_status == 'Widowed':
