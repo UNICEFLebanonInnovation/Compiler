@@ -546,11 +546,18 @@ def export_data(request, **kwargs):
 
         registration_qs = Registration.objects.filter(deleted=False)
 
-        if partner:
-            registration_qs = registration_qs.filter(partner__id=partner)
+        def _safe_int(value):
+            if value in (None, "", "undefined", "null"):
+                return None
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return None
 
-
-        logger.debug("governorate: %s", governorate)
+        print("partner: ", partner)
+        partner_id_filter = _safe_int(partner)
+        if partner_id_filter is not None:
+            registration_qs = registration_qs.filter(partner__id=partner_id_filter)
 
         if governorate:
             registration_qs = registration_qs.filter(adolescent__governorate__id=governorate)
