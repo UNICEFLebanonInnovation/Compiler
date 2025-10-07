@@ -134,7 +134,7 @@ urlpatterns = [
         name='meeting_edit'
     ),
     re_path(
-        r'^meeting-delete/(?P<pk>[\w.@+-]+)/$',
+        r'^meeting-delete/(?P<school_id>[\w.@+-]+)/(?P<pk>[\w.@+-]+)/$',
         view=views.meeting_delete,
         name='meeting_delete'
     ),

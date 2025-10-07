@@ -815,17 +815,27 @@ class MeetingFormView(LoginRequiredMixin,
         return super(MeetingFormView, self).form_valid(form)
 
 
-def meeting_delete(request, pk):
-    if request.user.is_authenticated:
-        try:
-            meeting = Meeting.objects.get(pk=pk)
-            meeting.delete()
-            result = {"isSuccessful": True}
-        except Meeting.DoesNotExist:
-            result = {"isSuccessful": False}
-    else:
+def meeting_delete(request, school_id, pk):
+    redirect_url = reverse('schools:meeting_list', kwargs={'school_id': school_id})
+
+    if not request.user.is_authenticated:
         result = {"isSuccessful": False}
-    return JsonResponse(result)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(result, status=403)
+        return redirect(redirect_url)
+
+    try:
+        meeting = Meeting.objects.get(pk=pk, school_id=school_id)
+        meeting.delete()
+        result = {"isSuccessful": True}
+    except Meeting.DoesNotExist:
+        result = {"isSuccessful": False}
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        status = 200 if result["isSuccessful"] else 404
+        return JsonResponse(result, status=status)
+
+    return redirect(redirect_url)
 
 
 class CommunityInitiativeListView(LoginRequiredMixin,
