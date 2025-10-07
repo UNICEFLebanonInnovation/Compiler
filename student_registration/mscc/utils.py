@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Exists, OuterRef, Subquery
 from django import forms
 from import_export import resources, fields
+from django.db import transaction
 
 from student_registration.outreach.models import OutreachChild
 from student_registration.students.models import Student
@@ -500,76 +501,55 @@ def load_child_attendance(center_id, round_id, attendance_date, education_progra
 
 def update_child_attendance(registration_id, education_program, old_class_section, new_class_section):
     try:
-        child_attendances = MSCCAttendanceChild.objects.filter(
-            registration_id=registration_id,
-            attendance_day__education_program=education_program,
-            attendance_day__class_section=old_class_section
-        )
+        with transaction.atomic():
+            children = list(
+                MSCCAttendanceChild.objects.filter(
+                    registration_id=registration_id,
+                    attendance_day__education_program=education_program,
+                    attendance_day__class_section=old_class_section,
+                ).select_related('attendance_day__center')
+            )
 
-        for ca in child_attendances:
-            center_id = ca.attendance_day.center.id
-            attendance_date = ca.attendance_day.attendance_date
-        if child_attendances:
-            for ca in child_attendances:
-                center_id = ca.attendance_day.center.id
-                attendance_date = ca.attendance_day.attendance_date
+            for ca in children:
+                old_attendance = ca.attendance_day
+                old_attendance_id = old_attendance.id
+                center_id = old_attendance.center_id
+                attendance_date = old_attendance.attendance_date
 
-                # Search if attendance for the new class exists and move the child attendance to it
-                new_attendance = MSCCAttendance.objects.filter(center_id=center_id,
-                                                           attendance_date=attendance_date,
-                                                           education_program=education_program,
-                                                           class_section=new_class_section
-                                                           ).last()
-                attendance_id = ca.attendance_day.id
+                new_attendance = (
+                    MSCCAttendance.objects
+                    .filter(
+                        center_id=center_id,
+                        attendance_date=attendance_date,
+                        education_program=education_program,
+                        class_section=new_class_section,
+                    )
+                    .order_by('id')
+                    .last()
+                )
 
-                # Count the number of other attendances for the same day
-                other_children_count = MSCCAttendanceChild.objects.filter(attendance_day=ca.attendance_day).exclude(id=ca.id).count()
+                others_count = (
+                    MSCCAttendanceChild.objects
+                    .filter(attendance_day=old_attendance)
+                    .exclude(pk=ca.pk)
+                    .count()
+                )
 
                 if new_attendance:
                     ca.attendance_day = new_attendance
-                    ca.save()
+                    ca.save(update_fields=['attendance_day'])
                 else:
-                    ca.delete()
+                    MSCCAttendanceChild.objects.filter(pk=ca.pk).delete()
 
-                if other_children_count == 0:
-                    try:
-                        old_attendance = MSCCAttendance.objects.get(id=attendance_id)
+                if others_count == 0:
+                    # delete old attendance if now empty
+                    MSCCAttendance.objects.filter(pk=old_attendance_id).delete()
 
-                        # Delete the unique old_attendance instance
-                        old_attendance.delete()
-
-                    except MSCCAttendance.DoesNotExist:
-                        logger.warning("Old attendance does not exist.")
-
-            # Check for an existing attendance for new section
-            new_attendance = MSCCAttendance.objects.filter(
-                center_id=center_id,
-                attendance_date=attendance_date,
-                education_program=education_program,
-                class_section=new_class_section
-            ).last()
-
-            old_attendance_id = ca.attendance_day.id
-
-            other_children_count = MSCCAttendanceChild.objects.filter(
-                attendance_day=ca.attendance_day
-            ).exclude(id=ca.id).count()
-
-            if new_attendance:
-                ca.attendance_day = new_attendance
-                ca.save()
-            else:
-                ca.delete()
-
-            if other_children_count == 0:
-                try:
-                    MSCCAttendance.objects.get(id=old_attendance_id).delete()
-                except MSCCAttendance.DoesNotExist:
-                    print("Old attendance does not exist.")
-
-    except Exception as ex:
-        logger.exception(ex)
         return []
+    except Exception as ex:
+        logger.exception("update_child_attendance failed: %s", ex)
+        return []
+
 
 
 class RegistrationResource(resources.ModelResource):

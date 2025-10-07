@@ -55,6 +55,11 @@ class OutreachCaregiverResource(resources.ModelResource):
             'partner_name',
             'father_name',
             'last_name',
+            'primary_phone',
+            'father_education_level',
+            'mother_education_level',
+            'number_of_children',
+
         )
         fields = (
             'id',

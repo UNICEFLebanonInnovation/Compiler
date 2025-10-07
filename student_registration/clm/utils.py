@@ -3177,12 +3177,14 @@ def get_outreach_child(outreach_id):
    # TODO check nationality'palestinian'
     # 3: for "فلسطينية  - من سوريا"
     # 4: for "فلسطنية - من لبنان"
-    if nationality == 'syrian':
+    if nationality == 'syrian' or nationality == 'سورية':
         initial['student_nationality'] = 1
-    elif nationality == 'lebanese':
+    elif nationality == 'lebanese' or nationality == 'لبنانية':
         initial['student_nationality'] = 5
-    # elif nationality == 'palestinian':
-    #     initial['student_nationality'] = 4
+    elif nationality == 'فلسطينية-من سوريا':
+        initial['student_nationality'] = 3
+    elif nationality == 'فلسطينية-من لبنان':
+        initial['student_nationality'] = 4
     elif nationality == 'iraqi':
         initial['student_nationality'] = 2
     elif nationality == 'stateless':
@@ -3195,40 +3197,50 @@ def get_outreach_child(outreach_id):
     disability = instance.disability
 
     # 1	"No"
-    if disability == 'no' or disability == 'No':
+    if disability == 'no' or disability == 'No' or disability == 'كلا':
         initial['disability'] = 1
     # 2	"Other Difficulties"
-    elif disability == 'Other':
+    elif disability == 'Other' or 'غير ذالك':
         initial['disability'] = 2
     # 3	"Difficulty hearing"
-    elif disability == 'Difficulty hearing' or disability == 'difficulty_hearing':
+    elif disability == 'Difficulty hearing' or disability == 'difficulty_hearing' or disability == 'عوبة في السمع':
         initial['disability'] = 3
     # 4	"Difficulty walking or moving hands"
-    elif disability == 'difficulty_walking_or_moving_hands' or disability == 'Difficulty walking or moving hands':
+    elif disability == 'difficulty_walking_or_moving_hands' or disability == 'Difficulty walking or moving hands' or disability == 'صعوبة في الحركة':
         initial['disability'] = 4
     # 5	"Difficulty Speaking"
-    elif disability == 'Difficulty Speaking' or disability == 'difficulty_speaking':
+    elif disability == 'Difficulty Speaking' or disability == 'difficulty_speaking' or disability == 'صعوبة في التحدث':
         initial['disability'] = 5
     # 6	"Difficulty seeing"
-    elif disability == 'Difficulty seeing' or 'difficulty_seeing':
+    elif disability == 'Difficulty seeing' or 'difficulty_seeing' or disability == 'صعوبة في الرؤية':
         initial['disability'] = 6
     # 7	"Difficulty with Self-Care"
+    elif disability == 'صعوبة في الرعاية الذاتية - الأكل، خلع الملابس':
+        initial['disability'] = 7
     # 8	"Learning Difficulties"
-    elif disability == 'learning_difficulties' or disability == 'Learning Difficulties':
+    elif disability == 'learning_difficulties' or disability == 'Learning Difficulties' or disability == 'صعوبة في التعلم':
         initial['disability'] = 8
     # 9	"Difficulty interacting with others"
-    elif disability == 'difficulty_interacting_with_others' or disability == 'Difficulty interacting with others':
+    elif disability == 'difficulty_interacting_with_others' or disability == 'Difficulty interacting with others' or disability == 'صعوبة التفاعل مع الآخرين':
         initial['disability'] = 9
     # 10	"Intellectual Disability"
-    elif disability == 'intellectual_disability' or disability == 'Intellectual Disability':
+    elif disability == 'intellectual_disability' or disability == 'Intellectual Disability' or disability == 'الاعاقة الذهنية':
         initial['disability'] = 10
     initial['disability_other'] = instance.disability_other
 
     family_status = instance.family_status.capitalize()
-    if family_status == 'Widow':
-        initial['student_family_status'] = 'widower'
-    elif family_status == 'Separated':
-        initial['student_family_status'] = 'divorced'
+
+
+    if family_status == 'Widow' or family_status == 'Widowed':
+        initial['student_family_status'] = 'Widower'
+    elif family_status == 'Separated' or family_status == 'Divorced':
+        initial['student_family_status'] = 'Divorced'
+    elif family_status == 'Married':
+        initial['student_family_status'] = 'Married'
+    elif family_status == 'Engaged':
+        initial['student_family_status'] = 'Engaged'
+    elif family_status == 'Single':
+        initial['student_family_status'] = 'Single'
     else:
         initial['student_family_status'] = family_status
 
@@ -3237,11 +3249,13 @@ def get_outreach_child(outreach_id):
     # 3: for "فلسطينية  - من سوريا"
     # 4: for "فلسطنية - من لبنان"
     main_caregiver_nationality = instance.outreach_caregiver.caregiver_nationality
-    if main_caregiver_nationality == 'syrian':
+    if main_caregiver_nationality == 'syrian' or nationality == 'سورية':
         initial['main_caregiver_nationality'] = 1
-    elif main_caregiver_nationality == 'lebanese':
-    #     initial['main_caregiver_nationality'] = 5
-    # elif main_caregiver_nationality == 'palestinian':
+    elif main_caregiver_nationality == 'lebanese' or nationality == 'لبنانية':
+        initial['main_caregiver_nationality'] = 5
+    elif main_caregiver_nationality == 'فلسطينية-من سوريا':
+        initial['main_caregiver_nationality'] = 3
+    elif main_caregiver_nationality == 'فلسطينية-من لبنان':
         initial['main_caregiver_nationality'] = 4
     elif main_caregiver_nationality == 'iraqi':
         initial['main_caregiver_nationality'] = 2
@@ -3249,6 +3263,7 @@ def get_outreach_child(outreach_id):
         initial['main_caregiver_nationality'] = 7
     elif main_caregiver_nationality == 'other':
         initial['main_caregiver_nationality'] = 6
+
     initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
 
     initial['have_labour_single_selection'] = instance.working_status
@@ -3343,10 +3358,6 @@ def get_outreach_child(outreach_id):
         initial['id_type'] = 'Other nationality'
         initial['parent_other_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['parent_other_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
-
-
-
-
 
     # TO DO: Awaiting feedback
     # education_status = instance.education_status
