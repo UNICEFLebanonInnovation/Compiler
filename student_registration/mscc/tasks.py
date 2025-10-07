@@ -30,7 +30,11 @@ logger = logging.getLogger(__name__)
 # are queued and processed one at a time by a low-concurrency worker.
 @app.task(queue="mscc_export")
 def generate_mscc_export(export_id, fields=None, file_format='csv'):
-    export = ExportHistory.objects.get(id=export_id)
+    try:
+        export = ExportHistory.objects.get(id=export_id)
+    except ExportHistory.DoesNotExist:
+        logger.error("ExportHistory with id %s does not exist", export_id)
+        return
     try:
         user = export.created_by
         cursor = connection.cursor()
