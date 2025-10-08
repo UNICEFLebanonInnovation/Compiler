@@ -128,6 +128,45 @@ def test_snapshot_contains_expected_counts(user):
     assert services['inclusion_service'][0]['dropout'] == 'Yes'
 
 
+@pytest.mark.django_db
+def test_snapshot_uses_view_records_when_available(user, monkeypatch):
+    partner = PartnerOrganization.objects.create(name='Partner B')
+    governorate, district, cadaster, _ = _build_locations()
+    center = Center.objects.create(name='Center V', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
+    nationality = Nationality.objects.create(name='Syrian', name_en='Syrian')
+    child = Child.objects.create(first_name='Noor', last_name='Habib', gender='Female', nationality=nationality)
+    round_obj = Round.objects.create(name='Round View', year=2023)
+    registration = Registration.objects.create(
+        center=center,
+        child=child,
+        partner=partner,
+        round=round_obj,
+        owner=user,
+        type='Core-Package',
+    )
+
+    repository = BMAInsightsRepository(user)
+    repository.__dict__['_views_available'] = True
+
+    fake_records = [
+        {
+            'id': registration.id,
+            'child': child.id,
+            'round_name': round_obj.name,
+            'services': {
+                'vw_mscc_data': [
+                    {'id': registration.id, 'service_model': 'ProvidedServices', 'name': 'Attendance'}
+                ]
+            },
+        }
+    ]
+
+    monkeypatch.setattr(repository, '_registration_records_from_views', lambda: fake_records)
+
+    snapshot = repository._registration_snapshot(repository.registrations)
+    assert snapshot['records'] == fake_records
+
+
 class _FakeChatCompletion:
     def __init__(self):
         self.last_kwargs = None
