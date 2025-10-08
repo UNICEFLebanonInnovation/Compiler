@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import django
 import pytest
-from django.test import Client
+from django.test import Client, override_settings
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory
 
@@ -132,6 +132,37 @@ class _FakeRateLimitError(Exception):
         super().__init__(message)
 
 
+class _FakeResponse:
+    def __init__(self, headers=None):
+        self.headers = headers or {}
+
+
+class _FakeRateLimitErrorWithHeaders(_FakeRateLimitError):
+    def __init__(self, message="Request rate limited", headers=None):
+        super().__init__(message)
+        self.response = _FakeResponse(headers=headers)
+
+
+class _SequenceChatCompletion:
+    def __init__(self, results):
+        self._results = list(results)
+        self.calls = 0
+
+    def create(self, **kwargs):
+        if self.calls >= len(self._results):
+            raise AssertionError("No more fake responses configured")
+        result = self._results[self.calls]
+        self.calls += 1
+        if isinstance(result, Exception):
+            raise result
+        return result
+
+
+class _SequenceClient:
+    def __init__(self, results):
+        self.chat = SimpleNamespace(completions=_SequenceChatCompletion(results))
+
+
 @pytest.mark.django_db
 def test_chat_service_uses_snapshot_and_returns_answer(user):
     partner = PartnerOrganization.objects.create(name='Partner A')
@@ -162,6 +193,59 @@ def test_chat_service_maps_rate_limit_error(user):
     assert isinstance(error, BMAChatService.ChatError)
     assert error.status_code == 429
     assert 'too many requests' in str(error).lower()
+
+
+@pytest.mark.django_db
+def test_chat_service_retries_rate_limit_then_succeeds(user):
+    partner = PartnerOrganization.objects.create(name='Partner A')
+    governorate, district, cadaster, _ = _build_locations()
+    Center.objects.create(name='Center 1', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
+
+    success_message = SimpleNamespace(content='All good now.')
+    success_choice = SimpleNamespace(message=success_message)
+    success_response = SimpleNamespace(choices=[success_choice], usage=None)
+
+    rate_limit_error = _FakeRateLimitErrorWithHeaders(headers={'Retry-After': '0.5'})
+    sequence_client = _SequenceClient([rate_limit_error, success_response])
+
+    sleep_calls = []
+
+    service = BMAChatService(
+        user,
+        client=sequence_client,
+        sleep=lambda delay: sleep_calls.append(delay),
+    )
+
+    result = service.chat(question='How many registrations?')
+
+    assert result['answer'] == 'All good now.'
+    assert sleep_calls == [0.5]
+    assert sequence_client.chat.completions.calls == 2
+
+
+@pytest.mark.django_db
+@override_settings(OPENAI_BMA_MAX_RETRIES=1)
+def test_chat_service_stops_retrying_after_limit(user):
+    partner = PartnerOrganization.objects.create(name='Partner A')
+    governorate, district, cadaster, _ = _build_locations()
+    Center.objects.create(name='Center 1', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
+
+    errors = [_FakeRateLimitError('First'), _FakeRateLimitError('Second')]
+    sequence_client = _SequenceClient(errors)
+
+    sleep_calls = []
+    service = BMAChatService(
+        user,
+        client=sequence_client,
+        sleep=lambda delay: sleep_calls.append(delay),
+    )
+
+    with pytest.raises(BMAChatService.ChatError) as excinfo:
+        service.chat(question='Retry please?')
+
+    assert excinfo.value.status_code == 429
+    assert sequence_client.chat.completions.calls == 2  # initial try + 1 retry
+    assert len(sleep_calls) == 1
 
 
 @pytest.mark.django_db

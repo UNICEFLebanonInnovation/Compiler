@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import time
 from typing import Any, Dict, List, Optional
 
 from django.conf import settings
@@ -24,12 +25,17 @@ class BMAChatService:
             super().__init__(message)
             self.status_code = status_code
 
-    def __init__(self, user, *, client=None):
+    def __init__(self, user, *, client=None, sleep=None):
         self.user = user
         self._client = client
         self.model = getattr(settings, "OPENAI_BMA_MODEL", "gpt-4o-mini")
         self.max_tokens = getattr(settings, "OPENAI_BMA_MAX_TOKENS", 800)
         self.temperature = getattr(settings, "OPENAI_BMA_TEMPERATURE", 0.2)
+        self.max_retries = max(getattr(settings, "OPENAI_BMA_MAX_RETRIES", 2), 0)
+        self.retry_backoff = max(
+            float(getattr(settings, "OPENAI_BMA_RETRY_BACKOFF", 1.0)), 0.0
+        )
+        self._sleep = sleep or time.sleep
         self.repository = BMAInsightsRepository(user)
 
     # Public API ---------------------------------------------------------------
@@ -50,15 +56,29 @@ class BMAChatService:
         messages = self._build_messages(system_prompt, history, question)
 
         client = self._client or self._build_client()
-        try:
-            response = client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                temperature=self.temperature,
-                max_tokens=self.max_tokens,
+        last_error: Optional[BMAChatService.ChatError] = None
+        response: Any = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                response = client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    temperature=self.temperature,
+                    max_tokens=self.max_tokens,
+                )
+                break
+            except Exception as exc:  # pragma: no cover - openai raises many subclasses
+                error = self._map_openai_exception(exc)
+                last_error = error
+                if attempt < self.max_retries and self._should_retry(error):
+                    self._sleep(self._retry_delay(exc, attempt))
+                    continue
+                raise error from exc
+        else:  # pragma: no cover - safety net; loop always breaks or raises
+            raise last_error or self.ChatError(
+                "An unexpected error occurred while contacting the OpenAI service.",
+                status_code=503,
             )
-        except Exception as exc:  # pragma: no cover - openai raises many subclasses
-            raise self._map_openai_exception(exc) from exc
 
         answer = self._extract_answer(response)
         usage = self._extract_usage(response)
@@ -153,6 +173,27 @@ class BMAChatService:
             "An unexpected error occurred while contacting the OpenAI service.",
             status_code=503,
         )
+
+    @staticmethod
+    def _should_retry(error: "BMAChatService.ChatError") -> bool:
+        if error.status_code in {429}:
+            return True
+        if error.status_code and error.status_code >= 500:
+            return True
+        return False
+
+    def _retry_delay(self, exc: Exception, attempt: int) -> float:
+        response = getattr(exc, "response", None)
+        headers = getattr(response, "headers", None)
+        retry_after = None
+        if headers is not None and hasattr(headers, "get"):
+            retry_after = headers.get("Retry-After") or headers.get("retry-after")
+        if retry_after is not None:
+            try:
+                return float(retry_after)
+            except (TypeError, ValueError):
+                pass
+        return self.retry_backoff * (2 ** attempt)
 
     @classmethod
     def _extract_answer(cls, response: Any) -> str:

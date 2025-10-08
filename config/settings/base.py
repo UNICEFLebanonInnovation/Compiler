@@ -435,6 +435,8 @@ OPENAI_API_KEY = env('OPENAI_API_KEY', default=None)
 OPENAI_BMA_MODEL = env('OPENAI_BMA_MODEL', default='gpt-4o-mini')
 OPENAI_BMA_MAX_TOKENS = env.int('OPENAI_BMA_MAX_TOKENS', default=800)
 OPENAI_BMA_TEMPERATURE = env.float('OPENAI_BMA_TEMPERATURE', default=0.2)
+OPENAI_BMA_MAX_RETRIES = env.int('OPENAI_BMA_MAX_RETRIES', default=2)
+OPENAI_BMA_RETRY_BACKOFF = env.float('OPENAI_BMA_RETRY_BACKOFF', default=1.0)
 
 # STORAGE CONFIGURATION
 # ------------------------------------------------------------------------------
