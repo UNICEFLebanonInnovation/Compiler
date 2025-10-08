@@ -117,6 +117,7 @@
               <button id="chat-submit" type="submit" class="btn btn-primary mr-sm-3 mb-2 mb-sm-0">
                 {% trans "Send" %}
               </button>
+              <div id="chat-loader" class="spinner-border spinner-border-sm text-primary d-none mb-2 mb-sm-0" role="status" aria-hidden="true"></div>
               <div id="chat-status" class="small text-muted" role="status" aria-live="polite"></div>
             </div>
             <div id="chat-error" class="alert alert-danger d-none mt-3" role="alert"></div>
@@ -170,6 +171,7 @@
     const chatLog = document.getElementById('chat-log');
     const placeholder = document.getElementById('chat-placeholder');
     const statusElement = document.getElementById('chat-status');
+    const loaderElement = document.getElementById('chat-loader');
     const errorElement = document.getElementById('chat-error');
     const snapshotSection = document.getElementById('chat-snapshot-section');
     const snapshotContent = document.getElementById('chat-snapshot');
@@ -191,6 +193,15 @@
     function setLoading(isLoading) {
       submitButton.disabled = isLoading;
       questionInput.disabled = isLoading;
+      if (loaderElement) {
+        if (isLoading) {
+          loaderElement.classList.remove('d-none');
+          loaderElement.setAttribute('aria-hidden', 'false');
+        } else {
+          loaderElement.classList.add('d-none');
+          loaderElement.setAttribute('aria-hidden', 'true');
+        }
+      }
       if (isLoading) {
         statusElement.textContent = '{% trans "Contacting the assistant…" %}';
       }
