@@ -1,8 +1,13 @@
 """Data aggregation helpers for the BMA chatbot."""
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence
+import re
+from datetime import date, datetime
+from decimal import Decimal
+from typing import Any, Dict, Iterable, List, Sequence
 
+from django.apps import apps
+from django.db import models
 from django.db.models import Count, Max, Q, QuerySet
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
@@ -66,8 +71,10 @@ class BMAInsightsRepository:
     # Registration helpers ------------------------------------------------------
     def _registration_snapshot(self, qs: QuerySet) -> Dict[str, Any]:
         last_modified = qs.aggregate(value=Max("modified"))['value']
+        registrations_list = list(qs)
+        total = len(registrations_list)
         snapshot = {
-            "total": qs.count(),
+            "total": total,
             "last_modified": last_modified.isoformat() if last_modified else None,
             "by_round": self._counts(
                 qs,
@@ -103,6 +110,10 @@ class BMAInsightsRepository:
                 limit=10,
             ),
             "monthly_trend": self._monthly_trend(qs, months=12),
+            "records": [
+                self._serialise_registration(registration)
+                for registration in registrations_list
+            ],
         }
         return snapshot
 
@@ -280,3 +291,81 @@ class BMAInsightsRepository:
         if hasattr(user, "regions"):
             return list(user.regions.values_list("id", flat=True))
         return []
+
+    # Serialisation helpers -----------------------------------------------------
+    def _serialise_registration(self, registration: Registration) -> Dict[str, Any]:
+        data = self._serialise_model_instance(registration)
+        data["services"] = self._serialise_registration_services(registration.id)
+        return data
+
+    def _serialise_registration_services(self, registration_id: int) -> Dict[str, Any]:
+        services: Dict[str, Any] = {}
+        for model in self._service_models:
+            key = self._service_key(model)
+            queryset = model.objects.filter(registration_id=registration_id)
+            services[key] = self._serialise_queryset(queryset)
+        return services
+
+    def _serialise_queryset(self, queryset: Iterable[models.Model]) -> List[Dict[str, Any]]:
+        return [self._serialise_model_instance(instance) for instance in queryset]
+
+    def _serialise_model_instance(self, instance: models.Model) -> Dict[str, Any]:
+        data: Dict[str, Any] = {}
+        for field in instance._meta.get_fields():
+            if field.auto_created and not field.concrete:
+                continue
+
+            name = field.name
+            value = getattr(instance, name)
+
+            if isinstance(field, models.ManyToManyField):
+                ids = list(value.values_list("id", flat=True)) if value is not None else []
+                labels = [str(obj) for obj in value.all()] if value is not None else []
+                data[name] = ids
+                data[f"{name}_labels"] = labels
+            elif isinstance(field, models.ForeignKey):
+                data[name] = value.pk if value else None
+                data[f"{name}_label"] = str(value) if value else None
+            else:
+                data[name] = self._serialise_value(value)
+        return data
+
+    @cached_property
+    def _service_models(self) -> List[models.Model]:
+        mscc_config = apps.get_app_config("mscc")
+        models_with_registration: List[models.Model] = []
+        for model in mscc_config.get_models():
+            if model is Registration:
+                continue
+            for field in model._meta.get_fields():
+                if (
+                    isinstance(field, models.ForeignKey)
+                    and field.concrete
+                    and not field.auto_created
+                    and field.related_model is Registration
+                ):
+                    models_with_registration.append(model)
+                    break
+        return models_with_registration
+
+    @staticmethod
+    def _service_key(model: models.Model) -> str:
+        return BMAInsightsRepository._to_snake_case(model.__name__)
+
+    @staticmethod
+    def _to_snake_case(name: str) -> str:
+        name = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
+        name = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
+        return name.lower()
+
+    @staticmethod
+    def _serialise_value(value: Any) -> Any:
+        if isinstance(value, datetime):
+            return value.isoformat()
+        if isinstance(value, date):
+            return value.isoformat()
+        if isinstance(value, Decimal):
+            return float(value)
+        if isinstance(value, (list, tuple)):
+            return [BMAInsightsRepository._serialise_value(item) for item in value]
+        return value

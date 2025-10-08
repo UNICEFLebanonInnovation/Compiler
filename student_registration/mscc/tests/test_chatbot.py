@@ -26,7 +26,12 @@ from student_registration.locations.models import Center, Location, LocationType
 from student_registration.mscc.chatbot.repository import BMAInsightsRepository  # noqa: E402
 from student_registration.mscc.chatbot.services import BMAChatService  # noqa: E402
 from student_registration.mscc.chatbot.views import BMAChatViewSet  # noqa: E402
-from student_registration.mscc.models import Registration, Round  # noqa: E402
+from student_registration.mscc.models import (  # noqa: E402
+    InclusionService,
+    ProvidedServices,
+    Registration,
+    Round,
+)
 from student_registration.schools.models import PartnerOrganization, School  # noqa: E402
 from student_registration.students.models import Nationality  # noqa: E402
 
@@ -85,6 +90,18 @@ def test_snapshot_contains_expected_counts(user):
         owner=user,
     )
 
+    ProvidedServices.objects.create(
+        name='PSS',
+        registration=registration,
+        type='Child Protection',
+        category='Social Protection',
+    )
+    InclusionService.objects.create(
+        registration=registration,
+        dropout='Yes',
+        parental_engagement='Mother Only',
+    )
+
     school = School.objects.create(
         number='12345',
         name='BMA School',
@@ -105,6 +122,10 @@ def test_snapshot_contains_expected_counts(user):
     assert snapshot['registrations']['monthly_trend'][0]['registrations'] == 1
     assert snapshot['schools']['total'] == 1
     assert snapshot['centers']['total'] == 1
+    assert snapshot['registrations']['records'][0]['child'] == child.id
+    services = snapshot['registrations']['records'][0]['services']
+    assert services['provided_services'][0]['name'] == 'PSS'
+    assert services['inclusion_service'][0]['dropout'] == 'Yes'
 
 
 class _FakeChatCompletion:
