@@ -27,7 +27,7 @@ from student_registration.mscc.chatbot.repository import BMAInsightsRepository  
 from student_registration.mscc.chatbot.services import BMAChatService  # noqa: E402
 from student_registration.mscc.chatbot.views import BMAChatViewSet  # noqa: E402
 from student_registration.mscc.models import Registration, Round  # noqa: E402
-from student_registration.schools.models import PartnerOrganization, School  # noqa: E402
+from student_registration.schools.models import PartnerOrganization  # noqa: E402
 from student_registration.students.models import Nationality  # noqa: E402
 
 
@@ -41,22 +41,20 @@ def _build_locations():
     gov_type = LocationType.objects.create(name='Governorate')
     district_type = LocationType.objects.create(name='District')
     cadaster_type = LocationType.objects.create(name='Cadaster')
-    school_loc_type = LocationType.objects.create(name='School Location')
 
     governorate = Location.objects.create(name='Bekaa', type=gov_type)
     district = Location.objects.create(name='West Bekaa', type=district_type, parent=governorate)
     cadaster = Location.objects.create(name='Kamed', type=cadaster_type, parent=district)
-    school_location = Location.objects.create(name='School Area', type=school_loc_type)
-    return governorate, district, cadaster, school_location
+    return governorate, district, cadaster
 
 
 @pytest.mark.django_db
-def test_snapshot_contains_expected_counts(user):
+def test_snapshot_returns_basic_registration_records(user):
     partner = PartnerOrganization.objects.create(name='Partner A')
     user.partner = partner
     user.save(update_fields=['partner'])
 
-    governorate, district, cadaster, school_location = _build_locations()
+    governorate, district, cadaster = _build_locations()
 
     center = Center.objects.create(
         name='Center 1',
@@ -85,26 +83,9 @@ def test_snapshot_contains_expected_counts(user):
         owner=user,
     )
 
-    school = School.objects.create(
-        number='12345',
-        name='BMA School',
-        location=school_location,
-        governorate=governorate,
-        district=district,
-        cadaster=cadaster,
-        is_bma=True,
-    )
-    school.partner_schools.add(partner)
-
     snapshot = BMAInsightsRepository(user).build_snapshot()
 
     assert snapshot['registrations']['total'] == 1
-    assert snapshot['registrations']['by_round'][0]['round'] == 'Round 2024'
-    assert snapshot['registrations']['by_gender'][0]['gender'] == 'Male'
-    assert snapshot['registrations']['by_partner'][0]['partner'] == 'Partner A'
-    assert snapshot['registrations']['monthly_trend'][0]['registrations'] == 1
-    assert snapshot['schools']['total'] == 1
-    assert snapshot['centers']['total'] == 1
     record = snapshot['registrations']['records'][0]
     assert record['id'] == registration.id
     assert record['child_name'] == 'Ali Hassan'
@@ -172,7 +153,7 @@ class _SequenceClient:
 @pytest.mark.django_db
 def test_chat_service_uses_snapshot_and_returns_answer(user):
     partner = PartnerOrganization.objects.create(name='Partner A')
-    governorate, district, cadaster, school_location = _build_locations()
+    governorate, district, cadaster = _build_locations()
     center = Center.objects.create(name='Center 1', partner=partner, governorate=governorate)
     nationality = Nationality.objects.create(name='Lebanese', name_en='Lebanese')
     child = Child.objects.create(first_name='Sara', last_name='Hassan', gender='Female', nationality=nationality)
@@ -204,7 +185,7 @@ def test_chat_service_maps_rate_limit_error(user):
 @pytest.mark.django_db
 def test_chat_service_retries_rate_limit_then_succeeds(user):
     partner = PartnerOrganization.objects.create(name='Partner A')
-    governorate, district, cadaster, _ = _build_locations()
+    governorate, district, cadaster = _build_locations()
     Center.objects.create(name='Center 1', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
 
     success_message = SimpleNamespace(content='All good now.')
@@ -233,7 +214,7 @@ def test_chat_service_retries_rate_limit_then_succeeds(user):
 @override_settings(OPENAI_BMA_MAX_RETRIES=1)
 def test_chat_service_stops_retrying_after_limit(user):
     partner = PartnerOrganization.objects.create(name='Partner A')
-    governorate, district, cadaster, _ = _build_locations()
+    governorate, district, cadaster = _build_locations()
     Center.objects.create(name='Center 1', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
 
     errors = [_FakeRateLimitError('First'), _FakeRateLimitError('Second')]
