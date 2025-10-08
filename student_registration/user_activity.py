@@ -49,7 +49,7 @@ class UserActivityMiddleware(MiddlewareMixin):
 
                 UserActivity.objects.create(
                     username=request.user.username,
-                    path=request.get_full_path(),
+                    path=getattr(request, 'path', request.get_full_path()),
                     method=request.method,
                     data=serialized_data,
                 )
