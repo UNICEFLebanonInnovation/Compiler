@@ -19,8 +19,8 @@ class BMAChatService:
     """Service responsible for orchestrating ChatGPT powered responses."""
 
     class ChatError(RuntimeError):
-        """Raised when the chatbot cannot fulfil a request."""
 
+        """Raised when the chatbot cannot fulfil a request."""
         def __init__(self, message: str, *, status_code: Optional[int] = None):
             super().__init__(message)
             self.status_code = status_code
@@ -93,16 +93,10 @@ class BMAChatService:
         if self._client:
             return self._client
         if OpenAI is None:
-            raise self.ChatError(
-                "The OpenAI client library is not available.",
-                status_code=503,
-            )
+            raise self.ChatError("The OpenAI client library is not available.")
         api_key = getattr(settings, "OPENAI_API_KEY", None)
         if not api_key:
-            raise self.ChatError(
-                "OpenAI API key is not configured.",
-                status_code=503,
-            )
+            raise self.ChatError("OpenAI API key is not configured.")
         return OpenAI(api_key=api_key)
 
     @staticmethod
@@ -132,47 +126,6 @@ class BMAChatService:
         messages.append({"role": "user", "content": question.strip()})
         return messages
 
-    def _map_openai_exception(self, exc: Exception) -> "BMAChatService.ChatError":
-        """Translate OpenAI exceptions into user-facing errors."""
-
-        status_code = getattr(exc, "status_code", None) or getattr(exc, "status", None)
-        if status_code is None and hasattr(exc, "response"):
-            status_code = getattr(getattr(exc, "response"), "status_code", None)
-
-        code = getattr(exc, "code", None)
-        message = str(exc)
-
-        if status_code == 429 or code in {"rate_limit_exceeded", "insufficient_quota"}:
-            return self.ChatError(
-                "The chatbot is receiving too many requests right now. Please wait a "
-                "moment and try again.",
-                status_code=429,
-            )
-
-        if status_code and 500 <= status_code < 600:
-            return self.ChatError(
-                "The OpenAI service is currently unavailable. Please try again shortly.",
-                status_code=503,
-            )
-
-        if status_code and 400 <= status_code < 500:
-            return self.ChatError(
-                "The OpenAI request could not be processed. Please verify your "
-                "question and try again.",
-                status_code=status_code,
-            )
-
-        if "429" in message:
-            return self.ChatError(
-                "The chatbot is receiving too many requests right now. Please wait a "
-                "moment and try again.",
-                status_code=429,
-            )
-
-        return self.ChatError(
-            "An unexpected error occurred while contacting the OpenAI service.",
-            status_code=503,
-        )
 
     @staticmethod
     def _should_retry(error: "BMAChatService.ChatError") -> bool:
