@@ -39,7 +39,7 @@ class BMAChatViewSet(viewsets.ViewSet):
         except BMAChatService.ChatError as exc:
             return Response(
                 {"detail": str(exc)},
-                status=status.HTTP_502_BAD_GATEWAY,
+                status=exc.status_code or status.HTTP_502_BAD_GATEWAY,
             )
 
         payload = {"answer": result["answer"]}

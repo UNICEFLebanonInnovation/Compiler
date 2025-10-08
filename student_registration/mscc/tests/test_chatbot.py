@@ -124,6 +124,14 @@ class _FakeClient:
         self.chat = SimpleNamespace(completions=_FakeChatCompletion())
 
 
+class _FakeRateLimitError(Exception):
+    status_code = 429
+    code = "rate_limit_exceeded"
+
+    def __init__(self, message="Request rate limited"):
+        super().__init__(message)
+
+
 @pytest.mark.django_db
 def test_chat_service_uses_snapshot_and_returns_answer(user):
     partner = PartnerOrganization.objects.create(name='Partner A')
@@ -144,6 +152,16 @@ def test_chat_service_uses_snapshot_and_returns_answer(user):
     assert 'SNAPSHOT' in system_message
     assert '"total": 1' in system_message
     assert fake_client.chat.completions.last_kwargs['messages'][-1]['role'] == 'user'
+
+
+def test_chat_service_maps_rate_limit_error(user):
+    service = BMAChatService(user, client=_FakeClient())
+
+    error = service._map_openai_exception(_FakeRateLimitError())
+
+    assert isinstance(error, BMAChatService.ChatError)
+    assert error.status_code == 429
+    assert 'too many requests' in str(error).lower()
 
 
 @pytest.mark.django_db
@@ -172,6 +190,27 @@ def test_chat_viewset_returns_response(user):
     assert response.data['answer'] == 'Mocked answer'
     assert response.data['snapshot']['registrations']['total'] == 0
     assert response.data['usage']['total_tokens'] == 42
+
+
+@pytest.mark.django_db
+def test_chat_viewset_returns_specific_status_for_chat_errors(user):
+    request = APIRequestFactory().post(
+        '/api/bma-chatbot/',
+        data={'question': 'Hello there?', 'include_snapshot': False},
+        format='json',
+    )
+    request.user = user
+
+    with patch('student_registration.mscc.chatbot.views.BMAChatService') as service_cls:
+        service_instance = service_cls.return_value
+        service_instance.chat.side_effect = BMAChatService.ChatError(
+            'Please slow down.', status_code=429
+        )
+        view = BMAChatViewSet.as_view({'post': 'create'})
+        response = view(request)
+
+    assert response.status_code == 429
+    assert response.data['detail'] == 'Please slow down.'
 
 
 @pytest.mark.django_db
