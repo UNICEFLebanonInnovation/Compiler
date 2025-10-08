@@ -26,12 +26,7 @@ from student_registration.locations.models import Center, Location, LocationType
 from student_registration.mscc.chatbot.repository import BMAInsightsRepository  # noqa: E402
 from student_registration.mscc.chatbot.services import BMAChatService  # noqa: E402
 from student_registration.mscc.chatbot.views import BMAChatViewSet  # noqa: E402
-from student_registration.mscc.models import (  # noqa: E402
-    InclusionService,
-    ProvidedServices,
-    Registration,
-    Round,
-)
+from student_registration.mscc.models import Registration, Round  # noqa: E402
 from student_registration.schools.models import PartnerOrganization, School  # noqa: E402
 from student_registration.students.models import Nationality  # noqa: E402
 
@@ -90,18 +85,6 @@ def test_snapshot_contains_expected_counts(user):
         owner=user,
     )
 
-    ProvidedServices.objects.create(
-        name='PSS',
-        registration=registration,
-        type='Child Protection',
-        category='Social Protection',
-    )
-    InclusionService.objects.create(
-        registration=registration,
-        dropout='Yes',
-        parental_engagement='Mother Only',
-    )
-
     school = School.objects.create(
         number='12345',
         name='BMA School',
@@ -122,49 +105,12 @@ def test_snapshot_contains_expected_counts(user):
     assert snapshot['registrations']['monthly_trend'][0]['registrations'] == 1
     assert snapshot['schools']['total'] == 1
     assert snapshot['centers']['total'] == 1
-    assert snapshot['registrations']['records'][0]['child'] == child.id
-    services = snapshot['registrations']['records'][0]['services']
-    assert services['provided_services'][0]['name'] == 'PSS'
-    assert services['inclusion_service'][0]['dropout'] == 'Yes'
-
-
-@pytest.mark.django_db
-def test_snapshot_uses_view_records_when_available(user, monkeypatch):
-    partner = PartnerOrganization.objects.create(name='Partner B')
-    governorate, district, cadaster, _ = _build_locations()
-    center = Center.objects.create(name='Center V', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
-    nationality = Nationality.objects.create(name='Syrian', name_en='Syrian')
-    child = Child.objects.create(first_name='Noor', last_name='Habib', gender='Female', nationality=nationality)
-    round_obj = Round.objects.create(name='Round View', year=2023)
-    registration = Registration.objects.create(
-        center=center,
-        child=child,
-        partner=partner,
-        round=round_obj,
-        owner=user,
-        type='Core-Package',
-    )
-
-    repository = BMAInsightsRepository(user)
-    repository.__dict__['_views_available'] = True
-
-    fake_records = [
-        {
-            'id': registration.id,
-            'child': child.id,
-            'round_name': round_obj.name,
-            'services': {
-                'vw_mscc_data': [
-                    {'id': registration.id, 'service_model': 'ProvidedServices', 'name': 'Attendance'}
-                ]
-            },
-        }
-    ]
-
-    monkeypatch.setattr(repository, '_registration_records_from_views', lambda: fake_records)
-
-    snapshot = repository._registration_snapshot(repository.registrations)
-    assert snapshot['records'] == fake_records
+    record = snapshot['registrations']['records'][0]
+    assert record['id'] == registration.id
+    assert record['child_name'] == 'Ali Hassan'
+    assert record['partner'] == 'Partner A'
+    assert record['center'] == 'Center 1'
+    assert record['round'] == 'Round 2024'
 
 
 class _FakeChatCompletion:

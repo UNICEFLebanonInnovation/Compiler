@@ -1,14 +1,10 @@
 """Data aggregation helpers for the BMA chatbot."""
 from __future__ import annotations
 
-import re
-from collections import defaultdict
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Dict, Iterable, List, Sequence, Tuple
+from typing import Any, Dict, List, Sequence
 
-from django.apps import apps
-from django.db import DatabaseError, connection, models
 from django.db.models import Count, Max, Q, QuerySet
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
@@ -115,200 +111,59 @@ class BMAInsightsRepository:
         return snapshot
 
     def _registration_records(self, qs: QuerySet) -> List[Dict[str, Any]]:
-        try:
-            if self._views_available:
-                return self._registration_records_from_views()
-        except Exception:
-            pass
-        registrations_list = list(qs)
-        return [self._serialise_registration(registration) for registration in registrations_list]
+        fields = (
+            "id",
+            "registration_date",
+            "type",
+            "child__first_name",
+            "child__last_name",
+            "child__gender",
+            "child__nationality__name",
+            "partner__name",
+            "center__name",
+            "center__governorate__name",
+            "center__caza__name",
+            "center__cadaster__name",
+            "round__name",
+            "round__year",
+        )
+        rows = (
+            qs.select_related(
+                "child__nationality",
+                "partner",
+                "center__governorate",
+                "center__caza",
+                "center__cadaster",
+                "round",
+            )
+            .values(*fields)
+        )
 
-    # View-backed registration helpers ----------------------------------------
-    @cached_property
-    def _views_available(self) -> bool:
-        return self._view_exists("vw_mscc_data")
-
-    def _registration_records_from_views(self) -> List[Dict[str, Any]]:
-        columns = self._get_view_columns("vw_mscc_data")
-        if not columns:
-            raise DatabaseError("vw_mscc_data view has no columns")
-
-        where, params = self._build_view_scope_filters(columns)
-        rows = self._fetch_view_rows("vw_mscc_data", where=where, params=params)
-        if not rows:
-            return []
-
-        registration_column = self._identify_registration_column(columns)
-        if not registration_column:
-            raise DatabaseError("vw_mscc_data view is missing a registration identifier column")
-
-        category_column = self._identify_service_category_column(columns)
-
-        grouped_rows: Dict[int, Dict[str, Any]] = {}
-        order: List[int] = []
-
+        records: List[Dict[str, Any]] = []
         for row in rows:
-            reg_id = self._extract_registration_id(row, columns)
-            if reg_id is None:
-                continue
+            first_name = row.get("child__first_name") or ""
+            last_name = row.get("child__last_name") or ""
+            full_name = " ".join(part for part in [first_name.strip(), last_name.strip()] if part).strip() or None
 
-            if reg_id not in grouped_rows:
-                grouped_rows[reg_id] = {
-                    "stable": {},
-                    "unstable": set(),
-                    "services": defaultdict(list),
+            records.append(
+                {
+                    "id": row["id"],
+                    "registration_date": self._serialise_value(row.get("registration_date")),
+                    "package_type": row.get("type"),
+                    "child_name": full_name,
+                    "child_gender": row.get("child__gender"),
+                    "child_nationality": row.get("child__nationality__name"),
+                    "partner": row.get("partner__name"),
+                    "center": row.get("center__name"),
+                    "governorate": row.get("center__governorate__name"),
+                    "district": row.get("center__caza__name"),
+                    "cadaster": row.get("center__cadaster__name"),
+                    "round": row.get("round__name"),
+                    "year": row.get("round__year"),
                 }
-                order.append(reg_id)
+            )
 
-            record = grouped_rows[reg_id]
-            stable = record["stable"]
-            unstable = record["unstable"]
-
-            for key, value in row.items():
-                if key in unstable or key == "services":
-                    continue
-                if key not in stable:
-                    stable[key] = value
-                elif stable[key] != value:
-                    unstable.add(key)
-                    stable.pop(key, None)
-
-            bucket_value = row.get(category_column) if category_column else None
-            bucket = self._service_bucket_key(bucket_value)
-            record["services"][bucket].append(dict(row))
-
-        results: List[Dict[str, Any]] = []
-        for reg_id in order:
-            record = grouped_rows[reg_id]
-            stable_data = dict(record["stable"])
-            if registration_column not in stable_data:
-                stable_data[registration_column] = reg_id
-            stable_keys = set(stable_data.keys())
-            stable_data["services"] = {
-                bucket: [
-                    {key: value for key, value in entry.items() if key not in stable_keys}
-                    for entry in entries
-                ]
-                for bucket, entries in record["services"].items()
-            }
-            results.append(stable_data)
-
-        return results
-
-    def _view_exists(self, view_name: str) -> bool:
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(f"SELECT 1 FROM {view_name} WHERE 1=0")
-        except DatabaseError:
-            return False
-        return True
-
-    def _get_view_columns(self, view_name: str) -> List[str]:
-        cache_key = getattr(self, "_view_columns_cache", None)
-        if cache_key is None:
-            self._view_columns_cache = {}
-        if view_name in self._view_columns_cache:
-            return self._view_columns_cache[view_name]
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(f"SELECT * FROM {view_name} WHERE 1=0")
-                columns = [col[0] for col in cursor.description]
-        except DatabaseError:
-            columns = []
-        self._view_columns_cache[view_name] = columns
-        return columns
-
-    def _build_view_scope_filters(self, columns: Sequence[str]) -> Tuple[List[str], List[Any]]:
-        where: List[str] = []
-        params: List[Any] = []
-        user = self.user
-        if getattr(user, "is_superuser", False):
-            return where, params
-
-        if getattr(user, "partner_id", None) and "partner_id" in columns:
-            where.append("partner_id = %s")
-            params.append(user.partner_id)
-
-        if getattr(user, "center_id", None) and "center_id" in columns:
-            where.append("center_id = %s")
-            params.append(user.center_id)
-        else:
-            location_ids = self._user_location_ids(user)
-            if location_ids:
-                location_filters = []
-                location_tuple = tuple(location_ids)
-                if "governorate_id" in columns:
-                    location_filters.append("governorate_id IN %s")
-                if "caza_id" in columns:
-                    location_filters.append("caza_id IN %s")
-                if "cadaster_id" in columns:
-                    location_filters.append("cadaster_id IN %s")
-                if location_filters:
-                    where.append("(" + " OR ".join(location_filters) + ")")
-                    params.extend([location_tuple] * len(location_filters))
-
-        region_ids = self._user_region_ids(user)
-        if region_ids and "governorate_id" in columns:
-            where.append("governorate_id IN %s")
-            params.append(tuple(region_ids))
-
-        return where, params
-
-    def _fetch_view_rows(
-        self,
-        view_name: str,
-        *,
-        where: Sequence[str] | None = None,
-        params: Sequence[Any] | None = None,
-    ) -> List[Dict[str, Any]]:
-        sql = f"SELECT * FROM {view_name}"
-        if where:
-            sql += " WHERE " + " AND ".join(where)
-        params = list(params or [])
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql, params)
-                columns = [col[0] for col in cursor.description]
-                return [dict(zip(columns, row)) for row in cursor.fetchall()]
-        except DatabaseError as exc:
-            raise exc
-
-    @staticmethod
-    def _extract_registration_id(row: Dict[str, Any], columns: Sequence[str]) -> int | None:
-        for candidate in ("registration_id", "registration", "registry_id", "id"):
-            if candidate in columns:
-                value = row.get(candidate)
-                if value is None:
-                    continue
-                if isinstance(value, int):
-                    return value
-                if isinstance(value, (str, Decimal)):
-                    try:
-                        return int(float(value))
-                    except (TypeError, ValueError):
-                        continue
-        return None
-
-    @staticmethod
-    def _identify_registration_column(columns: Sequence[str]) -> str | None:
-        for candidate in ("registration_id", "registration", "registry_id", "id"):
-            if candidate in columns:
-                return candidate
-        return None
-
-    @staticmethod
-    def _identify_service_category_column(columns: Sequence[str]) -> str | None:
-        for candidate in ("service_model", "service_type", "service_category", "table_name", "service_name"):
-            if candidate in columns:
-                return candidate
-        return None
-
-    def _service_bucket_key(self, value: Any) -> str:
-        if not value:
-            return "services"
-        if isinstance(value, str):
-            return self._to_snake_case(value)
-        return str(value)
+        return records
 
     # School helpers ------------------------------------------------------------
     def _school_snapshot(self, qs: QuerySet) -> Dict[str, Any]:
@@ -484,72 +339,6 @@ class BMAInsightsRepository:
         if hasattr(user, "regions"):
             return list(user.regions.values_list("id", flat=True))
         return []
-
-    # Serialisation helpers -----------------------------------------------------
-    def _serialise_registration(self, registration: Registration) -> Dict[str, Any]:
-        data = self._serialise_model_instance(registration)
-        data["services"] = self._serialise_registration_services(registration.id)
-        return data
-
-    def _serialise_registration_services(self, registration_id: int) -> Dict[str, Any]:
-        services: Dict[str, Any] = {}
-        for model in self._service_models:
-            key = self._service_key(model)
-            queryset = model.objects.filter(registration_id=registration_id)
-            services[key] = self._serialise_queryset(queryset)
-        return services
-
-    def _serialise_queryset(self, queryset: Iterable[models.Model]) -> List[Dict[str, Any]]:
-        return [self._serialise_model_instance(instance) for instance in queryset]
-
-    def _serialise_model_instance(self, instance: models.Model) -> Dict[str, Any]:
-        data: Dict[str, Any] = {}
-        for field in instance._meta.get_fields():
-            if field.auto_created and not field.concrete:
-                continue
-
-            name = field.name
-            value = getattr(instance, name)
-
-            if isinstance(field, models.ManyToManyField):
-                ids = list(value.values_list("id", flat=True)) if value is not None else []
-                labels = [str(obj) for obj in value.all()] if value is not None else []
-                data[name] = ids
-                data[f"{name}_labels"] = labels
-            elif isinstance(field, models.ForeignKey):
-                data[name] = value.pk if value else None
-                data[f"{name}_label"] = str(value) if value else None
-            else:
-                data[name] = self._serialise_value(value)
-        return data
-
-    @cached_property
-    def _service_models(self) -> List[models.Model]:
-        mscc_config = apps.get_app_config("mscc")
-        models_with_registration: List[models.Model] = []
-        for model in mscc_config.get_models():
-            if model is Registration:
-                continue
-            for field in model._meta.get_fields():
-                if (
-                    isinstance(field, models.ForeignKey)
-                    and field.concrete
-                    and not field.auto_created
-                    and field.related_model is Registration
-                ):
-                    models_with_registration.append(model)
-                    break
-        return models_with_registration
-
-    @staticmethod
-    def _service_key(model: models.Model) -> str:
-        return BMAInsightsRepository._to_snake_case(model.__name__)
-
-    @staticmethod
-    def _to_snake_case(name: str) -> str:
-        name = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
-        name = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
-        return name.lower()
 
     @staticmethod
     def _serialise_value(value: Any) -> Any:
