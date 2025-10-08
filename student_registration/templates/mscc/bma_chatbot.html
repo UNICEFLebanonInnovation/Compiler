@@ -1,0 +1,327 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+
+{% block project_title %}{% trans "BMA Chatbot" %}{% endblock %}
+{% block module_name %}{% trans "Makani - BMA Chatbot" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+  .chat-log {
+    height: 420px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .chat-message {
+    margin-bottom: 1rem;
+  }
+
+  .chat-message .bubble {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
+    white-space: pre-wrap;
+  }
+
+  .chat-message.user .bubble {
+    background-color: #f1f3f5;
+    border-color: #d0d7de;
+  }
+
+  .chat-message.assistant .bubble {
+    background-color: #e8f7ff;
+    border-color: #b6e0fe;
+  }
+
+  .chat-message .author {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .chat-log-empty {
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+    padding-top: 2rem;
+  }
+
+  .chat-controls label {
+    font-weight: 600;
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div>
+        <div class="page-title-head center-elem page-title-heading">
+          <span class="d-inline-block pr-2">
+            <i class="pe-7s-chat"></i>
+          </span>
+          <span class="d-inline-block">{% trans "BMA Chatbot" %}</span>
+        </div>
+        <div class="page-title-subheading">
+          {% trans "Ask natural-language questions about Makani and BMA data." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+          <h5 class="card-title mb-1">{% trans "Chat with the assistant" %}</h5>
+          <p class="card-subtitle text-muted mb-0">
+            {% trans "Your questions stay within the BMA platform and the latest data snapshot is automatically attached." %}
+          </p>
+        </div>
+        <div class="mt-2 mt-md-0">
+          <span class="badge badge-info">{% trans "Beta" %}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="chat-log" class="chat-log" aria-live="polite" aria-label="{% trans "Conversation history" %}">
+          <div id="chat-placeholder" class="chat-log-empty">
+            {% trans "Ask a question to start the conversation." %}
+          </div>
+        </div>
+        <div class="mt-3 chat-controls">
+          <form id="chat-form" novalidate>
+            <div class="form-group">
+              <label class="mb-2" for="chat-question">{% trans "Question" %}</label>
+              <textarea id="chat-question" class="form-control" rows="3" placeholder="{% trans "e.g. How many beneficiaries were registered last month?" %}" required></textarea>
+              <small class="form-text text-muted">
+                {% trans "The assistant understands English questions. It will use previous answers for follow-up questions." %}
+              </small>
+            </div>
+            <div class="form-group form-check">
+              <input type="checkbox" class="form-check-input" id="chat-include-snapshot" checked>
+              <label class="form-check-label" for="chat-include-snapshot">{% trans "Include data snapshot in the response" %}</label>
+            </div>
+            <div class="d-flex flex-column flex-sm-row align-items-sm-center">
+              <button id="chat-submit" type="submit" class="btn btn-primary mr-sm-3 mb-2 mb-sm-0">
+                {% trans "Send" %}
+              </button>
+              <div id="chat-status" class="small text-muted" role="status" aria-live="polite"></div>
+            </div>
+            <div id="chat-error" class="alert alert-danger d-none mt-3" role="alert"></div>
+          </form>
+        </div>
+        <div id="chat-usage" class="small text-muted mt-3 d-none"></div>
+        <div id="chat-snapshot-section" class="mt-4 d-none">
+          <h6 class="text-muted">{% trans "Snapshot shared with the assistant" %}</h6>
+          <pre id="chat-snapshot" class="bg-light p-3 rounded small mb-0"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="card-title mb-0">{% trans "Tips for better answers" %}</h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          {% trans "Try these prompts to discover insights." %}
+        </p>
+        <ul class="list-unstyled">
+          <li class="mb-2"><i class="pe-7s-check mr-2 text-success"></i>{% trans "How many children are currently registered in each center?" %}</li>
+          <li class="mb-2"><i class="pe-7s-check mr-2 text-success"></i>{% trans "Summarize registration trends for the past three months." %}</li>
+          <li class="mb-2"><i class="pe-7s-check mr-2 text-success"></i>{% trans "Which partners have the highest attendance this year?" %}</li>
+        </ul>
+        <p class="small text-muted mb-0">
+          {% trans "The assistant relies on the latest Makani data that you can access. Responses may take a few seconds while the snapshot is prepared." %}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+  (function() {
+    'use strict';
+
+    const form = document.getElementById('chat-form');
+    if (!form) {
+      return;
+    }
+
+    const questionInput = document.getElementById('chat-question');
+    const includeSnapshotInput = document.getElementById('chat-include-snapshot');
+    const submitButton = document.getElementById('chat-submit');
+    const chatLog = document.getElementById('chat-log');
+    const placeholder = document.getElementById('chat-placeholder');
+    const statusElement = document.getElementById('chat-status');
+    const errorElement = document.getElementById('chat-error');
+    const snapshotSection = document.getElementById('chat-snapshot-section');
+    const snapshotContent = document.getElementById('chat-snapshot');
+    const usageElement = document.getElementById('chat-usage');
+
+    const conversation = [];
+
+    function getCookie(name) {
+      const cookies = document.cookie ? document.cookie.split(';') : [];
+      for (let i = 0; i < cookies.length; i += 1) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          return decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      }
+      return null;
+    }
+
+    function setLoading(isLoading) {
+      submitButton.disabled = isLoading;
+      questionInput.disabled = isLoading;
+      if (isLoading) {
+        statusElement.textContent = '{% trans "Contacting the assistant…" %}';
+      }
+    }
+
+    function clearStatus() {
+      statusElement.textContent = '';
+    }
+
+    function appendMessage(role, content) {
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.removeChild(placeholder);
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'chat-message ' + role;
+
+      const author = document.createElement('span');
+      author.className = 'author';
+      author.textContent = role === 'assistant' ? '{% trans "Assistant" %}' : '{% trans "You" %}';
+      wrapper.appendChild(author);
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = content;
+      wrapper.appendChild(bubble);
+
+      chatLog.appendChild(wrapper);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function handleSuccess(data, question) {
+      conversation.push({ role: 'user', content: question });
+      if (Object.prototype.hasOwnProperty.call(data, 'answer')) {
+        conversation.push({ role: 'assistant', content: data.answer });
+        appendMessage('assistant', data.answer);
+      }
+
+      if (data.snapshot) {
+        snapshotSection.classList.remove('d-none');
+        snapshotContent.textContent = JSON.stringify(data.snapshot, null, 2);
+      } else {
+        snapshotSection.classList.add('d-none');
+        snapshotContent.textContent = '';
+      }
+
+      if (data.usage && (data.usage.total_tokens || data.usage.prompt_tokens || data.usage.completion_tokens)) {
+        const parts = [];
+        if (data.usage.prompt_tokens !== undefined) {
+          parts.push(data.usage.prompt_tokens + ' {% trans "prompt" %}');
+        }
+        if (data.usage.completion_tokens !== undefined) {
+          parts.push(data.usage.completion_tokens + ' {% trans "completion" %}');
+        }
+        if (data.usage.total_tokens !== undefined) {
+          parts.push(data.usage.total_tokens + ' {% trans "total" %}');
+        }
+        usageElement.textContent = '{% trans "Token usage:" %} ' + parts.join(', ');
+        usageElement.classList.remove('d-none');
+      } else {
+        usageElement.classList.add('d-none');
+        usageElement.textContent = '';
+      }
+
+      const now = new Date();
+      statusElement.textContent = '{% trans "Answered at" %} ' + now.toLocaleTimeString();
+    }
+
+    function handleError(error, lastQuestion) {
+      statusElement.textContent = '';
+      errorElement.textContent = error.message || '{% trans "Something went wrong while contacting the assistant." %}';
+      errorElement.classList.remove('d-none');
+      questionInput.value = lastQuestion;
+      questionInput.focus();
+    }
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      clearStatus();
+      errorElement.classList.add('d-none');
+
+      const question = questionInput.value.trim();
+      if (!question) {
+        questionInput.focus();
+        return;
+      }
+
+      appendMessage('user', question);
+      const previousValue = question;
+      questionInput.value = '';
+      setLoading(true);
+
+      const payload = {
+        question: question,
+        include_snapshot: includeSnapshotInput.checked
+      };
+      if (conversation.length) {
+        payload.history = conversation.map(function(entry) {
+          return { role: entry.role, content: entry.content };
+        });
+      }
+
+      fetch('/api/bma-chatbot/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') || ''
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function(response) {
+          if (!response.ok) {
+            return response.json().then(function(body) {
+              const message = body && body.detail ? body.detail : '{% trans "The assistant is temporarily unavailable." %}';
+              throw new Error(message);
+            }).catch(function() {
+              throw new Error('{% trans "Unable to reach the assistant." %}');
+            });
+          }
+          return response.json();
+        })
+        .then(function(data) {
+          handleSuccess(data, question);
+        })
+        .catch(function(error) {
+          handleError(error, previousValue);
+        })
+        .finally(function() {
+          setLoading(false);
+        });
+    });
+  })();
+</script>
+{% endblock extra_js %}
