@@ -126,62 +126,74 @@ class BMAInsightsRepository:
     # View-backed registration helpers ----------------------------------------
     @cached_property
     def _views_available(self) -> bool:
-        return self._view_exists("vw_mscc_child")
+        return self._view_exists("vw_mscc_data")
 
     def _registration_records_from_views(self) -> List[Dict[str, Any]]:
-        columns = self._get_view_columns("vw_mscc_child")
+        columns = self._get_view_columns("vw_mscc_data")
         if not columns:
-            raise DatabaseError("vw_mscc_child view has no columns")
+            raise DatabaseError("vw_mscc_data view has no columns")
 
         where, params = self._build_view_scope_filters(columns)
-        rows = self._fetch_view_rows("vw_mscc_child", where=where, params=params)
+        rows = self._fetch_view_rows("vw_mscc_data", where=where, params=params)
         if not rows:
             return []
 
-        registration_ids = [
-            reg_id
-            for reg_id in (self._extract_registration_id(row, columns) for row in rows)
-            if reg_id is not None
-        ]
-        services = self._services_from_view(registration_ids)
-
-        for row in rows:
-            reg_id = self._extract_registration_id(row, columns)
-            row["services"] = services.get(reg_id, {})
-        return rows
-
-    def _services_from_view(self, registration_ids: List[int]) -> Dict[int, Dict[str, List[Dict[str, Any]]]]:
-        columns = self._get_view_columns("vw_mscc_data")
-        if not columns:
-            return {}
-
-        where, params = self._build_view_scope_filters(columns)
         registration_column = self._identify_registration_column(columns)
-        params = list(params)
-        if registration_column and registration_ids:
-            placeholders = ", ".join(["%s"] * len(registration_ids))
-            where = list(where)
-            where.append(f"{registration_column} IN ({placeholders})")
-            params.extend(registration_ids)
+        if not registration_column:
+            raise DatabaseError("vw_mscc_data view is missing a registration identifier column")
 
-        rows = self._fetch_view_rows("vw_mscc_data", where=where, params=params)
-        if not rows:
-            return {}
-
-        grouped: Dict[int, Dict[str, List[Dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
         category_column = self._identify_service_category_column(columns)
+
+        grouped_rows: Dict[int, Dict[str, Any]] = {}
+        order: List[int] = []
+
         for row in rows:
             reg_id = self._extract_registration_id(row, columns)
             if reg_id is None:
                 continue
-            category_value = row.get(category_column) if category_column else None
-            key = self._service_bucket_key(category_value)
-            grouped[reg_id][key].append(row)
 
-        return {
-            reg_id: {bucket: list(entries) for bucket, entries in buckets.items()}
-            for reg_id, buckets in grouped.items()
-        }
+            if reg_id not in grouped_rows:
+                grouped_rows[reg_id] = {
+                    "stable": {},
+                    "unstable": set(),
+                    "services": defaultdict(list),
+                }
+                order.append(reg_id)
+
+            record = grouped_rows[reg_id]
+            stable = record["stable"]
+            unstable = record["unstable"]
+
+            for key, value in row.items():
+                if key in unstable or key == "services":
+                    continue
+                if key not in stable:
+                    stable[key] = value
+                elif stable[key] != value:
+                    unstable.add(key)
+                    stable.pop(key, None)
+
+            bucket_value = row.get(category_column) if category_column else None
+            bucket = self._service_bucket_key(bucket_value)
+            record["services"][bucket].append(dict(row))
+
+        results: List[Dict[str, Any]] = []
+        for reg_id in order:
+            record = grouped_rows[reg_id]
+            stable_data = dict(record["stable"])
+            if registration_column not in stable_data:
+                stable_data[registration_column] = reg_id
+            stable_keys = set(stable_data.keys())
+            stable_data["services"] = {
+                bucket: [
+                    {key: value for key, value in entry.items() if key not in stable_keys}
+                    for entry in entries
+                ]
+                for bucket, entries in record["services"].items()
+            }
+            results.append(stable_data)
+
+        return results
 
     def _view_exists(self, view_name: str) -> bool:
         try:
