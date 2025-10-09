@@ -105,6 +105,10 @@ class OutreachChildResource(resources.ModelResource):
         'father_education_level',
         'mother_education_level',
         'main_caregiver',
+        'primary_phone',
+        'father_education_level',
+        'mother_education_level',
+        'number_of_children',
     )
 
     def __init__(self, *args, **kwargs):
