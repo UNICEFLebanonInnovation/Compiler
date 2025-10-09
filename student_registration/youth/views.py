@@ -207,7 +207,7 @@ class MainListView(LoginRequiredMixin,
         elif not has_group(user, 'YOUTH_UNICEF'):
             return Registration.objects.none()
 
-        return queryset.distinct('id')
+        return queryset.distinct()
 
     def get_table_class(self):
         return RegistrationTable
