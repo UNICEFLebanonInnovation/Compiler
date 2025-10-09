@@ -150,6 +150,56 @@ def test_snapshot_filters_registrations_by_age_range(user):
     assert records[0]['child_age'] == 12
 
 
+@pytest.mark.django_db
+def test_snapshot_limits_registration_records(user, monkeypatch):
+    partner = PartnerOrganization.objects.create(name='Partner C')
+    user.partner = partner
+    user.save(update_fields=['partner'])
+
+    governorate, district, cadaster = _build_locations()
+    center = Center.objects.create(
+        name='Center 3',
+        partner=partner,
+        governorate=governorate,
+        caza=district,
+        cadaster=cadaster,
+    )
+    nationality = Nationality.objects.create(name='Iraqi', name_en='Iraqi')
+    round_obj = Round.objects.create(name='Round 2026', year=2026)
+
+    monkeypatch.setattr(BMAInsightsRepository, 'REGISTRATION_RECORD_LIMIT', 2)
+
+    registrations = []
+    for idx in range(4):
+        child = Child.objects.create(
+            first_name=f'Child {idx}',
+            last_name='Sample',
+            gender='Female',
+            nationality=nationality,
+        )
+        registrations.append(
+            Registration.objects.create(
+                center=center,
+                child=child,
+                partner=partner,
+                round=round_obj,
+                type='Core-Package',
+                registration_date=date(2024, 1, idx + 1),
+                owner=user,
+            )
+        )
+
+    snapshot = BMAInsightsRepository(user).build_snapshot()
+    registration_data = snapshot['registrations']
+
+    assert registration_data['record_limit'] == 2
+    assert registration_data['records_truncated'] is True
+    records = registration_data['records']
+    assert len(records) == 2
+    expected_ids = [registrations[-1].id, registrations[-2].id]
+    assert [record['id'] for record in records] == expected_ids
+
+
 class _FakeChatCompletion:
     def __init__(self):
         self.last_kwargs = None

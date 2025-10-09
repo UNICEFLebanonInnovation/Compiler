@@ -101,7 +101,7 @@ class BMAChatService:
 
     @staticmethod
     def _build_system_prompt(snapshot: Dict[str, Any]) -> str:
-        snapshot_json = json.dumps(snapshot, ensure_ascii=False)
+        snapshot_json = json.dumps(snapshot, ensure_ascii=False, separators=(",", ":"))
         return (
             "You are the Beneficiary Monitoring & Assessment (BMA) analytics assistant. "
             "Use only the information contained in the provided JSON snapshot to answer "

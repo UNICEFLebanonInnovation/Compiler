@@ -17,6 +17,12 @@ from student_registration.schools.models import School
 class BMAInsightsRepository:
     """Aggregate MSCC/BMA data for natural-language insights."""
 
+    REGISTRATION_RECORD_LIMIT = 250
+    """Maximum number of recent registration records to include in the snapshot."""
+
+    AGE_FILTER_CHUNK_SIZE = 2048
+    """Chunk size for iterating registrations when enforcing age filters."""
+
     def __init__(
         self,
         user,
@@ -82,10 +88,15 @@ class BMAInsightsRepository:
     # Registration helpers ------------------------------------------------------
     def _registration_snapshot(self, qs: QuerySet) -> Dict[str, Any]:
         last_modified = qs.aggregate(value=Max("modified"))['value']
+        total = qs.count()
         snapshot = {
-            "total": qs.count(),
+            "total": total,
             "last_modified": last_modified.isoformat() if last_modified else None,
-            "records": self._registration_records(qs),
+            "record_limit": self.REGISTRATION_RECORD_LIMIT,
+            "records_truncated": total > self.REGISTRATION_RECORD_LIMIT,
+            "records": self._registration_records(
+                qs, limit=self.REGISTRATION_RECORD_LIMIT
+            ),
             "by_round": self._counts(
                 qs,
                 fields=("round__name", "round__year"),
@@ -210,38 +221,59 @@ class BMAInsightsRepository:
             return "Unknown"
         return value
 
-    def _registration_records(self, qs: QuerySet) -> List[Dict[str, Any]]:
+    def _registration_records(
+        self, qs: QuerySet, *, limit: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
         records: List[Dict[str, Any]] = []
         today = self._current_local_date()
-        record_qs = qs.order_by("-modified", "-created")
-        for registration in record_qs:
-            child = getattr(registration, "child", None)
-            partner = getattr(registration, "partner", None)
-            center = getattr(registration, "center", None)
-            round_obj = getattr(registration, "round", None)
+        record_qs = qs.order_by("-modified", "-created").values(
+            "id",
+            "type",
+            "registration_date",
+            "child__first_name",
+            "child__last_name",
+            "child__mother_fullname",
+            "child__father_name",
+            "child__gender",
+            "child__birthday_year",
+            "child__birthday_month",
+            "child__birthday_day",
+            "partner__name",
+            "center__name",
+            "round__name",
+        )
+        if limit is not None:
+            record_qs = record_qs[:limit]
+
+        for row in record_qs.iterator(chunk_size=512):
+            child_data = {
+                "first_name": row.get("child__first_name"),
+                "last_name": row.get("child__last_name"),
+                "mother_fullname": row.get("child__mother_fullname"),
+                "father_name": row.get("child__father_name"),
+            }
             age = None
-            if child is not None:
-                age = self._age_from_components(
-                    getattr(child, "birthday_year", None),
-                    getattr(child, "birthday_month", None),
-                    getattr(child, "birthday_day", None),
-                    today=today,
-                )
+            age = self._age_from_components(
+                row.get("child__birthday_year"),
+                row.get("child__birthday_month"),
+                row.get("child__birthday_day"),
+                today=today,
+            )
             records.append(
                 {
-                    "id": registration.id,
-                    "child_name": self._child_name(child),
+                    "id": row["id"],
+                    "child_name": self._child_name(child_data),
                     "child_age": age,
                     "child_gender": self._normalise_value(
-                        getattr(child, "gender", None)
+                        row.get("child__gender")
                     ),
-                    "partner": self._normalise_value(getattr(partner, "name", None)),
-                    "center": self._normalise_value(getattr(center, "name", None)),
-                    "round": self._normalise_value(getattr(round_obj, "name", None)),
-                    "package_type": self._normalise_value(getattr(registration, "type", None)),
+                    "partner": self._normalise_value(row.get("partner__name")),
+                    "center": self._normalise_value(row.get("center__name")),
+                    "round": self._normalise_value(row.get("round__name")),
+                    "package_type": self._normalise_value(row.get("type")),
                     "registration_date": (
-                        registration.registration_date.isoformat()
-                        if getattr(registration, "registration_date", None)
+                        row["registration_date"].isoformat()
+                        if row.get("registration_date")
                         else None
                     ),
                 }
@@ -252,16 +284,15 @@ class BMAInsightsRepository:
     def _child_name(child) -> str:
         if child is None:
             return "Unknown"
-        parts = [
-            getattr(child, "first_name", None),
-            getattr(child, "last_name", None),
-        ]
+        if isinstance(child, dict):
+            getter = child.get
+        else:
+            getter = lambda attr: getattr(child, attr, None)
+        parts = [getter("first_name"), getter("last_name")]
         name = " ".join(part for part in parts if part)
         if name:
             return name
-        fallback = getattr(child, "mother_fullname", None) or getattr(
-            child, "father_name", None
-        )
+        fallback = getter("mother_fullname") or getter("father_name")
         return fallback or "Unknown"
 
     # Scope helpers -------------------------------------------------------------
@@ -293,11 +324,14 @@ class BMAInsightsRepository:
 
         today = self._current_local_date()
         ids: List[int] = []
-        for reg_id, year, month, day in qs.values_list(
+        values = qs.values_list(
             "id",
             "child__birthday_year",
             "child__birthday_month",
             "child__birthday_day",
+        )
+        for reg_id, year, month, day in values.iterator(
+            chunk_size=self.AGE_FILTER_CHUNK_SIZE
         ):
             age = self._age_from_components(year, month, day, today=today)
             if age is None:
