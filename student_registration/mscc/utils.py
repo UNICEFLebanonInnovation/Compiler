@@ -354,20 +354,30 @@ def create_attendance(data, center_id):
         attendance.close_reason = data["close_reason"]
         attendance.save()
 
-        for child in data['children_attendance']:
-            attendance_child, created = MSCCAttendanceChild.objects.get_or_create(attendance_day=attendance,
-                                                                                  child_id=child['child_id'],
-                                                                                  registration_id=child['registration_id']
-                                                                                  )
-            attendance_child.attended = child['attended']
-            attendance_child.absence_reason = child['absence_reason']
-            attendance_child.absence_reason_other = child['absence_reason_other']
-            attendance_child.save()
-        return True
-    except Exception as ex:
-        logger.exception(ex)
-        return False
+        for child in data.get('children_attendance', []):
+            child_id = child.get('child_id')
+            registration_id = child.get('registration_id')
 
+            if not child_id or not registration_id:
+                logger.warning(f"Missing child_id or registration_id for child: {child}")
+                continue
+
+            attendance_child, created = MSCCAttendanceChild.objects.get_or_create(
+                attendance_day=attendance,
+                child_id=child_id,
+                registration_id=registration_id
+            )
+
+            attendance_child.attended = child.get('attended')
+            attendance_child.absence_reason = child.get('absence_reason')
+            attendance_child.absence_reason_other = child.get('absence_reason_other')
+            attendance_child.save()
+
+        return True
+
+    except Exception as ex:
+        logger.exception("Error in create_attendance: %s", ex)
+        return False
 
 def load_child_attendance(center_id, round_id, attendance_date, education_program, class_section):
     from datetime import datetime
