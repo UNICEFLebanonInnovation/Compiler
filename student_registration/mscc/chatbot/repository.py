@@ -1,7 +1,8 @@
 """Data aggregation helpers for the BMA chatbot."""
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence
+from datetime import date
+from typing import Any, Dict, List, Optional, Sequence
 
 from django.db.models import Count, Max, Q, QuerySet
 from django.db.models.functions import TruncMonth
@@ -16,8 +17,22 @@ from student_registration.schools.models import School
 class BMAInsightsRepository:
     """Aggregate MSCC/BMA data for natural-language insights."""
 
-    def __init__(self, user):
+    def __init__(
+        self,
+        user,
+        *,
+        age_min: Optional[int] = None,
+        age_max: Optional[int] = None,
+    ):
         self.user = user
+        self.age_min = self._normalise_age_filter(age_min)
+        self.age_max = self._normalise_age_filter(age_max)
+        if (
+            self.age_min is not None
+            and self.age_max is not None
+            and self.age_min > self.age_max
+        ):
+            raise ValueError("age_min cannot be greater than age_max.")
 
     # QuerySets -----------------------------------------------------------------
     @cached_property
@@ -35,7 +50,8 @@ class BMAInsightsRepository:
                 "child__nationality",
             )
         )
-        return self._apply_registration_scope(qs)
+        qs = self._apply_registration_scope(qs)
+        return self._apply_age_filter(qs)
 
     @cached_property
     def schools(self) -> QuerySet:
@@ -69,6 +85,7 @@ class BMAInsightsRepository:
         snapshot = {
             "total": qs.count(),
             "last_modified": last_modified.isoformat() if last_modified else None,
+            "records": self._registration_records(qs),
             "by_round": self._counts(
                 qs,
                 fields=("round__name", "round__year"),
@@ -193,6 +210,60 @@ class BMAInsightsRepository:
             return "Unknown"
         return value
 
+    def _registration_records(self, qs: QuerySet) -> List[Dict[str, Any]]:
+        records: List[Dict[str, Any]] = []
+        today = timezone.localdate()
+        record_qs = qs.order_by("-modified", "-created")
+        for registration in record_qs:
+            child = getattr(registration, "child", None)
+            partner = getattr(registration, "partner", None)
+            center = getattr(registration, "center", None)
+            round_obj = getattr(registration, "round", None)
+            age = None
+            if child is not None:
+                age = self._age_from_components(
+                    getattr(child, "birthday_year", None),
+                    getattr(child, "birthday_month", None),
+                    getattr(child, "birthday_day", None),
+                    today=today,
+                )
+            records.append(
+                {
+                    "id": registration.id,
+                    "child_name": self._child_name(child),
+                    "child_age": age,
+                    "child_gender": self._normalise_value(
+                        getattr(child, "gender", None)
+                    ),
+                    "partner": self._normalise_value(getattr(partner, "name", None)),
+                    "center": self._normalise_value(getattr(center, "name", None)),
+                    "round": self._normalise_value(getattr(round_obj, "name", None)),
+                    "package_type": self._normalise_value(getattr(registration, "type", None)),
+                    "registration_date": (
+                        registration.registration_date.isoformat()
+                        if getattr(registration, "registration_date", None)
+                        else None
+                    ),
+                }
+            )
+        return records
+
+    @staticmethod
+    def _child_name(child) -> str:
+        if child is None:
+            return "Unknown"
+        parts = [
+            getattr(child, "first_name", None),
+            getattr(child, "last_name", None),
+        ]
+        name = " ".join(part for part in parts if part)
+        if name:
+            return name
+        fallback = getattr(child, "mother_fullname", None) or getattr(
+            child, "father_name", None
+        )
+        return fallback or "Unknown"
+
     # Scope helpers -------------------------------------------------------------
     def _apply_registration_scope(self, qs: QuerySet) -> QuerySet:
         user = self.user
@@ -215,6 +286,29 @@ class BMAInsightsRepository:
         if region_ids:
             qs = qs.filter(center__governorate_id__in=region_ids)
         return qs
+
+    def _apply_age_filter(self, qs: QuerySet) -> QuerySet:
+        if self.age_min is None and self.age_max is None:
+            return qs
+
+        today = timezone.localdate()
+        ids: List[int] = []
+        for reg_id, year, month, day in qs.values_list(
+            "id",
+            "child__birthday_year",
+            "child__birthday_month",
+            "child__birthday_day",
+        ):
+            age = self._age_from_components(year, month, day, today=today)
+            if age is None:
+                continue
+            if self.age_min is not None and age < self.age_min:
+                continue
+            if self.age_max is not None and age > self.age_max:
+                continue
+            ids.append(reg_id)
+
+        return qs.filter(id__in=ids)
 
     def _apply_school_scope(self, qs: QuerySet) -> QuerySet:
         user = self.user
@@ -280,3 +374,44 @@ class BMAInsightsRepository:
         if hasattr(user, "regions"):
             return list(user.regions.values_list("id", flat=True))
         return []
+
+    @staticmethod
+    def _normalise_age_filter(value: Optional[int | str]) -> Optional[int]:
+        if value in (None, ""):
+            return None
+        try:
+            age = int(value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Age filters must be integers.") from exc
+        if age < 0:
+            raise ValueError("Age filters cannot be negative.")
+        return age
+
+    @staticmethod
+    def _age_from_components(
+        year: Any,
+        month: Any,
+        day: Any,
+        *,
+        today: date | None = None,
+    ) -> Optional[int]:
+        try:
+            year_int = int(year)
+            month_int = int(month)
+            day_int = int(day)
+        except (TypeError, ValueError):
+            return None
+        if not (1 <= month_int <= 12 and 1 <= day_int <= 31):
+            return None
+        if year_int <= 0:
+            return None
+        try:
+            birthdate = date(year_int, month_int, day_int)
+        except ValueError:
+            return None
+        if today is None:
+            today = timezone.localdate()
+        age = today.year - birthdate.year - (
+            (today.month, today.day) < (birthdate.month, birthdate.day)
+        )
+        return max(age, 0)

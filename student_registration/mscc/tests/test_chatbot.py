@@ -10,6 +10,7 @@ import pytest
 from django.test import Client, override_settings
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory
+from django.utils import timezone
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
@@ -92,6 +93,61 @@ def test_snapshot_returns_basic_registration_records(user):
     assert record['partner'] == 'Partner A'
     assert record['center'] == 'Center 1'
     assert record['round'] == 'Round 2024'
+
+
+@pytest.mark.django_db
+def test_snapshot_filters_registrations_by_age_range(user):
+    partner = PartnerOrganization.objects.create(name='Partner B')
+    governorate, district, cadaster = _build_locations()
+    center = Center.objects.create(
+        name='Center 2',
+        partner=partner,
+        governorate=governorate,
+        caza=district,
+        cadaster=cadaster,
+    )
+    nationality = Nationality.objects.create(name='Syrian', name_en='Syrian')
+    round_obj = Round.objects.create(name='Round 2025', year=2025)
+
+    today = timezone.localdate()
+
+    def make_child(first_name: str, *, age: int) -> Child:
+        return Child.objects.create(
+            first_name=first_name,
+            last_name='Test',
+            gender='Male',
+            nationality=nationality,
+            birthday_year=str(today.year - age),
+            birthday_month=str(today.month),
+            birthday_day=str(today.day),
+        )
+
+    younger_child = make_child('Young', age=12)
+    older_child = make_child('Old', age=16)
+
+    young_registration = Registration.objects.create(
+        center=center,
+        child=younger_child,
+        partner=partner,
+        round=round_obj,
+        type='Walk-in',
+        owner=user,
+    )
+    Registration.objects.create(
+        center=center,
+        child=older_child,
+        partner=partner,
+        round=round_obj,
+        type='Walk-in',
+        owner=user,
+    )
+
+    snapshot = BMAInsightsRepository(user, age_min=10, age_max=13).build_snapshot()
+
+    assert snapshot['registrations']['total'] == 1
+    records = snapshot['registrations']['records']
+    assert [record['id'] for record in records] == [young_registration.id]
+    assert records[0]['child_age'] == 12
 
 
 class _FakeChatCompletion:
