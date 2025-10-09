@@ -135,23 +135,28 @@ class OutreachChildResource(resources.ModelResource):
         )
 
     def before_import_row(self, row, **kwargs):
-        caregiver_data = {
-            column: (row.get(column) or None)
-            for column in self.CAREGIVER_COLUMNS
-        }
+        caregiver_data = {}
 
-        if any(caregiver_data.values()):
-            lookup = {
-                'partner_name': caregiver_data.get('partner_name') or '',
-                'father_name': caregiver_data.get('father_name') or '',
-                'last_name': caregiver_data.get('last_name') or '',
-            }
-            caregiver, created = OutreachCaregiver.objects.get_or_create(
-                **lookup,
-                defaults={k: v for k, v in caregiver_data.items() if v is not None},
-            )
+        for column in self.CAREGIVER_COLUMNS:
+            if hasattr(row, 'get'):
+                value = row.get(column)
+            else:
+                try:
+                    value = row[column]
+                except Exception:
+                    value = None
 
-            row['outreach_caregiver'] = caregiver.pk
+            if isinstance(value, str):
+                value = value.strip()
+
+            if value == '':
+                value = None
+
+            caregiver_data[column] = value
+
+        payload = {k: v for k, v in caregiver_data.items() if v is not None}
+        caregiver = OutreachCaregiver.objects.create(**payload)
+        row['outreach_caregiver'] = caregiver.pk
 
     def get_or_init_instance(self, instance_loader, row):
         try:
