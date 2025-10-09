@@ -109,7 +109,7 @@ def test_snapshot_filters_registrations_by_age_range(user):
     nationality = Nationality.objects.create(name='Syrian', name_en='Syrian')
     round_obj = Round.objects.create(name='Round 2025', year=2025)
 
-    today = timezone.localdate()
+    today = BMAInsightsRepository._current_local_date()
 
     def make_child(first_name: str, *, age: int) -> Child:
         return Child.objects.create(

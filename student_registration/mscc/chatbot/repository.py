@@ -212,7 +212,7 @@ class BMAInsightsRepository:
 
     def _registration_records(self, qs: QuerySet) -> List[Dict[str, Any]]:
         records: List[Dict[str, Any]] = []
-        today = timezone.localdate()
+        today = self._current_local_date()
         record_qs = qs.order_by("-modified", "-created")
         for registration in record_qs:
             child = getattr(registration, "child", None)
@@ -291,7 +291,7 @@ class BMAInsightsRepository:
         if self.age_min is None and self.age_max is None:
             return qs
 
-        today = timezone.localdate()
+        today = self._current_local_date()
         ids: List[int] = []
         for reg_id, year, month, day in qs.values_list(
             "id",
@@ -410,8 +410,15 @@ class BMAInsightsRepository:
         except ValueError:
             return None
         if today is None:
-            today = timezone.localdate()
+            today = BMAInsightsRepository._current_local_date()
         age = today.year - birthdate.year - (
             (today.month, today.day) < (birthdate.month, birthdate.day)
         )
         return max(age, 0)
+
+    @staticmethod
+    def _current_local_date() -> date:
+        now = timezone.now()
+        if timezone.is_naive(now):
+            return now.date()
+        return timezone.localdate(now)
