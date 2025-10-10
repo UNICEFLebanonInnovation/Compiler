@@ -132,6 +132,7 @@ class OutreachChildResource(resources.ModelResource):
             'disability',
             'disability_other',
             'working_status',
+            'family_status'
         )
 
     def before_import_row(self, row, **kwargs):
