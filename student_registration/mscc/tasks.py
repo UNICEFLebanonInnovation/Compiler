@@ -5,18 +5,16 @@ import csv
 import zipfile
 import logging
 import codecs
-import os
+import threading
 
+from concurrent.futures import ThreadPoolExecutor
+
+from django.conf import settings
 from django.utils.encoding import smart_str
-from django.db import connection
+from django.db import connection, close_old_connections
 from django.core.files.base import ContentFile
 from openpyxl import Workbook
-from django.core.files.storage import default_storage
 
-from student_registration.taskapp.celery import app
-
-# Use a dedicated Celery queue for MSCC exports so that exports can be
-# processed sequentially without exhausting worker resources.
 from student_registration.backends.models import ExportHistory
 from student_registration.backends.utils import ExportStorage, send_push_to_web
 from student_registration.users.templatetags.custom_tags import has_group
@@ -24,12 +22,34 @@ from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
+_executor_lock = threading.Lock()
+_export_executor = None
 
 
-# Route export generation tasks to a dedicated queue so multiple requests
-# are queued and processed one at a time by a low-concurrency worker.
-@app.task(queue="mscc_export")
-def generate_mscc_export(export_id, fields=None, file_format='csv'):
+def _get_executor():
+    """Return a lazily instantiated thread pool for export jobs."""
+    global _export_executor
+    if _export_executor is None:
+        with _executor_lock:
+            if _export_executor is None:
+                max_workers = getattr(settings, 'MSCC_EXPORT_MAX_WORKERS', 4)
+                _export_executor = ThreadPoolExecutor(
+                    max_workers=max_workers,
+                    thread_name_prefix='mscc-export'
+                )
+    return _export_executor
+
+
+def _run_with_new_db_connection(fn, *args, **kwargs):
+    """Execute *fn* ensuring Django DB connections are thread-safe."""
+    close_old_connections()
+    try:
+        return fn(*args, **kwargs)
+    finally:
+        close_old_connections()
+
+
+def _generate_mscc_export(export_id, fields=None, file_format='csv'):
     try:
         export = ExportHistory.objects.get(id=export_id)
     except ExportHistory.DoesNotExist:
@@ -101,11 +121,8 @@ def generate_mscc_export(export_id, fields=None, file_format='csv'):
                     str(e),
                     data={"type": "mscc_export_failed", "reason": str(e)},
                 )
-
-
-@app.task(queue="mscc_export")
-def generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
-                                  father_name="", mother_fullname="", round=""):
+def _generate_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
+                                   father_name="", mother_fullname="", round=""):
     """Generate an MSCC export with optional filtering and notify the user.
 
     Parameters are used to filter the SQL query in the same way the synchronous
@@ -211,3 +228,32 @@ def generate_filtered_mscc_export(export_id, nationality="", first_name="", last
                 str(e),
                 data={"type": "mscc_export_failed", "reason": str(e)},
             )
+
+
+def queue_mscc_export(export_id, fields=None, file_format='csv'):
+    """Run the MSCC export in a background thread."""
+    executor = _get_executor()
+    return executor.submit(
+        _run_with_new_db_connection,
+        _generate_mscc_export,
+        export_id,
+        fields,
+        file_format,
+    )
+
+
+def queue_filtered_mscc_export(export_id, nationality="", first_name="", last_name="",
+                               father_name="", mother_fullname="", round=""):
+    """Run the filtered MSCC export in a background thread."""
+    executor = _get_executor()
+    return executor.submit(
+        _run_with_new_db_connection,
+        _generate_filtered_mscc_export,
+        export_id,
+        nationality,
+        first_name,
+        last_name,
+        father_name,
+        mother_fullname,
+        round,
+    )

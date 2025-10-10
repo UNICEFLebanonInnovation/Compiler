@@ -76,7 +76,7 @@ from .serializers import (
 from .utils import *
 
 from student_registration.mscc.templatetags.simple_tags import education_history_model, education_history_programmes
-from .tasks import generate_mscc_export, generate_filtered_mscc_export
+from .tasks import queue_mscc_export, queue_filtered_mscc_export
 from student_registration.users.templatetags.custom_tags import has_group
 
 
@@ -979,8 +979,7 @@ def export_list_background(request):
         created_by=user,
         partner_name=user.partner.name if user.partner else ''
     )
-    generate_filtered_mscc_export.delay(
-    # generate_filtered_mscc_export(
+    queue_filtered_mscc_export(
         export_record.id,
         nationality,
         first_name,
@@ -1055,7 +1054,7 @@ def export_list_async(request):
         fields=fields,
         file_format=file_format,
     )
-    generate_mscc_export.delay(export_record.id, fields, file_format)
+    queue_mscc_export(export_record.id, fields, file_format)
     return JsonResponse({'status': 'started'})
 
 
