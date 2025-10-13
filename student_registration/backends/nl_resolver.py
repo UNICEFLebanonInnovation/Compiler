@@ -67,7 +67,14 @@ def sanitize_payload(p: dict) -> dict:
     p["breakdowns"] = [x for x in b if x in ALLOWED_FIELDS][:3]
     if "breakdown_by" in p and p["breakdown_by"] not in ALLOWED_FIELDS:
         p["breakdown_by"] = "month"
-    p["filters"] = [f for f in p.get("filters",[]) if f.get("field") in ALLOWED_FIELDS]
+    allowed_ops = {"=", "in", "between"}
+    clean_filters = []
+    for f in p.get("filters", []):
+        field = f.get("field")
+        op = f.get("op")
+        if field in ALLOWED_FIELDS and op in allowed_ops:
+            clean_filters.append(f)
+    p["filters"] = clean_filters
     return p
 
 def nl_to_metric_payload(text: str) -> dict:

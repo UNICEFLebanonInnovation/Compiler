@@ -24,7 +24,8 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 
 # Our helpers (created earlier)
 from .nl_resolver import nl_to_metric_payload, sanitize_payload
-from .chat_tools import GET_METRIC_TOOL  # the function schema dict shown earlier
+from .chat_tools import build_get_metric_tool  # dynamic tool schema
+from .similarity import MetricSimilarityIndex
 
 # (Optional) requests fallback to call your /api/metrics/get_metric/ endpoint
 import requests
@@ -37,6 +38,44 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 
 
 # ---- tiny service layer to hit your metrics execution ----
+def _build_user_context(request) -> Dict[str, Any]:
+    user = getattr(request, "user", None)
+    if not user:
+        return {}
+
+    partner_ids_attr = getattr(user, "partner_ids", None)
+    partner_ids = []
+    if callable(partner_ids_attr):
+        try:
+            partner_ids = partner_ids_attr()
+        except TypeError:
+            partner_ids = []
+    elif partner_ids_attr is not None:
+        partner_ids = partner_ids_attr
+
+    if partner_ids is None:
+        partner_ids = []
+
+    try:
+        partner_ids = list(partner_ids)
+    except TypeError:
+        partner_ids = []
+
+    roles = []
+    groups = getattr(user, "groups", None)
+    if groups is not None:
+        try:
+            roles = list(groups.values_list("name", flat=True))
+        except Exception:
+            roles = [getattr(g, "name", "") for g in groups.all()]
+
+    return {
+        "user_id": getattr(user, "id", None),
+        "partner_ids": partner_ids,
+        "roles": [r for r in roles if r],
+    }
+
+
 def call_metrics_service(payload: Dict[str, Any], request=None) -> Dict[str, Any]:
     """
     Call your metrics engine. Three strategies (first that works wins):
@@ -48,7 +87,24 @@ def call_metrics_service(payload: Dict[str, Any], request=None) -> Dict[str, Any
     # 1) Try direct function import (stable if you add a service later)
     try:
         from student_registration.backends.ai_service import execute_metric  # your own service file
-        return execute_metric(payload, user=getattr(request, "user", None))
+
+        time_range = payload.get("time_range", {})
+        start = time_range.get("start")
+        end = time_range.get("end")
+
+        if not start or not end:
+            raise ValueError("Missing time range for metric execution")
+
+        breakdown_by = payload.get("breakdown_by") or "none"
+
+        return execute_metric(
+            metric_key=payload["metric_key"],
+            breakdown_by=breakdown_by,
+            time_start=start,
+            time_end=end,
+            filters=payload.get("filters", []),
+            user_ctx=_build_user_context(request),
+        )
     except Exception:
         pass
 
@@ -145,31 +201,61 @@ class AskView(APIView):
     authentication_classes = [CsrfExemptSessionAuthentication, SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]  # switch to IsAuthenticated if your UI has login
 
+    def _get_similarity_index(self, metrics: List[Metric]) -> MetricSimilarityIndex | None:
+        if not hasattr(self, "_metric_similarity_index"):
+            try:
+                self._metric_similarity_index = MetricSimilarityIndex(metrics)
+            except Exception:
+                self._metric_similarity_index = None
+        return getattr(self, "_metric_similarity_index", None)
+
+    def _build_similarity_context(self, question: str, metrics: List[Metric]) -> str:
+        index = self._get_similarity_index(metrics)
+        if not index:
+            return ""
+        try:
+            return index.build_context(question, top_k=3)
+        except Exception:
+            return ""
+
+    def _suggest_metric_key(self, question: str, metrics: List[Metric]) -> str | None:
+        index = self._get_similarity_index(metrics)
+        if not index:
+            return None
+        try:
+            match = index.best_match(question)
+        except Exception:
+            return None
+        if not match:
+            return None
+        return match.metadata.get("metric_key") or match.key
+
     def _llm_tool_call(self, question: str) -> Dict[str, Any] | None:
         """
         Ask the LLM to produce a single get_metric tool call.
         Returns the parsed tool arguments dict, or None if not available.
         """
+        metrics = list(Metric.objects.all())
+        if not metrics:
+            return None
+
+        tool_schema = build_get_metric_tool(metrics)
         client = OpenAI(api_key=getattr(settings, "OPENAI_API_KEY", None))
         model = getattr(settings, "BMA_CHAT_MODEL", "gpt-4o-mini")
 
-        system_msg = (
-            "You are a data assistant for the BMA system. Convert user questions into a single "
-            "`get_metric` tool call. Infer time ranges (e.g., last year). Prefer `breakdowns` "
-            "array (max 3 dims; include `month` for trends). Map phrases: gender→child_gender_norm, "
-            "nationality→child_nationality_name, etc. Add gender/age filters when phrased. "
-            "If unsure, metric=mscc_registrations_total and breakdowns=['month']."
-        )
+        system_msg = self._build_system_prompt(metrics)
 
-        messages = [
-            {"role": "system", "content": system_msg},
-            {"role": "user", "content": question},
-        ]
+        similarity_context = self._build_similarity_context(question, metrics)
+
+        messages = [{"role": "system", "content": system_msg}]
+        if similarity_context:
+            messages.append({"role": "system", "content": similarity_context})
+        messages.append({"role": "user", "content": question})
 
         resp = client.chat.completions.create(
             model=model,
             messages=messages,
-            tools=[GET_METRIC_TOOL],
+            tools=[tool_schema],
             tool_choice="auto",
             temperature=0.2,
         )
@@ -190,6 +276,159 @@ class AskView(APIView):
 
         return None
 
+    def _build_system_prompt(self, metrics: List[Metric]) -> str:
+        lines = [
+            "You are a Makani Support data assistant. Your job is to map natural language questions",
+            "to a single `get_metric` tool call. Always produce ISO8601 dates (YYYY-MM-DD).",
+            "Infer reasonable time ranges (e.g. last 6 months) when the user does not specify any.",
+            "Pick at most three breakdowns and include `month` for trend style questions.",
+            "Only use filters/breakdowns that exist for the chosen metric."
+        ]
+
+        lines.append("Available metrics:")
+        for metric in metrics:
+            breakdowns = getattr(metric, "allowed_breakdowns", []) or []
+            allowed = ", ".join([b for b in breakdowns if b != "none"]) or "none"
+            filters = ", ".join(getattr(metric, "allowed_filters", []) or []) or "none"
+            lines.append(
+                f"- {metric.key}: {metric.label}. Breakdowns: {allowed}. Filters: {filters}"
+            )
+
+        lines.append("If unsure choose mscc_registrations_total with breakdowns=['month'].")
+        return "\n".join(lines)
+
+    def _normalize_payload(self, payload: Dict[str, Any], metrics: List[Metric]) -> Dict[str, Any]:
+        payload = sanitize_payload(payload or {})
+
+        metric_key = payload.get("metric_key") or "mscc_registrations_total"
+        payload["metric_key"] = metric_key
+
+        metric = next((m for m in metrics if m.key == metric_key), None)
+
+        time_range = payload.get("time_range") or {}
+        start = time_range.get("start")
+        end = time_range.get("end")
+        if not start or not end:
+            time_range = default_timerange()
+        payload["time_range"] = time_range
+
+        breakdowns = payload.get("breakdowns") or []
+        allowed_breakdowns = list(getattr(metric, "allowed_breakdowns", []) or []) if metric else []
+        allowed_breakdowns = [b for b in allowed_breakdowns if b and b != "none"]
+        if metric:
+            breakdowns = [b for b in breakdowns if b in allowed_breakdowns][:3]
+        else:
+            breakdowns = breakdowns[:3]
+        payload["breakdowns"] = breakdowns
+
+        breakdown_by = payload.get("breakdown_by")
+        if breakdown_by not in allowed_breakdowns:
+            breakdown_by = breakdowns[0] if breakdowns else "none"
+        payload["breakdown_by"] = breakdown_by or "none"
+
+        filters = payload.get("filters") or []
+        if metric:
+            allowed_filters = set(getattr(metric, "allowed_filters", []) or [])
+            filters = [f for f in filters if f.get("field") in allowed_filters]
+        payload["filters"] = filters
+
+        return payload
+
+    def _run_orchestrated_call(
+        self, question: str, request, metrics: List[Metric]
+    ) -> Dict[str, Any] | None:
+        if not metrics:
+            return None
+
+        tool_schema = build_get_metric_tool(metrics)
+        client = OpenAI(api_key=getattr(settings, "OPENAI_API_KEY", None))
+        model = getattr(settings, "BMA_CHAT_MODEL", "gpt-4o-mini")
+
+        system_prompt = self._build_system_prompt(metrics)
+        similarity_context = self._build_similarity_context(question, metrics)
+
+        messages = [{"role": "system", "content": system_prompt}]
+        if similarity_context:
+            messages.append({"role": "system", "content": similarity_context})
+        messages.append({"role": "user", "content": question})
+
+        first = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            tools=[tool_schema],
+            tool_choice="auto",
+            temperature=0.2,
+        )
+
+        assistant_msg = first.choices[0].message
+        tool_calls = getattr(assistant_msg, "tool_calls", None) or []
+
+        if not tool_calls:
+            return None
+
+        execution_payload = None
+        execution_result = None
+        tool_messages = []
+
+        for tc in tool_calls:
+            if tc.function and tc.function.name == "get_metric":
+                try:
+                    args = json.loads(tc.function.arguments or "{}")
+                except json.JSONDecodeError:
+                    args = {}
+
+                normalized = self._normalize_payload(args, metrics)
+                execution_payload = normalized
+                execution_result = call_metrics_service(normalized, request=request)
+                tool_messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tc.id,
+                        "content": json.dumps(
+                            {
+                                "query": normalized,
+                                "result": execution_result,
+                            },
+                            default=str,
+                        ),
+                    }
+                )
+
+        if execution_payload is None or execution_result is None:
+            return None
+
+        assistant_dict = {
+            "role": "assistant",
+            "content": assistant_msg.content,
+            "tool_calls": [
+                {
+                    "id": tc.id,
+                    "type": tc.type,
+                    "function": {
+                        "name": tc.function.name,
+                        "arguments": tc.function.arguments,
+                    },
+                }
+                for tc in tool_calls
+            ],
+        }
+
+        follow_up_messages = messages + [assistant_dict] + tool_messages
+
+        second = client.chat.completions.create(
+            model=model,
+            messages=follow_up_messages,
+            temperature=0.3,
+        )
+
+        final_content = second.choices[0].message.content or ""
+
+        return {
+            "query": execution_payload,
+            "result": execution_result,
+            "explanation": final_content,
+        }
+
     def post(self, request, *args, **kwargs):
         # 1) read NL question
         question = (request.data.get("message") or "").strip()
@@ -197,21 +436,26 @@ class AskView(APIView):
             return Response({"error": "Missing 'question'."}, status=400)
 
         # 2) try LLM tool call; fallback to deterministic resolver
-        tool_payload = None
+        metrics = list(Metric.objects.all())
+
+        orchestrated = None
         try:
-            tool_payload = self._llm_tool_call(question)
-        except Exception as e:
-            # Do not block the request if LLM is unavailable
-            tool_payload = None
+            orchestrated = self._run_orchestrated_call(question, request, metrics)
+        except Exception:
+            orchestrated = None
 
-        if not tool_payload:
-            tool_payload = nl_to_metric_payload(question)
-        else:
-            tool_payload = sanitize_payload(tool_payload)
+        if orchestrated:
+            return Response(orchestrated)
 
-        # Ensure required fields exist
-        if "metric_key" not in tool_payload or "time_range" not in tool_payload:
-            tool_payload = nl_to_metric_payload(question)
+        tool_payload = nl_to_metric_payload(question)
+
+        suggested_metric = self._suggest_metric_key(question, metrics)
+        if suggested_metric:
+            tool_payload["metric_key"] = suggested_metric
+
+        if "breakdown_by" not in tool_payload:
+            breakdowns = tool_payload.get("breakdowns") or []
+            tool_payload["breakdown_by"] = breakdowns[0] if breakdowns else "none"
 
         # 3) call metrics service
         try:
