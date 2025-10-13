@@ -3172,7 +3172,7 @@ def get_outreach_child(outreach_id):
     initial['student_birthday_month'] = instance.birthday_month
     initial['student_birthday_day'] = instance.birthday_day
     print("----------------- instance.gender    ", instance.gender)
-    initial['student_sex'] = instance.gender
+    initial['student_sex'] = instance.gender.strip()
 
     nationality_raw = instance.nationality or ''
     nationality = nationality_raw.strip().lower()
@@ -3198,7 +3198,6 @@ def get_outreach_child(outreach_id):
 
     disability_raw = instance.disability or ''
     disability = disability_raw.strip().lower()
-
     disability_map = {
         'no': 1,
         'كلا': 1,
@@ -3238,8 +3237,8 @@ def get_outreach_child(outreach_id):
         'intellectual_disability': 10,
         'الإعاقة الذهنية': 10
     }
-
     initial['disability'] = disability_map.get(disability, None)
+
     initial['disability_other'] = instance.disability_other
 
     family_status_raw = instance.family_status or ''
@@ -3266,15 +3265,12 @@ def get_outreach_child(outreach_id):
 
     working_status_raw = instance.working_status or ''
     working_status = working_status_raw.strip().lower()
-
     working_status_map = {
         'yes - morning': 'Yes - Morning',
         'yes - afternoon': 'Yes - Afternoon',
         'no': 'no',
         'yes': 'Yes - All day'
     }
-
-    print("-----------------working_status:    ", working_status)
     initial['have_labour_single_selection'] = working_status_map.get(working_status, working_status_raw)
 
 
@@ -3296,7 +3292,6 @@ def get_outreach_child(outreach_id):
         'other_many_other': 'other_many_other',
         'other': 'other_many_other'
     }
-    print("-----------labours_single_selection: ", labour_type)
     initial['labours_single_selection'] = labour_type_map.get(labour_type, '')
 
     initial['labours_other_specify'] = instance.work_type_other
@@ -3333,26 +3328,27 @@ def get_outreach_child(outreach_id):
         except ValueError:
             pass
 
+    nationality_raw = instance.nationality or ''
+    nationality = nationality_raw.strip().lower()
+    initial['student_nationality'] = nationality_map.get(nationality, None)
     education_map = {
-        'لا تعليم رسمي': 'لا تعليم رسمي',
-        'غير متعلم لكنه يجيد القراءة والكتابة / غير متعلمة لكنها تجيد القرأة و الكتابة': 'غير متعلم لكنه يجيد القراءة والكتابة / غير متعلمة لكنها تجيد القرأة و الكتابة',
-        'بعض التعليم الإبتدائي-إكمال صف 1 إلى صف 5': 'بعض التعليم الإبتدائي-إكمال صف 1 إلى صف 5',
-        'تعليم إبتدائي': 'تعليم إبتدائي',
-        'مرحلة متوسطة': 'مرحلة متوسطة',
-        'مرحلة ثانوي': 'مرحلة ثانوي',
-        'جامعي أو دراسات عليا': 'جامعي أو دراسات عليا',
-        'N/A': 'N/A'
+        'لا تعليم رسمي': 1,
+        'غير متعلم لكنه يجيد القراءة والكتابة / غير متعلمة لكنها تجيد القرأة و الكتابة': 2,
+        'بعض التعليم الإبتدائي-إكمال صف 1 إلى صف 5': 4,
+        'تعليم إبتدائي': 4,
+        'مرحلة متوسطة': 5,
+        'مرحلة ثانوي': 6,
+        'جامعي أو دراسات عليا': 7,
+        'N/A': 8
     }
 
-    mother_education_raw = getattr(instance.outreach_caregiver, 'mother_education_level', '') or ''
+    mother_education_raw = instance.outreach_caregiver.mother_education_level
     mother_education = mother_education_raw.strip()
     initial['hh_educational_level'] = education_map.get(mother_education, '')
 
-    father_education_raw = getattr(instance.outreach_caregiver, 'father_education_level', '') or ''
+    father_education_raw = instance.outreach_caregiver.father_education_level
     father_education = father_education_raw.strip()
     initial['father_educational_level'] = education_map.get(father_education, '')
-    print("----------------- mother_education_level    ", instance.outreach_caregiver.mother_education_level)
-    print("----------------- father_educational_level    ", instance.outreach_caregiver.father_educational_level)
 
     id_type = instance.outreach_caregiver.id_type
     if id_type == 'unhcr_registered' or id_type == 'UNHCR registered':
