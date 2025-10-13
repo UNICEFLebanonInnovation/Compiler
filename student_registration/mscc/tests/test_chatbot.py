@@ -24,6 +24,7 @@ from django.contrib.auth import get_user_model  # noqa: E402
 from student_registration.child.models import Child  # noqa: E402
 from student_registration.locations.models import Center, Location, LocationType  # noqa: E402
 from student_registration.mscc.chatbot.repository import BMAInsightsRepository  # noqa: E402
+from student_registration.mscc.chatbot.retriever import BMAInsightsRetriever  # noqa: E402
 from student_registration.mscc.chatbot.services import BMAChatService  # noqa: E402
 from student_registration.mscc.chatbot.views import BMAChatViewSet  # noqa: E402
 from student_registration.mscc.models import Registration, Round  # noqa: E402
@@ -92,6 +93,30 @@ def test_snapshot_returns_basic_registration_records(user):
     assert record['partner'] == 'Partner A'
     assert record['center'] == 'Center 1'
     assert record['round'] == 'Round 2024'
+
+
+def test_retriever_returns_relevant_metrics():
+    snapshot = {
+        'scope': {'type': 'scoped', 'username': 'analyst'},
+        'registrations': {
+            'total': 3,
+            'by_partner': [
+                {'partner': 'Partner A', 'count': 2},
+                {'partner': 'Partner B', 'count': 1},
+            ],
+            'records': [
+                {'id': 1, 'child_name': 'Ali Hassan', 'partner': 'Partner A', 'center': 'Center 1', 'round': 'Round 2024'}
+            ],
+        },
+        'schools': {'total': 1, 'by_governorate': [{'governorate': 'Bekaa', 'count': 1}]},
+        'centers': {'total': 1},
+    }
+
+    retriever = BMAInsightsRetriever(snapshot)
+    context = retriever.build_context('registrations for partner a', top_k=3)
+
+    assert 'Partner A' in context
+    assert context.startswith('- **')
 
 
 class _FakeChatCompletion:
@@ -169,6 +194,8 @@ def test_chat_service_uses_snapshot_and_returns_answer(user):
     system_message = fake_client.chat.completions.last_kwargs['messages'][0]['content']
     assert 'SNAPSHOT' in system_message
     assert '"total": 1' in system_message
+    assert 'RELEVANT METRICS' in system_message
+    assert 'Registrations' in system_message
     assert fake_client.chat.completions.last_kwargs['messages'][-1]['role'] == 'user'
 
 

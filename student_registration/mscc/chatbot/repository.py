@@ -69,6 +69,7 @@ class BMAInsightsRepository:
         snapshot = {
             "total": qs.count(),
             "last_modified": last_modified.isoformat() if last_modified else None,
+            "records": self._registration_records(qs, limit=25),
             "by_round": self._counts(
                 qs,
                 fields=("round__name", "round__year"),
@@ -105,6 +106,32 @@ class BMAInsightsRepository:
             "monthly_trend": self._monthly_trend(qs, months=12),
         }
         return snapshot
+
+    def _registration_records(self, qs: QuerySet, *, limit: int = 25) -> List[Dict[str, Any]]:
+        records: List[Dict[str, Any]] = []
+        limited_qs = (
+            qs.select_related("child", "center", "partner", "round")
+            .order_by("-modified", "-created", "-pk")
+        )
+        for registration in limited_qs[:limit]:
+            child = getattr(registration, "child", None)
+            center = getattr(registration, "center", None)
+            partner = getattr(registration, "partner", None)
+            round_obj = getattr(registration, "round", None)
+            records.append(
+                {
+                    "id": registration.id,
+                    "child_name": self._format_person_name(child),
+                    "partner": getattr(partner, "name", None),
+                    "center": getattr(center, "name", None),
+                    "round": getattr(round_obj, "name", None),
+                    "registration_date": getattr(
+                        registration.registration_date, "isoformat", lambda: None
+                    )(),
+                    "package_type": getattr(registration, "type", None),
+                }
+            )
+        return records
 
     # School helpers ------------------------------------------------------------
     def _school_snapshot(self, qs: QuerySet) -> Dict[str, Any]:
@@ -192,6 +219,23 @@ class BMAInsightsRepository:
         if value in (None, "", " "):
             return "Unknown"
         return value
+
+    @staticmethod
+    def _format_person_name(child) -> str:
+        if child is None:
+            return "Unknown"
+        parts = [
+            getattr(child, "first_name", None),
+            getattr(child, "father_name", None),
+            getattr(child, "last_name", None),
+        ]
+        cleaned = [part.strip() for part in parts if part and str(part).strip()]
+        if cleaned:
+            return " ".join(cleaned)
+        full_name = getattr(child, "full_name", None)
+        if isinstance(full_name, str) and full_name.strip():
+            return full_name.strip()
+        return "Unknown"
 
     # Scope helpers -------------------------------------------------------------
     def _apply_registration_scope(self, qs: QuerySet) -> QuerySet:

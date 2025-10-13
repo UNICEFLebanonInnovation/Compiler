@@ -13,6 +13,7 @@ except Exception:  # pragma: no cover
     OpenAI = None  # type: ignore
 
 from .repository import BMAInsightsRepository
+from .retriever import BMAInsightsRetriever
 
 
 class BMAChatService:
@@ -25,7 +26,9 @@ class BMAChatService:
             super().__init__(message)
             self.status_code = status_code
 
-    def __init__(self, user, *, client=None, sleep=None):
+    retriever_class = BMAInsightsRetriever
+
+    def __init__(self, user, *, client=None, sleep=None, retriever_class=None):
         self.user = user
         self._client = client
         self.model = getattr(settings, "OPENAI_BMA_MODEL", "gpt-4o-mini")
@@ -37,6 +40,7 @@ class BMAChatService:
         )
         self._sleep = sleep or time.sleep
         self.repository = BMAInsightsRepository(user)
+        self._retriever_class = retriever_class or self.retriever_class
 
     # Public API ---------------------------------------------------------------
     def chat(
@@ -52,7 +56,8 @@ class BMAChatService:
             )
 
         snapshot = self.repository.build_snapshot()
-        system_prompt = self._build_system_prompt(snapshot)
+        context = self._build_context(snapshot, question)
+        system_prompt = self._build_system_prompt(snapshot, context)
         messages = self._build_messages(system_prompt, history, question)
 
         client = self._client or self._build_client()
@@ -99,16 +104,23 @@ class BMAChatService:
             raise self.ChatError("OpenAI API key is not configured.")
         return OpenAI(api_key=api_key)
 
+    def _build_context(self, snapshot: Dict[str, Any], question: str) -> str:
+        if not self._retriever_class:
+            return ""
+        retriever = self._retriever_class(snapshot)
+        return retriever.build_context(question, top_k=5)
+
     @staticmethod
-    def _build_system_prompt(snapshot: Dict[str, Any]) -> str:
+    def _build_system_prompt(snapshot: Dict[str, Any], context: str) -> str:
         snapshot_json = json.dumps(snapshot, ensure_ascii=False)
+        context_block = f"RELEVANT METRICS:\n{context}\n\n" if context else ""
         return (
             "You are the Beneficiary Monitoring & Assessment (BMA) analytics assistant. "
-            "Use only the information contained in the provided JSON snapshot to answer "
-            "questions about registrations, schools, centres, partners, and trends. "
-            "When data is unavailable, be transparent and explain any limitations. "
+            "Use only the information contained in the provided JSON snapshot and the curated "
+            "metrics to answer questions about registrations, schools, centres, partners, and "
+            "trends. When data is unavailable, be transparent and explain any limitations. "
             "Respond with concise, well-structured Markdown.\n\n"
-            f"SNAPSHOT:\n{snapshot_json}"
+            f"{context_block}SNAPSHOT:\n{snapshot_json}"
         )
 
     @staticmethod
