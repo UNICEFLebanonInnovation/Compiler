@@ -157,6 +157,7 @@ def generate_education_history(registration_id, child_id, student_old_id):
 def get_outreach_child(outreach_id):
     initial = {}
     instance = OutreachChild.objects.get(id=outreach_id)
+
     initial['child_outreach'] = instance.id
     initial['child_first_name'] = instance.first_name
     initial['child_father_name'] = instance.outreach_caregiver.father_name
@@ -165,99 +166,140 @@ def get_outreach_child(outreach_id):
     initial['child_birthday_year'] = instance.birthday_year
     initial['child_birthday_month'] = instance.birthday_month
     initial['child_birthday_day'] = instance.birthday_day
-    initial['child_gender'] = instance.gender
-    nationality = instance.nationality
-    if nationality == 'syrian':
-        initial['child_nationality'] = 1
-    elif nationality == 'lebanese':
-        initial['child_nationality'] = 5
-    elif nationality == 'palestinian':
-        initial['child_nationality'] = 4
-    elif nationality == 'iraqi':
-        initial['child_nationality'] = 2
-    elif nationality == 'stateless':
-        initial['child_nationality'] = 7
-    elif nationality == 'other':
-        initial['child_nationality'] = 6
-    initial['child_nationality_other'] = instance.nationality_other
+    initial['child_gender'] = (instance.gender or '').strip()
     initial['child_address'] = instance.outreach_caregiver.address
+ 
+    nationality_raw = instance.nationality or ''
+    nationality = nationality_raw.strip().lower()
+    nationality_map = {
+        'syrian': 1,
+        'سورية': 1,
+        'lebanese': 5,
+        'لبنانية': 5,
+        'palestinian from syria': 3,
+        'فلسطينية  - من سوريا': 3,
+        'palestinian from lebanon': 4,
+        'فلسطينية - من لبنان': 4,
+        'iraqi': 2,
+        'عراقية': 2,
+        'stateless': 7,
+        'other': 6,
+        'اخرى': 6
+    }
+    initial['child_nationality'] = nationality_map.get(nationality, None)
+    initial['child_nationality_other'] = instance.nationality_other
 
-    disability = instance.disability
-    if disability == 'no':
-        initial['child_disability'] = 1
-    elif disability == 'difficulty_seeing':
-        initial['child_disability'] = 6
-    elif disability == 'difficulty_interacting_with_others':
-        initial['child_disability'] = 9
-    elif disability == 'difficulty_speaking':
-        initial['child_disability'] = 5
-    elif disability == 'intellectual_disability':
-        initial['child_disability'] = 10
-    elif disability == 'difficulty_hearing':
-        initial['child_disability'] = 3
-    elif disability == 'learning_difficulties':
-        initial['child_disability'] = 8
-    elif disability == 'difficulty_walking_or_moving_hands':
-        initial['child_disability'] = 4
-    elif disability == 'Other':
-        initial['child_disability'] = 2
+    disability_raw = instance.disability or ''
+    disability = disability_raw.strip().lower()
+    disability_map = {
+        'no': 1,
+        'كلا': 1,
+
+        'other': 2,
+        'other difficulties': 2,
+        'غير ذالك': 2,
+
+        'difficulty hearing': 3,
+        'difficulty_hearing': 3,
+        'صعوبة في السمع': 3,
+
+        'difficulty walking or moving hands': 4,
+        'difficulty_walking_or_moving_hands': 4,
+        'صعوبة في الحركة': 4,
+
+        'difficulty speaking': 5,
+        'difficulty_speaking': 5,
+        'صعوبة في التحدث': 5,
+
+        'difficulty seeing': 6,
+        'difficulty_seeing': 6,
+        'صعوبة في الرؤية': 6,
+
+        'difficulty with self-care': 7,
+        'صعوبة في الرعاية الذاتية - الأكل، خلع الملابس': 7,
+
+        'learning difficulties': 8,
+        'learning_difficulties': 8,
+        'صعوبة في التعلم': 8,
+
+        'difficulty interacting with others': 9,
+        'difficulty_interacting_with_others': 9,
+        'صعوبة التفاعل مع الآخرين': 9,
+
+        'intellectual disability': 10,
+        'intellectual_disability': 10,
+        'الإعاقة الذهنية': 10
+    }
+    initial['child_disability'] = disability_map.get(disability, None)
     initial['disability_other'] = instance.disability_other
-    family_status = instance.family_status or ''
-    initial['child_marital_status'] = family_status.capitalize() if family_status else ''
 
-    main_caregiver_nationality = instance.outreach_caregiver.caregiver_nationality
-    if main_caregiver_nationality == 'syrian':
-        initial['main_caregiver_nationality'] = 1
-    elif main_caregiver_nationality == 'lebanese':
-        initial['main_caregiver_nationality'] = 5
-    elif main_caregiver_nationality == 'palestinian':
-        initial['main_caregiver_nationality'] = 4
-    elif main_caregiver_nationality == 'iraqi':
-        initial['main_caregiver_nationality'] = 2
-    elif main_caregiver_nationality == 'stateless':
-        initial['main_caregiver_nationality'] = 7
-    elif main_caregiver_nationality == 'other':
-        initial['main_caregiver_nationality'] = 6
+    family_status_raw = instance.family_status or ''
+    family_status_key = family_status_raw.strip().lower()
+    status_map = {
+        'widow': 'widower',
+        'widowed': 'widower',
+        'widower': 'widower',
+        'separated': 'divorced',
+        'divorced': 'divorced',
+        'married': 'married',
+        'engaged': 'engaged',
+        'single': 'single'
+    }
+    initial['child_marital_status'] = status_map.get(family_status_key, family_status_raw)
+
+    main_care_nat_raw = instance.outreach_caregiver.caregiver_nationality or ''
+    main_care_nat = main_care_nat_raw.strip().lower()
+    initial['main_caregiver_nationality'] = nationality_map.get(main_care_nat, None)
     initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
 
-    working_status = instance.working_status or ''
-    initial['have_labour'] = working_status.capitalize() if working_status else ''
-    if working_status == 'yes':
-        initial['have_labour'] = 'Yes - Full Day'
-        labour_type = instance.work_type
-        if labour_type == 'manufacturing_producing':
-            initial['labour_type'] = 'Manufacturing'
-        elif labour_type == 'garage_mechanics_workshop':
-            initial['labour_type'] = ''
-        elif labour_type == 'construction_site':
-            initial['labour_type'] = 'Building'
-        elif labour_type == 'shop_restaurant_bakery_barber':
-            initial['labour_type'] = 'Retail / Store'
-        elif labour_type == 'street_connected_work__begging__vending_':
-            initial['labour_type'] = 'Begging'
-        elif labour_type == 'agriculture_animal_herding':
-            initial['labour_type'] = 'Agriculture'
-        elif labour_type == 'others':
-            initial['labour_type'] = 'Other services'
-        else:
-            initial['labour_type'] = ''
+    working_status_raw = instance.working_status or ''
+    working_status = working_status_raw.strip().lower()
+    working_status_map = {
+        'yes - morning': 'Yes - Morning',
+        'yes - afternoon': 'Yes - Afternoon',
+        'no': 'no',
+        'yes': 'Yes - All day'
+    }
+    initial['have_labour'] = working_status_map.get(working_status, working_status_raw)
 
+    labour_type_raw = instance.work_type or ''
+    labour_type_key = labour_type_raw.strip().lower()
+    labour_type_map = {
+        'manufacturing_producing': 'manufacturing',
+        'manufacturing': 'manufacturing',
+        'garage_mechanics_workshop': '',
+        'construction_site': 'building',
+        'building': 'building',
+        'shop_restaurant_bakery_barber': 'retail_store',
+        'retail_store': 'retail_store',
+        'street_connected_work__begging__vending_': 'begging',
+        'begging': 'begging',
+        'agriculture_animal_herding': 'agriculture',
+        'agriculture': 'agriculture',
+        'others': 'other_many_other',
+        'other_many_other': 'other_many_other',
+        'other': 'other_many_other'
+    }
+    initial['labour_type'] = labour_type_map.get(labour_type_key, '')
     initial['labour_type_specify'] = instance.work_type_other
+
     initial['first_phone_number'] = instance.outreach_caregiver.primary_phone
     initial['first_phone_number_confirm'] = instance.outreach_caregiver.primary_phone
     initial['second_phone_number'] = instance.outreach_caregiver.secondary_phone
     initial['second_phone_number_confirm'] = instance.outreach_caregiver.secondary_phone
 
-    main_caregiver = instance.outreach_caregiver.main_caregiver
+    main_caregiver = (instance.outreach_caregiver.main_caregiver or '').strip()
     if main_caregiver == u'الاب':
-        initial['main_caregiver'] = 'Father'
+        initial['main_caregiver'] = 'father'   # match *_correct option value
         initial['caregiver_first_name'] = instance.outreach_caregiver.father_name
         initial['caregiver_last_name'] = instance.outreach_caregiver.last_name
     else:
         if main_caregiver == u'الام':
-            initial['main_caregiver'] = 'Mother'
+            initial['main_caregiver'] = 'mother'
         elif main_caregiver == u'اخر':
-            initial['main_caregiver'] = 'Other'
+            initial['main_caregiver'] = 'other'
+        else:
+            initial['main_caregiver'] = (main_caregiver or '').lower() or None
         initial['caregiver_first_name'] = instance.outreach_caregiver.caregiver_first_name
         initial['caregiver_last_name'] = instance.outreach_caregiver.caregiver_last_name
 
@@ -265,7 +307,7 @@ def get_outreach_child(outreach_id):
     initial['caregiver_mother_name'] = instance.outreach_caregiver.caregiver_mother_name
 
     id_type = instance.outreach_caregiver.id_type
-    if id_type == 'unhcr_registered':
+    if id_type == 'unhcr_registered' or id_type == 'UNHCR registered':
         initial['id_type'] = 1
         initial['case_number'] = instance.outreach_caregiver.unhcr_case_number
         initial['case_number_confirm'] = instance.outreach_caregiver.unhcr_case_number
@@ -273,28 +315,55 @@ def get_outreach_child(outreach_id):
         initial['parent_individual_case_number_confirm'] = instance.outreach_caregiver.caregiver_unhcr_id
         initial['individual_case_number'] = instance.child_unhcr_number
         initial['individual_case_number_confirm'] = instance.child_unhcr_number
-    elif id_type == 'unhcr_recorded':
+    elif id_type == 'unhcr_recorded' or id_type == 'UNHCR recorded':
         initial['id_type'] = 2
         initial['recorded_number'] = instance.outreach_caregiver.unhcr_barcode
         initial['recorded_number_confirm'] = instance.outreach_caregiver.unhcr_barcode
-    elif id_type == 'syrian_id':
+    elif id_type == 'syrian_id' or id_type == 'Syrian ID':
         initial['id_type'] = 3
         initial['parent_syrian_national_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['parent_syrian_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
         initial['syrian_national_number'] = instance.child_personal_id
         initial['syrian_national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'palestinian_id':
+    elif id_type == 'palestinian_id' or id_type == 'Palestinian ID':
         initial['id_type'] = 4
         initial['parent_sop_national_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['parent_sop_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
         initial['sop_national_number'] = instance.child_personal_id
         initial['sop_national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'lebanese_id':
+    elif id_type == 'lebanese_id' or id_type == 'Lebanese ID':
         initial['id_type'] = 5
         initial['parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
         initial['parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
         initial['national_number'] = instance.child_personal_id
         initial['national_number_confirm'] = instance.child_personal_id
+    elif id_type == 'other_nationality_id' or id_type == 'Other Nationality ID':
+        initial['id_type'] = 6
+        initial['parent_national_number'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['parent_national_number_confirm'] = instance.outreach_caregiver.caregiver_personal_id
+        initial['national_number'] = instance.child_personal_id
+        initial['national_number_confirm'] = instance.child_personal_id
+    elif id_type == 'No_papers' or id_type == 'No papers':
+        initial['id_type'] = 7
+
+    education_map = {
+        'لا تعليم رسمي': 1,
+        'غير متعلم لكنه يجيد القراءة والكتابة / غير متعلمة لكنها تجيد القرأة و الكتابة': 2,
+        'بعض التعليم الإبتدائي-إكمال صف 1 إلى صف 5': 4,
+        'تعليم إبتدائي': 4,
+        'مرحلة متوسطة': 5,
+        'مرحلة ثانوي': 6,
+        'جامعي أو دراسات عليا': 7,
+        'N/A': 8
+    }
+    mother_education_raw = instance.outreach_caregiver.mother_education_level
+    mother_education = mother_education_raw.strip()
+    initial['mother_educational_level'] = education_map.get(mother_education, '')
+
+    father_education_raw = instance.outreach_caregiver.father_education_level
+    father_education = father_education_raw.strip()
+    initial['father_educational_level'] = education_map.get(father_education, '')
+
 
     return initial
 
@@ -378,6 +447,7 @@ def create_attendance(data, center_id):
     except Exception as ex:
         logger.exception("Error in create_attendance: %s", ex)
         return False
+
 
 def load_child_attendance(center_id, round_id, attendance_date, education_program, class_section):
     from datetime import datetime
@@ -561,7 +631,6 @@ def update_child_attendance(registration_id, education_program, old_class_sectio
     except Exception as ex:
         logger.exception("update_child_attendance failed: %s", ex)
         return []
-
 
 
 class RegistrationResource(resources.ModelResource):
