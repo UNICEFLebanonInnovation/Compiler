@@ -1,0 +1,32 @@
+<form id="qform">
+  <input id="q" placeholder="Ask: registrations by governorate for 2025?" size="100"/>
+  <button>Ask</button>
+</form>
+<pre id="answer"></pre>
+<script>
+
+    function getCookie(name) {
+      const cookies = document.cookie ? document.cookie.split(';') : [];
+      for (let i = 0; i < cookies.length; i += 1) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          return decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      }
+      return null;
+    }
+
+document.getElementById('qform').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const res = await fetch('/api/chat/ask/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken') || ''
+    },
+    body: JSON.stringify({message: document.getElementById('q').value})
+  });
+  const data = await res.json();
+  document.getElementById('answer').textContent = data.text + '\n\n' + JSON.stringify(data.data, null, 2);
+});
+</script>

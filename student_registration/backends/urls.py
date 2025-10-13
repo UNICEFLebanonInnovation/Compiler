@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.urls import re_path
 
 from . import views
+from .chat_api import ChatbotAIView
 
 app_name = 'backends'
 
@@ -58,5 +59,9 @@ urlpatterns = [
         view=views.AdolescentUploadFailedView.as_view(),
         name='adolescent_upload_failed'
     ),
-
+    re_path(
+        r'^ask-ai/$',
+        view=ChatbotAIView.as_view(),
+        name='ask_ai'
+    ),
 ]

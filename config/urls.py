@@ -56,6 +56,7 @@ from student_registration.users.views import LoginRedirectView, home, login_succ
 from student_registration.students.views import serve_file
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 from student_registration.mscc.chatbot.views import BMAChatViewSet
+from student_registration.backends.chat_api import AskView
 
 api = routers.SimpleRouter()
 
@@ -77,6 +78,7 @@ api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, basename='se
 api.register(r'program-staff', ProgramStaffViewSet, basename='program-staff')
 api.register(r'attendance-heatmap-data', AttendanceHeatmapViewSet, basename='attendance-heatmap-data')
 api.register(r'bma-chatbot', BMAChatViewSet, basename='bma-chatbot')
+# api.register(r'chat-api', AskViewSet, basename='chat-api')
 
 api.register(r'clm-outreach', OutreachViewSet, basename='clm-outreach')
 api.register(r'locations', LocationViewSet, basename='locations')
@@ -91,6 +93,7 @@ urlpatterns = [
     re_path(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
     re_path(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
     re_path(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
+    re_path(r'^api/chat/ask/$', AskView.as_view(), name="chat-ask"),
 
     # Django Admin, use {% url 'admin:index' %}
     re_path(settings.ADMIN_URL, admin.site.urls),

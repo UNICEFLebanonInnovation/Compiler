@@ -171,7 +171,7 @@ MANAGERS = ADMINS
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='postgres:///mscc_10012023'),
     'default': env.db('DATABASE_URL',
-    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/new_staging_03092025'),
+    default='postgresql://lebclmprod:clmp!0ck3din@leb-clm-prod-flex-14.postgres.database.azure.com:5432/bma_staging'),
 }
 DJANGO_READ_DOT_ENV_FILE = True
 
@@ -431,12 +431,13 @@ JAZZMIN_SETTINGS = {
 }
 
 # OpenAI / ChatGPT configuration for the BMA chatbot
-OPENAI_API_KEY = env('OPENAI_API_KEY', default=None)
+OPENAI_API_KEY = env('OPENAI_API_KEY', default='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')
 OPENAI_BMA_MODEL = env('OPENAI_BMA_MODEL', default='gpt-4o-mini')
 OPENAI_BMA_MAX_TOKENS = env.int('OPENAI_BMA_MAX_TOKENS', default=800)
 OPENAI_BMA_TEMPERATURE = env.float('OPENAI_BMA_TEMPERATURE', default=0.2)
 OPENAI_BMA_MAX_RETRIES = env.int('OPENAI_BMA_MAX_RETRIES', default=2)
 OPENAI_BMA_RETRY_BACKOFF = env.float('OPENAI_BMA_RETRY_BACKOFF', default=1.0)
+APPEND_SLASH = False
 
 # STORAGE CONFIGURATION
 # ------------------------------------------------------------------------------

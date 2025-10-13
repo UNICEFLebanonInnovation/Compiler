@@ -7,6 +7,8 @@ from django.db.models import JSONField
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
 from student_registration.schools.models import School
+from django.contrib.postgres.fields import ArrayField
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Exporter(TimeStampedModel):
@@ -164,3 +166,36 @@ class AdolescentUpload(TimeStampedModel):
 
     def __str__(self):
         return self.file.name
+
+
+class Metric(models.Model):
+    key = models.CharField(max_length=120, unique=True)
+    label = models.CharField(max_length=200)
+    description = models.TextField()
+
+    sql_view = models.CharField(max_length=200)
+    value_column = models.CharField(max_length=120)
+
+    allowed_breakdowns = ArrayField(models.CharField(max_length=50), default=list)
+    allowed_filters = ArrayField(models.CharField(max_length=50), default=list)
+    default_time_column = models.CharField(max_length=50)
+
+    unit = models.CharField(max_length=50, default="count")
+    decimals = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(6)])
+
+    min_sample_size = models.IntegerField(default=15, validators=[MinValueValidator(0)])
+    rounding = models.IntegerField(default=5)  # validate in loader (1,2,5,10,20,50,100)
+    owner_team = models.CharField(max_length=120, default="T4D/Unknown")
+    tags = ArrayField(models.CharField(max_length=50), default=list, blank=True)
+
+    freshness_sla_minutes = models.IntegerField(default=60, validators=[MinValueValidator(0)])
+    meta = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["sql_view"]),
+            models.Index(fields=["owner_team"]),
+        ]
+
+    def __str__(self):
+        return self.key
