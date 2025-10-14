@@ -347,6 +347,7 @@ function get_child_data(outreach_id)
                     checkArabicOnly($(this));
                 });
             });
+            reorganizeForm();
         },
         error: function (response) {
             console.log(response);

@@ -178,7 +178,8 @@ class MainForm(forms.ModelForm):
         label=_('Cash support programmes that the child is already benefiting from'),
         choices=Registration.CASH_SUPPORT_PROGRAMMES,
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=True,
+        initial=['None'],
     )
     # mscc_packages = forms.MultipleChoiceField(
     #     label=_('Packages received/to be provided to child under Makani'),

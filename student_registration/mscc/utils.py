@@ -189,48 +189,26 @@ def get_outreach_child(outreach_id):
     initial['child_nationality'] = nationality_map.get(nationality, None)
     initial['child_nationality_other'] = instance.nationality_other
 
-    disability_raw = instance.disability or ''
-    disability = disability_raw.strip().lower()
-    disability_map = {
-        'no': 1,
-        'كلا': 1,
+    disability_raw = (instance.disability or '').strip()
+    if not disability_raw:
+        initial['child_disability'] = 1
+    else:
+        disability_key = disability_raw.lower()
+        disability_map = {
+            'no': 1, 'كلا': 1,
+            'other': 2, 'other difficulties': 2, 'غير ذالك': 2,
+            'difficulty hearing': 3, 'difficulty_hearing': 3, 'صعوبة في السمع': 3,
+            'difficulty walking or moving hands': 4, 'difficulty_walking_or_moving_hands': 4, 'صعوبة في الحركة': 4,
+            'difficulty speaking': 5, 'difficulty_speaking': 5, 'صعوبة في التحدث': 5,
+            'difficulty seeing': 6, 'difficulty_seeing': 6, 'صعوبة في الرؤية': 6,
+            'difficulty with self-care': 7, 'صعوبة في الرعاية الذاتية - الأكل، خلع الملابس': 7,
+            'learning difficulties': 8, 'learning_difficulties': 8, 'صعوبة في التعلم': 8,
+            'difficulty interacting with others': 9, 'difficulty_interacting_with_others': 9,
+            'صعوبة التفاعل مع الآخرين': 9,
+            'intellectual disability': 10, 'intellectual_disability': 10, 'الإعاقة الذهنية': 10
+        }
+        initial['child_disability'] = disability_map.get(disability_key, None)
 
-        'other': 2,
-        'other difficulties': 2,
-        'غير ذالك': 2,
-
-        'difficulty hearing': 3,
-        'difficulty_hearing': 3,
-        'صعوبة في السمع': 3,
-
-        'difficulty walking or moving hands': 4,
-        'difficulty_walking_or_moving_hands': 4,
-        'صعوبة في الحركة': 4,
-
-        'difficulty speaking': 5,
-        'difficulty_speaking': 5,
-        'صعوبة في التحدث': 5,
-
-        'difficulty seeing': 6,
-        'difficulty_seeing': 6,
-        'صعوبة في الرؤية': 6,
-
-        'difficulty with self-care': 7,
-        'صعوبة في الرعاية الذاتية - الأكل، خلع الملابس': 7,
-
-        'learning difficulties': 8,
-        'learning_difficulties': 8,
-        'صعوبة في التعلم': 8,
-
-        'difficulty interacting with others': 9,
-        'difficulty_interacting_with_others': 9,
-        'صعوبة التفاعل مع الآخرين': 9,
-
-        'intellectual disability': 10,
-        'intellectual_disability': 10,
-        'الإعاقة الذهنية': 10
-    }
-    initial['child_disability'] = disability_map.get(disability, None)
     initial['disability_other'] = instance.disability_other
 
     family_status_raw = instance.family_status or ''
@@ -246,22 +224,69 @@ def get_outreach_child(outreach_id):
         'single': 'Single'
     }
     initial['child_marital_status'] = status_map.get(family_status_key, family_status_raw)
-    initial['child_have_children'] = 'No'
+
+    initial['child_have_children'] = (instance.have_children or '').strip().capitalize()
+
+    living_arrangement_raw = instance.living_arrangement or ''
+    living_arrangement_key = living_arrangement_raw.strip()
+    living_arrangement_map = {
+        'Unaccompanied': 'Unaccompanied',
+        'Separated': 'Separated',
+        'Living with one caregivers': 'Living with one caregivers',
+        'Living with caregivers': 'Living with caregivers',
+        'Child headed household': 'Child headed household',
+        'Married and living with extended family': 'Married and living with extended family',
+    }
+    initial['child_living_arrangement'] = living_arrangement_map.get(living_arrangement_key, living_arrangement_raw)
+
+    initial['child_have_sibling'] = (instance.have_sibling or '').strip().capitalize()
+    initial['child_siblings_have_disability'] = (instance.siblings_have_disability or '').strip().capitalize()
+    initial['child_mother_pregnant_expecting'] = (instance.mother_pregnant_expecting or '').strip().capitalize()
+
+    source_of_identification_raw = instance.source_of_identification or ''
+    source_of_identification_key = source_of_identification_raw.strip()
+    source_of_identification_map = {
+        'Dirassa': 'Dirassa',
+        'Awareness Session': 'Awareness Session',
+        'Child\'s parents': 'Child\'s parents',
+        'From Hosted Community': 'From Hosted Community',
+        'From Host Community': 'From Hosted Community',
+        'Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...)': 'Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
+        'From Profiling Database': 'From Profiling Database',
+        'From Other NGO': 'From Other NGO',
+        'From Displaced Community': 'From Displaced Community',
+        'Referred by the municipality/Other formal sources': 'Referred by the municipality/Other formal sources',
+        'Other Sources': 'Other Sources',
+    }
+    initial['source_of_identification'] = source_of_identification_map.get(source_of_identification_key, source_of_identification_raw)
+
+    initial['children_number_under18'] = instance.children_number_under18
 
     main_care_nat_raw = instance.outreach_caregiver.caregiver_nationality or ''
     main_care_nat = main_care_nat_raw.strip().lower()
     initial['main_caregiver_nationality'] = nationality_map.get(main_care_nat, None)
     initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
 
-    working_status_raw = instance.working_status or ''
-    working_status = working_status_raw.strip().lower()
+    working_status_raw = (instance.working_status or '').strip()
+    print('----------------------------')
+    print(working_status_raw)
+    print('----------------------------')
     working_status_map = {
         'yes - morning': 'Yes - Morning',
+        'Yes -Morning': 'Yes - Morning',
         'yes - afternoon': 'Yes - Afternoon',
-        'no': 'no',
-        'yes': 'Yes - All day'
+        'Yes-Afternoon': 'Yes - Afternoon',
+        'no': 'No',
+        'yes': 'Yes - Full day',
+        'Yes - Night Shift': 'Yes - Night Shift',
+        'Yes - Morning & Night Shift': 'Yes - Morning & Night Shift',
+        'Yes - Afternoon & Night Shift': 'Yes - Afternoon & Night Shift',
+        'Yes - Full Day & Night Shift': 'Yes - Full Day & Night Shift',
     }
-    initial['have_labour'] = working_status_map.get(working_status, working_status_raw)
+    if not working_status_raw:
+        initial['have_labour'] = 'No'
+    else:
+        initial['have_labour'] = working_status_map.get(working_status_raw)
 
     labour_type_raw = instance.work_type or ''
     labour_type_key = labour_type_raw.strip().lower()
@@ -286,19 +311,35 @@ def get_outreach_child(outreach_id):
 
     initial['first_phone_number'] = instance.outreach_caregiver.primary_phone
     initial['first_phone_number_confirm'] = instance.outreach_caregiver.primary_phone
+
+    first_phone_owner_raw = instance.outreach_caregiver.first_phone_owner or ''
+    first_phone_owner_key = first_phone_owner_raw.strip()
+    print('----------------------------')
+    print(first_phone_owner_key)
+    print('----------------------------')
+    phone_owner_map = {
+        'Phone Main Caregiver': 'Phone Main Caregiver',
+        'Family Member': 'Family Member',
+        'Father': 'Phone Main Caregiver',
+        'Mother': 'Phone Main Caregiver',
+        'Neighbors': 'Neighbors',
+        'Shawish': 'Shawish',
+    }
+    initial['first_phone_owner'] = phone_owner_map.get(first_phone_owner_key, '')
+
     initial['second_phone_number'] = instance.outreach_caregiver.secondary_phone
     initial['second_phone_number_confirm'] = instance.outreach_caregiver.secondary_phone
 
     main_caregiver = (instance.outreach_caregiver.main_caregiver or '').strip()
     if main_caregiver == u'الاب':
-        initial['main_caregiver'] = 'father'   # match *_correct option value
+        initial['main_caregiver'] = 'Father'   # match *_correct option value
         initial['caregiver_first_name'] = instance.outreach_caregiver.father_name
         initial['caregiver_last_name'] = instance.outreach_caregiver.last_name
     else:
         if main_caregiver == u'الام':
-            initial['main_caregiver'] = 'mother'
+            initial['main_caregiver'] = 'Mother'
         elif main_caregiver == u'اخر':
-            initial['main_caregiver'] = 'other'
+            initial['main_caregiver'] = 'Other'
         else:
             initial['main_caregiver'] = (main_caregiver or '').lower() or None
         initial['caregiver_first_name'] = instance.outreach_caregiver.caregiver_first_name
@@ -364,7 +405,6 @@ def get_outreach_child(outreach_id):
     father_education_raw = instance.outreach_caregiver.father_education_level
     father_education = father_education_raw.strip()
     initial['father_educational_level'] = education_map.get(father_education, '')
-
 
     return initial
 
