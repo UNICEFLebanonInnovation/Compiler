@@ -106,6 +106,7 @@ class OutreachChildResource(resources.ModelResource):
         'mother_education_level',
         'main_caregiver',
         'primary_phone',
+        'first_phone_owner',
         'father_education_level',
         'mother_education_level',
         'number_of_children',
@@ -132,7 +133,15 @@ class OutreachChildResource(resources.ModelResource):
             'disability',
             'disability_other',
             'working_status',
-            'family_status'
+            'family_status',
+            'living_arrangement',
+            'have_children',
+            'have_sibling',
+            'siblings_have_disability',
+            'mother_pregnant_expecting',
+            'source_of_identification',
+            'cash_support_programmes',
+            'children_number_under18'
         )
 
     def before_import_row(self, row, **kwargs):

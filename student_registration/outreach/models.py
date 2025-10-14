@@ -275,6 +275,7 @@ class OutreachCaregiver(models.Model):
     address = models.CharField(max_length=200, blank=True, null=True)
     gps = models.CharField(max_length=200, blank=True, null=True)
     primary_phone = models.CharField(max_length=200, blank=True, null=True)
+    first_phone_owner = models.CharField(max_length=200, blank=True, null=True)
     secondary_phone = models.CharField(max_length=200, blank=True, null=True)
     father_name = models.CharField(max_length=200, blank=True, null=True)
     mother_full_name = models.CharField(max_length=200, blank=True, null=True)
@@ -359,6 +360,14 @@ class OutreachChild(models.Model):
     work_type_other = models.CharField(max_length=200, blank=True, null=True)
     child_referral = models.CharField(max_length=200, blank=True, null=True)
     child_notes = models.CharField(max_length=1000, blank=True, null=True)
+    living_arrangement = models.CharField(max_length=200, blank=True, null=True)
+    have_children = models.CharField(max_length=200, blank=True, null=True)
+    have_sibling = models.CharField(max_length=200, blank=True, null=True)
+    siblings_have_disability = models.CharField(max_length=200, blank=True, null=True)
+    mother_pregnant_expecting = models.CharField(max_length=200, blank=True, null=True)
+    source_of_identification = models.CharField(max_length=200, blank=True, null=True)
+    cash_support_programmes = models.CharField(max_length=200, blank=True, null=True)
+    children_number_under18 = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         ordering = ['id']
