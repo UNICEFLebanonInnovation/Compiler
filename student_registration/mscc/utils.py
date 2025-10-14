@@ -168,7 +168,7 @@ def get_outreach_child(outreach_id):
     initial['child_birthday_day'] = instance.birthday_day
     initial['child_gender'] = (instance.gender or '').strip()
     initial['child_address'] = instance.outreach_caregiver.address
- 
+
     nationality_raw = instance.nationality or ''
     nationality = nationality_raw.strip().lower()
     nationality_map = {
@@ -236,16 +236,17 @@ def get_outreach_child(outreach_id):
     family_status_raw = instance.family_status or ''
     family_status_key = family_status_raw.strip().lower()
     status_map = {
-        'widow': 'widower',
-        'widowed': 'widower',
-        'widower': 'widower',
-        'separated': 'divorced',
-        'divorced': 'divorced',
-        'married': 'married',
-        'engaged': 'engaged',
-        'single': 'single'
+        'widow': 'Widowed',
+        'widowed': 'Widowed',
+        'widower': 'Widowed',
+        'separated': 'Divorced',
+        'divorced': 'Divorced',
+        'married': 'Married',
+        'engaged': 'Engaged',
+        'single': 'Single'
     }
     initial['child_marital_status'] = status_map.get(family_status_key, family_status_raw)
+    initial['child_have_children'] = 'No'
 
     main_care_nat_raw = instance.outreach_caregiver.caregiver_nationality or ''
     main_care_nat = main_care_nat_raw.strip().lower()
