@@ -525,24 +525,32 @@ def export_data(request, **kwargs):
         user = request.user
         partner_id = user.partner_id
 
-        partner = request.GET.get('partner', '')
-        governorate = request.GET.get('governorate', '')
-        district = request.GET.get('district', '')
-        cadaster = request.GET.get('cadaster', '')
-        adolescent_first_name = request.GET.get('adolescent_first_name', '')
-        adolescent_father_name = request.GET.get('adolescent_father_name', '')
-        adolescent_last_name = request.GET.get('adolescent_last_name', '')
-        adolescent_unicef_id = request.GET.get('adolescent_unicef_id', '')
-        adolescent_gender = request.GET.get('adolescent_gender', '')
-        adolescent_nationality = request.GET.get('adolescent_nationality', '')
-        adolescent_disability = request.GET.get('adolescent_disability', '')
-        adolescent_first_phone_number = request.GET.get('adolescent_first_phone_number', '')
-        master_program = request.GET.get('master_program', '')
-        sub_program = request.GET.get('sub_program', '')
-        donor = request.GET.get('donor', '')
-        program_document = request.GET.get('program_document', '')
-        start_date = request.GET.get('start_date', '')
-        end_date = request.GET.get('end_date', '')
+        def _normalize_param(value):
+            if value is None:
+                return ''
+            value = str(value).strip()
+            if value.lower() in {"", "undefined", "null"}:
+                return ''
+            return value
+
+        partner = _normalize_param(request.GET.get('partner', ''))
+        governorate = _normalize_param(request.GET.get('governorate', ''))
+        district = _normalize_param(request.GET.get('district', ''))
+        cadaster = _normalize_param(request.GET.get('cadaster', ''))
+        adolescent_first_name = _normalize_param(request.GET.get('adolescent_first_name', ''))
+        adolescent_father_name = _normalize_param(request.GET.get('adolescent_father_name', ''))
+        adolescent_last_name = _normalize_param(request.GET.get('adolescent_last_name', ''))
+        adolescent_unicef_id = _normalize_param(request.GET.get('adolescent_unicef_id', ''))
+        adolescent_gender = _normalize_param(request.GET.get('adolescent_gender', ''))
+        adolescent_nationality = _normalize_param(request.GET.get('adolescent_nationality', ''))
+        adolescent_disability = _normalize_param(request.GET.get('adolescent_disability', ''))
+        adolescent_first_phone_number = _normalize_param(request.GET.get('adolescent_first_phone_number', ''))
+        master_program = _normalize_param(request.GET.get('master_program', ''))
+        sub_program = _normalize_param(request.GET.get('sub_program', ''))
+        donor = _normalize_param(request.GET.get('donor', ''))
+        program_document = _normalize_param(request.GET.get('program_document', ''))
+        start_date = _normalize_param(request.GET.get('start_date', ''))
+        end_date = _normalize_param(request.GET.get('end_date', ''))
 
         registration_qs = Registration.objects.filter(deleted=False)
 
@@ -560,13 +568,19 @@ def export_data(request, **kwargs):
             registration_qs = registration_qs.filter(partner__id=partner_id_filter)
 
         if governorate:
-            registration_qs = registration_qs.filter(adolescent__governorate__id=governorate)
+            governorate_id = _safe_int(governorate)
+            if governorate_id is not None:
+                registration_qs = registration_qs.filter(adolescent__governorate__id=governorate_id)
 
         if district:
-            registration_qs = registration_qs.filter(adolescent__district__id=district)
+            district_id = _safe_int(district)
+            if district_id is not None:
+                registration_qs = registration_qs.filter(adolescent__district__id=district_id)
 
         if cadaster:
-            registration_qs = registration_qs.filter(adolescent__cadaster__id=cadaster)
+            cadaster_id = _safe_int(cadaster)
+            if cadaster_id is not None:
+                registration_qs = registration_qs.filter(adolescent__cadaster__id=cadaster_id)
 
         if adolescent_first_name:
             registration_qs = registration_qs.filter(adolescent__first_name__icontains=adolescent_first_name)
@@ -584,10 +598,14 @@ def export_data(request, **kwargs):
             registration_qs = registration_qs.filter(adolescent__gender=adolescent_gender)
 
         if adolescent_nationality:
-            registration_qs = registration_qs.filter(adolescent__nationality_id=adolescent_nationality)
+            nationality_id = _safe_int(adolescent_nationality)
+            if nationality_id is not None:
+                registration_qs = registration_qs.filter(adolescent__nationality_id=nationality_id)
 
         if adolescent_disability:
-            registration_qs = registration_qs.filter(adolescent__disability__id=adolescent_disability)
+            disability_id = _safe_int(adolescent_disability)
+            if disability_id is not None:
+                registration_qs = registration_qs.filter(adolescent__disability__id=disability_id)
 
         if adolescent_first_phone_number:
             registration_qs = registration_qs.filter(adolescent__first_phone_number__icontains=adolescent_first_phone_number)
@@ -597,18 +615,40 @@ def export_data(request, **kwargs):
             registration_qs = registration_qs.prefetch_related('enrolled_programs')
 
             if master_program:
-                master_program_ids = master_program.split(",")
-                registration_qs = registration_qs.filter(enrolled_programs__master_program__id__in=master_program_ids)
+                master_program_ids = [
+                    mp_id for mp_id in [
+                        _safe_int(value) for value in master_program.split(",")
+                    ]
+                    if mp_id is not None
+                ]
+                if master_program_ids:
+                    registration_qs = registration_qs.filter(
+                        enrolled_programs__master_program__id__in=master_program_ids
+                    )
 
             if sub_program:
-                sub_program_ids = sub_program.split(",")
-                registration_qs = registration_qs.filter(enrolled_programs__sub_program__id__in=sub_program_ids)
+                sub_program_ids = [
+                    sp_id for sp_id in [
+                        _safe_int(value) for value in sub_program.split(",")
+                    ]
+                    if sp_id is not None
+                ]
+                if sub_program_ids:
+                    registration_qs = registration_qs.filter(
+                        enrolled_programs__sub_program__id__in=sub_program_ids
+                    )
 
             if donor:
-                registration_qs = registration_qs.filter(enrolled_programs__donor__id=donor)
+                donor_id = _safe_int(donor)
+                if donor_id is not None:
+                    registration_qs = registration_qs.filter(enrolled_programs__donor__id=donor_id)
 
             if program_document:
-                registration_qs = registration_qs.filter(enrolled_programs__program_document__id=program_document)
+                program_document_id = _safe_int(program_document)
+                if program_document_id is not None:
+                    registration_qs = registration_qs.filter(
+                        enrolled_programs__program_document__id=program_document_id
+                    )
 
             if start_date:
                 try:
