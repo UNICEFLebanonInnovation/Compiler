@@ -268,9 +268,6 @@ def get_outreach_child(outreach_id):
     initial['main_caregiver_nationality_other'] = instance.outreach_caregiver.caregiver_nationality_other
 
     working_status_raw = (instance.working_status or '').strip()
-    print('----------------------------')
-    print(working_status_raw)
-    print('----------------------------')
     working_status_map = {
         'yes - morning': 'Yes - Morning',
         'Yes -Morning': 'Yes - Morning',
@@ -313,10 +310,7 @@ def get_outreach_child(outreach_id):
     initial['first_phone_number_confirm'] = instance.outreach_caregiver.primary_phone
 
     first_phone_owner_raw = instance.outreach_caregiver.first_phone_owner or ''
-    first_phone_owner_key = first_phone_owner_raw.strip()
-    print('----------------------------')
-    print(first_phone_owner_key)
-    print('----------------------------')
+    first_phone_owner_key = first_phone_owner_raw.strip() 
     phone_owner_map = {
         'Phone Main Caregiver': 'Phone Main Caregiver',
         'Family Member': 'Family Member',
