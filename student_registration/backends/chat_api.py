@@ -3,10 +3,11 @@
 from __future__ import annotations
 from datetime import date, timedelta
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
-from .ai_service import execute_metric
+from .ai_service import execute_metric, ALLOWED_OPS
 from .models import Metric
 
 import json
@@ -122,6 +123,95 @@ def call_metrics_service(payload: Dict[str, Any], request=None) -> Dict[str, Any
     r = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
     r.raise_for_status()
     return r.json()
+
+
+# --- Direct metrics execution endpoint ---
+class MetricGetView(APIView):
+    """Execute a metric request and return aggregated results."""
+
+    authentication_classes = [CsrfExemptSessionAuthentication, SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def _validate_filters(self, filters, metric):
+        if filters in (None, ""):
+            return []
+        if not isinstance(filters, list):
+            raise ValueError("'filters' must be a list of objects")
+
+        allowed_fields = set(metric.allowed_filters or [])
+        cleaned = []
+        for item in filters:
+            if not isinstance(item, dict):
+                raise ValueError("Each filter must be an object")
+            field = item.get("field")
+            op = item.get("op")
+            if not field or not op:
+                raise ValueError("Each filter requires 'field' and 'op'")
+            if field not in allowed_fields and field != metric.default_time_column:
+                raise ValueError(f"Filter field '{field}' is not allowed for this metric")
+            if op not in ALLOWED_OPS:
+                raise ValueError(f"Operator '{op}' is not permitted")
+            cleaned.append({
+                "field": field,
+                "op": op,
+                "value": item.get("value"),
+            })
+        return cleaned
+
+    def post(self, request, *args, **kwargs):
+        if not isinstance(request.data, dict):
+            return Response({"error": "Invalid payload."}, status=status.HTTP_400_BAD_REQUEST)
+
+        metric_key = request.data.get("metric_key")
+        if not metric_key:
+            return Response({"error": "'metric_key' is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            metric = Metric.objects.get(key=metric_key)
+        except Metric.DoesNotExist:
+            return Response({"error": f"Unknown metric '{metric_key}'."}, status=status.HTTP_404_NOT_FOUND)
+
+        time_range = request.data.get("time_range") or {}
+        start = time_range.get("start")
+        end = time_range.get("end")
+        if not start or not end:
+            return Response(
+                {"error": "'time_range.start' and 'time_range.end' are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        breakdown_by = request.data.get("breakdown_by")
+        if not breakdown_by:
+            breakdowns = request.data.get("breakdowns") or []
+            breakdown_by = breakdowns[0] if breakdowns else "none"
+
+        allowed_breakdowns = set(metric.allowed_breakdowns or [])
+        if breakdown_by not in (allowed_breakdowns | {"none"}):
+            return Response(
+                {"error": f"Breakdown '{breakdown_by}' is not allowed for this metric."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            filters = self._validate_filters(request.data.get("filters"), metric)
+        except ValueError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            result = execute_metric(
+                metric_key=metric_key,
+                breakdown_by=breakdown_by or "none",
+                time_start=start,
+                time_end=end,
+                filters=filters,
+                user_ctx=_build_user_context(request),
+            )
+        except PermissionError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(result, status=status.HTTP_200_OK)
 
 
 # --- Tool implementations the orchestrator can execute ---
