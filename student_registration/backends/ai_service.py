@@ -68,16 +68,45 @@ def _normalize_time_value(value: Any, *, column_type: str):
     return value
 
 
+def _normalise_breakdown(breakdown_by: Any) -> tuple[str, list[str]]:
+    """Return a canonical breakdown label and the list of columns involved."""
+
+    if isinstance(breakdown_by, str):
+        text = breakdown_by.strip()
+        if not text or text.lower() == "none":
+            return "none", []
+        columns = [col.strip() for col in text.split(",") if col.strip()]
+        if not columns:
+            return "none", []
+        return ",".join(columns), columns
+
+    if isinstance(breakdown_by, (list, tuple)):
+        columns = []
+        for element in breakdown_by:
+            if element is None:
+                continue
+            text = str(element).strip()
+            if text and text.lower() != "none":
+                columns.append(text)
+        if not columns:
+            return "none", []
+        return ",".join(columns), columns
+
+    return "none", []
+
+
 def execute_metric(
     *,
     metric_key: str,
-    breakdown_by: str = "none",
+    breakdown_by: Any = "none",
     time_start: str,
     time_end: str,
     filters: List[Dict[str, Any]],
     user_ctx: Dict[str, Any],
 ) -> dict:
     m = Metric.objects.get(key=metric_key)
+
+    breakdown_label, breakdown_columns = _normalise_breakdown(breakdown_by)
 
     # Detect time column type:
     # - explicit override via metric.meta["time_column_type"]
@@ -94,7 +123,7 @@ def execute_metric(
         )
 
     # Guard: breakdown allowed?
-    if breakdown_by != "none" and breakdown_by not in (m.allowed_breakdowns or []):
+    if breakdown_label != "none" and breakdown_label not in (m.allowed_breakdowns or []):
         raise PermissionError("Breakdown not allowed")
 
     # Guard: filters allowed?
@@ -107,9 +136,10 @@ def execute_metric(
     # SELECT / GROUP BY
     select = f"SUM({m.value_column}) AS value"
     group_clause = ""
-    if breakdown_by != "none":
-        select = f"{breakdown_by}, SUM({m.value_column}) AS value"
-        group_clause = f" GROUP BY {breakdown_by} ORDER BY value DESC"
+    if breakdown_columns:
+        select_columns = ", ".join(breakdown_columns)
+        select = f"{select_columns}, SUM({m.value_column}) AS value"
+        group_clause = f" GROUP BY {select_columns} ORDER BY value DESC"
 
     # Time WHERE — use typed params (ints for year, date objects for date)
     where = [f"{m.default_time_column} >= %s", f"{m.default_time_column} < %s"]
@@ -164,7 +194,7 @@ def execute_metric(
     rounding = max(m.rounding or 1, 1)
     def r(v): return int(round(v / rounding) * rounding)
 
-    if breakdown_by == "none":
+    if not breakdown_columns:
         total = rows[0][0] if rows else 0
         if total < (m.min_sample_size or 0):
             raise PermissionError("Cohort too small")
@@ -177,14 +207,32 @@ def execute_metric(
         }
 
     out = []
-    for label, val in rows:
+    for row in rows:
+        *raw_labels, val = row
         if val >= (m.min_sample_size or 0):
-            out.append({"label": str(label), "value": r(val)})
+            labels_dict = {
+                column: raw_labels[idx] if idx < len(raw_labels) else None
+                for idx, column in enumerate(breakdown_columns)
+            }
+            display_label: Any
+            if not raw_labels:
+                display_label = None
+            elif len(raw_labels) == 1:
+                display_label = str(raw_labels[0])
+            else:
+                display_label = " | ".join("" if value is None else str(value) for value in raw_labels)
+            out.append(
+                {
+                    "label": display_label,
+                    "labels": labels_dict,
+                    "value": r(val),
+                }
+            )
 
     return {
         "metric_key": m.key,
         "unit": m.unit,
         "total": sum(x["value"] for x in out),
-        "breakdown_by": breakdown_by,
+        "breakdown_by": breakdown_label,
         "rows": out[:100],
     }

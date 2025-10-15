@@ -56,6 +56,14 @@ class _StubRepository:
                 'by_partner': [{'partner': 'Partner A', 'count': 1}],
                 'by_package_type': [{'package_type': 'Core-Package', 'count': 1}],
                 'by_governorate': [{'governorate': 'Bekaa', 'count': 1}],
+                'by_round_gender_nationality': [
+                    {
+                        'round': 'Round 2024',
+                        'gender': 'Female',
+                        'nationality': 'Lebanese',
+                        'count': 1,
+                    }
+                ],
                 'monthly_trend': [{'month': '2024-05', 'registrations': 1}],
             },
             'schools': {'total': 0, 'by_governorate': [], 'by_type': []},
@@ -74,6 +82,18 @@ def test_snapshot_uses_materialised_metrics(mock_execute_metric, user):
         'governorate': {'rows': [{'label': 'Bekaa', 'value': 3}]},
         'round_id': {'rows': [{'label': 'Round 2024', 'value': 3}]},
         'month': {'rows': [{'label': '2024-04-01', 'value': 1}, {'label': '2024-05-01', 'value': 2}]},
+        'round_id,child_gender_norm,child_nationality_name': {
+            'rows': [
+                {
+                    'labels': {
+                        'round_id': 'Round 2024',
+                        'child_gender_norm': 'Female',
+                        'child_nationality_name': 'Lebanese',
+                    },
+                    'value': 2,
+                }
+            ]
+        },
     }
 
     def side_effect(**kwargs):
@@ -91,9 +111,15 @@ def test_snapshot_uses_materialised_metrics(mock_execute_metric, user):
     assert snapshot['registrations']['total'] == 3
     assert snapshot['registrations']['by_partner'][0]['partner'] == 'Partner A'
     assert snapshot['registrations']['monthly_trend'][-1] == {'month': '2024-05', 'registrations': 2}
+    assert snapshot['registrations']['by_round_gender_nationality'][0]['gender'] == 'Female'
 
     called_breakdowns = {kwargs['breakdown_by'] for _, kwargs in mock_execute_metric.call_args_list}
-    assert {'none', 'partner_id', 'month'}.issubset(called_breakdowns)
+    assert {
+        'none',
+        'partner_id',
+        'month',
+        'round_id,child_gender_norm,child_nationality_name',
+    }.issubset(called_breakdowns)
 
     for _, kwargs in mock_execute_metric.call_args_list:
         assert kwargs['metric_key'] == 'mscc_registrations_total'

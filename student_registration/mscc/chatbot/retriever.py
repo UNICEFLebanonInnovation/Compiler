@@ -128,7 +128,15 @@ class BMAInsightsRetriever:
                 metadata={"category": "registrations", "label": "Registrations"},
             )
 
-        for group_key in ("by_round", "by_partner", "by_governorate", "by_gender", "by_nationality", "by_package_type"):
+        for group_key in (
+            "by_round",
+            "by_partner",
+            "by_governorate",
+            "by_gender",
+            "by_nationality",
+            "by_package_type",
+            "by_round_gender_nationality",
+        ):
             for item in registrations.get(group_key, []):
                 text = self._format_group_item(group_key, item, noun="registrations")
                 if text:

@@ -51,6 +51,15 @@ class BMAInsightsRepository:
             "by_governorate": self._metric_breakdown(
                 "governorate", label_key="governorate", limit=10
             ),
+            "by_round_gender_nationality": self._metric_multi_breakdown(
+                ("round_id", "child_gender_norm", "child_nationality_name"),
+                label_map={
+                    "round_id": "round",
+                    "child_gender_norm": "gender",
+                    "child_nationality_name": "nationality",
+                },
+                limit=50,
+            ),
             "monthly_trend": self._monthly_trend(months=12),
         }
         return snapshot
@@ -71,13 +80,45 @@ class BMAInsightsRepository:
         rows: Iterable[Dict[str, Any]] = result.get("rows", []) or []
         items: List[Dict[str, Any]] = []
         for row in rows:
-            label = self._normalise_value(row.get("label"))
             value = row.get("value")
             try:
                 count = int(value)
             except (TypeError, ValueError):
                 count = 0
+            label = self._normalise_value(row.get("label"))
             items.append({label_key: label, "count": count})
+
+        if limit is not None:
+            items = items[:limit]
+        return items
+
+    def _metric_multi_breakdown(
+        self,
+        breakdown: Iterable[str],
+        *,
+        label_map: Dict[str, str],
+        limit: Optional[int] = None,
+    ) -> List[Dict[str, Any]]:
+        breakdown_str = ",".join(str(part) for part in breakdown)
+        result = self._execute_metric(breakdown_str)
+        rows: Iterable[Dict[str, Any]] = result.get("rows", []) or []
+        items: List[Dict[str, Any]] = []
+        for row in rows:
+            labels = row.get("labels")
+            value = row.get("value")
+            try:
+                count = int(value)
+            except (TypeError, ValueError):
+                count = 0
+            entry: Dict[str, Any] = {"count": count}
+            if isinstance(labels, dict):
+                for field, key in label_map.items():
+                    entry[key] = self._normalise_value(labels.get(field))
+            else:
+                label = self._normalise_value(row.get("label"))
+                for key in label_map.values():
+                    entry.setdefault(key, label)
+            items.append(entry)
 
         if limit is not None:
             items = items[:limit]
