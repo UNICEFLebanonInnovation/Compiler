@@ -23,6 +23,17 @@ class BMAChatbotPageView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class BMAMetricsAgentPageView(LoginRequiredMixin, TemplateView):
+    """Render the HTML page used to interact with the metrics agent."""
+
+    template_name = "mscc/bma_metrics_agent.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.setdefault("page_title", "BMA Metrics Assistant")
+        return context
+
+
 class BMAChatViewSet(viewsets.ViewSet):
     """Expose the ChatGPT-powered BMA assistant as a REST endpoint."""
 
