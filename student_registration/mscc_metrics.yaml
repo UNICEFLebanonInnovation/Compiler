@@ -1,0 +1,632 @@
+# apps/metrics/seeds/mscc_metrics.yaml
+# Covers: registrations, education status/program, dropouts, outreach, digital usage, attendance, age/gender
+# Time columns:
+#   - monthly MVs: month
+#   - age/gender pyramid: year
+
+##############################################################################
+# REGISTRATIONS (TOTALS & BREAKDOWNS)
+##############################################################################
+- key: mscc_registrations_total
+  label: MSCC Registrations (Total)
+  description: Count of child registrations in the selected period.
+  sql_view: mv_mscc_registrations_monthly
+  value_column: value
+  default_time_column: month
+  unit: registrations
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - caza
+    - cadaster
+    - child_gender
+    - child_gender_norm
+    - child_nationality_name
+    - partner_id
+    - center_type
+    - cycle
+    - round_id
+    - age_band
+  allowed_filters:
+    - governorate
+    - caza
+    - cadaster
+    - child_gender
+    - child_gender_norm
+    - child_nationality_name
+    - partner_id
+    - center_type
+    - cycle
+    - round_id
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, volume]
+
+##############################################################################
+# EDUCATION STATUS
+##############################################################################
+- key: mscc_education_status_breakdown
+  label: Education Status Breakdown
+  description: Registrations by education_status.
+  sql_view: mv_mscc_edu_status_monthly
+  value_column: value
+  default_time_column: month
+  unit: registrations
+  allowed_breakdowns:
+    - education_status
+    - month
+    - governorate
+    - child_gender
+    - child_gender_norm
+    - partner_id
+    - cycle
+  allowed_filters:
+    - education_status
+    - governorate
+    - child_gender
+    - child_gender_norm
+    - partner_id
+    - cycle
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, status]
+
+##############################################################################
+# EDUCATION PROGRAM
+##############################################################################
+- key: mscc_program_breakdown
+  label: Education Program Breakdown
+  description: Registrations by education_program.
+  sql_view: mv_mscc_program_monthly
+  value_column: value
+  default_time_column: month
+  unit: registrations
+  allowed_breakdowns:
+    - education_program
+    - month
+    - center_type
+    - partner_id
+    - cycle
+    - round_id
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - education_program
+    - center_type
+    - partner_id
+    - cycle
+    - round_id
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, program]
+
+##############################################################################
+# DROPOUTS (TOTAL + RATE)
+##############################################################################
+- key: mscc_dropout_total
+  label: Dropouts (Total)
+  description: Number of registrations with dropout in the selected period.
+  sql_view: mv_mscc_dropout_monthly
+  value_column: value
+  default_time_column: month
+  unit: registrations
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, dropout]
+
+# --- Dropout Rate (from MV) ---
+- key: mscc_dropout_rate
+  label: Dropout Rate
+  description: Share of registrations that dropped out in the selected period.
+  sql_view: mv_mscc_dropout_rate_monthly
+  value_column: rate_pct
+  default_time_column: month
+  unit: percent
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 1
+  rounding: 1          # must be one of 1,2,5,10,20,50,100
+  min_sample_size: 30
+  freshness_sla_minutes: 60
+  tags: [mscc, dropout, rate]
+
+# --- Outreach Yes Rate ---
+- key: mscc_outreach_yes_rate
+  label: Outreach Yes Rate
+  description: Share of registrations with outreach_status = 'Yes'.
+  sql_view: mv_mscc_outreach_yes_rate_monthly
+  value_column: rate_pct
+  default_time_column: month
+  unit: percent
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 1
+  rounding: 1
+  min_sample_size: 30
+  freshness_sla_minutes: 60
+  tags: [mscc, outreach, rate]
+
+# --- LP Usage Rate ---
+- key: mscc_digital_lp_rate
+  label: LP Usage Rate
+  description: Share of registrations using Learning Passport.
+  sql_view: mv_mscc_digital_rates_monthly
+  value_column: lp_rate_pct
+  default_time_column: month
+  unit: percent
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 1
+  rounding: 1
+  min_sample_size: 30
+  freshness_sla_minutes: 60
+  tags: [mscc, digital, lp, rate]
+
+# --- Akelius Usage Rate ---
+- key: mscc_digital_akelius_rate
+  label: Akelius Usage Rate
+  description: Share of registrations using Akelius.
+  sql_view: mv_mscc_digital_rates_monthly
+  value_column: akelius_rate_pct
+  default_time_column: month
+  unit: percent
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 1
+  rounding: 1
+  min_sample_size: 30
+  freshness_sla_minutes: 60
+  tags: [mscc, digital, akelius, rate]
+
+# --- Attendance Absence Rate ---
+- key: mscc_attendance_absence_rate
+  label: Absence Rate
+  description: Share of sessions missed by registered children.
+  sql_view: mv_mscc_attendance_rates_monthly
+  value_column: absence_rate_pct
+  default_time_column: month
+  unit: percent
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 1
+  rounding: 1
+  min_sample_size: 30
+  freshness_sla_minutes: 60
+  tags: [mscc, attendance, rate]
+
+##############################################################################
+# OUTREACH (TOTAL + RATE)
+##############################################################################
+- key: mscc_outreach_total
+  label: Outreach (Total)
+  description: Number of registrations with outreach status (Yes/No).
+  sql_view: mv_mscc_outreach_monthly
+  value_column: value
+  default_time_column: month
+  unit: registrations
+  allowed_breakdowns:
+    - outreach_status
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - outreach_status
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, outreach]
+
+##############################################################################
+# DIGITAL USAGE (TOTALS + RATES)
+##############################################################################
+- key: mscc_digital_lp_users
+  label: Digital – LP Users
+  description: Count of registrations using Learning Passport.
+  sql_view: mv_mscc_digital_usage_monthly
+  value_column: lp_users
+  default_time_column: month
+  unit: users
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, digital, lp]
+
+- key: mscc_digital_akelius_users
+  label: Digital – Akelius Users
+  description: Count of registrations using Akelius.
+  sql_view: mv_mscc_digital_usage_monthly
+  value_column: akelius_users
+  default_time_column: month
+  unit: users
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, digital, akelius]
+
+- key: mscc_digital_total
+  label: Digital – Registrations (Total)
+  description: Total registrations used to compute digital usage rates.
+  sql_view: mv_mscc_digital_usage_monthly
+  value_column: total
+  default_time_column: month
+  unit: registrations
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, digital]
+
+##############################################################################
+# ATTENDANCE (TOTALS + RATES)
+##############################################################################
+- key: mscc_attendance_total_attended
+  label: Attendance – Sessions Attended
+  description: Total attended sessions summed across registrations.
+  sql_view: mv_mscc_attendance_monthly
+  value_column: total_attended
+  default_time_column: month
+  unit: sessions
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, attendance]
+
+- key: mscc_attendance_total_absence
+  label: Attendance – Sessions Absent
+  description: Total absence sessions summed across registrations.
+  sql_view: mv_mscc_attendance_monthly
+  value_column: total_absence
+  default_time_column: month
+  unit: sessions
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, attendance]
+
+- key: mscc_attendance_registrations
+  label: Attendance – Registrations (Denominator)
+  description: Number of registrations contributing to attendance sums.
+  sql_view: mv_mscc_attendance_monthly
+  value_column: registrations
+  default_time_column: month
+  unit: registrations
+  allowed_breakdowns:
+    - none
+    - month
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  allowed_filters:
+    - governorate
+    - partner_id
+    - cycle
+    - child_gender
+    - child_gender_norm
+    - age_band
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, attendance]
+
+# Avg attendance per registration = total_attended / registrations
+#- key: mscc_attendance_avg_attended_per_reg
+#  label: Avg Attended Sessions per Registration
+#  description: Average attended sessions per registration.
+#  derived: ratio
+#  numerator_key: mscc_attendance_total_attended
+#  denominator_key: mscc_attendance_registrations
+#  unit: sessions_per_registration
+#  decimals: 2
+#  min_sample_size: 30
+#  rounding: 0.01
+#  freshness_sla_minutes: 60
+#  tags: [mscc, attendance, rate]
+
+
+##############################################################################
+# AGE / GENDER PYRAMID (YEARLY)
+##############################################################################
+- key: mscc_age_gender_yearly
+  label: Age–Gender Pyramid (Yearly)
+  description: Registrations by integer age and gender per calendar year.
+  sql_view: mv_mscc_age_gender_yearly
+  value_column: value
+  default_time_column: year_date
+  unit: registrations
+  allowed_breakdowns:
+    - year
+    - child_gender
+    - child_gender_norm
+    - age_years
+  allowed_filters:
+    - child_gender
+    - child_gender_norm
+    - age_years
+    - year
+  decimals: 0
+  min_sample_size: 15
+  rounding: 5
+  freshness_sla_minutes: 60
+  tags: [mscc, age, gender]
+  meta:
+    time_column_type: year
+
+##############################################################################
+# SHORTCUTS: FEMALE/MALE FILTERED TOTALS (OPTIONAL)
+##############################################################################
+#- key: mscc_registrations_female
+#  label: Registrations – Female
+#  description: Female registrations in the selected period.
+#  sql_view: mv_mscc_registrations_monthly
+#  value_column: value
+#  default_time_column: month
+#  unit: registrations
+#  static_filters:
+#    - field: child_gender_norm
+#      op: in
+#      value: ["F","FEMALE"]
+#  allowed_breakdowns:
+#    - none
+#    - month
+#    - governorate
+#    - caza
+#    - cadaster
+#    - child_nationality_name
+#    - partner_id
+#    - center_type
+#    - cycle
+#    - round_id
+#    - age_band
+#  allowed_filters:
+#    - governorate
+#    - caza
+#    - cadaster
+#    - child_nationality_name
+#    - partner_id
+#    - center_type
+#    - cycle
+#    - round_id
+#    - age_band
+#  decimals: 0
+#  min_sample_size: 15
+#  rounding: 5
+#  freshness_sla_minutes: 60
+#  tags: [mscc, volume, female]
+
+#- key: mscc_registrations_male
+#  label: Registrations – Male
+#  description: Male registrations in the selected period.
+#  sql_view: mv_mscc_registrations_monthly
+#  value_column: value
+#  default_time_column: month
+#  unit: registrations
+#  static_filters:
+#    - field: child_gender_norm
+#      op: in
+#      value: ["M","MALE"]
+#  allowed_breakdowns:
+#    - none
+#    - month
+#    - governorate
+#    - caza
+#    - cadaster
+#    - child_nationality_name
+#    - partner_id
+#    - center_type
+#    - cycle
+#    - round_id
+#    - age_band
+#  allowed_filters:
+#    - governorate
+#    - caza
+#    - cadaster
+#    - child_nationality_name
+#    - partner_id
+#    - center_type
+#    - cycle
+#    - round_id
+#    - age_band
+#  decimals: 0
+#  min_sample_size: 15
+#  rounding: 5
+#  freshness_sla_minutes: 60
+#  tags: [mscc, volume, male]

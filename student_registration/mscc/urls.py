@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.urls import re_path
 
 from . import views, education_view, services_view, attendance_views
+from student_registration.mscc.chatbot.views import BMAChatbotPageView
 
 app_name = 'mscc'
 
@@ -12,6 +13,11 @@ urlpatterns = [
         r'^child-add/$',
         view=views.MainAddView.as_view(),
         name='child_add'
+    ),
+    re_path(
+        r'^chatbot/$',
+        view=BMAChatbotPageView.as_view(),
+        name='chatbot'
     ),
     re_path(
         r'^child-edit/(?P<pk>[\w.@+-]+)/$',

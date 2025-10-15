@@ -8,7 +8,7 @@ from django.template.response import TemplateResponse
 
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
-from .models import Exporter, Notification, ExportHistory, UserActivity
+from .models import Exporter, Notification, ExportHistory, UserActivity, Metric
 from student_registration.users.models import User
 from student_registration.schools.models import School
 
@@ -211,6 +211,20 @@ class UserActivityAdmin(admin.ModelAdmin):
         return TemplateResponse(request, 'admin/user_activity_dashboard.html', context)
 
 
+class MetricAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'key',
+        'label',
+        'description',
+        'sql_view',
+        'value_column',
+        'allowed_breakdowns',
+        'allowed_filters',
+        'default_time_column',
+    )
+
 
 admin.site.register(ExportHistory, ExportHistoryAdmin)
 admin.site.register(UserActivity, UserActivityAdmin)
+admin.site.register(Metric, MetricAdmin)
