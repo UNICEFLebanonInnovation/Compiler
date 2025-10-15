@@ -28,6 +28,7 @@
     - cycle
     - round_id
     - age_band
+    - age_years
   allowed_filters:
     - governorate
     - caza

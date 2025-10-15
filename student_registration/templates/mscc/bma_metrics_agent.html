@@ -1,0 +1,446 @@
+{% extends "mscc/base.html" %}
+{% load static i18n %}
+
+{% block project_title %}{% trans "BMA Metrics Assistant" %}{% endblock %}
+{% block module_name %}{% trans "Makani - BMA Metrics Assistant" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+  .metrics-card-placeholder {
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .metrics-query {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e6eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    max-height: 260px;
+    overflow: auto;
+  }
+
+  .metrics-result-table table {
+    width: 100%;
+  }
+
+  .metrics-result-table thead th {
+    background-color: #f1f3f5;
+    border-bottom: 2px solid #dee2e6;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .metrics-result-table tbody td {
+    vertical-align: top;
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div>
+        <div class="page-title-head center-elem page-title-heading">
+          <span class="d-inline-block pr-2">
+            <i class="pe-7s-graph1"></i>
+          </span>
+          <span class="d-inline-block">{% trans "BMA Metrics Assistant" %}</span>
+        </div>
+        <div class="page-title-subheading">
+          {% trans "Ask analytical questions and the assistant will suggest and run the best fitting metric." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-4">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="card-title mb-0">{% trans "Ask the assistant" %}</h5>
+      </div>
+      <div class="card-body">
+        <div id="metrics-error" class="alert alert-danger d-none" role="alert"></div>
+        <form id="metrics-form" novalidate>
+          <div class="form-group">
+            <label for="metrics-question" class="font-weight-bold">{% trans "Question" %}</label>
+            <textarea id="metrics-question" class="form-control" rows="5" placeholder="{% trans "e.g. How many beneficiaries attended Makani sessions last quarter?" %}" required></textarea>
+            <small class="form-text text-muted">{% trans "Use plain English. Mention locations, time frames or groups if relevant." %}</small>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="metrics-top-k" class="font-weight-bold">{% trans "Suggestions" %}</label>
+              <input id="metrics-top-k" type="number" class="form-control" min="1" max="10" value="3">
+              <small class="form-text text-muted">{% trans "Controls how many similar metrics to surface." %}</small>
+            </div>
+            <div class="form-group col-md-6 align-self-end">
+              <div class="form-check">
+                <input id="metrics-include-suggestions" class="form-check-input" type="checkbox" checked>
+                <label class="form-check-label" for="metrics-include-suggestions">{% trans "Show suggestions" %}</label>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <button id="metrics-submit" type="submit" class="btn btn-primary mr-3">
+              {% trans "Run metric" %}
+            </button>
+            <div id="metrics-loader" class="spinner-border spinner-border-sm text-primary d-none" role="status" aria-hidden="true"></div>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-muted small" id="metrics-status"></div>
+    </div>
+  </div>
+  <div class="col-xl-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center">
+        <div>
+          <h5 class="card-title mb-1">{% trans "Latest answer" %}</h5>
+          <p class="card-subtitle text-muted mb-0">{% trans "The assistant explains the selected metric, the query and the returned data." %}</p>
+        </div>
+        <span class="badge badge-info mt-2 mt-lg-0">{% trans "Preview" %}</span>
+      </div>
+      <div class="card-body">
+        <p id="metrics-placeholder" class="metrics-card-placeholder mb-0">{% trans "Ask a question to see metric results." %}</p>
+        <div id="metrics-response" class="d-none">
+          <p id="metrics-summary" class="lead"></p>
+          <div class="mb-3" id="metrics-result-summary"></div>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-muted font-weight-bold">{% trans "Selected metric" %}</h6>
+            <dl class="row mb-0" id="metrics-selected-metric"></dl>
+          </div>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-muted font-weight-bold">{% trans "Query" %}</h6>
+            <pre id="metrics-query" class="metrics-query text-monospace small"></pre>
+          </div>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-muted font-weight-bold">{% trans "Result" %}</h6>
+            <div id="metrics-result" class="metrics-result-table"></div>
+          </div>
+          <div class="mb-3 d-none" id="metrics-suggestions">
+            <h6 class="text-uppercase text-muted font-weight-bold">{% trans "Similar metrics" %}</h6>
+            <ul id="metrics-suggestions-list" class="list-unstyled mb-0"></ul>
+          </div>
+          <p id="metrics-timestamp" class="text-muted small mb-0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+  (function() {
+    'use strict';
+
+    const form = document.getElementById('metrics-form');
+    if (!form) {
+      return;
+    }
+
+    const questionInput = document.getElementById('metrics-question');
+    const topKInput = document.getElementById('metrics-top-k');
+    const suggestionsInput = document.getElementById('metrics-include-suggestions');
+    const submitButton = document.getElementById('metrics-submit');
+    const loaderElement = document.getElementById('metrics-loader');
+    const errorElement = document.getElementById('metrics-error');
+    const statusElement = document.getElementById('metrics-status');
+    const placeholder = document.getElementById('metrics-placeholder');
+    const response = document.getElementById('metrics-response');
+    const summaryElement = document.getElementById('metrics-summary');
+    const resultSummary = document.getElementById('metrics-result-summary');
+    const metricDetails = document.getElementById('metrics-selected-metric');
+    const queryElement = document.getElementById('metrics-query');
+    const resultContainer = document.getElementById('metrics-result');
+    const suggestionsContainer = document.getElementById('metrics-suggestions');
+    const suggestionsList = document.getElementById('metrics-suggestions-list');
+    const timestampElement = document.getElementById('metrics-timestamp');
+
+    function getCookie(name) {
+      const cookies = document.cookie ? document.cookie.split(';') : [];
+      for (let i = 0; i < cookies.length; i += 1) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          return decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      }
+      return null;
+    }
+
+    function setLoading(isLoading) {
+      submitButton.disabled = isLoading;
+      questionInput.disabled = isLoading;
+      topKInput.disabled = isLoading;
+      suggestionsInput.disabled = isLoading;
+      if (isLoading) {
+        loaderElement.classList.remove('d-none');
+        loaderElement.setAttribute('aria-hidden', 'false');
+        statusElement.textContent = '{% trans "Contacting the assistant…" %}';
+      } else {
+        loaderElement.classList.add('d-none');
+        loaderElement.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    function clearError() {
+      errorElement.classList.add('d-none');
+      errorElement.textContent = '';
+    }
+
+    function showError(message) {
+      errorElement.textContent = message;
+      errorElement.classList.remove('d-none');
+    }
+
+    function ensureResponseVisible() {
+      if (response.classList.contains('d-none')) {
+        response.classList.remove('d-none');
+      }
+      placeholder.classList.add('d-none');
+    }
+
+    function renderMetricDetails(metric) {
+      metricDetails.innerHTML = '';
+      if (!metric) {
+        return;
+      }
+      const items = [
+        { label: '{% trans "Label" %}', value: metric.label || metric.key || '' },
+        { label: '{% trans "Key" %}', value: metric.key || '' },
+        { label: '{% trans "Description" %}', value: metric.description || '' },
+        { label: '{% trans "Materialized view" %}', value: metric.sql_view || '' }
+      ];
+      items.forEach(function(item) {
+        const term = document.createElement('dt');
+        term.className = 'col-sm-4 text-muted';
+        term.textContent = item.label;
+        const description = document.createElement('dd');
+        description.className = 'col-sm-8';
+        description.textContent = item.value || '—';
+        metricDetails.appendChild(term);
+        metricDetails.appendChild(description);
+      });
+    }
+
+    function renderQuery(query) {
+      if (!query) {
+        queryElement.textContent = '';
+        return;
+      }
+      try {
+        queryElement.textContent = JSON.stringify(query, null, 2);
+      } catch (err) {
+        queryElement.textContent = String(query);
+      }
+    }
+
+    function createTable(rows) {
+      const table = document.createElement('table');
+      table.className = 'table table-sm table-striped table-bordered mb-0';
+
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      const columns = [];
+      rows.forEach(function(row) {
+        Object.keys(row || {}).forEach(function(key) {
+          if (columns.indexOf(key) === -1) {
+            columns.push(key);
+          }
+        });
+      });
+
+      columns.forEach(function(column) {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.textContent = column;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      rows.forEach(function(row) {
+        const tr = document.createElement('tr');
+        columns.forEach(function(column) {
+          const td = document.createElement('td');
+          const value = row && Object.prototype.hasOwnProperty.call(row, column) ? row[column] : '';
+          if (value === null || value === undefined) {
+            td.textContent = '';
+          } else if (typeof value === 'object') {
+            td.textContent = JSON.stringify(value);
+          } else {
+            td.textContent = String(value);
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      return table;
+    }
+
+    function renderResult(result) {
+      resultContainer.innerHTML = '';
+      resultSummary.innerHTML = '';
+      if (!result) {
+        resultContainer.textContent = '{% trans "No data returned." %}';
+        return;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(result, 'total')) {
+        const totalBadge = document.createElement('span');
+        totalBadge.className = 'badge badge-primary mr-2';
+        totalBadge.textContent = '{% trans "Total" %}';
+
+        const totalValue = document.createElement('span');
+        const unit = result.unit ? ' ' + result.unit : '';
+        totalValue.textContent = String(result.total) + unit;
+
+        const totalWrapper = document.createElement('p');
+        totalWrapper.appendChild(totalBadge);
+        totalWrapper.appendChild(totalValue);
+        resultSummary.appendChild(totalWrapper);
+      }
+
+      const updated = result.last_modified || result.generated_at || result.as_of;
+      if (updated) {
+        const info = document.createElement('p');
+        info.className = 'text-muted small mb-2';
+        info.textContent = '{% trans "Data timestamp:" %} ' + updated;
+        resultSummary.appendChild(info);
+      }
+
+      if (Array.isArray(result.rows) && result.rows.length) {
+        const table = createTable(result.rows);
+        resultContainer.appendChild(table);
+      } else if (result.rows && typeof result.rows === 'object') {
+        const pre = document.createElement('pre');
+        pre.className = 'metrics-query text-monospace small';
+        pre.textContent = JSON.stringify(result.rows, null, 2);
+        resultContainer.appendChild(pre);
+      } else {
+        const message = document.createElement('p');
+        message.className = 'mb-0';
+        message.textContent = '{% trans "No tabular rows were returned." %}';
+        resultContainer.appendChild(message);
+      }
+    }
+
+    function renderSuggestions(suggestions) {
+      suggestionsList.innerHTML = '';
+      if (!Array.isArray(suggestions) || !suggestions.length) {
+        suggestionsContainer.classList.add('d-none');
+        return;
+      }
+
+      suggestions.forEach(function(item) {
+        const li = document.createElement('li');
+        const title = document.createElement('div');
+        title.className = 'font-weight-bold';
+        title.textContent = item.label || item.metric_key;
+        const summary = document.createElement('div');
+        summary.className = 'text-muted small';
+        summary.textContent = item.summary || '';
+        const meta = document.createElement('div');
+        meta.className = 'text-muted small';
+        meta.textContent = item.metric_key || '';
+        li.appendChild(title);
+        if (summary.textContent) {
+          li.appendChild(summary);
+        }
+        if (meta.textContent) {
+          li.appendChild(meta);
+        }
+        li.className = 'mb-2';
+        suggestionsList.appendChild(li);
+      });
+
+      suggestionsContainer.classList.remove('d-none');
+    }
+
+    function handleSuccess(data) {
+      ensureResponseVisible();
+      clearError();
+
+      summaryElement.textContent = data.explanation || '';
+      renderMetricDetails(data.selected_metric || {});
+      renderQuery(data.query || {});
+      renderResult(data.result || {});
+      renderSuggestions(data.similarity_suggestions || []);
+
+      const now = new Date();
+      timestampElement.textContent = '{% trans "Answered at" %} ' + now.toLocaleTimeString();
+      statusElement.textContent = '{% trans "Metric executed successfully." %}';
+    }
+
+    function handleError(message) {
+      if (message) {
+        showError(message);
+      } else {
+        showError('{% trans "The metrics assistant is temporarily unavailable." %}');
+      }
+      statusElement.textContent = '';
+    }
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      clearError();
+
+      const question = (questionInput.value || '').trim();
+      if (!question) {
+        questionInput.focus();
+        return;
+      }
+
+      const payload = { question: question };
+      const topKValue = parseInt(topKInput.value, 10);
+      if (!Number.isNaN(topKValue) && topKValue > 0) {
+        payload.top_k = topKValue;
+      }
+      payload.include_suggestions = !!suggestionsInput.checked;
+
+      setLoading(true);
+
+      fetch('/api/bma-chatbot/metrics-agent/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') || ''
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function(response) {
+          if (response.ok) {
+            return response.json();
+          }
+          return response.json()
+            .then(function(body) {
+              if (body && body.detail) {
+                throw new Error(body.detail);
+              }
+              throw new Error('{% trans "Unexpected error from the assistant." %}');
+            })
+            .catch(function(err) {
+              throw err instanceof Error ? err : new Error('{% trans "Unable to reach the assistant." %}');
+            });
+        })
+        .then(function(data) {
+          handleSuccess(data || {});
+        })
+        .catch(function(error) {
+          handleError(error && error.message);
+        })
+        .finally(function() {
+          setLoading(false);
+        });
+    });
+  })();
+</script>
+{% endblock extra_js %}
