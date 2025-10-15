@@ -120,7 +120,26 @@ def call_metrics_service(payload: Dict[str, Any], request=None) -> Dict[str, Any
     if token:
         headers["Authorization"] = f"Token {token}"
 
-    r = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
+    session = requests.Session()
+
+    if request is not None:
+        # Reuse the caller's authentication context when available so that
+        # SessionAuthentication/BasicAuthentication checks on the internal
+        # endpoint succeed. This mirrors a browser request that already has a
+        # logged-in session cookie or Authorization header.
+        try:
+            cookies = getattr(request, "COOKIES", None) or {}
+            if cookies:
+                session.cookies.update(cookies)
+        except Exception:
+            pass
+
+        if "Authorization" not in headers:
+            auth_header = getattr(request, "META", {}).get("HTTP_AUTHORIZATION")
+            if auth_header:
+                headers["Authorization"] = auth_header
+
+    r = session.post(url, headers=headers, data=json.dumps(payload), timeout=60)
     r.raise_for_status()
     return r.json()
 
