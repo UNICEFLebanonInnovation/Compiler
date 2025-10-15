@@ -27,8 +27,17 @@ class BMAChatService:
             self.status_code = status_code
 
     retriever_class = BMAInsightsRetriever
+    repository_class = BMAInsightsRepository
 
-    def __init__(self, user, *, client=None, sleep=None, retriever_class=None):
+    def __init__(
+        self,
+        user,
+        *,
+        client=None,
+        sleep=None,
+        retriever_class=None,
+        repository_class=None,
+    ):
         self.user = user
         self._client = client
         self.model = getattr(settings, "OPENAI_BMA_MODEL", "gpt-4o-mini")
@@ -39,7 +48,8 @@ class BMAChatService:
             float(getattr(settings, "OPENAI_BMA_RETRY_BACKOFF", 1.0)), 0.0
         )
         self._sleep = sleep or time.sleep
-        self.repository = BMAInsightsRepository(user)
+        repository_cls = repository_class or self.repository_class
+        self.repository = repository_cls(user)
         self._retriever_class = retriever_class or self.retriever_class
 
     # Public API ---------------------------------------------------------------

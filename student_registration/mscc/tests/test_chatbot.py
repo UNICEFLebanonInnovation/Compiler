@@ -1,7 +1,6 @@
 import os
 import pathlib
 import sys
-from datetime import date
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -21,15 +20,10 @@ django.setup()
 
 from django.contrib.auth import get_user_model  # noqa: E402
 
-from student_registration.child.models import Child  # noqa: E402
-from student_registration.locations.models import Center, Location, LocationType  # noqa: E402
 from student_registration.mscc.chatbot.repository import BMAInsightsRepository  # noqa: E402
 from student_registration.mscc.chatbot.retriever import BMAInsightsRetriever  # noqa: E402
 from student_registration.mscc.chatbot.services import BMAChatService  # noqa: E402
 from student_registration.mscc.chatbot.views import BMAChatViewSet  # noqa: E402
-from student_registration.mscc.models import Registration, Round  # noqa: E402
-from student_registration.schools.models import PartnerOrganization  # noqa: E402
-from student_registration.students.models import Nationality  # noqa: E402
 
 
 @pytest.fixture()
@@ -38,61 +32,74 @@ def user(db):
     return user_model.objects.create_user(username='analyst', password='pwd12345')
 
 
-def _build_locations():
-    gov_type = LocationType.objects.create(name='Governorate')
-    district_type = LocationType.objects.create(name='District')
-    cadaster_type = LocationType.objects.create(name='Cadaster')
+class _StubRepository:
+    """Simple repository stub returning a deterministic snapshot."""
 
-    governorate = Location.objects.create(name='Bekaa', type=gov_type)
-    district = Location.objects.create(name='West Bekaa', type=district_type, parent=governorate)
-    cadaster = Location.objects.create(name='Kamed', type=cadaster_type, parent=district)
-    return governorate, district, cadaster
+    def __init__(self, user):
+        self.user = user
+
+    def build_snapshot(self):
+        username = getattr(self.user, 'username', None)
+        snapshot_time_range = {'start': '2024-01-01', 'end': '2024-06-01'}
+        return {
+            'generated_at': '2024-06-01T00:00:00',
+            'time_range': snapshot_time_range,
+            'scope': {'type': 'scoped', 'username': username},
+            'source': 'metrics',
+            'registrations': {
+                'total': 1,
+                'time_range': snapshot_time_range,
+                'records': [],
+                'by_round': [{'round': 'Round 2024', 'count': 1}],
+                'by_gender': [{'gender': 'Female', 'count': 1}],
+                'by_nationality': [{'nationality': 'Lebanese', 'count': 1}],
+                'by_partner': [{'partner': 'Partner A', 'count': 1}],
+                'by_package_type': [{'package_type': 'Core-Package', 'count': 1}],
+                'by_governorate': [{'governorate': 'Bekaa', 'count': 1}],
+                'monthly_trend': [{'month': '2024-05', 'registrations': 1}],
+            },
+            'schools': {'total': 0, 'by_governorate': [], 'by_type': []},
+            'centers': {'total': 0, 'by_governorate': [], 'by_partner': []},
+        }
 
 
-@pytest.mark.django_db
-def test_snapshot_returns_basic_registration_records(user):
-    partner = PartnerOrganization.objects.create(name='Partner A')
-    user.partner = partner
-    user.save(update_fields=['partner'])
+@patch('student_registration.mscc.chatbot.repository.execute_metric')
+def test_snapshot_uses_materialised_metrics(mock_execute_metric, user):
+    responses = {
+        'none': {'total': 3, 'rows': []},
+        'partner_id': {'rows': [{'label': 'Partner A', 'value': 2}, {'label': 'Partner B', 'value': 1}]},
+        'child_gender_norm': {'rows': [{'label': 'Female', 'value': 2}]},
+        'child_nationality_name': {'rows': [{'label': 'Lebanese', 'value': 3}]},
+        'cycle': {'rows': [{'label': 'Core-Package', 'value': 3}]},
+        'governorate': {'rows': [{'label': 'Bekaa', 'value': 3}]},
+        'round_id': {'rows': [{'label': 'Round 2024', 'value': 3}]},
+        'month': {'rows': [{'label': '2024-04-01', 'value': 1}, {'label': '2024-05-01', 'value': 2}]},
+    }
 
-    governorate, district, cadaster = _build_locations()
+    def side_effect(**kwargs):
+        breakdown = kwargs.get('breakdown_by', 'none')
+        payload = responses.get(breakdown, {'rows': []})
+        result = {'metric_key': kwargs['metric_key'], 'breakdown_by': breakdown}
+        result.update(payload)
+        return result
 
-    center = Center.objects.create(
-        name='Center 1',
-        partner=partner,
-        governorate=governorate,
-        caza=district,
-        cadaster=cadaster,
-    )
-
-    nationality = Nationality.objects.create(name='Lebanese', name_en='Lebanese')
-    child = Child.objects.create(
-        first_name='Ali',
-        last_name='Hassan',
-        gender='Male',
-        nationality=nationality,
-    )
-    round_obj = Round.objects.create(name='Round 2024', year=2024)
-
-    registration = Registration.objects.create(
-        center=center,
-        child=child,
-        partner=partner,
-        round=round_obj,
-        type='Core-Package',
-        registration_date=date(2024, 5, 1),
-        owner=user,
-    )
+    mock_execute_metric.side_effect = side_effect
 
     snapshot = BMAInsightsRepository(user).build_snapshot()
 
-    assert snapshot['registrations']['total'] == 1
-    record = snapshot['registrations']['records'][0]
-    assert record['id'] == registration.id
-    assert record['child_name'] == 'Ali Hassan'
-    assert record['partner'] == 'Partner A'
-    assert record['center'] == 'Center 1'
-    assert record['round'] == 'Round 2024'
+    assert snapshot['source'] == 'metrics'
+    assert snapshot['registrations']['total'] == 3
+    assert snapshot['registrations']['by_partner'][0]['partner'] == 'Partner A'
+    assert snapshot['registrations']['monthly_trend'][-1] == {'month': '2024-05', 'registrations': 2}
+
+    called_breakdowns = {kwargs['breakdown_by'] for _, kwargs in mock_execute_metric.call_args_list}
+    assert {'none', 'partner_id', 'month'}.issubset(called_breakdowns)
+
+    for _, kwargs in mock_execute_metric.call_args_list:
+        assert kwargs['metric_key'] == 'mscc_registrations_total'
+        assert kwargs['time_start'] == snapshot['time_range']['start']
+        assert kwargs['time_end'] == snapshot['time_range']['end']
+        assert kwargs['user_ctx']['partner_ids'] == []
 
 
 def test_retriever_returns_relevant_metrics():
@@ -104,9 +111,7 @@ def test_retriever_returns_relevant_metrics():
                 {'partner': 'Partner A', 'count': 2},
                 {'partner': 'Partner B', 'count': 1},
             ],
-            'records': [
-                {'id': 1, 'child_name': 'Ali Hassan', 'partner': 'Partner A', 'center': 'Center 1', 'round': 'Round 2024'}
-            ],
+            'records': [],
         },
         'schools': {'total': 1, 'by_governorate': [{'governorate': 'Bekaa', 'count': 1}]},
         'centers': {'total': 1},
@@ -177,17 +182,12 @@ class _SequenceClient:
 
 @pytest.mark.django_db
 def test_chat_service_uses_snapshot_and_returns_answer(user):
-    partner = PartnerOrganization.objects.create(name='Partner A')
-    governorate, district, cadaster = _build_locations()
-    center = Center.objects.create(name='Center 1', partner=partner, governorate=governorate)
-    nationality = Nationality.objects.create(name='Lebanese', name_en='Lebanese')
-    child = Child.objects.create(first_name='Sara', last_name='Hassan', gender='Female', nationality=nationality)
-    round_obj = Round.objects.create(name='Round 2024', year=2024)
-    Registration.objects.create(center=center, child=child, partner=partner, round=round_obj, type='Walk-in', owner=user)
-
     fake_client = _FakeClient()
-    service = BMAChatService(user, client=fake_client)
-    result = service.chat(question='How many registrations do we have?', history=[{'role': 'assistant', 'content': 'Hello!'}])
+    service = BMAChatService(user, client=fake_client, repository_class=_StubRepository)
+    result = service.chat(
+        question='How many registrations do we have?',
+        history=[{'role': 'assistant', 'content': 'Hello!'}],
+    )
 
     assert result['answer'] == 'We currently have 1 registration.'
     assert result['usage']['total_tokens'] == 150
@@ -200,7 +200,7 @@ def test_chat_service_uses_snapshot_and_returns_answer(user):
 
 
 def test_chat_service_maps_rate_limit_error(user):
-    service = BMAChatService(user, client=_FakeClient())
+    service = BMAChatService(user, client=_FakeClient(), repository_class=_StubRepository)
 
     error = service._map_openai_exception(_FakeRateLimitError())
 
@@ -211,10 +211,6 @@ def test_chat_service_maps_rate_limit_error(user):
 
 @pytest.mark.django_db
 def test_chat_service_retries_rate_limit_then_succeeds(user):
-    partner = PartnerOrganization.objects.create(name='Partner A')
-    governorate, district, cadaster = _build_locations()
-    Center.objects.create(name='Center 1', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
-
     success_message = SimpleNamespace(content='All good now.')
     success_choice = SimpleNamespace(message=success_message)
     success_response = SimpleNamespace(choices=[success_choice], usage=None)
@@ -228,6 +224,7 @@ def test_chat_service_retries_rate_limit_then_succeeds(user):
         user,
         client=sequence_client,
         sleep=lambda delay: sleep_calls.append(delay),
+        repository_class=_StubRepository,
     )
 
     result = service.chat(question='How many registrations?')
@@ -240,10 +237,6 @@ def test_chat_service_retries_rate_limit_then_succeeds(user):
 @pytest.mark.django_db
 @override_settings(OPENAI_BMA_MAX_RETRIES=1)
 def test_chat_service_stops_retrying_after_limit(user):
-    partner = PartnerOrganization.objects.create(name='Partner A')
-    governorate, district, cadaster = _build_locations()
-    Center.objects.create(name='Center 1', partner=partner, governorate=governorate, caza=district, cadaster=cadaster)
-
     errors = [_FakeRateLimitError('First'), _FakeRateLimitError('Second')]
     sequence_client = _SequenceClient(errors)
 
@@ -252,6 +245,7 @@ def test_chat_service_stops_retrying_after_limit(user):
         user,
         client=sequence_client,
         sleep=lambda delay: sleep_calls.append(delay),
+        repository_class=_StubRepository,
     )
 
     with pytest.raises(BMAChatService.ChatError) as excinfo:
