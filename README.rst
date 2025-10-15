@@ -159,3 +159,23 @@ Translations
 ------------
 
 ./manage.py compilemessages
+
+Vanna Integration
+-----------------
+
+The project ships with a light-weight bridge to the `Vanna <https://github.com/vanna-ai/vanna>`_ toolkit. Once enabled, a ``POST`` request to ``/api/vanna/`` allows authenticated users to ask natural language questions that Vanna converts to SQL.
+
+Configuration is controlled through the following environment variables:
+
+* ``VANNA_ENABLED`` – set to ``true`` to activate the integration. When disabled the endpoint returns ``503``.
+* ``VANNA_CLIENT_CLASS`` – dotted Python path to the client class, defaults to ``vanna.remote.VannaDefault``.
+* ``VANNA_API_KEY`` – API key passed to the Vanna client constructor (optional).
+* ``VANNA_MODEL`` – model identifier forwarded to the client (optional).
+* ``VANNA_HOST`` – custom host or endpoint (optional).
+* ``VANNA_CONNECTION_METHOD`` – optional method called on the client to establish a database connection (for example ``connect_to_postgres``).
+* ``VANNA_CONNECTION_KWARGS`` – JSON encoded keyword arguments passed to the connection method.
+* ``VANNA_ASK_METHOD`` – override the method used for obtaining direct answers (defaults to ``ask``).
+* ``VANNA_GENERATE_SQL_METHOD`` – override the method used for producing SQL statements (defaults to ``generate_sql``).
+* ``VANNA_RUN_SQL_METHOD`` – override the method used to execute generated SQL (defaults to ``run_sql``).
+
+The API accepts a ``question`` string and an optional ``run_sql`` boolean flag. When ``run_sql`` is true and the configured client exposes the relevant method, the endpoint returns the executed dataset alongside the generated SQL text.

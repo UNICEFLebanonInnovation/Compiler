@@ -106,6 +106,7 @@ LOCAL_APPS = [
     'student_registration.mscc',
     'student_registration.youth',
     'student_registration.adolescent',
+    'student_registration.ai',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -381,6 +382,23 @@ ADMIN_URL = r'^admin/'
 LOCALE_PATHS = [
     str(APPS_DIR.path('static/locale')),
 ]
+
+_vanna_client_kwargs = {
+    'api_key': env('VANNA_API_KEY', default=None),
+    'model': env('VANNA_MODEL', default=None),
+    'host': env('VANNA_HOST', default=None),
+}
+
+VANNA = {
+    'ENABLED': env.bool('VANNA_ENABLED', default=False),
+    'CLIENT_CLASS': env('VANNA_CLIENT_CLASS', default='vanna.remote.VannaDefault'),
+    'CLIENT_KWARGS': {key: value for key, value in _vanna_client_kwargs.items() if value},
+    'CONNECTION_METHOD': env('VANNA_CONNECTION_METHOD', default=None),
+    'CONNECTION_KWARGS': env('VANNA_CONNECTION_KWARGS', default=None),
+    'ASK_METHOD': env('VANNA_ASK_METHOD', default='ask'),
+    'GENERATE_SQL_METHOD': env('VANNA_GENERATE_SQL_METHOD', default='generate_sql'),
+    'RUN_SQL_METHOD': env('VANNA_RUN_SQL_METHOD', default='run_sql'),
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
