@@ -393,11 +393,12 @@ def get_outreach_child(outreach_id):
         'N/A': 8
     }
     mother_education_raw = instance.outreach_caregiver.mother_education_level
-    mother_education = mother_education_raw.strip()
+    mother_education = (mother_education_raw or '').strip()
     initial['mother_educational_level'] = education_map.get(mother_education, '')
 
     father_education_raw = instance.outreach_caregiver.father_education_level
-    father_education = father_education_raw.strip()
+    father_education = (father_education_raw or '').strip()
+
     initial['father_educational_level'] = education_map.get(father_education, '')
 
     return initial

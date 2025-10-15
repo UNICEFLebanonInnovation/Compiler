@@ -3172,7 +3172,7 @@ def get_outreach_child(outreach_id):
     initial['student_birthday_month'] = instance.birthday_month
     initial['student_birthday_day'] = instance.birthday_day
     print("----------------- instance.gender    ", instance.gender)
-    initial['student_sex'] = instance.gender.strip()
+    initial['student_sex'] = (instance.gender or '').strip()
 
     nationality_raw = instance.nationality or ''
     nationality = nationality_raw.strip().lower()
@@ -3343,11 +3343,11 @@ def get_outreach_child(outreach_id):
     }
 
     mother_education_raw = instance.outreach_caregiver.mother_education_level
-    mother_education = mother_education_raw.strip()
+    mother_education = (mother_education_raw or '').strip()
     initial['hh_educational_level'] = education_map.get(mother_education, '')
 
     father_education_raw = instance.outreach_caregiver.father_education_level
-    father_education = father_education_raw.strip()
+    father_education = (father_education_raw or '').strip()
     initial['father_educational_level'] = education_map.get(father_education, '')
 
     id_type = instance.outreach_caregiver.id_type
