@@ -55,11 +55,14 @@ def extract_filters(text: str) -> list:
     if any(w in t for w in ["male","boys","men"]):
         f.append({"field":"child_gender_norm","op":"in","value":["M","MALE"]})
     # age > / < / range
-    if m := re.search(r"(?:age\s*>\s*|above\s*)(\d+)", t): f.append({"field":"age_years","op":"gt","value":int(m.group(1))})
-    if m := re.search(r"(?:age\s*<\s*|below\s*)(\d+)", t): f.append({"field":"age_years","op":"lt","value":int(m.group(1))})
+    if m := re.search(r"(?:age\s*>\s*|above\s*)(\d+)", t):
+        f.append({"field": "age_years", "op": ">", "value": int(m.group(1))})
+    if m := re.search(r"(?:age\s*<\s*|below\s*)(\d+)", t):
+        f.append({"field": "age_years", "op": "<", "value": int(m.group(1))})
     if m := re.search(r"age\s*(\d+)\s*-\s*(\d+)", t):
-        a,b = int(m.group(1)), int(m.group(2))
-        f += [{"field":"age_years","op":"gte","value":a},{"field":"age_years","op":"lte","value":b}]
+        a, b = int(m.group(1)), int(m.group(2))
+        lo, hi = sorted((a, b))
+        f.append({"field": "age_years", "op": "between", "value": [lo, hi]})
     return f
 
 def sanitize_payload(p: dict) -> dict:
@@ -67,13 +70,14 @@ def sanitize_payload(p: dict) -> dict:
     p["breakdowns"] = [x for x in b if x in ALLOWED_FIELDS][:3]
     if "breakdown_by" in p and p["breakdown_by"] not in ALLOWED_FIELDS:
         p["breakdown_by"] = "month"
-    allowed_ops = {"=", "in", "between"}
+    allowed_ops = {"=", "!=", "in", "not in", "between", ">", "<", ">=", "<=", "like", "ilike"}
     clean_filters = []
     for f in p.get("filters", []):
         field = f.get("field")
-        op = f.get("op")
+        raw_op = f.get("op")
+        op = str(raw_op).lower() if isinstance(raw_op, str) else raw_op
         if field in ALLOWED_FIELDS and op in allowed_ops:
-            clean_filters.append(f)
+            clean_filters.append({**f, "op": op})
     p["filters"] = clean_filters
     return p
 

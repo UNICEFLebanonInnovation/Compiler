@@ -8,7 +8,19 @@ from django.db import connection
 
 from .models import Metric
 
-ALLOWED_OPS = {"=", "in", "between"}
+ALLOWED_OPS = {
+    "=",
+    "!=",
+    "in",
+    "not in",
+    "between",
+    ">",
+    ">=",
+    "<",
+    "<=",
+    "like",
+    "ilike",
+}
 
 
 def _normalize_time_value(value: Any, *, column_type: str):
@@ -99,9 +111,11 @@ def execute_metric(
 
     # Guard: filters allowed?
     for f in filters + implicit_filters:
-        if f["field"] not in (m.allowed_filters or []) and f["field"] != m.default_time_column:
+        field = f.get("field")
+        op = str(f.get("op", "")).lower()
+        if field not in (m.allowed_filters or []) and field != m.default_time_column:
             raise PermissionError(f"Filter '{f['field']}' not allowed")
-        if f["op"] not in ALLOWED_OPS:
+        if op not in ALLOWED_OPS:
             raise PermissionError("Operator not allowed")
 
     # SELECT / GROUP BY
@@ -127,12 +141,16 @@ def execute_metric(
             # you can add per-field normalization here as needed.
             return v
 
-        op = f["op"]
+        op = str(f.get("op", "")).lower()
         field = f["field"]
         val = f["value"]
 
         if op == "=":
             where.append(f"{field} = %s")
+            params.append(normalize(val))
+
+        elif op == "!=":
+            where.append(f"{field} <> %s")
             params.append(normalize(val))
 
         elif op == "in":
@@ -144,6 +162,14 @@ def execute_metric(
                 where.append(f"{field} IN ({ph})")
                 params.extend(normalize(v) for v in val)
 
+        elif op == "not in":
+            if not isinstance(val, (list, tuple)) or len(val) == 0:
+                # Empty NOT IN () should evaluate to TRUE, so skip adding a clause.
+                return
+            ph = ", ".join(["%s"] * len(val))
+            where.append(f"{field} NOT IN ({ph})")
+            params.extend(normalize(v) for v in val)
+
         elif op == "between":
             if not isinstance(val, (list, tuple)) or len(val) != 2:
                 raise ValueError("between expects [start, end]")
@@ -151,6 +177,20 @@ def execute_metric(
             where.append(f"{field} BETWEEN %s AND %s")
             params.extend([normalize(start), normalize(end)])
 
+        elif op in {">", ">=", "<", "<="}:
+            where.append(f"{field} {op} %s")
+            params.append(normalize(val))
+
+        elif op == "like":
+            where.append(f"{field} LIKE %s")
+            params.append(str(val))
+
+        elif op == "ilike":
+            where.append(f"{field} ILIKE %s")
+            params.append(str(val))
+
+        else:
+            raise PermissionError("Operator not allowed")
     for f in filters + implicit_filters:
         add_filter(f)
 
