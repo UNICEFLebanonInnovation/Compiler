@@ -595,6 +595,7 @@ class AskView(APIView):
         final_content = second.choices[0].message.content or ""
 
         return {
+            "strategy": "orchestrated",
             "query": execution_payload,
             "result": execution_result,
             "explanation": final_content,
@@ -608,6 +609,11 @@ class AskView(APIView):
 
         # 2) try LLM tool call; fallback to deterministic resolver
         metrics = list(Metric.objects.all())
+        if not metrics:
+            return Response(
+                {"error": "No metrics are configured in the system."},
+                status=503,
+            )
 
         orchestrated = None
         try:
@@ -628,28 +634,40 @@ class AskView(APIView):
             breakdowns = tool_payload.get("breakdowns") or []
             tool_payload["breakdown_by"] = breakdowns[0] if breakdowns else "none"
 
+        normalized_payload = self._normalize_payload(tool_payload, metrics)
+
         # 3) call metrics service
         try:
-            result = call_metrics_service(tool_payload, request=request)
+            result = call_metrics_service(normalized_payload, request=request)
         except requests.HTTPError as http_err:
+            status_code = getattr(getattr(http_err, "response", None), "status_code", None)
+            response_text = getattr(getattr(http_err, "response", None), "text", "")
             return Response(
                 {
-                    "query": tool_payload,
-                    "error": f"Metrics service HTTP error: {http_err.response.status_code}",
-                    "details": http_err.response.text,
+                    "query": normalized_payload,
+                    "error": "Metrics service HTTP error",
+                    "status_code": status_code,
+                    "details": response_text,
                 },
                 status=502,
             )
         except Exception as e:
             return Response(
-                {"query": tool_payload, "error": f"Metrics service error: {str(e)}"},
+                {"query": normalized_payload, "error": f"Metrics service error: {str(e)}"},
                 status=500,
             )
 
         # 4) craft a short human explanation (optional, lightweight)
-        explain = self._summarize(tool_payload, result)
+        explain = self._summarize(normalized_payload, result)
 
-        return Response({"query": tool_payload, "result": result, "explanation": explain})
+        return Response(
+            {
+                "strategy": "fallback",
+                "query": normalized_payload,
+                "result": result,
+                "explanation": explain,
+            }
+        )
 
     # --- tiny summary for UX; pure Python, no extra OpenAI call ---
     def _summarize(self, q: Dict[str, Any], r: Dict[str, Any]) -> str:
