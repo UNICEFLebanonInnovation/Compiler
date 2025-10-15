@@ -547,6 +547,8 @@
   rounding: 5
   freshness_sla_minutes: 60
   tags: [mscc, age, gender]
+  meta:
+    time_column_type: year
 
 ##############################################################################
 # SHORTCUTS: FEMALE/MALE FILTERED TOTALS (OPTIONAL)
