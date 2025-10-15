@@ -56,7 +56,7 @@ from student_registration.users.views import LoginRedirectView, home, login_succ
 from student_registration.students.views import serve_file
 from student_registration.mscc.attendance_views import AttendanceHeatmapViewSet
 from student_registration.mscc.chatbot.views import BMAChatViewSet
-from student_registration.backends.chat_api import AskView
+from student_registration.backends.chat_api import AskView, MetricGetView
 
 api = routers.SimpleRouter()
 
@@ -94,6 +94,7 @@ urlpatterns = [
     re_path(r'^school-autocomplete/$', SchoolAutocomplete.as_view(), name='school_autocomplete'),
     re_path(r'^location-autocomplete/$', LocationAutocomplete.as_view(), name='location_autocomplete'),
     re_path(r'^api/chat/ask/$', AskView.as_view(), name="chat-ask"),
+    re_path(r'^api/metrics/get_metric/$', MetricGetView.as_view(), name="metrics-get"),
 
     # Django Admin, use {% url 'admin:index' %}
     re_path(settings.ADMIN_URL, admin.site.urls),
