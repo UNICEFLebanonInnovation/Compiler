@@ -341,6 +341,10 @@ class AdolescentUploadConfirmView(LoginRequiredMixin, View):
             if gender_norm not in ('Male', 'Female'):
                 invalid_fields.append("gender ({0})".format(raw_gender or 'None'))
 
+            raw_main_caregiver = (values.get('main_caregiver') or '').strip()
+            main_caregiver_norm = raw_main_caregiver[:1].upper() + raw_main_caregiver[1:] if raw_main_caregiver else ''
+            values['main_caregiver'] = main_caregiver_norm
+
             nationality = Nationality.objects.filter(name=values.get('nationality')).first()
             gov = Location.objects.filter(name=values.get('governorate'), type_id=1).first()
             dist = Location.objects.filter(name=values.get('district'), type_id=2).first()

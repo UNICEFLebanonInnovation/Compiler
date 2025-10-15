@@ -310,7 +310,7 @@ def get_outreach_child(outreach_id):
     initial['first_phone_number_confirm'] = instance.outreach_caregiver.primary_phone
 
     first_phone_owner_raw = instance.outreach_caregiver.first_phone_owner or ''
-    first_phone_owner_key = first_phone_owner_raw.strip() 
+    first_phone_owner_key = first_phone_owner_raw.strip()
     phone_owner_map = {
         'Phone Main Caregiver': 'Phone Main Caregiver',
         'Family Member': 'Family Member',

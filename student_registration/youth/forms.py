@@ -165,7 +165,7 @@ class MainForm(forms.ModelForm):
     )
     caregiver_middle_name = forms.CharField(
         label=_("Caregiver Middle Name"),
-        widget=forms.TextInput, required=True
+        widget=forms.TextInput, required=False
     )
     caregiver_last_name = forms.CharField(
         label=_("Caregiver Last Name"),
