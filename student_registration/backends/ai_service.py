@@ -1,12 +1,38 @@
 # apps/metrics/service.py
+from datetime import datetime
+
 from django.db import connection
+
 from .models import Metric
 
 ALLOWED_OPS = {"=", "in", "between"}
 
+def _normalize_time_value(value, *, column_type: str):
+    """Normalize values used for comparisons against the time column."""
+
+    if column_type == "year":
+        if isinstance(value, int):
+            return value
+        if isinstance(value, str):
+            value = value.strip()
+            if not value:
+                raise ValueError("Empty time value")
+            if value.isdigit():
+                return int(value)
+            try:
+                return datetime.fromisoformat(value).year
+            except ValueError as exc:
+                raise ValueError(f"Invalid year value: {value}") from exc
+        raise ValueError(f"Unsupported type for year value: {type(value)!r}")
+
+    return value
+
+
 def execute_metric(*, metric_key: str, breakdown_by: str = "none",
                    time_start: str, time_end: str, filters: list, user_ctx: dict) -> dict:
     m = Metric.objects.get(key=metric_key)
+
+    time_column_type = (m.meta or {}).get("time_column_type", "date")
 
     # implicit scoping example
     implicit_filters = []
@@ -29,19 +55,28 @@ def execute_metric(*, metric_key: str, breakdown_by: str = "none",
         group = f" GROUP BY {breakdown_by} ORDER BY value DESC"
 
     where = [f"{m.default_time_column} >= %s", f"{m.default_time_column} < %s"]
-    params = [time_start, time_end]
+    params = [
+        _normalize_time_value(time_start, column_type=time_column_type),
+        _normalize_time_value(time_end, column_type=time_column_type),
+    ]
 
     def add_filter(f):
+        def normalize(v):
+            if f["field"] == m.default_time_column:
+                return _normalize_time_value(v, column_type=time_column_type)
+            return v
+
         if f["op"] == "=":
             where.append(f"{f['field']} = %s")
-            params.append(f["value"])
+            params.append(normalize(f["value"]))
         elif f["op"] == "in":
             ph = ", ".join(["%s"] * len(f["value"]))
             where.append(f"{f['field']} IN ({ph})")
-            params.extend(f["value"])
+            params.extend(normalize(v) for v in f["value"])
         elif f["op"] == "between":
             where.append(f"{f['field']} BETWEEN %s AND %s")
-            params.extend(f["value"])
+            start, end = f["value"]
+            params.extend([normalize(start), normalize(end)])
 
     for f in filters + implicit_filters:
         add_filter(f)
