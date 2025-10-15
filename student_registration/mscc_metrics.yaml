@@ -530,7 +530,7 @@
   description: Registrations by integer age and gender per calendar year.
   sql_view: mv_mscc_age_gender_yearly
   value_column: value
-  default_time_column: year
+  default_time_column: year_date
   unit: registrations
   allowed_breakdowns:
     - year
