@@ -1,7 +1,7 @@
 # apps/chat/api.py
 
 from __future__ import annotations
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -77,6 +77,66 @@ def _build_user_context(request) -> Dict[str, Any]:
     }
 
 
+def _normalize_year_value(value: Any) -> int:
+    """Convert a year-like value (int, ISO date string) into an integer year."""
+
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, str):
+        raw = value.strip()
+        if not raw:
+            raise ValueError("Empty year value")
+        if raw.isdigit():
+            return int(raw)
+        try:
+            return datetime.fromisoformat(raw).year
+        except ValueError as exc:
+            raise ValueError(f"Invalid year value: {value}") from exc
+
+    raise ValueError(f"Unsupported type for year value: {type(value)!r}")
+
+
+def _normalize_time_inputs(payload: Dict[str, Any]) -> None:
+    """Normalize time range and filters according to the metric's time column."""
+
+    metric_key = payload.get("metric_key")
+    if not metric_key:
+        return
+
+    try:
+        metric = Metric.objects.get(key=metric_key)
+    except Metric.DoesNotExist:
+        return
+
+    time_column_type = (metric.meta or {}).get("time_column_type", "date")
+    if time_column_type != "year":
+        return
+
+    time_range = payload.get("time_range") or {}
+    for bound in ("start", "end"):
+        value = time_range.get(bound)
+        if value not in (None, ""):
+            time_range[bound] = _normalize_year_value(value)
+
+    for f in payload.get("filters", []):
+        if f.get("field") != metric.default_time_column:
+            continue
+
+        op = f.get("op")
+        value = f.get("value")
+
+        if op == "between" and isinstance(value, (list, tuple)) and len(value) == 2:
+            f["value"] = [
+                _normalize_year_value(value[0]),
+                _normalize_year_value(value[1]),
+            ]
+        elif op == "in" and isinstance(value, (list, tuple)):
+            f["value"] = [_normalize_year_value(v) for v in value]
+        elif op == "=" and value is not None:
+            f["value"] = _normalize_year_value(value)
+
+
 def call_metrics_service(payload: Dict[str, Any], request=None) -> Dict[str, Any]:
     """
     Call your metrics engine. Three strategies (first that works wins):
@@ -85,6 +145,8 @@ def call_metrics_service(payload: Dict[str, Any], request=None) -> Dict[str, Any
     2) Internal HTTP to your existing endpoint /api/metrics/get_metric/
     3) As a last resort, raise a clear error
     """
+    _normalize_time_inputs(payload)
+
     # 1) Try direct function import (stable if you add a service later)
     try:
         from student_registration.backends.ai_service import execute_metric  # your own service file
