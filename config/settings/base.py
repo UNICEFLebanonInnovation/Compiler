@@ -398,6 +398,11 @@ VANNA = {
     'ASK_METHOD': env('VANNA_ASK_METHOD', default='ask'),
     'GENERATE_SQL_METHOD': env('VANNA_GENERATE_SQL_METHOD', default='generate_sql'),
     'RUN_SQL_METHOD': env('VANNA_RUN_SQL_METHOD', default='run_sql'),
+    'TRAIN_SQL_METHOD': env('VANNA_TRAIN_SQL_METHOD', default='train_sql'),
+    'TRAIN_DOCUMENTATION_METHOD': env(
+        'VANNA_TRAIN_DOCUMENTATION_METHOD', default='train_documentation'
+    ),
+    'TRAIN_DDL_METHOD': env('VANNA_TRAIN_DDL_METHOD', default='train_ddl'),
 }
 
 REST_FRAMEWORK = {

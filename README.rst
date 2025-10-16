@@ -202,6 +202,9 @@ Configuration is controlled through the following environment variables:
 * ``VANNA_ASK_METHOD`` – override the method used for obtaining direct answers (defaults to ``ask``).
 * ``VANNA_GENERATE_SQL_METHOD`` – override the method used for producing SQL statements (defaults to ``generate_sql``).
 * ``VANNA_RUN_SQL_METHOD`` – override the method used to execute generated SQL (defaults to ``run_sql``).
+* ``VANNA_TRAIN_SQL_METHOD`` – method used for training question/SQL pairs (defaults to ``train_sql``).
+* ``VANNA_TRAIN_DOCUMENTATION_METHOD`` – method used for ingesting documentation (defaults to ``train_documentation``).
+* ``VANNA_TRAIN_DDL_METHOD`` – method used for registering database schemas (defaults to ``train_ddl``).
 
 The API accepts a ``question`` string and an optional ``run_sql`` boolean flag. When ``run_sql`` is true and the configured client exposes the relevant method, the endpoint returns the executed dataset alongside the generated SQL text.
 
@@ -214,3 +217,14 @@ Example ``curl`` request::
          https://<your-domain>/api/vanna/
 
 The ``-b cookie.jar`` flag assumes you have already authenticated and stored the session cookie; replace it with an ``Authorization`` header when using token-based authentication.
+
+Training utilities
+~~~~~~~~~~~~~~~~~~
+
+Three management commands are provided to bootstrap or maintain the Vanna knowledge base:
+
+* ``python manage.py vanna_train_sql training-data.csv`` – register question/SQL pairs from a CSV (or JSON) payload. Pairs can also be submitted inline with ``--question``/``--sql``.
+* ``python manage.py vanna_train_documentation docs/*.md`` – ingest documentation snippets. Use ``--title`` and ``--content`` for ad-hoc snippets.
+* ``python manage.py vanna_train_ddl schema.sql`` – forward database DDL statements, either from files or with ``--ddl``.
+
+All commands reuse the same configuration as the API integration and will raise informative errors when the integration is disabled or misconfigured.

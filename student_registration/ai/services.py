@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import importlib
 import json
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -78,6 +78,11 @@ class VannaService:
         self._ask_method = configuration.get("ASK_METHOD", "ask")
         self._generate_sql_method = configuration.get("GENERATE_SQL_METHOD", "generate_sql")
         self._run_sql_method = configuration.get("RUN_SQL_METHOD", "run_sql")
+        self._train_sql_method = configuration.get("TRAIN_SQL_METHOD", "train_sql")
+        self._train_documentation_method = configuration.get(
+            "TRAIN_DOCUMENTATION_METHOD", "train_documentation"
+        )
+        self._train_ddl_method = configuration.get("TRAIN_DDL_METHOD", "train_ddl")
 
     @property
     def client(self) -> Any:
@@ -94,6 +99,19 @@ class VannaService:
             return None
         method = getattr(self._client, method_name)
         return method(*args, **kwargs)
+
+    def _require_method(self, method_name: str) -> Callable[..., Any]:
+        """Return a callable method on the client or raise configuration errors."""
+
+        if not method_name:
+            raise ImproperlyConfigured(
+                "No method configured for the requested Vanna interaction."
+            )
+        if not hasattr(self._client, method_name):
+            raise ImproperlyConfigured(
+                f"Configured Vanna client does not define '{method_name}'."
+            )
+        return getattr(self._client, method_name)
 
     @staticmethod
     def _serialise_result(result: Any) -> Any:
@@ -133,6 +151,24 @@ class VannaService:
             )
 
         return payload
+
+    def train_sql(self, *, question: str, sql: str) -> Any:
+        """Train the Vanna client with a question/SQL pair."""
+
+        method = self._require_method(self._train_sql_method)
+        return method(question=question, sql=sql)
+
+    def train_documentation(self, *, title: str, content: str) -> Any:
+        """Train the Vanna client with supplemental documentation."""
+
+        method = self._require_method(self._train_documentation_method)
+        return method(title=title, text=content)
+
+    def train_ddl(self, ddl: str) -> Any:
+        """Train the Vanna client with database DDL definitions."""
+
+        method = self._require_method(self._train_ddl_method)
+        return method(ddl=ddl)
 
 
 _vanna_service: VannaService | None = None
