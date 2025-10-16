@@ -179,6 +179,17 @@ Typical user journey
 
 For interactive clients (for example a React or Vue admin dashboard) you can wire a simple form that POSTs the question and then renders the JSON response fields. The endpoint is stateless, so multiple questions can be asked in sequence without any additional setup.
 
+Built-in web console
+~~~~~~~~~~~~~~~~~~~~
+
+Authenticated staff can also use the built-in console located at ``/ai/vanna/`` (linked from the *BMA Modules → Intelligence → AI Assistant* menu). The page provides:
+
+* A question editor with a toggle for executing the generated SQL.
+* Live status feedback while the request is in flight and error handling when something goes wrong.
+* A conversation transcript that displays the natural language answer, suggested SQL, and any returned tabular data.
+
+When the integration is disabled the form controls are automatically disabled and a warning banner explains how to enable the service.
+
 Configuration is controlled through the following environment variables:
 
 * ``VANNA_ENABLED`` – set to ``true`` to activate the integration. When disabled the endpoint returns ``503``.

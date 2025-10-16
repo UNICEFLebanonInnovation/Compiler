@@ -118,6 +118,7 @@ urlpatterns = [
     re_path(r'^api/schema/redoc/$', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     re_path(r'^api/save-fcm-token/$', save_fcm_token, name='save_fcm_token'),
+    re_path(r'^ai/', include(('student_registration.ai.urls', 'ai'), namespace='ai')),
     re_path(r'^api/', include(api.urls)),
     re_path(r"^serve-file/(?P<file_path>.+)/$", serve_file, name="serve_file")
 

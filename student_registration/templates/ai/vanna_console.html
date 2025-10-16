@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block project_title %}{% trans "AI Assistant" %}{% endblock %}
+{% block module_name %}{% trans "AI Assistant" %}{% endblock %}
+
+{% block content %}
+<div class="row" id="vanna-console" data-api-endpoint="{{ api_endpoint }}">
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{% trans "Ask a question" %}</h5>
+                <p class="text-muted small mb-3">
+                    {% blocktrans %}Describe the insight you are looking for in natural language. The assistant will suggest SQL and, when requested, execute it against the configured database.{% endblocktrans %}
+                </p>
+                {% if not vanna_enabled %}
+                    <div class="alert alert-warning" role="status">
+                        {% trans "The Vanna integration is currently disabled. Enable it in the environment settings to use the assistant." %}
+                    </div>
+                {% endif %}
+                <form id="vanna-form">
+                    <div class="form-group">
+                        <label for="vanna-question" class="font-weight-bold">{% trans "Question" %}</label>
+                        <textarea id="vanna-question" name="question" rows="6" class="form-control" placeholder="{% trans "E.g. Show total enrolments per center for the last quarter" %}" {% if not vanna_enabled %}disabled{% endif %}></textarea>
+                    </div>
+                    <div class="custom-control custom-switch mb-3">
+                        <input type="checkbox" class="custom-control-input" id="vanna-run-sql" name="run_sql" {% if not vanna_enabled %}disabled{% endif %}>
+                        <label class="custom-control-label" for="vanna-run-sql">{% trans "Run the generated SQL" %}</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" {% if not vanna_enabled %}disabled{% endif %}>
+                        {% trans "Submit" %}
+                    </button>
+                </form>
+                <div id="vanna-status" class="mt-3" role="status" aria-live="polite"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title mb-3">{% trans "Tips" %}</h6>
+                <ul class="small mb-0 pl-3">
+                    <li>{% trans "Be specific about filters, metrics, and time frames." %}</li>
+                    <li>{% trans "Toggle SQL execution when you are ready to validate the suggested query." %}</li>
+                    <li>{% trans "Review the generated SQL and results before sharing insights." %}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">{% trans "Conversation" %}</h5>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="vanna-clear-history" {% if not vanna_enabled %}disabled{% endif %}>
+                        {% trans "Clear" %}
+                    </button>
+                </div>
+                <div id="vanna-empty-state" class="text-center text-muted my-5">
+                    <p class="lead">{% trans "Ask a question to start a new conversation." %}</p>
+                </div>
+                <div id="vanna-transcript" class="flex-grow-1 overflow-auto" style="max-height: 520px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        const consoleContainer = document.getElementById('vanna-console');
+        if (!consoleContainer) {
+            return;
+        }
+
+        const form = document.getElementById('vanna-form');
+        const transcript = document.getElementById('vanna-transcript');
+        const emptyState = document.getElementById('vanna-empty-state');
+        const statusBanner = document.getElementById('vanna-status');
+        const clearHistoryButton = document.getElementById('vanna-clear-history');
+        const endpoint = consoleContainer.getAttribute('data-api-endpoint');
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+            return null;
+        }
+
+        function setStatus(message, level) {
+            statusBanner.className = '';
+            if (!message) {
+                statusBanner.textContent = '';
+                return;
+            }
+            const levelClass = level === 'error' ? 'alert alert-danger' : level === 'success' ? 'alert alert-success' : 'alert alert-info';
+            statusBanner.className = levelClass;
+            statusBanner.textContent = message;
+        }
+
+        function clearTranscript() {
+            transcript.innerHTML = '';
+            if (emptyState) {
+                emptyState.classList.remove('d-none');
+            }
+        }
+
+        function renderTable(rows) {
+            const table = document.createElement('table');
+            table.className = 'table table-sm table-striped mb-0';
+            if (!rows || !rows.length) {
+                const caption = document.createElement('caption');
+                caption.textContent = 'No rows returned.';
+                caption.className = 'text-muted text-center';
+                table.appendChild(caption);
+                return table;
+            }
+            const columns = Array.from(rows.reduce((set, row) => {
+                Object.keys(row || {}).forEach((key) => set.add(key));
+                return set;
+            }, new Set()));
+
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            columns.forEach((column) => {
+                const th = document.createElement('th');
+                th.scope = 'col';
+                th.textContent = column;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            rows.forEach((row) => {
+                const tr = document.createElement('tr');
+                columns.forEach((column) => {
+                    const td = document.createElement('td');
+                    const value = row && Object.prototype.hasOwnProperty.call(row, column) ? row[column] : '';
+                    td.textContent = value === null || value === undefined ? '' : value;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            return table;
+        }
+
+        function renderValue(data) {
+            const wrapper = document.createElement('div');
+            if (data === null || data === undefined) {
+                const placeholder = document.createElement('p');
+                placeholder.className = 'text-muted mb-0';
+                placeholder.textContent = 'No data returned.';
+                wrapper.appendChild(placeholder);
+                return wrapper;
+            }
+
+            if (typeof data === 'string' || typeof data === 'number' || typeof data === 'boolean') {
+                const paragraph = document.createElement('p');
+                paragraph.textContent = data;
+                wrapper.appendChild(paragraph);
+                return wrapper;
+            }
+
+            if (Array.isArray(data)) {
+                if (data.length && typeof data[0] === 'object' && !Array.isArray(data[0])) {
+                    wrapper.appendChild(renderTable(data));
+                } else {
+                    const list = document.createElement('ul');
+                    list.className = 'mb-0 pl-3';
+                    data.forEach((item) => {
+                        const li = document.createElement('li');
+                        li.textContent = typeof item === 'object' ? JSON.stringify(item) : item;
+                        list.appendChild(li);
+                    });
+                    wrapper.appendChild(list);
+                }
+                return wrapper;
+            }
+
+            if (typeof data === 'object') {
+                if (Object.values(data).every((value) => Array.isArray(value))) {
+                    const container = document.createElement('div');
+                    Object.entries(data).forEach(([key, value]) => {
+                        const heading = document.createElement('h6');
+                        heading.className = 'mt-3';
+                        heading.textContent = key;
+                        container.appendChild(heading);
+                        container.appendChild(renderValue(value));
+                    });
+                    wrapper.appendChild(container);
+                } else {
+                    const definitionList = document.createElement('dl');
+                    Object.entries(data).forEach(([key, value]) => {
+                        const dt = document.createElement('dt');
+                        dt.textContent = key;
+                        const dd = document.createElement('dd');
+                        if (value && typeof value === 'object') {
+                            dd.appendChild(renderValue(value));
+                        } else {
+                            dd.textContent = value === null || value === undefined ? '' : value;
+                        }
+                        definitionList.appendChild(dt);
+                        definitionList.appendChild(dd);
+                    });
+                    wrapper.appendChild(definitionList);
+                }
+                return wrapper;
+            }
+
+            const pre = document.createElement('pre');
+            pre.textContent = JSON.stringify(data, null, 2);
+            wrapper.appendChild(pre);
+            return wrapper;
+        }
+
+        function appendTranscriptEntry(question, response) {
+            if (emptyState) {
+                emptyState.classList.add('d-none');
+            }
+            const entry = document.createElement('div');
+            entry.className = 'border rounded p-3 mb-3 shadow-sm';
+
+            const questionHeading = document.createElement('h6');
+            questionHeading.className = 'text-primary';
+            questionHeading.textContent = question;
+            entry.appendChild(questionHeading);
+
+            if (response.answer !== undefined) {
+                const answerHeading = document.createElement('strong');
+                answerHeading.textContent = 'Answer';
+                entry.appendChild(answerHeading);
+                entry.appendChild(renderValue(response.answer));
+            }
+
+            if (response.sql !== undefined) {
+                const sqlHeading = document.createElement('strong');
+                sqlHeading.className = 'd-block mt-3';
+                sqlHeading.textContent = 'Suggested SQL';
+                entry.appendChild(sqlHeading);
+                const codeBlock = document.createElement('pre');
+                codeBlock.className = 'bg-light p-2 rounded';
+                codeBlock.textContent = response.sql;
+                entry.appendChild(codeBlock);
+            }
+
+            if (response.results !== undefined) {
+                const resultsHeading = document.createElement('strong');
+                resultsHeading.className = 'd-block mt-3';
+                resultsHeading.textContent = 'Execution results';
+                entry.appendChild(resultsHeading);
+                entry.appendChild(renderValue(response.results));
+            }
+
+            transcript.prepend(entry);
+        }
+
+        function handleError(error) {
+            console.error(error);
+            const fallback = 'An unexpected error occurred. Please try again.';
+            const message = error && typeof error === 'object' && 'message' in error
+                ? error.message
+                : (typeof error === 'string' ? error : fallback);
+            setStatus(message || fallback, 'error');
+        }
+
+        if (clearHistoryButton) {
+            clearHistoryButton.addEventListener('click', () => {
+                clearTranscript();
+                setStatus('', '');
+            });
+        }
+
+        if (!form) {
+            return;
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const questionField = document.getElementById('vanna-question');
+            const runSqlField = document.getElementById('vanna-run-sql');
+
+            const question = questionField ? questionField.value.trim() : '';
+            const runSql = runSqlField ? runSqlField.checked : false;
+
+            if (!question) {
+                setStatus('Please enter a question before submitting.', 'error');
+                return;
+            }
+
+            setStatus('Sending question to the assistant…', 'info');
+
+            const payload = {
+                question,
+                run_sql: runSql
+            };
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') || ''
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const details = await response.json().catch(() => ({}));
+                    const detailMessage = details && details.detail ? details.detail : response.statusText;
+                    throw new Error(detailMessage || 'Unable to submit the question.');
+                }
+
+                const data = await response.json();
+                appendTranscriptEntry(question, data);
+                setStatus('Response received.', 'success');
+                form.reset();
+            } catch (error) {
+                handleError(error);
+            }
+        });
+    })();
+</script>
+{% endblock extra_js %}

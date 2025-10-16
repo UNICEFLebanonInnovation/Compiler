@@ -1,5 +1,8 @@
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView
 from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 
@@ -31,3 +34,21 @@ class VannaQueryViewSet(viewsets.ViewSet):
             return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(payload, status=status.HTTP_200_OK)
+
+
+class VannaConsoleView(LoginRequiredMixin, TemplateView):
+    """Render the conversational console for the Vanna assistant."""
+
+    template_name = "ai/vanna_console.html"
+    login_url = reverse_lazy("account_login")
+
+    def get_context_data(self, **kwargs):  # type: ignore[override]
+        context = super().get_context_data(**kwargs)
+        configuration = getattr(settings, "VANNA", {})
+        context.update(
+            {
+                "vanna_enabled": configuration.get("ENABLED", False),
+                "api_endpoint": reverse_lazy("vanna-list"),
+            }
+        )
+        return context
