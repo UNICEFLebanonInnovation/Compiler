@@ -161,6 +161,17 @@ def _safe_attr(obj, attr, default=None):
     return default if value is None else value
 
 
+def _safe_string(value, default=''):
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return value
+    try:
+        return str(value)
+    except Exception:
+        return default
+
+
 def get_outreach_child(outreach_id):
     initial = {}
 
@@ -170,263 +181,267 @@ def get_outreach_child(outreach_id):
 
     try:
         instance = OutreachChild.objects.select_related('outreach_caregiver').get(id=outreach_id)
-    except OutreachChild.DoesNotExist:
+    except (OutreachChild.DoesNotExist, ValueError, TypeError):
         logger.warning("Outreach child with id %s was not found", outreach_id)
         return initial
 
     caregiver = getattr(instance, 'outreach_caregiver', None)
 
-    initial['child_outreach'] = instance.id
-    initial['child_first_name'] = instance.first_name
-    initial['child_father_name'] = _safe_attr(caregiver, 'father_name', '')
-    initial['child_last_name'] = _safe_attr(caregiver, 'last_name', '')
-    initial['child_mother_fullname'] = _safe_attr(caregiver, 'mother_full_name', '')
-    initial['child_birthday_year'] = instance.birthday_year
-    initial['child_birthday_month'] = instance.birthday_month
-    initial['child_birthday_day'] = instance.birthday_day
-    initial['child_gender'] = (instance.gender or '').strip()
-    initial['child_address'] = _safe_attr(caregiver, 'address', '')
+    try:
+        initial['child_outreach'] = instance.id
+        initial['child_first_name'] = _safe_string(instance.first_name)
+        initial['child_father_name'] = _safe_string(_safe_attr(caregiver, 'father_name', ''))
+        initial['child_last_name'] = _safe_string(_safe_attr(caregiver, 'last_name', ''))
+        initial['child_mother_fullname'] = _safe_string(_safe_attr(caregiver, 'mother_full_name', ''))
+        initial['child_birthday_year'] = _safe_string(instance.birthday_year)
+        initial['child_birthday_month'] = _safe_string(instance.birthday_month)
+        initial['child_birthday_day'] = _safe_string(instance.birthday_day)
+        initial['child_gender'] = _safe_string(instance.gender).strip()
+        initial['child_address'] = _safe_string(_safe_attr(caregiver, 'address', ''))
 
-    nationality_raw = instance.nationality or ''
-    nationality = nationality_raw.strip().lower()
-    nationality_map = {
-        'syrian': 1,
-        'سورية': 1,
-        'lebanese': 5,
-        'لبنانية': 5,
-        'palestinian from syria': 3,
-        'فلسطينية  - من سوريا': 3,
-        'palestinian from lebanon': 4,
-        'فلسطينية - من لبنان': 4,
-        'iraqi': 2,
-        'عراقية': 2,
-        'stateless': 7,
-        'other': 6,
-        'اخرى': 6
-    }
-    initial['child_nationality'] = nationality_map.get(nationality, None)
-    initial['child_nationality_other'] = instance.nationality_other
-
-    disability_raw = (instance.disability or '').strip()
-    if not disability_raw:
-        initial['child_disability'] = 1
-    else:
-        disability_key = disability_raw.lower()
-        disability_map = {
-            'no': 1, 'كلا': 1,
-            'other': 2, 'other difficulties': 2, 'غير ذالك': 2,
-            'difficulty hearing': 3, 'difficulty_hearing': 3, 'صعوبة في السمع': 3,
-            'difficulty walking or moving hands': 4, 'difficulty_walking_or_moving_hands': 4, 'صعوبة في الحركة': 4,
-            'difficulty speaking': 5, 'difficulty_speaking': 5, 'صعوبة في التحدث': 5,
-            'difficulty seeing': 6, 'difficulty_seeing': 6, 'صعوبة في الرؤية': 6,
-            'difficulty with self-care': 7, 'صعوبة في الرعاية الذاتية - الأكل، خلع الملابس': 7,
-            'learning difficulties': 8, 'learning_difficulties': 8, 'صعوبة في التعلم': 8,
-            'difficulty interacting with others': 9, 'difficulty_interacting_with_others': 9,
-            'صعوبة التفاعل مع الآخرين': 9,
-            'intellectual disability': 10, 'intellectual_disability': 10, 'الإعاقة الذهنية': 10
+        nationality_raw = _safe_string(instance.nationality)
+        nationality = nationality_raw.strip().lower()
+        nationality_map = {
+            'syrian': 1,
+            'سورية': 1,
+            'lebanese': 5,
+            'لبنانية': 5,
+            'palestinian from syria': 3,
+            'فلسطينية  - من سوريا': 3,
+            'palestinian from lebanon': 4,
+            'فلسطينية - من لبنان': 4,
+            'iraqi': 2,
+            'عراقية': 2,
+            'stateless': 7,
+            'other': 6,
+            'اخرى': 6
         }
-        initial['child_disability'] = disability_map.get(disability_key, None)
+        initial['child_nationality'] = nationality_map.get(nationality, None)
+        initial['child_nationality_other'] = _safe_string(instance.nationality_other)
 
-    initial['disability_other'] = instance.disability_other
-
-    family_status_raw = instance.family_status or ''
-    family_status_key = family_status_raw.strip().lower()
-    status_map = {
-        'widow': 'Widowed',
-        'widowed': 'Widowed',
-        'widower': 'Widowed',
-        'separated': 'Divorced',
-        'divorced': 'Divorced',
-        'married': 'Married',
-        'engaged': 'Engaged',
-        'single': 'Single'
-    }
-    initial['child_marital_status'] = status_map.get(family_status_key, family_status_raw)
-
-    initial['child_have_children'] = (instance.have_children or '').strip().capitalize()
-
-    living_arrangement_raw = instance.living_arrangement or ''
-    living_arrangement_key = living_arrangement_raw.strip()
-    living_arrangement_map = {
-        'Unaccompanied': 'Unaccompanied',
-        'Separated': 'Separated',
-        'Living with one caregivers': 'Living with one caregivers',
-        'Living with caregivers': 'Living with caregivers',
-        'Child headed household': 'Child headed household',
-        'Married and living with extended family': 'Married and living with extended family',
-    }
-    initial['child_living_arrangement'] = living_arrangement_map.get(living_arrangement_key, living_arrangement_raw)
-
-    initial['child_have_sibling'] = (instance.have_sibling or '').strip().capitalize()
-    initial['child_siblings_have_disability'] = (instance.siblings_have_disability or '').strip().capitalize()
-    initial['child_mother_pregnant_expecting'] = (instance.mother_pregnant_expecting or '').strip().capitalize()
-
-    source_of_identification_raw = instance.source_of_identification or ''
-    source_of_identification_key = source_of_identification_raw.strip()
-    source_of_identification_map = {
-        'Dirassa': 'Dirassa',
-        'Awareness Session': 'Awareness Session',
-        'Child\'s parents': 'Child\'s parents',
-        'From Hosted Community': 'From Hosted Community',
-        'From Host Community': 'From Hosted Community',
-        'Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...)': 'Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
-        'From Profiling Database': 'From Profiling Database',
-        'From Other NGO': 'From Other NGO',
-        'From Displaced Community': 'From Displaced Community',
-        'Referred by the municipality/Other formal sources': 'Referred by the municipality/Other formal sources',
-        'Other Sources': 'Other Sources',
-    }
-    initial['source_of_identification'] = source_of_identification_map.get(source_of_identification_key, source_of_identification_raw)
-
-    initial['children_number_under18'] = instance.children_number_under18
-
-    main_care_nat_raw = _safe_attr(caregiver, 'caregiver_nationality', '') or ''
-    main_care_nat = main_care_nat_raw.strip().lower()
-    initial['main_caregiver_nationality'] = nationality_map.get(main_care_nat, None)
-    initial['main_caregiver_nationality_other'] = _safe_attr(caregiver, 'caregiver_nationality_other', '')
-
-    working_status_raw = (instance.working_status or '').strip()
-    working_status_map = {
-        'yes - morning': 'Yes - Morning',
-        'Yes -Morning': 'Yes - Morning',
-        'yes - afternoon': 'Yes - Afternoon',
-        'Yes-Afternoon': 'Yes - Afternoon',
-        'no': 'No',
-        'yes': 'Yes - Full day',
-        'Yes - Night Shift': 'Yes - Night Shift',
-        'Yes - Morning & Night Shift': 'Yes - Morning & Night Shift',
-        'Yes - Afternoon & Night Shift': 'Yes - Afternoon & Night Shift',
-        'Yes - Full Day & Night Shift': 'Yes - Full Day & Night Shift',
-    }
-    if not working_status_raw:
-        initial['have_labour'] = 'No'
-    else:
-        initial['have_labour'] = working_status_map.get(working_status_raw)
-
-    labour_type_raw = instance.work_type or ''
-    labour_type_key = labour_type_raw.strip().lower()
-    labour_type_map = {
-        'manufacturing_producing': 'manufacturing',
-        'manufacturing': 'manufacturing',
-        'garage_mechanics_workshop': '',
-        'construction_site': 'building',
-        'building': 'building',
-        'shop_restaurant_bakery_barber': 'retail_store',
-        'retail_store': 'retail_store',
-        'street_connected_work__begging__vending_': 'begging',
-        'begging': 'begging',
-        'agriculture_animal_herding': 'agriculture',
-        'agriculture': 'agriculture',
-        'others': 'other_many_other',
-        'other_many_other': 'other_many_other',
-        'other': 'other_many_other'
-    }
-    initial['labour_type'] = labour_type_map.get(labour_type_key, '')
-    initial['labour_type_specify'] = instance.work_type_other
-
-    primary_phone = _safe_attr(caregiver, 'primary_phone', '')
-    initial['first_phone_number'] = primary_phone
-    initial['first_phone_number_confirm'] = primary_phone
-
-    first_phone_owner_raw = _safe_attr(caregiver, 'first_phone_owner', '') or ''
-    first_phone_owner_key = first_phone_owner_raw.strip()
-    phone_owner_map = {
-        'Phone Main Caregiver': 'Phone Main Caregiver',
-        'Family Member': 'Family Member',
-        'Father': 'Phone Main Caregiver',
-        'Mother': 'Phone Main Caregiver',
-        'Neighbors': 'Neighbors',
-        'Shawish': 'Shawish',
-    }
-    initial['first_phone_owner'] = phone_owner_map.get(first_phone_owner_key, '')
-
-    secondary_phone = _safe_attr(caregiver, 'secondary_phone', '')
-    initial['second_phone_number'] = secondary_phone
-    initial['second_phone_number_confirm'] = secondary_phone
-
-    main_caregiver = (_safe_attr(caregiver, 'main_caregiver', '') or '').strip()
-    if main_caregiver == u'الاب':
-        initial['main_caregiver'] = 'Father'   # match *_correct option value
-        initial['caregiver_first_name'] = _safe_attr(caregiver, 'father_name', '')
-        initial['caregiver_last_name'] = _safe_attr(caregiver, 'last_name', '')
-    else:
-        if main_caregiver == u'الام':
-            initial['main_caregiver'] = 'Mother'
-        elif main_caregiver == u'اخر':
-            initial['main_caregiver'] = 'Other'
+        disability_raw = _safe_string(instance.disability).strip()
+        if not disability_raw:
+            initial['child_disability'] = 1
         else:
-            initial['main_caregiver'] = (main_caregiver or '').lower() or None
-        initial['caregiver_first_name'] = _safe_attr(caregiver, 'caregiver_first_name', '')
-        initial['caregiver_last_name'] = _safe_attr(caregiver, 'caregiver_last_name', '')
+            disability_key = disability_raw.lower()
+            disability_map = {
+                'no': 1, 'كلا': 1,
+                'other': 2, 'other difficulties': 2, 'غير ذالك': 2,
+                'difficulty hearing': 3, 'difficulty_hearing': 3, 'صعوبة في السمع': 3,
+                'difficulty walking or moving hands': 4, 'difficulty_walking_or_moving_hands': 4, 'صعوبة في الحركة': 4,
+                'difficulty speaking': 5, 'difficulty_speaking': 5, 'صعوبة في التحدث': 5,
+                'difficulty seeing': 6, 'difficulty_seeing': 6, 'صعوبة في الرؤية': 6,
+                'difficulty with self-care': 7, 'صعوبة في الرعاية الذاتية - الأكل، خلع الملابس': 7,
+                'learning difficulties': 8, 'learning_difficulties': 8, 'صعوبة في التعلم': 8,
+                'difficulty interacting with others': 9, 'difficulty_interacting_with_others': 9,
+                'صعوبة التفاعل مع الآخرين': 9,
+                'intellectual disability': 10, 'intellectual_disability': 10, 'الإعاقة الذهنية': 10
+            }
+            initial['child_disability'] = disability_map.get(disability_key, None)
 
-    initial['caregiver_middle_name'] = _safe_attr(caregiver, 'caregiver_father_name', '')
-    initial['caregiver_mother_name'] = _safe_attr(caregiver, 'caregiver_mother_name', '')
+        initial['disability_other'] = _safe_string(instance.disability_other)
 
-    id_type = _safe_attr(caregiver, 'id_type', '')
-    if id_type == 'unhcr_registered' or id_type == 'UNHCR registered':
-        initial['id_type'] = 1
-        case_number = _safe_attr(caregiver, 'unhcr_case_number', '')
-        initial['case_number'] = case_number
-        initial['case_number_confirm'] = case_number
-        parent_case = _safe_attr(caregiver, 'caregiver_unhcr_id', '')
-        initial['parent_individual_case_number'] = parent_case
-        initial['parent_individual_case_number_confirm'] = parent_case
-        initial['individual_case_number'] = instance.child_unhcr_number
-        initial['individual_case_number_confirm'] = instance.child_unhcr_number
-    elif id_type == 'unhcr_recorded' or id_type == 'UNHCR recorded':
-        initial['id_type'] = 2
-        recorded_number = _safe_attr(caregiver, 'unhcr_barcode', '')
-        initial['recorded_number'] = recorded_number
-        initial['recorded_number_confirm'] = recorded_number
-    elif id_type == 'syrian_id' or id_type == 'Syrian ID':
-        initial['id_type'] = 3
-        parent_syrian = _safe_attr(caregiver, 'caregiver_personal_id', '')
-        initial['parent_syrian_national_number'] = parent_syrian
-        initial['parent_syrian_national_number_confirm'] = parent_syrian
-        initial['syrian_national_number'] = instance.child_personal_id
-        initial['syrian_national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'palestinian_id' or id_type == 'Palestinian ID':
-        initial['id_type'] = 4
-        parent_sop = _safe_attr(caregiver, 'caregiver_personal_id', '')
-        initial['parent_sop_national_number'] = parent_sop
-        initial['parent_sop_national_number_confirm'] = parent_sop
-        initial['sop_national_number'] = instance.child_personal_id
-        initial['sop_national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'lebanese_id' or id_type == 'Lebanese ID':
-        initial['id_type'] = 5
-        parent_lebanese = _safe_attr(caregiver, 'caregiver_personal_id', '')
-        initial['parent_national_number'] = parent_lebanese
-        initial['parent_national_number_confirm'] = parent_lebanese
-        initial['national_number'] = instance.child_personal_id
-        initial['national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'other_nationality_id' or id_type == 'Other Nationality ID':
-        initial['id_type'] = 6
-        parent_other = _safe_attr(caregiver, 'caregiver_personal_id', '')
-        initial['parent_national_number'] = parent_other
-        initial['parent_national_number_confirm'] = parent_other
-        initial['national_number'] = instance.child_personal_id
-        initial['national_number_confirm'] = instance.child_personal_id
-    elif id_type == 'No_papers' or id_type == 'No papers':
-        initial['id_type'] = 7
+        family_status_raw = _safe_string(instance.family_status)
+        family_status_key = family_status_raw.strip().lower()
+        status_map = {
+            'widow': 'Widowed',
+            'widowed': 'Widowed',
+            'widower': 'Widowed',
+            'separated': 'Divorced',
+            'divorced': 'Divorced',
+            'married': 'Married',
+            'engaged': 'Engaged',
+            'single': 'Single'
+        }
+        initial['child_marital_status'] = status_map.get(family_status_key, family_status_raw)
 
-    education_map = {
-        'لا تعليم رسمي': 1,
-        'غير متعلم لكنه يجيد القراءة والكتابة / غير متعلمة لكنها تجيد القرأة و الكتابة': 2,
-        'بعض التعليم الإبتدائي-إكمال صف 1 إلى صف 5': 4,
-        'تعليم إبتدائي': 4,
-        'مرحلة متوسطة': 5,
-        'مرحلة ثانوي': 6,
-        'جامعي أو دراسات عليا': 7,
-        'N/A': 8
-    }
-    mother_education_raw = _safe_attr(caregiver, 'mother_education_level', '')
-    mother_education = (mother_education_raw or '').strip()
-    initial['mother_educational_level'] = education_map.get(mother_education, '')
+        initial['child_have_children'] = _safe_string(instance.have_children).strip().capitalize()
 
-    father_education_raw = _safe_attr(caregiver, 'father_education_level', '')
-    father_education = (father_education_raw or '').strip()
+        living_arrangement_raw = _safe_string(instance.living_arrangement)
+        living_arrangement_key = living_arrangement_raw.strip()
+        living_arrangement_map = {
+            'Unaccompanied': 'Unaccompanied',
+            'Separated': 'Separated',
+            'Living with one caregivers': 'Living with one caregivers',
+            'Living with caregivers': 'Living with caregivers',
+            'Child headed household': 'Child headed household',
+            'Married and living with extended family': 'Married and living with extended family',
+        }
+        initial['child_living_arrangement'] = living_arrangement_map.get(living_arrangement_key, living_arrangement_raw)
 
-    initial['father_educational_level'] = education_map.get(father_education, '')
+        initial['child_have_sibling'] = _safe_string(instance.have_sibling).strip().capitalize()
+        initial['child_siblings_have_disability'] = _safe_string(instance.siblings_have_disability).strip().capitalize()
+        initial['child_mother_pregnant_expecting'] = _safe_string(instance.mother_pregnant_expecting).strip().capitalize()
+
+        source_of_identification_raw = _safe_string(instance.source_of_identification)
+        source_of_identification_key = source_of_identification_raw.strip()
+        source_of_identification_map = {
+            'Dirassa': 'Dirassa',
+            'Awareness Session': 'Awareness Session',
+            "Child's parents": "Child's parents",
+            'From Hosted Community': 'From Hosted Community',
+            'From Host Community': 'From Hosted Community',
+            'Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...)': 'Sector Partners referral (CP, Education, Health, Wash, Youth, Palestenian program...) ',
+            'From Profiling Database': 'From Profiling Database',
+            'From Other NGO': 'From Other NGO',
+            'From Displaced Community': 'From Displaced Community',
+            'Referred by the municipality/Other formal sources': 'Referred by the municipality/Other formal sources',
+            'Other Sources': 'Other Sources',
+        }
+        initial['source_of_identification'] = source_of_identification_map.get(source_of_identification_key, source_of_identification_raw)
+
+        initial['children_number_under18'] = _safe_string(instance.children_number_under18)
+
+        main_care_nat_raw = _safe_string(_safe_attr(caregiver, 'caregiver_nationality', ''))
+        main_care_nat = main_care_nat_raw.strip().lower()
+        initial['main_caregiver_nationality'] = nationality_map.get(main_care_nat, None)
+        initial['main_caregiver_nationality_other'] = _safe_string(_safe_attr(caregiver, 'caregiver_nationality_other', ''))
+
+        working_status_raw = _safe_string(instance.working_status).strip()
+        working_status_map = {
+            'yes - morning': 'Yes - Morning',
+            'Yes -Morning': 'Yes - Morning',
+            'yes - afternoon': 'Yes - Afternoon',
+            'Yes-Afternoon': 'Yes - Afternoon',
+            'no': 'No',
+            'yes': 'Yes - Full day',
+            'Yes - Night Shift': 'Yes - Night Shift',
+            'Yes - Morning & Night Shift': 'Yes - Morning & Night Shift',
+            'Yes - Afternoon & Night Shift': 'Yes - Afternoon & Night Shift',
+            'Yes - Full Day & Night Shift': 'Yes - Full Day & Night Shift',
+        }
+        if not working_status_raw:
+            initial['have_labour'] = 'No'
+        else:
+            initial['have_labour'] = working_status_map.get(working_status_raw)
+
+        labour_type_raw = _safe_string(instance.work_type)
+        labour_type_key = labour_type_raw.strip().lower()
+        labour_type_map = {
+            'manufacturing_producing': 'manufacturing',
+            'manufacturing': 'manufacturing',
+            'garage_mechanics_workshop': '',
+            'construction_site': 'building',
+            'building': 'building',
+            'shop_restaurant_bakery_barber': 'retail_store',
+            'retail_store': 'retail_store',
+            'street_connected_work__begging__vending_': 'begging',
+            'begging': 'begging',
+            'agriculture_animal_herding': 'agriculture',
+            'agriculture': 'agriculture',
+            'others': 'other_many_other',
+            'other_many_other': 'other_many_other',
+            'other': 'other_many_other'
+        }
+        initial['labour_type'] = labour_type_map.get(labour_type_key, '')
+        initial['labour_type_specify'] = _safe_string(instance.work_type_other)
+
+        primary_phone = _safe_string(_safe_attr(caregiver, 'primary_phone', ''))
+        initial['first_phone_number'] = primary_phone
+        initial['first_phone_number_confirm'] = primary_phone
+
+        first_phone_owner_raw = _safe_string(_safe_attr(caregiver, 'first_phone_owner', ''))
+        first_phone_owner_key = first_phone_owner_raw.strip()
+        phone_owner_map = {
+            'Phone Main Caregiver': 'Phone Main Caregiver',
+            'Family Member': 'Family Member',
+            'Father': 'Phone Main Caregiver',
+            'Mother': 'Phone Main Caregiver',
+            'Neighbors': 'Neighbors',
+            'Shawish': 'Shawish',
+        }
+        initial['first_phone_owner'] = phone_owner_map.get(first_phone_owner_key, '')
+
+        secondary_phone = _safe_string(_safe_attr(caregiver, 'secondary_phone', ''))
+        initial['second_phone_number'] = secondary_phone
+        initial['second_phone_number_confirm'] = secondary_phone
+
+        main_caregiver = _safe_string(_safe_attr(caregiver, 'main_caregiver', '')).strip()
+        if main_caregiver == u'الاب':
+            initial['main_caregiver'] = 'Father'   # match *_correct option value
+            initial['caregiver_first_name'] = _safe_string(_safe_attr(caregiver, 'father_name', ''))
+            initial['caregiver_last_name'] = _safe_string(_safe_attr(caregiver, 'last_name', ''))
+        else:
+            if main_caregiver == u'الام':
+                initial['main_caregiver'] = 'Mother'
+            elif main_caregiver == u'اخر':
+                initial['main_caregiver'] = 'Other'
+            else:
+                initial['main_caregiver'] = main_caregiver.lower() or None
+            initial['caregiver_first_name'] = _safe_string(_safe_attr(caregiver, 'caregiver_first_name', ''))
+            initial['caregiver_last_name'] = _safe_string(_safe_attr(caregiver, 'caregiver_last_name', ''))
+
+        initial['caregiver_middle_name'] = _safe_string(_safe_attr(caregiver, 'caregiver_father_name', ''))
+        initial['caregiver_mother_name'] = _safe_string(_safe_attr(caregiver, 'caregiver_mother_name', ''))
+
+        id_type = _safe_string(_safe_attr(caregiver, 'id_type', ''))
+        if id_type == 'unhcr_registered' or id_type == 'UNHCR registered':
+            initial['id_type'] = 1
+            case_number = _safe_string(_safe_attr(caregiver, 'unhcr_case_number', ''))
+            initial['case_number'] = case_number
+            initial['case_number_confirm'] = case_number
+            parent_case = _safe_string(_safe_attr(caregiver, 'caregiver_unhcr_id', ''))
+            initial['parent_individual_case_number'] = parent_case
+            initial['parent_individual_case_number_confirm'] = parent_case
+            initial['individual_case_number'] = _safe_string(instance.child_unhcr_number)
+            initial['individual_case_number_confirm'] = _safe_string(instance.child_unhcr_number)
+        elif id_type == 'unhcr_recorded' or id_type == 'UNHCR recorded':
+            initial['id_type'] = 2
+            recorded_number = _safe_string(_safe_attr(caregiver, 'unhcr_barcode', ''))
+            initial['recorded_number'] = recorded_number
+            initial['recorded_number_confirm'] = recorded_number
+        elif id_type == 'syrian_id' or id_type == 'Syrian ID':
+            initial['id_type'] = 3
+            parent_syrian = _safe_string(_safe_attr(caregiver, 'caregiver_personal_id', ''))
+            initial['parent_syrian_national_number'] = parent_syrian
+            initial['parent_syrian_national_number_confirm'] = parent_syrian
+            initial['syrian_national_number'] = _safe_string(instance.child_personal_id)
+            initial['syrian_national_number_confirm'] = _safe_string(instance.child_personal_id)
+        elif id_type == 'palestinian_id' or id_type == 'Palestinian ID':
+            initial['id_type'] = 4
+            parent_sop = _safe_string(_safe_attr(caregiver, 'caregiver_personal_id', ''))
+            initial['parent_sop_national_number'] = parent_sop
+            initial['parent_sop_national_number_confirm'] = parent_sop
+            initial['sop_national_number'] = _safe_string(instance.child_personal_id)
+            initial['sop_national_number_confirm'] = _safe_string(instance.child_personal_id)
+        elif id_type == 'lebanese_id' or id_type == 'Lebanese ID':
+            initial['id_type'] = 5
+            parent_lebanese = _safe_string(_safe_attr(caregiver, 'caregiver_personal_id', ''))
+            initial['parent_national_number'] = parent_lebanese
+            initial['parent_national_number_confirm'] = parent_lebanese
+            initial['national_number'] = _safe_string(instance.child_personal_id)
+            initial['national_number_confirm'] = _safe_string(instance.child_personal_id)
+        elif id_type == 'other_nationality_id' or id_type == 'Other Nationality ID':
+            initial['id_type'] = 6
+            parent_other = _safe_string(_safe_attr(caregiver, 'caregiver_personal_id', ''))
+            initial['parent_national_number'] = parent_other
+            initial['parent_national_number_confirm'] = parent_other
+            initial['national_number'] = _safe_string(instance.child_personal_id)
+            initial['national_number_confirm'] = _safe_string(instance.child_personal_id)
+        elif id_type == 'No_papers' or id_type == 'No papers':
+            initial['id_type'] = 7
+
+        education_map = {
+            'لا تعليم رسمي': 1,
+            'غير متعلم لكنه يجيد القراءة والكتابة / غير متعلمة لكنها تجيد القرأة و الكتابة': 2,
+            'بعض التعليم الإبتدائي-إكمال صف 1 إلى صف 5': 4,
+            'تعليم إبتدائي': 4,
+            'مرحلة متوسطة': 5,
+            'مرحلة ثانوي': 6,
+            'جامعي أو دراسات عليا': 7,
+            'N/A': 8
+        }
+        mother_education_raw = _safe_string(_safe_attr(caregiver, 'mother_education_level', ''))
+        mother_education = mother_education_raw.strip()
+        initial['mother_educational_level'] = education_map.get(mother_education, '')
+
+        father_education_raw = _safe_string(_safe_attr(caregiver, 'father_education_level', ''))
+        father_education = father_education_raw.strip()
+
+        initial['father_educational_level'] = education_map.get(father_education, '')
+    except Exception:
+        logger.exception("Failed to build outreach child response for id %s", outreach_id)
+        return {}
 
     return initial
 
